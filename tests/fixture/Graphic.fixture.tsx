@@ -104,12 +104,6 @@ export default function GraphicFixture() {
         </Button>
       </div>
       <List.Root aria-label="Projects">
-        <List.Item start={<IconPipeline />} label="Build pipeline" data-testid="list-svg" />
-        <List.Item
-          start={<img src={png} alt="" />}
-          label="Website refresh"
-          data-testid="list-img"
-        />
         <List.Item
           start={
             <Graphic alt="" tint="text">

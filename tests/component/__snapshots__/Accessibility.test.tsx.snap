@@ -118,6 +118,8 @@ exports[`document-tabs-rtl has no new accessibility violations 1`] = `{}`;
 
 exports[`drop-zone has no new accessibility violations 1`] = `{}`;
 
+exports[`empty-state has no new accessibility violations 1`] = `{}`;
+
 exports[`field has no new accessibility violations 1`] = `{}`;
 
 exports[`forced-colors has no new accessibility violations 1`] = `
@@ -149,6 +151,8 @@ exports[`markdown-editor has no new accessibility violations 1`] = `{}`;
 exports[`menu has no new accessibility violations 1`] = `{}`;
 
 exports[`menubar has no new accessibility violations 1`] = `{}`;
+
+exports[`message-list has no new accessibility violations 1`] = `{}`;
 
 exports[`messages has no new accessibility violations 1`] = `
 {
@@ -206,8 +210,11 @@ exports[`panel-dock has no new accessibility violations 1`] = `
 
 exports[`panes has no new accessibility violations 1`] = `
 {
+  "scrollable-region-focusable": {
+    "div.env-panes-body": 1,
+  },
   "target-size": {
-    "div.env-panes-list button": 3,
+    "div.env-panes-body button": 3,
   },
 }
 `;
@@ -234,7 +241,7 @@ exports[`scaffold has no new accessibility violations 1`] = `{}`;
 exports[`scaffold-panes has no new accessibility violations 1`] = `
 {
   "target-size": {
-    "div.env-panes-main button": 60,
+    "div.env-panes-body button": 60,
   },
 }
 `;
@@ -327,5 +334,7 @@ exports[`time-picker has no new accessibility violations 1`] = `{}`;
 exports[`toast has no new accessibility violations 1`] = `{}`;
 
 exports[`tooltip has no new accessibility violations 1`] = `{}`;
+
+exports[`top-bar has no new accessibility violations 1`] = `{}`;
 
 exports[`tree has no new accessibility violations 1`] = `{}`;

@@ -162,15 +162,7 @@ const patternIds = [
 ];
 
 /** Component pages that became patterns, by their slug. */
-const componentPatterns = [
-  'window-frame',
-  'account-menu',
-  'stat',
-  'stats',
-  'empty-state',
-  'loading',
-  'skeleton',
-];
+const componentPatterns = ['window-frame', 'account-menu', 'stat', 'stats', 'loading', 'skeleton'];
 
 /** Pages merged into others, and pages that became others, each opening the page it is part of now. */
 function mergedPage({ path, rest }: OldAddress) {

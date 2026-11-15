@@ -33,11 +33,10 @@
     max-inline-size: 100%;
     cursor: default;
   }
-  /* A label above its control, Field.Label's and an editor's above its toolbar, reads as the notched
-     label of envUI's fields does once it floats: its size, weight and muted color (TextField.css),
-     so a form's labels read alike. */
+  /* The label above its control, Field.Label's and every field's of envUI: the label size, in the
+     muted color, so a form's labels read alike. */
   .env-field-label,
-  .env-field:not(.env-text-field) > label {
+  .env-field > label {
     font: var(--env-type-body);
     font-size: var(--env-font-size-label);
     color: var(--env-color-fg-muted);
@@ -46,7 +45,7 @@
     opacity: var(--env-state-disabled-opacity);
   }
   /* Field.Control: a native text input in the outlined field look, at the control height of its size
-     or its container's, so it lines up with buttons in a row, with a text field's corners and no fill of
+     or its container's, so it lines up with buttons in a row, with the control radius and no fill of
      its own: it takes the background of what it sits on. A control given through render takes the
      same outline. */
   .env-field-control {
@@ -63,9 +62,7 @@
       )
       var(--env-space-4);
     border: var(--env-control-border-width) solid var(--_field-control-border);
-    /* A text field's corner: the large corner, no more than a third of the height, so a taller
-       control given through render, such as a text area, keeps the same corners. */
-    border-radius: min(var(--env-radius-lg), var(--env-control-height) / 3);
+    border-radius: var(--env-radius-control);
     outline: none;
     background: transparent;
     color: var(--env-color-fg-default);

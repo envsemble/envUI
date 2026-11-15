@@ -32,7 +32,7 @@ test("a Drawer destination's badge follows its label, and names it with the labe
   assert.equal(textOf(reports), 'ReportsNew');
   assert.deepEqual(
     reports.children.map((part) => part.attributes.class),
-    ['env-navigation-drawer-label', 'env-badge'],
+    ['env-navigation-drawer-label', 'env-navigation-drawer-badge'],
   );
   // With a count, the label and the count name the item, and the badge stands before the count.
   assert.equal(archive.attributes['aria-label'], 'Archive, 2 new');

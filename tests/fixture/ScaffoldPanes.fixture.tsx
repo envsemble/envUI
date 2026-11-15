@@ -33,7 +33,7 @@ const destinations: Destination[] = [
  * button, and the supporting pane, a sheet below expanded, holds a message's details.
  */
 export default function ScaffoldPanesFixture() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean | null>(null);
   return (
     <Scaffold
       topBar={<TopBar title="Mail" />}

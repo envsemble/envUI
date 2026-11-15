@@ -96,10 +96,9 @@ examples:
 
 ### Outline
 
-An outline field has no fill of its own. It takes the background of what it sits on, such as a card or a dialog. Its label rests inside it and floats into the edge, which opens behind it.
+An outline field is a box with a thin edge and the control corners every button shares, and no fill of its own. It takes the background of what it sits on, such as a card or a dialog. Its label sits above it.
 
 - It is as tall as a button of its size, so the two line up in a row.
-- Stacked in a Column or a Grid, it keeps a little room above it for its floated label.
 - A field on its own on a page, or in a long form, takes the large size.
 - It can be given a fill of its own where it needs one.
 
@@ -109,7 +108,6 @@ A ghost field has no edge. A faint fill at rest shows where to type, and deepens
 
 - It has the outline field's corners, so the two sit together in a row.
 - Keep it to toolbars, an application's chrome and palettes. In a form, a faint fill says less than an edge, so a form's fields are outline.
-- Its label floats inside the fill, above the value, as there is no edge to cut a notch in, and stays within the field's height, so a ghost field is as tall as an outline one.
 - A read-only or disabled ghost field keeps a fainter fill, quieter than one to fill in.
 - An invalid ghost field shows a red edge.
 - The [CommandPalette](command-palette.md)'s search is a large ghost field that keeps its fill.
@@ -160,17 +158,17 @@ An icon at the start only decorates the field.
 4. **Start icon** (`env-text-field-start`, `startIcon`)
 5. **Prefix** (`env-text-field-prefix`, `prefix`)
 6. **Input** (`env-text-field-input`)
-7. **End action** (`env-text-field-end`, `endAction`)
+7. **End action** (`env-text-field-end-action`, `endAction`)
 8. **Description** (`env-field-description`, `description`)
 
 ## Behaviour
 
 ### States
 
-The label rests in an empty field and floats into the outline on focus or with a value.
+The label stays above the field in every state.
 
-- Under the pointer, the outline darkens.
-- Focus alone draws it in the accent, twice as thick.
+- Under the pointer, the edge darkens.
+- Focus alone draws it in the accent, twice as thick, inward, with no ring around it.
 
 <!-- specimen: States -->
 

@@ -34,11 +34,18 @@ describe('Panes, supporting', () => {
       expect(detail.x - (list.x + list.width)).toBeCloseTo(16, 0);
       if (search.includes('none')) continue;
       expect(shown(root.getByRole('separator', { name: 'Resize details' }))).toBe(true);
-      // It paints nothing while it is a pane, and each pane scrolls on its own.
+      // It paints nothing while it is a pane, and each pane's body scrolls on its own, under its
+      // header, within the pane.
       expect(css(supporting, 'background-color')).toBe('rgba(0, 0, 0, 0)');
       expect(css(supporting, 'position')).toBe('static');
-      expect(css(main, 'overflow-y')).toBe('auto');
+      const body = main.element().querySelector('.env-panes-body')!;
+      expect(css(body, 'overflow-y')).toBe('auto');
       expect(box(main).height).toBeCloseTo(24 * 16 - 2, 0);
+      expect(box(body).y + box(body).height).toBeCloseTo(box(main).y + box(main).height, 0);
+      expect(main.element().scrollHeight).toBe(main.element().clientHeight);
+      body.scrollTop = body.scrollHeight;
+      await expect.poll(() => body.scrollTop).toBeGreaterThan(0);
+      expect(box(root.getByTestId('main-header')).y).toBeCloseTo(box(main).y, 0);
     }
 
     // splitAt sets where the panes sit side by side.
@@ -126,16 +133,58 @@ describe('Panes, supporting', () => {
       expect(bottom.width).toBeCloseTo(narrow.width - 2, 0);
       expect(bottom.y + bottom.height).toBeCloseTo(narrow.y + narrow.height - 1, 0);
       expect(bottom.height).toBeLessThan(narrow.height * 0.9);
-      // Wider again, the panes sit side by side, whatever open says: a region again, without its
-      // close button, beside a main pane that isn't inert.
+      // Wider again, the panes sit side by side, the pane open as it was: a region again beside a
+      // main pane that isn't inert, with its close button in its header row.
       page.getByTestId('supporting-frame').element().setAttribute('style', 'inline-size: 80rem');
       await expect.poll(() => css(supporting, 'position')).toBe('static');
       await isShown(root.getByRole('region', { name: 'Details' }));
-      expect(shown(close)).toBe(false);
       expect(main.inert).toBe(false);
       expect(shownElement(backdrop())).toBe(false);
       // The trigger hides while the supporting pane shows beside the main one.
       expect(shown(show)).toBe(false);
+    },
+  );
+
+  test(
+    'side by side its close button closes it, the main pane takes the room and the trigger opens it again',
+    { tags: ['engines'] },
+    async () => {
+      panes('width=60rem');
+      const root = page.getByTestId('supporting');
+      const frame = page.getByTestId('supporting-frame');
+      const main = element(root, '.env-panes-main');
+      const supporting = page.elementLocator(element(root, '.env-panes-supporting'));
+      const close = supporting.getByRole('button', { name: 'Close' });
+      const show = root.getByRole('button', { name: 'Show details' });
+      // Open as no one has chosen yet: the pane shows beside the main one, with its close button.
+      await isShown(root.getByRole('region', { name: 'Details' }));
+      await isShown(close);
+      expect(shown(show)).toBe(false);
+      focus(close);
+      await keyboard.press('Enter');
+      await isHidden(supporting);
+      expect(page.getByTestId('reasons').element().textContent).toBe('close close-press');
+      // The main pane takes the room, the divider hides, and the trigger shows and takes focus.
+      expect(box(main).width).toBeCloseTo(box(frame).width - 2, 0);
+      expect(shown(root.getByRole('separator'))).toBe(false);
+      await isShown(show);
+      await isFocused(show);
+      await expect.element(show).toHaveAttribute('aria-expanded', 'false');
+      // Narrower, it stays closed: no sheet opens.
+      await setWidth('45rem');
+      await expect.poll(() => css(supporting, 'position')).toBe('absolute');
+      expect(shown(supporting)).toBe(false);
+      // The trigger opens it, beside the main pane once there is room again, with no modal.
+      await setWidth('80rem');
+      await isShown(show);
+      focus(show);
+      await keyboard.press('Enter');
+      await isShown(root.getByRole('region', { name: 'Details' }));
+      expect(main.inert).toBe(false);
+      expect(shown(show)).toBe(false);
+      expect(page.getByTestId('reasons').element().textContent).toBe(
+        'close close-press, open trigger-press',
+      );
     },
   );
 
@@ -298,7 +347,7 @@ describe('Panes in a Scaffold whose document scrolls', { tags: ['engines'] }, ()
           .closest('[inert]'),
       ).not.toBeNull();
       // The sheet scrolls inside itself while the page stays where it was.
-      const inside = sheet.element();
+      const inside = sheet.element().querySelector('.env-panes-body')!;
       inside.scrollTop = inside.scrollHeight;
       expect({
         scrolled: inside.scrollTop > 0,

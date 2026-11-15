@@ -43,6 +43,9 @@ const timeWheel = (scope: Locator, name: 'Hours' | 'Minutes') =>
     .getByRole('spinbutton', { name, exact: true });
 const wellOf = (trigger: Locator) =>
   trigger.element().closest<HTMLElement>('.env-text-field-control')!;
+/** A field's label, above its well. */
+const labelOf = (trigger: Locator) =>
+  trigger.element().closest('.env-text-field')!.querySelector<HTMLElement>(':scope > label')!;
 /** The open calendar popup; a closing one can still fade out. */
 const openPopup = () => document.querySelector<HTMLElement>('.env-date-picker-popup[data-open]');
 const popups = () => document.querySelectorAll('.env-date-picker-popup');
@@ -218,7 +221,7 @@ test('a calendar opened again while it fades out moves focus to the chosen day',
   await expect.poll(focusedDate).toBe('2026-10-19');
 });
 
-test('month buttons, a pressed day, Today and the clear button change the value; the label of an open field closes its calendar; a read-only field opens none and an empty one floats its label with focus', async () => {
+test('month buttons, a pressed day, Today and the clear button change the value; the label of an open field closes its calendar; a read-only field opens none and an empty one keeps its label above it with focus', async () => {
   const due = field('Due light');
   const changes = output('date-picker-due-light');
   expect(textOf(due)()).toBe('Oct 20, 2026');
@@ -263,11 +266,11 @@ test('month buttons, a pressed day, Today and the clear button change the value;
   const publish = field('Publish on light');
   await publish.click();
   await isOpen();
-  await press(wellOf(publish).querySelector('label')!);
+  await press(labelOf(publish));
   await isClosed();
   await expect.poll(() => popups().length).toBe(0);
   await isFocused(publish);
-  await press(wellOf(publish).querySelector('label')!);
+  await press(labelOf(publish));
   await isOpen();
   await keyboard.press('Escape');
   await isClosed();
@@ -278,11 +281,15 @@ test('month buttons, a pressed day, Today and the clear button change the value;
   await nextFrames();
   expect(page.getByRole('dialog').query()).toBeNull();
   expect(textOf(readOnly)()).toBe('20 Oct 2026');
-  // An empty field's label rests inside it, and floats once it has focus.
-  const label = wellOf(field('Invalid date light')).querySelector('label')!;
-  const resting = box(label).y;
+  // An empty field's label sits above it, and stays there once it has focus.
+  const label = labelOf(field('Invalid date light'));
+  const resting = box(label);
+  expect(resting.y + resting.height).toBeLessThanOrEqual(
+    box(wellOf(field('Invalid date light'))).y,
+  );
   focus(field('Invalid date light'));
-  await expect.poll(() => box(label).y).toBeLessThan(resting - 8);
+  await nextFrames();
+  expect(box(label)).toEqual(resting);
 });
 
 test('with a time the calendar stays open beside the time wheels, with Now and Clear', async () => {

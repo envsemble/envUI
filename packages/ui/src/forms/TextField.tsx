@@ -4,7 +4,7 @@ import type { CSSProperties, InputHTMLAttributes, Ref } from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import {
   FieldFrame,
-  isLabelShown,
+  FieldLabelContent,
   type FieldProps,
   type FieldSizeProps,
   type TextFieldAffixProps,
@@ -38,7 +38,7 @@ export interface TextFieldProps
 }
 
 /**
- * A labelled single-line text input: a native input with a floating label, a description and an
+ * A labelled single-line text input: a native input with its label above it, a description and an
  * error, at the control height in an outline or ghost look, with an optional start icon, end
  * action, prefix and suffix.
  */
@@ -57,7 +57,6 @@ export function TextField({
   id: suppliedId,
   className,
   style,
-  placeholder,
   onChange,
   onValueChange,
   'aria-describedby': describedBy,
@@ -75,22 +74,19 @@ export function TextField({
     ]
       .filter(Boolean)
       .join(' ') || undefined;
-  // A floating label needs a blank placeholder to detect the empty state; hidden labels leave it.
-  const fieldPlaceholder =
-    label != null && isLabelShown({ visibleLabel }) ? placeholder || ' ' : placeholder;
   return (
     <FieldFrame
       id={id}
       label={
         label != null ? (
           <label htmlFor={id} className="env-text-field-label">
-            {label}
+            <FieldLabelContent>{label}</FieldLabelContent>
           </label>
         ) : null
       }
       description={description}
       error={error}
-      floatingLabel
+      controlBox
       variant={variant}
       startIcon={startIcon}
       endAction={endAction}
@@ -106,7 +102,6 @@ export function TextField({
         ref={ref}
         {...metadata}
         aria-describedby={describedByIds}
-        placeholder={fieldPlaceholder}
         className="env-text-field-input"
         onChange={(event) => {
           onChange?.(event);

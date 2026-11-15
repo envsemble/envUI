@@ -171,6 +171,17 @@
     z-index: var(--env-z-sticky);
   }
 
+  .env-scaffold-top-bar:has(> .env-top-bar[data-background='page']) {
+    border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
+  }
+  .env-scaffold-drawer:has(> .env-navigation-drawer[data-background='page']),
+  .env-scaffold-rail:has(> .env-navigation-rail[data-background='page']) {
+    border-inline-end: var(--env-control-border-width) solid var(--env-color-border-muted);
+  }
+  .env-scaffold-bar:has(> .env-navigation-bar[data-background='page']) {
+    border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
+  }
+
   /* The body: the page's main content, beside the navigation and below the top bar. It keeps clear
      of the bottom safe area where no bar is below it. Where it scrolls, it has a stable gutter so the
      layout stays in place as content starts or stops overflowing, and sticky content sticks to its
@@ -264,7 +275,8 @@
      sizes and layers them; the selectors stay below Panes' side-by-side rules, which win. */
   :where(.env-scaffold[data-scroll='document'])
     .env-panes
-    > :is(.env-panes-main, .env-panes-list, .env-panes-detail) {
+    > :is(.env-panes-main, .env-panes-list, .env-panes-detail)
+    > .env-panes-body {
     overflow: visible;
   }
   :where(.env-scaffold[data-scroll='document'])

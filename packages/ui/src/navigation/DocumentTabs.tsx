@@ -14,6 +14,7 @@ import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { documentTabs } from '../foundations/messages/documentTabs.js';
@@ -246,9 +247,9 @@ export function DocumentTabs({
           {strip}
         </ContextMenu>
         {end != null && (
-          <Row align="center" gap={1} className="env-document-tabs-end">
+          <Slot className="env-document-tabs-end" layout="row" shrink="never">
             {end}
-          </Row>
+          </Slot>
         )}
         {drag && dragged && (
           // The floating copy of the dragged tab, beside the pointer; decorative, since the drag is

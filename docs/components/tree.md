@@ -141,7 +141,7 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
 
 - An `aria-label` for every tree, and the context menu's name in the application's language.
 - The visible rows, their expansion, the selection, and what opening does.
-- A `textValue` for rows whose label isn't plain text, and a name for a count in `end`.
+- A name for a count in `end`.
 
 ## Compose
 
@@ -167,7 +167,7 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
 />
 ```
 
-`items` are the visible rows in order, flattened: an expanded row is followed by its visible descendants. Each row, a `TreeItem`, has a stable, unique `value`, such as a path, which it carries as `data-id`; its `depth`, 0 for a top-level row, each level indenting it by 0.75 rem; its `label`; and an optional decorative `icon`, a muted `description`, such as a status or a path, `end` content, such as a Badge with a count, a native `tooltip`, `textValue` for type-ahead where the label isn't plain text, and `disabled`.
+`items` are the visible rows in order, flattened: an expanded row is followed by its visible descendants. Each row, a `TreeItem`, has a stable, unique `value`, such as a path, which it carries as `data-id`; its `depth`, 0 for a top-level row, each level indenting it by 0.75 rem; its `label`, the text type-ahead matches; and an optional decorative `icon`, a muted `description`, such as a status or a path, `end` content, such as a Badge with a count, a native `tooltip` and `disabled`. The label keeps its room: the description gives way first, and an `end` that doesn't fit beside the label leaves the row whole rather than squeeze it.
 
 #### Expanding
 

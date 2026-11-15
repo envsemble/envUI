@@ -67,17 +67,17 @@
       "env-accordion-header": "An item's heading, which holds its button.",
       "env-accordion-indicator": "The plus that becomes a minus while the item is open.",
       "env-accordion-item": "One section, with the hairline under it.",
-      "env-accordion-label": "An item's title.",
+      "env-accordion-label": "The slot of an item's title.",
       "env-accordion-panel": "The panel that opens below the heading.",
       "env-accordion-trigger": "The button that opens and closes the item."
     },
     "Alert": {
       "env-alert": "The alert: an icon and a message in its tone.",
-      "env-alert-action": "The alert's action, such as a button.",
+      "env-alert-action": "The slot of the alert's actions, such as a button, a row that wraps.",
       "env-alert-content": "The column that holds the title and the message.",
       "env-alert-dismiss": "The button that dismisses the alert.",
       "env-alert-icon": "The icon of the alert's tone.",
-      "env-alert-message": "The alert's message.",
+      "env-alert-message": "The slot of the alert's message.",
       "env-alert-title": "The alert's title."
     },
     "AnimatedNumber": {
@@ -126,6 +126,7 @@
       "env-button-content": "The button's label and icons.",
       "env-button-end": "The slot of the quiet content at the button's far end, such as a shortcut's keys.",
       "env-button-end-icon": "The slot of the icon after the label.",
+      "env-button-icon": "The slot of an icon button's icon.",
       "env-button-label": "The slot of the label, the button's children.",
       "env-button-start-icon": "The slot of the icon before the label.",
       "env-button-spinner": "The spinner of a pending button."
@@ -162,6 +163,7 @@
       "env-card": "The card's surface.",
       "env-card-body": "The card's content above the footer.",
       "env-card-description": "The sentence under the title.",
+      "env-card-actions": "The slot of the card's actions, a row that wraps.",
       "env-card-footer": "The strip of actions.",
       "env-card-header": "The row with the title and the meta.",
       "env-card-title": "The title.",
@@ -173,7 +175,9 @@
       "env-checkbox-indicator": "The check or dash inside the box.",
       "env-checkbox-input": "The native input.",
       "env-checkbox-description": "The muted line under the label.",
-      "env-checkbox-label": "The label."
+      "env-checkbox-description-content": "The slot of the description.",
+      "env-checkbox-label": "The label, with the description under it.",
+      "env-checkbox-label-content": "The slot of the label."
     },
     "Code": {
       "env-code": "Inline code."
@@ -211,6 +215,7 @@
       "env-color-picker-swatches": "The preset swatches.",
       "env-color-picker-swatch": "A preset swatch.",
       "env-color-picker-description": "The description under the picker.",
+      "env-color-picker-description-content": "The slot of the description.",
       "env-color-picker-error": "The error under the picker.",
       "env-color-picker-popover": "The popover of a ColorPickerButton, around its picker."
     },
@@ -221,7 +226,7 @@
     "ColorSwatch": {
       "env-color-swatch": "A swatch of one color, with its label and value.",
       "env-color-swatch-sample": "The sample of the color.",
-      "env-color-swatch-label": "The color's name.",
+      "env-color-swatch-label": "The slot of the color's name.",
       "env-color-swatch-value": "The color's value in the format asked for."
     },
     "Combobox": {
@@ -249,28 +254,27 @@
     "CommandPalette": {
       "env-command-palette": "The command palette's dialog.",
       "env-command-palette-close": "The close button after the search, shown under a coarse pointer.",
-      "env-command-palette-empty-description": "The empty state's text after its title, on its line.",
-      "env-command-palette-empty-icon": "The empty state's icon, at the start of its line.",
-      "env-command-palette-empty-title": "The empty state's title.",
       "env-command-palette-footer": "The footer with the keyboard hints.",
-      "env-command-palette-footer-content": "The content of the footer.",
+      "env-command-palette-footer-content": "The slot of the footer's own content, after the hints.",
       "env-command-palette-group": "A group of commands.",
       "env-command-palette-group-label": "A group's label.",
       "env-command-palette-header": "The row of the search field and the close button.",
       "env-command-palette-hint": "One keyboard hint.",
+      "env-command-palette-hint-label": "The slot of what a hint's keys do.",
       "env-command-palette-input": "The search input.",
       "env-command-palette-item": "One command.",
       "env-command-palette-list": "The list of commands.",
       "env-command-palette-positioner": "The palette's positioner.",
       "env-command-palette-search": "The search field, a ghost TextField around the search input.",
-      "env-command-palette-status": "The empty state in place of the list, and the announcement of the number of results."
+      "env-command-palette-status": "The EmptyState in place of the list, and the announcement of the number of results."
     },
     "Composer": {
       "env-composer": "The message composer.",
       "env-composer-action": "The send or stop button.",
-      "env-composer-footer": "The row of actions under the input.",
+      "env-composer-description": "The slot of the supporting text below the composer.",
+      "env-composer-footer": "The supporting text below the composer, which describes the field.",
       "env-composer-input": "The text input.",
-      "env-composer-start": "The actions at the start of the footer.",
+      "env-composer-start": "The slot of the content at the start of the action row.",
       "env-composer-surface": "The surface around the input and the footer."
     },
     "ConfirmButton": {
@@ -281,7 +285,7 @@
       "env-confirm-dialog-form": "The form that holds the dialog's fields and its confirming action."
     },
     "ConnectedRows": {
-      "env-connected-rows": "Rows joined into one block, a small gap apart, with large outer and small inner corners.",
+      "env-connected-rows": "Rows that, under a filled surface, join into one block with large outer and small inner corners.",
       "env-connected-row": "One joined row."
     },
     "CopyButton": {
@@ -334,13 +338,14 @@
     "Disclosure": {
       "env-disclosure": "The disclosure: a summary that shows and hides a panel.",
       "env-disclosure-indicator": "The chevron before the summary's words, turned down while open.",
-      "env-disclosure-panel": "The panel it shows."
+      "env-disclosure-panel": "The panel it shows.",
+      "env-disclosure-title": "The slot of the summary's words."
     },
     "DocumentTabs": {
       "env-document-tabs-list": "The tabs of open documents, which scroll sideways.",
       "env-document-tabs-close": "A tab's close button.",
       "env-document-tabs-drag-image": "The image that follows the pointer while a tab is dragged.",
-      "env-document-tabs-end": "The actions at the end of the bar.",
+      "env-document-tabs-end": "The slot of the actions at the end of the bar.",
       "env-document-tabs-item": "One tab with its close button.",
       "env-document-tabs": "The root: a bar that holds the strip of tabs and the content after it.",
       "env-document-tabs-tab": "A tab's button.",
@@ -349,8 +354,11 @@
     "DropZone": {
       "env-drop-zone": "The area that takes dropped files.",
       "env-drop-zone-description": "The sentence about the accepted files.",
-      "env-drop-zone-icon": "The icon.",
+      "env-drop-zone-description-content": "The slot of that sentence.",
+      "env-drop-zone-icon": "The round well of the icon.",
+      "env-drop-zone-icon-content": "The slot of the icon.",
       "env-drop-zone-label": "The label.",
+      "env-drop-zone-label-content": "The slot of the label.",
       "env-drop-zone-target": "The target that takes the drop and opens the file picker.",
       "env-drop-zone-text": "The column with the label and the description."
     },
@@ -358,12 +366,22 @@
       "env-editor-status": "The editor's status line, such as a character count.",
       "env-editor-toolbar": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which wrap onto more rows where they are wider than the editor."
     },
+    "EmptyState": {
+      "env-empty-state": "The empty state, centred in the region it fills.",
+      "env-empty-state-actions": "The slot of the actions, a row that wraps.",
+      "env-empty-state-description": "The slot of the description.",
+      "env-empty-state-heading": "The title's line, in the title's text style.",
+      "env-empty-state-icon": "The slot of the icon above the title.",
+      "env-empty-state-title": "The slot of the title."
+    },
     "Field": {
       "env-field": "The field: label, control, description and error.",
       "env-field-control": "The control.",
       "env-field-description": "The description under the control.",
+      "env-field-description-content": "The slot of the description, as the application gives it.",
       "env-field-error": "The error message.",
-      "env-field-label": "The label."
+      "env-field-label": "The label.",
+      "env-field-label-content": "The slot of a field's label, as the application gives it, inside its label element."
     },
     "Graphic": {
       "env-graphic": "The box at the graphic's size, which contains and centers the picture, or which it covers.",
@@ -398,18 +416,21 @@
       "env-list": "The list.",
       "env-list-announcer": "The announcements of a reordered item.",
       "env-list-item": "One item.",
-      "env-list-item-content": "An item's content.",
+      "env-list-item-content": "The column with an item's label, description and more content.",
+      "env-list-item-description": "An item's description, in muted text.",
+      "env-list-item-end": "The slot of the content at an item's end, such as a button or a switch.",
+      "env-list-item-extra": "The slot of more content under an item's label and description.",
       "env-list-item-handle": "The handle that reorders an item.",
-      "env-list-item-start": "The start of an item, for the handle or a checkbox."
+      "env-list-item-label": "The slot of an item's name.",
+      "env-list-item-start": "The slot of the content before an item's label, such as a checkbox or an avatar."
     },
     "ListRow": {
       "env-list-row": "The row anatomy of menu, select and combobox options.",
       "env-list-row-description": "A row's description.",
-      "env-list-row-end": "The end of a row, for a shortcut or a check.",
+      "env-list-row-end": "The slot of the content at a row's end, such as a count or keys.",
       "env-list-row-icon": "A row's icon.",
       "env-list-row-indicator": "The check of a chosen row.",
-      "env-list-row-label": "A row's label.",
-      "env-list-row-shortcut": "A row's keyboard shortcut.",
+      "env-list-row-label": "The slot of a row's name.",
       "env-list-row-text": "The column with a row's label and description."
     },
     "Listbox": {
@@ -458,16 +479,18 @@
     },
     "Message": {
       "env-message": "One message in a conversation.",
-      "env-message-actions": "The message's actions.",
+      "env-message-actions": "The slot of the message's actions, a row that wraps.",
       "env-message-author": "The author's name.",
-      "env-message-content": "The message's content.",
+      "env-message-content": "The slot of the message's content, in a bubble on your own messages.",
       "env-message-header": "The row with the author and the meta.",
-      "env-message-meta": "The time or another fact about the message.",
-      "env-message-status": "The sending or failed status."
+      "env-message-meta": "The slot of the time or another fact about the message.",
+      "env-message-status": "The sending or failed status.",
+      "env-message-text": "Content given as plain text, which keeps its line breaks."
     },
     "MessageList": {
       "env-message-list": "The list of messages.",
-      "env-message-list-busy": "The row after the last message while busy: the busy author, a spinner and Working."
+      "env-message-list-busy": "The row after the last message while busy: the busy author, a spinner and Working.",
+      "env-message-list-jump": "The place of the Jump to latest button at the foot of a list that follows."
     },
     "Meter": {
       "env-meter": "The meter.",
@@ -500,7 +523,7 @@
     },
     "NavigationDrawer": {
       "env-navigation-drawer": "The navigation drawer: a nav landmark, a column with the header, the list and the footer.",
-      "env-navigation-drawer-header": "Content above the destinations, such as the application's name or a search trigger.",
+      "env-navigation-drawer-header": "The slot of the content above the destinations, such as the application's name or a search trigger.",
       "env-navigation-drawer-list": "The list of destinations and groups, which scrolls where the drawer is shorter.",
       "env-navigation-drawer-section": "A group: its heading and the list of its destinations.",
       "env-navigation-drawer-group-label": "A group's label, which names the group's list.",
@@ -508,22 +531,24 @@
       "env-navigation-drawer-label": "A destination's label.",
       "env-navigation-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
       "env-navigation-drawer-branch": "A section: a destination with destinations nested under it, which open and close below it.",
-      "env-navigation-drawer-branch-row": "A section's row: the destination's link or button, with the section's button over its end.",
+      "env-navigation-drawer-row": "A destination with controls beside it: its link or button, its end content and a section's button, over one fill.",
+      "env-navigation-drawer-badge": "The slot of a destination's badge, after its label.",
+      "env-navigation-drawer-end": "The slot of a destination's own controls at the end of its row, outside its link or button.",
       "env-navigation-drawer-toggle": "The button at the end of a section's link that opens and closes the section.",
       "env-navigation-drawer-chevron": "A section's chevron, which points down, and up while the section is open.",
       "env-navigation-drawer-children": "The list of a section's nested destinations, indented, hidden until found while closed.",
-      "env-navigation-drawer-footer": "Content below the destinations, at the bottom of the drawer.",
+      "env-navigation-drawer-footer": "The slot of the content below the destinations, at the bottom of the drawer.",
       "env-navigation-drawer-resize-handle": "The handle on a resizable drawer's end edge, a separator that resizes it."
     },
     "NavigationRail": {
       "env-navigation-rail": "The navigation rail: a nav landmark, a narrow column with the header, the list and the footer.",
-      "env-navigation-rail-header": "Content above the destinations, such as a button that opens the drawer or the main action.",
+      "env-navigation-rail-header": "The slot of the content above the destinations, such as a button that opens the drawer or the main action.",
       "env-navigation-rail-list": "The list of destinations, one under another, which scrolls where the rail is shorter.",
       "env-navigation-rail-item": "A destination: a link or button with its indicator above its label.",
       "env-navigation-rail-indicator": "The rounded rectangle around a destination's icon, filled while the destination is current.",
       "env-navigation-rail-label": "A destination's short label, under its indicator.",
       "env-navigation-rail-count": "A destination's count, on the icon's top end; 999+ above 999.",
-      "env-navigation-rail-footer": "Content at the bottom of the rail, such as the account's button."
+      "env-navigation-rail-footer": "The slot of the content at the bottom of the rail, such as the account's button."
     },
     "Overlay": {
       "env-overlay-theme": "The theme boundary of a dialog's, a sheet's or the command palette's portal. It has no box, so their backdrop and positioner keep their own layers; the positioner is the env-window container."
@@ -534,16 +559,16 @@
     },
     "PageHeader": {
       "env-page-header": "The page header.",
-      "env-page-header-actions": "The page's actions.",
-      "env-page-header-breadcrumbs": "The breadcrumbs above the title.",
-      "env-page-header-description": "The sentence under the title.",
-      "env-page-header-heading": "The column with the title and the description.",
-      "env-page-header-meta": "The facts beside the title.",
+      "env-page-header-actions": "The slot of the page's actions.",
+      "env-page-header-breadcrumbs": "The slot of the breadcrumbs above the title.",
+      "env-page-header-description": "The slot of the description under the title.",
+      "env-page-header-heading": "The column with the title and the description, in the description's smaller muted text.",
+      "env-page-header-meta": "The slot of the facts beside the title.",
       "env-page-header-row": "The row with the title and the actions.",
-      "env-page-header-start": "The content before the title, such as an avatar or a back button.",
+      "env-page-header-start": "The slot of the content before the title, such as an avatar or a back button.",
       "env-page-header-title": "The title.",
       "env-page-header-title-line": "The line with the title and the meta.",
-      "env-page-header-toolbar": "The toolbar under the title."
+      "env-page-header-toolbar": "The slot of the toolbar under the title."
     },
     "Pager": {
       "env-pager": "The previous and next links.",
@@ -565,9 +590,9 @@
       "env-panel-dock-content": "A panel's content.",
       "env-panel-dock-controls": "A panel's window controls: minimize, maximize and close.",
       "env-panel-dock-header": "A panel's header.",
-      "env-panel-dock-header-content": "The header's title and meta.",
+      "env-panel-dock-header-content": "The slot of the content below the title row, such as Tabs.",
       "env-panel-dock-heading": "A panel's heading.",
-      "env-panel-dock-meta": "A fact beside a panel's title.",
+      "env-panel-dock-meta": "The slot of the supporting text under a panel's title.",
       "env-panel-dock-panel": "One panel.",
       "env-panel-dock-probe": "An invisible element that measures the dock's room.",
       "env-panel-dock-resize-handle": "The handle that resizes the dock.",
@@ -588,9 +613,12 @@
       "env-panes-detail": "The detail pane of list-detail panes.",
       "env-panes-divider": "The gap between the panes, with its grip, that resizes them.",
       "env-panes-back": "The button back to the list, when one pane shows at a time.",
-      "env-panes-close": "The supporting sheet's close button, which shows only while the pane is a sheet.",
+      "env-panes-close": "The supporting pane's close button, at the end of its header row.",
+      "env-panes-header": "A pane's header row, which stays in view: the back or close button and the application's header.",
+      "env-panes-header-content": "The slot of a pane's header.",
+      "env-panes-body": "A pane's content, which scrolls on its own under its header.",
       "env-panes-backdrop": "The backdrop behind the supporting sheet.",
-      "env-panes-trigger": "The button in the main pane that opens the supporting sheet, which hides while the panes sit side by side."
+      "env-panes-trigger": "The button in the main pane that opens the supporting pane, which shows while the pane doesn't."
     },
     "PickerPopup": {
       "env-picker-popup": "The card DatePicker, TimePicker and MonthPicker open.",
@@ -622,12 +650,16 @@
     "Radio": {
       "env-radio": "One radio with its label.",
       "env-radio-description": "A radio's description.",
-      "env-radio-input": "The native input."
+      "env-radio-description-content": "The slot of a radio's description.",
+      "env-radio-input": "The native input.",
+      "env-radio-label": "The slot of a radio's label."
     },
     "RadioGroup": {
       "env-radio-group": "The group of radios.",
       "env-radio-group-description": "The description under the options.",
-      "env-radio-group-error": "The error under the options."
+      "env-radio-group-description-content": "The slot of the description.",
+      "env-radio-group-error": "The error under the options.",
+      "env-radio-group-label": "The slot of the group's label, in its legend."
     },
     "Rating": {
       "env-rating": "The rating.",
@@ -671,18 +703,19 @@
     "SegmentedControl": {
       "env-segmented-control": "The segmented control: the track the segments sit in.",
       "env-segmented-control-item": "One segment; the chosen one rises on a raised thumb.",
+      "env-segmented-control-item-icon": "The slot of a segment's icon.",
       "env-segmented-control-thumb": "The raised thumb that travels to the chosen segment, hidden until it has measured it.",
       "env-segmented-control-item-count": "A segment's count.",
       "env-segmented-control-item-label": "A segment's label."
     },
     "Select": {
       "env-select": "The select field.",
-      "env-select-control": "The outlined well that holds the button, the label and the chevron.",
+      "env-select-control": "The outlined box that holds the button and the chevron.",
       "env-select-end": "The chevron's place at the end of the well.",
       "env-select-icon": "The chevron.",
       "env-select-item": "One option.",
       "env-select-item-indicator": "The check of the chosen option.",
-      "env-select-label": "The label, inside the well, which floats into the outline.",
+      "env-select-label": "The label, above the box.",
       "env-select-list": "The list of options.",
       "env-select-placeholder": "What the button shows while nothing is chosen.",
       "env-select-popup": "The popup with the options.",
@@ -723,14 +756,16 @@
       "env-switch": "The switch with its label.",
       "env-switch-input": "The native input.",
       "env-switch-description": "The muted line under the label.",
-      "env-switch-label": "The label."
+      "env-switch-description-content": "The slot of the description.",
+      "env-switch-label": "The label, with the description under it.",
+      "env-switch-label-content": "The slot of the label."
     },
     "Table": {
       "env-table": "The table.",
       "env-table-body": "The body.",
       "env-table-caption": "The caption.",
       "env-table-cell": "A cell.",
-      "env-table-cell-content": "A cell's content.",
+      "env-table-cell-content": "The slot of a cell's content beside its label, while rows stack.",
       "env-table-cell-label": "A cell's column name, shown when rows stack.",
       "env-table-column-resize-handle": "The handle that resizes a column.",
       "env-table-head": "The head.",
@@ -761,13 +796,13 @@
     },
     "TextField": {
       "env-text-field": "The text field.",
-      "env-text-field-border": "The border over the well's edge, which a floated label opens behind it.",
       "env-text-field-control": "The well around the input and its adornments.",
       "env-text-field-end": "The buttons at the end of the well.",
+      "env-text-field-end-action": "The slot of the control at the end of the well, the endAction.",
       "env-text-field-input": "The input.",
       "env-text-field-label": "The label.",
       "env-text-field-prefix": "Fixed text before the input.",
-      "env-text-field-start": "The icon at the start of the well.",
+      "env-text-field-start": "The slot of the icon at the start of the well.",
       "env-text-field-suffix": "Fixed text after the input."
     },
     "Textarea": {
@@ -815,16 +850,20 @@
     },
     "TopBar": {
       "env-top-bar": "The top bar.",
-      "env-top-bar-start": "The start of the bar, for a navigation button or a mark.",
-      "env-top-bar-title": "The title, which truncates first.",
-      "env-top-bar-actions": "The actions at the end.",
+      "env-top-bar-lead": "The start side of the bar: the start content and the title, taking the room left.",
+      "env-top-bar-start": "The slot of the content at the start, such as a navigation button or a mark.",
+      "env-top-bar-title": "The slot of the title.",
+      "env-top-bar-title-text": "A title given as text, which truncates first.",
+      "env-top-bar-middle": "The middle of the bar, centered: the center content, and in a title bar the title.",
+      "env-top-bar-center": "The slot of the content centered in the bar.",
+      "env-top-bar-end": "The slot of the content at the end.",
       "env-top-bar-loading-bar": "The page progress along the bar's bottom edge."
     },
     "Tree": {
       "env-tree": "The tree.",
       "env-tree-chevron": "The chevron that expands an item.",
       "env-tree-description": "An item's description.",
-      "env-tree-end": "The end of an item, for a count or actions.",
+      "env-tree-end": "The slot of the content at an item's end, such as a count, which leaves the row whole where it doesn't fit beside the label.",
       "env-tree-group": "The rows an expanding or collapsing item reveals or hides, while they grow or shrink.",
       "env-tree-icon": "An item's icon.",
       "env-tree-item": "One item.",
@@ -955,13 +994,13 @@
       "--env-text-field-container": "The well behind the entered text.",
       "--env-text-field-content": "The entered text.",
       "--env-text-field-outline": "The edge at rest, which darkens toward the text under the pointer.",
-      "--env-text-field-indicator": "The edge while pressed and focused, the caret and the floating label while focused."
+      "--env-text-field-indicator": "The edge while pressed and focused, and the caret."
     },
     "Textarea": {
       "--env-text-field-container": "The well behind the entered text.",
       "--env-text-field-content": "The entered text.",
       "--env-text-field-outline": "The edge at rest, which darkens toward the text under the pointer.",
-      "--env-text-field-indicator": "The edge while pressed and focused, the caret and the floating label while focused."
+      "--env-text-field-indicator": "The edge while pressed and focused, and the caret."
     },
     "ToastProvider": {
       "--env-toast-container": "The fill, in place of the tone; set, the dismiss button's states are state layers over it.",

@@ -1,6 +1,6 @@
 @layer env.components {
   /* Bar, the navigation bar: a row of up to five destinations across the window's width on the
-     navigation's background, a plain rectangle, each its icon in a rounded-rectangle indicator above its
+     page's background, a plain rectangle, each its icon in a rounded-rectangle indicator above its
      label. The current destination fills its indicator; the count sits on the icon's top end. It
      keeps clear of a phone's home indicator. */
   .env-navigation-bar {
@@ -13,14 +13,15 @@
     padding-block: var(--env-space-2);
     padding-block-end: max(var(--env-space-2), env(safe-area-inset-bottom));
     padding-inline: var(--env-space-1);
-    /* The navigation's background, the default surface color; on a surface, the surface's color. */
-    background: var(--_surface-color, var(--env-color-bg-default));
+    /* The page's background, the same as the content beside it; on a surface, such as a Sheet's,
+       the surface's color rather than a second fill on it. */
+    background: var(--_surface-color, var(--env-color-bg-page));
     color: var(--env-color-fg-default);
   }
-  /* background="page": the page's background, so the bar sits on the page; on a surface, the
-     surface's color. */
-  .env-navigation-bar[data-background='page'] {
-    background: var(--_surface-color, var(--env-color-bg-page));
+  /* background="default": the default surface color, so the bar stands apart from the page; on a
+     surface, the surface's color. */
+  .env-navigation-bar[data-background='default'] {
+    background: var(--_surface-color, var(--env-color-bg-default));
   }
   .env-navigation-bar-list {
     margin: 0;

@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useCheckedInput, type CheckedProps } from './internal/useCheckedInput.js';
+import { Slot } from '../internal/layout/Slot.js';
 import '../styles/Base.css';
 import '../styles/Switch.css';
 
@@ -76,8 +77,16 @@ export function Switch({
       />
       {label != null && (
         <span className="env-switch-label">
-          {label}
-          {description != null && <small className="env-switch-description">{description}</small>}
+          <Slot className="env-switch-label-content" element="span">
+            {label}
+          </Slot>
+          {description != null && (
+            <small className="env-switch-description">
+              <Slot className="env-switch-description-content" element="span">
+                {description}
+              </Slot>
+            </small>
+          )}
         </span>
       )}
     </label>

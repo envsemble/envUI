@@ -87,6 +87,7 @@ export function DestinationItem({
   labelRef,
   ref,
   topLevel = false,
+  badge,
   end,
   ...props
 }: Omit<HTMLAttributes<HTMLElement>, 'children'> & {
@@ -97,7 +98,9 @@ export function DestinationItem({
    * hold the current one takes the current fill, and reports aria-current="true".
    */
   topLevel?: boolean;
-  /** Content at the end of a row, after the count, such as a section's chevron. */
+  /** The destination's badge in its slot, after the label: NavigationDrawer's. */
+  badge?: ReactNode;
+  /** The component's own content at the end of a row, after the count: a section's chevron. */
   end?: ReactNode;
   /** The label's element, such as to tell whether it is cut short. */
   labelRef?: Ref<HTMLSpanElement>;
@@ -116,7 +119,7 @@ export function DestinationItem({
       </SymbolIconFill>
     );
   // The count is part of the item's name, so the badge that shows it is hidden.
-  const badge = shown !== undefined && (
+  const countBadge = shown !== undefined && (
     <span className={classes.count} aria-hidden="true">
       {shown}
     </span>
@@ -142,17 +145,16 @@ export function DestinationItem({
   };
   // The item's text is its label, then its count, apart, in the order its name gives them, such as
   // Inbox 3 for Inbox, 3 new; NavigationBar and NavigationRail draw the indicator above the label with CSS order.
-  const apart = badge && ' ';
+  const apart = countBadge && ' ';
   return classes.indicator === undefined ? (
     <Row {...shared} align="center" gap={3}>
       {icons}
       <span className={classes.label} ref={labelRef}>
         {label}
       </span>
-      {/* Drawer's own badge, such as New, after the label: part of the item's name. */}
-      {destination.badge}
-      {apart}
       {badge}
+      {apart}
+      {countBadge}
       {end}
     </Row>
   ) : (
@@ -161,7 +163,7 @@ export function DestinationItem({
       {apart}
       <span className={classes.indicator}>
         {icons}
-        {badge}
+        {countBadge}
       </span>
     </Column>
   );

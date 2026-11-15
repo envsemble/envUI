@@ -7,7 +7,6 @@ import {
   type ComponentPropsWithRef,
   type MouseEvent,
   type ReactElement,
-  type ReactNode,
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
@@ -23,10 +22,10 @@ import '../styles/Breadcrumbs.css';
 
 export interface BreadcrumbsItem {
   /**
-   * The level's name, such as a folder's title. Beyond 20 rem it ends with an ellipsis, and a
-   * tooltip shows it in full on hover and keyboard focus.
+   * The level's name, such as a folder's title: text, which the trail cuts short beyond 20 rem with
+   * an ellipsis, and a tooltip shows in full on hover and keyboard focus.
    */
-  label: ReactNode;
+  label: string;
   /** A destination, rendered through the LinkProvider link. */
   href?: string;
   /** An action for applications that navigate without URLs; rendered as a button styled as a link. */

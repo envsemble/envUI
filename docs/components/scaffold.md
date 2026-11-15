@@ -39,7 +39,7 @@ examples:
     caption: A drawer only, and none on a phone.
   NarrowNavigation: example
   TitleBarAcross: example
-  TopBarOnThePage: example
+  NavigationApart: example
   ScaffoldAnatomy: anatomy
   FormsByWidth: example
 ---
@@ -79,11 +79,11 @@ The top bar can run across the whole width, above the rail or the drawer, as a w
 
 ### Backgrounds
 
-The navigation and the top bar share one fill, flush with the window's edges and the body, with no line between them.
+The navigation and the top bar sit on the page's background, the same as the body, with a hairline between them and the body.
 
-- Either can sit on the page's background instead, such as a top bar beside a drawer.
+- Either can stand apart on the default surface color instead, such as a drawer beside a top bar on the page.
 
-```tsx figure=TopBarOnThePage stage=shaded widths="40"
+```tsx figure=NavigationApart stage=shaded widths="40"
 
 ```
 
@@ -211,10 +211,13 @@ A button that narrows the navigation sets `navigationForms={{ expanded: 'rail', 
 #### Top bar span and backgrounds
 
 - `topBarSpan` is `body`, the default, where the top bar sits above the body beside the rail or drawer, which run the full height, or `full`, where it runs across the whole width above the navigation, as a window's title bar must.
-- `background="page"` on a TopBar, a NavigationRail or a NavigationDrawer puts it on the page's background instead of the navigation's, the default; on a surface, such as a Sheet, both values take the surface's color. A Sheet is on the navigation's background, so the navigation keeps its color in the sheet of a narrow window.
+- A TopBar, a NavigationRail, a NavigationDrawer and a NavigationBar sit on the page's background, `background="page"`, the default, and the Scaffold sets each apart from the body with a hairline. `background="default"` puts one on the default surface color instead, a plain rectangle apart from the page, with no hairline; on a surface, such as a Sheet, both values take the surface's color.
 
 ```tsx
-<Scaffold topBar={<TopBar title="Northwind" background="page" />} navigation={{ drawer }}>
+<Scaffold
+  topBar={<TopBar title="Northwind" />}
+  navigation={{ drawer: <NavigationDrawer background="default" destinations={destinations} /> }}
+>
   …
 </Scaffold>
 ```

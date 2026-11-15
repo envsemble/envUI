@@ -9,6 +9,7 @@ import {
   type CheckboxState,
 } from './internal/useCheckedInput.js';
 import { IconCheck } from '../icons/Check.js';
+import { Slot } from '../internal/layout/Slot.js';
 import '../styles/Base.css';
 import '../styles/Checkbox.css';
 
@@ -82,8 +83,16 @@ export function Checkbox({
       </span>
       {label != null && (
         <span className="env-checkbox-label">
-          {label}
-          {description != null && <small className="env-checkbox-description">{description}</small>}
+          <Slot className="env-checkbox-label-content" element="span">
+            {label}
+          </Slot>
+          {description != null && (
+            <small className="env-checkbox-description">
+              <Slot className="env-checkbox-description-content" element="span">
+                {description}
+              </Slot>
+            </small>
+          )}
         </span>
       )}
     </label>

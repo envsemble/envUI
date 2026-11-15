@@ -88,7 +88,7 @@
     position: fixed;
     inset: 0;
     pointer-events: auto;
-    z-index: var(--env-z-backdrop);
+    z-index: var(--env-z-modal);
     background: var(--env-color-bg-backdrop);
     /* Motion: the backdrop fades in and out. */
     transition: opacity var(--env-motion-duration-slow) var(--env-motion-ease-enter);

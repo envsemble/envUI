@@ -34,9 +34,16 @@
       --_table-divider: var(--env-color-border-muted);
     }
   }
-  /* Tables sit on a rounded surface with subtle row dividers and scroll sideways within their region. */
+  /* Tables part their rows by hairlines and scroll sideways within their region. Under a filled
+     surface the region is a rounded frame on the raised surface; under a plain one it has neither,
+     and the table lies on the surface around it. */
   .env-table-region {
-    --_table-surface: var(--env-color-bg-raised);
+    --_table-filled-surface: var(--_theme-filled) var(--env-color-bg-raised);
+    --_table-frame-width: var(--_theme-filled) var(--env-control-border-width);
+    --_table-frame-radius: var(--_theme-filled) var(--env-radius-lg);
+    --_table-inner-radius: var(--_theme-filled)
+      calc(var(--env-radius-lg) - var(--env-control-border-width));
+    --_table-surface: var(--_table-filled-surface, var(--_surface-color, var(--env-color-bg-page)));
     /* Avatar groups in the cells ring their avatars in the table's surface, with the row's fill
        over it while the row is hovered or selected. */
     --_avatar-group-ring: var(--_table-surface);
@@ -49,9 +56,9 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-x: auto;
-    border: 1px solid var(--env-color-border-muted);
-    border-radius: var(--env-radius-lg);
-    background: var(--_table-surface);
+    border: var(--_table-frame-width, 0) solid var(--env-color-border-muted);
+    border-radius: var(--_table-frame-radius, 0);
+    background: var(--_table-filled-surface, transparent);
     scrollbar-width: thin;
   }
   .env-table-region:focus-visible {
@@ -109,33 +116,33 @@
     background: none;
   }
   .env-table:has(> .env-table-caption) {
-    border: var(--env-control-border-width) solid var(--env-color-border-muted);
-    border-radius: var(--env-radius-lg);
-    background: var(--_table-surface);
+    border: var(--_table-frame-width, 0) solid var(--env-color-border-muted);
+    border-radius: var(--_table-frame-radius, 0);
+    background: var(--_table-filled-surface, transparent);
   }
   .env-table:has(> .env-table-caption)
     .env-table-head
     > .env-table-row:first-child
     > :where(.env-table-header-cell, .env-table-cell):first-child {
-    border-start-start-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+    border-start-start-radius: var(--_table-inner-radius, 0);
   }
   .env-table:has(> .env-table-caption)
     .env-table-head
     > .env-table-row:first-child
     > :where(.env-table-header-cell, .env-table-cell):last-child {
-    border-start-end-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+    border-start-end-radius: var(--_table-inner-radius, 0);
   }
   .env-table:has(> .env-table-caption)
     > :last-child
     > .env-table-row:last-child
     > :where(.env-table-header-cell, .env-table-cell):first-child {
-    border-end-start-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+    border-end-start-radius: var(--_table-inner-radius, 0);
   }
   .env-table:has(> .env-table-caption)
     > :last-child
     > .env-table-row:last-child
     > :where(.env-table-header-cell, .env-table-cell):last-child {
-    border-end-end-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+    border-end-end-radius: var(--_table-inner-radius, 0);
   }
   .env-table-header-cell,
   .env-table-cell {
@@ -143,20 +150,33 @@
     text-align: start;
     vertical-align: middle;
   }
+  /* The header lies over a hairline, or with headerBand on a shaded band over the surface. */
+  .env-table[data-header-band] {
+    --_table-band-image: linear-gradient(var(--_table-band), var(--_table-band));
+    --_table-header-ground: var(--_table-surface);
+  }
   .env-table-header-cell {
-    /* The fill over the surface keeps the header opaque, so a sticky header covers scrolled rows. */
-    background: linear-gradient(var(--_table-band), var(--_table-band)), var(--_table-surface);
+    background-color: var(--_table-header-ground, transparent);
+    background-image: var(--_table-band-image, none);
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
     font-weight: var(--env-font-weight-medium);
     white-space: nowrap;
   }
+  .env-table:not([data-header-band])
+    > .env-table-head
+    > .env-table-row:last-child
+    > .env-table-header-cell {
+    border-block-end: 1px solid var(--_table-divider);
+  }
+  /* A sticky header is opaque, so it covers the rows scrolled beneath it. */
   .env-table-region[data-sticky-header] .env-table-head .env-table-header-cell {
     position: sticky;
     inset-block-start: 0;
     z-index: var(--env-z-raised);
+    background-color: var(--_table-surface);
   }
-  /* Rows are separated by hairlines; the first body row meets the header without one. */
+  /* Rows are separated by hairlines; the first body row meets the header without one of its own. */
   .env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
     border-block-start: 1px solid var(--_table-divider);
   }
@@ -182,8 +202,7 @@
     white-space: nowrap;
   }
   /* A secondary line, such as <Text variant="caption">, sits under the cell's main text. */
-  .env-table-cell > .env-text:where([data-variant='caption']),
-  .env-table-cell-content > .env-text:where([data-variant='caption']) {
+  .env-table-cell > .env-text:where([data-variant='caption']) {
     margin-block-start: calc(var(--env-space-1) / 2);
   }
   /* It keeps to one line, so the rows stay even: what doesn't fit its column ends in an ellipsis
@@ -241,8 +260,6 @@
       var(--_table-surface)
     );
     --_avatar-group-ring-tint: var(--_table-selected);
-    /* Soft badges lay their tint over the table's surface, not the selection's blue (Badge.css). */
-    --_badge-underlay: var(--_table-surface);
     background: var(--_table-selected);
   }
   .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :focus-within) {
@@ -304,10 +321,10 @@
      corners less that inset, a row's in most cells and the surface's outer corners in the first and
      last header cells. It is a border, which forced colors paint in the system color. */
   .env-table-head .env-table-row:first-child > :first-child .env-table-sort-button {
-    --_table-sort-start-radius: calc(var(--env-radius-lg) - 0.0625rem);
+    --_table-sort-start-radius: var(--_table-inner-radius, var(--env-radius-sm));
   }
   .env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
-    --_table-sort-end-radius: calc(var(--env-radius-lg) - 0.0625rem);
+    --_table-sort-end-radius: var(--_table-inner-radius, var(--env-radius-sm));
   }
   .env-table-sort-button:focus-visible {
     outline: 2px solid transparent;
@@ -422,9 +439,9 @@
       .env-table:has(> .env-table-caption)
       > .env-table-body {
       overflow: clip;
-      border: var(--env-control-border-width) solid var(--env-color-border-muted);
-      border-radius: var(--env-radius-lg);
-      background: var(--_table-surface);
+      border: var(--_table-frame-width, 0) solid var(--env-color-border-muted);
+      border-radius: var(--_table-frame-radius, 0);
+      background: var(--_table-filled-surface, transparent);
     }
   }
   .env-table-region[data-narrow-layout='stack'] {
@@ -611,11 +628,10 @@
     }
   }
 
-  /* In a skeleton, the header's cells carry the skeleton's tint over their fill, as the region does
-     over its own (Skeleton.css). */
+  /* In a skeleton, the header's cells carry the skeleton's tint over their band, as the region does
+     over its own fill (Skeleton.css). */
   [data-env-skeleton] .env-table-head .env-table-header-cell {
-    background-image:
-      var(--_skeleton-overlay), linear-gradient(var(--_table-band), var(--_table-band));
+    background-image: var(--_skeleton-overlay), var(--_table-band-image, none);
   }
   /* A sortable header's button isn't a shape, as other buttons are in a skeleton: its label is a bar,
      as every header's is, and its arrow isn't drawn. */

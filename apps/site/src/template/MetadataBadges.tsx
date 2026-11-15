@@ -31,7 +31,7 @@ export function MetadataBadges({
         .filter(([name]) => !plain || /^[A-Z]/.test(name))
         .map(([name, status]) => (
           <Badge key={name} tone={statusTones[status]}>
-            {name}: {status[0].toUpperCase() + status.slice(1)}
+            {`${name}: ${status[0].toUpperCase()}${status.slice(1)}`}
           </Badge>
         ))}
       {metadata.since && (

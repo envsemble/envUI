@@ -9,6 +9,7 @@ import { classNames } from '../internal/classNames.js';
 import { Text } from '../foundations/Text.js';
 import { Column, Row, type SpaceStep } from './Layout.js';
 import { Surface } from './Surface.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { given, type SkeletonProps } from '../internal/skeleton.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
@@ -59,7 +60,10 @@ interface CardContentOptions {
   meta?: ReactNode;
   /** A sentence under the title, in muted text. */
   description?: ReactNode;
-  /** The card's controls, such as Buttons, in a strip along the bottom of the card. */
+  /**
+   * The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and
+   * wrapping onto more lines where they don't fit.
+   */
   actions?: ReactNode;
   /**
    * The element for the card's meaning, such as render={<article />} or render={<section />}. A
@@ -147,8 +151,6 @@ function InteractiveCard({
 }
 
 function ContentCard(allProps: CardContentProps) {
-  // A slot given as undefined, as over a placeholder item, renders empty: a skeleton shows a bar
-  // there, and outside one it takes no room.
   const slots = {
     title: given(allProps, 'title'),
     meta: given(allProps, 'meta'),
@@ -207,16 +209,11 @@ function ContentCardLayout({
           {descriptionText}
           {children}
         </Column>
-        <Row
-          gap={4}
-          render={<footer />}
-          wrap
-          align="center"
-          justify="end"
-          className="env-card-footer"
-        >
-          {actions}
-        </Row>
+        <footer className="env-card-footer">
+          <Slot className="env-card-actions" layout="row">
+            {actions}
+          </Slot>
+        </footer>
       </>
     );
   } else {

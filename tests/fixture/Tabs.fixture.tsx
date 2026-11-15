@@ -6,7 +6,7 @@ const fillViews = ['Canvas', 'Outline', 'History'];
 
 /**
  * Filling Tabs that keep their inactive panels mounted: one with a nested Tabs in its first panel,
- * and a vertical one whose list sits beside a heading through renderList.
+ * and one whose list sits beside a heading through renderList.
  */
 export default function TabsFixture({ theme }: { theme: ColorScheme }) {
   const items = (nested: boolean) =>
@@ -41,10 +41,9 @@ export default function TabsFixture({ theme }: { theme: ColorScheme }) {
       </div>
       <div className="fixture-fill-frame">
         <Tabs
-          aria-label={`Vertical filling views ${theme}`}
+          aria-label={`Headed filling views ${theme}`}
           fill
           keepMounted
-          orientation="vertical"
           className="fixture-fill-tabs"
           renderList={(list) => (
             <div className="fixture-tabs-heading">

@@ -74,12 +74,6 @@ export interface TabsProps extends Omit<
    */
   activation?: 'automatic' | 'manual';
   /**
-   * horizontal puts the tabs in a row, moved through with the left and right arrow keys; vertical
-   * in a column, with the up and down arrow keys. The panels stay below the list either way.
-   * @default 'horizontal'
-   */
-  orientation?: 'horizontal' | 'vertical';
-  /**
    * Keep the panels of unselected tabs mounted and hidden, so their state, such as a draft or a
    * scroll position, survives switching; otherwise a panel unmounts once it has faded out.
    * @default false
@@ -166,7 +160,6 @@ export function Tabs({
   defaultValue,
   onValueChange,
   activation = 'automatic',
-  orientation = 'horizontal',
   keepMounted = false,
   renderList,
   className,
@@ -178,7 +171,7 @@ export function Tabs({
   onFocus,
   ...props
 }: TabsProps) {
-  // A horizontal tab list's arrow keys follow the text direction, which Base UI only knows from
+  // The tab list's arrow keys follow the text direction, which Base UI only knows from
   // its own provider. Only the list reads it: the panels keep the direction around the tabs, so a
   // slider or a popup in a panel of another direction follows its own.
   const scope = useDirectionScope(ref);
@@ -190,17 +183,7 @@ export function Tabs({
     <DirectionProvider direction={scope.direction}>
       <BaseTabs.List
         render={
-          <Surface
-            background="muted"
-            radius="full"
-            render={
-              orientation === 'vertical' ? (
-                <Column align="stretch" gap={1} />
-              ) : (
-                <Row align="center" gap={1} />
-              )
-            }
-          />
+          <Surface background="muted" radius="full" render={<Row align="center" gap={1} />} />
         }
         aria-label={label}
         data-size={size}
@@ -249,7 +232,6 @@ export function Tabs({
       value={value}
       defaultValue={initialValue}
       onValueChange={onValueChange}
-      orientation={orientation}
     >
       {renderList ? renderList(list) : list}
       <Grid className="env-tabs-panels">

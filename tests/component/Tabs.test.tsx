@@ -70,8 +70,8 @@ test('filling tabs that keep inactive panels mounted display only the selected p
   for (const theme of ['light', 'dark']) {
     // Tabs nested in a filling panel keep their own layout, and their hidden panel stays hidden.
     await expect.poll(() => panelDisplays(`Canvas layers ${theme}`)).toEqual(['block', 'none']);
-    // Alone, and vertical with the list beside a heading through renderList.
-    for (const name of [`Filling views ${theme}`, `Vertical filling views ${theme}`]) {
+    // Alone, and with the list beside a heading through renderList.
+    for (const name of [`Filling views ${theme}`, `Headed filling views ${theme}`]) {
       await expect.poll(() => panelDisplays(name)).toEqual(['flex', 'none', 'none']);
       await page
         .getByRole('tablist', { name, exact: true })

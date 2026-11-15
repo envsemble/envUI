@@ -35,6 +35,8 @@ const ownThresholds = {
   'PanelDock.css': ['37.5em'],
   // A calendar seven days of under 2 rem wide names the weekdays by two letters.
   'Calendar.css': ['14rem'],
+  // An empty state is compact in a small region, such as a popup's list, whatever the window.
+  'EmptyState.css': ['24rem'],
 };
 
 test('windowClasses holds the widths of the window-class tokens, from compact up', () => {

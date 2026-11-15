@@ -154,7 +154,7 @@ export const NodeTree = memo(function NodeTree({
         </Text>
         {problemCount ? (
           <Badge tone="danger" variant="soft">
-            {problemCount} {problemCount === 1 ? 'problem' : 'problems'}
+            {`${problemCount} ${problemCount === 1 ? 'problem' : 'problems'}`}
           </Badge>
         ) : null}
       </Row>
@@ -364,7 +364,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
         tooltip: node.hidden ?? undefined,
         end: problems ? (
           <Badge tone="danger" variant="soft">
-            {problems}
+            {String(problems)}
           </Badge>
         ) : node.container ? (
           <Badge variant="outline">container</Badge>

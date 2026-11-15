@@ -158,7 +158,7 @@ Pair the trail with the main navigation: it never replaces it.
 />
 ```
 
-`items` run from the top down to the current page, the last item, which is never a link. Each has its `label`; with `href` it is a link, through the router link from `LinkProvider`; with `onClick` it is a button; with neither it is plain text.
+`items` run from the top down to the current page, the last item, which is never a link. Each has its `label`, text; with `href` it is a link, through the router link from `LinkProvider`; with `onClick` it is a button; with neither it is plain text.
 
 #### Without addresses
 

@@ -1352,13 +1352,6 @@
         "high": 4.5
       }
     },
-    "--env-color-border-primary-emphasis on --env-color-bg-field": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
     "--env-color-border-primary-emphasis on --env-color-bg-muted": {
       "kind": "non-text",
       "minimum": {
@@ -2675,76 +2668,6 @@
       }
     },
     "--env-color-fg-default on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-recessed": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-default": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-muted": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-page": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-raised": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-recessed": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-default": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-muted": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-page": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-raised": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-recessed": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -4811,27 +4734,6 @@
         "high": 7
       }
     },
-    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-hover": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-pressed": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
     "--env-color-fg-on-emphasis on --env-color-bg-accent-solid": {
       "kind": "text",
       "minimum": {
@@ -5099,24 +5001,24 @@
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-primary-strong": {
-      "kind": "non-text",
+      "kind": "text",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-primary-strong-hover": {
-      "kind": "non-text",
+      "kind": "text",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-primary-strong-pressed": {
-      "kind": "non-text",
+      "kind": "text",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-success-strong": {
@@ -6025,111 +5927,6 @@
         "high": 4.5
       }
     },
-    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-default": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-muted": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-page": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-raised": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-recessed": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-default": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-muted": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-page": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-raised": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-recessed": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-default": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-muted": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-page": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-raised": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-recessed": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
     "button-end-separator-danger on --env-color-bg-neutral-subtle-hover over --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
@@ -6193,6 +5990,20 @@
         "high": 4.5
       }
     },
+    "button-end-separator-default on --env-color-bg-default": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-default on --env-color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
     "button-end-separator-default on --env-color-bg-neutral-subtle-hover over --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
@@ -6200,7 +6011,21 @@
         "high": 4.5
       }
     },
+    "button-end-separator-default on --env-color-bg-neutral-subtle-hover over --env-color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
     "button-end-separator-default on --env-color-bg-neutral-subtle-hover over --env-color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-default on --env-color-bg-neutral-subtle-hover over --env-color-bg-raised": {
       "kind": "non-text",
       "minimum": {
         "standard": 3,
@@ -6221,6 +6046,13 @@
         "high": 4.5
       }
     },
+    "button-end-separator-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
     "button-end-separator-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-page": {
       "kind": "non-text",
       "minimum": {
@@ -6228,7 +6060,35 @@
         "high": 4.5
       }
     },
+    "button-end-separator-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
     "button-end-separator-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-recessed": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-default on --env-color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-default on --env-color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-default on --env-color-bg-recessed": {
       "kind": "non-text",
       "minimum": {
         "standard": 3,
@@ -6305,48 +6165,6 @@
         "high": 4.5
       }
     },
-    "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis-hover": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis-pressed": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-hover": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-pressed": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
     "button-end-separator-on-strong on --env-color-bg-accent-strong": {
       "kind": "non-text",
       "minimum": {
@@ -6404,6 +6222,27 @@
       }
     },
     "button-end-separator-on-strong on --env-color-bg-danger-strong-pressed": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-strong on --env-color-bg-primary-strong": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-strong on --env-color-bg-primary-strong-hover": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-strong on --env-color-bg-primary-strong-pressed": {
       "kind": "non-text",
       "minimum": {
         "standard": 3,
@@ -6544,6 +6383,7 @@
     "--env-color-border-danger-muted on --env-color-bg-default",
     "--env-color-border-danger-muted on --env-color-bg-page",
     "--env-color-border-danger-muted on --env-color-bg-recessed",
+    "--env-color-border-primary-emphasis on --env-color-bg-field",
     "--env-color-border-success-muted on --env-color-bg-default",
     "--env-color-border-success-muted on --env-color-bg-page",
     "--env-color-border-success-muted on --env-color-bg-recessed",
@@ -6566,13 +6406,46 @@
     "--env-color-fg-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-raised",
     "--env-color-fg-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-recessed",
     "--env-color-fg-default on --env-color-bg-neutral-muted over catalogue-band",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-default",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-muted",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-raised",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-hover over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-default",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-muted",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-raised",
+    "--env-color-fg-default on --env-color-bg-neutral-muted-pressed over --env-color-bg-recessed",
     "--env-color-fg-default on catalogue-band",
     "--env-color-fg-link on catalogue-band",
     "--env-color-fg-muted on catalogue-band",
+    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-hover",
+    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-pressed",
     "badge-outline-important on --env-color-bg-accent-strong",
     "badge-outline-important on --env-color-bg-danger-emphasis",
     "badge-outline-primary on --env-color-bg-accent-emphasis",
-    "badge-outline-primary on --env-color-bg-primary-emphasis"
+    "badge-outline-primary on --env-color-bg-primary-emphasis",
+    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-default",
+    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-muted",
+    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-page",
+    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-raised",
+    "button-end-separator-control on --env-color-bg-neutral-muted over --env-color-bg-recessed",
+    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-default",
+    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-muted",
+    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-page",
+    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-raised",
+    "button-end-separator-control on --env-color-bg-neutral-muted-hover over --env-color-bg-recessed",
+    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-default",
+    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-muted",
+    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-page",
+    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-raised",
+    "button-end-separator-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-recessed",
+    "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis",
+    "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis-hover",
+    "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis-pressed",
+    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis",
+    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-hover",
+    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-pressed"
   ],
   "renamed": [
     "--color-action-strip on --color-bg-muted",
@@ -7642,6 +7515,7 @@
     "--env-color-fg-muted-hover on segmented-control-hover-layer over --env-color-bg-neutral-muted over catalogue-canvas",
     "--env-color-fg-muted-pressed on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over catalogue-canvas",
     "--env-color-fg-muted-pressed on catalogue-canvas",
+    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis",
     "--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis",
     "--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-hover",
     "--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-pressed",
@@ -7789,6 +7663,7 @@
     "button-end-separator-danger on --env-color-bg-neutral-subtle-pressed over catalogue-canvas",
     "button-end-separator-default on --env-color-bg-neutral-subtle-hover over catalogue-canvas",
     "button-end-separator-default on --env-color-bg-neutral-subtle-pressed over catalogue-canvas",
+    "button-end-separator-default on catalogue-canvas",
     "button-end-separator-link on catalogue-canvas",
     "button-end-separator-muted on catalogue-canvas",
     "button-end-separator-on-emphasis on --env-color-bg-brand-emphasis",
@@ -7797,6 +7672,9 @@
     "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis",
     "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis-hover",
     "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis-pressed",
+    "button-end-separator-on-strong on --env-color-bg-brand-strong",
+    "button-end-separator-on-strong on --env-color-bg-brand-strong-hover",
+    "button-end-separator-on-strong on --env-color-bg-brand-strong-pressed",
     "button-end-separator-on-strong on --env-color-bg-important-strong",
     "button-end-separator-on-strong on --env-color-bg-important-strong-hover",
     "button-end-separator-on-strong on --env-color-bg-important-strong-pressed",

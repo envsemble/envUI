@@ -332,7 +332,7 @@ function TopBars() {
     <TopBar
       start={<IconButton icon={<IconArrowBack />} aria-label="Back to projects" variant="ghost" />}
       title="Website refresh"
-      actions={
+      end={
         <>
           <IconButton icon={<IconSearch />} aria-label="Search" variant="ghost" />
           <AvatarButton name="Alex Morgan" />
@@ -388,7 +388,7 @@ function Scaffolds() {
             topBar={
               <TopBar
                 title="Northwind"
-                actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
+                end={<IconButton icon={<IconSearch />} aria-label="Search" />}
               />
             }
             navigation={{ rail: <NavigationRail destinations={destinations} /> }}
@@ -408,7 +408,7 @@ function Scaffolds() {
               expanded: 'drawer',
               large: 'drawer',
             }}
-            topBar={<TopBar title="Northwind" actions={<AvatarButton name="Alex Morgan" />} />}
+            topBar={<TopBar title="Northwind" end={<AvatarButton name="Alex Morgan" />} />}
             navigation={{ drawer: <NavigationDrawer destinations={destinations} /> }}
           >
             {content}

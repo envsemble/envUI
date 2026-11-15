@@ -53,6 +53,7 @@
       "data-display/internal/ReorderableList.tsx": "composites",
       "content/Markdown.tsx": "composites",
       "content/Message.tsx": "composites",
+      "content/internal/MessageListFollow.tsx": "composites",
       "data-display/RelativeTime.tsx": "composites",
       "feedback/Alert.tsx": "composites",
       "actions/CommandPalette.tsx": "composites",
@@ -440,6 +441,9 @@
       "Menubar": {
         "modules": ["actions/internal/useMenubarAccessKeys.ts"]
       },
+      "Message": {
+        "modules": ["content/internal/MessageListFollow.tsx"]
+      },
       "PanelDock": {
         "modules": [
           "layout/panel-dock/internal/PanelFrame.tsx",
@@ -586,12 +590,6 @@
           "note": "ButtonGroup joins its buttons into one control: it sizes them, squares their inner corners and insets their focus rings; where it holds buttons of mixed variants, read with :has(), it spaces them apart with their own corners instead."
         },
         {
-          "stylesheet": "TextField.css",
-          "classes": ["env-icon-button"],
-          "properties": ["content"],
-          "note": "Under a coarse pointer a field's end actions keep their size, and an empty pseudo-element reaches their hit area to the touch height within the field."
-        },
-        {
           "stylesheet": "PickerPopup.css",
           "classes": ["env-button"],
           "properties": ["white-space", "overflow-wrap"],
@@ -649,22 +647,28 @@
             "env-panes-list",
             "env-panes-detail",
             "env-panes-supporting",
-            "env-panes-backdrop"
+            "env-panes-backdrop",
+            "env-panes-body"
           ],
           "properties": ["z-index", "overflow"],
           "note": "Where the document scrolls, Panes in the body are as tall as their content, so a Scaffold fixes their supporting sheet and its backdrop to the window at the modal layers, as a Sheet is, and lets the panes grow with the page rather than scroll; it never restyles them."
+        },
+        {
+          "stylesheet": "Scaffold.css",
+          "classes": [
+            "env-top-bar",
+            "env-navigation-drawer",
+            "env-navigation-rail",
+            "env-navigation-bar"
+          ],
+          "properties": ["border-block-start", "border-block-end", "border-inline-end"],
+          "note": "A Scaffold reads, with :has(), whether the top bar or the navigation form in a region of its own is on the page's background, the same as the body, and then draws a hairline on that region's edge toward the body; it never styles them."
         },
         {
           "stylesheet": "Sheet.css",
           "classes": ["env-dialog-content", "env-dialog-actions"],
           "properties": [],
           "note": "A resizable side sheet makes its content, which scrolls with the sheet, at least as tall as the sheet and the containing block of its resize handle, so the handle runs down the whole edge; a side sheet's content fills its height and its actions sit at its foot. It never restyles them."
-        },
-        {
-          "stylesheet": "ColorSwatch.css",
-          "classes": ["env-icon-button"],
-          "properties": ["background", "border-radius"],
-          "note": "An icon button in the default secondary variant that holds a swatch alone, read with :has(), is a rounded square with no fill at rest, so no round fill clashes with the square sample; it keeps Button's custom fill and its state fills on hover, focus and press."
         },
         {
           "stylesheet": "PickerPopup.css",

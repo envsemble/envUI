@@ -10,7 +10,7 @@
      minimum width keeps the field from shrinking under 12rem in a row with room for it; alone, it
      counts as nothing while a container measures its content. */
   .env-date-picker {
-    --_field-height: max(var(--env-control-height), var(--_text-field-least, 0rem));
+    --_field-height: var(--env-control-height);
     --_date-picker-min-width: 12rem;
     min-inline-size: min(var(--_date-picker-min-width), 100%);
     grid-template-columns: minmax(0, var(--_date-picker-min-width)) minmax(0, 1fr);
@@ -60,13 +60,6 @@
   }
   .env-date-picker-placeholder {
     color: var(--env-color-fg-muted);
-  }
-  /* Like an input's placeholder, it waits while the label rests inside the empty field. A field
-     without a label, named by aria-label, shows it. */
-  .env-date-picker:not([data-label-hidden])
-    .env-date-picker-control:has(> label):not([data-label-floating], :focus-within)
-    .env-date-picker-placeholder {
-    color: transparent;
   }
   /* The icon shows what the field opens; presses on it reach the field. It keeps its quiet color
      while the field is read-only, as a read-only Select's chevron does. The clear button, a quiet

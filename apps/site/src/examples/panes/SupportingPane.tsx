@@ -3,7 +3,7 @@ import { Column, DescriptionList, Panes, Text } from '@envsemble/envui';
 import { IconInfo } from '@envsemble/envui/icons/Info';
 
 export default function SupportingPane() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean | null>(null);
   return (
     // Side by side from an expanded width of their own; narrower, the details are a sheet over
     // the document, which the button opens and Escape closes.

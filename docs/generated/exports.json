@@ -98,6 +98,8 @@
     "DocumentTabsProps": "interface",
     "DropZone": "function",
     "DropZoneProps": "interface",
+    "EmptyState": "function",
+    "EmptyStateProps": "interface",
     "EnvUIMessages": "type",
     "EnvUIMessagesInput": "type",
     "EnvUIProvider": "function",

@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Avatar, Button, Checkbox, EnvUIProvider, Link, List, Column } from '@envsemble/envui';
+import {
+  Avatar,
+  Button,
+  Checkbox,
+  EnvUIProvider,
+  Link,
+  List,
+  Column,
+  Theme,
+  useTheme,
+} from '@envsemble/envui';
 
 export const mount = 'standalone';
 
@@ -97,10 +107,11 @@ function WrappedSlides({ bare = false }: { bare?: boolean }) {
 /**
  * Lists: reorderable slides with a current one, the same in
  * right-to-left text, slides in a row component, people with avatars in the start slot, and rows
- * chosen by checkboxes. With &bare-rows, slides in a row component that drops List.Root's props.
+ * chosen by checkboxes, and people under a filled surface. With &bare-rows, slides in a row component that drops List.Root's props.
  */
 export default function ListFixture() {
   const [checked, setChecked] = useState<string[]>(['Sam Lee']);
+  const theme = useTheme();
   return (
     <Column gap={5} className="fixture-section" style={{ inlineSize: '24rem' }}>
       <Slides testId="slides" />
@@ -132,6 +143,13 @@ export default function ListFixture() {
           />
         ))}
       </List.Root>
+      <Theme {...theme} surface="filled">
+        <List.Root aria-label="People filled">
+          {['Alex Morgan', 'Sam Lee'].map((name) => (
+            <List.Item key={name} label={name} description="Editor" />
+          ))}
+        </List.Root>
+      </Theme>
       <List.Root aria-label="Reviewers">
         {['Alex Morgan', 'Sam Lee', 'Priya Shah'].map((name) => (
           <List.Item

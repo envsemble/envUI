@@ -8,6 +8,7 @@ import {
   CopyButton,
   Field,
   IconButton,
+  Kbd,
   Popover,
   Column,
   Row,
@@ -338,7 +339,7 @@ function ListRowSample() {
           icon={<IconSettings />}
           label="Settings"
           description="Account and workspace"
-          shortcut="Ctrl+,"
+          end={<Kbd keys={['Ctrl', ',']} />}
         />
         <ListRow render={<BaseMenu.Item disabled />} label="Archive" />
       </PopupSurface>

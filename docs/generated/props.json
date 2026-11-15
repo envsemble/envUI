@@ -144,7 +144,7 @@
         },
         {
           "name": "title",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
           "description": "A short heading for the message, such as \"Sync paused\", above the message."
         },
@@ -408,9 +408,9 @@
         },
         {
           "name": "children",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "The label: a state, a name or a category in a word or two. It stays on one line and ends with an ellipsis where the badge is wider than its container."
+          "description": "The label: a state, a name or a category in a word or two, as text. It stays on one line and ends with an ellipsis where the badge is wider than its container."
         },
         {
           "name": "count",
@@ -904,7 +904,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit."
         },
         {
           "name": "render",
@@ -1598,7 +1598,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -1616,14 +1616,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         },
         {
           "name": "multiple",
@@ -1742,20 +1742,20 @@
           "type": "ReactNode",
           "required": false,
           "default": "'Type to search' while the search field is empty and 'No results' when its text finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty",
-          "description": "The empty state's title, the start of the one muted line shown in place of the list when there are no options, and announced."
+          "description": "The title of the EmptyState shown in place of the list when there are no options, and announced."
         },
         {
           "name": "emptyDescription",
           "type": "ReactNode",
           "required": false,
           "default": "None while the search field is empty; when its text finds nothing, 'Nothing matches “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint",
-          "description": "Text after the empty state's title on its line, such as what the palette searches; null or false shows none."
+          "description": "The empty state's description below its title, such as what the palette searches; null or false shows none."
         },
         {
           "name": "emptyIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon at the start of the empty state's line, in an option's icon place, such as an error icon when the search failed; none by default."
+          "description": "A decorative icon above the empty state's title, such as an error icon when the search failed; none by default."
         },
         {
           "name": "hints",
@@ -2459,7 +2459,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -2477,14 +2477,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         }
       ],
       "native": [
@@ -3029,6 +3029,43 @@
           "type": "Ref<HTMLInputElement>",
           "required": false,
           "description": "The native file input that opens the file picker, for example from a Replace button. The zone holds no value a form library could register, as a field's input does, so ref reaches the zone itself, the drop target, and this ref the picker."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "EmptyState": {
+      "kind": "component",
+      "source": "packages/ui/src/feedback/EmptyState.tsx",
+      "description": "What a region shows when it has nothing to show: an optional icon, a title, an optional description and optional actions, centred in the region it fills, and compact where that region is narrow.",
+      "props": [
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A decorative icon above the title, such as the icon of what the region would list."
+        },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": true,
+          "description": "What the region would show, said as its absence, such as \"No projects yet\"."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A sentence on why it is empty or what fills it, such as \"Projects you create show here.\""
+        },
+        {
+          "name": "actions",
+          "type": "ReactNode",
+          "required": false,
+          "description": "What fills it, such as a Button that creates the first item, in a row that wraps."
         }
       ],
       "native": [
@@ -3806,7 +3843,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row. Undefined, such as over a placeholder item, a skeleton shows a bar in its place."
+          "description": "The row's name, in the row's text color, such as an item's name, or in an interactive row a link or text Button marked `data-row-target`, which then reads in the row's text color too. It takes the room the row leaves and wraps; it is never cut short. Undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "description",
@@ -3818,13 +3855,13 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Content at the end of the row, such as a Button or a Switch; it moves below the text when it doesn't fit."
+          "description": "Content at the end of the row, such as a Button, a Switch or a Badge, which keeps its size; it moves below the text when it doesn't fit beside it."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "More content after the label and the description, such as a Badge."
+          "description": "More content under the label and the description, such as a row of Badges, placed as given."
         },
         {
           "name": "interactive",
@@ -3838,7 +3875,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The current row, such as the one whose details show beside a list: the selected fill, and `aria-current=\"true\"` on its `data-row-target` element in the label, description or children, or on the row without one."
+          "description": "The current row, such as the one whose details show beside a list: the selected fill and medium text, and `aria-current=\"true\"` on its `data-row-target` element in the label, description or children, or on the row without one."
         },
         {
           "name": "start",
@@ -3871,7 +3908,7 @@
     "List.Root": {
       "kind": "component",
       "source": "packages/ui/src/data-display/List.tsx",
-      "description": "A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles.",
+      "description": "A `ul` of rows. Plain by default: no fill, hairlines between the rows and their text in line with the content around the list. Under a Theme with `surface=\"filled\"`, the rows are tiles joined into one block with shared outer corners, and in a muted Surface that holds only lists they take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles.",
       "props": [
         {
           "name": "density",
@@ -4018,7 +4055,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "style",
@@ -4050,7 +4087,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top."
+          "description": "The field's look, as TextField's: outline or ghost."
         },
         {
           "name": "error",
@@ -4748,7 +4785,7 @@
         },
         {
           "name": "author",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
           "description": "Who wrote the message, such as a name, shown above it at weight 500. Leave it out where the conversation makes it clear, such as on your own messages in a conversation with one person."
         },
@@ -4762,7 +4799,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are ghost buttons at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
+          "description": "Small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are small ghost buttons, at the inline end for your own messages. false and null count as absent."
         },
         {
           "name": "status",
@@ -4801,7 +4838,7 @@
     "MessageList": {
       "kind": "component",
       "source": "packages/ui/src/content/Message.tsx",
-      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. Set busy while a reply is on its way or streams in. Name it with aria-label or aria-labelledby.",
+      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. Set busy while a reply is on its way or streams in, and follow where the list scrolls by itself. Name it with aria-label or aria-labelledby.",
       "props": [
         {
           "name": "busy",
@@ -4812,7 +4849,7 @@
         },
         {
           "name": "busyAuthor",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
           "description": "Who the reply on its way comes from, such as Agent, named on the busy row as a message's author."
         },
@@ -4822,6 +4859,20 @@
           "required": false,
           "default": "'Working'",
           "description": "The text beside the busy spinner, such as \"Thinking\". It overrides EnvUIProvider's `messages.message.working`."
+        },
+        {
+          "name": "follow",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The list scrolls by itself and follows the conversation: it fills the height its container gives it, opens at the latest message and keeps the latest in view while the reader is at the end. Once they scroll away and more arrives, a Jump to latest button shows at its foot, which scrolls back to the end."
+        },
+        {
+          "name": "jumpToLatestLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Jump to latest'",
+          "description": "The text of the Jump to latest button of a list that follows. It overrides EnvUIProvider's `messages.message.jumpToLatest`."
         }
       ],
       "native": [
@@ -5032,7 +5083,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -5050,14 +5101,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         }
       ],
       "native": [
@@ -5082,8 +5133,8 @@
           "name": "background",
           "type": "'default' | 'page'",
           "required": false,
-          "default": "'default'",
-          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a NavigationBar with page under a TopBar with its background."
+          "default": "'page'",
+          "description": "The bar's background, named as Surface's and Card's: page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline; default, the default surface color, a plain rectangle that stands apart from the page. On a surface, such as a Sheet, both take the surface's color."
         },
         {
           "name": "aria-label",
@@ -5110,7 +5161,7 @@
     "NavigationDrawer": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavigationDrawer.tsx",
-      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups, and nested destinations in sections that open and close. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination and section button is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
+      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups, and nested destinations in sections that open and close. It is `--env-navigation-drawer-width` wide and never wider than its container, so it also serves as a side list of a page's sections in a narrow column. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination and section button is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
       "props": [
         {
           "name": "destinations",
@@ -5160,8 +5211,8 @@
           "name": "background",
           "type": "'default' | 'page'",
           "required": false,
-          "default": "'default'",
-          "description": "The drawer's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a NavigationDrawer with its background under a TopBar with page."
+          "default": "'page'",
+          "description": "The drawer's background, named as Surface's and Card's: page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline; default, the default surface color, a plain rectangle that stands apart from the page. On a surface, such as a Sheet, both take the surface's color."
         },
         {
           "name": "aria-label",
@@ -5201,7 +5252,7 @@
           "type": "number",
           "required": false,
           "default": "15",
-          "description": "The smallest width of a `resizable` drawer, in rem."
+          "description": "The smallest width people can resize a `resizable` drawer to, in rem; it never takes more than its container."
         },
         {
           "name": "maxWidth",
@@ -5259,8 +5310,8 @@
           "name": "background",
           "type": "'default' | 'page'",
           "required": false,
-          "default": "'default'",
-          "description": "The rail's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a NavigationRail with its background beside a TopBar with page."
+          "default": "'page'",
+          "description": "The rail's background, named as Surface's and Card's: page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline; default, the default surface color, a plain rectangle that stands apart from the page. On a surface, such as a Sheet, both take the surface's color."
         },
         {
           "name": "aria-label",
@@ -5357,7 +5408,7 @@
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "A sentence under the title, in the smaller muted text, such as what the page is for."
+          "description": "Under the title, such as a sentence on what the page is for, or a status line. Text takes the smaller muted text; any content, block content too, keeps its own look."
         },
         {
           "name": "breadcrumbs",
@@ -5812,6 +5863,12 @@
           "type": "string",
           "required": false,
           "description": "Names the pane, which makes it a region landmark that people can jump to, such as Documents. Name the panes of a page's main layout; leave small panes unnamed."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The top of the pane, which stays in view while the pane's content scrolls, such as a PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit in its row."
         }
       ],
       "native": [
@@ -5851,6 +5908,12 @@
           "type": "string",
           "required": true,
           "description": "Names the pane's region, such as Projects."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The top of the pane, which stays in view while the pane's content scrolls, such as a PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit in its row."
         }
       ],
       "native": [
@@ -5870,6 +5933,12 @@
           "type": "string",
           "required": false,
           "description": "Names the pane, which makes it a region landmark that people can jump to, such as Documents. Name the panes of a page's main layout; leave small panes unnamed."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The top of the pane, which stays in view while the pane's content scrolls, such as a PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit in its row."
         }
       ],
       "native": [
@@ -5882,7 +5951,7 @@
     "Panes.Root": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "Two panes side by side, after Material's pane patterns, and how they behave in less room: a main pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time. Invisible structure that never paints, except the supporting pane while it is a sheet, which is modal. Its own width decides, in CSS: it is the env-panes container. Each pane scrolls on its own when Panes has a height, as in a Scaffold's body that scrolls; an optional Panes.Divider resizes them.",
+      "description": "Two panes side by side, after Material's pane patterns, and how they behave in less room: a main pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time. Invisible structure that never paints, except the supporting pane while it is a sheet, which is modal. Its own width decides, in CSS: it is the env-panes container. One state says whether the supporting pane shows, which every presentation follows: its close button closes it beside the main pane as well as as a sheet. Each pane's content scrolls on its own under its header when Panes has a height, as in a Scaffold's body that scrolls; an optional Panes.Divider resizes them.",
       "props": [
         {
           "name": "behavior",
@@ -5899,29 +5968,29 @@
         },
         {
           "name": "open",
-          "type": "boolean",
+          "type": "boolean | null",
           "required": false,
-          "description": "Below `splitAt`: whether the supporting sheet is open, or the detail shows instead of the list, for Panes the application controls with onOpenChange, such as a list-detail that opens the detail as an item is chosen. Side by side, both panes show whatever it is."
+          "description": "Whether the supporting pane shows, in every presentation: beside the main pane, or as a sheet over it below `splitAt`. null, until people open or close it, shows it where the panes sit side by side and keeps the sheet closed. In list-detail Panes, whether the detail shows instead of the list below `splitAt`, such as one that opens the detail as an item is chosen; side by side both panes show. For Panes the application controls with onOpenChange."
         },
         {
           "name": "defaultOpen",
-          "type": "boolean",
+          "type": "boolean | null",
           "required": false,
-          "default": "false",
-          "description": "Whether uncontrolled Panes start with the supporting sheet open, or the detail shown, below `splitAt`. Panes.Trigger opens the sheet, and Escape, the close button, the backdrop and the back button close what shows."
+          "default": "null",
+          "description": "Whether uncontrolled Panes start with the supporting pane shown, as `open` says, or the detail shown below `splitAt`. Panes.Trigger opens the supporting pane, and Escape, the close button, the backdrop and the back button close what shows."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean, details: OpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the new state, and why: true when Panes.Trigger opens the supporting sheet, and false when people close what `open` shows below `splitAt`: Escape, the close button or a press on the backdrop closes the supporting sheet, and the back button returns from the detail to the list."
+          "description": "Called with the new state, and why: true when Panes.Trigger opens the supporting pane, and false when people close what `open` shows: the close button closes the supporting pane beside the main pane or as a sheet, and Escape or a press on the backdrop closes the sheet; the back button returns from the detail to the list."
         },
         {
           "name": "closeLabel",
           "type": "string",
           "required": false,
           "default": "'Close', or EnvUIProvider's messages.panes.close",
-          "description": "The name of the supporting sheet's close button, which shows only while the pane is a sheet."
+          "description": "The name of the supporting pane's close button."
         },
         {
           "name": "backLabel",
@@ -5998,7 +6067,7 @@
     "Panes.Supporting": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet is: fixed to the window over a backdrop, scrolling inside itself while the page stays. As a sheet it is a modal dialog with a close button: everything else on the page is inert, focus moves into it and Tab stays in it, and Escape, the close button or a press on the backdrop closes it, which returns focus to where it was. In a contained PortalContainer, such as a preview on a page, the sheet belongs to the container: it is not modal, so the page stays in use and focus stays where it is.",
+      "description": "The supporting pane, at the end, such as details or filters for the main pane, with a close button in its header row. Beside the main pane, closing it gives the main pane the room and Panes.Trigger, which shows then, takes focus. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet is: fixed to the window over a backdrop, scrolling inside itself while the page stays. As a sheet it is a modal dialog with a close button: everything else on the page is inert, focus moves into it and Tab stays in it, and Escape, the close button or a press on the backdrop closes it, which returns focus to where it was. In a contained PortalContainer, such as a preview on a page, the sheet belongs to the container: it is not modal, so the page stays in use and focus stays where it is.",
       "props": [
         {
           "name": "label",
@@ -6007,11 +6076,24 @@
           "description": "Names the pane's region, such as Details."
         },
         {
+          "name": "closeButton",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Shows the close button beside the main pane too, so people can close the pane in every presentation; as a sheet the pane always shows it. false keeps the pane beside the main one open, for a pane people never close there."
+        },
+        {
           "name": "skeleton",
           "type": "boolean",
           "required": false,
           "default": "false",
           "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The top of the pane, which stays in view while the pane's content scrolls, such as a PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit in its row."
         }
       ],
       "native": [
@@ -6024,7 +6106,7 @@
     "Panes.Trigger": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The button that opens the supporting pane while it is a sheet, below `splitAt`; place it in the main pane. It hides while the panes sit side by side, where the supporting pane shows anyway, and says whether the sheet is open with aria-expanded. It takes Button's props.",
+      "description": "The button that opens the supporting pane; place it in the main pane. It shows while the pane doesn't: below `splitAt`, and beside the main pane once people close it. It says whether the pane is open with aria-expanded. It takes Button's props.",
       "props": [
         {
           "name": "variant",
@@ -6684,7 +6766,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -6939,9 +7021,9 @@
         },
         {
           "name": "prefix",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Short, non-interactive text before the value, such as the start of an address, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
         },
         {
           "name": "description",
@@ -6953,14 +7035,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "variant",
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, a thin border its label floats into, or ghost, a faint fill, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, a box with a thin edge, or ghost, a faint fill without an edge, for a search at the top of a sidebar or a list."
         },
         {
           "name": "error",
@@ -6970,9 +7052,9 @@
         },
         {
           "name": "suffix",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
         }
       ],
       "native": [
@@ -7148,7 +7230,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -7166,14 +7248,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         }
       ],
       "native": [
@@ -7367,9 +7449,9 @@
       "props": [
         {
           "name": "label",
-          "type": "ReactNode",
+          "type": "string",
           "required": true,
-          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider."
+          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends in an ellipsis where the slider is too narrow for it."
         },
         {
           "name": "description",
@@ -7773,7 +7855,7 @@
     "Table.Root": {
       "kind": "component",
       "source": "packages/ui/src/data-display/Table.tsx",
-      "description": "A semantic data table on a rounded surface, in a focusable region that scrolls sideways when the columns do not fit.",
+      "description": "A semantic data table, in a focusable region that scrolls sideways when the columns do not fit. Plain by default: a hairline under the header and between the rows, with no frame or fill; under a Theme with `surface=\"filled\"`, it lies on a rounded raised surface.",
       "props": [
         {
           "name": "aria-label",
@@ -7800,6 +7882,13 @@
           "required": false,
           "default": "false",
           "description": "The header row stays at the top of the region while the rows scroll beneath it. The region then scrolls vertically too, so give it a height through regionClassName or the surrounding layout."
+        },
+        {
+          "name": "headerBand",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The header row lies on a shaded band rather than over a hairline."
         },
         {
           "name": "regionClassName",
@@ -7996,13 +8085,6 @@
           "description": "automatic selects a tab as the arrow keys move focus to it; manual only moves focus, and Enter or Space selects, for panels that take a moment to show."
         },
         {
-          "name": "orientation",
-          "type": "'horizontal' | 'vertical'",
-          "required": false,
-          "default": "'horizontal'",
-          "description": "horizontal puts the tabs in a row, moved through with the left and right arrow keys; vertical in a column, with the up and down arrow keys. The panels stay below the list either way."
-        },
-        {
           "name": "keepMounted",
           "type": "boolean",
           "required": false,
@@ -8090,7 +8172,7 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -8120,7 +8202,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -8139,7 +8221,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, a thin border its label floats into, or ghost, a faint fill, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, a box with a thin edge, or ghost, a faint fill without an edge, for a search at the top of a sidebar or a list."
         },
         {
           "name": "startIcon",
@@ -8158,25 +8240,25 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         },
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "prefix",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Short, non-interactive text before the value, such as the start of an address, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
         },
         {
           "name": "suffix",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
         }
       ],
       "native": [
@@ -8214,7 +8296,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top."
+          "description": "The field's look, as TextField's: outline or ghost."
         },
         {
           "name": "onValueChange",
@@ -8239,7 +8321,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -8595,7 +8677,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -8613,14 +8695,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         }
       ],
       "native": [
@@ -8953,25 +9035,31 @@
     "TopBar": {
       "kind": "component",
       "source": "packages/ui/src/layout/TopBar.tsx",
-      "description": "The bar at the top of an application or a screen: start content, such as a navigation button or the application's mark, the title, which truncates first, and the actions at the end, in one row that never wraps, at the top bar height. It can stick to the top as the page scrolls, show page progress along its bottom edge, or be the window's own title bar.",
+      "description": "The bar at the top of an application or a screen: start content, such as a navigation button or the application's mark, the title, content centered in the bar and content at the end, in one row that never wraps, at the top bar height. Each holds what the application gives it without styling it. It can stick to the top as the page scrolls, show page progress along its bottom edge, or be the window's own title bar.",
       "props": [
         {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the title, at the inline start: a navigation IconButton, such as one that opens a navigation drawer, a back IconButton, or the application's mark."
+          "description": "Content before the title, at the inline start: a navigation IconButton, such as one that opens a navigation drawer, a back IconButton, or the application's mark. It keeps its size."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "The title, such as the application's or the section's name. It truncates before the start content and the actions shrink. It is no heading: the page's own heading is its PageHeader's."
+          "description": "The title, such as the application's or the section's name, after the start content. Text given as a string truncates before anything else shrinks; any other content keeps its own look and decides how it fits. It is no heading: the page's own heading is its PageHeader's."
         },
         {
-          "name": "actions",
+          "name": "center",
           "type": "ReactNode",
           "required": false,
-          "description": "The actions at the inline end, such as a search trigger, a theme toggle and an account menu, in the order people read them."
+          "description": "Content centered in the bar, between the title and the end content, such as a search trigger or a document's name. The start and end sides take equal room, so it stays centered over the bar's middle as long as they fit."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The content at the inline end, such as a search trigger, a theme toggle and an account menu, in the order people read them. It keeps its size."
         },
         {
           "name": "sticky",
@@ -8985,14 +9073,14 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The bar is the window's title bar, in an installed web app or a desktop shell that draws its own (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls the system draws, the title is centered, and its controls are small, with buttons that set no variant ghost. Put it in a Scaffold with topBarSpan=\"full\"."
+          "description": "The bar is the window's title bar, in an installed web app or a desktop shell that draws its own (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls the system draws, the title is centered with the center content, and its controls are small, with buttons that set no variant ghost. Put it in a Scaffold with topBarSpan=\"full\"."
         },
         {
           "name": "background",
           "type": "'default' | 'page'",
           "required": false,
-          "default": "'default'",
-          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a TopBar with page over a NavigationDrawer with its background."
+          "default": "'page'",
+          "description": "The bar's background, named as Surface's and Card's: page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline; default, the default surface color, a plain rectangle that stands apart from the page. On a surface, such as a Sheet, both take the surface's color."
         },
         {
           "name": "loading",

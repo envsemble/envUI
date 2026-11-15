@@ -101,14 +101,12 @@
   .env-alert-content {
     grid-column: 2;
     row-gap: calc(var(--env-space-1) / 2);
+    color: var(--_alert-text-color);
+    font: var(--env-type-body-sm);
   }
   .env-alert-title {
     color: var(--_alert-text-color);
     font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
-  }
-  .env-alert-message {
-    color: var(--_alert-text-color);
-    font: var(--env-type-body-sm);
   }
   /* A secondary button among the actions stands clear of the tint, through the neutral fills it
      reads, where the translucent neutral fill would sink into it: in a light scheme it takes a card's
@@ -141,6 +139,8 @@
     --env-color-border-default-pressed: var(--_alert-icon-color);
     --env-color-bg-neutral-subtle-hover: var(--_alert-custom-hover, var(--_alert-hover));
     --env-color-bg-neutral-subtle-pressed: var(--_alert-custom-pressed, var(--_alert-pressed));
+    flex-wrap: wrap;
+    gap: var(--env-space-2);
     margin-block-start: var(--env-space-2);
   }
   .env-alert[data-tone='warning'] .env-alert-action {

@@ -82,7 +82,7 @@ export default function ScaffoldScrollKeysFixture() {
           titleBar
           start={<NotesMenubar />}
           title="Scroll keys"
-          actions={
+          end={
             <>
               {createElement('fixture-field')}
               {createElement('fixture-closed-field')}

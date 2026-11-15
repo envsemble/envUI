@@ -15,14 +15,13 @@ aliases:
   - view switcher
 useWhen:
   - Related views of one subject, such as a project's summary and activity
-  - Sections people look at one at a time, such as a settings page's
   - Views that fill a region, such as a diagram's canvas and its outline
 avoidWhen:
   - text: A filter or mode that changes the content below, such as a list's sort order or a chart's range.
     use: SegmentedControl
   - text: Open documents that people close, reorder and keep, as in an editor.
     use: DocumentTabs
-  - text: An application's destinations, such as the pages in a sidebar.
+  - text: An application's destinations, such as the pages in a sidebar, or a side list of a page's sections, such as a settings page's.
     use: NavigationDrawer
   - text: Sections people may want open at the same time, one under another.
     use: Accordion
@@ -33,7 +32,6 @@ examples:
   SmallRail:
     role: example
     caption: Small tabs, with a count in a tab.
-  VerticalList: example
   FillARegion: example
   ListBesideAHeading: example
   TabsAnatomy: anatomy
@@ -55,14 +53,6 @@ examples:
 | Small and medium | Toolbars and bars, as tall as a control of that size. |
 
 ```tsx figure=SmallRail
-
-```
-
-### Vertical
-
-A column of tabs beside their panels, for the sections of a settings page.
-
-```tsx figure=VerticalList
 
 ```
 
@@ -130,13 +120,12 @@ Keep content people compare in one panel.
 
 ### Keyboard
 
-| Key                                             | Action                                                                                                       |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves into the rail, to the selected tab or the one focused last, then on to the panel.                      |
-| <kbd>←</kbd>, <kbd>→</kbd>                      | In a horizontal rail, moves to the previous or next tab, wrapping, and with automatic activation selects it. |
-| <kbd>↑</kbd>, <kbd>↓</kbd>                      | The same in a vertical rail.                                                                                 |
-| <kbd>Home</kbd>, <kbd>End</kbd>                 | Moves to the first or last tab, and with automatic activation selects it.                                    |
-| <kbd>Enter</kbd>, <kbd>Space</kbd>              | Selects the focused tab, with manual activation.                                                             |
+| Key                                             | Action                                                                                  |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves into the rail, to the selected tab or the one focused last, then on to the panel. |
+| <kbd>←</kbd>, <kbd>→</kbd>                      | Moves to the previous or next tab, wrapping, and with automatic activation selects it.  |
+| <kbd>Home</kbd>, <kbd>End</kbd>                 | Moves to the first or last tab, and with automatic activation selects it.               |
+| <kbd>Enter</kbd>, <kbd>Space</kbd>              | Selects the focused tab, with manual activation.                                        |
 
 ### envUI provides
 
@@ -185,7 +174,6 @@ Each `TabsItem` has its `value`, the panel's `content`, and its `label` with an 
 
 `size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons.
 
-- `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>, whose tabs are as tall as medium controls unless `size` is `sm`. The panels stay below the list either way: to put a vertical list beside them, lay the Tabs out as a row through `style`, as the VerticalList example does.
 - With `fill`, the selected panel takes the height left below the list. Give the Tabs a height, for example as a flex child.
 - A horizontal list lines its first label up with the content's edge, so the first tab's padding, where its focus ring shows, reaches into the space before it. Leave that room where the Tabs sit flush against an edge that clips.
 
@@ -210,7 +198,7 @@ Each `TabsItem` has its `value`, the panel's `content`, and its `label` with an 
 
 ### Composition
 
-The tabs, `env-tabs`, carry `data-fill` when they fill a region; the rail, `env-tabs-list`, `data-orientation="vertical"` in a column; each tab, `env-tabs-tab`, `data-active` while selected. The panels sit in `env-tabs-panels`, each an `env-tabs-panel`.
+The tabs, `env-tabs`, carry `data-fill` when they fill a region; the rail, `env-tabs-list`; each tab, `env-tabs-tab`, `data-active` while selected. The panels sit in `env-tabs-panels`, each an `env-tabs-panel`.
 
 ### Customize
 

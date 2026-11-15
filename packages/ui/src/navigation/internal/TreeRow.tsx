@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { flag } from '../../internal/flag.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
 import type { TreeItem } from '../Tree.js';
 import type { TreeMotion } from './treeModel.js';
@@ -72,7 +73,11 @@ export function TreeRow({
           <span className="env-tree-description">{item.description}</span>
         </>
       )}
-      {item.end != null && <span className="env-tree-end">{item.end}</span>}
+      {item.end != null && (
+        <Slot className="env-tree-end" element="span" layout="row" shrink="never">
+          {item.end}
+        </Slot>
+      )}
     </div>
   );
 }

@@ -16,7 +16,8 @@ import { IconButton } from '../actions/Button.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../layout/Layout.js';
+import { Grid } from '../layout/Layout.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
@@ -277,9 +278,9 @@ export function Composer({
           onKeyDown={handleKeyDown}
         />
         {start != null && (
-          <Row wrap align="center" gap={2} className="env-composer-start">
+          <Slot className="env-composer-start" layout="row">
             {start}
-          </Row>
+          </Slot>
         )}
         <IconButton
           variant="primary"
@@ -302,7 +303,7 @@ export function Composer({
       </div>
       {description != null && (
         <div className="env-composer-footer" id={descriptionId}>
-          {description}
+          <Slot className="env-composer-description">{description}</Slot>
         </div>
       )}
     </Grid>

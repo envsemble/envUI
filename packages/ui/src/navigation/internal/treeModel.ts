@@ -40,10 +40,6 @@ export function rowElementId(treeId: string, itemId: string) {
   )}`;
 }
 
-function itemText(item: TreeItem) {
-  return item.textValue ?? (typeof item.label === 'string' ? item.label : '');
-}
-
 /** The text typed ahead so far, and when its last key was, from performance.now(). */
 export interface TypedText {
   text: string;
@@ -75,7 +71,7 @@ function findTypedRow(
   const start = repeated || query.length === 1 ? activeIndex + 1 : activeIndex;
   for (let offset = 0; offset < items.length; offset += 1) {
     const index = (start + offset) % items.length;
-    if (itemText(items[index]).toLocaleLowerCase().startsWith(search)) return index;
+    if (items[index].label.toLocaleLowerCase().startsWith(search)) return index;
   }
   return -1;
 }

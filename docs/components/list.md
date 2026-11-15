@@ -1,6 +1,6 @@
 ---
 title: List
-summary: A vertical list of connected rows, each with a title, a detail and an action.
+summary: A vertical list of rows, each with a title, a detail and an action.
 status: stable
 since: 1.0.0
 category: Data display
@@ -62,7 +62,7 @@ examples:
 
 ### On a pane
 
-In a muted surface that holds only lists, the rows take the raised fill, so they stand out from it.
+Rows are plain by default, parted by hairlines with their text in line with the content around them. Under a Theme with `surface="filled"` they are joined tiles, and in a muted surface that holds only lists they take the raised fill, so they stand out from it.
 
 ```tsx figure=OnAPane
 
@@ -93,10 +93,10 @@ Rows pack more or less tightly, from extra small to large, which changes only th
 1. **List** (`env-list`)
 2. **Row** (`env-list-item`)
 3. **Handle** (`env-list-item-handle`)
-4. **Start** (`env-list-item-start > env-avatar`, `start`)
-5. **Content** (`env-list-item-content`, `label`)
-6. **Description** (`env-list-item-content > small`, `description`)
-7. **End** (`env-list-item > env-button:last-child`, `end`)
+4. **Start** (`env-list-item-start`, `start`)
+5. **Label** (`env-list-item-label`, `label`)
+6. **Description** (`env-list-item-description`, `description`)
+7. **End** (`env-list-item-end`, `end`)
 
 ## Behaviour
 
@@ -248,7 +248,7 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
 
 #### Density and panes
 
-`density` is `xs`, `sm`, `md`, the default, or `lg`, and changes only the rows' block padding. Put a list directly in `<Surface background="muted" padding={3}>`, a muted Surface that holds only lists, and its rows take the raised fill.
+`density` is `xs`, `sm`, `md`, the default, or `lg`, and changes only the rows' block padding. Under a filled surface, put a list directly in `<Surface background="muted" padding={3}>`, a muted Surface that holds only lists, and its rows take the raised fill.
 
 ```tsx
 <Surface background="muted" padding={3}>
@@ -260,4 +260,4 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
 
 ### Composition
 
-The parts are the list, `env-list`, each row, `env-list-item`, with its handle, `env-list-item-handle`, its start, `env-list-item-start`, its content, `env-list-item-content`, which holds the label and the description, and its action at the end. Rows render on the server; only the handle of a reorderable row needs the browser.
+The parts are the list, `env-list`, each row, `env-list-item`, with its handle, `env-list-item-handle`, its start, `env-list-item-start`, its content, `env-list-item-content`, which holds the label, `env-list-item-label`, the description, `env-list-item-description`, and more content, `env-list-item-extra`, and its end, `env-list-item-end`. The start, label, more content and end are slots: they place what they hold and never style it. Rows render on the server; only the handle of a reorderable row needs the browser.

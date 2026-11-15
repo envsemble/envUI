@@ -18,7 +18,7 @@
   }
   /* Content after the tabs, such as a button that closes them all, keeps its size at the end. */
   .env-document-tabs-end {
-    flex: 0 0 auto;
+    gap: var(--env-space-1);
     padding-inline: var(--env-space-1);
   }
   .env-document-tabs-list {

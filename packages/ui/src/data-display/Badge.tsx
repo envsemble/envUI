@@ -34,10 +34,10 @@ interface LabelBadgeProps extends BadgeAppearanceProps {
    */
   icon?: ReactNode;
   /**
-   * The label: a state, a name or a category in a word or two. It stays on one line and ends with
-   * an ellipsis where the badge is wider than its container.
+   * The label: a state, a name or a category in a word or two, as text. It stays on one line and
+   * ends with an ellipsis where the badge is wider than its container.
    */
-  children: ReactNode;
+  children: string;
   count?: undefined;
 }
 

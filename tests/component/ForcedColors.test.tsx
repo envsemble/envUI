@@ -82,12 +82,12 @@ const states: Record<string, [state: Target, rest: Target]> = {
     ['.env-radio[data-orientation=vertical]', { index: 1 }],
   ],
   'an invalid field': [
-    ['.env-text-field-control', { text: 'Invalid', inner: ':scope > .env-text-field-border' }],
-    ['.env-text-field-control', { text: 'Valid', inner: '.env-text-field-border' }],
+    ['.env-text-field', { text: 'Invalid', inner: '.env-text-field-control' }],
+    ['.env-text-field', { text: 'Valid', inner: '.env-text-field-control' }],
   ],
   'a disabled field': [
-    ['.env-text-field-control', { text: 'Disabled' }],
-    ['.env-text-field-control', { text: 'Valid' }],
+    ['.env-text-field', { text: 'Disabled', inner: '.env-text-field-control' }],
+    ['.env-text-field', { text: 'Valid', inner: '.env-text-field-control' }],
   ],
   'a selected table row': [['[data-testid=row-selected]'], ['[data-testid=row]']],
   'the current list row': [['[data-testid=list-selected]'], ['[data-testid=list-item]']],

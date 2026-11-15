@@ -7,7 +7,7 @@ export default function FewActions() {
     <TopBar
       title="Northwind"
       style={{ inlineSize: 'min(100%, 22rem)' }}
-      actions={
+      end={
         <>
           <IconButton icon={<IconSearch />} aria-label="Search" variant="ghost" />
           <IconButton icon={<IconNotifications />} aria-label="Notifications" variant="ghost" />

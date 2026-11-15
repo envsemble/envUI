@@ -72,9 +72,7 @@ function rowOf(list: HTMLElement, element: EventTarget | null) {
 
 /** A row's label, as its handle has it, or the row's text where it has no handle. */
 const labelOf = (row: HTMLElement) =>
-  row
-    .querySelector(':scope > .env-list-item-start > .env-list-item-handle')
-    ?.getAttribute('data-label') ??
+  row.querySelector(':scope > .env-list-item-handle')?.getAttribute('data-label') ??
   row.textContent?.trim() ??
   '';
 
@@ -167,9 +165,11 @@ export function ListReorderHandle({ textValue }: { textValue?: string }) {
   const [shownLabel, setShownLabel] = useState('');
   useLayoutEffect(() => {
     if (textValue !== undefined || !reorder) return;
-    const content = button.current?.closest('li')?.querySelector(':scope > .env-list-item-content');
+    const content = button.current
+      ?.closest('li')
+      ?.querySelector(':scope > .env-list-item-content > .env-list-item-label');
     if (!content) return;
-    const read = () => setShownLabel(content.firstChild?.textContent?.trim() ?? '');
+    const read = () => setShownLabel(content.textContent?.trim() ?? '');
     read();
     const observer = new MutationObserver(read);
     observer.observe(content, { childList: true, characterData: true, subtree: true });

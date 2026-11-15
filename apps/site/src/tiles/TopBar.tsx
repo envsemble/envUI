@@ -7,7 +7,7 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
 import { narrowGallery } from './Tiles';
 
-const refresh = '.env-top-bar-actions .env-icon-button';
+const refresh = '.env-top-bar-end .env-icon-button';
 
 /**
  * Hovers and presses Refresh: the page progress creeps along the bar's bottom edge, over the page,
@@ -54,7 +54,7 @@ export default function TopBarTile() {
       <TopBar
         loading={loading}
         title="Reports"
-        actions={
+        end={
           <>
             <IconButton icon={<IconRefresh />} aria-label="Refresh" variant="ghost" />
             {!narrow && <AvatarButton name="Alex Morgan" />}

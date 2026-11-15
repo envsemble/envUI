@@ -5,6 +5,7 @@ import { createContext, useContext, type ComponentPropsWithRef, type ReactNode }
 import { IconAdd } from '../icons/Add.js';
 import { IconRemove } from '../icons/Remove.js';
 import { classNames } from '../internal/classNames.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
@@ -142,7 +143,11 @@ function Item(allProps: ItemProps) {
             <IconAdd />
             <IconRemove />
           </span>
-          {hasTitle && <span className="env-accordion-label">{title}</span>}
+          {hasTitle && (
+            <Slot className="env-accordion-label" element="span" grow>
+              {title}
+            </Slot>
+          )}
         </BaseAccordion.Trigger>
       </BaseAccordion.Header>
       <BaseAccordion.Panel className="env-accordion-panel">

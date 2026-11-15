@@ -4,6 +4,7 @@ import { type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'rea
 import { classNames } from '../internal/classNames.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { Column } from '../layout/Layout.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import '../styles/Base.css';
 import '../styles/Disclosure.css';
@@ -81,7 +82,9 @@ export function Disclosure({
         <span className="env-icon env-disclosure-indicator" aria-hidden="true">
           <IconChevronRight />
         </span>
-        {title}
+        <Slot className="env-disclosure-title" element="span">
+          {title}
+        </Slot>
       </summary>
       <Column gap={2} className="env-disclosure-panel">
         {children}

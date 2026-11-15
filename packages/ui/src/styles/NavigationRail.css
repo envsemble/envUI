@@ -1,5 +1,5 @@
 @layer env.components {
-  /* Rail, the navigation rail: a narrow column of destinations on the navigation's background, a
+  /* Rail, the navigation rail: a narrow column of destinations on the page's background, a
      plain rectangle, each its icon in a rounded-rectangle indicator above a short label, with an optional
      header and footer. The current destination fills its indicator; the count sits on the icon's top
      end. Every placement is logical. */
@@ -13,19 +13,23 @@
     block-size: 100%;
     min-block-size: 0;
     padding-block: var(--env-space-3);
-    /* The navigation's background, the default surface color; on a surface, such as a Sheet's, the
-       surface's color rather than a second fill on it. */
-    background: var(--_surface-color, var(--env-color-bg-default));
+    /* The page's background, the same as the content beside it; on a surface, such as a Sheet's,
+       the surface's color rather than a second fill on it. */
+    background: var(--_surface-color, var(--env-color-bg-page));
     color: var(--env-color-fg-default);
   }
-  /* background="page": the page's background, so the rail sits on the page; on a surface, the
-     surface's color. */
-  .env-navigation-rail[data-background='page'] {
-    background: var(--_surface-color, var(--env-color-bg-page));
+  /* background="default": the default surface color, so the rail stands apart from the page; on a
+     surface, the surface's color. */
+  .env-navigation-rail[data-background='default'] {
+    background: var(--_surface-color, var(--env-color-bg-default));
   }
   .env-navigation-rail-header,
   .env-navigation-rail-footer {
+    display: flex;
     flex: none;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--env-space-2);
     inline-size: 100%;
   }
   .env-navigation-rail-footer {

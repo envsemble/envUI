@@ -72,10 +72,7 @@ export default function NavigationForms() {
       landmarks={false}
       style={preview}
       topBar={
-        <TopBar
-          title="Northwind"
-          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
-        />
+        <TopBar title="Northwind" end={<IconButton icon={<IconSearch />} aria-label="Search" />} />
       }
       navigation={{
         bar: <NavigationBar destinations={destinations} />,

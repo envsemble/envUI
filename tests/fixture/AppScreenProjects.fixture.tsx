@@ -695,7 +695,7 @@ const activity = [
 export function ProjectsScreen() {
   const [current, setCurrent] = useState('/projects');
   const [openId, setOpenId] = useState('checkout-web');
-  const [details, setDetails] = useState(false);
+  const [details, setDetails] = useState<boolean | null>(null);
   const [searching, setSearching] = useState(false);
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState<string | null>('all');

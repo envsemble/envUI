@@ -204,7 +204,7 @@ Page holds the page's content as `children`, and its heading, a PageHeader, in `
 
 A PageHeader takes the page's `title`, which wraps, balanced across its lines, and is never cut short.
 
-- `description` goes under it, in the smaller muted text.
+- `description` goes under it: text takes the smaller muted text, and any content, such as a status line, keeps its own look.
 - `breadcrumbs` go above it, usually Breadcrumbs with `wrap={false}`.
 - `start` goes before it, such as an Avatar, an icon or a back IconButton.
 - `meta` goes beside it, such as Badges or a count.

@@ -550,9 +550,9 @@ test('narrow containers wrap chips within the field, and the popup fits a phone'
   const items = [...well.querySelectorAll('.env-combobox-chip')].map((chip) =>
     chip.getBoundingClientRect(),
   );
-  // A field's corner: the large corner, no more than a third of the single-line field's height.
+  // A field's corner: the control corner every control shares.
   const probe = document.createElement('div');
-  probe.style.blockSize = 'min(var(--env-radius-lg), var(--_field-height) / 3)';
+  probe.style.blockSize = 'var(--env-radius-control)';
   well.append(probe);
   const corner = probe.getBoundingClientRect().height;
   probe.remove();
@@ -560,7 +560,7 @@ test('narrow containers wrap chips within the field, and the popup fits a phone'
   expect(outer.right - outer.left).toBeLessThanOrEqual(box(narrow).width + 1);
   expect(new Set(items.map((item) => Math.round(item.top))).size).toBeGreaterThan(1);
   expect(items.every((item) => item.left >= outer.left && item.right <= outer.right)).toBe(true);
-  // A wrapped field keeps a single-line field's corners rather than becoming a pill.
+  // A wrapped field keeps a single-line field's corners rather than rounding its ends.
   expect(outer.height).toBeGreaterThan(32);
   expect(radius).toBeCloseTo(corner, 0);
   expect(radius).toBeLessThan(outer.height / 2 - 4);
@@ -603,9 +603,10 @@ test('disabled and read-only fields keep their value', async () => {
   probe.style.color = 'var(--env-color-fg-disabled)';
   control.append(probe);
   const colors = [
-    ...['.env-combobox-input', '.env-combobox-trigger', '.env-combobox-label'].map((part) =>
+    ...['.env-combobox-input', '.env-combobox-trigger'].map((part) =>
       css(control.querySelector(part)!, 'color'),
     ),
+    css(control.parentElement!.querySelector(':scope > .env-combobox-label')!, 'color'),
     css(probe, 'color'),
   ];
   probe.remove();

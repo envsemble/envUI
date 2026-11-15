@@ -15,6 +15,7 @@ import {
   type RefObject,
 } from 'react';
 import { Column } from '../layout/Layout.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
@@ -81,12 +82,11 @@ export interface NavigationDrawerProps
    */
   headingLevel?: Exclude<HeadingLevel, 1>;
   /**
-   * The drawer's background, named as Surface's and Card's: default, the navigation's background,
-   * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
-   * page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the
-   * navigation's background, so it keeps its color in a narrow window. Set it on its own, such as
-   * a NavigationDrawer with its background under a TopBar with page.
-   * @default 'default'
+   * The drawer's background, named as Surface's and Card's: page, the page's background, the same as
+   * the content beside it, from which a Scaffold sets it apart with a hairline; default, the
+   * default surface color, a plain rectangle that stands apart from the page. On a surface, such as
+   * a Sheet, both take the surface's color.
+   * @default 'page'
    */
   background?: NavigationBackground;
   /**
@@ -121,7 +121,8 @@ export interface NavigationDrawerProps
    */
   onWidthChange?: (width: number, details: ResizeDetails) => void;
   /**
-   * The smallest width of a `resizable` drawer, in rem.
+   * The smallest width people can resize a `resizable` drawer to, in rem; it never takes more than
+   * its container.
    * @default 15
    */
   minWidth?: number;
@@ -189,7 +190,19 @@ function DrawerControl({
   const label = useRef<HTMLSpanElement>(null);
   const cut = useCut(label, oneLine);
   const destinationItem = (
-    <DestinationItem classes={drawerClasses} destination={destination} labelRef={label} end={end} />
+    <DestinationItem
+      classes={drawerClasses}
+      destination={destination}
+      labelRef={label}
+      badge={
+        destination.badge != null && (
+          <Slot className="env-navigation-drawer-badge" element="span" layout="row" shrink="never">
+            {destination.badge}
+          </Slot>
+        )
+      }
+      end={end}
+    />
   );
   const item = as ? as(destinationItem) : destinationItem;
   return oneLine ? (
@@ -207,6 +220,33 @@ const chevron = (
     <IconChevronRight />
   </span>
 );
+
+/**
+ * A destination's control alone, or in a row with the controls beside it: the destination's own end
+ * content and a section's button, outside the link or button, over the row's fill.
+ */
+function DrawerRow({
+  destination,
+  toggle,
+  children,
+}: {
+  destination: NavigationDrawerDestination;
+  toggle?: ReactNode;
+  children: ReactNode;
+}) {
+  if (destination.end == null && toggle == null) return children;
+  return (
+    <div className="env-navigation-drawer-row">
+      {children}
+      {destination.end != null && (
+        <Slot className="env-navigation-drawer-end" layout="row" shrink="never">
+          {destination.end}
+        </Slot>
+      )}
+      {toggle}
+    </div>
+  );
+}
 
 /**
  * A destination with destinations nested under it: a section that opens and closes, its nested
@@ -235,22 +275,28 @@ function DrawerBranch({
       className="env-navigation-drawer-branch"
     >
       {heading ? (
-        <DrawerControl
-          destination={destination}
-          oneLine={state.oneLine}
-          end={chevron}
-          as={(item) => <Collapsible.Trigger render={item} />}
-        />
+        <DrawerRow destination={destination}>
+          <DrawerControl
+            destination={destination}
+            oneLine={state.oneLine}
+            end={chevron}
+            as={(item) => <Collapsible.Trigger render={item} />}
+          />
+        </DrawerRow>
       ) : (
-        <div className="env-navigation-drawer-branch-row">
+        <DrawerRow
+          destination={destination}
+          toggle={
+            <Collapsible.Trigger
+              className="env-navigation-drawer-toggle"
+              aria-label={messages.contents({ label: destination.label })}
+            >
+              {chevron}
+            </Collapsible.Trigger>
+          }
+        >
           <DrawerControl destination={destination} oneLine={state.oneLine} />
-          <Collapsible.Trigger
-            className="env-navigation-drawer-toggle"
-            aria-label={messages.contents({ label: destination.label })}
-          >
-            {chevron}
-          </Collapsible.Trigger>
-        </div>
+        </DrawerRow>
       )}
       <Collapsible.Panel
         hiddenUntilFound
@@ -278,7 +324,9 @@ function DrawerItem({
     return <DrawerBranch destination={destination} nested={nested} state={state} />;
   return (
     <li>
-      <DrawerControl destination={destination} oneLine={state.oneLine} />
+      <DrawerRow destination={destination}>
+        <DrawerControl destination={destination} oneLine={state.oneLine} />
+      </DrawerRow>
     </li>
   );
 }
@@ -394,7 +442,9 @@ const roomFor = (handle: HTMLElement) => containerWidth(handle.parentElement ?? 
 /**
  * The navigation drawer for expanded and larger windows: a column at the window's start with every
  * destination as a row of icon, label and count, under the headings of their groups, and nested
- * destinations in sections that open and close. A `nav` landmark; the current destination reports
+ * destinations in sections that open and close. It is `--env-navigation-drawer-width` wide and never
+ * wider than its container, so it also serves as a side list of a page's sections in a narrow
+ * column. A `nav` landmark; the current destination reports
  * aria-current="page", and every destination and section button is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`,
  * people resize it by its end edge.
  */
@@ -406,7 +456,7 @@ export function NavigationDrawer({
   header,
   footer,
   headingLevel = 2,
-  background = 'default',
+  background = 'page',
   'aria-label': label,
   'aria-labelledby': labelledBy,
   resizable = false,
@@ -479,7 +529,6 @@ export function NavigationDrawer({
         resizable
           ? {
               '--env-navigation-drawer-width': `${resize.width}rem`,
-              '--_navigation-drawer-min-width': `${resize.handleProps.min}rem`,
               '--_navigation-drawer-max-width': `${resize.handleProps.max}rem`,
               ...style,
             }
@@ -493,17 +542,9 @@ export function NavigationDrawer({
       {inSkeleton(
         skeleton,
         <>
-          {header != null && (
-            <Column className="env-navigation-drawer-header" gap={2}>
-              {header}
-            </Column>
-          )}
+          {header != null && <Slot className="env-navigation-drawer-header">{header}</Slot>}
           {list}
-          {footer != null && (
-            <Column className="env-navigation-drawer-footer" gap={2}>
-              {footer}
-            </Column>
-          )}
+          {footer != null && <Slot className="env-navigation-drawer-footer">{footer}</Slot>}
         </>,
       )}
       {resizable && (

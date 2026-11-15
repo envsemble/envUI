@@ -14,6 +14,7 @@ import type { ControlSize } from '../foundations/Theme.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
 import { flag } from '../internal/flag.js';
@@ -24,8 +25,11 @@ import '../styles/SegmentedControl.css';
 export interface SegmentedControlItem {
   /** The value onValueChange reports when this item is chosen. */
   value: string;
-  /** The item's short visible name, such as Open or Board; it names the item. */
-  label: ReactNode;
+  /**
+   * The item's short visible name, such as Open or Board; it names the item. In a full-width control
+   * a name too long for its share ends in an ellipsis, and its tooltip shows it whole.
+   */
+  label: string;
   /**
    * A small muted number after the label, such as the items in a view, in the locale's number
    * format; it is read as part of the item's name, such as Open 12.
@@ -146,7 +150,16 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       render={<button type="button" />}
       className="env-segmented-control-item"
     >
-      {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
+      {item.icon != null && (
+        <Slot
+          className="env-segmented-control-item-icon"
+          element="span"
+          layout="row"
+          shrink="never"
+        >
+          <DecorativeIcon>{item.icon}</DecorativeIcon>
+        </Slot>
+      )}
       <span ref={labelRef} className="env-segmented-control-item-label">
         {item.label}
       </span>

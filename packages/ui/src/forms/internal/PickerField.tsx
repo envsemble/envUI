@@ -27,6 +27,7 @@ import { IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
 import {
   FieldFrame,
+  FieldLabelContent,
   type FieldControlBoxProps,
   type FieldProps,
   type FieldSizeProps,
@@ -310,15 +311,14 @@ export function PickerField({
 
   const portal = usePortalContainer();
   const showClear = clearable && Boolean(serialized) && !disabled && !readOnly;
-  // The field keeps its open look, its frame and its floated label, until the popup has closed, as
-  // focus comes back to it, rather than settling while the popup fades and rising again.
+  // The field keeps its open look, its frame, until the popup has closed, as focus comes back to it,
+  // rather than settling while the popup fades and showing focus again.
   const [popupShown, setPopupShown] = useState(open);
   if (open && !popupShown) setPopupShown(true);
   // Each opening shows the popup's content afresh, such as the calendar at the value rather than
   // at the day it was left on, also when it opens again while it still fades out.
   const [openings, setOpenings] = useState({ open, count: 0 });
   if (open !== openings.open) setOpenings({ open, count: openings.count + (open ? 1 : 0) });
-  const labelFloats = Boolean(serialized) || popupShown;
 
   function renderControlBox(boxProps: FieldControlBoxProps) {
     return (
@@ -326,7 +326,6 @@ export function PickerField({
         {...boxProps}
         ref={controlRef}
         className={`${boxProps.className} env-date-picker-control`}
-        data-label-floating={flag(labelFloats)}
         data-popup-open={flag(popupShown)}
         data-action-count={showClear ? '2' : '1'}
       />
@@ -348,13 +347,13 @@ export function PickerField({
         label={
           label != null ? (
             <PickerLabel id={id} labelId={labelId} open={open} triggerRef={triggerRef}>
-              {label}
+              <FieldLabelContent>{label}</FieldLabelContent>
             </PickerLabel>
           ) : null
         }
         description={description}
         error={error}
-        floatingLabel
+        controlBox
         size={size}
         visibleLabel={visibleLabel}
         className={className ? `${rootClassName} ${className}` : rootClassName}

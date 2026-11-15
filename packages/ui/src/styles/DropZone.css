@@ -32,6 +32,7 @@
   .env-drop-zone-icon {
     /* The round well of the icon, smaller in the small size. */
     --_drop-zone-icon-well: 2.75rem;
+    --env-icon-size: 1.5rem;
     display: grid;
     place-items: center;
     inline-size: var(--_drop-zone-icon-well);
@@ -40,9 +41,6 @@
     background: var(--env-color-bg-neutral-muted);
     color: var(--env-color-fg-muted);
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
-  }
-  .env-drop-zone-icon > .env-icon {
-    --env-icon-size: 1.5rem;
   }
   .env-drop-zone-label {
     font-weight: var(--env-font-weight-medium);
@@ -93,10 +91,7 @@
   }
   .env-drop-zone[data-size='sm'] .env-drop-zone-icon {
     --_drop-zone-icon-well: 2rem;
-  }
-  .env-drop-zone[data-size='sm'] .env-drop-zone-icon > .env-icon {
-    inline-size: var(--env-control-icon-size);
-    block-size: var(--env-control-icon-size);
+    --env-icon-size: var(--env-control-icon-size);
   }
   .env-drop-zone[data-size='sm'] .env-drop-zone-label {
     font: var(--env-type-body-sm);

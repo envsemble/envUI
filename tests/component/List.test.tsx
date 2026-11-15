@@ -335,3 +335,27 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     await expect.element(link).toHaveAttribute('draggable', 'false');
   }
 });
+
+test('rows are plain by default, parted by hairlines with their text at the list edge, and a filled surface makes them tiles; a row target reads in the row text color', async () => {
+  mount(fixture);
+  const rows = (name: string) =>
+    page.getByRole('list', { name, exact: true }).getByRole('listitem').elements();
+  const [first, second] = rows('People');
+  expect(css(first!, 'background-color')).toBe('rgba(0, 0, 0, 0)');
+  expect(css(first!, 'border-top-left-radius')).toBe('0px');
+  expect(css(first!, 'padding-left')).toBe('0px');
+  expect(css(second!, 'border-top-width')).toBe('1px');
+
+  const [tile, nextTile] = rows('People filled');
+  expect(css(tile!, 'background-color')).not.toBe('rgba(0, 0, 0, 0)');
+  expect(css(tile!, 'border-top-left-radius')).not.toBe('0px');
+  expect(css(nextTile!, 'border-top-width')).toBe('0px');
+
+  const plans = page.getByRole('list', { name: 'Plans', exact: true });
+  const target = plans.getByRole('button', { name: 'Hiring plan 2027' });
+  const row = plans.getByRole('listitem').element();
+  await mouse.move(centre(target).x, centre(target).y);
+  await expect.poll(() => css(row, 'background-color')).not.toBe('rgba(0, 0, 0, 0)');
+  expect(css(target, 'color')).toBe(css(row, 'color'));
+  expect(css(target, 'text-decoration-line')).toBe('none');
+});

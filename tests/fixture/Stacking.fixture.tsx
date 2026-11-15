@@ -1,4 +1,14 @@
-import { Button, Dialog, Menu, Theme, ToastProvider, Tooltip, useToast } from '@envsemble/envui';
+import {
+  Button,
+  Dialog,
+  Menu,
+  Sheet,
+  Text,
+  Theme,
+  ToastProvider,
+  Tooltip,
+  useToast,
+} from '@envsemble/envui';
 
 export const mount = 'standalone';
 
@@ -79,12 +89,24 @@ function LayeredDialog() {
   );
 }
 
+/** A sheet that opens a dialog over itself. */
+function NestedModals() {
+  return (
+    <Sheet title="Filters" trigger={<Button>Open the sheet</Button>}>
+      <Dialog title="Discard the filters?" trigger={<Button>Discard…</Button>}>
+        <Text>The filters you chose are cleared.</Text>
+      </Dialog>
+    </Sheet>
+  );
+}
+
 export default function StackingFixture() {
   return (
     <Theme theme="light" className="fixture-section">
       <ToastProvider>
         <Ladder />
         <LayeredDialog />
+        <NestedModals />
       </ToastProvider>
     </Theme>
   );

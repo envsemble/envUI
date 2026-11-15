@@ -28,21 +28,19 @@
   .env-page-header[data-sticky][data-scrolled] {
     background-color: var(--env-color-bg-muted);
   }
-  /* A picture before the title takes an avatar's size: a Graphic of the icon size, and an svg or
-     img of the application's own, contained in that box whatever its file's size. An svg that
-     follows the text, such as one of envUI's symbols, and the icon buttons, which set their own,
-     keep their sizes. */
+  /* A Graphic before the title takes an avatar's size; icon buttons set their own. */
   .env-page-header-start {
-    flex: none;
     --env-icon-size: var(--env-picture-size-md);
-  }
-  .env-page-header-start > :is(img, svg:not([width='1em'])) {
-    inline-size: var(--env-icon-size);
-    block-size: var(--env-icon-size);
-    object-fit: contain;
   }
   .env-page-header-heading {
     flex: 1 1 auto;
+    font: var(--env-type-body-sm);
+    color: var(--env-color-fg-muted);
+  }
+  .env-page-header-meta,
+  .env-page-header-actions {
+    flex-wrap: wrap;
+    gap: var(--env-space-2);
   }
   .env-page-header-title-line {
     gap: var(--env-space-1) var(--env-space-3);

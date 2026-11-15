@@ -333,6 +333,36 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
           </Table.Body>
         </Table.Root>
       </div>
+      <Table.Root aria-label={`Band ${theme}`} headerBand>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Report</Table.HeaderCell>
+            <Table.HeaderCell>Owner</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>Quarterly report</Table.Cell>
+            <Table.Cell>Aurora</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
+      <Theme theme={theme} surface="filled">
+        <Table.Root aria-label={`Filled ${theme}`}>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Report</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Quarterly report</Table.Cell>
+              <Table.Cell>Aurora</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
+      </Theme>
       <span id={`due-date-${theme}`} hidden>
         Due date
       </span>

@@ -447,9 +447,6 @@ function TabStrips() {
         <Cell caption="Fill" width="28rem">
           <Tabs aria-label="Project views" fill items={items()} />
         </Cell>
-        <Cell caption="Vertical">
-          <Tabs aria-label="Project views" orientation="vertical" items={items()} />
-        </Cell>
         <Cell caption="Icons">
           <Tabs
             aria-label="Mailboxes"

@@ -264,3 +264,35 @@ test('a tree renders a tall pane of rows before it measures, and fills its viewp
   expect(errors).toEqual([]);
   expect(shown(page.elementLocator(container.querySelector('.env-tree-item')!))).toBe(true);
 });
+
+test('a row keeps its label whole before its end: an end that does not fit beside it leaves the row', async () => {
+  mount(fixture);
+  const ends = page.getByRole('tree', { name: 'Ends light' });
+  const rowOf = (id: string) => ends.element().querySelector<HTMLElement>(`[data-id="${id}"]`)!;
+  await expect.poll(() => rowOf('long') !== null).toBe(true);
+  const visible = (part: Element, within: HTMLElement) => {
+    const inner = part.getBoundingClientRect();
+    const outer = within.getBoundingClientRect();
+    return inner.top >= outer.top - 0.5 && inner.bottom <= outer.bottom + 0.5;
+  };
+
+  const long = rowOf('long');
+  const longLabel = long.querySelector('.env-tree-label')!;
+  const longEnd = long.querySelector('.env-tree-end')!;
+  expect(visible(longEnd, long)).toBe(false);
+  expect(visible(longLabel, long)).toBe(true);
+  const icon = long.querySelector('.env-tree-icon')!.getBoundingClientRect();
+  const content =
+    long.getBoundingClientRect().right - Number.parseFloat(css(long, 'padding-right'));
+  expect(longLabel.getBoundingClientRect().right).toBeCloseTo(content, 0);
+  expect(longLabel.getBoundingClientRect().left).toBeGreaterThan(icon.right);
+
+  const short = rowOf('short');
+  const shortEnd = short.querySelector('.env-tree-end')!;
+  expect(visible(shortEnd, short)).toBe(true);
+  expect(shortEnd.getBoundingClientRect().right).toBeCloseTo(
+    short.getBoundingClientRect().right - Number.parseFloat(css(short, 'padding-right')),
+    0,
+  );
+  expect(short.querySelector('.env-badge')!.getBoundingClientRect().width).toBeGreaterThan(30);
+});

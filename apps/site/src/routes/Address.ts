@@ -73,7 +73,6 @@ let serverPath = '/';
 
 /**
  * Sets the path the server renders the site at next, such as `/components/button`.
- * @internal
  */
 export function renderAt(path: string) {
   serverPath = path;

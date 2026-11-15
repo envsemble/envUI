@@ -31,6 +31,7 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { flag } from '../internal/flag.js';
+import { Slot } from '../internal/layout/Slot.js';
 import '../styles/Base.css';
 import '../styles/Table.css';
 
@@ -63,6 +64,11 @@ export interface RootProps
    * scrolls vertically too, so give it a height through regionClassName or the surrounding layout.
    */
   stickyHeader?: boolean;
+  /**
+   * The header row lies on a shaded band rather than over a hairline.
+   * @default false
+   */
+  headerBand?: boolean;
   /** Class of the scroll region around the table, for example to limit its height. */
   regionClassName?: string;
   /**
@@ -170,14 +176,16 @@ function useStacked(
 const defaultStackBelow = '36rem';
 
 /**
- * A semantic data table on a rounded surface, in a focusable region that scrolls sideways when the
- * columns do not fit.
+ * A semantic data table, in a focusable region that scrolls sideways when the columns do not fit.
+ * Plain by default: a hairline under the header and between the rows, with no frame or fill; under
+ * a Theme with `surface="filled"`, it lies on a rounded raised surface.
  */
 function Root({
   'aria-label': label,
   caption,
   density = 'md',
   stickyHeader = false,
+  headerBand = false,
   regionClassName,
   narrowLayout = 'scroll',
   stackBelow = defaultStackBelow,
@@ -241,6 +249,7 @@ function Root({
           aria-label={caption == null ? label : undefined}
           className={classNames('env-table', className)}
           data-density={density}
+          data-header-band={flag(headerBand)}
           data-fixed-layout={flag(widths)}
           data-resizing={flag(resizing)}
         >
@@ -516,7 +525,7 @@ function Cell({ align, numeric, nowrap, label, className, children, ...props }: 
           <span className="env-table-cell-label" aria-hidden="true">
             {label}
           </span>
-          <div className="env-table-cell-content">{children}</div>
+          <Slot className="env-table-cell-content">{children}</Slot>
         </>
       ) : (
         children

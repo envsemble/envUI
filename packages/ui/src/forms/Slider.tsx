@@ -32,9 +32,10 @@ export interface SliderProps extends Omit<
   'defaultValue' | 'onChange' | 'children' | 'ref'
 > {
   /**
-   * The value's name, inside the slider at its start, such as Opacity. It names the slider.
+   * The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends
+   * in an ellipsis where the slider is too narrow for it.
    */
-  label: ReactNode;
+  label: string;
   /**
    * Lasting guidance under the slider, such as what the value applies to, linked to the slider as
    * its description.

@@ -24,7 +24,8 @@ const highlightInList = (input: Locator) => () => {
 };
 
 const texts = (elements: Iterable<Element>) => [...elements].map((each) => each.textContent);
-const textOf = (locator: Locator) => () => locator.query()?.textContent;
+const textOf = (locator: Locator) => () =>
+  (locator.query() as HTMLElement | null)?.innerText.replace(/\s+/g, ' ').trim();
 const isShown = (locator: Locator) => expect.poll(() => shown(locator)).toBe(true);
 const isHidden = (locator: Locator) => expect.poll(() => shown(locator)).toBe(false);
 /** Whether a palette shows its list, which is in the page, hidden, while it has nothing to show. */
@@ -154,7 +155,7 @@ test('modifier selection, pointer highlight, empty results and Escape', async ()
   await dialog.getByRole('combobox').fill('nothing matches this');
   // The application's title, with the default hint that quotes the query under it.
   await expect
-    .poll(() => dialog.element().querySelector('.env-command-palette-empty-title')?.textContent)
+    .poll(() => dialog.element().querySelector('.env-empty-state-title')?.textContent)
     .toBe('No matching documents');
   await expect
     .poll(textOf(dialog.getByRole('status')))
@@ -183,16 +184,15 @@ test('modifier selection, pointer highlight, empty results and Escape', async ()
 
 test('the empty states invite a search, say what found nothing, and follow the messages; while results load, the palette says so, and results already shown stay, busy', async () => {
   const root = page.getByTestId('palette-empty');
-  const icons = (dialog: Locator) =>
-    dialog.element().querySelectorAll('.env-command-palette-empty-icon');
+  const icons = (dialog: Locator) => dialog.element().querySelectorAll('.env-empty-state-icon');
   await root.getByRole('button', { name: 'Open Find a page' }).click();
   const dialog = page.getByRole('dialog', { name: 'Find a page' });
   const status = textOf(dialog.getByRole('status'));
-  // Before people type, an invitation in place of the list: one line of words, with no icon.
+  // Before people type, an invitation in place of the list, with no icon.
   await expect.poll(status).toBe('Type to search');
   expect(listShown(dialog)).toBe(false);
   expect(icons(dialog)).toHaveLength(0);
-  // A query that finds nothing says so, quoting it, on the same one line.
+  // A query that finds nothing says so, quoting it.
   await dialog.getByRole('combobox').fill('  roadmap ');
   await expect
     .poll(status)
@@ -274,7 +274,7 @@ test('default items show until people type, and choose like results', async () =
   await expect
     .poll(textOf(dialog.getByRole('status')))
     .toBe("No matching pages Try a page's name, such as Billing.");
-  expect(dialog.element().querySelectorAll('.env-command-palette-empty-icon')).toHaveLength(0);
+  expect(dialog.element().querySelectorAll('.env-empty-state-icon')).toHaveLength(0);
   await input.fill('');
   await expect.poll(options).toEqual(['Home', 'Settings']);
   await expect.poll(active).toBe('suggested/Home');

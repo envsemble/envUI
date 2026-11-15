@@ -245,30 +245,30 @@
       "primary": {
         "emphasis": {
           "$root": {
-            "$description": "The primary fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1.",
+            "$description": "The primary fill of chosen radios, checked checkboxes, switches that are on, the chosen calendar day, check marks, meters and spinners; paired with fg.on-emphasis. A saturated blue with white marks in light; in dark a lighter blue with dark marks, which keeps 3:1 against every surface, a selected row's too. Primary actions take color.bg.primary.strong.",
             "$value": "{palette.blue.50}"
           },
           "hover": {
-            "$description": "A primary action under the pointer: a grade further from its label, darker in light and lighter in dark, so the label gains contrast.",
+            "$description": "A checked control under the pointer: a grade further from its marks, darker in light and lighter in dark.",
             "$value": "{palette.blue.60}"
           },
           "pressed": {
-            "$description": "A primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted.",
+            "$description": "A checked control while pressed: in light a grade past its hover; in dark a step deeper than rest, still clear of its dark marks, so it reads as pressed rather than highlighted.",
             "$value": "{palette.blue.70}"
           }
         },
         "strong": {
           "$root": {
-            "$description": "The saturated primary fill of checked checkboxes, switches that are on, sliders, meters and spinners in the light theme at standard contrast, with white marks, the check and the thumb, at 3:1. The dark theme and high contrast put those controls on the emphasis fill instead; in dark this fill, which keeps 3:1 against the surfaces, would put white text below 4.5:1.",
-            "$value": "{palette.blue.50}"
+            "$description": "The saturated primary fill of primary actions, Button's primary variant, in every theme, with white labels at 4.5:1; paired with fg.on-strong. In light it is the emphasis fill, so an area that recolors color.bg.primary.emphasis recolors its actions too; in dark it is a saturated blue of its own, deeper than the emphasis fill, which keeps 3:1 against the surfaces.",
+            "$value": "{color.bg.primary.emphasis}"
           },
           "hover": {
-            "$description": "A checked control under the pointer.",
-            "$value": "{palette.blue.60}"
+            "$description": "A primary action under the pointer: darker in light; a step lighter in dark, where the label keeps 4.5:1.",
+            "$value": "{color.bg.primary.emphasis.hover}"
           },
           "pressed": {
-            "$description": "A checked control while pressed.",
-            "$value": "{palette.blue.70}"
+            "$description": "A primary action while pressed: a step deeper than rest.",
+            "$value": "{color.bg.primary.emphasis.pressed}"
           }
         },
         "subtle": {
@@ -435,7 +435,7 @@
       "danger": {
         "emphasis": {
           "$root": {
-            "$description": "A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions: a saturated red with white labels in every theme, so in dark, beside the soft primary and accent fills with their dark labels, a destructive action is the deepest and weightiest fill rather than a third pastel; paired with fg.on-strong.",
+            "$description": "A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions: a saturated red with white labels in every theme; paired with fg.on-strong.",
             "$value": "{palette.red.60}"
           },
           "hover": {
@@ -537,30 +537,30 @@
       "accent": {
         "emphasis": {
           "$root": {
-            "$description": "The fill of accent primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark; paired with fg.on-emphasis.",
+            "$description": "The accent fill at emphasis, paired with fg.on-emphasis: saturated with white labels in light, soft with dark labels in dark. Accent actions take color.bg.accent.strong.",
             "$value": "{palette.purple.55}"
           },
           "hover": {
-            "$description": "An accent primary action under the pointer: a grade further from its label, darker in light and lighter in dark.",
+            "$description": "The accent emphasis fill under the pointer: a grade further from its label, darker in light and lighter in dark.",
             "$value": "{palette.purple.65}"
           },
           "pressed": {
-            "$description": "An accent primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted.",
+            "$description": "The accent emphasis fill while pressed: in light a grade past its hover; in dark a small step deeper than rest, still clear of its dark label.",
             "$value": "{palette.purple.75}"
           }
         },
         "strong": {
           "$root": {
             "$description": "The accent purple of accent actions, such as Button's accent tone, in both themes; paired with fg.on-strong.",
-            "$value": "{palette.purple.55}"
+            "$value": "{color.bg.accent.emphasis}"
           },
           "hover": {
             "$description": "An accent action under the pointer.",
-            "$value": "{palette.purple.65}"
+            "$value": "{color.bg.accent.emphasis.hover}"
           },
           "pressed": {
             "$description": "An accent action while pressed.",
-            "$value": "{palette.purple.75}"
+            "$value": "{color.bg.accent.emphasis.pressed}"
           }
         },
         "subtle": {

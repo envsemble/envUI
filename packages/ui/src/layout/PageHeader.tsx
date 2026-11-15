@@ -4,6 +4,7 @@ import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/control/ControlDefaults.js';
 import { StickyHeaderSize } from './internal/StickyHeaderSize.js';
+import { Slot } from '../internal/layout/Slot.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
@@ -18,7 +19,10 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
    * @default 1
    */
   headingLevel?: HeadingLevel;
-  /** A sentence under the title, in the smaller muted text, such as what the page is for. */
+  /**
+   * Under the title, such as a sentence on what the page is for, or a status line. Text takes the
+   * smaller muted text; any content, block content too, keeps its own look.
+   */
   description?: ReactNode;
   /** The trail to the page, usually Breadcrumbs with wrap={false}, above the title. */
   breadcrumbs?: ReactNode;
@@ -81,12 +85,12 @@ export function PageHeader({
       data-sticky={flag(sticky)}
     >
       {sticky && <StickyHeaderSize />}
-      {breadcrumbs != null && <div className="env-page-header-breadcrumbs">{breadcrumbs}</div>}
+      {breadcrumbs != null && <Slot className="env-page-header-breadcrumbs">{breadcrumbs}</Slot>}
       <Row wrap gap={4} align="start" className="env-page-header-row">
         {start != null && (
-          <Row align="center" className="env-page-header-start">
+          <Slot className="env-page-header-start" layout="row" shrink="never">
             {start}
-          </Row>
+          </Slot>
         )}
         <Column gap={1} className="env-page-header-heading">
           <Row wrap align="center" className="env-page-header-title-line">
@@ -94,27 +98,25 @@ export function PageHeader({
               {title}
             </Text>
             {meta != null && (
-              <Row wrap align="center" gap={2} className="env-page-header-meta">
+              <Slot className="env-page-header-meta" layout="row">
                 {meta}
-              </Row>
+              </Slot>
             )}
           </Row>
           {description != null && (
-            <Text variant="body-sm" className="env-page-header-description">
-              {description}
-            </Text>
+            <Slot className="env-page-header-description">{description}</Slot>
           )}
         </Column>
         {actions != null && (
-          <Row wrap align="center" gap={2} className="env-page-header-actions">
+          <Slot className="env-page-header-actions" layout="row">
             <ControlDefaults size={controlSize}>{actions}</ControlDefaults>
-          </Row>
+          </Slot>
         )}
       </Row>
       {toolbar != null && (
-        <div className="env-page-header-toolbar">
+        <Slot className="env-page-header-toolbar">
           <ControlDefaults size={controlSize}>{toolbar}</ControlDefaults>
-        </div>
+        </Slot>
       )}
     </Column>
   );

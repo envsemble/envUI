@@ -21,7 +21,7 @@ import { IconClose } from '../icons/Close.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
 import {
   FieldFrame,
-  isLabelShown,
+  FieldLabelContent,
   type FieldControlBoxProps,
   type FieldProps,
   type FieldSizeProps,
@@ -293,9 +293,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   }
 
   const hasChips = isMultiple && selectedValues.length > 0;
-  const labelShown = label != null && isLabelShown({ visibleLabel });
-  // A floating label needs a blank placeholder to detect the empty state; chips fill the field.
-  const fieldPlaceholder = hasChips ? undefined : labelShown ? placeholder || ' ' : placeholder;
+  const fieldPlaceholder = hasChips ? undefined : placeholder;
   const describedByIds =
     [hasChips && selectionId, metadata['aria-describedby']].filter(Boolean).join(' ') || undefined;
   const showClear = clearable && !disabled && !readOnly;
@@ -333,13 +331,13 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           label={
             label != null ? (
               <label htmlFor={id} id={labelId} className="env-combobox-label">
-                {label}
+                <FieldLabelContent>{label}</FieldLabelContent>
               </label>
             ) : null
           }
           description={description}
           error={error}
-          floatingLabel
+          controlBox
           size={size}
           visibleLabel={visibleLabel}
           className={classNames('env-combobox', className)}

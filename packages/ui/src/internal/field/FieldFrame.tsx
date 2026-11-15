@@ -1,21 +1,14 @@
 'use client';
 
-import {
-  isValidElement,
-  type ComponentPropsWithoutRef,
-  type CSSProperties,
-  type MouseEvent,
-  type ReactNode,
-  type Ref,
-} from 'react';
+import type { ComponentPropsWithoutRef, CSSProperties, MouseEvent, ReactNode, Ref } from 'react';
 import * as Field from '../../forms/Field.js';
 import { DecorativeIcon } from '../icon/DecorativeIcon.js';
 import { ControlDefaults } from '../control/ControlDefaults.js';
+import { Slot } from '../layout/Slot.js';
 import { classNames } from '../classNames.js';
 import type { ControlSize } from '../../foundations/Theme.js';
 import { fieldMessageIds } from './useFieldMetadata.js';
 import { flag } from '../flag.js';
-import { reportInDevelopment } from '../developmentReport.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
 
@@ -26,8 +19,8 @@ export type FieldControlBoxProps = ComponentPropsWithoutRef<'div'> & {
 
 export interface FieldProps {
   /**
-   * The field's visible name, such as Project name; it also names the control for assistive
-   * technology.
+   * The field's visible name, above the field, such as Project name; it also names the control for
+   * assistive technology.
    */
   label?: ReactNode;
   /**
@@ -47,7 +40,7 @@ export type FieldVariant = 'outline' | 'ghost';
 
 export interface TextFieldAppearanceProps {
   /**
-   * The field's look: outline, a thin border its label floats into, or ghost, a faint fill, for a
+   * The field's look: outline, a box with a thin edge, or ghost, a faint fill without an edge, for a
    * search at the top of a sidebar or a list.
    * @default 'outline'
    */
@@ -55,10 +48,7 @@ export interface TextFieldAppearanceProps {
 }
 
 export interface FieldSizeProps {
-  /**
-   * The control height, sm, md or lg; without it, the container's, and else md. sm is for a
-   * field with its label hidden.
-   */
+  /** The control height, sm, md or lg; without it, the container's, and else md. */
   size?: ControlSize;
 }
 
@@ -71,10 +61,9 @@ export interface TextFieldDecorationProps {
    */
   endAction?: ReactNode;
   /**
-   * The label shows in the field, where it rests while the field is empty and floats into the
-   * outline while the field is in use or has a value. false hides it, for a field whose purpose is
-   * clear without it, such as a search in a toolbar: the label still names the field for assistive
-   * technology, and a placeholder gives the visible guidance.
+   * The label shows above the field. false hides it, for a field whose purpose is clear without it,
+   * such as a search in a toolbar: the label still names the field for assistive technology, and a
+   * placeholder gives the visible guidance.
    * @default true
    */
   visibleLabel?: boolean;
@@ -82,15 +71,15 @@ export interface TextFieldDecorationProps {
 
 export interface TextFieldAffixProps {
   /**
-   * Short, non-interactive text before the value, such as the start of an address. It is not part
-   * of the value; it shows once the field has focus or a value and is read after the label.
+   * Short, non-interactive text before the value, such as the start of an address, cut short with an
+   * ellipsis where it is long. It is not part of the value and is read after the label.
    */
-  prefix?: ReactNode;
+  prefix?: string;
   /**
-   * Short, non-interactive text after the value, such as a unit. It is not part of the value; it
-   * shows once the field has focus or a value and is read after the label.
+   * Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it
+   * is long. It is not part of the value and is read after the label.
    */
-  suffix?: ReactNode;
+  suffix?: string;
 }
 
 /** Pressing the prefix or suffix places the caret in the control, at the nearer end of its value. */
@@ -105,32 +94,21 @@ function focusControl(event: MouseEvent<HTMLElement>) {
   try {
     control.setSelectionRange(end, end);
   } catch {
-    // Some input types, such as number, have no text selection.
+    return;
   }
 }
 
-/** The text of a field's label element, for the notch its floated label cuts in the border. */
-function labelText(label: ReactNode): ReactNode {
-  return isValidElement<{ children?: ReactNode }>(label) ? label.props.children : label;
-}
-
 /** Whether a text field shows its label: unless visibleLabel is false. */
-export function isLabelShown({ visibleLabel }: TextFieldDecorationProps) {
+function isLabelShown({ visibleLabel }: TextFieldDecorationProps) {
   return visibleLabel ?? true;
 }
 
-/**
- * Says while developing, once a page, that a single-line field with size="sm" that shows its label
- * takes the md height: sm is for a field with its label hidden.
- */
-function reportSmallWithLabel() {
-  reportInDevelopment(
-    () =>
-      process.env.NODE_ENV !== 'production' &&
-      'a field with size="sm" that shows its label takes the md height, so the label and the ' +
-        'value each keep room. Hide the label with visibleLabel={false}, as in a toolbar, or use ' +
-        'size="md".',
-    { level: 'warn', key: 'Field size sm with label' },
+/** A field's label as the application gives it, inside the label element its field renders. */
+export function FieldLabelContent({ children }: { children: ReactNode }) {
+  return (
+    <Slot className="env-field-label-content" element="span">
+      {children}
+    </Slot>
   );
 }
 
@@ -140,9 +118,9 @@ function renderPlainControlBox(props: FieldControlBoxProps) {
 }
 
 /**
- * The frame of envUI's own fields, built from Field's parts: Field.Root around the label, the
- * control, Field.Description and Field.Error. Text controls (floatingLabel) sit in a control box
- * with their label, icon and actions; composite controls, such as Select, keep a separate label.
+ * The frame of envUI's own fields, built from Field's parts: Field.Root around the label above the
+ * control, the control, Field.Description and Field.Error. Text controls (controlBox) sit in a box
+ * with their icon, affixes and actions.
  */
 export function FieldFrame({
   id,
@@ -150,7 +128,7 @@ export function FieldFrame({
   description,
   error,
   children,
-  floatingLabel = false,
+  controlBox = false,
   variant = 'outline',
   startIcon,
   endAction,
@@ -170,8 +148,9 @@ export function FieldFrame({
   TextFieldAffixProps & {
     id: string;
     children: ReactNode;
-    floatingLabel?: boolean;
-    /** A text area, which is tall whatever its variant. */
+    /** The control sits in a text field's box, with its icon, affixes and actions. */
+    controlBox?: boolean;
+    /** A text area, which is tall. */
     multiline?: boolean;
     /** The owner's root class, beside env-field. */
     className?: string;
@@ -183,90 +162,72 @@ export function FieldFrame({
     renderControlBox?: (props: FieldControlBoxProps) => ReactNode;
   }) {
   const ids = fieldMessageIds(id);
-  if (
-    floatingLabel &&
-    !multiline &&
-    size === 'sm' &&
-    label != null &&
-    isLabelShown({ visibleLabel })
-  )
-    reportSmallWithLabel();
   return (
     <Field.Root
       ref={rootRef}
-      className={classNames(floatingLabel ? 'env-text-field' : undefined, className)}
+      className={classNames(controlBox ? 'env-text-field' : undefined, className)}
       style={style}
       invalid={error != null || undefined}
-      data-size={floatingLabel ? size : undefined}
-      data-tall={flag(floatingLabel && multiline)}
-      data-label-hidden={flag(floatingLabel && !isLabelShown({ visibleLabel }))}
+      data-size={controlBox ? size : undefined}
+      data-tall={flag(controlBox && multiline)}
+      data-label-hidden={flag(controlBox && !isLabelShown({ visibleLabel }))}
     >
-      {floatingLabel ? (
-        renderControlBox({
-          className: 'env-text-field-control',
-          'data-variant': variant,
-          'data-start-icon': flag(startIcon != null),
-          'data-end-action': flag(endAction != null),
-          'data-prefix': flag(prefix != null),
-          'data-suffix': flag(suffix != null),
-          children: (
-            <>
-              {/* The border, drawn over the control's own, which stays transparent. A floated label
-                  cuts a notch in it through the legend, a hidden copy of the label, so the field
-                  needs no fill of its own to hide the line behind the label. */}
-              <fieldset aria-hidden="true" className="env-text-field-border">
-                <legend>
-                  {isLabelShown({ visibleLabel }) && label != null && (
-                    <span>{labelText(label)}</span>
-                  )}
-                </legend>
-              </fieldset>
-              {/* The control names the prefix and suffix in its description, so they are read once. */}
-              {prefix != null && (
-                <span
-                  className="env-text-field-prefix"
-                  id={`${id}-prefix`}
-                  aria-hidden="true"
-                  onMouseDown={focusControl}
-                >
-                  {prefix}
-                </span>
-              )}
-              {children}
-              {suffix != null && (
-                <span
-                  className="env-text-field-suffix"
-                  id={`${id}-suffix`}
-                  aria-hidden="true"
-                  onMouseDown={focusControl}
-                >
-                  {suffix}
-                </span>
-              )}
-              {label}
-              {startIcon != null && (
-                <span className="env-text-field-start">
-                  <DecorativeIcon>{startIcon}</DecorativeIcon>
-                </span>
-              )}
-              {endAction != null && (
-                <span className="env-text-field-end">
-                  {/* The actions an application passes take the field's quiet look. */}
-                  <ControlDefaults variant="ghost">{endAction}</ControlDefaults>
-                </span>
-              )}
-            </>
-          ),
-        })
-      ) : (
-        <>
-          {label}
-          {children}
-        </>
-      )}
+      {label}
+      {controlBox
+        ? renderControlBox({
+            className: 'env-text-field-control',
+            'data-variant': variant,
+            'data-start-icon': flag(startIcon != null),
+            'data-end-action': flag(endAction != null),
+            'data-prefix': flag(prefix != null),
+            'data-suffix': flag(suffix != null),
+            children: (
+              <>
+                {startIcon != null && (
+                  <Slot className="env-text-field-start" element="span" layout="row" shrink="never">
+                    <DecorativeIcon>{startIcon}</DecorativeIcon>
+                  </Slot>
+                )}
+                {prefix != null && (
+                  <span
+                    className="env-text-field-prefix"
+                    id={`${id}-prefix`}
+                    aria-hidden="true"
+                    onMouseDown={focusControl}
+                  >
+                    {prefix}
+                  </span>
+                )}
+                {children}
+                {suffix != null && (
+                  <span
+                    className="env-text-field-suffix"
+                    id={`${id}-suffix`}
+                    aria-hidden="true"
+                    onMouseDown={focusControl}
+                  >
+                    {suffix}
+                  </span>
+                )}
+                {endAction != null && (
+                  <span className="env-text-field-end">
+                    <Slot
+                      className="env-text-field-end-action"
+                      element="span"
+                      layout="row"
+                      shrink="never"
+                    >
+                      <ControlDefaults variant="ghost">{endAction}</ControlDefaults>
+                    </Slot>
+                  </span>
+                )}
+              </>
+            ),
+          })
+        : children}
       {description != null && (
-        <Field.Description id={ids.description} render={<small />}>
-          {description}
+        <Field.Description id={ids.description} render={<div />}>
+          <Slot className="env-field-description-content">{description}</Slot>
         </Field.Description>
       )}
       {error != null && <Field.Error id={ids.error}>{error}</Field.Error>}

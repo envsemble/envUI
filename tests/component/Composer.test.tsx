@@ -1,7 +1,15 @@
 import { beforeEach, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/Composer.fixture.tsx';
-import { addStyle, box, collectErrors, css, keyboard, mouse } from './support/Browser.ts';
+import {
+  addStyle,
+  animationsDone,
+  box,
+  collectErrors,
+  css,
+  keyboard,
+  mouse,
+} from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
@@ -325,6 +333,22 @@ test('an uncontrolled composer sends from its button, clears and describes the f
   const disabled = field('Disabled');
   await expect.element(disabled).toBeDisabled();
   await expect.element(sendOf('Disabled')).toBeDisabled();
+});
+
+test('focus in the field darkens its edge to a neutral hairline, with no ring of the accent around it', async () => {
+  const surface = composerOf('Message').querySelector<HTMLElement>('.env-composer-surface')!;
+  const probe = document.createElement('div');
+  probe.style.color = 'var(--env-color-border-primary-emphasis)';
+  surface.append(probe);
+  const accent = css(probe, 'color');
+  probe.remove();
+  const rest = css(surface, 'border-top-color');
+  input('Message').focus();
+  await expect.poll(() => css(surface, 'border-top-color')).not.toBe(rest);
+  await animationsDone(surface);
+  expect(css(surface, 'border-top-color')).not.toBe(accent);
+  expect(css(surface, 'border-top-width')).toBe('1px');
+  expect(css(surface, 'box-shadow')).toBe('none');
 });
 
 test('on a coarse pointer, the action grows to the touch height, and the field takes the larger text', async () => {

@@ -26,10 +26,7 @@ export default function ScaffoldAnatomy() {
       style={{ blockSize: '16rem' }}
       navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={
-        <TopBar
-          title="Northwind"
-          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
-        />
+        <TopBar title="Northwind" end={<IconButton icon={<IconSearch />} aria-label="Search" />} />
       }
       navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >

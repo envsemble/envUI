@@ -65,7 +65,7 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   vi.useRealTimers();
   expect(confirmed()).toBe('1');
 
-  // An icon-only ConfirmButton is round at rest and names the consequence when armed.
+  // An icon-only ConfirmButton is square at rest and names the consequence when armed.
   const icon = page.getByTestId('confirm-icon-button');
   await expect.element(icon).toHaveAccessibleName('Remove Morgan');
   await expect.element(icon).toHaveClass(/env-icon-button/);
@@ -74,8 +74,9 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   const rest = box(icon);
   expect(rest.width).toBeCloseTo(36, 0);
   expect(rest.height).toBeCloseTo(36, 0);
-  // Round like IconButton: the corners take at least half the height.
-  expect(Number.parseFloat(css(icon, 'border-top-left-radius'))).toBeGreaterThanOrEqual(18);
+  // It keeps the control corners every button has, at rest and armed.
+  const corner = css(icon, 'border-top-left-radius');
+  expect(Number.parseFloat(corner)).toBeGreaterThan(0);
   // Keyboard arming keeps focus on the button while it grows to name the consequence.
   (icon.element() as HTMLElement).focus();
   await keyboard.press('Enter');
@@ -86,6 +87,7 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await expect.element(icon).toHaveFocus();
   expect(icon.element().querySelectorAll('.env-icon')).toHaveLength(1);
   expect(box(icon).width).toBeGreaterThan(rest.width + 40);
+  expect(css(icon, 'border-top-left-radius')).toBe(corner);
   expect(document.querySelectorAll('.env-confirm-button-status')[1]!.textContent).toBe(
     'Remove. Press again to confirm.',
   );

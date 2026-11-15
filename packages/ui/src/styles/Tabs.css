@@ -40,33 +40,28 @@
     --_tabs-active-padding: var(--env-space-3);
     --env-control-height: var(--_tabs-height);
     inline-size: fit-content;
-    max-inline-size: 100%;
     /* Inset focus rings remain visible when a long list needs scrolling. */
     overflow: auto;
     scrollbar-width: thin;
     /* The tabs' offset parent, so the rail, which scrolls the selected tab into view, measures it
        from its own start rather than from a positioned ancestor's, and starts with it in view. */
     position: relative;
-  }
-  /* A horizontal rail lines its first label up with the content below it. It reaches back before
-     its container's edge by a tab's inline padding, a button's or a text button's slimmer one, and
-     holds that much as leading padding of its own, which takes no presses; its first tab gives up its
-     leading padding, so its label starts at the content's edge, and draws its fill and focus ring
-     back over the rail's padding (below). So no tab's hit area reaches over what lies before the
-     rail, and none overlaps the next. */
-  .env-tabs-list:not([data-orientation='vertical']) {
+    /* The rail lines its first label up with the content below it. It reaches back before its
+       container's edge by a tab's inline padding, a button's or a text button's slimmer one, and
+       holds that much as leading padding of its own, which takes no presses; its first tab gives up
+       its leading padding, so its label starts at the content's edge, and draws its fill and focus
+       ring back over the rail's padding (below). So no tab's hit area reaches over what lies before
+       the rail, and none overlaps the next. */
     --_tabs-lead: var(--env-space-3);
     margin-inline-start: calc(-1 * var(--_tabs-lead));
     padding-inline-start: calc(var(--_tabs-inset) + var(--_tabs-lead));
     max-inline-size: calc(100% + var(--_tabs-lead));
     pointer-events: none;
   }
-  .env-tabs-list:not([data-orientation='vertical']):has(
-      > .env-tabs-tab:first-child[data-variant='text']
-    ) {
+  .env-tabs-list:has(> .env-tabs-tab:first-child[data-variant='text']) {
     --_tabs-lead: var(--env-space-1);
   }
-  .env-tabs-list:not([data-orientation='vertical']) > * {
+  .env-tabs-list > * {
     pointer-events: auto;
   }
   /* The rail has no fill of its own: the tabs sit on what the Tabs sit on. */
@@ -77,30 +72,22 @@
   }
   /* Under a coarse pointer the rail grows to the touch height, like every control of its row, and
      each tab's hit area covers the rail's padding above and below it, so it is as tall as the rail and
-     nothing reaches out of the rail, which scrolls, and it is at least as wide. A vertical rail's tabs
-     grow themselves instead. */
+     nothing reaches out of the rail, which scrolls, and it is at least as wide. */
   @media (pointer: coarse) {
     .env-tabs-list {
       --_tabs-height: max(var(--_tabs-rail), var(--env-control-height-touch));
-    }
-    .env-tabs-list:not([data-orientation='vertical']) {
       --_button-touch-height: 0rem;
     }
-    .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab {
+    .env-tabs-list > .env-tabs-tab {
       position: relative;
       min-inline-size: var(--env-control-height-touch);
     }
-    .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab::before {
+    .env-tabs-list > .env-tabs-tab::before {
       content: '';
       position: absolute;
       inset-block: calc(-1 * var(--_tabs-inset));
       inset-inline: 0;
     }
-  }
-  /* A vertical rail's tabs are rows of a column, as tall as a medium control like the other
-     navigation rows beside them, at the large size too; a small rail keeps its smaller tabs. */
-  .env-tabs-list[data-orientation='vertical'] {
-    --_tabs-rail: var(--env-control-height-md);
   }
   .env-tabs-list[data-size='sm'] {
     --_tabs-rail: var(--env-control-height-sm);
@@ -202,7 +189,7 @@
     --active-tab-top: 0rem;
     --active-tab-width: 0rem;
     --active-tab-height: 0rem;
-    /* The padding before the label, at the tab's start: none on a horizontal rail's first tab. */
+    /* The padding before the label, at the tab's start: none on the rail's first tab. */
     --_tabs-indicator-start: var(--_tabs-active-padding);
     position: absolute;
     /* Physical, as Base UI measures the tab. */
@@ -221,11 +208,7 @@
       );
     pointer-events: none;
   }
-  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-indicator {
-    pointer-events: none;
-  }
-  .env-tabs-list:not([data-orientation='vertical']):has(> .env-tabs-tab:first-child[data-active])
-    > .env-tabs-indicator {
+  .env-tabs-list:has(> .env-tabs-tab:first-child[data-active]) > .env-tabs-indicator {
     --_tabs-indicator-start: 0rem;
   }
   /* In right-to-left text the tab's start is its right side. */
@@ -239,34 +222,6 @@
      indicator's own attribute, not hidden, as :has() asks (packages/ui/AGENTS.md, Style sheets). */
   .env-tabs-list:has(> .env-tabs-indicator[data-placed]) > .env-tabs-tab[data-active] {
     --_tabs-tab-indicator: transparent;
-  }
-  /* A vertical rail's indicator stands at the start of the selected tab. */
-  .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab {
-    justify-content: flex-start;
-    text-align: start;
-  }
-  .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab::after {
-    inset-block: var(--env-space-2);
-    inset-inline: 0 auto;
-    inline-size: calc(3 * var(--env-control-border-width));
-    block-size: auto;
-    border-radius: 0;
-    border-start-end-radius: calc(3 * var(--env-control-border-width));
-    border-end-end-radius: calc(3 * var(--env-control-border-width));
-  }
-  .env-tabs-list[data-orientation='vertical'] > .env-tabs-indicator {
-    inline-size: calc(3 * var(--env-control-border-width));
-    block-size: calc(var(--active-tab-height) - 2 * var(--env-space-2));
-    border-radius: 0;
-    border-start-end-radius: calc(3 * var(--env-control-border-width));
-    border-end-end-radius: calc(3 * var(--env-control-border-width));
-    translate: var(--active-tab-left) calc(var(--active-tab-top) + var(--env-space-2));
-  }
-  .env-tabs-list[data-orientation='vertical'] > .env-tabs-indicator:dir(rtl) {
-    translate: calc(
-        var(--active-tab-left) + var(--active-tab-width) - calc(3 * var(--env-control-border-width))
-      )
-      calc(var(--active-tab-top) + var(--env-space-2));
   }
   /* It slides and resizes to the tab selected, once a tab has been selected, not as it first
      measures. */
@@ -285,18 +240,18 @@
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
-  /* The first tab of a horizontal rail, its label at the content's edge: its focus ring is drawn a
+  /* The first tab of the rail, its label at the content's edge: its focus ring is drawn a
      tab's padding wider, back over the rail's leading padding, by a shape under its label that takes
      no presses, so it surrounds the whole tab as the others' do. */
-  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child {
+  .env-tabs-list > .env-tabs-tab:first-child {
     isolation: isolate;
     padding-inline-start: 0;
   }
-  .env-tabs-list:not([data-orientation='vertical'])
+  .env-tabs-list
     > .env-tabs-tab:first-child:focus-visible:not(:disabled):not([aria-disabled='true']) {
     outline-color: transparent;
   }
-  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child::before {
+  .env-tabs-list > .env-tabs-tab:first-child::before {
     content: '';
     position: absolute;
     z-index: calc(var(--env-z-base) - var(--env-z-raised));
@@ -305,21 +260,19 @@
     border-radius: inherit;
     pointer-events: none;
   }
-  .env-tabs-list:not([data-orientation='vertical'])
-    > .env-tabs-tab:first-child:focus-visible::before {
+  .env-tabs-list > .env-tabs-tab:first-child:focus-visible::before {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
   /* Its press layer, too, covers the whole tab: the shape under its label takes it. */
-  .env-tabs-list:not([data-orientation='vertical'])
-    > .env-tabs-tab:first-child:active:not(:disabled):not([aria-disabled='true']) {
+  .env-tabs-list > .env-tabs-tab:first-child:active:not(:disabled):not([aria-disabled='true']) {
     background: transparent;
   }
-  .env-tabs-list:not([data-orientation='vertical'])
+  .env-tabs-list
     > .env-tabs-tab:first-child:active:not(:disabled):not([aria-disabled='true'])::before {
     background: var(--_tabs-press-layer);
   }
-  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child::after {
+  .env-tabs-list > .env-tabs-tab:first-child::after {
     inset-inline-start: 0;
   }
   .env-tabs-panels {
@@ -407,12 +360,11 @@
     }
     /* The lined-up first tab draws its ring on a shape under its label; with no fills to line up,
        the tab draws the system's ring itself. */
-    .env-tabs-list:not([data-orientation='vertical'])
+    .env-tabs-list
       > .env-tabs-tab:first-child:focus-visible:not(:disabled):not([aria-disabled='true']) {
       outline-color: CanvasText;
     }
-    .env-tabs-list:not([data-orientation='vertical'])
-      > .env-tabs-tab:first-child:focus-visible::before {
+    .env-tabs-list > .env-tabs-tab:first-child:focus-visible::before {
       outline: 0;
     }
   }

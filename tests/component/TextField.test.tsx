@@ -46,14 +46,11 @@ test('affixes sit beside the value, a press on one places the caret, and a long 
   const scope = page.getByTestId('affixes-light');
   const address = scope.getByRole('textbox', { name: 'Address', exact: true });
   const prefix = affix(address, 'prefix');
-  // While the label rests in the empty field, the prefix waits for focus or a value.
-  expect(css(prefix, 'opacity')).toBe('0');
+  expect(css(prefix, 'opacity')).toBe('1');
   (address.element() as HTMLElement).focus();
-  await expect.poll(() => css(prefix, 'opacity')).toBe('1');
   await keyboard.type('tokens');
   await expect.element(address).toHaveValue('tokens');
   (address.element() as HTMLElement).blur();
-  await expect.poll(() => css(prefix, 'opacity')).toBe('1');
   // The value starts right after the prefix, on the same line.
   const [prefixBox, addressBox] = [box(prefix), box(address)];
   expect(addressBox.x).toBeCloseTo(prefixBox.x + prefixBox.width, 0);
@@ -159,35 +156,31 @@ test('SearchField clears with its button and with Escape inside a dialog', async
   await expect.element(dialog).toBeVisible();
 });
 
-test('a floated label cuts its notch under itself, right to left too, and keeps the button height', async () => {
+test('a field shows its label above its box, right to left too, and focus thickens its edge without a ring', async () => {
   await open(affixes);
-  // Right to left, with and without a start icon, the notch starts at the right, where the label
-  // does.
+  // Right to left, with and without a start icon, the label starts where the box does, above it.
   for (const name of ['Street', 'City']) {
     const field = page.getByTestId('affixes-light').getByRole('textbox', { name });
-    const label = well(field).querySelector(':scope > label')!;
-    const legend = well(field).querySelector(':scope > .env-text-field-border legend')!;
-    (field.element() as HTMLElement).focus();
-    await expect.poll(() => Math.abs(box(legend).width - box(label).width)).toBeLessThanOrEqual(1);
-    const [labelBox, notchBox] = [box(label), box(legend)];
-    expect(
-      Math.abs(labelBox.x + labelBox.width - (notchBox.x + notchBox.width)),
-    ).toBeLessThanOrEqual(1);
+    const label = well(field).parentElement!.querySelector(':scope > label')!;
+    const [labelBox, wellBox] = [box(label), box(well(field))];
+    expect(labelBox.y + labelBox.height).toBeLessThanOrEqual(wellBox.y);
+    expect(Math.abs(labelBox.x + labelBox.width - (wellBox.x + wellBox.width))).toBeLessThanOrEqual(
+      1,
+    );
   }
-  // Compact fields float their label into the outline and keep the button height.
+  // A compact field keeps the button height, and focus draws its edge in the accent, twice as
+  // thick, inward, with no ring around it.
   await open(adoption);
   const field = page.getByTestId('compact-label');
-  const label = well(field).querySelector('label')!;
-  const wellBox = box(well(field));
-  expect(box(label).y).toBeGreaterThan(wellBox.y);
-  await field.fill('Northwind');
-  // Floated onto the outline, the label has no fill: the border opens behind it instead.
-  expect(css(label, 'background-image')).toBe('none');
-  expect(css(label, 'background-color')).toBe('rgba(0, 0, 0, 0)');
-  await expect
-    .poll(() => well(field).querySelector(':scope > .env-text-field-border legend')!.clientWidth)
-    .toBeGreaterThan(0);
-  await expect.poll(() => box(label).y).toBeLessThan(wellBox.y + 2);
+  const control = well(field);
+  const wellBox = box(control);
   const apply = page.getByTestId('compact-label-toolbar').getByRole('button', { name: 'Apply' });
   expect(Math.round(wellBox.height)).toBe(Math.round(box(apply).height));
+  const rest = css(control, 'border-top-color');
+  expect(css(control, 'box-shadow')).toBe('none');
+  (field.element() as HTMLElement).focus();
+  await expect.poll(() => css(control, 'border-top-color')).not.toBe(rest);
+  expect(css(control, 'box-shadow')).toContain('inset');
+  expect(css(control, 'outline-style')).toBe('none');
+  expect(box(control)).toEqual(wellBox);
 });

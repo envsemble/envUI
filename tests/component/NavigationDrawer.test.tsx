@@ -261,3 +261,36 @@ describe('Drawer nested sections', () => {
     await expect.poll(() => closed(linkTo(controlled, '#webhooks'))).toBe(true);
   });
 });
+
+describe('Drawer in a narrow column', () => {
+  test('fits the column, and a destination keeps its badge and its own end control beside its link', async () => {
+    mount(resizable);
+    const column = page.getByTestId('narrow-column');
+    const drawer = page.getByRole('navigation', { name: 'Sections' });
+    expect(widthOf(drawer)).toBeCloseTo(12 * 16, 0);
+    const list = drawer.element().querySelector('.env-navigation-drawer-list')!;
+    expect(list.scrollWidth).toBeLessThanOrEqual(list.clientWidth);
+    expect(box(drawer).x + widthOf(drawer)).toBeLessThanOrEqual(box(column).x + 12 * 16 + 0.5);
+
+    const link = drawer.getByRole('link', { name: /Notifications and e-mail/ });
+    expect(link.element().textContent).toContain('New');
+    const saved = drawer.getByRole('link', { name: 'Saved search' });
+    const remove = drawer.getByRole('button', { name: 'Delete Saved search' });
+    expect(saved.element().contains(remove.element())).toBe(false);
+    const linkBox = box(saved);
+    const removeBox = box(remove);
+    expect(removeBox.x).toBeGreaterThanOrEqual(linkBox.x + linkBox.width - 0.5);
+    expect(removeBox.x + removeBox.width).toBeLessThanOrEqual(box(drawer).x + widthOf(drawer));
+
+    const row = saved.element().closest('.env-navigation-drawer-row')!;
+    const fill = () => getComputedStyle(saved.element(), '::before').backgroundColor;
+    expect(fill()).toBe('rgba(0, 0, 0, 0)');
+    await saved.hover();
+    await expect.poll(fill).not.toBe('rgba(0, 0, 0, 0)');
+    expect(css(saved, 'position', '::before')).toBe('absolute');
+    expect(css(saved, 'position')).toBe('static');
+    expect(css(row, 'position')).toBe('relative');
+    const rowBox = box(row);
+    expect(rowBox.x + rowBox.width).toBeGreaterThanOrEqual(removeBox.x + removeBox.width);
+  });
+});

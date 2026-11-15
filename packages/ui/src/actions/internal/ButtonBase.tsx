@@ -41,7 +41,9 @@ export function ButtonBase({
   ...props
 }: ButtonBaseProps) {
   const content = iconOnly ? (
-    <DecorativeIcon>{icon}</DecorativeIcon>
+    <Slot className="env-button-icon" element="span" layout="row" shrink="never">
+      <DecorativeIcon>{icon}</DecorativeIcon>
+    </Slot>
   ) : (
     <>
       {startIcon != null && (

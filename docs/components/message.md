@@ -130,7 +130,7 @@ Name icon actions after what they do, such as Copy answer.
 - A name for the list, such as Conversation with Sam Lee.
 - `busy` while a reply streams in.
 - Names for icon-only actions, and Try again for a failed message.
-- Scrolling, without moving focus.
+- A height for a list that follows, and scrolling without moving focus for one that doesn't.
 
 ## Compose
 
@@ -172,12 +172,25 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 
 #### Streaming
 
-`busy` on MessageList shows a busy row after the last message, where the reply will show: `busyAuthor`, who the reply comes from, as a message's author, then a quiet spinner and Working in the muted color (`busyLabel`, or `messages.message.working`). It reports `aria-busy` while a reply is on its way or streams in, until it is cleared. The list doesn't scroll by itself: keep the newest message in view yourself, without moving focus.
+`busy` on MessageList shows a busy row after the last message, where the reply will show: `busyAuthor`, who the reply comes from, as a message's author, then a quiet spinner and Working in the muted color (`busyLabel`, or `messages.message.working`). It reports `aria-busy` while a reply is on its way or streams in, until it is cleared.
 
 ```tsx
 <MessageList aria-label="Conversation with Sam Lee" busy={streaming} busyAuthor="Assistant">
   …
 </MessageList>
+```
+
+#### Following the conversation
+
+`follow` makes the list scroll by itself: give it a height, such as the rest of a column above a Composer. It opens at the latest message and keeps it in view while the reader is at the end; once they scroll away and more arrives, a Jump to latest button shows at its foot (`jumpToLatestLabel`, or `messages.message.jumpToLatest`), which scrolls back to the end. Without `follow`, the list grows with its messages and the page scrolls.
+
+```tsx
+<Column style={{ blockSize: '100%' }}>
+  <MessageList aria-label="Conversation with Sam Lee" follow busy={streaming}>
+    …
+  </MessageList>
+  <Composer aria-label="Message Sam Lee" onSend={send} />
+</Column>
 ```
 
 ### Composition
@@ -186,4 +199,4 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 
 ### Customize
 
-The list is `env-message-list`, with `env-message-list-busy` for its busy row, and each message `env-message`, with its author, `env-message-author`, and meta, `env-message-meta`, in its header, then its content, `env-message-content`, its actions, `env-message-actions`, and its status, `env-message-status`.
+The list is `env-message-list`, with `env-message-list-busy` for its busy row and `env-message-list-jump` for the place of its Jump to latest button, and each message `env-message`, with its author, `env-message-author`, and meta, `env-message-meta`, in its header, then its content, `env-message-content`, its actions, `env-message-actions`, and its status, `env-message-status`.

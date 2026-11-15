@@ -17,7 +17,7 @@ export default function AppLogo() {
       start={<Graphic src={logo} alt="" size="sm" />}
       title="Northwind"
       style={{ inlineSize: '100%' }}
-      actions={<AvatarButton name="Alex Morgan" />}
+      end={<AvatarButton name="Alex Morgan" />}
     />
   );
 }

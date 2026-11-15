@@ -1,5 +1,11 @@
 import { useState, type ReactNode } from 'react';
-import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/envui';
+import {
+  Badge,
+  IconButton,
+  NavigationDrawer,
+  type NavigationDrawerDestination,
+} from '@envsemble/envui';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
 
 export const mount = 'standalone';
 
@@ -16,6 +22,24 @@ const longDestinations: NavigationDrawerDestination[] = [
     label: 'Reviews waiting for the whole team',
     href: '#reviews',
     group: 'Shared across the organization',
+  },
+];
+
+/** A page's sections, one with a badge and one with a delete button of its own. */
+const sections: NavigationDrawerDestination[] = [
+  { label: 'Profile', href: '#profile', current: true },
+  { label: 'Notifications and e-mail', href: '#notifications', badge: <Badge>New</Badge> },
+  {
+    label: 'Saved search',
+    href: '#saved',
+    end: (
+      <IconButton
+        icon={<IconDelete />}
+        aria-label="Delete Saved search"
+        size="sm"
+        variant="ghost"
+      />
+    ),
   },
 ];
 
@@ -41,7 +65,7 @@ function Frame({ width, dir, children }: { width: string; dir?: 'rtl'; children:
 /**
  * Resizable drawers: one that keeps its own width, one the application controls in a narrower
  * container, which halves its room, one in right-to-left text, one that isn't resizable, one whose
- * long label and heading it cuts short as it narrows.
+ * long label and heading it cuts short as it narrows; and a page's sections in a narrow column.
  */
 export default function NavigationDrawerFixture() {
   const [width, setWidth] = useState(20);
@@ -81,6 +105,13 @@ export default function NavigationDrawerFixture() {
           minWidth={10}
         />
       </Frame>
+      <div
+        data-testid="narrow-column"
+        style={{ display: 'grid', gridTemplateColumns: '12rem 1fr', blockSize: '12rem' }}
+      >
+        <NavigationDrawer aria-label="Sections" destinations={sections} />
+        <div>Content</div>
+      </div>
     </div>
   );
 }

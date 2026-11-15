@@ -15,18 +15,21 @@ const destinations: Destination[] = [
   { label: 'Shared', icon: <IconFolder />, href: '/shared' },
 ];
 
-export default function TopBarOnThePage() {
+export default function NavigationApart() {
   return (
-    // The drawer keeps its background; background="page" puts the top bar on the page.
     <Scaffold
       scroll="body"
       landmarks={false}
       navigationForms={{ compact: 'none', medium: 'drawer' }}
       style={{ blockSize: '16rem' }}
-      topBar={<TopBar title="Northwind" background="page" />}
+      topBar={<TopBar title="Northwind" />}
       navigation={{
         drawer: (
-          <NavigationDrawer aria-label="Main, top bar on the page" destinations={destinations} />
+          <NavigationDrawer
+            aria-label="Main, set apart"
+            background="default"
+            destinations={destinations}
+          />
         ),
       }}
     >

@@ -150,7 +150,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 ```
 
 1. **Section** (`env-navigation-drawer-branch`)
-2. **Item** (`env-navigation-drawer-branch-row > env-navigation-drawer-item`)
+2. **Item** (`env-navigation-drawer-row > env-navigation-drawer-item`)
 3. **Section button** (`env-navigation-drawer-toggle`)
 4. **Chevron** (`env-navigation-drawer-toggle > env-navigation-drawer-chevron`)
 5. **Nested destinations** (`env-navigation-drawer-children`)
@@ -231,7 +231,7 @@ Keep labels to a word or two, so they fit on one line in the drawer and under th
 
 ### Its own background
 
-Keep a resizable drawer on its own background, so its handle is the edge of a surface.
+A resizable drawer's handle is its edge: in a Scaffold its hairline marks it; elsewhere give the drawer the default surface color.
 
 - Leave a drawer in a sheet of a narrow window at its own width.
 
@@ -293,6 +293,22 @@ Pass the same array to each form. A heading starts each run of destinations of o
 
 A NavigationDrawer destination's `badge` shows at the end of its item, after the label and before any count, such as a status of the page it leads to. It is part of the item's name, so keep it to a word; an item with a `count` is named by its label and count alone. NavigationRail and NavigationBar leave it out.
 
+#### A control at the end of the row
+
+```tsx
+{
+  label: 'Saved search',
+  href: '/saved',
+  end: <IconButton icon={<IconDelete />} aria-label="Delete Saved search" size="sm" variant="ghost" />,
+}
+```
+
+A NavigationDrawer destination's `end` is a control of its own at the end of its row, outside its link or button, such as a delete button or a Menu of its actions; the row's fill reaches under it. NavigationRail and NavigationBar leave it out.
+
+#### A side list of a page's sections
+
+The drawer is `--env-navigation-drawer-width` wide and never wider than its container, so it also lists a page's sections in a narrow column beside them, such as a settings page's, with `aria-label` naming them.
+
 #### Nested sections
 
 ```tsx
@@ -325,7 +341,7 @@ A NavigationRail's `header` holds the main action or a button that opens the nav
 <NavigationBar background="page" aria-label="Project" destinations={destinations} />
 ```
 
-`background` is `default`, the navigation's fill, the same as TopBar's, or `page`, the page's background. `aria-label` names the landmark; give each navigation landmark of a page its own.
+`background` is `page`, the default, the page's background, the same as the content beside it, from which a Scaffold sets the form apart with a hairline; or `default`, the default surface color, the same as TopBar's, a plain rectangle apart from the page. `aria-label` names the landmark; give each navigation landmark of a page its own.
 
 #### Resizable
 
@@ -337,8 +353,8 @@ The example keeps the width in the browser's storage. It reads it once the drawe
 
 ```
 
-A heading cut short takes no focus, so it gives its full text as its `title`. Keep a resizable drawer off `background="page"`, so its handle doesn't float beside the page's content, and leave `resizable` off a drawer in a sheet of a narrow window.
+A heading cut short takes no focus, so it gives its full text as its `title`. Leave `resizable` off a drawer in a sheet of a narrow window.
 
 ### Composition
 
-The parts the anatomy doesn't show: a section's row, `env-navigation-drawer-branch-row`, and the handle on a resizable drawer's end edge, `env-navigation-drawer-resize-handle`, the same grip as Panes.Divider's; the rail's list of destinations, `env-navigation-rail-list`, which scrolls where the rail is shorter; the bar's row of destinations, `env-navigation-bar-list`, and More, `env-navigation-bar-more`. The current item of each has `data-current`, a section's button `aria-expanded`, and a form on the page's background `data-background="page"`.
+The parts the anatomy doesn't show: the row of a destination with controls beside it, `env-navigation-drawer-row`, its badge, `env-navigation-drawer-badge`, and its end, `env-navigation-drawer-end`; the handle on a resizable drawer's end edge, `env-navigation-drawer-resize-handle`, the same grip as Panes.Divider's; the rail's list of destinations, `env-navigation-rail-list`, which scrolls where the rail is shorter; the bar's row of destinations, `env-navigation-bar-list`, and More, `env-navigation-bar-more`. The current item of each has `data-current`, a section's button `aria-expanded`, and every form its background as `data-background`.

@@ -278,11 +278,11 @@ test('selected rows report aria-selected and take the selection colors in both t
     const other = reports.getByRole('row', { name: /Quarterly report/ });
     expect(attribute(selected, 'aria-selected')()).toBe('true');
     expect(attribute(other, 'aria-selected')()).toBe('false');
-    // Three quarters of the selection fill over the table's surface, so wide rows don't outweigh
-    // their content.
+    // Three quarters of the selection fill over the surface the plain table lies on, so wide rows
+    // don't outweigh their content.
     const selection = resolved(
       selected.element(),
-      'color-mix(in oklab, var(--env-color-bg-selected) 75%, var(--env-color-bg-raised))',
+      'color-mix(in oklab, var(--env-color-bg-selected) 75%, var(--env-color-bg-page))',
       'background-color',
     );
     await expect.poll(() => css(selected, 'background-color')).toBe(selection);
@@ -363,7 +363,7 @@ test('a stacking table lists its rows as blocks in a narrow container, two value
     const first = box(rows[0]!);
     const second = box(rows[1]!);
     expect(second.y).toBeGreaterThanOrEqual(first.y + first.height - 1);
-    expect(first.width).toBeCloseTo(box(frame).width - 2, 0);
+    expect(first.width).toBeCloseTo(box(frame).width, 0);
     // The selected row keeps its colors as a block.
     expect(css(stacked.getByRole('row', { name: /design-system\/tokens/ }), 'box-shadow')).toBe(
       `${tokenColor(stacked.element(), '--env-color-fg-on-selected')} 3px 0px 0px 0px inset`,
@@ -668,7 +668,7 @@ test(
       const top = scroller.getBoundingClientRect().top + scroller.clientTop;
       await expect.poll(() => box(plan).y).toBeCloseTo(top, 0);
       // The opaque header covers the rows scrolled beneath it.
-      expect(css(plan, 'background-image')).toContain('gradient');
+      expect(css(plan, 'background-color')).not.toBe('rgba(0, 0, 0, 0)');
     }
     expect(table('Compact light').getByRole('rowheader', { name: 'Total' }).query()).not.toBeNull();
 
@@ -694,3 +694,24 @@ test(
     await wheelOver(300);
   },
 );
+
+test('a table is plain with a hairline under its header, headerBand shades the header, and a filled surface frames it', async () => {
+  mount(fixture);
+  for (const theme of themes) {
+    const plain = region(`Reports ${theme}`).element();
+    expect(css(plain, 'border-top-width')).toBe('0px');
+    expect(css(plain, 'background-color')).toBe('rgba(0, 0, 0, 0)');
+    const plainHeader = header(table(`Reports ${theme}`), 'Report').element();
+    expect(css(plainHeader, 'background-image')).toBe('none');
+    expect(css(plainHeader, 'border-bottom-width')).toBe('1px');
+
+    const banded = header(table(`Band ${theme}`), 'Report').element();
+    expect(css(banded, 'background-image')).toContain('gradient');
+    expect(css(banded, 'border-bottom-width')).toBe('0px');
+
+    const filled = region(`Filled ${theme}`).element();
+    expect(css(filled, 'border-top-width')).not.toBe('0px');
+    expect(css(filled, 'border-top-left-radius')).not.toBe('0px');
+    expect(css(filled, 'background-color')).toBe(tokenColor(filled, '--env-color-bg-raised'));
+  }
+});

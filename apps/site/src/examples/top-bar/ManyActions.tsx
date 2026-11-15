@@ -11,7 +11,7 @@ export default function ManyActions() {
     <TopBar
       title="Northwind"
       style={{ inlineSize: 'min(100%, 22rem)' }}
-      actions={
+      end={
         <>
           <IconButton icon={<IconSearch />} aria-label="Search" variant="ghost" />
           <IconButton icon={<IconShare />} aria-label="Share" variant="ghost" />

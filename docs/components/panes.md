@@ -148,7 +148,7 @@ The application's navigation goes in the [Scaffold](scaffold.md), not in a suppo
 - The supporting sheet as a modal dialog: focus moves in and stays, the rest of the page is inert, and focus returns as it closes.
 - Focus on the back button as the detail opens alone, and on the list's current row as it closes.
 - The divider as a focusable `separator` with its value in rem.
-- Panes.Trigger, which opens the supporting sheet, says whether it is open with `aria-expanded`, and hides while the panes sit side by side.
+- Panes.Trigger, which opens the supporting pane, says whether it is open with `aria-expanded`, and shows while the pane doesn't.
 
 ### You provide
 
@@ -162,9 +162,11 @@ The application's navigation goes in the [Scaffold](scaffold.md), not in a suppo
 
 Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supporting, such as a document and its details, and `list-detail` holds Panes.List and Panes.Detail, such as messages and the one chosen, each pair with an optional Panes.Divider between them.
 
-- Below `splitAt`, the supporting pane is a modal sheet over the main one while `open`, and a list-detail shows the detail instead of the list while `open`.
-- Left uncontrolled, with `defaultOpen`, Panes.Trigger opens the sheet and people close it; a list-detail application keeps `open` itself, setting it as an item is chosen.
+- `open` says whether the supporting pane shows, in every presentation: beside the main pane, or below `splitAt` as a modal sheet over it. `null`, the default, shows it side by side and keeps the sheet closed until people open it. A list-detail shows the detail instead of the list below `splitAt` while `open`.
+- Its close button closes it beside the main pane too, which then takes the room; Panes.Trigger shows then, and takes focus. `closeButton={false}` on Panes.Supporting keeps it open beside the main pane, and the sheet still has one.
+- Left uncontrolled, with `defaultOpen`, Panes.Trigger opens the pane and people close it; a list-detail application keeps `open` itself, setting it as an item is chosen.
 - `onOpenChange` receives the new state and why: `true` with `trigger-press`, and `false` as people close it, with `escape-key`, `close-press`, `outside-press` for the backdrop, or `back-press` for the back button that returns to the list.
+- Each pane takes a `header`, such as a PageHeader or a Toolbar, which stays in view while its content scrolls; the close and back buttons sit in its row.
 
 ```tsx source=SupportingPane
 
@@ -174,8 +176,8 @@ Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supportin
 
 Panes.Supporting and Panes.List take a `label`, which names their region; on Panes.Main and Panes.Detail it is optional, and makes the pane a region landmark, for the panes of a page's main layout.
 
-- Panes.Trigger is a Button, `primary` by default, that opens the supporting sheet and hides while the panes sit side by side.
-- `closeLabel` names the sheet's close button, and `backLabel` the back button: name where it goes, such as Inbox.
+- Panes.Trigger is a Button, `primary` by default, that opens the supporting pane and shows while the pane doesn't.
+- `closeLabel` names the pane's close button, and `backLabel` the back button: name where it goes, such as Inbox.
 - Set `aria-current` on the list's current row.
 
 ```tsx
@@ -226,4 +228,4 @@ Panes.Divider, named by its `label`, Resize panes by default, resizes the suppor
 
 ### Composition
 
-The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `data-open`; the main pane, `env-panes-main`, and the supporting one, `env-panes-supporting`, with its close button, `env-panes-close`, and its backdrop, `env-panes-backdrop`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the list, `env-panes-list`, and the detail, `env-panes-detail`, with its back button, `env-panes-back`; and the divider, `env-panes-divider`. Panes paints no background of its own: the surfaces in its panes do. `name` names the node for dev mode, as `data-env-name`.
+The parts are the root, `env-panes`, with `data-behavior`, `data-split-at`, `data-open` and `data-closed`; the main pane, `env-panes-main`, and the supporting one, `env-panes-supporting`, with its close button, `env-panes-close`, and its backdrop, `env-panes-backdrop`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the list, `env-panes-list`, and the detail, `env-panes-detail`, with its back button, `env-panes-back`; each pane's header row, `env-panes-header`, with the application's header in `env-panes-header-content`, and its content, `env-panes-body`, which scrolls; and the divider, `env-panes-divider`. Panes paints no background of its own: the surfaces in its panes do. `name` names the node for dev mode, as `data-env-name`.

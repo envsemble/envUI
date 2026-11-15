@@ -1,6 +1,6 @@
 ---
 title: TopBar
-summary: The bar at the top of an application or a screen, with its title and actions.
+summary: The bar at the top of an application or a screen, with its title, centered content and actions.
 status: beta
 since: 1.0.0
 category: App frame & layout
@@ -67,13 +67,13 @@ The bar can be the window's own title bar in an installed web app: empty space d
 1. **Bar** (`env-top-bar`)
 2. **Start** (`env-top-bar-start`, `start`)
 3. **Title** (`env-top-bar-title`, `title`)
-4. **Actions** (`env-top-bar-actions`, `actions`)
+4. **End** (`env-top-bar-end`, `end`)
 
 ## Behaviour
 
 ### Adapting to width
 
-The bar never wraps: the title is cut short first, and the start content and actions keep their size.
+The bar never wraps: a title given as text is cut short first, and the start and end content keep their size. Other content in the title or the center decides how it fits.
 
 ```tsx figure=TitleFirstToGo stage=shaded widths="40 20" sweep
 
@@ -117,8 +117,11 @@ The title names the application or the section.
 A TopBar holds, in reading order:
 
 - `start` content before the title, such as a navigation or back IconButton or the application's mark;
-- its `title`, the application's or the section's name, which is no heading and is cut short first;
-- `actions` at the end, such as a search trigger and the account menu.
+- its `title`, the application's or the section's name, which is no heading; text is cut short first;
+- `center` content, centered in the bar, such as a search trigger;
+- `end` content, such as a search trigger and the account menu.
+
+Each holds what you give it without styling it, so a button there keeps its focus ring and its colors.
 
 Put it in a Scaffold's top bar region, which is the banner landmark.
 
@@ -150,7 +153,7 @@ Put it in a Scaffold's top bar region, which is the banner landmark.
   titleBar
   title="Roadmap.md"
   start={<Menubar.Root aria-label="Application menu">…</Menubar.Root>}
-  actions={<IconButton icon={<IconShare />} aria-label="Share" />}
+  end={<IconButton icon={<IconShare />} aria-label="Share" />}
 />
 ```
 
@@ -162,6 +165,6 @@ Put it in a Scaffold's top bar region, which is the banner landmark.
 
 ### Composition
 
-The parts are the bar, `env-top-bar`, its start, `env-top-bar-start`, its title, `env-top-bar-title`, its actions, `env-top-bar-actions`, and the page progress, `env-top-bar-loading-bar`.
+The parts are the bar, `env-top-bar`, its start side, `env-top-bar-lead`, with the start, `env-top-bar-start`, and the title, `env-top-bar-title`; its middle, `env-top-bar-middle`, with the center, `env-top-bar-center`; its end, `env-top-bar-end`; and the page progress, `env-top-bar-loading-bar`.
 
 - Keep the navigation in the Scaffold's navigation region, and two or three actions in the bar, the account last.

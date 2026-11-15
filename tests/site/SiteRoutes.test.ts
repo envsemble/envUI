@@ -95,6 +95,7 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'components/stats/props': 'docs',
     'components/loading': 'docs',
     'components/skeleton': 'docs',
+    'components/empty-state': 'components/empty-state',
     // Old addresses that name a document that is gone open the page it became.
     'overview/get-started?document=dev-mode-overview': 'docs/dev-mode',
     'overview/get-started?document=agent-skills': 'docs?section=coding-agents',

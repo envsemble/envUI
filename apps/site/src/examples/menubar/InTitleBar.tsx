@@ -23,7 +23,7 @@ export default function InTitleBar() {
           </Menubar.Menu>
         </Menubar.Root>
       }
-      actions={<IconButton icon={<IconShare />} aria-label="Share" />}
+      end={<IconButton icon={<IconShare />} aria-label="Share" />}
     />
   );
 }

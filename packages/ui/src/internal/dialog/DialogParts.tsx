@@ -28,12 +28,15 @@ export function OverlayTheme({ className, ...props }: ThemeProps) {
 }
 
 /**
- * The backdrop behind a modal surface, which fades in and out. While it is mounted the surface counts
- * as open in its portal container, so toasts there wait until it has closed.
+ * The backdrop behind a modal surface, which fades in and out. A modal opened from inside another,
+ * such as a Dialog from a Sheet, has one of its own over the one below. While it is mounted the
+ * surface counts as open in its portal container, so toasts there wait until it has closed.
  */
 export function DialogBackdrop({ className }: { className?: string }) {
   useModalPresence(usePortalContainer().container);
-  return <BaseDialog.Backdrop className={classNames('env-dialog-backdrop', className)} />;
+  return (
+    <BaseDialog.Backdrop forceRender className={classNames('env-dialog-backdrop', className)} />
+  );
 }
 
 /**
@@ -81,7 +84,7 @@ export function DialogHeader({
         </Row>
       )}
       {description != null && (
-        <BaseDialog.Description className="env-dialog-description">
+        <BaseDialog.Description render={<div />} className="env-dialog-description">
           {description}
         </BaseDialog.Description>
       )}

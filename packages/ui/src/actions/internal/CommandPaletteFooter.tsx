@@ -1,17 +1,12 @@
 import type { ReactNode } from 'react';
 import { Kbd } from '../../content/Kbd.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import { Row } from '../../layout/Layout.js';
 import type { CommandPaletteHint } from '../CommandPalette.js';
 import '../../styles/Base.css';
-// The options' ListRow.css ties with the palette's rules, so it comes first in any bundle.
 import '../../styles/ListRow.css';
 import '../../styles/CommandPalette.css';
 
-/**
- * CommandPalette's key hints and footer content, below the list; none shows without either. A hint
- * for Enter, alone or with a modifier, chooses the highlighted option: with no option to choose,
- * while results load or when nothing matches, it would promise what can't run, so it hides.
- */
 export function CommandPaletteFooter({
   hints,
   footer,
@@ -34,10 +29,16 @@ export function CommandPaletteFooter({
           className="env-command-palette-hint"
         >
           <Kbd keys={hint.keys} />
-          <span>{hint.label}</span>
+          <Slot className="env-command-palette-hint-label" element="span">
+            {hint.label}
+          </Slot>
         </Row>
       ))}
-      {footer != null && <span className="env-command-palette-footer-content">{footer}</span>}
+      {footer != null && (
+        <Slot className="env-command-palette-footer-content" element="span">
+          {footer}
+        </Slot>
+      )}
     </Row>
   );
 }

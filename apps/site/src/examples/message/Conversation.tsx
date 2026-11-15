@@ -52,8 +52,8 @@ export default function Conversation() {
   }
 
   return (
-    <Column gap={5}>
-      <MessageList aria-label="Conversation with the assistant" busy={replying}>
+    <Column gap={5} style={{ blockSize: '24rem' }}>
+      <MessageList aria-label="Conversation with the assistant" busy={replying} follow>
         {messages.map((entry) => (
           <Message
             key={entry.id}

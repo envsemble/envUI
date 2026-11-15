@@ -44,23 +44,25 @@ export interface TreeItem {
   /** The row's children show, as the rows that follow it in items; its chevron points down. */
   expanded?: boolean;
   /**
-   * The row's text, which names it and ends with an ellipsis where the row is too narrow;
-   * type-ahead matches it where it is a string.
+   * The row's name, which type-ahead matches. It keeps its room before the description and the end,
+   * and ends with an ellipsis only where the row is too narrow for it alone.
    */
-  label: ReactNode;
+  label: string;
   /** A decorative icon before the label, such as a folder or a document, at the control icon size. */
   icon?: ReactNode;
   /**
-   * Muted text after the label, such as a status or a path. It gives way first where the row runs
-   * out of room, and is read with the label.
+   * Muted text after the label, such as a status or a path. It gives way first, to an ellipsis and
+   * then out of the row, where the row runs out of room, and is read with the label.
    */
-  description?: ReactNode;
-  /** Content at the end of the row, such as a Badge with a count; it is read with the label. */
+  description?: string;
+  /**
+   * Content at the end of the row, such as a Badge with a count, which keeps its size. It gives way
+   * to the label: where both don't fit, it leaves the row whole rather than squeeze the name. It
+   * is read with the label.
+   */
   end?: ReactNode;
   /** The row's native tooltip, such as the full path of a truncated name. */
   tooltip?: string;
-  /** The text type-ahead matches, where the label is not a plain string. */
-  textValue?: string;
   /**
    * The row is dimmed and reports aria-disabled: the keyboard still reaches it, but it neither
    * opens nor expands.

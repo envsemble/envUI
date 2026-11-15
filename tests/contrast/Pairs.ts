@@ -384,7 +384,7 @@ const registry: readonly ContrastPair[] = merged([
       '--env-color-bg-primary-emphasis-hover',
       '--env-color-bg-primary-emphasis-pressed',
     ],
-    'Primary buttons, the chosen calendar day and time, the check of a checked checkbox and the thumb of a switch that is on',
+    'The chosen calendar day and time, the check of a checked checkbox and the thumb of a switch that is on',
   ),
   ...nonText(
     '--env-color-border-default-pressed',
@@ -411,24 +411,6 @@ const registry: readonly ContrastPair[] = merged([
     'The thumb of a switch that is off on its track under the pointer and pressed',
   ),
   ...text(
-    '--env-color-fg-default',
-    [
-      [fill, page],
-      ['--env-color-bg-neutral-muted-hover', page],
-      ['--env-color-bg-neutral-muted-pressed', page],
-      [fill, surface],
-      ['--env-color-bg-neutral-muted-hover', surface],
-      ['--env-color-bg-neutral-muted-pressed', surface],
-      [fill, muted],
-      ['--env-color-bg-neutral-muted-hover', muted],
-      ['--env-color-bg-neutral-muted-pressed', muted],
-      [fill, raised],
-      ['--env-color-bg-neutral-muted-hover', raised],
-      ['--env-color-bg-neutral-muted-pressed', raised],
-    ],
-    'Secondary buttons: the fill is translucent, so it is measured on each surface it sits on',
-  ),
-  ...text(
     '--env-color-fg-primary',
     [raised, '--env-color-bg-raised-hover', '--env-color-bg-raised-pressed'],
     'The icon of a pager link',
@@ -442,8 +424,8 @@ const registry: readonly ContrastPair[] = merged([
     ]),
     'Text in the brand’s text color, such as a selected tab’s label or today in a calendar, on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
   ),
-  // An outline button has no fill: its label, in the text color, sits on the surface beneath it,
-  // and on hover and press on the state layer over that surface.
+  // An outline or secondary button has no fill: its label, in the text color, sits on the surface
+  // beneath it, and on hover and press on the state layer over that surface.
   ...text(
     '--env-color-fg-default',
     [page, surface, muted, raised, popup].flatMap((ground) => [
@@ -451,7 +433,7 @@ const registry: readonly ContrastPair[] = merged([
       [layerHover, ground],
       [layerPressed, ground],
     ]),
-    'The label of an outline button and an outline Select trigger, on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
+    'The label of an outline or secondary button and of a Select trigger, on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
   ),
   ...text(
     '--env-color-fg-on-strong',
@@ -469,7 +451,7 @@ const registry: readonly ContrastPair[] = merged([
       '--env-color-bg-accent-strong-hover',
       '--env-color-bg-accent-strong-pressed',
     ],
-    'Button variant="important"',
+    'Primary buttons in the accent tone, at rest, hovered and pressed',
   ),
   ...text(
     '--env-color-fg-on-strong',
@@ -481,13 +463,13 @@ const registry: readonly ContrastPair[] = merged([
     'Primary buttons in the danger tone, at rest, hovered and pressed',
   ),
   ...text(
-    '--env-color-fg-on-emphasis',
+    '--env-color-fg-on-strong',
     [
-      '--env-color-bg-accent-emphasis',
-      '--env-color-bg-accent-emphasis-hover',
-      '--env-color-bg-accent-emphasis-pressed',
+      '--env-color-bg-primary-strong',
+      '--env-color-bg-primary-strong-hover',
+      '--env-color-bg-primary-strong-pressed',
     ],
-    'Primary buttons in the accent tone, at rest, hovered and pressed',
+    'Primary buttons, at rest, hovered and pressed, a saturated fill with a white label in every theme',
   ),
   ...text(
     '--env-color-fg-default',
@@ -529,20 +511,14 @@ const registry: readonly ContrastPair[] = merged([
 
   // Fields.
   ...text('--env-color-fg-default', [field]),
-  ...text('--env-color-fg-muted', [field], 'Labels, placeholders and icons in the field'),
+  ...text('--env-color-fg-muted', [field], 'Placeholders and icons in the field'),
   ...text(
     textFieldAffix,
     [field, page, surface, muted, raised],
     'A prefix or a suffix, quieter than the value, in a field and in a ghost field on any surface',
   ),
-  ...text('--env-color-border-primary-emphasis', [field], 'The label of a focused field'),
-  ...text('--env-color-fg-danger', [field], 'The label and message of an invalid field'),
-  // A field has no fill of its own: its text, label and border sit on the surface beneath it.
-  ...text(
-    '--env-color-fg-primary',
-    [page, surface, muted, raised, popup],
-    'The label of a focused field, on the surface the field sits on',
-  ),
+  ...text('--env-color-fg-danger', [field], 'The message of an invalid field'),
+  // A field has no fill of its own: its text and border sit on the surface beneath it.
   ...nonText(
     '--env-color-border-primary-emphasis',
     [muted, raised],
@@ -551,7 +527,7 @@ const registry: readonly ContrastPair[] = merged([
   ...text(
     '--env-color-fg-danger',
     [page, surface, raised, popup],
-    'The label of an invalid field, on the surface the field sits on',
+    'The message of an invalid field, on the surface the field sits on',
   ),
   ...nonText(
     '--env-color-border-danger-emphasis',
@@ -608,7 +584,7 @@ const registry: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-border-primary-emphasis',
     [page, surface, popup],
-    'The border of a focused field and of the composer, and today’s ring in a calendar',
+    'The border of a focused field, and today’s ring in a calendar',
   ),
   ...nonText(
     '--env-color-border-danger-emphasis',
@@ -762,15 +738,6 @@ const registry: readonly ContrastPair[] = merged([
       row,
     ],
     'A chosen radio, also in a chosen row; a checked checkbox and the track of a switch that is on, also in a list item and a selected table row; check marks in menus and options, also on a selected option under the pointer; the chosen calendar day',
-  ),
-  ...nonText(
-    '--env-color-fg-on-strong',
-    [
-      '--env-color-bg-primary-strong',
-      '--env-color-bg-primary-strong-hover',
-      '--env-color-bg-primary-strong-pressed',
-    ],
-    'White marks on the brand’s strong fill, for applications: envUI’s checked controls take the emphasis fill, which has the same color in light. Not text: in dark the fill keeps 3:1 against the surfaces, which puts white text below 4.5:1',
   ),
 
   // Selection: menus, Select, tabs, navigation, trees, tables.
@@ -1238,34 +1205,15 @@ const registry: readonly ContrastPair[] = merged([
   // The + between the keys in a button's end slot: the button's content color at 80%, decorative,
   // since the keys around it name the shortcut. The keys and any text in the slot are the label's
   // color on no fill of their own, which the button pairs above measure.
-  ...buttonEndSeparator('on-emphasis', [
-    '--env-color-bg-primary-emphasis',
-    '--env-color-bg-primary-emphasis-hover',
-    '--env-color-bg-primary-emphasis-pressed',
-    '--env-color-bg-accent-emphasis',
-    '--env-color-bg-accent-emphasis-hover',
-    '--env-color-bg-accent-emphasis-pressed',
-  ]),
-  ...buttonEndSeparator('control', [
-    [fill, page],
-    ['--env-color-bg-neutral-muted-hover', page],
-    ['--env-color-bg-neutral-muted-pressed', page],
-    [fill, surface],
-    ['--env-color-bg-neutral-muted-hover', surface],
-    ['--env-color-bg-neutral-muted-pressed', surface],
-    [fill, muted],
-    ['--env-color-bg-neutral-muted-hover', muted],
-    ['--env-color-bg-neutral-muted-pressed', muted],
-    [fill, raised],
-    ['--env-color-bg-neutral-muted-hover', raised],
-    ['--env-color-bg-neutral-muted-pressed', raised],
-  ]),
   ...buttonEndSeparator('accent', [
     raised,
     '--env-color-bg-raised-hover',
     '--env-color-bg-raised-pressed',
   ]),
   ...buttonEndSeparator('on-strong', [
+    '--env-color-bg-primary-strong',
+    '--env-color-bg-primary-strong-hover',
+    '--env-color-bg-primary-strong-pressed',
     '--env-color-bg-danger-emphasis',
     '--env-color-bg-danger-emphasis-hover',
     '--env-color-bg-danger-emphasis-pressed',
@@ -1278,10 +1226,18 @@ const registry: readonly ContrastPair[] = merged([
   ]),
   ...buttonEndSeparator('muted', [page, surface, muted, raised]),
   ...buttonEndSeparator('default', [
+    page,
+    surface,
+    muted,
+    raised,
     [layerHover, page],
     [layerPressed, page],
     [layerHover, surface],
     [layerPressed, surface],
+    [layerHover, muted],
+    [layerPressed, muted],
+    [layerHover, raised],
+    [layerPressed, raised],
   ]),
   ...buttonEndSeparator('link', [page, surface, muted, raised]),
   ...buttonEndSeparator('danger', [
@@ -1407,9 +1363,10 @@ const tooltipKeyFill = markedColor('packages/ui/src/styles/Tooltip.css', 'toolti
 
 const derived: Readonly<Record<string, string>> = {
   ...Object.fromEntries(
-    ['on-emphasis', 'control', 'accent', 'on-strong', 'muted', 'default', 'link', 'danger'].map(
-      (label) => [`button-end-separator-${label}`, ofLabel(separator, `--env-color-fg-${label}`)],
-    ),
+    ['accent', 'on-strong', 'muted', 'default', 'link', 'danger'].map((label) => [
+      `button-end-separator-${label}`,
+      ofLabel(separator, `--env-color-fg-${label}`),
+    ]),
   ),
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-primary) 30%, var(--env-color-bg-page))',

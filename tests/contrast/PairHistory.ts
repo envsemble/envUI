@@ -117,6 +117,49 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
     rationale:
       'A badge, counter or diff stat inside a button keeps its own fill and colors, measured where it is drawn on the surfaces, rather than an outline in the button’s label color.',
   })),
+  {
+    pair: '--env-color-border-primary-emphasis on --env-color-bg-field',
+    rationale:
+      'A field’s label sits above the field, in the muted label color, and no longer takes the accent while the field has focus; the focused edge stays measured as a boundary.',
+  },
+  ...['-hover', '-pressed'].flatMap((state) =>
+    [
+      '--env-color-bg-default',
+      '--env-color-bg-muted',
+      '--env-color-bg-page',
+      '--env-color-bg-raised',
+      '--env-color-bg-recessed',
+    ].map((ground) => ({
+      pair: `--env-color-fg-default on --env-color-bg-neutral-muted${state} over ${ground}`,
+      rationale:
+        'A secondary button has no fill: its label sits on the surface, and on the neutral state layer over it while hovered and pressed, measured as an outline button’s.',
+    })),
+  ),
+  ...['', '-hover', '-pressed'].flatMap((state) =>
+    [
+      '--env-color-bg-default',
+      '--env-color-bg-muted',
+      '--env-color-bg-page',
+      '--env-color-bg-raised',
+      '--env-color-bg-recessed',
+    ].map((ground) => ({
+      pair: `button-end-separator-control on --env-color-bg-neutral-muted${state} over ${ground}`,
+      rationale:
+        'A secondary button has no fill and its label is the text color: the + between its keys is measured as the default label’s, on the surfaces and their state layers.',
+    })),
+  ),
+  ...['-hover', '-pressed'].map((state) => ({
+    pair: `--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis${state}`,
+    rationale:
+      'A primary button in the accent tone takes the accent strong fill with a white label in every theme, measured as --env-color-fg-on-strong on it, so it is a solid fill in dark too.',
+  })),
+  ...['primary', 'accent'].flatMap((tone) =>
+    ['', '-hover', '-pressed'].map((state) => ({
+      pair: `button-end-separator-on-emphasis on --env-color-bg-${tone}-emphasis${state}`,
+      rationale:
+        'Primary buttons take the strong fills with a white label in every theme, so the + between their keys is measured as the on-strong label’s, on the strong fills.',
+    })),
+  ),
 ];
 
 /**
@@ -1852,6 +1895,32 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     to: 'badge-outline-primary on --env-color-bg-primary-emphasis',
     rationale: 'The brand emphasis fill is the primary emphasis fill.',
   },
+  {
+    from: '--env-color-border-accent-emphasis on --env-color-bg-field',
+    to: '--env-color-border-primary-emphasis on --env-color-bg-field',
+    rationale:
+      'The blue roles are primary, and the purple of accent actions is accent: one meaning for a tone on every component.',
+  },
+  // The separator on the primary fill, since dropped, was renamed from the brand fill first.
+  ...['', '-hover', '-pressed'].map((state) => ({
+    from: `button-end-separator-on-emphasis on --env-color-bg-brand-emphasis${state}`,
+    to: `button-end-separator-on-emphasis on --env-color-bg-primary-emphasis${state}`,
+    rationale: 'The brand emphasis fill is the primary emphasis fill.',
+  })),
+  // A secondary button's fill and its separator's, since dropped, were renamed onto the recessed
+  // surface first.
+  ...['-hover', '-pressed'].map((state) => ({
+    from: `--env-color-fg-default on --env-color-bg-neutral-muted${state} over catalogue-canvas`,
+    to: `--env-color-fg-default on --env-color-bg-neutral-muted${state} over --env-color-bg-recessed`,
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  })),
+  ...['', '-hover', '-pressed'].map((state) => ({
+    from: `button-end-separator-control on --env-color-bg-neutral-muted${state} over catalogue-canvas`,
+    to: `button-end-separator-control on --env-color-bg-neutral-muted${state} over --env-color-bg-recessed`,
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  })),
 ];
 
 /**

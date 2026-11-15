@@ -193,7 +193,7 @@ export function RichTextEditor({
         )}
         <FieldFrame
           id={metadata.id}
-          floatingLabel
+          controlBox
           multiline
           variant={variant}
           renderControlBox={renderControlBox}

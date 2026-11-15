@@ -1,33 +1,32 @@
 @layer env.components {
-  /* Drawer, the navigation drawer: a column of destinations on the navigation's background, a plain
+  /* Drawer, the navigation drawer: a column of destinations on the page's background, a plain
      rectangle, each a rounded rectangle as wide as the drawer with its icon, label and count, under
      the headings of their groups. It keeps its header and footer in view and scrolls its list. Every placement is
      logical, so it follows the text direction. */
   .env-navigation-drawer {
-    /* The drawer is as wide as its longest destination, within these bounds. */
-    --_navigation-drawer-min-width: 15rem;
-    --_navigation-drawer-max-width: 20rem;
     box-sizing: border-box;
-    inline-size: fit-content;
-    min-inline-size: var(--_navigation-drawer-min-width);
-    max-inline-size: var(--_navigation-drawer-max-width);
+    inline-size: var(--env-navigation-drawer-width);
+    min-inline-size: 0;
+    max-inline-size: 100%;
     block-size: 100%;
     min-block-size: 0;
     padding: var(--env-space-3);
-    /* The navigation's background, the default surface color; on a surface, such as a Sheet's, the
-       surface's color rather than a second fill on it. */
-    background: var(--_surface-color, var(--env-color-bg-default));
+    /* The page's background, the same as the content beside it; on a surface, such as a Sheet's,
+       the surface's color rather than a second fill on it. */
+    background: var(--_surface-color, var(--env-color-bg-page));
     color: var(--env-color-fg-default);
   }
-  /* background="page": the page's background, so the drawer sits on the page; on a surface, the
-     surface's color. */
-  .env-navigation-drawer[data-background='page'] {
-    background: var(--_surface-color, var(--env-color-bg-page));
+  /* background="default": the default surface color, so the drawer stands apart from the page; on a
+     surface, the surface's color. */
+  .env-navigation-drawer[data-background='default'] {
+    background: var(--_surface-color, var(--env-color-bg-default));
   }
   .env-navigation-drawer-header,
   .env-navigation-drawer-footer {
+    display: flex;
     flex: none;
-    min-inline-size: 0;
+    flex-direction: column;
+    gap: var(--env-space-2);
   }
   .env-navigation-drawer-footer {
     margin-block-start: auto;
@@ -66,15 +65,14 @@
     font: var(--env-font-weight-semibold) var(--env-font-size-body-sm) / 1.4 var(--env-font-family);
     overflow-wrap: break-word;
   }
-  /* resizable: the drawer is --env-navigation-drawer-width wide, which the component sets with its bounds, and
-     never more than half its container, such as the Scaffold, or of the window. The resize handle
+  /* resizable: the drawer is --env-navigation-drawer-width wide, which the component sets with its
+     largest width, and never more than half its container, such as the Scaffold, or of the window. The resize handle
      (ResizeHandle.css) runs down its end edge, inside it, so nothing overflows the column that holds
      it: the same handle as between Panes, a grip at its middle and never a line. It is as wide as the
      drawer's padding, so it leaves the destinations alone, and under a coarse pointer wider, a touch
      target across the edge. */
   .env-navigation-drawer[data-resizable] {
     position: relative;
-    inline-size: var(--env-navigation-drawer-width);
     max-inline-size: min(var(--_navigation-drawer-max-width), 50cqi);
   }
   /* A resizable drawer keeps each label and heading on one line, so its items keep their height as
@@ -180,7 +178,8 @@
     border: 0;
     /* The indicator's medium corner, as on the rail's and the bar's. */
     border-radius: var(--env-radius-md);
-    background: var(--_navigation-drawer-item-custom-fill, transparent);
+    --_navigation-drawer-item-fill: var(--_navigation-drawer-item-custom-fill, transparent);
+    background: var(--_navigation-drawer-item-fill);
     /* Muted, under the group headings in the text color; a section's heading is an item too. */
     color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted));
     font: var(--env-font-weight-body) var(--env-font-size-body) / 1.4 var(--env-font-family);
@@ -216,7 +215,7 @@
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
-  .env-navigation-drawer-item:not([data-current]) .env-icon {
+  .env-navigation-drawer-item:not([data-current]) > .env-icon {
     color: var(--_navigation-drawer-item-icon-color, var(--env-color-fg-muted));
   }
   /* Hover and press fill the item and gain contrast on its muted label, as muted text that responds
@@ -224,26 +223,41 @@
   .env-navigation-drawer-item:hover {
     --_navigation-drawer-item-layer: calc(var(--env-state-hover-opacity) * 100%);
     color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted-hover));
-    background: var(--_navigation-drawer-item-custom-fill, var(--env-color-bg-navigation-hover));
+    --_navigation-drawer-item-fill: var(
+      --_navigation-drawer-item-custom-fill,
+      var(--env-color-bg-navigation-hover)
+    );
   }
   .env-navigation-drawer-item:active {
     --_navigation-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
     color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted-pressed));
-    background: var(--_navigation-drawer-item-custom-fill, var(--env-color-bg-navigation-pressed));
+    --_navigation-drawer-item-fill: var(
+      --_navigation-drawer-item-custom-fill,
+      var(--env-color-bg-navigation-pressed)
+    );
   }
   /* The current destination takes the selected fill, or the application's selected and
      selected-content, with lighter state layers, as the designed selected fills are close together. */
   .env-navigation-drawer-item[data-current] {
     color: var(--env-navigation-drawer-item-selected-content, var(--env-color-fg-on-selected));
-    background: var(--_navigation-drawer-item-selected-fill, var(--env-color-bg-selected));
+    --_navigation-drawer-item-fill: var(
+      --_navigation-drawer-item-selected-fill,
+      var(--env-color-bg-selected)
+    );
   }
   .env-navigation-drawer-item[data-current]:hover {
     --_navigation-drawer-item-layer: calc(var(--env-state-hover-opacity) * 75%);
-    background: var(--_navigation-drawer-item-selected-fill, var(--env-color-bg-selected-hover));
+    --_navigation-drawer-item-fill: var(
+      --_navigation-drawer-item-selected-fill,
+      var(--env-color-bg-selected-hover)
+    );
   }
   .env-navigation-drawer-item[data-current]:active {
     --_navigation-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
-    background: var(--_navigation-drawer-item-selected-fill, var(--env-color-bg-selected-pressed));
+    --_navigation-drawer-item-fill: var(
+      --_navigation-drawer-item-selected-fill,
+      var(--env-color-bg-selected-pressed)
+    );
   }
   .env-navigation-drawer-item:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
@@ -262,7 +276,7 @@
   }
   .env-navigation-drawer-branch:has(
     > .env-navigation-drawer-item > .env-navigation-drawer-label:not(:first-child),
-    > .env-navigation-drawer-branch-row
+    > .env-navigation-drawer-row
       > .env-navigation-drawer-item
       > .env-navigation-drawer-label:not(:first-child)
   ) {
@@ -270,19 +284,38 @@
       var(--env-control-icon-size) + var(--env-space-3) + var(--env-space-4)
     );
   }
-  .env-navigation-drawer-branch-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+  .env-navigation-drawer-row {
+    position: relative;
+    isolation: isolate;
+    display: flex;
     align-items: start;
+    min-inline-size: 0;
+    border-radius: var(--env-radius-md);
   }
-  .env-navigation-drawer-branch-row > .env-navigation-drawer-item {
-    grid-area: 1 / 1 / 2 / 3;
-    /* The label and the count keep clear of the button over the item's end. */
-    padding-inline-end: calc(var(--_navigation-drawer-toggle-size) + var(--env-space-2));
+  .env-navigation-drawer-row > .env-navigation-drawer-item {
+    position: static;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    background: transparent;
+  }
+  .env-navigation-drawer-row > .env-navigation-drawer-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: calc(var(--env-z-base) - var(--env-z-raised));
+    border-radius: inherit;
+    background: var(--_navigation-drawer-item-fill);
+    pointer-events: none;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-navigation-drawer-end {
+    align-self: center;
+    gap: var(--env-space-1);
+    margin-inline-end: var(--env-space-1);
   }
   .env-navigation-drawer-toggle {
     box-sizing: border-box;
-    grid-area: 1 / 2;
+    flex: none;
     display: inline-grid;
     place-items: center;
     inline-size: var(--_navigation-drawer-toggle-size);
@@ -297,7 +330,7 @@
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* Over the current destination, the button takes its content color. */
-  .env-navigation-drawer-branch-row:has(> [data-current]) > .env-navigation-drawer-toggle {
+  .env-navigation-drawer-row:has(> [data-current]) > .env-navigation-drawer-toggle {
     color: var(--env-navigation-drawer-item-selected-content, var(--env-color-fg-on-selected));
   }
   .env-navigation-drawer-toggle:hover {
@@ -391,6 +424,7 @@
   /* Under a reduced-motion preference, fills change and sections open and close at once. */
   @media (prefers-reduced-motion: reduce) {
     .env-navigation-drawer-item,
+    .env-navigation-drawer-item::before,
     .env-navigation-drawer-toggle,
     .env-navigation-drawer-children {
       transition: none;
@@ -415,6 +449,9 @@
     }
     .env-navigation-drawer-item:active {
       transform: scale(0.98);
+    }
+    .env-navigation-drawer-row > .env-navigation-drawer-item:active {
+      transform: none;
     }
   }
   /* Forced colors: the system paints no fills, so an edge at its end sets the drawer apart from the
@@ -448,6 +485,7 @@
      for the current one, whether it is a link or a button. */
   .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
     .env-navigation-drawer-item {
+    --_navigation-drawer-item-fill: transparent;
     border-color: transparent;
     box-shadow: none;
     background: transparent;

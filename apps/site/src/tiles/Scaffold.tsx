@@ -64,10 +64,7 @@ export default function ScaffoldTile() {
       landmarks={false}
       navigationForms={{ compact: 'bar', medium: 'bar', expanded: 'bar', large: 'bar' }}
       topBar={
-        <TopBar
-          title={current}
-          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
-        />
+        <TopBar title={current} end={<IconButton icon={<IconSearch />} aria-label="Search" />} />
       }
       navigation={{ bar: <NavigationBar destinations={destinations} /> }}
     >

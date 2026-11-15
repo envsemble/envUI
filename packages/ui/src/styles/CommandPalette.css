@@ -135,42 +135,21 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  /* The empty state, in place of the list: one muted line at an option's height and inset, as a
-     combobox says it has no options, so the palette keeps about its height as results come and go.
-     An icon an application passes sits where an option's icon does; the description follows the
-     title after a dot. */
   .env-command-palette-status[data-empty] {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    min-block-size: var(--env-control-height-md);
     margin-block-start: var(--_popup-group-gap);
-    padding: var(--env-space-1) var(--_popup-row-padding-inline);
-    color: var(--env-color-fg-muted);
-    font: var(--env-font-weight-body) var(--env-font-size-body) / 1.35 var(--env-font-family);
-    overflow-wrap: break-word;
-  }
-  .env-command-palette-empty-icon {
-    display: inline-flex;
-    flex: none;
-    margin-inline-end: var(--_popup-row-gap);
-  }
-  .env-command-palette-empty-icon > .env-icon {
-    inline-size: var(--env-control-icon-size);
-    block-size: var(--env-control-icon-size);
-  }
-  .env-command-palette-empty-description {
-    margin-inline-start: var(--env-space-1);
-    text-wrap: pretty;
-  }
-  .env-command-palette-empty-description::before {
-    content: '·' / '';
-    margin-inline-end: var(--env-space-1);
   }
   /* The footer stands apart from the options by space, its small muted text and its keys, with no
      line. */
   .env-command-palette-footer {
-    /* Its keys are the rows' muted chips, side by side. */
+    flex: 0 0 auto;
+    padding: var(--_popup-group-gap) var(--_popup-row-padding-inline)
+      calc(0.1 * var(--env-control-height-md));
+    gap: var(--env-space-1) var(--env-space-4);
+    color: var(--env-color-fg-muted);
+    font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
+  }
+  /* Each hint's keys stand as close to what they do as to one another. */
+  .env-command-palette-hint {
     --_kbd-size: calc(0.5 * var(--env-control-height-md));
     --_kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
     --_kbd-radius: calc(0.125 * var(--env-control-height-md));
@@ -181,15 +160,6 @@
     --_kbd-font-size: var(--env-font-size-caption);
     --_kbd-separator-padding-inline: calc(0.0625 * var(--env-control-height-md));
     --_kbd-separator-font: 0 / 1 var(--env-font-family);
-    flex: 0 0 auto;
-    padding: var(--_popup-group-gap) var(--_popup-row-padding-inline)
-      calc(0.1 * var(--env-control-height-md));
-    gap: var(--env-space-1) var(--env-space-4);
-    color: var(--env-color-fg-muted);
-    font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
-  }
-  /* Each hint's keys stand as close to what they do as to one another. */
-  .env-command-palette-hint {
     gap: calc(0.125 * var(--env-control-height-md));
   }
   /* The application's own footer content flows as text after the hints. */
@@ -203,7 +173,7 @@
     .env-command-palette-item {
       min-block-size: var(--env-control-height-touch);
     }
-    .env-command-palette-item .env-list-row-end :is(.env-kbd, .env-kbd-combination),
+    .env-command-palette-item .env-list-row-end:has(> :is(.env-kbd, .env-kbd-combination)),
     .env-command-palette-hint,
     .env-command-palette-footer:not(:has(.env-command-palette-footer-content)) {
       display: none;

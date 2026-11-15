@@ -69,11 +69,12 @@ test("a slot sizes what it holds: an icon slot any child to its icon size, and T
     expectSize(slot, icon, testId);
     expectSameBox(box(child(testId, '.env-icon > *')), slot, testId);
   }
-  // A list row's start isn't an icon slot, but an icon or a picture in it takes a leading icon's
-  // size there.
-  const leading = length('var(--env-icon-size-lg)');
-  for (const testId of ['list-svg', 'list-img', 'list-graphic'])
-    expectSize(box(child(testId, '.env-list-item-start > *')), leading, testId);
+  // A list row's start isn't an icon slot, but a Graphic in it takes a leading icon's size there.
+  expectSize(
+    box(child('list-graphic', '.env-list-item-start > *')),
+    length('var(--env-icon-size-lg)'),
+    'list-graphic',
+  );
 
   for (const [testId, token] of [
     ['top-bar-graphic', 'var(--env-picture-size-sm)'],

@@ -7,7 +7,7 @@ export default function AppTopBar() {
     <TopBar
       start={<IconButton icon={<IconArrowBack />} aria-label="Back to projects" variant="ghost" />}
       title="Website refresh"
-      actions={
+      end={
         <>
           <IconButton icon={<IconSearch />} aria-label="Search" variant="ghost" />
           <AvatarButton name="Alex Morgan" />

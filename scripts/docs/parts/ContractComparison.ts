@@ -80,7 +80,9 @@ export function removedParts(
 ) {
   const now = contractNames(after);
   const kept = contractClasses(after);
-  const major = (Array.isArray(changesets) ? changesets : [changesets]).filter(recordsBreakingChange);
+  const major = (Array.isArray(changesets) ? changesets : [changesets]).filter(
+    recordsBreakingChange,
+  );
   /** Whether a part, attribute or value is still there, in this group or another. */
   const stays = (item: ContractItem) => {
     if (item.part) return kept.classes.has(item.part);

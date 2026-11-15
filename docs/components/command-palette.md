@@ -240,12 +240,12 @@ Each CommandPaletteItem has an `id` and a `label`, with `textValue` for a label 
 
 `suggestedItems` show while the field is empty, or holds only spaces, in place of `items`, such as recent documents or suggested pages with a `group` heading; they are options like any other, highlighted, chosen with <kbd>Enter</kbd> or <kbd>Ctrl</kbd>+<kbd>Enter</kbd> and passed to `onAction`.
 
-With no options, the empty state shows in place of the list as the polite status: one muted line at an option's height, its title and then its description after a dot, so the palette keeps about its height as results come and go.
+With no options, the empty state shows in place of the list as the polite status: an [EmptyState](empty-state.md), its icon above its title and then its description.
 
 - While the field is empty: Type to search, with no description; `emptyDescription` says what the palette finds.
 - When the text finds nothing: No results, and a hint that quotes the trimmed text.
 - While results load: the loading label, with a spinner at the search field's end, which also shows while results already found stay.
-- `emptyLabel` and `emptyDescription` replace the title and the description in either state, `null` or `false` hiding the description, and `emptyIcon` puts an icon at the start of the line, where an option's sits, such as an error icon. Pass a value that depends on the query to change one state only.
+- `emptyLabel` and `emptyDescription` replace the title and the description in either state, `null` or `false` hiding the description, and `emptyIcon` puts an icon above the title, such as an error icon. Pass a value that depends on the query to change one state only.
 - The icon is decorative and hidden from assistive technology; the title and description are announced.
 
 ```tsx
@@ -359,7 +359,7 @@ In a narrow header, the button is an IconButton with `variant="ghost"`, `aria-la
 
 ### Composition
 
-The palette is `env-command-palette`: its search field, `env-command-palette-search`, a large ghost [TextField](text-field.md) kept solid on the frosted palette, with its input, `env-command-palette-input`, and the close button shown under a coarse pointer, `env-command-palette-close`, in `env-command-palette-header`, the group headings, `env-command-palette-group-label`, the items, `env-command-palette-item`, the key hints in `env-command-palette-footer`, and the empty state, `env-command-palette-status` with `data-empty`: its icon, `env-command-palette-empty-icon`, title, `env-command-palette-empty-title`, and description, `env-command-palette-empty-description`. `className`, `style`, `ref` and data attributes reach the surface.
+The palette is `env-command-palette`: its search field, `env-command-palette-search`, a large ghost [TextField](text-field.md) kept solid on the frosted palette, with its input, `env-command-palette-input`, and the close button shown under a coarse pointer, `env-command-palette-close`, in `env-command-palette-header`, the group headings, `env-command-palette-group-label`, the items, `env-command-palette-item`, the key hints in `env-command-palette-footer`, and the empty state, an EmptyState in `env-command-palette-status` with `data-empty`. `className`, `style`, `ref` and data attributes reach the surface.
 
 The button that opens it is Button's: `env-button`, its icon, `env-button > env-icon`, its label, and the keys in its end slot, `env-button-end`. The icon-only button is an `env-icon-button` in a tooltip.
 

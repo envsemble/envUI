@@ -29,7 +29,7 @@ export default function BadgeFixture({ theme }: { theme: ColorScheme }) {
               <div key={variant} className="fixture-actions">
                 {tones.map((tone) => (
                   <Badge key={tone} tone={tone} variant={variant} data-testid="badge">
-                    {tone} {variant}
+                    {`${tone} ${variant}`}
                   </Badge>
                 ))}
               </div>

@@ -28,6 +28,7 @@ import { ColorChangeContext } from './internal/colorChange.js';
 import { useColorState, useFormResetOf } from './internal/useColorState.js';
 import { formatColor, sameColor, toColor, type ColorFormat } from './internal/colorValue.js';
 import { flag } from '../../internal/flag.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import '../../styles/Base.css';
 import '../../styles/ColorPicker.css';
 
@@ -194,7 +195,7 @@ export function ColorPicker({
         )}
         {description != null && (
           <div id={`${id}-description`} className="env-color-picker-description">
-            {description}
+            <Slot className="env-color-picker-description-content">{description}</Slot>
           </div>
         )}
         {error != null && (

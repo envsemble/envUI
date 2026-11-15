@@ -40,7 +40,7 @@ export function SmallApplication({ fixedColumns = false }: { fixedColumns?: bool
       scroll="body"
       landmarks={false}
       style={windowBox}
-      topBar={<TopBar title="Northwind" actions={<AvatarButton name="Alex Morgan" />} />}
+      topBar={<TopBar title="Northwind" end={<AvatarButton name="Alex Morgan" />} />}
       navigation={{
         bar: <NavigationBar destinations={destinations} />,
         rail: <NavigationRail destinations={destinations} />,

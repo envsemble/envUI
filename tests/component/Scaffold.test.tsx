@@ -266,8 +266,9 @@ describe('Scaffold document scroll', { tags: ['engines'] }, () => {
     const side = box(drawer);
     expect(side.y).toBeCloseTo(0, 0);
     expect(side.height).toBeCloseTo(700, 0);
-    // A sticky page header sits under the top bar.
-    expect(box(header).y).toBeCloseTo(top.y + top.height, 0);
+    // A sticky page header sits under the top bar's region, its hairline included.
+    const region = box(element('.env-scaffold-top-bar'));
+    expect(box(header).y).toBeCloseTo(region.y + region.height, 0);
   });
 
   test('the bar sticks to the bottom, and a top bar across the width keeps the rail under it', async () => {

@@ -49,11 +49,6 @@ test('entered text keeps the body size with a mouse, and is 16 px on touch scree
 
     mount(affixes);
     const scope = page.getByTestId('affixes-light');
-    // A label resting in an empty field stands in for its text, so it takes the same size.
-    const address = [...scope.element().querySelectorAll('label')].find((label) =>
-      label.textContent?.includes('Address'),
-    )!;
-    expect(fontSize(address)).toBe('16px');
     const price = scope.getByRole('textbox', { name: 'Price', exact: true }).element();
     expect(fontSize(price)).toBe('16px');
     expect(fontSize(price.parentElement!.querySelector('.env-text-field-prefix')!)).toBe('16px');

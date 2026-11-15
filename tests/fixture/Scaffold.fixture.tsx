@@ -92,7 +92,7 @@ export default function ScaffoldFixture() {
             <TopBar
               start={<IconButton icon={<IconMenu />} aria-label="Open navigation" />}
               title="Inbox"
-              actions={
+              end={
                 <>
                   <IconButton icon={<IconSearch />} aria-label="Search" />
                   <IconButton icon={<IconSettings />} aria-label="Settings" />

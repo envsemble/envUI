@@ -72,6 +72,7 @@
 @import './Sheet.css';
 @import './Toast.css';
 @import './Alert.css';
+@import './EmptyState.css';
 @import './Popover.css';
 @import './Avatar.css';
 @import './Tooltip.css';

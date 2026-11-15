@@ -1,0 +1,51 @@
+@layer env.components {
+  .env-empty-state {
+    --_empty-state-measure: 36rem;
+    box-sizing: border-box;
+    display: grid;
+    flex: 1 1 auto;
+    justify-items: center;
+    align-content: center;
+    inline-size: 100%;
+    min-block-size: 100%;
+    padding: var(--env-space-4);
+    container: env-empty-state / inline-size;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body);
+    text-align: center;
+    overflow-wrap: break-word;
+  }
+  .env-empty-state-icon {
+    --env-icon-size: var(--env-icon-size-lg);
+    margin-block-end: var(--env-space-2);
+  }
+  .env-empty-state-heading {
+    max-inline-size: 100%;
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body);
+    font-weight: var(--env-font-weight-medium);
+    text-wrap: balance;
+  }
+  .env-empty-state-description {
+    max-inline-size: min(100%, var(--_empty-state-measure));
+    margin-block-start: var(--env-space-1);
+  }
+  .env-empty-state-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--env-space-2);
+    margin-block-start: var(--env-space-3);
+  }
+  @container env-empty-state (width >= 24rem) {
+    .env-empty-state-icon {
+      --env-icon-size: calc(2 * var(--env-icon-size-lg));
+      margin-block-end: var(--env-space-4);
+    }
+    .env-empty-state-heading {
+      font: var(--env-type-title);
+    }
+    .env-empty-state-actions {
+      margin-block-start: var(--env-space-5);
+    }
+  }
+}

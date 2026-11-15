@@ -7,7 +7,7 @@
   /* The field's height, as TextField sets it: its size's control height, and the touch height under a
      coarse pointer. */
   .env-combobox {
-    --_field-height: max(var(--env-control-height), var(--_text-field-least, 0rem));
+    --_field-height: var(--env-control-height);
   }
   @media (pointer: coarse) {
     .env-combobox {
@@ -16,7 +16,7 @@
   }
   /* The control box lays out the chosen option's leading content, the chips and the text input in
      rows. Its padding keeps one row as tall as a TextField of its size, and leaves room for the
-     actions at its end. While one row tall it is a pill; wrapped chips keep the same rounded ends. */
+     actions at its end. */
   .env-combobox .env-combobox-control {
     --_combobox-row: 1.375rem;
     --_combobox-action: max(
@@ -62,12 +62,6 @@
       min-inline-size: var(--env-space-2);
       field-sizing: content;
     }
-  }
-  /* The chips and the value's leading content sit as far below the middle as the input does in a
-     short field with a visible label (TextField.css). */
-  .env-combobox .env-combobox-control > :is(.env-combobox-chip, .env-combobox-start) {
-    position: relative;
-    inset-block-start: var(--_text-field-value-shift, 0);
   }
   .env-combobox .env-combobox-control > .env-combobox-input:read-only {
     cursor: default;

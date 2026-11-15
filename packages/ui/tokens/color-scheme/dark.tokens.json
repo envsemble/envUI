@@ -205,24 +205,24 @@
       "primary": {
         "emphasis": {
           "$root": {
-            "$value": "{palette.blue.20}"
+            "$value": "{palette.blue.30}"
           },
           "hover": {
-            "$value": "{palette.blue.13}"
+            "$value": "{palette.blue.25}"
           },
           "pressed": {
-            "$value": "{palette.blue.25}"
+            "$value": "{palette.blue.35}"
           }
         },
         "strong": {
           "$root": {
-            "$value": "{palette.blue.40}"
+            "$value": "{palette.blue.55}"
           },
           "hover": {
-            "$value": "{palette.blue.45}"
+            "$value": "{palette.blue.50}"
           },
           "pressed": {
-            "$value": "{palette.blue.50}"
+            "$value": "{palette.blue.60}"
           }
         },
         "subtle": {

@@ -105,6 +105,7 @@ export * from './content/Composer.js';
 
 // feedback/ (Feedback): alerts, progress and toasts.
 export * from './feedback/Alert.js';
+export * from './feedback/EmptyState.js';
 export * from './feedback/Spinner.js';
 export * from './feedback/Progress.js';
 export { ToastProvider, type ToastProviderProps } from './feedback/toast/ToastProvider.js';

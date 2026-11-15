@@ -249,7 +249,7 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 #### Sticky header and loading
 
-`stickyHeader` makes the region scroll vertically, so give it a height through `regionClassName` or its layout. `skeleton` shows the table as its own skeleton over placeholder rows until they arrive, without the selection's fill or bar.
+A table is plain: a hairline under its header and between its rows, with no frame or fill; under a Theme with `surface="filled"` it lies on a rounded raised surface. `headerBand` sets the header row on a shaded band instead of the hairline. `stickyHeader` makes the region scroll vertically, so give it a height through `regionClassName` or its layout. `skeleton` shows the table as its own skeleton over placeholder rows until they arrive, without the selection's fill or bar.
 
 #### Stacked rows
 

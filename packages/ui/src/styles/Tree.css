@@ -64,11 +64,15 @@
     inset-block-start: 0;
     inset-inline: 0;
     block-size: var(--_tree-item-height);
+    --_tree-lead: calc(var(--_tree-icon-size) + var(--env-space-1));
     display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
     align-items: center;
     gap: var(--env-space-1);
     padding-inline: calc(var(--env-space-1) + var(--_tree-depth, 0) * var(--_tree-indent))
       var(--env-space-2);
+    overflow: clip;
     border-radius: var(--env-radius-sm);
     cursor: pointer;
     user-select: none;
@@ -113,9 +117,11 @@
   .env-tree-item[aria-disabled='true']:is(:hover, :active) {
     background: transparent;
   }
+  /* The chevron is as tall as the row, so the row's first line is: what doesn't fit on it, the end
+     before the label, wraps to a second line outside the row, which leaves the row whole. */
   .env-tree-chevron {
     inline-size: var(--_tree-icon-size);
-    block-size: var(--_tree-icon-size);
+    block-size: 100%;
     flex: 0 0 auto;
     display: grid;
     place-items: center;
@@ -123,7 +129,7 @@
   }
   .env-tree-chevron .env-icon {
     inline-size: 100%;
-    block-size: 100%;
+    block-size: var(--_tree-icon-size);
     transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-tree-chevron:dir(rtl) .env-icon {
@@ -136,24 +142,37 @@
     transform: scaleX(-1) rotate(90deg);
   }
   .env-tree .env-tree-icon {
+    flex: 0 0 auto;
     inline-size: var(--_tree-icon-size);
     block-size: var(--_tree-icon-size);
     color: var(--env-color-fg-muted);
   }
+  .env-tree-item:has(> .env-tree-icon) {
+    --_tree-lead: calc(2 * (var(--_tree-icon-size) + var(--env-space-1)));
+  }
   .env-tree-item[aria-selected='true'] :is(.env-tree-icon, .env-tree-chevron) {
     color: inherit;
   }
+  /* The label keeps its room: at most the row's width after the chevron and the icon, so it is never
+     the part that leaves the line, and it ends with an ellipsis only beyond that. The selected
+     row's label is medium, as the neutral selection is close to a hovered row. */
   .env-tree-label {
     min-inline-size: 0;
+    max-inline-size: calc(100% - var(--_tree-lead));
     flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  /* The detail gives way to the label when space runs out. It keeps more room from the label than
-     the row's other parts, so it never reads as part of the name. */
+  .env-tree-item[aria-selected='true'] .env-tree-label {
+    font-weight: var(--env-font-weight-medium);
+  }
+  /* The detail takes only the room the label and the end leave, so it never pushes the end out, and
+     gives way first. It keeps more room from the label than the row's other parts, so it never
+     reads as part of the name. */
   .env-tree-description {
     min-inline-size: 0;
-    flex: 0 1000 auto;
+    max-inline-size: max-content;
+    flex: 1 1 0;
     margin-inline-start: var(--env-space-2);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -161,10 +180,7 @@
     font: var(--env-type-body-sm);
   }
   .env-tree-end {
-    flex: 0 0 auto;
     margin-inline-start: auto;
-    display: inline-flex;
-    align-items: center;
     gap: var(--env-space-1);
     padding-inline-start: var(--env-space-2);
   }

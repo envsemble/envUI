@@ -16,7 +16,7 @@
     inherits: false;
   }
   .env-select {
-    --_field-height: max(var(--env-control-height), var(--_text-field-least, 0rem));
+    --_field-height: var(--env-control-height);
     /* prettier-ignore */
     --_text-field-well: var(--env-select-container, var(--env-text-field-container, transparent));
     --_text-field-text: var(
@@ -110,14 +110,7 @@
   .env-select-placeholder {
     color: var(--env-color-fg-muted);
   }
-  /* Like an input's placeholder, it waits while the label rests inside the empty field. A field
-     without a label, named by aria-label, shows it. */
-  .env-select:not([data-label-hidden])
-    .env-select-control:has(> label):not([data-label-floating], :focus-within)
-    .env-select-placeholder {
-    color: transparent;
-  }
-  .env-select-control > .env-select-label {
+  .env-select > .env-select-label {
     cursor: pointer;
   }
   /* The chevron shows what the field opens; presses on it reach the field. */

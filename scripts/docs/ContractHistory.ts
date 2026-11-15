@@ -15,7 +15,7 @@ export const bumpsLibrary = (changeset: string) =>
   );
 
 /** Whether a changeset's front matter makes it a major change of @envsemble/envui. */
-export const isMajor = (changeset: string) =>
+const isMajor = (changeset: string) =>
   /^---\r?\n[\s\S]*?^\s*['"]?@envsemble\/envui['"]?\s*:\s*major\s*$[\s\S]*?^---/m.test(changeset);
 
 export const recordsBreakingChange = (changeset: string) =>

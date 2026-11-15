@@ -102,6 +102,14 @@ examples:
 | Text            | Neutral (link blue), danger  | A link-like action, underlined where needed.                              |
 | Primary, accent | Accent                       | The main action, where it must stand apart from the brand blue around it. |
 
+### Shape and fill
+
+Every variant has the corners every control shares, which follow the theme's corners, as fields do.
+
+A secondary button is a quiet edge with no fill. A primary button is a solid fill under a white label in every theme.
+
+A toggle that is on takes the selection fill, gray unless the theme's selection is accent.
+
 ### Tones
 
 Only the main action and links are blue: the neutral tone keeps each variant's own color, and the danger tone colors the label, or a primary's fill.
@@ -138,9 +146,9 @@ A button takes an icon at its start or its end. An IconButton shows an icon alon
 
 A ButtonGroup joins related buttons in a row or a column.
 
-- It joins buttons of one variant, or filled primary and secondary buttons, such as a split button.
+- It joins buttons of one variant, or primary and secondary buttons, such as a split button.
 - A split button's menu half takes the main half's variant and tone, and shows a chevron. The hairline between the halves then reads as one action with its options, not two actions.
-- A group that mixes an outline, ghost or text button with another variant keeps them apart as whole pills, such as an outline Back beside a primary Next.
+- A group that mixes an outline, ghost or text button with another variant keeps them apart as whole buttons, such as an outline Back beside a primary Next.
 
 ```tsx figure=ConnectedButtons
 
@@ -169,7 +177,7 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 
 Hover, press, keyboard focus and disabled, for each variant.
 
-- Keyboard focus draws a ring just outside the button. On an outline button the ring lies on its edge, which takes the ring's color; in dark, a primary button's ring takes the text color, apart from its soft blue fill.
+- Keyboard focus draws a ring just outside the button. On an outline or secondary button the ring lies on its edge, which takes the ring's color.
 - A text button's ring reaches a little past its label, which stays in line with the text around it.
 
 <!-- specimen: InteractionStates -->

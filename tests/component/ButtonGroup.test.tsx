@@ -22,24 +22,25 @@ function buttons(group: Locator) {
 test('corners connect along the row or column, past hidden and removed buttons, and full width', async () => {
   mount(fixture);
   const scope = page.getByTestId('button-groups-light');
-  // Inside a row the buttons connect at their inline ends, inside a column at their block ends.
+  const standalone = Number.parseFloat(
+    css(scope.getByTestId('standalone'), 'border-top-left-radius'),
+  );
+  // Inside a row the buttons connect at their inline ends, inside a column at their block ends,
+  // and keep a lone button's corners at the group's ends.
   for (const orientation of ['horizontal', 'vertical']) {
     const group = scope.getByTestId(orientation);
     await expect.element(group).toHaveAttribute('role', 'group');
     const row = buttons(group);
     expect(row).toHaveLength(5);
     row.forEach(({ corners }, index) => {
-      const start = index === 0 ? 20 : 4;
-      const end = index === row.length - 1 ? 20 : 4;
+      const start = index === 0 ? standalone : 4;
+      const end = index === row.length - 1 ? standalone : 4;
       expect(corners).toEqual(
         orientation === 'horizontal' ? [start, end, start, end] : [start, start, end, end],
       );
     });
   }
 
-  const standalone = Number.parseFloat(
-    css(scope.getByTestId('standalone'), 'border-top-left-radius'),
-  );
   expect(buttons(scope.getByTestId('single'))[0]!.corners).toEqual(Array(4).fill(standalone));
   // A lone accent icon button keeps its round corners.
   expect(buttons(scope.getByTestId('single-important'))[0]!.corners).toEqual(
@@ -55,14 +56,14 @@ test('corners connect along the row or column, past hidden and removed buttons, 
   await toggle.click();
   await expect
     .poll(() => buttons(scope.getByTestId('dynamic'))[0]!.corners)
-    .toEqual([20, 4, 20, 4]);
+    .toEqual([standalone, 4, standalone, 4]);
 
   const row = scope.getByTestId('horizontal');
   row.element().setAttribute('dir', 'rtl');
   const rtl = buttons(row);
   expect(rtl[0]!.x).toBeGreaterThan(rtl[1]!.x);
   const continueButton = row.getByRole('button', { name: 'Continue' });
-  expect(css(continueButton, 'border-top-right-radius')).toBe('20px');
+  expect(css(continueButton, 'border-top-right-radius')).toBe(`${standalone}px`);
   expect(css(continueButton, 'border-top-left-radius')).toBe('4px');
 
   // A full-width group fills its container, where its labelled button takes the room.

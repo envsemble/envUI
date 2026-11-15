@@ -297,6 +297,7 @@
     "--env-radio-container",
     "--env-radio-content",
     "--env-radio-selected",
+    "--env-radius-control",
     "--env-radius-full",
     "--env-radius-lg",
     "--env-radius-md",

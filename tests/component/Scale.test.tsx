@@ -136,8 +136,8 @@ test('every control of a size has its height in each scale, a tab counter centre
 });
 
 test('labelled outline and ghost fields share one height per size in each scale', async () => {
-  // Fields that show their labels, outline and ghost, are as tall as a button of their size at md
-  // and lg, and take the md height at sm, so the floated label and the value each keep room.
+  // Fields that show their labels, above them, outline and ghost, are as tall as a button of their
+  // size at every size.
   await openSection('sizes');
   for (const scale of densityScales)
     for (const size of controlSizes) {
@@ -146,12 +146,8 @@ test('labelled outline and ghost fields share one height per size in each scale'
       )!;
       const boxes = controlBoxes(row);
       expect(boxes.length).toBe(6);
-      const field = Math.max(heights[scale][size], heights[scale].md);
       expect(boxes, `${scale} ${size}`).toEqual(
-        boxes.map(({ name }, index) => ({
-          name,
-          height: index === 0 ? heights[scale][size] : field,
-        })),
+        boxes.map(({ name }) => ({ name, height: heights[scale][size] })),
       );
     }
 });
@@ -325,15 +321,17 @@ test('on a coarse pointer every control of a row is as tall, and at least the to
           touchHeights[scale][size],
         );
       }
-    // A ButtonGroup's corners stay round at the touch height.
+    // A ButtonGroup's outer corners stay the control corners at the touch height.
+    const rem = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
     const corners = [
       ...document.querySelectorAll('.env-button-group > .env-button:first-child'),
     ].map((button) => ({
       radius: Number.parseFloat(getComputedStyle(button).borderStartStartRadius),
-      half: button.getBoundingClientRect().height / 2,
+      control:
+        Number.parseFloat(getComputedStyle(button).getPropertyValue('--env-radius-control')) * rem,
     }));
     expect(corners).toHaveLength(6);
-    for (const { radius, half } of corners) expect(radius).toBe(half);
+    for (const { radius, control } of corners) expect(radius).toBeCloseTo(control, 1);
     // AvatarButton grows to the touch height around a small avatar.
     mount(adoption);
     const avatar = page.getByRole('button', { name: 'Open account menu' });

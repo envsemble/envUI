@@ -3,7 +3,7 @@ import { Column, Panes, Text } from '@envsemble/envui';
 import { IconInfo } from '@envsemble/envui/icons/Info';
 
 export default function DetailsButton() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean | null>(null);
   return (
     // Side by side from a medium width; narrower, the details are a sheet, which the button in
     // the main pane opens.

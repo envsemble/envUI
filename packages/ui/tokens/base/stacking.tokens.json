@@ -20,11 +20,11 @@
       "$value": 30
     },
     "backdrop": {
-      "$description": "The backdrop behind a modal layer, which covers the page and the frame.",
+      "$description": "A backdrop in the page that covers the page and the frame, under the modal layers, such as the one behind a supporting pane's sheet fixed to the window.",
       "$value": 90
     },
     "modal": {
-      "$description": "Modal layers over their backdrop: dialogs, sheets and the command palette.",
+      "$description": "Modal layers and their backdrops: dialogs, sheets and the command palette. Each draws its backdrop and then its surface at this level, in the order they open, so one opened over another, such as a Dialog from a Sheet, covers it, backdrop included.",
       "$value": 100
     },
     "popup": {

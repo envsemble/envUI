@@ -1,6 +1,5 @@
 // Message and MessageList, rendered on the server: a conversation is a polite log of articles with
-// their authors, status and actions, which reports when it is busy; and the style sheet's sizes
-// and edges for the actions.
+// their authors, status and actions, which reports when it is busy.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -57,15 +56,12 @@ test('a conversation is a polite log of articles with authors, status and action
   assert.deepEqual(byClass(messages[1], 'env-message-author').map(textOf), ['Aurora']);
   assert.deepEqual(byClass(messages[1], 'env-message-meta').map(textOf), ['09:41']);
   // Plain text keeps its line breaks.
-  const [plain] = byClass(messages[0], 'env-message-content');
+  const [plain] = byClass(messages[0], 'env-message-text');
   assert.equal(textOf(plain), 'Summarize the report\nand list the risks.');
-  assert.equal(plain.attributes['data-text'], '');
   assert.ok(
     css.some(
       ({ selector, prop, value }) =>
-        selector === '.env-message-content[data-text]' &&
-        prop === 'white-space' &&
-        value === 'pre-wrap',
+        selector === '.env-message-text' && prop === 'white-space' && value === 'pre-wrap',
     ),
   );
 
@@ -110,7 +106,7 @@ test('a busy log reports it while a reply streams in', () => {
   );
 });
 
-test('actions without a variant or size of their own are small ghost buttons, the touch height on a coarse pointer', () => {
+test('actions without a variant or size of their own are small ghost buttons', () => {
   const message = render(
     h(
       Message,
@@ -131,31 +127,4 @@ test('actions without a variant or size of their own are small ghost buttons, th
     assert.equal(button.attributes['data-variant'], 'ghost');
     assert.equal(button.attributes['data-size'], 'sm');
   }
-  // The actions take the small control height, which a coarse pointer raises to the touch height,
-  // and a text icon action at the edge lines its icon up with the message through Button's edge
-  // hooks; the sizes themselves are Scale's.
-  const declared = (selector, prop) =>
-    css.find((each) => each.selector === selector && each.prop === prop)?.value;
-  assert.equal(
-    declared('.env-message-actions', '--env-control-height'),
-    'var(--env-control-height-sm)',
-  );
-  assert.deepEqual(
-    css.filter((each) => each.prop === '--_message-action-height').map((each) => each.value),
-    [
-      'var(--env-control-height)',
-      'max(var(--env-control-height), var(--env-control-height-touch))',
-    ],
-  );
-  for (const [from, edge] of [
-    ['self', 'end'],
-    ['other', 'start'],
-  ])
-    assert.match(
-      declared(
-        `.env-message[data-from='${from}'] > .env-message-actions, .env-message[data-from='${from}'] > .env-skeleton-content > .env-message-actions`,
-        `--_button-text-icon-edge-${edge}`,
-      ),
-      /var\(--env-control-icon-size\) - var\(--_message-action-height\)/,
-    );
 });

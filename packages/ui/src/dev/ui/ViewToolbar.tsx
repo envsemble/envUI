@@ -14,7 +14,6 @@ import { Slider } from '../../forms/Slider.js';
 import { Switch } from '../../forms/Switch.js';
 import { Column, Grid, Row } from '../../layout/Layout.js';
 import { Surface } from '../../layout/Surface.js';
-import { Text } from '../../foundations/Text.js';
 import { IconFilterAlt } from '../../icons/FilterAlt.js';
 import { IconInfo } from '../../icons/Info.js';
 import { IconLabel } from '../../icons/Label.js';
@@ -295,13 +294,6 @@ function ResponsiveMenu({
   );
 }
 
-/** A secondary label, quiet and small. */
-const Quiet = ({ children }: { children: ReactNode }) => (
-  <Text variant="body-sm" render={<span />}>
-    {children}
-  </Text>
-);
-
 /** View settings: the levels shown and their spacing, and the performance panel. */
 function ViewSettings({
   levels,
@@ -322,7 +314,7 @@ function ViewSettings({
     >
       <Column gap={3}>
         <Slider
-          label={<Quiet>Spacing between levels</Quiet>}
+          label="Spacing between levels"
           min={0}
           max={160}
           value={spacing}
@@ -330,7 +322,7 @@ function ViewSettings({
           formatValue={(value) => `${value} px`}
         />
         <Slider
-          label={<Quiet>From level</Quiet>}
+          label="From level"
           min={0}
           max={Math.max(1, most)}
           value={from}
@@ -339,7 +331,7 @@ function ViewSettings({
           }
         />
         <Slider
-          label={<Quiet>To level</Quiet>}
+          label="To level"
           min={0}
           max={Math.max(1, most)}
           value={to}

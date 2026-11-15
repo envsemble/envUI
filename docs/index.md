@@ -93,6 +93,7 @@ On a page, Compose holds the code, and Accessibility's **You provide** what the 
 ## Feedback
 
 - [Alert](components/alert.md)
+- [EmptyState](components/empty-state.md)
 - [Toast](components/toast.md)
 - [Progress](components/progress.md)
 - [Spinner](components/spinner.md)

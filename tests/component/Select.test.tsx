@@ -250,12 +250,10 @@ test(
 test('a small Select has a small trigger, and its popup has the menus anatomy with a check mark', async () => {
   const compact = select('Compact plan');
   const standard = select('Plan');
-  // The field's well, with its edge, is as tall as the control height, and at least the md height
-  // while its label shows: a small one, of 2 rem, takes 2.5 rem.
-  const compactBox = box(well(compact));
-  expect(compactBox.height).toBeCloseTo(40, 0);
-  expect(compactBox.height).toBeCloseTo(box(well(standard)).height, 0);
-  // Without a visible label, a small select keeps the small height, and a smaller chevron.
+  // The field's well, with its edge, is as tall as the control height of its size, its label
+  // above it or hidden: a small one is 2 rem tall, with a smaller chevron.
+  expect(box(well(compact)).height).toBeCloseTo(32, 0);
+  expect(box(well(standard)).height).toBeCloseTo(40, 0);
   const unlabelled = select('Compact unlabelled plan');
   expect(box(well(unlabelled)).height).toBeCloseTo(32, 0);
   expect(box(chevron(unlabelled)).width).toBeLessThan(box(chevron(standard)).width);

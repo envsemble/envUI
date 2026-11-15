@@ -112,22 +112,22 @@ export interface CommandPaletteProps extends Omit<
    */
   loadingLabel?: ReactNode;
   /**
-   * The empty state's title, the start of the one muted line shown in place of the list when there
-   * are no options, and announced.
+   * The title of the EmptyState shown in place of the list when there are no options, and
+   * announced.
    * @default 'Type to search' while the search field is empty and 'No results' when its text
    * finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty
    */
   emptyLabel?: ReactNode;
   /**
-   * Text after the empty state's title on its line, such as what the palette searches; null or
+   * The empty state's description below its title, such as what the palette searches; null or
    * false shows none.
    * @default None while the search field is empty; when its text finds nothing, 'Nothing matches
    * “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint
    */
   emptyDescription?: ReactNode;
   /**
-   * A decorative icon at the start of the empty state's line, in an option's icon place, such as
-   * an error icon when the search failed; none by default.
+   * A decorative icon above the empty state's title, such as an error icon when the search
+   * failed; none by default.
    */
   emptyIcon?: ReactNode;
   /**
@@ -233,7 +233,7 @@ export function CommandPalette({
                   <Row align="center" gap={2} className="env-command-palette-header">
                     <FieldFrame
                       id={searchId}
-                      floatingLabel
+                      controlBox
                       variant="ghost"
                       size="lg"
                       startIcon={<IconSearch />}

@@ -227,6 +227,8 @@
     --_panel-dock-heading-min-width: 10rem;
     flex: 1 1 var(--_panel-dock-heading-min-width);
     gap: calc(var(--env-space-1) / 2);
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
     /* Long words break only where they would overflow the line. */
     overflow-wrap: break-word;
   }
@@ -239,14 +241,10 @@
     );
     margin: 0;
     padding-block-start: var(--_panel-dock-title-inset);
+    color: var(--env-color-fg-default);
     font: var(--env-type-headline);
     letter-spacing: var(--env-type-headline-letter-spacing);
     overflow-wrap: break-word;
-  }
-  .env-panel-dock-meta {
-    min-inline-size: 0;
-    color: var(--env-color-fg-muted);
-    font: var(--env-type-body-sm);
   }
   .env-panel-dock-actions,
   .env-panel-dock-controls {

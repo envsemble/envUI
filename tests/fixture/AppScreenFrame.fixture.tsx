@@ -139,7 +139,7 @@ export function AppFrame({
       topBar={
         <TopBar
           title="Northwind"
-          actions={
+          end={
             <>
               <Tooltip content="Search" side="bottom">
                 <IconButton

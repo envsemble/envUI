@@ -6,6 +6,26 @@
     max-inline-size: 100%;
     overflow-wrap: break-word;
   }
+  .env-message-list[data-follow] {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  .env-message-list[data-follow]:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
+  }
+  .env-message-list-jump {
+    position: sticky;
+    inset-block-end: var(--env-space-3);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    block-size: 0;
+    margin-block-start: calc(-1 * var(--env-space-5));
+  }
   /* While busy, a reply on its way, where it will show: its author, as a message's header, then a
      small spinner and Working in the muted color. */
   .env-message-list-busy {
@@ -24,14 +44,12 @@
   .env-message-header {
     align-items: baseline;
     column-gap: var(--env-space-2);
+    color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
   }
   .env-message-author {
     color: var(--env-color-fg-default);
     font-weight: var(--env-font-weight-medium);
-  }
-  .env-message-meta {
-    color: var(--env-color-fg-muted);
   }
   .env-message[data-from='other'] > .env-message-content,
   .env-message[data-from='other'] > .env-skeleton-content > .env-message-content {
@@ -48,7 +66,7 @@
     background: var(--env-color-bg-neutral-muted);
   }
   /* Plain text keeps the line breaks it was written with. */
-  .env-message-content[data-text] {
+  .env-message-text {
     white-space: pre-wrap;
   }
   .env-message[data-from='self'][data-status='failed'] > .env-message-content,
@@ -56,12 +74,6 @@
     > .env-skeleton-content
     > .env-message-content {
     box-shadow: inset 0 0 0 1px var(--env-color-border-danger);
-  }
-  .env-message-content > :first-child {
-    margin-block-start: 0;
-  }
-  .env-message-content > :last-child {
-    margin-block-end: 0;
   }
   .env-message-status {
     /* The spinner takes the status's color, through its hook. */
@@ -72,32 +84,14 @@
   .env-message[data-status='failed'] .env-message-status {
     color: var(--env-color-fg-danger);
   }
-  /* Actions are small text and icon buttons; on coarse pointers they grow to the touch height. */
   .env-message-actions {
-    --env-control-height: var(--env-control-height-sm);
-    /* The height the actions draw at, which a coarse pointer raises to the touch height. */
-    --_message-action-height: var(--env-control-height);
+    flex-wrap: wrap;
     justify-self: stretch;
+    gap: var(--env-space-1);
   }
-  /* A text icon action at the edge lines its icon up with the message, not its round hit area,
-     through Button's edge hooks. */
   .env-message[data-from='self'] > .env-message-actions,
   .env-message[data-from='self'] > .env-skeleton-content > .env-message-actions {
-    --_button-text-icon-edge-end: calc(
-      (var(--env-control-icon-size) - var(--_message-action-height)) / 2
-    );
     justify-content: flex-end;
-  }
-  .env-message[data-from='other'] > .env-message-actions,
-  .env-message[data-from='other'] > .env-skeleton-content > .env-message-actions {
-    --_button-text-icon-edge-start: calc(
-      (var(--env-control-icon-size) - var(--_message-action-height)) / 2
-    );
-  }
-  @media (pointer: coarse) {
-    .env-message-actions {
-      --_message-action-height: max(var(--env-control-height), var(--env-control-height-touch));
-    }
   }
 
   /* An author or meta given as undefined, as over a placeholder item, takes no room outside a

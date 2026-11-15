@@ -9,7 +9,8 @@ import {
 } from 'react';
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../layout/Layout.js';
+import { Grid } from '../layout/Layout.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { SkeletonStatus } from '../foundations/SkeletonScope.js';
 import { Text } from '../foundations/Text.js';
 import {
@@ -49,9 +50,10 @@ export interface RootProps extends ComponentPropsWithRef<'ul'>, SkeletonProps {
 const reorderableProp = 'data-env-reorderable';
 
 /**
- * A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as
- * `<Surface background="muted" padding={3}>`, the rows take the raised fill, so they stand out
- * from it. With onReorder, people move the rows by their handles.
+ * A `ul` of rows. Plain by default: no fill, hairlines between the rows and their text in line with
+ * the content around the list. Under a Theme with `surface="filled"`, the rows are tiles joined into
+ * one block with shared outer corners, and in a muted Surface that holds only lists they take the
+ * raised fill, so they stand out from it. With onReorder, people move the rows by their handles.
  */
 function Root({
   density = 'md',
@@ -114,8 +116,10 @@ function markReorderable(children: ReactNode): ReactNode {
 
 export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
   /**
-   * The row's main text, such as an item's name; a link marked `data-row-target` in an interactive
-   * row. Undefined, such as over a placeholder item, a skeleton shows a bar in its place.
+   * The row's name, in the row's text color, such as an item's name, or in an interactive row a
+   * link or text Button marked `data-row-target`, which then reads in the row's text color too. It
+   * takes the room the row leaves and wraps; it is never cut short. Undefined, such as over a
+   * placeholder item, a skeleton shows a bar in its place.
    */
   label: ReactNode;
   /**
@@ -124,11 +128,11 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
    */
   description?: ReactNode;
   /**
-   * Content at the end of the row, such as a Button or a Switch; it moves below the text when it
-   * doesn't fit.
+   * Content at the end of the row, such as a Button, a Switch or a Badge, which keeps its size; it
+   * moves below the text when it doesn't fit beside it.
    */
   end?: ReactNode;
-  /** More content after the label and the description, such as a Badge. */
+  /** More content under the label and the description, such as a row of Badges, placed as given. */
   children?: ReactNode;
   /**
    * The row opens something through a link or button inside: it reacts to hover, keyboard focus
@@ -137,9 +141,9 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
    */
   interactive?: boolean;
   /**
-   * The current row, such as the one whose details show beside a list: the selected fill, and
-   * `aria-current="true"` on its `data-row-target` element in the label, description or children,
-   * or on the row without one.
+   * The current row, such as the one whose details show beside a list: the selected fill and medium
+   * text, and `aria-current="true"` on its `data-row-target` element in the label, description or
+   * children, or on the row without one.
    * @default false
    */
   current?: boolean;
@@ -194,7 +198,6 @@ const itemLayout = rowAttributes({ wrap: true, align: 'center', justify: 'betwee
  * reorderable row needs the browser.
  */
 function Item(props: ItemProps) {
-  // markReorderable adds the private prop, which ItemProps does not list.
   const {
     label,
     description,
@@ -210,7 +213,6 @@ function Item(props: ItemProps) {
     ...rest
   } = props as ItemProps & { [reorderableProp]?: boolean };
   const hasDescription = description != null || given(props, 'description');
-  // The current row says so on its target, which people reach and hear, or on the row itself.
   let targetMarked = false;
   const mark = (node: ReactNode) => {
     if (!current || targetMarked || node == null) return node;
@@ -239,19 +241,24 @@ function Item(props: ItemProps) {
       {inSkeleton(
         skeleton,
         <>
-          {hasStart && (
-            <Row align="center" gap={2} className="env-list-item-start">
-              {reorderable && <ListReorderHandle textValue={text} />}
+          {reorderable && <ListReorderHandle textValue={text} />}
+          {start != null && (
+            <Slot className="env-list-item-start" layout="row" shrink="never">
               {start}
-            </Row>
+            </Slot>
           )}
           <div className="env-list-item-content">
-            {/* A missing label, as over a placeholder item, is an empty line: a bar in a skeleton. */}
-            {shownLabel ?? <Text render={<span />} variant="body-sm" />}
-            {hasDescription && <small>{shownDescription}</small>}
-            {shownChildren}
+            <Slot className="env-list-item-label">
+              {shownLabel ?? <Text render={<span />} variant="body-sm" />}
+            </Slot>
+            {hasDescription && <div className="env-list-item-description">{shownDescription}</div>}
+            {shownChildren != null && <Slot className="env-list-item-extra">{shownChildren}</Slot>}
           </div>
-          {end}
+          {end != null && (
+            <Slot className="env-list-item-end" layout="row" shrink="never">
+              {end}
+            </Slot>
+          )}
         </>,
       )}
     </li>

@@ -32,6 +32,7 @@ import { useResizableWidth } from '../internal/resize/useResizableWidth.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { flag } from '../internal/flag.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { keepTabInside, useSupportingSheet } from './internal/useSupportingSheet.js';
 import '../styles/Base.css';
 import '../styles/Panes.css';
@@ -46,8 +47,8 @@ export type Behavior = 'supporting' | 'list-detail';
 export type SplitAt = 'medium' | 'expanded' | 'large';
 
 /**
- * Why Panes asks to open or close what `open` shows below `splitAt`: Escape, the supporting
- * sheet's close button, a press on its backdrop, the detail's back button, or Panes.Trigger.
+ * Why Panes asks to open or close what `open` shows: Escape, the supporting pane's close button, a
+ * press on the sheet's backdrop, the detail's back button, or Panes.Trigger.
  */
 export type OpenChangeReason = Extract<
   OverlayOpenChangeReason,
@@ -76,27 +77,29 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    */
   splitAt?: SplitAt;
   /**
-   * Below `splitAt`: whether the supporting sheet is open, or the detail shows instead of the
-   * list, for Panes the application controls with onOpenChange, such as a list-detail that opens
-   * the detail as an item is chosen. Side by side, both panes show whatever it is.
+   * Whether the supporting pane shows, in every presentation: beside the main pane, or as a sheet
+   * over it below `splitAt`. null, until people open or close it, shows it where the panes sit
+   * side by side and keeps the sheet closed. In list-detail Panes, whether the detail shows instead
+   * of the list below `splitAt`, such as one that opens the detail as an item is chosen; side by
+   * side both panes show. For Panes the application controls with onOpenChange.
    */
-  open?: boolean;
+  open?: boolean | null;
   /**
-   * Whether uncontrolled Panes start with the supporting sheet open, or the detail shown, below
-   * `splitAt`. Panes.Trigger opens the sheet, and Escape, the close button, the backdrop and the
-   * back button close what shows.
-   * @default false
+   * Whether uncontrolled Panes start with the supporting pane shown, as `open` says, or the detail
+   * shown below `splitAt`. Panes.Trigger opens the supporting pane, and Escape, the close button,
+   * the backdrop and the back button close what shows.
+   * @default null
    */
-  defaultOpen?: boolean;
+  defaultOpen?: boolean | null;
   /**
-   * Called with the new state, and why: true when Panes.Trigger opens the supporting sheet, and
-   * false when people close what `open` shows below `splitAt`: Escape, the close button or a press
-   * on the backdrop closes the supporting sheet, and the back button returns from the detail to the
-   * list.
+   * Called with the new state, and why: true when Panes.Trigger opens the supporting pane, and
+   * false when people close what `open` shows: the close button closes the supporting pane beside
+   * the main pane or as a sheet, and Escape or a press on the backdrop closes the sheet; the back
+   * button returns from the detail to the list.
    */
   onOpenChange?: (open: boolean, details: OpenChangeDetails) => void;
   /**
-   * The name of the supporting sheet's close button, which shows only while the pane is a sheet.
+   * The name of the supporting pane's close button.
    * @default 'Close', or EnvUIProvider's messages.panes.close
    */
   closeLabel?: string;
@@ -157,7 +160,17 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
   children: ReactNode;
 }
 
-export interface MainProps extends ComponentPropsWithRef<'div'> {
+/** What every pane holds: a header that stays in view, and the content, which scrolls under it. */
+interface PaneContentProps {
+  /**
+   * The top of the pane, which stays in view while the pane's content scrolls, such as a
+   * PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit
+   * in its row.
+   */
+  header?: ReactNode;
+}
+
+export interface MainProps extends ComponentPropsWithRef<'div'>, PaneContentProps {
   /**
    * Names the pane, which makes it a region landmark that people can jump to, such as Documents.
    * Name the panes of a page's main layout; leave small panes unnamed.
@@ -168,7 +181,7 @@ export interface MainProps extends ComponentPropsWithRef<'div'> {
 /** Panes.Detail's props: Panes.Main's, with its optional name. */
 export type DetailProps = MainProps;
 
-export interface ListProps extends ComponentPropsWithRef<'div'> {
+export interface ListProps extends ComponentPropsWithRef<'div'>, PaneContentProps {
   /** Names the pane's region, such as Projects. */
   label: string;
 }
@@ -177,9 +190,17 @@ export interface ListProps extends ComponentPropsWithRef<'div'> {
  * The supporting pane: named, and a skeleton while what it holds loads. It stays busy and keeps
  * focus, as a sheet must, while its content is the skeleton, and inert.
  */
-export interface SupportingProps extends ComponentPropsWithRef<'div'>, SkeletonProps {
+export interface SupportingProps
+  extends ComponentPropsWithRef<'div'>, SkeletonProps, PaneContentProps {
   /** Names the pane's region, such as Details. */
   label: string;
+  /**
+   * Shows the close button beside the main pane too, so people can close the pane in every
+   * presentation; as a sheet the pane always shows it. false keeps the pane beside the main one
+   * open, for a pane people never close there.
+   * @default true
+   */
+  closeButton?: boolean;
 }
 
 export interface DividerProps extends Omit<
@@ -195,7 +216,7 @@ export interface DividerProps extends Omit<
 
 interface PanesContextValue {
   behavior: Behavior;
-  open: boolean;
+  open: boolean | null;
   close: (reason: OpenChangeReason) => void;
   /** Opens the supporting pane, or the detail. */
   show: () => void;
@@ -206,6 +227,8 @@ interface PanesContextValue {
   /** The pane the divider resizes, which it names in aria-controls. */
   resizedId: string;
   listRef: RefObject<HTMLDivElement | null>;
+  /** Panes.Trigger, which takes focus as the pane closes beside the main one. */
+  triggerRef: RefObject<HTMLButtonElement | null>;
 }
 
 const PanesContext = createContext<PanesContextValue | null>(null);
@@ -240,15 +263,16 @@ function roomFor(divider: HTMLElement) {
  * Two panes side by side, after Material's pane patterns, and how they behave in less room: a main
  * pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time.
  * Invisible structure that never paints, except the supporting pane while it is a sheet, which is
- * modal. Its own width decides, in CSS: it is the env-panes container. Each pane scrolls on its own
- * when Panes has a height, as in a Scaffold's body that scrolls; an optional Panes.Divider resizes
- * them.
+ * modal. Its own width decides, in CSS: it is the env-panes container. One state says whether the
+ * supporting pane shows, which every presentation follows: its close button closes it beside the
+ * main pane as well as as a sheet. Each pane's content scrolls on its own under its header when
+ * Panes has a height, as in a Scaffold's body that scrolls; an optional Panes.Divider resizes them.
  */
 function Root({
   behavior,
   splitAt = 'expanded',
   open: controlledOpen,
-  defaultOpen = false,
+  defaultOpen = null,
   onOpenChange,
   backLabel,
   closeLabel,
@@ -295,7 +319,7 @@ function Root({
     if (kept !== undefined) restore(kept);
   }, [persist, restore]);
 
-  const [open, setOpen] = useControllableState({
+  const [open, setOpen] = useControllableState<boolean | null, boolean, [OpenChangeDetails]>({
     value: controlledOpen,
     defaultValue: defaultOpen,
     onChange: onOpenChange,
@@ -304,6 +328,7 @@ function Root({
   const show = useCallback(() => setOpen(true, { reason: 'trigger-press' }), [setOpen]);
   const resizedId = `${useId()}-resized`;
   const listRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const context = useMemo<PanesContextValue>(
     () => ({
       behavior,
@@ -315,6 +340,7 @@ function Root({
       divider: resize.handleProps,
       resizedId,
       listRef,
+      triggerRef,
     }),
     [behavior, open, close, show, backLabel, closeLabel, resize.handleProps, resizedId],
   );
@@ -328,7 +354,8 @@ function Root({
         data-env-name={name}
         data-behavior={behavior}
         data-split-at={splitAt}
-        data-open={flag(open)}
+        data-open={flag(open === true)}
+        data-closed={flag(behavior === 'supporting' && open === false)}
       >
         {children}
         {behavior === 'supporting' && (
@@ -345,21 +372,54 @@ function Root({
   );
 }
 
+/**
+ * A pane's header row, which stays in view: the controls Panes gives the pane, such as the back
+ * button, and the application's header.
+ */
+function PaneHeader({
+  header,
+  before,
+  after,
+}: PaneContentProps & { before?: ReactNode; after?: ReactNode }) {
+  if (header == null && before == null && after == null) return null;
+  return (
+    <div className="env-panes-header">
+      {before}
+      {header != null && (
+        <Slot className="env-panes-header-content" grow>
+          {header}
+        </Slot>
+      )}
+      {after}
+    </div>
+  );
+}
+
+/** A pane's content, which scrolls on its own under the header. */
+const PaneBody = ({ children }: { children: ReactNode }) => (
+  <div className="env-panes-body">{children}</div>
+);
+
 /** The main pane of supporting Panes, at the start. */
-function Main({ label, className, ...props }: MainProps) {
+function Main({ label, header, className, children, ...props }: MainProps) {
   usePanes('Main');
   return (
     <div
       {...props}
       className={classNames('env-panes-main', className)}
       {...(label !== undefined && { role: 'region', 'aria-label': label })}
-    />
+    >
+      <PaneHeader header={header} />
+      <PaneBody>{children}</PaneBody>
+    </div>
   );
 }
 
 /**
- * The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it
- * is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet
+ * The supporting pane, at the end, such as details or filters for the main pane, with a close
+ * button in its header row. Beside the main pane, closing it gives the main pane the room and
+ * Panes.Trigger, which shows then, takes focus. Below `splitAt` it is a modal sheet over the main
+ * pane while `open`: a side sheet in a medium width, a bottom sheet
  * in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet
  * is: fixed to the window over a backdrop, scrolling inside itself while the page stays. As a sheet
  * it is a modal dialog with a close button: everything else on the page is inert, focus moves into
@@ -370,6 +430,8 @@ function Main({ label, className, ...props }: MainProps) {
  */
 function Supporting({
   label,
+  header,
+  closeButton = true,
   skeleton = false,
   className,
   onKeyDown,
@@ -378,11 +440,23 @@ function Supporting({
   children,
   ...props
 }: SupportingProps) {
-  const { open, close, closeLabel, resizedId } = usePanes('Supporting');
+  const { open, close, closeLabel, resizedId, triggerRef } = usePanes('Supporting');
   const messages = useMessages('panes', panes);
   const { contained } = usePortalContainer();
   const pane = useRef<HTMLDivElement | null>(null);
-  const { sheet, modal } = useSupportingSheet(pane, open, contained, isBackdrop);
+  const { sheet, modal } = useSupportingSheet(pane, open === true, contained, isBackdrop);
+  const focusTrigger = useRef(false);
+  useLayoutEffect(() => {
+    if (open !== false || !focusTrigger.current) return;
+    focusTrigger.current = false;
+    triggerRef.current?.focus();
+  }, [open, triggerRef]);
+  const closePane = (reason: OpenChangeReason) => {
+    const element = pane.current;
+    focusTrigger.current =
+      !sheet && element !== null && element.contains(element.ownerDocument.activeElement);
+    close(reason);
+  };
   return (
     <div
       tabIndex={-1}
@@ -408,17 +482,20 @@ function Supporting({
         if (modal) keepTabInside(event);
       }}
     >
-      {/* Always rendered, so the server's markup has it; the style sheet shows it only while the
-          pane is a sheet, and hidden it is out of the tab order and the accessibility tree. */}
-      <div className="env-panes-close">
-        <IconButton
-          variant="ghost"
-          icon={<IconClose />}
-          aria-label={closeLabel ?? messages.close}
-          onClick={() => close('close-press')}
-        />
-      </div>
-      {inSkeleton(skeleton, children)}
+      <PaneHeader
+        header={header}
+        after={
+          <div className="env-panes-close" data-sheet-only={flag(!closeButton)}>
+            <IconButton
+              variant="ghost"
+              icon={<IconClose />}
+              aria-label={closeLabel ?? messages.close}
+              onClick={() => closePane('close-press')}
+            />
+          </div>
+        }
+      />
+      <PaneBody>{inSkeleton(skeleton, children)}</PaneBody>
     </div>
   );
 }
@@ -439,7 +516,7 @@ function focusCurrentRow(list: HTMLElement | null) {
 }
 
 /** The list pane of list-detail Panes, at the start. Below `splitAt` it hides while `open`. */
-function List({ label, className, ref, id, ...props }: ListProps) {
+function List({ label, header, className, ref, id, children, ...props }: ListProps) {
   const { listRef, resizedId } = usePanes('List');
   return (
     <div
@@ -452,7 +529,10 @@ function List({ label, className, ref, id, ...props }: ListProps) {
       role="region"
       aria-label={label}
       className={classNames('env-panes-list', className)}
-    />
+    >
+      <PaneHeader header={header} />
+      <PaneBody>{children}</PaneBody>
+    </div>
   );
 }
 
@@ -461,8 +541,9 @@ function List({ label, className, ref, id, ...props }: ListProps) {
  * with a back button to the list at its start, and focus follows what shows: the back button as
  * the detail opens, the list's current row as it closes.
  */
-function Detail({ label, className, children, ref, ...props }: DetailProps) {
-  const { open, close, backLabel, listRef } = usePanes('Detail');
+function Detail({ label, header, className, children, ref, ...props }: DetailProps) {
+  const { open: state, close, backLabel, listRef } = usePanes('Detail');
+  const open = state === true;
   const messages = useMessages('panes', panes);
   const back = useRef<HTMLButtonElement>(null);
   const detail = useRef<HTMLDivElement | null>(null);
@@ -494,19 +575,22 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
       className={classNames('env-panes-detail', className)}
       {...(label !== undefined && { role: 'region', 'aria-label': label })}
     >
-      {/* Always rendered, so the server's markup has it; the style sheet shows it only while one
-          pane shows at a time, and hidden it is out of the tab order and the accessibility tree. */}
-      <div className="env-panes-back">
-        <Button
-          ref={back}
-          variant="text"
-          startIcon={<IconArrowBack />}
-          onClick={() => close('back-press')}
-        >
-          {backLabel ?? messages.back}
-        </Button>
-      </div>
-      {children}
+      <PaneHeader
+        header={header}
+        before={
+          <div className="env-panes-back">
+            <Button
+              ref={back}
+              variant="text"
+              startIcon={<IconArrowBack />}
+              onClick={() => close('back-press')}
+            >
+              {backLabel ?? messages.back}
+            </Button>
+          </div>
+        }
+      />
+      <PaneBody>{children}</PaneBody>
     </div>
   );
 }
@@ -543,17 +627,21 @@ export type TriggerProps = ButtonAppearanceProps &
   ComponentPropsWithRef<'button'> & { href?: undefined };
 
 /**
- * The button that opens the supporting pane while it is a sheet, below `splitAt`; place it in the
- * main pane. It hides while the panes sit side by side, where the supporting pane shows anyway,
- * and says whether the sheet is open with aria-expanded. It takes Button's props.
+ * The button that opens the supporting pane; place it in the main pane. It shows while the pane
+ * doesn't: below `splitAt`, and beside the main pane once people close it. It says whether the pane
+ * is open with aria-expanded. It takes Button's props.
  */
-function Trigger({ className, onClick, ...props }: TriggerProps) {
-  const { open, show, resizedId } = usePanes('Trigger');
+function Trigger({ className, onClick, ref, ...props }: TriggerProps) {
+  const { open, show, resizedId, triggerRef } = usePanes('Trigger');
   return (
     <Button
       {...props}
+      ref={(node: HTMLButtonElement | null) => {
+        triggerRef.current = node;
+        setRef(ref, node);
+      }}
       className={classNames('env-panes-trigger', className)}
-      aria-expanded={open}
+      aria-expanded={open === true}
       aria-controls={resizedId}
       onClick={(event: MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);

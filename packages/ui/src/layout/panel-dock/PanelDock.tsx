@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../../internal/classNames.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import { IconButton } from '../../actions/Button.js';
 import { Tooltip } from '../../overlays/Tooltip.js';
 import { IconCloseFullscreen } from '../../icons/CloseFullscreen.js';
@@ -408,7 +409,7 @@ function Header({
     >
       <Grid className="env-panel-dock-heading">
         {createElement(`h${headingLevel}`, { className: 'env-panel-dock-title' }, title)}
-        {meta != null && <div className="env-panel-dock-meta">{meta}</div>}
+        {meta != null && <Slot className="env-panel-dock-meta">{meta}</Slot>}
       </Grid>
       {(actions != null || windowControls) && (
         <Row align="center" className="env-panel-dock-actions">
@@ -417,7 +418,7 @@ function Header({
           {windowControls && <WindowControls />}
         </Row>
       )}
-      {children != null && <div className="env-panel-dock-header-content">{children}</div>}
+      {children != null && <Slot className="env-panel-dock-header-content">{children}</Slot>}
     </header>
   );
 }

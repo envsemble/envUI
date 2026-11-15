@@ -13,6 +13,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { FileInput } from './internal/FileInput.js';
 import { setRef } from '../internal/react/setRef.js';
@@ -177,18 +178,24 @@ export function DropZone({
         {pending ? (
           <Spinner size={size === 'sm' ? 'sm' : 'md'} />
         ) : (
-          <DecorativeIcon>{icon ?? <IconCloudUpload />}</DecorativeIcon>
+          <Slot className="env-drop-zone-icon-content" element="span" layout="row" shrink="never">
+            <DecorativeIcon>{icon ?? <IconCloudUpload />}</DecorativeIcon>
+          </Slot>
         )}
       </span>
       <Grid render={<span />} gap={size === 'sm' ? 0 : 1} className="env-drop-zone-text">
         <span className="env-drop-zone-label" id={`${id}-label`}>
-          {label}
+          <Slot className="env-drop-zone-label-content" element="span">
+            {label}
+          </Slot>
         </span>
         {description != null && (
           <>
             {/* A space between the lines, so the visible text reads as the name does. */}{' '}
             <span className="env-drop-zone-description" id={`${id}-description`}>
-              {description}
+              <Slot className="env-drop-zone-description-content" element="span">
+                {description}
+              </Slot>
             </span>
           </>
         )}

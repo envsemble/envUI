@@ -22,7 +22,7 @@ const edgeOf = (field: Locator) =>
     .getByRole('separator', { name: 'Resize text area', exact: true });
 
 test(
-  'a growing textarea starts at its rows and grows with its lines, and a ghost one keeps its label in its fill',
+  'a growing textarea starts at its rows and grows with its lines, and a ghost one shows its frame only while focused',
   { tags: ['engines'] },
   async () => {
     const one = textbox('One line');
@@ -40,34 +40,21 @@ test(
     const two = textbox('Two fixed lines');
     expect(box(two).height).toBeCloseTo(linesHigh(two, 2), 0);
 
-    // A ghost textarea shows a faint fill and no border at rest, the accent frame while focused,
-    // and its label inside the fill.
+    // A ghost textarea shows a faint fill and no edge at rest, the accent frame while focused, and
+    // its label above it.
     const field = textbox('Ghost notes');
     const control = controlOf(field);
-    const border = control.querySelector(':scope > .env-text-field-border')!;
     expect(control.getAttribute('data-variant')).toBe('ghost');
-    expect(css(border, 'border-top-color')).toBe('rgba(0, 0, 0, 0)');
+    expect(css(control, 'border-top-color')).toBe('rgba(0, 0, 0, 0)');
     const rest = css(control, 'background-color');
     expect(rest).not.toBe('rgba(0, 0, 0, 0)');
     (field.element() as HTMLElement).focus();
-    await expect.poll(() => css(border, 'border-top-color')).not.toBe('rgba(0, 0, 0, 0)');
+    await expect.poll(() => css(control, 'border-top-color')).not.toBe('rgba(0, 0, 0, 0)');
     expect(css(control, 'background-color')).toBe(rest);
-    // The floated label sits inside the fill, above where the text starts, and opens no notch.
-    await expect
-      .poll(() => {
-        const outer = control.getBoundingClientRect();
-        const label = control.querySelector(':scope > label')!.getBoundingClientRect();
-        const input = control.querySelector('textarea')!;
-        const textTop =
-          input.getBoundingClientRect().top + Number.parseFloat(getComputedStyle(input).paddingTop);
-        const legend = control.querySelector('.env-text-field-border > legend')!;
-        return (
-          label.top > outer.top &&
-          label.bottom <= textTop &&
-          legend.getBoundingClientRect().width === 0
-        );
-      })
-      .toBe(true);
+    const label = control.parentElement!.querySelector(':scope > label')!;
+    expect(label.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      control.getBoundingClientRect().top,
+    );
   },
 );
 

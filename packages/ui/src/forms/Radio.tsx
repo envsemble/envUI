@@ -15,6 +15,7 @@ import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
+import { Slot } from '../internal/layout/Slot.js';
 import '../styles/Base.css';
 import '../styles/Radio.css';
 import '../styles/ConnectedRows.css';
@@ -149,11 +150,19 @@ export function RadioGroup({
   );
   const content = (
     <>
-      {label != null && <legend>{label}</legend>}
+      {label != null && (
+        <legend>
+          <Slot className="env-radio-group-label" element="span">
+            {label}
+          </Slot>
+        </legend>
+      )}
       {children}
       {description != null && (
         <small id={ids.description} className="env-radio-group-description">
-          {description}
+          <Slot className="env-radio-group-description-content" element="span">
+            {description}
+          </Slot>
         </small>
       )}
       {/* The error looks as a field's does, the error icon before the message (Radio.css); a
@@ -264,8 +273,16 @@ export function Radio({
   );
   const labelContent = (
     <span>
-      {label}
-      {description != null && <small className="env-radio-description">{description}</small>}
+      <Slot className="env-radio-label" element="span">
+        {label}
+      </Slot>
+      {description != null && (
+        <small className="env-radio-description">
+          <Slot className="env-radio-description-content" element="span">
+            {description}
+          </Slot>
+        </small>
+      )}
     </span>
   );
   const vertical = group.orientation === 'vertical';

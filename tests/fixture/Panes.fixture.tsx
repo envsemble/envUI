@@ -20,7 +20,7 @@ export default function PanesFixture() {
   const splitAt = (query.get('split') ?? undefined) as Panes.SplitAt | undefined;
   const divider = query.get('divider') !== 'none';
   const [width, setWidth] = useState(query.get('width') ?? '60rem');
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean | null>(null);
   const [chosen, setChosen] = useState<string | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [sizes, setSizes] = useState<string[]>([]);
@@ -57,7 +57,7 @@ export default function PanesFixture() {
           name="document"
           data-testid="supporting"
         >
-          <Panes.Main label="Document">
+          <Panes.Main label="Document" header={<Text data-testid="main-header">Document</Text>}>
             <Panes.Trigger variant="secondary">Show details</Panes.Trigger>
             <Text>The document, which scrolls on its own.</Text>
             <div style={{ blockSize: '40rem' }} />

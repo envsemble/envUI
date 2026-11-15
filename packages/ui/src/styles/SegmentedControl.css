@@ -126,14 +126,18 @@
     /* No outline unless the application sets one, drawn inside the track's edge. */
     outline: var(--env-control-border-width) solid var(--env-segmented-control-outline, transparent);
     outline-offset: calc(-1 * var(--env-control-border-width));
-    /* The capped full corner, so a control whose labels wrap keeps its corners. */
-    border-radius: var(--env-radius-full);
+    --_segmented-control-inner-radius: max(
+      0rem,
+      var(--env-radius-control) - var(--_segmented-control-inset)
+    );
+    border-radius: var(--env-radius-control);
     background: var(--env-segmented-control-container, var(--env-color-bg-neutral-muted));
     /* Long labels stay reachable in narrow containers. */
     overflow-x: auto;
     scrollbar-width: none;
   }
   .env-segmented-control-item {
+    --env-icon-size: var(--env-control-icon-size);
     box-sizing: border-box;
     flex: 0 0 auto;
     /* As tall as the track inside its inset. */
@@ -165,7 +169,7 @@
     );
     position: relative;
     border: 0;
-    border-radius: var(--env-radius-full);
+    border-radius: var(--_segmented-control-inner-radius);
     background: transparent;
     color: var(--_segmented-control-option-color, var(--env-color-fg-muted));
     font: var(--env-font-weight-medium) var(--env-font-size-label) / 1.4 var(--env-font-family);
@@ -243,7 +247,7 @@
       inline-size: var(--_segmented-control-thumb-width);
       block-size: var(--_segmented-control-thumb-height);
       translate: var(--_segmented-control-thumb-left) var(--_segmented-control-thumb-top);
-      border-radius: var(--env-radius-full);
+      border-radius: var(--_segmented-control-inner-radius);
       background: var(--_segmented-control-custom-selected, var(--_segmented-control-thumb));
       box-shadow: var(--_segmented-control-shadow);
       pointer-events: none;
@@ -284,10 +288,6 @@
   .env-segmented-control-item[data-disabled] {
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
-  }
-  .env-segmented-control-item .env-icon {
-    inline-size: var(--env-control-icon-size);
-    block-size: var(--env-control-icon-size);
   }
   .env-segmented-control-item-count {
     font-size: 0.8125em;

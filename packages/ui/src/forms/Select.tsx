@@ -14,6 +14,7 @@ import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
 import {
   FieldFrame,
+  FieldLabelContent,
   type FieldProps,
   type FieldSizeProps,
   type TextFieldDecorationProps,
@@ -30,7 +31,6 @@ import { ListRow } from '../internal/list/ListRow.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { classNames } from '../internal/classNames.js';
-import { flag } from '../internal/flag.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import '../styles/Base.css';
 import '../styles/Select.css';
@@ -220,8 +220,6 @@ export function Select({
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
-  // The label floats into the outline while the field holds a value or its list is open.
-  const labelFloats = selectedValue != null || open;
   useFormReset(
     inputRef,
     function applyReset() {
@@ -276,13 +274,13 @@ export function Select({
         label={
           label != null ? (
             <BaseSelect.Label render={<label />} className="env-select-label">
-              {label}
+              <FieldLabelContent>{label}</FieldLabelContent>
             </BaseSelect.Label>
           ) : null
         }
         description={description}
         error={error}
-        floatingLabel
+        controlBox
         size={size}
         visibleLabel={visibleLabel}
         className={classNames('env-select', className)}
@@ -292,7 +290,6 @@ export function Select({
             {...box}
             ref={controlRef}
             className={classNames(box.className, 'env-select-control')}
-            data-label-floating={flag(labelFloats)}
           />
         )}
       >
