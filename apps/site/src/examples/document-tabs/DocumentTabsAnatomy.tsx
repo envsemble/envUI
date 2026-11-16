@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DocumentTabs, IconButton, type DocumentTabsItem } from '@envsemble/envui';
+import { DocumentTabs, IconButton, Text, type DocumentTabsItem } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 
@@ -24,7 +24,11 @@ export default function DocumentTabsAnatomy() {
           if (id === value) setValue(remaining[0]?.value ?? null);
         }}
         end={<IconButton icon={<IconAdd />} aria-label="New document" variant="ghost" size="sm" />}
-      />
+      >
+        <Text style={{ padding: '0.75rem 1rem' }}>
+          {tabs.find((tab) => tab.value === value)?.label ?? 'No document open'}
+        </Text>
+      </DocumentTabs>
     </div>
   );
 }

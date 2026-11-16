@@ -40,7 +40,7 @@ examples:
 
 ```
 
-1. **Strip** (`env-document-tabs-list`)
+1. **Tabs** (`env-document-tabs-list`)
 2. **Item** (`env-document-tabs-item`)
 3. **Tab** (`env-document-tabs-tab`)
 4. **Icon** (`env-document-tabs-tab > env-icon`, `icon`)
