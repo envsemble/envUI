@@ -247,7 +247,6 @@
     "--env-icon-size-lg",
     "--env-icon-size-md",
     "--env-icon-size-sm",
-    "--env-line-art-duration",
     "--env-line-height-body",
     "--env-list-item-container",
     "--env-list-item-content",

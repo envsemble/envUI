@@ -116,7 +116,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [PanelDock](components/panel-dock.md)
 - [Surface](components/surface.md)
 - [Card](components/card.md)
-- [LineArt](components/line-art.md)
 - [Box](components/box.md)
 - [Row](components/row.md)
 - [Column](components/column.md)

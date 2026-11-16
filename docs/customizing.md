@@ -254,12 +254,6 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 - Parts: `env-kbd`, `env-kbd-combination`, `env-kbd-part`, `env-kbd-separator`
 
-### LineArt
-
-- Parts: `env-line-art`
-- States: `data-align` (`center`, `end`, `start`); `data-drawing` (`ford-circles`, `golden-section`, `gothic-tracery`, `graded-quadtree`, `harmonic-division`, `logarithmic-grid`, `monochord`, `pappus-chain`, `pointed-arcade`, `quartered-square`, `root-rectangles`, `root-two-halving`, `sacred-cut`, `square-circle-triangle`, `triangle-and-circles`, `whirling-squares`); `data-motion` (`appear`, `disappear`, `loop`, `play`); `data-turn` (`in`, `out`)
-- `--env-line-art-duration`, to set: How long a drawing's motion takes, on the drawing: ten times the slow motion duration by default, and play half as long again.
-
 ### Link
 
 - Parts: `env-link`

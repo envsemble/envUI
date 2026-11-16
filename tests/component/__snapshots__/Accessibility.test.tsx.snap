@@ -140,8 +140,6 @@ exports[`layout has no new accessibility violations 1`] = `{}`;
 
 exports[`layout-check has no new accessibility violations 1`] = `{}`;
 
-exports[`line-art has no new accessibility violations 1`] = `{}`;
-
 exports[`list has no new accessibility violations 1`] = `{}`;
 
 exports[`markdown has no new accessibility violations 1`] = `{}`;

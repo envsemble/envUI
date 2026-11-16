@@ -24,8 +24,6 @@ avoidWhen:
     see: icons
   - text: A person's or an organization's picture beside their name.
     use: Avatar
-  - text: A drawing in hairlines that fills a region, such as behind a sign-in form.
-    use: LineArt
 components:
   - Graphic
 examples:

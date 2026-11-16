@@ -11,7 +11,6 @@ import {
   DescriptionList,
   Grid,
   IconButton,
-  LineArt,
   List,
   NavigationDrawer,
   NavigationRail,
@@ -36,25 +35,6 @@ import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { Block, Cell, Section, Strip, interactionStates } from './ContactSheetParts.fixture.js';
-
-const drawings = [
-  'golden-section',
-  'square-circle-triangle',
-  'whirling-squares',
-  'triangle-and-circles',
-  'ford-circles',
-  'harmonic-division',
-  'pappus-chain',
-  'root-rectangles',
-  'sacred-cut',
-  'gothic-tracery',
-  'quartered-square',
-  'graded-quadtree',
-  'monochord',
-  'logarithmic-grid',
-  'pointed-arcade',
-  'root-two-halving',
-] as const;
 
 function Primitives() {
   return (
@@ -227,39 +207,6 @@ function Cards() {
             {linkContent}
           </Card>
         </Cell>
-      </Strip>
-    </Section>
-  );
-}
-
-function LineArts() {
-  return (
-    <Section name="LineArt">
-      <Strip label="Drawings">
-        {drawings.map((drawing) => (
-          <Cell key={drawing} caption={drawing} width="13rem">
-            <Surface
-              background="default"
-              padding={0}
-              style={{ overflow: 'hidden', aspectRatio: '20 / 9' }}
-            >
-              <LineArt drawing={drawing} />
-            </Surface>
-          </Cell>
-        ))}
-      </Strip>
-      <Strip label="Align">
-        {(['start', 'center', 'end'] as const).map((align) => (
-          <Cell key={align} caption={align} width="16rem">
-            <Surface
-              background="muted"
-              padding={0}
-              style={{ overflow: 'hidden', aspectRatio: '3 / 1' }}
-            >
-              <LineArt drawing="pappus-chain" align={align} />
-            </Surface>
-          </Cell>
-        ))}
       </Strip>
     </Section>
   );
@@ -615,7 +562,6 @@ export function LayoutSheet() {
       <Primitives />
       <Surfaces />
       <Cards />
-      <LineArts />
       <Pages />
       <TopBars />
       <Scaffolds />

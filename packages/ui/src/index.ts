@@ -126,5 +126,4 @@ export * as PanelDock from './layout/panel-dock/PanelDock.js';
 export type { PanelDockMode, PanelDockPanel } from './layout/panel-dock/panelDockTypes.js';
 export * from './layout/Page.js';
 export * from './layout/PageHeader.js';
-export * from './layout/LineArt.js';
 export * from './layout/Card.js';

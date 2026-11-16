@@ -408,9 +408,6 @@
       "env-kbd-part": "One key of a combination.",
       "env-kbd-separator": "The separator between two keys."
     },
-    "LineArt": {
-      "env-line-art": "The drawing: an SVG of hairlines that fills its container's box."
-    },
     "Link": {
       "env-link": "The link."
     },
@@ -1034,12 +1031,6 @@
       "--env-icon-button-hit-area": {
         "use": "set",
         "description": "The size of an icon button's pointer target, which a container sets for the icon buttons in it, such as the touch height under a coarse pointer; unset, the button's own box."
-      }
-    },
-    "LineArt": {
-      "--env-line-art-duration": {
-        "use": "set",
-        "description": "How long a drawing's motion takes, on the drawing: ten times the slow motion duration by default, and play half as long again."
       }
     },
     "Popup": {
