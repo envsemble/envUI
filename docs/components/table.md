@@ -39,6 +39,7 @@ examples:
   ResizableColumns: example
   StickyHeader: example
   StackedRows: example
+  WorkItemsWithParts: example
 ---
 
 # Table
@@ -88,6 +89,12 @@ examples:
 ### Resizable columns
 
 ```tsx figure=ResizableColumns motion
+
+```
+
+### Rows with parts
+
+```tsx figure=WorkItemsWithParts
 
 ```
 
