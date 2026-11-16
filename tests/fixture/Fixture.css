@@ -143,6 +143,12 @@ body:has(> #root > .env-theme > .env-scaffold) {
 .fixture-narrow-stack-frame {
   inline-size: min(100%, 22rem);
 }
+.fixture-cut-short {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .fixture-visually-hidden {
   position: absolute;
   inline-size: 1px;

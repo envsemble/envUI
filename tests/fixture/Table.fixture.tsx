@@ -49,6 +49,8 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
     layout: 'stack' as 'stack' | 'scroll',
   });
   const [prioritySort, setPrioritySort] = useState<Table.SortDirection>('none');
+  const [opened, setOpened] = useState<string[]>([]);
+  const [pressed, setPressed] = useState('');
   const rows = sort
     ? [...reports].sort((first, second) =>
         sort.direction === 'ascending'
@@ -332,7 +334,7 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
           </Table.Body>
         </Table.Root>
       </div>
-      <Table.Root aria-label={`Band ${theme}`} headerBand>
+      <Table.Root aria-label={`Plain ${theme}`} plain>
         <Table.Head>
           <Table.Row>
             <Table.HeaderCell>Report</Table.HeaderCell>
@@ -347,7 +349,7 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
         </Table.Body>
       </Table.Root>
       <Theme theme={theme} surface="filled">
-        <Table.Root aria-label={`Filled ${theme}`}>
+        <Table.Root aria-label={`Plain filled ${theme}`} plain>
           <Table.Head>
             <Table.Row>
               <Table.HeaderCell>Report</Table.HeaderCell>
@@ -362,6 +364,50 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
           </Table.Body>
         </Table.Root>
       </Theme>
+      <div className="fixture-table-frame">
+        <Table.Root aria-label={`Work ${theme}`} columnWidths={[45, 25, 30]}>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Work</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+              <Table.HeaderCell>Actions</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            {reports.map((report) => (
+              <Table.Row key={report.id} interactive>
+                <Table.Cell>
+                  <a
+                    href={`#work-${report.id}`}
+                    data-row-target
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setOpened((list) => [...list, report.id]);
+                    }}
+                  >
+                    {report.title}
+                  </a>
+                  <span className="fixture-cut-short" data-testid={`cut-${report.id}-${theme}`}>
+                    A second line long enough to be cut short at the end of its narrow column
+                  </span>
+                </Table.Cell>
+                <Table.Cell>{report.owner}</Table.Cell>
+                <Table.Cell>
+                  <Button
+                    variant="secondary"
+                    aria-label={`Assign ${report.title}`}
+                    onClick={() => setPressed(report.id)}
+                  >
+                    Assign
+                  </Button>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </div>
+      <output data-testid={`opened-${theme}`}>{opened.join(' ')}</output>
+      <output data-testid={`pressed-${theme}`}>{pressed}</output>
       <span id={`due-date-${theme}`} hidden>
         Due date
       </span>

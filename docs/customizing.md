@@ -445,7 +445,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Table
 
 - Parts: `env-table`, `env-table-body`, `env-table-caption`, `env-table-cell`, `env-table-cell-content` (slot), `env-table-cell-label`, `env-table-column-resize-handle`, `env-table-head`, `env-table-header-cell`, `env-table-header-label`, `env-table-region`, `env-table-row`, `env-table-sort-button`
-- States: `data-align` (`end`, `start`) on `env-table-cell`, `env-table-header-cell`; `data-density` (`lg`, `md`, `sm`, `xs`); `data-fixed-layout`; `data-header-band`; `data-interactive` on `env-table-row`; `data-labelled` on `env-table-cell`; `data-narrow-layout` (`stack`) on `env-table-region`; `data-nowrap` on `env-table-cell`, `env-table-header-cell`; `data-numeric` on `env-table-cell`, `env-table-header-cell`; `data-resizable` on `env-table-header-cell`; `data-resizing` on `env-table`, `env-table-column-resize-handle`; `data-sortable` on `env-table-header-cell`; `data-stacked` on `env-table-region`; `data-sticky-header` on `env-table-region`
+- States: `data-align` (`end`, `start`) on `env-table-cell`, `env-table-header-cell`; `data-density` (`lg`, `md`, `sm`, `xs`); `data-fixed-layout`; `data-interactive` on `env-table-row`; `data-labelled` on `env-table-cell`; `data-narrow-layout` (`stack`) on `env-table-region`; `data-nowrap` on `env-table-cell`, `env-table-header-cell`; `data-numeric` on `env-table-cell`, `env-table-header-cell`; `data-plain` on `env-table-region`; `data-resizable` on `env-table-header-cell`; `data-resizing` on `env-table`, `env-table-column-resize-handle`; `data-sortable` on `env-table-header-cell`; `data-stacked` on `env-table-region`; `data-sticky-header` on `env-table-region`
 
 ### TableOfContents
 

@@ -5458,15 +5458,6 @@
           ]
         },
         {
-          "attribute": "data-header-band",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-table"
-          ]
-        },
-        {
           "attribute": "data-interactive",
           "values": [
             ""
@@ -5511,6 +5502,15 @@
           "parts": [
             "env-table-cell",
             "env-table-header-cell"
+          ]
+        },
+        {
+          "attribute": "data-plain",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-table-region"
           ]
         },
         {

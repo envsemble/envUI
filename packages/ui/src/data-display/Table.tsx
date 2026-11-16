@@ -64,10 +64,11 @@ export interface RootProps
    */
   stickyHeader?: boolean;
   /**
-   * The header row lies on a shaded band rather than over a hairline.
+   * Drops the frame, the raised surface and the header's shaded band: a hairline under the header
+   * and between the rows, the table lying on the surface around it.
    * @default false
    */
-  headerBand?: boolean;
+  plain?: boolean;
   /** Class of the scroll region around the table, for example to limit its height. */
   regionClassName?: string;
   /**
@@ -161,15 +162,16 @@ const keyboardScrollTabStop = 0;
 
 /**
  * A semantic data table, in a focusable region that scrolls sideways when the columns do not fit.
- * Plain by default: a hairline under the header and between the rows, with no frame or fill; under
- * a Theme with `surface="filled"`, it lies on a rounded raised surface.
+ * It is a shell for rows of anything: the frame, the rows, their states and their layout are the
+ * table's, and the cells place what they hold as given. It lies on a rounded raised surface, its
+ * header on a shaded band and its rows parted by hairlines; plain drops the frame and the band.
  */
 function Root({
   'aria-label': label,
   caption,
   density = 'md',
   stickyHeader = false,
-  headerBand = false,
+  plain = false,
   regionClassName,
   narrowLayout = 'scroll',
   stackBelow = defaultStackBelowRegionWidth,
@@ -210,6 +212,7 @@ function Root({
       tabIndex={keyboardScrollTabStop}
       aria-label={labelledBy === undefined ? label : undefined}
       aria-labelledby={labelledBy}
+      data-plain={flag(plain)}
       data-sticky-header={flag(stickyHeader)}
       data-narrow-layout={stack ? 'stack' : undefined}
       data-stacked={flag(stacked)}
@@ -228,7 +231,6 @@ function Root({
           aria-label={caption == null ? label : undefined}
           className={classNames('env-table', className)}
           data-density={density}
-          data-header-band={flag(headerBand)}
           data-fixed-layout={flag(widths)}
           data-resizing={flag(resizing)}
         >
@@ -287,8 +289,11 @@ function Body({ className, ...props }: BodyProps) {
 
 export interface RowProps extends ComponentPropsWithRef<'tr'> {
   /**
-   * The row highlights on hover and while focus is inside it, for rows that open something through
-   * a link or button in a cell. It adds no behavior of its own.
+   * The row opens something through a link or button in a cell: it highlights on hover and while
+   * focus is inside it. Mark that link or button `data-row-target` to stretch it over the row, so a
+   * click anywhere in the row follows it and the row shows its focus ring; the other links, buttons
+   * and fields in the row stay clickable above it.
+   * @default false
    */
   interactive?: boolean;
   /**
@@ -299,7 +304,7 @@ export interface RowProps extends ComponentPropsWithRef<'tr'> {
   selected?: boolean;
 }
 
-/** A row of a table, a native tr, which can highlight on hover or be selected. */
+/** A row of a table, a native tr, which can open something, highlight on hover or be selected. */
 function Row({ interactive = false, selected, className, ...props }: RowProps) {
   const stack = useContext(StackingTableNamesPartRolesContext);
   return (
@@ -491,7 +496,10 @@ export interface CellProps extends Omit<ComponentPropsWithRef<'td'>, 'align'>, T
   label?: ReactNode;
 }
 
-/** A data cell, a native td, with a label that names its value while rows stack. */
+/**
+ * A data cell, a native td, which places what it holds as given, with a label that names its value
+ * while rows stack.
+ */
 function Cell({ align, numeric, nowrap, label, className, children, ...props }: CellProps) {
   const stack = useContext(StackingTableNamesPartRolesContext);
   const labelled = stack && label != null;

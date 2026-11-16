@@ -259,7 +259,7 @@ test('selected rows report aria-selected and take the selection colors in both t
     expect(attribute(other, 'aria-selected')()).toBe('false');
     const selection = resolved(
       selected.element(),
-      'color-mix(in oklab, var(--env-color-bg-selected) 75%, var(--env-color-bg-page))',
+      'color-mix(in oklab, var(--env-color-bg-selected) 75%, var(--env-color-bg-raised))',
       'background-color',
     );
     await expect.poll(() => css(selected, 'background-color')).toBe(selection);
@@ -331,7 +331,8 @@ test('a stacking table lists its rows as blocks in a narrow container, two value
     const first = box(rows[0]!);
     const second = box(rows[1]!);
     expect(second.y).toBeGreaterThanOrEqual(first.y + first.height - 1);
-    expect(first.width).toBeCloseTo(box(frame).width, 0);
+    expect(first.width).toBeCloseTo(rows[0]!.parentElement!.clientWidth, 0);
+    expect(rows[0]!.parentElement!.clientWidth).toBeGreaterThan(box(frame).width - 4);
     expect(css(stacked.getByRole('row', { name: /design-system\/tokens/ }), 'box-shadow')).toBe(
       `${tokenColor(stacked.element(), '--env-color-fg-on-selected')} 3px 0px 0px 0px inset`,
     );
@@ -627,23 +628,80 @@ test(
   },
 );
 
-test('a table is plain with a hairline under its header, headerBand shades the header, and a filled surface frames it', async () => {
+test('a table is framed on the raised surface with its header on a band, and plain drops the frame and the band in every surface', async () => {
   mount(fixture);
   for (const theme of themes) {
-    const plain = region(`Reports ${theme}`).element();
-    expect(css(plain, 'border-top-width')).toBe('0px');
-    expect(css(plain, 'background-color')).toBe('rgba(0, 0, 0, 0)');
-    const plainHeader = header(table(`Reports ${theme}`), 'Report').element();
-    expect(css(plainHeader, 'background-image')).toBe('none');
-    expect(css(plainHeader, 'border-bottom-width')).toBe('1px');
-
-    const banded = header(table(`Band ${theme}`), 'Report').element();
+    const framed = region(`Reports ${theme}`).element();
+    expect(attribute(region(`Reports ${theme}`), 'data-plain')()).toBeNull();
+    expect(css(framed, 'border-top-width')).not.toBe('0px');
+    expect(css(framed, 'border-top-left-radius')).not.toBe('0px');
+    expect(css(framed, 'background-color')).toBe(tokenColor(framed, '--env-color-bg-raised'));
+    const banded = header(table(`Reports ${theme}`), 'Owner').element();
     expect(css(banded, 'background-image')).toContain('gradient');
     expect(css(banded, 'border-bottom-width')).toBe('0px');
 
-    const filled = region(`Filled ${theme}`).element();
-    expect(css(filled, 'border-top-width')).not.toBe('0px');
-    expect(css(filled, 'border-top-left-radius')).not.toBe('0px');
-    expect(css(filled, 'background-color')).toBe(tokenColor(filled, '--env-color-bg-raised'));
+    for (const name of [`Plain ${theme}`, `Plain filled ${theme}`]) {
+      const plain = region(name).element();
+      expect(plain.hasAttribute('data-plain'), name).toBe(true);
+      expect(css(plain, 'border-top-width'), name).toBe('0px');
+      expect(css(plain, 'background-color'), name).toBe('rgba(0, 0, 0, 0)');
+      const plainHeader = header(table(name), 'Report').element();
+      expect(css(plainHeader, 'background-image'), name).toBe('none');
+      expect(css(plainHeader, 'border-bottom-width'), name).toBe('1px');
+    }
   }
+});
+
+test(
+  "an interactive row's data-row-target opens on a click anywhere in the row, its other controls keep their own clicks, and its cells let content cut itself short",
+  { tags: ['engines'] },
+  async () => {
+    mount(fixture);
+    await mouse.move(0, 0);
+    const work = table('Work light');
+    const row = work.getByRole('row', { name: /Accessibility audit/ });
+    row.element().scrollIntoView({ block: 'center' });
+    const target = row.getByRole('link', { name: 'Accessibility audit' });
+    expect(css(target, 'text-decoration-line')).toBe('none');
+    expect(css(target, 'color')).toBe(css(row.getByRole('cell').nth(1), 'color'));
+
+    const owner = middle(row.getByRole('cell', { name: 'Sam Lee' }));
+    await mouse.click(owner.x, owner.y);
+    await expect.poll(text('opened-light')).toBe('audit');
+
+    const rowBox = box(row);
+    await mouse.click(rowBox.x + rowBox.width - 4, rowBox.y + 4);
+    await expect.poll(text('opened-light')).toBe('audit audit');
+
+    const assign = middle(row.getByRole('button', { name: 'Assign Accessibility audit' }));
+    await mouse.click(assign.x, assign.y);
+    await expect.poll(text('pressed-light')).toBe('audit');
+    expect(text('opened-light')()).toBe('audit audit');
+
+    const second = middle(page.getByTestId('cut-roadmap-light'));
+    await mouse.click(second.x, second.y);
+    await expect.poll(text('opened-light')).toBe('audit audit roadmap');
+
+    const cut = page.getByTestId('cut-audit-light').element() as HTMLElement;
+    expect(cut.scrollWidth).toBeGreaterThan(cut.clientWidth);
+    expect(box(cut).width).toBeLessThanOrEqual(box(row.getByRole('cell').first()).width);
+
+    expect(document.elementFromPoint(owner.x, owner.y)).toBe(target.element());
+  },
+);
+
+test('a row shows the focus ring of its data-row-target over the whole row', async () => {
+  mount(fixture);
+  const work = table('Work light');
+  const target = work.getByRole('link', { name: 'Accessibility audit' });
+  (
+    work.getByRole('button', { name: 'Assign design-system/tokens' }).element() as HTMLElement
+  ).focus();
+  await keyboard.press('Tab');
+  await expect.poll(() => document.activeElement === target.element()).toBe(true);
+  expect(css(target, 'outline-style')).toBe('none');
+  expect(css(target, 'outline-style', '::after')).toBe('solid');
+  expect(css(target, 'outline-color', '::after')).toBe(
+    tokenColor(target.element(), '--env-color-border-focus'),
+  );
 });

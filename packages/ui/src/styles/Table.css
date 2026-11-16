@@ -27,12 +27,17 @@
     }
   }
   .env-table-region {
-    --_table-filled-surface: var(--_theme-filled) var(--env-color-bg-raised);
-    --_table-frame-width: var(--_theme-filled) var(--env-control-border-width);
-    --_table-frame-radius: var(--_theme-filled) var(--env-radius-lg);
-    --_table-inner-radius: var(--_theme-filled)
+    --_table-framed: ;
+    --_table-filled-surface: var(--_table-framed) var(--env-color-bg-raised);
+    --_table-frame-width: var(--_table-framed) var(--env-control-border-width);
+    --_table-frame-radius: var(--_table-framed) var(--env-radius-lg);
+    --_table-inner-radius: var(--_table-framed)
       calc(var(--env-radius-lg) - var(--env-control-border-width));
     --_table-surface: var(--_table-filled-surface, var(--_surface-color, var(--env-color-bg-page)));
+    --_table-band-image: var(--_table-framed)
+      linear-gradient(var(--_table-band), var(--_table-band));
+    --_table-header-ground: var(--_table-framed) var(--_table-surface);
+    --_table-header-rule: var(--_table-framed) 0;
     --_avatar-group-ring: var(--_table-surface);
     --env-avatar-dense: 1;
     position: relative;
@@ -44,6 +49,9 @@
     border-radius: var(--_table-frame-radius, 0);
     background: var(--_table-filled-surface, transparent);
     scrollbar-width: thin;
+  }
+  .env-table-region[data-plain] {
+    --_table-framed: initial;
   }
   .env-table-region:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
@@ -122,10 +130,6 @@
     text-align: start;
     vertical-align: middle;
   }
-  .env-table[data-header-band] {
-    --_table-band-image: linear-gradient(var(--_table-band), var(--_table-band));
-    --_table-header-ground: var(--_table-surface);
-  }
   .env-table-header-cell {
     background-color: var(--_table-header-ground, transparent);
     background-image: var(--_table-band-image, none);
@@ -134,16 +138,13 @@
     font-weight: var(--env-font-weight-medium);
     white-space: nowrap;
   }
-  .env-table:not([data-header-band])
-    > .env-table-head
-    > .env-table-row:last-child
-    > .env-table-header-cell {
-    border-block-end: 1px solid var(--_table-divider);
+  .env-table > .env-table-head > .env-table-row:last-child > .env-table-header-cell {
+    border-block-end: var(--_table-header-rule, 1px) solid var(--_table-divider);
   }
   .env-table-region[data-sticky-header] .env-table-head .env-table-header-cell {
     position: sticky;
     inset-block-start: 0;
-    z-index: var(--env-z-raised);
+    z-index: calc(var(--env-z-raised) + 1);
     background-color: var(--_table-surface);
   }
   .env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
@@ -168,23 +169,46 @@
   .env-table :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
     white-space: nowrap;
   }
-  .env-table-cell > .env-text:where([data-variant='caption']) {
-    margin-block-start: calc(var(--env-space-1) / 2);
-  }
-  .env-table-cell .env-text:where([data-variant='caption']) {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-    overflow: hidden;
-  }
-  .env-table-cell a[href][data-variant='text'] {
-    --env-color-fg-link: currentColor;
-    --env-color-fg-link-hover: currentColor;
-    --env-color-fg-link-pressed: currentColor;
-  }
   .env-table-row[data-interactive] {
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-table-row[data-interactive]:has([data-row-target]) {
+    position: relative;
+  }
+  .env-table-row[data-interactive] [data-row-target] {
+    max-inline-size: none;
+    -webkit-user-drag: none;
+  }
+  :where(.env-table-row[data-interactive]) :where([data-row-target]) {
+    text-decoration: none;
+  }
+  .env-table-row[data-interactive] [data-row-target]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .env-table-row[data-interactive] [data-row-target]:focus-visible {
+    outline: none;
+  }
+  .env-table-row[data-interactive] [data-row-target]:focus-visible::after {
+    --_table-row-focus-ring: 0.125rem;
+    outline: var(--_table-row-focus-ring) solid var(--env-color-border-focus);
+    outline-offset: calc(-1 * var(--_table-row-focus-ring));
+  }
+  :where(.env-table-row[data-interactive]:has([data-row-target]))
+    :where(
+      a[href],
+      button,
+      input,
+      select,
+      textarea,
+      summary,
+      label,
+      [tabindex],
+      [contenteditable]
+    ):where(:not([data-row-target], [data-row-target] *)) {
+    position: relative;
+    z-index: var(--env-z-raised);
   }
   .env-table-row[data-interactive]:is(:hover, :focus-within) {
     --_avatar-group-ring-tint: var(--env-color-bg-row-hover);
