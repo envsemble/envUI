@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Badge,
-  Button,
-  Column,
-  DescriptionList,
-  PageHeader,
-  Surface,
-} from '@envsemble/envui';
+import { Avatar, Badge, Button, Column, DescriptionList, PageHeader } from '@envsemble/envui';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useTimeline } from '../../motion/Timeline';
 import { remPixels } from '../../shared/Lengths';
@@ -16,7 +8,7 @@ import { remeasure } from '../../shared/Remeasure';
 
 function Profile() {
   return (
-    <Surface background="default" padding={5} radius="xl" render={<Column gap={5} />}>
+    <Column gap={5}>
       <PageHeader
         title="Sam Lee"
         headingLevel={3}
@@ -33,7 +25,7 @@ function Profile() {
       <DescriptionList.Root aria-label="Profile details">
         <DescriptionList.Item label="Team">Research</DescriptionList.Item>
       </DescriptionList.Root>
-    </Surface>
+    </Column>
   );
 }
 

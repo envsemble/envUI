@@ -1,13 +1,4 @@
-import {
-  Avatar,
-  Badge,
-  Button,
-  Column,
-  DescriptionList,
-  PageHeader,
-  Surface,
-  Text,
-} from '@envsemble/envui';
+import { Avatar, Badge, Button, Column, DescriptionList, PageHeader, Text } from '@envsemble/envui';
 import { WidthSweep } from '../../motion/WidthSweep';
 import type { FoundationFigureEntry } from './FoundationFigures';
 import { ClassTextSizeFigure } from './ResponsiveTextSize';
@@ -15,7 +6,7 @@ import { FoundationFrame, type LegendEntry } from './FoundationFrame';
 
 function Profile() {
   return (
-    <Surface background="default" padding={5} radius="xl" render={<Column gap={5} />}>
+    <Column gap={5}>
       <PageHeader
         title="Sam Lee"
         headingLevel={3}
@@ -34,7 +25,7 @@ function Profile() {
         <DescriptionList.Item label="Location">Lisbon</DescriptionList.Item>
         <DescriptionList.Item label="Joined">4 March 2026</DescriptionList.Item>
       </DescriptionList.Root>
-    </Surface>
+    </Column>
   );
 }
 

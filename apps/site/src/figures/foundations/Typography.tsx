@@ -4,7 +4,6 @@ import {
   Button,
   Column,
   Row,
-  Surface,
   Text,
   Theme,
   useTheme,
@@ -29,13 +28,7 @@ function ScreenFigure({ legend }: FigureWords) {
       legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
-        <Surface
-          background="default"
-          padding={6}
-          radius="xl"
-          className="catalogue-type-screen"
-          render={<Column gap={6} />}
-        >
+        <Column gap={6} className="catalogue-type-screen">
           <Text render={<p />} variant="headline" data-catalogue-mark="1">
             Quarterly report
           </Text>
@@ -56,7 +49,7 @@ function ScreenFigure({ legend }: FigureWords) {
           <Text variant="caption" data-catalogue-mark="5">
             Figures include tax.
           </Text>
-        </Surface>
+        </Column>
       </MarkedSubject>
     </FoundationFrame>
   );
@@ -105,13 +98,7 @@ function HierarchyFigure({ legend }: FigureWords) {
       legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
-        <Surface
-          background="default"
-          padding={6}
-          radius="xl"
-          className="catalogue-type-screen"
-          render={<Column gap={5} />}
-        >
+        <Column gap={5} className="catalogue-type-screen">
           <Column gap={2}>
             <Text render={<p />} variant="headline">
               Billing
@@ -132,7 +119,7 @@ function HierarchyFigure({ legend }: FigureWords) {
               The card we charge each month
             </Text>
           </Column>
-        </Surface>
+        </Column>
       </MarkedSubject>
     </FoundationFrame>
   );
@@ -151,7 +138,7 @@ function EmphasisFigure() {
 
 function BookClub() {
   return (
-    <Surface background="default" padding={5} radius="xl" render={<Column gap={3} />}>
+    <Column gap={3}>
       <Column gap={1}>
         <Text render={<p />} variant="title">
           Book club
@@ -162,7 +149,7 @@ function BookClub() {
         <Text variant="body-sm">12 members going</Text>
         <Button size="sm">Join</Button>
       </Row>
-    </Surface>
+    </Column>
   );
 }
 

@@ -48,18 +48,12 @@ const reviewers: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jord
 function GroupingFigure({ legend }: FigureWords) {
   return (
     <FoundationFrame
-      label="How space groups a settings card"
+      label="How space groups a settings form"
       className="catalogue-marked-stage"
       legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
-        <Surface
-          background="default"
-          padding={6}
-          radius="xl"
-          className="catalogue-spacing-subject"
-          render={<Column gap={8} data-catalogue-space="3" />}
-        >
+        <Column gap={8} data-catalogue-space="3" className="catalogue-spacing-subject">
           <Column gap={4} data-catalogue-space="2">
             <Column gap={1} data-catalogue-space="1">
               <Text render={<h3 />} variant="title">
@@ -80,7 +74,7 @@ function GroupingFigure({ legend }: FigureWords) {
             <Switch label="A weekly summary" defaultChecked />
             <Switch label="When someone mentions you" />
           </Column>
-        </Surface>
+        </Column>
       </MarkedSubject>
     </FoundationFrame>
   );
@@ -153,13 +147,7 @@ function ShapesFigure({ legend }: FigureWords) {
 
 function ScaleSample() {
   return (
-    <Surface
-      background="default"
-      padding={5}
-      radius="xl"
-      className="catalogue-scale-sample"
-      render={<Column gap={4} />}
-    >
+    <Column gap={4} className="catalogue-scale-sample">
       <Column gap={1}>
         <Text render={<p />} variant="title">
           Rename report
@@ -171,7 +159,7 @@ function ScaleSample() {
         <Button variant="secondary">Cancel</Button>
         <Button>Rename</Button>
       </Row>
-    </Surface>
+    </Column>
   );
 }
 
@@ -200,7 +188,7 @@ function ScaleSteps({ legend }: FigureWords) {
 
 function ScalesFigure({ legend }: FigureWords) {
   return (
-    <FoundationFrame label="Comfortable or compact" motion="the dialog in each scale">
+    <FoundationFrame label="Comfortable or compact" motion="the form in each scale">
       <ScaleSteps legend={legend} />
     </FoundationFrame>
   );

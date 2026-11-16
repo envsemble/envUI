@@ -1,8 +1,8 @@
-import { Column, Surface, Switch, Text, TextField } from '@envsemble/envui';
+import { Column, Switch, Text, TextField } from '@envsemble/envui';
 
 export default function Grouping() {
   return (
-    <Surface background="default" padding={6} radius="xl" render={<Column gap={8} />}>
+    <Column gap={8}>
       <Column gap={4}>
         <Column gap={1}>
           <Text render={<h3 />} variant="title">
@@ -23,6 +23,6 @@ export default function Grouping() {
         <Switch label="A weekly summary" defaultChecked />
         <Switch label="When someone mentions you" />
       </Column>
-    </Surface>
+    </Column>
   );
 }
