@@ -33,7 +33,13 @@ export function readStyles() {
       return '';
     });
     for (const body of inner) for (const part of splitTopLevel(body, /,/)) visit(part, path);
-    for (const compound of splitTopLevel(own, /[\s>+~]/)) {
+    const ownCompounds = splitTopLevel(own, /[\s>+~]/).flatMap((compound) => {
+      const group = /^:is\(([\s\S]*)\)$/.exec(compound);
+      if (!group || splitTopLevel(group[1], /[\s>+~]/).length < 2) return [compound];
+      for (const part of splitTopLevel(group[1], /,/)) visit(part, path);
+      return [];
+    });
+    for (const compound of ownCompounds) {
       const names = [...compound.matchAll(/\.(env-[a-z\d]+(?:-[a-z\d]+)*)(?![\w-])/g)].map(
         (match) => match[1],
       );

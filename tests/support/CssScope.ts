@@ -91,10 +91,11 @@ function scopedElement(selector: string): boolean {
   if (list.length !== 1) return list.length > 1 && list.every(scopedElement);
   if (namesDocumentElement(selector) || !siblingsStayScoped(selector)) return false;
   if (/^(?:[a-zA-Z][\w-]*)?(?:\.env-|\[data-env-)/.test(selector)) return true;
-  if (!selector.startsWith(':where(')) return false;
-  const end = closingParenthesis(selector, ':where'.length);
+  const group = [':where(', ':is('].find((opening) => selector.startsWith(opening));
+  if (!group) return false;
+  const end = closingParenthesis(selector, group.length - 1);
   if (end === -1) return false;
-  const inner = splitSelectors(selector.slice(':where('.length, end));
+  const inner = splitSelectors(selector.slice(group.length, end));
   return inner.length > 0 && inner.every(scopedElement);
 }
 
