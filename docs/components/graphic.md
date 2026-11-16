@@ -28,15 +28,11 @@ components:
   - Graphic
 examples:
   SignInWithLogo: overview
-  AppLogo:
-    role: overview
-    caption: The application's logo beside its name.
   Sizes: variants
   InText: example
   FillBox: example
   PhotoThumbnails: example
   Colors: example
-  OwnIcons: example
   ListIcons: example
 ---
 
@@ -81,10 +77,6 @@ examples:
 ## Behaviour
 
 ### In icon slots
-
-```tsx figure=OwnIcons
-
-```
 
 ```tsx figure=ListIcons
 

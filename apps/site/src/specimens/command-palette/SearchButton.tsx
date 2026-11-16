@@ -1,6 +1,6 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
 import { useModifierKey, type ModifierKey } from '@envsemble/envui';
-import InSidebar from '../../examples/command-palette/InSidebar';
+import SearchButton from '../../examples/command-palette/SearchButton';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
@@ -10,7 +10,7 @@ const input = '.env-command-palette-input';
 
 const scriptFor = (modifier: ModifierKey['key']): PointerStep[] => [
   { wait: 300 },
-  { to: '.env-navigation-drawer-header .env-button', x: 0.4, y: 0.6 },
+  { to: '.env-button', x: 0.4, y: 0.6 },
   { wait: 240 },
   { click: true },
   { leave: true },
@@ -19,9 +19,9 @@ const scriptFor = (modifier: ModifierKey['key']): PointerStep[] => [
   { key: 'Escape', on: input },
   { wait: 780 },
   { cue: 'shortcut' },
-  { keyDown: modifier, on: '.env-navigation-drawer' },
-  { key: 'k', on: '.env-navigation-drawer' },
-  { keyUp: modifier, on: '.env-navigation-drawer' },
+  { keyDown: modifier, on: '.env-button' },
+  { key: 'k', on: '.env-button' },
+  { keyUp: modifier, on: '.env-button' },
   { wait: 960 },
   { cue: 'escape' },
   { key: 'Escape', on: input },
@@ -50,19 +50,17 @@ function Opening() {
     if (!held || event.key.toLowerCase() !== 'k') return;
     event.preventDefault();
     event.stopPropagation();
-    root.current
-      ?.querySelector<HTMLButtonElement>('.env-navigation-drawer-header .env-button')
-      ?.click();
+    root.current?.querySelector<HTMLButtonElement>('.env-button')?.click();
   };
   return (
     <div ref={root} onKeyDown={handleShortcutWithinFigure}>
       <PressedKeys keys={pressed?.keys ?? null} press={pressed?.press ?? 0} />
-      <InSidebar />
+      <SearchButton />
     </div>
   );
 }
 
-export default function InSidebarMotion() {
+export default function SearchButtonMotion() {
   return (
     <MotionStage label="the button and the shortcut opening the palette" height="20rem">
       <Opening />

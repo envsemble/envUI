@@ -2,29 +2,18 @@ import { useMemo, useState } from 'react';
 import {
   Button,
   CommandPalette,
-  NavigationDrawer,
   Kbd,
   Column,
   Text,
   type CommandPaletteItem,
-  type Destination,
   useModifierKey,
 } from '@envsemble/envui';
 import { IconDescription } from '@envsemble/envui/icons/Description';
-import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
-import { IconGroup } from '@envsemble/envui/icons/Group';
-import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const documents = ['Roadmap', 'Launch checklist', 'Pricing research', 'Interview notes'];
 
-const destinations: Destination[] = [
-  { label: 'Home', icon: <IconHome />, href: '/', current: true },
-  { label: 'Projects', icon: <IconFolderOpen />, href: '/projects' },
-  { label: 'People', icon: <IconGroup />, href: '/people' },
-];
-
-export default function InSidebar() {
+export default function SearchButton() {
   const modifier = useModifierKey();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -37,23 +26,16 @@ export default function InSidebar() {
     [query],
   );
   return (
-    <Column gap={3}>
-      <NavigationDrawer
-        aria-label="Workspace"
-        destinations={destinations}
-        header={
-          <Button
-            variant="secondary"
-            fullWidth
-            startIcon={<IconSearch />}
-            end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
-            aria-keyshortcuts={`${modifier.key}+K`}
-            onClick={() => setOpen(true)}
-          >
-            Search
-          </Button>
-        }
-      />
+    <Column gap={3} align="start">
+      <Button
+        variant="secondary"
+        startIcon={<IconSearch />}
+        end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
+        aria-keyshortcuts={`${modifier.key}+K`}
+        onClick={() => setOpen(true)}
+      >
+        Search
+      </Button>
       <CommandPalette
         open={open}
         onOpenChange={(next) => {

@@ -39,9 +39,6 @@ examples:
   ProjectName:
     role: overview
     caption: 'Outline: a short value on one line, with a label and a description.'
-  SearchInSidebar:
-    role: overview
-    caption: 'Ghost: a search atop a sidebar, only its icon and words until it is used.'
   Variants: variants
   SearchInToolbar: example
   FieldsBesideButtons: example

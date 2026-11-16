@@ -45,7 +45,7 @@ examples:
     role: overview
     open: true
   RunCommand: example
-  InSidebar: example
+  SearchButton: example
   IconOnly: example
   CommandPaletteAnatomy: anatomy
   TypeToSearch: example
@@ -64,7 +64,7 @@ examples:
 
 ### Opening it: the button and the shortcut
 
-```tsx figure=InSidebar motion
+```tsx figure=SearchButton motion
 
 ```
 
