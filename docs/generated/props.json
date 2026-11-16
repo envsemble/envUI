@@ -2833,8 +2833,14 @@
     "DocumentTabs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/DocumentTabs.tsx",
-      "description": "Editor-style closable tabs for open documents; the application renders the active document. className, style, ref and the other native props go to the root element, which holds the strip of tabs and the actions at its end.",
+      "description": "Editor-style closable tabs for open documents, with the active document in a panel under them. className, style, ref and the other native props go to the root element, which holds the strip of tabs, the actions at its end and the panel.",
       "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The active document, in the panel under the strip, which the active tab joins: anything the application renders, such as an editor or a page, placed as given. Without it, the application renders the panel itself and names it with panelId."
+        },
         {
           "name": "items",
           "type": "readonly DocumentTabsItem[]",
@@ -2887,7 +2893,7 @@
           "name": "panelId",
           "type": "string",
           "required": false,
-          "description": "Id of the panel the application renders for the active tab."
+          "description": "Id of the panel the active tab controls: the one DocumentTabs renders around children, or the one the application renders itself."
         },
         {
           "name": "closeLabel",

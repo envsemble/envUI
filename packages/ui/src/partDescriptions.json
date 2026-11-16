@@ -348,7 +348,10 @@
       "env-document-tabs-drag-image": "The image that follows the pointer while a tab is dragged.",
       "env-document-tabs-end": "The slot of the actions at the end of the bar.",
       "env-document-tabs-item": "One tab with its close button.",
-      "env-document-tabs": "The root: a bar that holds the strip of tabs and the content after it.",
+      "env-document-tabs": "The root: the strip of tabs over the panel of the active document.",
+      "env-document-tabs-strip": "The bar that holds the tabs and the actions at their end.",
+      "env-document-tabs-panel": "The panel of the active document, which the active tab joins.",
+      "env-document-tabs-panel-content": "The slot of the active document.",
       "env-document-tabs-tab": "A tab's button.",
       "env-document-tabs-tab-label": "A tab's title."
     },

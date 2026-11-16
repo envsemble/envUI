@@ -1,4 +1,6 @@
+import { createRoot } from 'react-dom/client';
 import { describe, expect, test } from 'vitest';
+import { DocumentTabs, Theme } from '@envsemble/envui';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as tabsFixture from '../fixture/DocumentTabs.fixture.tsx';
 import * as rerenderFixture from '../fixture/DocumentTabsRerender.fixture.tsx';
@@ -320,4 +322,44 @@ describe('DocumentTabs', () => {
     await expect.element(three).toHaveAttribute('aria-selected', 'true');
     await expect.element(three).toHaveFocus();
   });
+});
+
+test('children go in the panel the active tab controls, which the active tab joins', async () => {
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  const items = [
+    { value: 'a', label: 'A.md' },
+    { value: 'b', label: 'B.md' },
+  ];
+  const render = (value: string) =>
+    root.render(
+      <Theme theme="dark">
+        <DocumentTabs
+          aria-label="Panel documents"
+          items={items}
+          value={value}
+          onValueChange={() => undefined}
+          onClose={() => undefined}
+        >
+          <p data-testid="panel-content">Content of {value}</p>
+        </DocumentTabs>
+      </Theme>,
+    );
+  render('b');
+  const panel = page.getByRole('tabpanel', { name: 'B.md' });
+  await expect.element(panel).toBeVisible();
+  const tab = page.getByRole('tab', { name: 'B.md' }).element();
+  expect(tab.getAttribute('aria-controls')).toBe(panel.element().id);
+  expect(panel.element().contains(page.getByTestId('panel-content').element())).toBe(true);
+  const item = tab.closest('.env-document-tabs-item')!;
+  expect(getComputedStyle(item).backgroundColor).toBe(
+    getComputedStyle(panel.element()).backgroundColor,
+  );
+  expect(getComputedStyle(panel.element()).borderStartStartRadius).not.toBe('0px');
+  const panelElement = panel.element();
+  render('a');
+  await expect.poll(() => getComputedStyle(panelElement).borderStartStartRadius).toBe('0px');
+  root.unmount();
+  host.remove();
 });

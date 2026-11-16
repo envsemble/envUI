@@ -1,19 +1,53 @@
 @layer env.components {
+  .env-theme {
+    --_document-tabs-muted-weight: 88%;
+  }
+  .env-theme[data-env-theme='dark'] {
+    --_document-tabs-muted-weight: 65%;
+  }
+  .env-theme[data-env-contrast='high'] {
+    --_document-tabs-muted-weight: 100%;
+  }
+  @media (prefers-contrast: more) {
+    .env-theme:not([data-env-contrast='standard']) {
+      --_document-tabs-muted-weight: 100%;
+    }
+  }
   .env-document-tabs {
-    --_document-tabs-close-size: 1.5rem;
+    --_document-tabs-close-size: 1.25rem;
+    --_document-tabs-height: 2.1875rem;
     --_document-tabs-item-max: 14rem;
-    --_document-tabs-item-min: 7.5rem;
+    --_document-tabs-item-min: 5rem;
     --_document-tabs-rule: var(--env-control-border-width);
+    --_document-tabs-panel: var(--_surface-color, var(--env-color-bg-page));
+    --_document-tabs-muted: color-mix(
+      in srgb,
+      var(--env-color-fg-muted) var(--_document-tabs-muted-weight),
+      var(--env-color-bg-muted)
+    );
+    --_document-tabs-fillet: var(--env-radius-sm);
     box-sizing: border-box;
     inline-size: 100%;
     max-inline-size: 100%;
-    block-size: var(--env-control-height-md);
     contain: inline-size;
-    background-color: var(--env-color-bg-default);
-    background-image: linear-gradient(var(--env-color-border-muted), var(--env-color-border-muted));
-    background-position: bottom;
-    background-repeat: no-repeat;
-    background-size: 100% var(--_document-tabs-rule);
+    background-color: var(--env-color-bg-muted);
+  }
+  .env-document-tabs-strip {
+    box-sizing: border-box;
+    flex: none;
+    block-size: var(--_document-tabs-height);
+    min-inline-size: 0;
+  }
+  .env-document-tabs-panel {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    margin-inline-start: var(--env-space-1);
+    border-start-start-radius: var(--_document-tabs-fillet);
+    border-start-end-radius: var(--_document-tabs-fillet);
+    background: var(--_document-tabs-panel);
+  }
+  .env-document-tabs[data-first-active] > .env-document-tabs-panel {
+    border-start-start-radius: 0;
   }
   .env-document-tabs-end {
     gap: var(--env-space-1);
@@ -99,14 +133,13 @@
   .env-document-tabs-item {
     box-sizing: border-box;
     position: relative;
-    flex: 0 1 auto;
+    flex: 0 0 auto;
     min-inline-size: var(--_document-tabs-item-min);
     max-inline-size: var(--_document-tabs-item-max);
     display: inline-flex;
     align-items: center;
     padding-inline-end: var(--env-space-1);
-    border-inline-end: var(--_document-tabs-rule) solid var(--env-color-border-muted);
-    color: var(--env-color-fg-muted);
+    color: var(--_document-tabs-muted);
     font: var(--env-type-body-sm);
     white-space: nowrap;
     cursor: pointer;
@@ -115,12 +148,44 @@
       background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
       color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
-  :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:hover {
+  .env-document-tabs-item[data-active] {
+    --_document-tabs-fillet-start: radial-gradient(
+      circle at 0 0,
+      transparent var(--_document-tabs-fillet),
+      var(--_document-tabs-panel) var(--_document-tabs-fillet)
+    );
+    --_document-tabs-fillet-end: radial-gradient(
+      circle at 100% 0,
+      transparent var(--_document-tabs-fillet),
+      var(--_document-tabs-panel) var(--_document-tabs-fillet)
+    );
+    border-start-start-radius: var(--_document-tabs-fillet);
+    border-start-end-radius: var(--_document-tabs-fillet);
+    background: var(--_document-tabs-panel);
     color: var(--env-color-fg-default);
   }
-  .env-document-tabs-item[data-active] {
-    background: var(--_surface-color, var(--env-color-bg-page));
-    color: var(--env-color-fg-default);
+  .env-document-tabs-item[data-active]::after {
+    content: '';
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline: calc(-1 * var(--_document-tabs-fillet));
+    block-size: var(--_document-tabs-fillet);
+    background-image: var(--_document-tabs-fillet-start), var(--_document-tabs-fillet-end);
+    background-position:
+      left bottom,
+      right bottom;
+    background-repeat: no-repeat;
+    background-size: var(--_document-tabs-fillet) 100%;
+    pointer-events: none;
+  }
+  .env-document-tabs-item[data-active]:dir(rtl)::after {
+    background-image: var(--_document-tabs-fillet-end), var(--_document-tabs-fillet-start);
+    background-position:
+      right bottom,
+      left bottom;
+  }
+  .env-document-tabs[data-first-active] .env-document-tabs-item[data-active] {
+    --_document-tabs-fillet-start: none;
   }
   .env-document-tabs-item:has(> .env-document-tabs-tab:focus-visible) {
     outline: 2px solid var(--env-color-border-focus);
@@ -134,10 +199,10 @@
     min-inline-size: 0;
     display: inline-flex;
     align-items: center;
-    gap: var(--env-space-2);
+    gap: calc(var(--env-space-1) * 1.5);
     margin: 0;
     padding-block: 0;
-    padding-inline: var(--env-space-3) var(--env-space-2);
+    padding-inline: calc(var(--env-space-1) * 2.5) calc(var(--env-space-1) * 1.5);
     border: 0;
     background: transparent;
     color: inherit;
@@ -151,7 +216,7 @@
   .env-document-tabs-tab .env-icon {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
-    color: var(--env-color-fg-muted);
+    color: inherit;
   }
   .env-document-tabs-tab-label {
     min-inline-size: 0;
@@ -177,7 +242,7 @@
     visibility: visible;
   }
   @media (pointer: coarse) {
-    .env-document-tabs {
+    .env-document-tabs-strip {
       --_document-tabs-close-size: var(--env-control-height-touch);
       block-size: var(--env-control-height-touch);
     }
@@ -192,8 +257,11 @@
   }
 
   @media (forced-colors: active) {
-    .env-document-tabs {
+    .env-document-tabs-strip {
       border-block-end: var(--_document-tabs-rule) solid CanvasText;
+    }
+    .env-document-tabs-item[data-active]::after {
+      display: none;
     }
     .env-document-tabs-item[data-active] {
       forced-color-adjust: none;

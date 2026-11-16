@@ -3,6 +3,7 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import {
+  useId,
   useRef,
   type ComponentPropsWithRef,
   type KeyboardEvent,
@@ -13,7 +14,7 @@ import {
 import { IconButton } from '../actions/Button.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
-import { Row } from '../layout/Layout.js';
+import { Column, Row } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { useDirection } from '../internal/provider/useDirection.js';
@@ -49,6 +50,12 @@ export interface DocumentTabsProps extends Omit<
   ComponentPropsWithRef<'div'>,
   'children' | 'defaultValue' | 'onChange' | 'aria-label'
 > {
+  /**
+   * The active document, in the panel under the strip, which the active tab joins: anything the
+   * application renders, such as an editor or a page, placed as given. Without it, the application
+   * renders the panel itself and names it with panelId.
+   */
+  children?: ReactNode;
   /** The open documents, in tab order. */
   items: readonly DocumentTabsItem[];
   /** The active tab, or null. */
@@ -75,7 +82,10 @@ export interface DocumentTabsProps extends Omit<
   end?: ReactNode;
   /** Accessible name of the tab strip. */
   'aria-label': string;
-  /** Id of the panel the application renders for the active tab. */
+  /**
+   * Id of the panel the active tab controls: the one DocumentTabs renders around children, or the
+   * one the application renders itself.
+   */
   panelId?: string;
   /**
    * The name of the context menu's item that closes a tab, and the tooltip of its close button.
@@ -101,9 +111,9 @@ export interface DocumentTabsProps extends Omit<
 }
 
 /**
- * Editor-style closable tabs for open documents; the application renders the active document.
+ * Editor-style closable tabs for open documents, with the active document in a panel under them.
  * className, style, ref and the other native props go to the root element, which holds the strip
- * of tabs and the actions at its end.
+ * of tabs, the actions at its end and the panel.
  */
 export function DocumentTabs({
   items,
@@ -120,8 +130,11 @@ export function DocumentTabs({
   closeAllLabel,
   contextMenuLabel,
   className,
+  children,
   ...props
 }: DocumentTabsProps) {
+  const ownPanelId = useId();
+  const controlledPanel = panelId ?? (children != null ? ownPanelId : undefined);
   const messages = useMessages('documentTabs', documentTabs);
   const closeName = closeLabel ?? ((name: string) => messages.close({ label: name }));
   const list = useRef<HTMLDivElement | null>(null);
@@ -180,7 +193,7 @@ export function DocumentTabs({
           item={item}
           active={item.value === value}
           focusable={item.value === focusable}
-          panelId={panelId}
+          panelId={controlledPanel}
           closeName={closeName}
           moving={drag?.id === item.value}
           drop={
@@ -202,49 +215,62 @@ export function DocumentTabs({
         onValueChange={(next) => {
           if (typeof next === 'string') onValueChange(next);
         }}
-        render={<Row align="center" />}
+        render={<Column align="stretch" />}
         className={classNames('env-document-tabs', className)}
+        data-first-active={flag(items[0] !== undefined && items[0].value === value)}
       >
-        <ContextMenu
-          aria-label={contextMenuLabel ?? messages.contextMenu}
-          onOpenChange={closeFocus.onMenuOpenChange}
-          content={(target) => {
-            const tab = target
-              ?.closest('.env-document-tabs-item')
-              ?.querySelector<HTMLElement>('[role="tab"]');
-            const id = tab?.dataset.tabId;
-            const onTab = tab != null && id !== undefined;
-            const offersMenu = onTab || onCloseAll !== undefined;
-            if (!offersMenu) return null;
-            return (
-              <TabMenuItems
-                tab={onTab ? { id, label: tab.getAttribute('aria-label') ?? '' } : undefined}
-                closeName={closeName}
-                onClose={(tabId) => {
-                  closeFocus.onCloseFromMenu();
-                  onClose(tabId);
-                }}
-                onMove={onReorder && moveTab}
-                canMove={(tabId, side) => moveTarget(tabId, side) >= 0}
-                closeAll={
-                  onCloseAll && {
-                    onClick: onCloseAll,
-                    label: closeAllLabel ?? messages.closeAll,
-                    disabled: items.length === 0,
+        <Row align="center" className="env-document-tabs-strip">
+          <ContextMenu
+            aria-label={contextMenuLabel ?? messages.contextMenu}
+            onOpenChange={closeFocus.onMenuOpenChange}
+            content={(target) => {
+              const tab = target
+                ?.closest('.env-document-tabs-item')
+                ?.querySelector<HTMLElement>('[role="tab"]');
+              const id = tab?.dataset.tabId;
+              const onTab = tab != null && id !== undefined;
+              const offersMenu = onTab || onCloseAll !== undefined;
+              if (!offersMenu) return null;
+              return (
+                <TabMenuItems
+                  tab={onTab ? { id, label: tab.getAttribute('aria-label') ?? '' } : undefined}
+                  closeName={closeName}
+                  onClose={(tabId) => {
+                    closeFocus.onCloseFromMenu();
+                    onClose(tabId);
+                  }}
+                  onMove={onReorder && moveTab}
+                  canMove={(tabId, side) => moveTarget(tabId, side) >= 0}
+                  closeAll={
+                    onCloseAll && {
+                      onClick: onCloseAll,
+                      label: closeAllLabel ?? messages.closeAll,
+                      disabled: items.length === 0,
+                    }
                   }
-                }
-                moveLeftLabel={messages.moveLeft}
-                moveRightLabel={messages.moveRight}
-              />
-            );
-          }}
-        >
-          {strip}
-        </ContextMenu>
-        {end != null && (
-          <Slot className="env-document-tabs-end" layout="row" shrink="never">
-            {end}
-          </Slot>
+                  moveLeftLabel={messages.moveLeft}
+                  moveRightLabel={messages.moveRight}
+                />
+              );
+            }}
+          >
+            {strip}
+          </ContextMenu>
+          {end != null && (
+            <Slot className="env-document-tabs-end" layout="row" shrink="never">
+              {end}
+            </Slot>
+          )}
+        </Row>
+        {children != null && (
+          <div
+            className="env-document-tabs-panel"
+            role="tabpanel"
+            id={controlledPanel}
+            aria-label={items.find((item) => item.value === value)?.label}
+          >
+            <Slot className="env-document-tabs-panel-content">{children}</Slot>
+          </div>
         )}
         {drag && dragged && (
           <div

@@ -2118,7 +2118,7 @@
       "parts": [
         {
           "class": "env-document-tabs",
-          "description": "The root: a bar that holds the strip of tabs and the content after it."
+          "description": "The root: the strip of tabs over the panel of the active document."
         },
         {
           "class": "env-document-tabs-close",
@@ -2140,6 +2140,19 @@
         {
           "class": "env-document-tabs-list",
           "description": "The tabs of open documents, which scroll sideways."
+        },
+        {
+          "class": "env-document-tabs-panel",
+          "description": "The panel of the active document, which the active tab joins."
+        },
+        {
+          "class": "env-document-tabs-panel-content",
+          "description": "The slot of the active document.",
+          "slot": true
+        },
+        {
+          "class": "env-document-tabs-strip",
+          "description": "The bar that holds the tabs and the actions at their end."
         },
         {
           "class": "env-document-tabs-tab",
@@ -2186,6 +2199,15 @@
           ],
           "parts": [
             "env-document-tabs-list"
+          ]
+        },
+        {
+          "attribute": "data-first-active",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-document-tabs"
           ]
         },
         {
