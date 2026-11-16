@@ -1,4 +1,4 @@
-.site-banner > :not(.site-banner-shapes, .catalogue-banner-motif) {
+.site-banner > :not(.catalogue-banner-motif) {
   position: relative;
   z-index: var(--env-z-raised);
 }
@@ -44,12 +44,6 @@
 }
 
 @container site-page-header (width >= 44rem) {
-  .site-banner-shapes ~ .site-page-banner-content {
-    --_picture-shown-share: 0.7;
-    --site-banner-art: calc(
-      var(--_picture-shown-share) * min(0.48 * (100cqi + 2 * var(--site-banner-padding)), 42rem)
-    );
-  }
   .catalogue-banner-motif ~ .site-page-banner-content {
     --_picture-shown-share: 0.9;
     --site-banner-art: calc(
@@ -81,53 +75,4 @@
 .site-banner .catalogue-page-banner-breadcrumb {
   font: var(--env-type-body-sm);
   color: var(--env-color-fg-muted);
-}
-
-.catalogue-banner-lines,
-.docs-banner-lines {
-  --site-banner-lines-opaque: var(--env-color-fg-default);
-  position: absolute;
-  inset-block: 0;
-  inset-inline-end: 0;
-  inline-size: min(48%, 42rem);
-  mask-image: linear-gradient(to right, transparent 25%, var(--site-banner-lines-opaque) 70%);
-}
-.catalogue-banner-lines {
-  --env-line-art-duration: calc(var(--env-motion-duration-slow) * 4);
-}
-@media (prefers-reduced-motion: no-preference) {
-  :root[data-site-banner-appear] .catalogue-banner-lines:not([data-motion]) {
-    --_shown-whole-without-script-after: 5s;
-    visibility: hidden;
-    animation: site-banner-lines-shown 0s var(--_shown-whole-without-script-after) forwards;
-  }
-}
-@keyframes site-banner-lines-shown {
-  to {
-    visibility: visible;
-  }
-}
-:where([data-env-theme='dark']) :is(.catalogue-banner-lines, .docs-banner-lines) {
-  opacity: 0.7;
-}
-:where([data-env-contrast='high']) :is(.catalogue-banner-lines, .docs-banner-lines) {
-  opacity: 1;
-}
-.catalogue-banner-lines:dir(rtl),
-.docs-banner-lines:dir(rtl) {
-  mask-image: linear-gradient(to left, transparent 25%, var(--site-banner-lines-opaque) 70%);
-}
-
-@container site-page-header (width < 44rem) {
-  .site-banner-shapes {
-    display: none;
-  }
-}
-
-.site-banner-shapes {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  container-type: size;
-  pointer-events: none;
 }

@@ -21,8 +21,4 @@ export const drawerWidths = {
 export const storedDrawerWidthProperty = (area: 'catalogue' | 'docs') =>
   `--site-drawer-width-${area}`;
 
-export const bannerDrawnKey = 'envui-site-banner-drawn';
-
-export const bannerAppearAttribute = 'data-site-banner-appear';
-
 export const modifierAttribute = 'data-site-modifier';

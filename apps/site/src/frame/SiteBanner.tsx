@@ -3,8 +3,6 @@ import { Breadcrumbs, Card, Column, Text } from '@envsemble/envui';
 import { routeHref } from '../routes/Address';
 import type { TrailStep } from '../routes/Trails';
 import { BannerMotif, motifOf } from './BannerMotif';
-import { CatalogueBannerLines } from './CatalogueBannerLines';
-import { DocsBannerLines } from './DocsBannerLines';
 import { CompactContents } from './PageContents';
 
 type BannerKind = 'catalogue' | 'docs';
@@ -36,13 +34,7 @@ export function SiteBanner({
   return (
     <header className="site-page-header">
       <Card background="default" padding={6} className="site-page-banner site-banner">
-        {motif ? (
-          <BannerMotif motif={motif} />
-        ) : kind === 'catalogue' ? (
-          <CatalogueBannerLines subject={subject} />
-        ) : (
-          <DocsBannerLines title={title} />
-        )}
+        {motif && <BannerMotif motif={motif} />}
         <Column gap={6} className="site-page-banner-content">
           <div className="site-page-banner-heading">
             <Column gap={3}>

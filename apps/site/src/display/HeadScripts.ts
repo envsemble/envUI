@@ -7,8 +7,6 @@ import {
   scaleSourceAttribute,
 } from '../../../../packages/ui/src/foundations/themeBootstrap.ts';
 import {
-  bannerAppearAttribute,
-  bannerDrawnKey,
   displayStorageKeys,
   drawerWidthKey,
   drawerWidths,
@@ -55,11 +53,8 @@ function createSiteBootstrapScript() {
       drawerWidths[area].maxWidth,
     ]),
   );
-  const motionKey = JSON.stringify(displayStorageKeys.motion);
-  const drawnKey = JSON.stringify(bannerDrawnKey);
-  const appear = JSON.stringify(bannerAppearAttribute);
   const modifier = JSON.stringify(modifierAttribute);
-  return `(function(){var r=document.documentElement,w=${widths},m=null,d=true,n=navigator,u=n.userAgentData;try{for(var i=0;i<w.length;i++){var v=parseFloat(localStorage.getItem(w[i][0]));if(isFinite(v))r.style.setProperty(w[i][1],Math.min(w[i][3],Math.max(w[i][2],v))+"rem")}m=localStorage.getItem(${motionKey})}catch(e){}if(m!=="paused"&&(m==="playing"||!matchMedia("(prefers-reduced-motion: reduce)").matches)){try{d=sessionStorage.getItem(${drawnKey})===null}catch(e){}if(d)r.setAttribute(${appear},"")}if(/mac|iphone|ipad|ipod/i.test(u&&u.platform||n.platform||""))r.setAttribute(${modifier},"meta")})();`;
+  return `(function(){var r=document.documentElement,w=${widths},n=navigator,u=n.userAgentData;try{for(var i=0;i<w.length;i++){var v=parseFloat(localStorage.getItem(w[i][0]));if(isFinite(v))r.style.setProperty(w[i][1],Math.min(w[i][3],Math.max(w[i][2],v))+"rem")}}catch(e){}if(/mac|iphone|ipad|ipod/i.test(u&&u.platform||n.platform||""))r.setAttribute(${modifier},"meta")})();`;
 }
 
 export function createFirstPaintStyle(tokensCss: string) {
