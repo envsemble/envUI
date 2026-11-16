@@ -1,6 +1,8 @@
 import { Link, Row, Text } from '@envsemble/envui';
 import { version } from '@envsemble/envui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
+import envsembleOnDark from '../brand/envsemble-horizontal-on-dark.svg';
+import envsembleOnLight from '../brand/envsemble-horizontal-on-light.svg';
 import { docsRoute, homeRoute, routeHref } from '../routes/Address';
 
 const repository = 'https://github.com/envsemble/envUI';
@@ -41,6 +43,27 @@ export function PageFooter() {
             ))}
           </Row>
         </nav>
+        <Row gap={2} align="center" className="site-footer-maker">
+          <Text variant="body-sm" emphasis="muted">
+            © 2026
+          </Text>
+          <a href="https://envsemble.com" className="site-footer-maker-logo">
+            <img
+              src={envsembleOnLight}
+              alt="envsemble"
+              width={303}
+              height={63}
+              className="site-footer-maker-on-light"
+            />
+            <img
+              src={envsembleOnDark}
+              alt="envsemble"
+              width={303}
+              height={63}
+              className="site-footer-maker-on-dark"
+            />
+          </a>
+        </Row>
       </Row>
     </footer>
   );

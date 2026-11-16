@@ -511,6 +511,19 @@ body {
 .site-footer-links .env-link {
   color: var(--env-color-fg-muted);
 }
+.site-footer-maker-logo {
+  display: block;
+  flex: none;
+}
+.site-footer-maker-logo img {
+  display: block;
+  block-size: 1.125rem;
+  inline-size: auto;
+}
+:root[data-env-theme='dark'] .site-footer-maker-on-light,
+:root:not([data-env-theme='dark']) .site-footer-maker-on-dark {
+  display: none;
+}
 .site-footer-links .env-link:hover {
   color: var(--env-color-fg-default);
   text-decoration: underline;
