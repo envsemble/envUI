@@ -9,6 +9,16 @@ import {
 
 const entryPoints = new Set(readData('entryPoints.json').entryPoints);
 
+const overlays = new Set([
+  'Popover',
+  'Dialog',
+  'Sheet',
+  'Menu.Root',
+  'HoverCard',
+  'ConfirmDialog',
+  'CommandPalette',
+]);
+
 const fields = new Set([
   'Select',
   'RadioGroup',
@@ -58,6 +68,7 @@ export default {
       if (!expression) return found;
       if (expression.type === 'JSXElement') {
         const name = envuiName(expression.openingElement.name);
+        if (name && overlays.has(name)) return found;
         if (name && fields.has(name)) found.push({ node: expression.openingElement.name, name });
         for (const child of expression.children) fieldsIn(child, found);
       } else if (expression.type === 'JSXFragment') {

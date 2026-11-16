@@ -44,7 +44,18 @@ ruleTester.run('no-link-in-clickable-row', rule, {
     },
     {
       code: '<Card onClick={open}><a href="/help">Help</a></Card>',
-      errors: [nested('A raw <a>', 'Card', 'beside the card as a Button')],
+      errors: [
+        {
+          messageId: 'nested',
+          data: {
+            found: 'A raw <a>',
+            row: 'Card',
+            place: 'beside the card as a Button',
+            advice:
+              " When it goes where the card goes, leave it out: the card's href or onClick takes the click.",
+          },
+        },
+      ],
     },
     {
       code: 'import { Table } from \'@envsemble/envui\'; <Table.Row onClick={open}><Table.Cell><Button variant="text">Edit</Button></Table.Cell></Table.Row>;',

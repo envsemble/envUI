@@ -30,7 +30,8 @@ const rows = {
     props: ['href', 'onClick'],
     target: false,
     place: 'beside the card as a Button',
-    advice: ' When it goes where the row goes, mark it data-row-target instead.',
+    advice:
+      " When it goes where the card goes, leave it out: the card's href or onClick takes the click.",
   },
 };
 

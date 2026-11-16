@@ -10,6 +10,10 @@ ruleTester.run('no-field-in-list-row', rule, {
       '<List.Item label="Archive" control={<Checkbox />} />',
       '<List.Item label="Report" end={<IconButton icon={<IconMore />} aria-label="More" />} />',
     ]),
+    ...named("A form in an overlay a row's end opens", [
+      '<List.Item label="Port" end={<Popover trigger={<IconButton icon={<IconEdit />} aria-label="Edit" />}><TextField label="Port" /></Popover>} />',
+      '<List.Item label="Members" end={<Dialog title="Invite"><Select label="Role" items={roles} /></Dialog>} />',
+    ]),
     ...named('A field in a form, outside a row', [
       '<Field label="Port"><TextField /></Field>',
       '<List.Item label="Report">{children}</List.Item>',
