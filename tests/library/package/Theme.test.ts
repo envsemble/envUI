@@ -117,26 +117,23 @@ test('a Theme writes its scale, which nested Themes inherit, and a data-env-scal
   assert.match(prop, /data-env-scale="comfortable"/);
 });
 
-test('a Theme writes its surface, selection and corners, which nested Themes and useTheme take', () => {
+test('a Theme writes its selection and corners, which nested Themes and useTheme take', () => {
   function Inner() {
-    const { surface, selection, corners } = useTheme();
-    return h('output', null, `${surface} ${selection} ${corners}`);
+    const { selection, corners } = useTheme();
+    return h('output', null, `${selection} ${corners}`);
   }
   const plain = render(h(Theme, { theme: 'light' }, h(Inner))).markup;
-  assert.match(
-    plain,
-    /data-env-surface="plain" data-env-selection="neutral" data-env-corners="rounded"/,
-  );
+  assert.match(plain, /data-env-selection="neutral" data-env-corners="rounded"/);
+  assert.doesNotMatch(plain, /data-env-surface/);
   const nested = render(
     h(
       Theme,
-      { theme: 'light', surface: 'filled', selection: 'accent', corners: 'sharp' },
+      { theme: 'light', selection: 'accent', corners: 'sharp' },
       h(Theme, { theme: 'dark', corners: 'round' }, h(Inner)),
     ),
   ).markup;
-  assert.equal(nested.match(/data-env-surface="filled"/g)?.length, 2);
   assert.equal(nested.match(/data-env-selection="accent"/g)?.length, 2);
-  assert.match(nested, /<output>filled accent round<\/output>/);
+  assert.match(nested, /<output>accent round<\/output>/);
 });
 
 test('ThemePreferenceProvider renders its default on the server and leaves the look to the root', () => {
@@ -160,7 +157,7 @@ test('ThemePreferenceProvider renders its default on the server and leaves the l
   ).markup;
   assert.match(
     own,
-    /^<div class="env-theme" data-env-theme="dark" data-env-scale="system" data-env-surface="plain" data-env-selection="neutral" data-env-corners="rounded">/,
+    /^<div class="env-theme" data-env-theme="dark" data-env-scale="system" data-env-selection="neutral" data-env-corners="rounded">/,
   );
   assert.match(own, /<output>dark<\/output>/);
 });

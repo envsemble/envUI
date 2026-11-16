@@ -1,10 +1,4 @@
-import type {
-  ThemeContrast,
-  ThemeCorners,
-  ThemeScale,
-  ThemeSelection,
-  ThemeSurface,
-} from './Theme.js';
+import type { ThemeContrast, ThemeCorners, ThemeScale, ThemeSelection } from './Theme.js';
 
 /** Preference stored by ThemePreferenceProvider: an explicit theme or the operating system's. */
 export type ThemePreference = 'light' | 'dark' | 'system';
@@ -40,11 +34,6 @@ export interface ThemeDefinition {
    * scale, or one the page set on the root, and else `system`.
    */
   scale?: ThemeScale;
-  /**
-   * How rows, tables and cards draw: plain on the surface they sit on, or filled as tiles. Left
-   * out, an enclosing Theme's, and else plain.
-   */
-  surface?: ThemeSurface;
   /**
    * The tone of what is selected: neutral, a gray under the text color, or accent, the brand's
    * tint. Left out, an enclosing Theme's, and else neutral.
@@ -83,13 +72,11 @@ export const scaleSourceAttribute = 'data-env-scale-source';
 export const ownScaleSource = (scale: string) => `envui:${scale}`;
 
 export const lookAttributes = {
-  surface: 'data-env-surface',
   selection: 'data-env-selection',
   corners: 'data-env-corners',
 } as const;
 
 const lookValues: Record<keyof typeof lookAttributes, readonly string[]> = {
-  surface: ['plain', 'filled'],
   selection: ['neutral', 'accent'],
   corners: ['sharp', 'rounded', 'round'],
 };
@@ -100,7 +87,7 @@ const setAttribute = (name: string, value: string) =>
 /**
  * Inline script for the document head. It themes the root element before the first paint, so a
  * saved or system dark theme does not flash light while the application loads, and the contrast,
- * scale, surface, selection and corners of the theme apply from the start. Give it the theme
+ * scale, selection and corners of the theme apply from the start. Give it the theme
  * ThemePreferenceProvider takes.
  */
 export function createThemeBootstrapScript(theme: ThemeDefinition = {}) {

@@ -18,20 +18,16 @@
 
   .env-list {
     --_list-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
-    --_list-filled-gap: var(--_theme-filled) calc(var(--env-space-1) / 2);
-    --_list-filled-padding: var(--_theme-filled) var(--env-row-padding-inline);
-    --_list-filled-handle-reach: var(--_theme-filled) calc(-1 * var(--env-space-3));
-    --_list-plain-divider: var(--_theme-filled) 0;
     overflow-wrap: break-word;
-    gap: var(--_list-filled-gap, 0);
+    gap: calc(var(--env-space-1) / 2);
     margin: 0;
     padding: 0;
     list-style: none;
   }
   .env-list > .env-list-item {
-    --_list-item-container-default: var(--_list-ground, var(--env-color-bg-item));
-    --_list-item-fill-hover: var(--_list-ground-hover, var(--env-color-bg-item-hover));
-    --_list-item-fill-pressed: var(--_list-ground-pressed, var(--env-color-bg-item-pressed));
+    --_list-item-container-default: var(--_list-ground, var(--env-color-bg-list-item));
+    --_list-item-fill-hover: var(--_list-ground-hover, var(--env-color-bg-list-item-hover));
+    --_list-item-fill-pressed: var(--_list-ground-pressed, var(--env-color-bg-list-item-pressed));
     --_list-item-layer: initial;
     --_list-item-content-gate: color-mix(
       in srgb,
@@ -47,14 +43,10 @@
     --_list-item-custom-fill: var(--_list-item-custom-layered, var(--_list-item-custom-base));
     box-sizing: border-box;
     min-height: calc(var(--env-control-height-sm) + 2 * var(--_list-row-padding));
-    padding: var(--_list-row-padding) var(--_list-filled-padding, 0);
+    padding: var(--_list-row-padding) var(--env-row-padding-inline);
     font: var(--env-type-body-sm);
     background: var(--_list-item-custom-fill, var(--_list-item-container-default));
     color: var(--env-list-item-content, var(--env-color-fg-default));
-  }
-  .env-list > .env-list-item ~ .env-list-item {
-    border-block-start: var(--_list-plain-divider, var(--env-control-border-width)) solid
-      var(--env-color-border-muted);
   }
   .env-list[data-density='xs'] {
     --_list-row-padding: calc(var(--env-row-padding-block-xs) + var(--env-space-1));
@@ -73,15 +65,22 @@
     flex: 1 1 0;
   }
   .env-list-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--env-space-1);
     min-inline-size: 0;
   }
   .env-list-header {
     font: var(--env-type-body-sm);
     color: var(--env-color-fg-muted);
   }
-  .env-list-item-start {
+  .env-list-item-start,
+  .env-list-item-end,
+  .env-list-item-control {
     position: relative;
     z-index: var(--env-z-raised);
+  }
+  .env-list-item-start {
     --env-icon-size: var(--env-icon-size-lg);
     justify-content: center;
     min-inline-size: var(--env-icon-size);
@@ -89,7 +88,7 @@
   .env-list-item-handle {
     position: relative;
     z-index: var(--env-z-raised);
-    margin-inline-start: var(--_list-filled-handle-reach, 0);
+    margin-inline-start: calc(-1 * var(--env-space-3));
     cursor: grab;
     touch-action: none;
   }
@@ -166,9 +165,9 @@
     > .env-skeleton-content
     > .env-list
     > .env-list-item {
-    --_list-ground: var(--_theme-filled) var(--env-color-bg-default);
-    --_list-ground-hover: var(--_theme-filled) var(--env-color-bg-default-hover);
-    --_list-ground-pressed: var(--_theme-filled) var(--env-color-bg-default-pressed);
+    --_list-ground: var(--env-color-bg-default);
+    --_list-ground-hover: var(--env-color-bg-default-hover);
+    --_list-ground-pressed: var(--env-color-bg-default-pressed);
   }
   .env-list > .env-list-item[data-interactive] {
     position: relative;

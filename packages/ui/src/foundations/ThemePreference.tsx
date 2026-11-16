@@ -41,10 +41,10 @@ export interface ThemePreferenceProviderProps {
   children: ReactNode;
   /**
    * The application's theme, from defineTheme: its storage key, default preference, contrast,
-   * scale, surface, selection and corners. Give createThemeBootstrapScript the same theme, so the
+   * scale, selection and corners. Give createThemeBootstrapScript the same theme, so the
    * root has it before the first paint. Left out, the stored preference is under `env-theme`, the
    * contrast and scale are an enclosing Theme's, or else the page's on the root, or else system,
-   * and the look is an enclosing Theme's, or else plain, neutral and rounded.
+   * and the look is an enclosing Theme's, or else neutral and rounded.
    */
   theme?: ThemeDefinition;
   /**
@@ -238,7 +238,6 @@ export function ThemePreferenceProvider({
     scale: ownScale,
   } = definition;
   const inherited = useTheme();
-  const surface = definition.surface ?? inherited.surface;
   const selection = definition.selection ?? inherited.selection;
   const corners = definition.corners ?? inherited.corners;
   const takesPageScaleAndContrast = applyToDocument && inherited === outsideTheme;
@@ -320,7 +319,6 @@ export function ThemePreferenceProvider({
         root.setAttribute(scaleSourceAttribute, ownScaleSource(ownScale));
       } else releaseScale(root);
       const look = {
-        [lookAttributes.surface]: surface,
         [lookAttributes.selection]: selection,
         [lookAttributes.corners]: corners,
       };
@@ -328,17 +326,7 @@ export function ThemePreferenceProvider({
       documentProviders.set(provider, { ...documentProviders.get(provider), look });
       root.style.colorScheme = theme;
     },
-    [
-      applyToDocument,
-      hydrated,
-      theme,
-      appliedContrast,
-      ownScale,
-      surface,
-      selection,
-      corners,
-      provider,
-    ],
+    [applyToDocument, hydrated, theme, appliedContrast, ownScale, selection, corners, provider],
   );
 
   useLayoutEffect(
@@ -368,7 +356,6 @@ export function ThemePreferenceProvider({
         theme={theme}
         contrast={contrast}
         scale={scale}
-        surface={surface}
         selection={selection}
         corners={corners}
         className={className}

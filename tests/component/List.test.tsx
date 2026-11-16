@@ -298,20 +298,17 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
   }
 });
 
-test('rows are plain by default, parted by hairlines with their text at the list edge, and a filled surface makes them tiles; a row target reads in the row text color', async () => {
+test('rows are filled tiles joined by small gaps with the outer corners, and a row target reads in the row text color', async () => {
   mount(fixture);
-  const rows = (name: string) =>
-    page.getByRole('list', { name, exact: true }).getByRole('listitem').elements();
-  const [first, second] = rows('People');
-  expect(css(first!, 'background-color')).toBe('rgba(0, 0, 0, 0)');
-  expect(css(first!, 'border-top-left-radius')).toBe('0px');
-  expect(css(first!, 'padding-left')).toBe('0px');
-  expect(css(second!, 'border-top-width')).toBe('1px');
-
-  const [tile, nextTile] = rows('People filled');
+  const [tile, nextTile] = page
+    .getByRole('list', { name: 'People', exact: true })
+    .getByRole('listitem')
+    .elements();
   expect(css(tile!, 'background-color')).not.toBe('rgba(0, 0, 0, 0)');
-  expect(css(tile!, 'border-top-left-radius')).not.toBe('0px');
+  expect(css(tile!, 'padding-left')).not.toBe('0px');
+  expect(css(tile!, 'border-top-left-radius')).not.toBe(css(tile!, 'border-bottom-left-radius'));
   expect(css(nextTile!, 'border-top-width')).toBe('0px');
+  expect(box(nextTile!).y).toBeGreaterThan(box(tile!).y + box(tile!).height);
 
   const plans = page.getByRole('list', { name: 'Plans', exact: true });
   const target = plans.getByRole('button', { name: 'Hiring plan 2027' });
@@ -323,7 +320,7 @@ test('rows are plain by default, parted by hairlines with their text at the list
 });
 
 test('a titled list is named by its heading, and a control in a row is named and described by the row, once', async () => {
-  mount(surfaces, { search: 'surface=plain' });
+  mount(surfaces);
   const list = page.getByRole('list', { name: 'Remote access', exact: true });
   await expect
     .element(list)
@@ -331,28 +328,25 @@ test('a titled list is named by its heading, and a control in a row is named and
   await expect
     .element(page.getByRole('heading', { level: 2, name: 'Remote access', exact: true }))
     .toBeVisible();
-  const port = list.getByRole('textbox', { name: 'Port', exact: true });
-  await expect.element(port).toHaveAccessibleName('Port');
-  await expect.element(port).toHaveAccessibleDescription('Default 7420.');
   const allow = list.getByRole('switch');
   await expect.element(allow).toHaveAccessibleName('Allow paired devices');
   await expect
     .element(allow)
     .toHaveAccessibleDescription('They can see and steer the agents on this computer.');
-  await expect.element(list.getByRole('combobox')).toHaveAccessibleName('Channel');
-  const [portRow] = list
-    .getByRole('listitem')
-    .elements()
-    .filter((row) => row.textContent?.startsWith('Port'));
-  const field = port.element();
-  expect(box(field).x).toBeGreaterThan(box(portRow!.querySelector('.env-list-item-label')!).x);
+  await expect
+    .element(list.getByRole('checkbox'))
+    .toHaveAccessibleName('Wake this computer for them');
+  const [switchRow] = list.getByRole('listitem').elements();
+  expect(box(allow.element()).x).toBeGreaterThan(
+    box(switchRow!.querySelector('.env-list-item-label')!).x,
+  );
 });
 
 test(
   "a row's start icon takes the start's icon size and sits centred on the row",
   { tags: ['engines'] },
   async () => {
-    mount(surfaces, { search: 'surface=plain' });
+    mount(surfaces);
     const row = page
       .getByRole('list', { name: 'Paired devices', exact: true })
       .getByRole('listitem')
@@ -375,7 +369,7 @@ test(
   },
 );
 
-test("every envUI control without a label of its own takes the row's name, and one with a label keeps it", async () => {
+test("a Switch, Checkbox or RadioGroup without a label of its own takes the row's name, and one with a label keeps it", async () => {
   mount(rowControls);
   const list = page.getByRole('list', { name: 'Row controls', exact: true });
   const checkbox = list.getByRole('checkbox');
@@ -383,12 +377,5 @@ test("every envUI control without a label of its own takes the row's name, and o
   await expect.element(checkbox).toHaveAccessibleDescription('Keep this computer in step.');
   const channel = list.getByRole('group', { name: 'Channel', exact: true });
   await expect.element(channel).toHaveAccessibleDescription('Where updates come from.');
-  await expect
-    .element(list.getByRole('radiogroup', { name: 'Density', exact: true }))
-    .toBeVisible();
-  const volume = list.getByRole('slider');
-  await expect.element(volume).toHaveAccessibleName('Volume');
-  await expect.element(volume).toHaveAccessibleDescription('Of every sound.');
-  await expect.element(list.getByRole('searchbox')).toHaveAccessibleName('Filter');
   await expect.element(list.getByRole('switch')).toHaveAccessibleName('Mute alerts');
 });

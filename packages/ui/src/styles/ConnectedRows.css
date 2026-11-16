@@ -1,24 +1,19 @@
 @layer env.components {
-  .env-connected-rows {
-    --_connected-rows-inner: var(--_theme-filled) var(--env-radius-row-inner);
-    --_connected-rows-outer: var(--_theme-filled) var(--env-radius-row-outer);
-    --_connected-rows-single: var(--_theme-filled) var(--env-radius-row-single);
-  }
   .env-connected-rows > .env-connected-row {
-    border-radius: var(--_connected-rows-inner, 0);
+    border-radius: var(--env-radius-row-inner);
   }
   .env-connected-rows > .env-connected-row:nth-child(1 of .env-connected-row) {
-    border-start-start-radius: var(--_connected-rows-outer, 0);
-    border-start-end-radius: var(--_connected-rows-outer, 0);
+    border-start-start-radius: var(--env-radius-row-outer);
+    border-start-end-radius: var(--env-radius-row-outer);
   }
   .env-connected-rows > .env-connected-row:nth-last-child(1 of .env-connected-row) {
-    border-end-start-radius: var(--_connected-rows-outer, 0);
-    border-end-end-radius: var(--_connected-rows-outer, 0);
+    border-end-start-radius: var(--env-radius-row-outer);
+    border-end-end-radius: var(--env-radius-row-outer);
   }
   .env-connected-rows
     > .env-connected-row:nth-child(1 of .env-connected-row):nth-last-child(
       1 of .env-connected-row
     ) {
-    border-radius: var(--_connected-rows-single, 0);
+    border-radius: var(--env-radius-row-single);
   }
 }

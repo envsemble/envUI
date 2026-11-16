@@ -628,7 +628,7 @@ test(
   },
 );
 
-test('a table is framed on the raised surface with its header on a band, and plain drops the frame and the band in every surface', async () => {
+test('a table is framed on the raised surface with its header on a band, and plain drops the frame and the band', async () => {
   mount(fixture);
   for (const theme of themes) {
     const framed = region(`Reports ${theme}`).element();
@@ -640,7 +640,7 @@ test('a table is framed on the raised surface with its header on a band, and pla
     expect(css(banded, 'background-image')).toContain('gradient');
     expect(css(banded, 'border-bottom-width')).toBe('0px');
 
-    for (const name of [`Plain ${theme}`, `Plain filled ${theme}`]) {
+    for (const name of [`Plain ${theme}`]) {
       const plain = region(name).element();
       expect(plain.hasAttribute('data-plain'), name).toBe(true);
       expect(css(plain, 'border-top-width'), name).toBe('0px');

@@ -4,7 +4,6 @@
   -webkit-tap-highlight-color: transparent;
   --_theme-high-contrast: initial;
   --_theme-dark: initial;
-  --_theme-filled: initial;
   --_theme-page-gutter: var(--env-page-gutter);
 }
 :where(.env-theme):not(:where(.env-theme .env-theme)) {
@@ -63,12 +62,6 @@ html.env-theme > body {
   --env-color-bg-selected-hover: var(--env-color-bg-selected-accent-hover);
   --env-color-bg-selected-pressed: var(--env-color-bg-selected-accent-pressed);
   --env-color-fg-on-selected: var(--env-color-fg-on-selected-accent);
-}
-.env-theme[data-env-surface='filled'] {
-  --_theme-filled: ;
-  --env-color-bg-item: var(--env-color-bg-list-item);
-  --env-color-bg-item-hover: var(--env-color-bg-list-item-hover);
-  --env-color-bg-item-pressed: var(--env-color-bg-list-item-pressed);
 }
 .env-theme[data-env-corners='sharp'] {
   --env-radius-xs: 0rem;

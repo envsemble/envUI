@@ -534,21 +534,6 @@
           "$value": "{color.bg.muted.pressed}"
         }
       },
-      "item": {
-        "$root": {
-          "$value": {
-            "colorSpace": "srgb",
-            "components": [0, 0, 0],
-            "alpha": 0
-          }
-        },
-        "hover": {
-          "$value": "{color.bg.row.hover}"
-        },
-        "pressed": {
-          "$value": "{color.bg.row.pressed}"
-        }
-      },
       "row": {
         "hover": {
           "$value": {

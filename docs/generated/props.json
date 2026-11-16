@@ -3906,7 +3906,7 @@
           "name": "control",
           "type": "ReactNode",
           "required": false,
-          "description": "The setting the row is about, at the row's end: a Switch, Select, TextField, SearchField, Checkbox, RadioGroup, SegmentedControl or Slider given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice."
+          "description": "The selection control the row is about, at the row's end: a Switch, a Checkbox or a RadioGroup, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select or a TextField, belongs in a form, with its label above it."
         },
         {
           "name": "interactive",
@@ -3953,7 +3953,7 @@
     "List.Root": {
       "kind": "component",
       "source": "packages/ui/src/data-display/List.tsx",
-      "description": "A `ul` of rows. Plain by default: no fill, hairlines between the rows and their text in line with the content around the list. Under a Theme with `surface=\"filled\"`, the rows are tiles joined into one block with shared outer corners, and in a muted Surface that holds only lists they take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles. With a title, a heading above the rows names the list.",
+      "description": "A `ul` of rows, filled tiles joined into one block by small gaps with shared outer corners, for items people scan, open or choose. In a muted Surface that holds only lists, the rows take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles. With a title, a heading above the rows names the list.",
       "props": [
         {
           "name": "title",
@@ -7029,8 +7029,8 @@
         {
           "name": "label",
           "type": "string",
-          "required": false,
-          "description": "The field's accessible name, such as Search members. It shows above the field only with showLabel; otherwise a placeholder gives the visible guidance. Leave it out only in a List.Item's control, where the row's label names the field."
+          "required": true,
+          "description": "The field's accessible name, such as Search members. It shows above the field only with showLabel; otherwise a placeholder gives the visible guidance."
         },
         {
           "name": "showLabel",
@@ -7174,8 +7174,8 @@
         {
           "name": "aria-label",
           "type": "string",
-          "required": false,
-          "description": "The group's accessible name, such as Work items; the control has no visible label. Leave it out only in a List.Item's control, where the row's label names it."
+          "required": true,
+          "description": "The group's accessible name, such as Work items; the control has no visible label."
         },
         {
           "name": "size",
@@ -7527,8 +7527,8 @@
         {
           "name": "label",
           "type": "string",
-          "required": false,
-          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends in an ellipsis where the slider is too narrow for it. Leave it out only in a List.Item's control, where the row's label names the slider."
+          "required": true,
+          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends in an ellipsis where the slider is too narrow for it."
         },
         {
           "name": "description",
@@ -8256,7 +8256,7 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix. In a List.Item's control, without a label, the row names it.",
+      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -8436,7 +8436,7 @@
     "Theme": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "An explicit, scoped theme: a color scheme, a contrast, a scale, and the surface, selection and corners of the look, which nested Themes and envUI's popups keep. Theme preference and persistence belong to the app.",
+      "description": "An explicit, scoped theme: a color scheme, a contrast, a scale, and the selection and corners of the look, which nested Themes and envUI's popups keep. Theme preference and persistence belong to the app.",
       "props": [
         {
           "name": "theme",
@@ -8455,12 +8455,6 @@
           "type": "'comfortable' | 'compact' | 'system'",
           "required": false,
           "description": "The app scale of everything inside: comfortable, compact, or `system`, which is compact under a fine pointer and comfortable on touch, chosen by the stylesheet. Use one scale per app or window, and another only on a Theme around a whole region, such as a docked inspector. Defaults to the scale of the enclosing Theme, and to `system` outside any. It wins over a `data-env-scale` attribute passed to the Theme."
-        },
-        {
-          "name": "surface",
-          "type": "'plain' | 'filled'",
-          "required": false,
-          "description": "How rows, tables and cards draw inside: plain or filled. Defaults to the surface of the enclosing Theme, and to plain outside any."
         },
         {
           "name": "selection",
@@ -8542,7 +8536,7 @@
           "type": "ThemeDefinition",
           "required": false,
           "default": "{}",
-          "description": "The application's theme, from defineTheme: its storage key, default preference, contrast, scale, surface, selection and corners. Give createThemeBootstrapScript the same theme, so the root has it before the first paint. Left out, the stored preference is under `env-theme`, the contrast and scale are an enclosing Theme's, or else the page's on the root, or else system, and the look is an enclosing Theme's, or else plain, neutral and rounded."
+          "description": "The application's theme, from defineTheme: its storage key, default preference, contrast, scale, selection and corners. Give createThemeBootstrapScript the same theme, so the root has it before the first paint. Left out, the stored preference is under `env-theme`, the contrast and scale are an enclosing Theme's, or else the page's on the root, or else system, and the look is an enclosing Theme's, or else neutral and rounded."
         },
         {
           "name": "applyToDocument",
@@ -9320,7 +9314,7 @@
     "createThemeBootstrapScript": {
       "kind": "function",
       "source": "packages/ui/src/foundations/themeBootstrap.ts",
-      "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and the contrast, scale, surface, selection and corners of the theme apply from the start. Give it the theme ThemePreferenceProvider takes.",
+      "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and the contrast, scale, selection and corners of the theme apply from the start. Give it the theme ThemePreferenceProvider takes.",
       "signature": "(theme?: ThemeDefinition): string",
       "entries": [
         "@envsemble/envui",
@@ -9421,7 +9415,7 @@
     "useTheme": {
       "kind": "function",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast, scale, surface, selection and corners. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of `system` leaves it to `pointer: fine`.",
+      "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast, scale, selection and corners. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of `system` leaves it to `pointer: fine`.",
       "signature": "(): ThemeContextValue",
       "entries": [
         "@envsemble/envui"

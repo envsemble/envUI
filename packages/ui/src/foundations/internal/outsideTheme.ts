@@ -7,7 +7,6 @@ export const outsideTheme = Object.freeze({
   theme: 'light',
   contrast: 'system',
   scale: 'system',
-  surface: 'plain',
   selection: 'neutral',
   corners: 'rounded',
 } as const);

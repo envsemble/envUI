@@ -4,12 +4,12 @@ Give envUI another look through its styling contract: each component's part clas
 
 ## Theme settings
 
-Change the look of the whole application first, in the theme `defineTheme` returns: `surface` (`plain` or `filled`), `selection` (`neutral` or `accent`) and `corners` (`sharp`, `rounded` or `round`), beside `scale` and `contrast`. A nested `Theme` takes the same props for one region. [Setup](setup.md#theme-preference) shows where the theme goes.
+Change the look of the whole application first, in the theme `defineTheme` returns: `selection` (`neutral` or `accent`) and `corners` (`sharp`, `rounded` or `round`), beside `scale` and `contrast`. A nested `Theme` takes the same props for one region. [Setup](setup.md#theme-preference) shows where the theme goes.
 
 ```ts
 import { defineTheme } from '@envsemble/envui/theme-bootstrap';
 
-export const theme = defineTheme({ surface: 'filled', selection: 'accent', corners: 'round' });
+export const theme = defineTheme({ selection: 'accent', corners: 'round' });
 ```
 
 ## Color one element
@@ -480,7 +480,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Theme
 
 - Parts: `env-theme`
-- States: `data-env-contrast` (`high`, `standard`); `data-env-corners` (`round`, `rounded`, `sharp`); `data-env-scale` (`comfortable`, `compact`, `system`); `data-env-selection` (`accent`, `neutral`); `data-env-surface` (`filled`, `plain`); `data-env-theme` (`dark`, `light`)
+- States: `data-env-contrast` (`high`, `standard`); `data-env-corners` (`round`, `rounded`, `sharp`); `data-env-scale` (`comfortable`, `compact`, `system`); `data-env-selection` (`accent`, `neutral`); `data-env-theme` (`dark`, `light`)
 
 ### ThemeToggle
 

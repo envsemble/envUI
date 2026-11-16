@@ -40,30 +40,20 @@
   }
   .env-radio-group[data-orientation='vertical'] {
     --_radio-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
-    --_radio-filled-gap: var(--_theme-filled) calc(var(--env-space-1) / 2);
-    --_radio-filled-padding: var(--_theme-filled) var(--env-row-padding-inline);
-    --_radio-plain-divider: var(--_theme-filled) 0;
-    --_radio-pressed-scale: var(--_theme-filled) 0.99;
-    --_radio-row: var(--_theme-filled) var(--_surface-muted-ground)
+    --_radio-row: var(--_surface-muted-ground)
       color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent);
-    --_radio-row-hover: var(--_theme-filled) var(--_surface-muted-ground)
-      var(--env-color-bg-neutral-muted);
-    --_radio-row-pressed: var(--_theme-filled) var(--_surface-muted-ground)
-      var(--env-color-bg-neutral-muted-hover);
-    --_radio-selected: var(--_theme-filled) var(--env-color-bg-selected);
-    --_radio-selected-hover: var(--_theme-filled) var(--env-color-bg-selected-hover);
-    --_radio-selected-pressed: var(--_theme-filled) var(--env-color-bg-selected-pressed);
-    --_radio-selected-layer: var(--_theme-filled) calc(var(--env-state-hover-opacity) * 100%);
-    gap: var(--_radio-filled-gap, 0);
+    --_radio-row-hover: var(--_surface-muted-ground) var(--env-color-bg-neutral-muted);
+    --_radio-row-pressed: var(--_surface-muted-ground) var(--env-color-bg-neutral-muted-hover);
+    gap: calc(var(--env-space-1) / 2);
   }
   .env-radio-group[data-orientation='vertical']
     > :is(.env-radio-group-description, .env-radio-group-error) {
     margin-block-start: var(--env-space-2);
   }
   .env-radio[data-orientation='vertical'] {
-    --_radio-fill: var(--_radio-row, var(--env-color-bg-item));
-    --_radio-fill-hover: var(--_radio-row-hover, var(--env-color-bg-item-hover));
-    --_radio-fill-pressed: var(--_radio-row-pressed, var(--env-color-bg-item-pressed));
+    --_radio-fill: var(--_radio-row, var(--env-color-bg-list-item));
+    --_radio-fill-hover: var(--_radio-row-hover, var(--env-color-bg-list-item-hover));
+    --_radio-fill-pressed: var(--_radio-row-pressed, var(--env-color-bg-list-item-pressed));
     --_radio-layer: initial;
     --_radio-content-gate: color-mix(in srgb, var(--env-radio-content) 0%, var(--_radio-fill));
     --_radio-custom-base: var(--env-radio-container, var(--_radio-content-gate));
@@ -80,31 +70,21 @@
     gap: var(--env-space-3);
     min-width: 0;
     min-height: calc(var(--env-control-height-sm) + 2 * var(--_radio-row-padding));
-    padding: var(--_radio-row-padding) var(--_radio-filled-padding, 0);
+    padding: var(--_radio-row-padding) var(--env-row-padding-inline);
     background: var(--_radio-custom-fill, var(--_radio-fill));
     font: var(--env-type-body-sm);
     font-size: var(--env-font-size-body-sm);
     color: var(--env-radio-content, var(--env-color-fg-default));
     cursor: pointer;
   }
-  .env-radio[data-orientation='vertical'] ~ .env-radio[data-orientation='vertical'] {
-    border-block-start: var(--_radio-plain-divider, var(--env-control-border-width)) solid
-      var(--env-color-border-muted);
-  }
   .env-radio > span {
     min-inline-size: 0;
   }
   .env-radio[data-orientation='vertical']:has(input:checked) {
-    --_radio-fill: var(--_radio-selected, var(--_radio-row, var(--env-color-bg-item)));
-    --_radio-fill-hover: var(
-      --_radio-selected-hover,
-      var(--_radio-row-hover, var(--env-color-bg-item-hover))
-    );
-    --_radio-fill-pressed: var(
-      --_radio-selected-pressed,
-      var(--_radio-row-pressed, var(--env-color-bg-item-pressed))
-    );
-    --_radio-layer: var(--_radio-selected-layer);
+    --_radio-fill: var(--env-color-bg-selected);
+    --_radio-fill-hover: var(--env-color-bg-selected-hover);
+    --_radio-fill-pressed: var(--env-color-bg-selected-pressed);
+    --_radio-layer: calc(var(--env-state-hover-opacity) * 100%);
   }
   .env-radio[data-orientation='vertical']:hover:not(:has(input:disabled)) {
     --_radio-layer: calc(var(--env-state-hover-opacity) * 100%);
@@ -195,7 +175,7 @@
       transition-timing-function: var(--env-motion-ease-enter);
     }
     .env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
-      transform: scale(var(--_radio-pressed-scale, 1));
+      transform: scale(0.99);
     }
     .env-radio[data-orientation='horizontal']:active:not(:has(input:disabled)) .env-radio-input {
       transform: scale(0.9);

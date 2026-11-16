@@ -2,7 +2,6 @@
 
 import { useRef, type CSSProperties, type InputHTMLAttributes, type Ref } from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
 import {
   FieldFrame,
   FieldLabelContent,
@@ -54,7 +53,7 @@ function typeValue(input: HTMLInputElement, value: string) {
 /**
  * A labelled single-line text input: a native input with its label above it, a description and an
  * error, at the control height in an outline or ghost look, with an optional start icon, end
- * action, prefix and suffix. In a List.Item's control, without a label, the row names it.
+ * action, prefix and suffix.
  */
 export function TextField({
   ref,
@@ -81,14 +80,7 @@ export function TextField({
   'aria-invalid': invalid,
   ...props
 }: TextFieldProps) {
-  const naming = useRowControlNaming({ label, ...props, 'aria-describedby': describedBy });
-  const metadata = useFieldMetadata(
-    suppliedId,
-    description,
-    error,
-    naming['aria-describedby'],
-    invalid,
-  );
+  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const committed = useRef<string | null>(null);
   const rejected = useRef<string | null>(null);
   const commit = (input: HTMLInputElement) => {
@@ -137,7 +129,6 @@ export function TextField({
         {...props}
         ref={ref}
         {...metadata}
-        aria-labelledby={naming['aria-labelledby']}
         aria-describedby={describedByIds}
         className="env-text-field-input"
         onChange={(event) => {

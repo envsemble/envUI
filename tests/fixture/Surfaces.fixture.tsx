@@ -1,34 +1,27 @@
 import {
   Badge,
-  Button,
+  Checkbox,
+  IconButton,
   List,
   Radio,
   RadioGroup,
-  Select,
   Switch,
-  TextField,
   Theme,
   type ColorScheme,
-  type ThemeSurface,
 } from '@envsemble/envui';
 import { IconComputer } from '@envsemble/envui/icons/Computer';
+import { IconMoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 import { IconSmartphone } from '@envsemble/envui/icons/Smartphone';
 
 export const mount = 'root';
 
-const channels = [
-  { value: 'stable', label: 'Stable' },
-  { value: 'nightly', label: 'Nightly' },
-];
-
 export default function SurfacesFixture() {
   const query = new URLSearchParams(location.search);
-  const surface: ThemeSurface = query.get('surface') === 'filled' ? 'filled' : 'plain';
   const theme: ColorScheme = query.get('theme') === 'dark' ? 'dark' : 'light';
   return (
-    <Theme theme={theme} surface={surface}>
+    <Theme theme={theme}>
       <div
-        data-surfaces={`${surface}-${theme}`}
+        data-surfaces={theme}
         style={{
           display: 'grid',
           gap: '2rem',
@@ -43,12 +36,7 @@ export default function SurfacesFixture() {
             description="They can see and steer the agents on this computer."
             control={<Switch defaultChecked />}
           />
-          <List.Item
-            label="Port"
-            description="Default 7420."
-            control={<TextField defaultValue="7420" style={{ inlineSize: '8rem' }} />}
-          />
-          <List.Item label="Channel" control={<Select items={channels} defaultValue="stable" />} />
+          <List.Item label="Wake this computer for them" control={<Checkbox />} />
         </List.Root>
         <RadioGroup orientation="vertical" label="Reach this computer via" defaultValue="tailscale">
           <Radio value="local" label="Local network" description="192.168.1.20" />
@@ -60,7 +48,7 @@ export default function SurfacesFixture() {
             start={<IconSmartphone />}
             label="Phone"
             description="Paired 3 days ago"
-            end={<Button variant="outline">Remove…</Button>}
+            end={<IconButton variant="text" icon={<IconMoreHoriz />} aria-label="More for Phone" />}
           />
           <List.Item
             start={<IconComputer />}
@@ -69,7 +57,7 @@ export default function SurfacesFixture() {
             end={
               <>
                 <Badge tone="success">Online</Badge>
-                <Button variant="secondary">Remove…</Button>
+                <IconButton variant="text" icon={<IconMoreHoriz />} aria-label="More for Laptop" />
               </>
             }
           />

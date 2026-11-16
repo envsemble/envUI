@@ -43,9 +43,8 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'ul'>, 'title'>, S
 }
 
 /**
- * A `ul` of rows. Plain by default: no fill, hairlines between the rows and their text in line with
- * the content around the list. Under a Theme with `surface="filled"`, the rows are tiles joined into
- * one block with shared outer corners, and in a muted Surface that holds only lists they take the
+ * A `ul` of rows, filled tiles joined into one block by small gaps with shared outer corners, for
+ * items people scan, open or choose. In a muted Surface that holds only lists, the rows take the
  * raised fill, so they stand out from it. With onReorder, people move the rows by their handles.
  * With a title, a heading above the rows names the list.
  */
@@ -74,9 +73,10 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
   /** More content under the label and the description, such as a row of Badges, placed as given. */
   children?: ReactNode;
   /**
-   * The setting the row is about, at the row's end: a Switch, Select, TextField, SearchField,
-   * Checkbox, RadioGroup, SegmentedControl or Slider given no label of its own. The row's label
-   * names it and the row's description describes it, so it isn't labelled twice.
+   * The selection control the row is about, at the row's end: a Switch, a Checkbox or a RadioGroup,
+   * given no label of its own. The row's label names it and the row's description describes it, so
+   * it isn't labelled twice. A field, such as a Select or a TextField, belongs in a form, with its
+   * label above it.
    */
   control?: ReactNode;
   /**

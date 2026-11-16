@@ -27,9 +27,7 @@ const densityShots = [
   { section: 'desktop', theme: 'light' },
   { section: 'desktop', theme: 'dark' },
 ] as const;
-const surfaceShots = ['plain', 'filled'].flatMap((surface) =>
-  ['light', 'dark'].map((theme) => ({ surface, theme })),
-);
+const surfaceShots = ['light', 'dark'];
 const exampleShots = [
   { name: 'table-parts', page: 'table', example: 'WorkItemsWithParts' },
 ].flatMap((shot) => (['light', 'dark'] as const).map((theme) => ({ ...shot, theme })));
@@ -434,14 +432,14 @@ test.describe('density', () => {
 });
 
 test.describe('surfaces', () => {
-  for (const { surface, theme } of surfaceShots) {
-    test(`list and radio rows (${surface}, ${theme})`, async ({ page }) => {
+  for (const theme of surfaceShots) {
+    test(`list and radio rows (${theme})`, async ({ page }) => {
       await page.clock.setFixedTime(frozenTime);
-      await page.goto(`${fixtureUrl}/?fixture=surfaces&surface=${surface}&theme=${theme}`);
-      const specimen = page.locator(`[data-surfaces="${surface}-${theme}"]`);
+      await page.goto(`${fixtureUrl}/?fixture=surfaces&theme=${theme}`);
+      const specimen = page.locator(`[data-surfaces="${theme}"]`);
       await specimen.waitFor();
       await settle(page);
-      await expect(specimen).toHaveScreenshot(['surfaces', `${theme}-${surface}.png`]);
+      await expect(specimen).toHaveScreenshot(['surfaces', `${theme}-rows.png`]);
     });
   }
 });
@@ -525,7 +523,7 @@ test('every snapshot folder belongs to a catalogue page, a density section, a su
   const open = new Set(
     openLists.flatMap((list) => list.themes.map((theme) => `${theme}-${list.name}.png`)),
   );
-  const surfaces = new Set(surfaceShots.map(({ surface, theme }) => `${theme}-${surface}.png`));
+  const surfaces = new Set(surfaceShots.map((theme) => `${theme}-rows.png`));
   const examples = new Set(exampleShots.map(({ name, theme }) => `${theme}-${name}.png`));
   const stale = (folder: string, belongs: (entry: Dirent) => boolean) =>
     existsSync(join(snapshots, folder))

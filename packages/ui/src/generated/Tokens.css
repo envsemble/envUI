@@ -50,9 +50,6 @@
   --env-color-bg-info-strong-hover: #376cb2;
   --env-color-bg-info-strong-pressed: #4177be;
   --env-color-bg-inset: rgb(255 255 255 / 0.5);
-  --env-color-bg-item: transparent;
-  --env-color-bg-item-hover: var(--env-color-bg-row-hover);
-  --env-color-bg-item-pressed: var(--env-color-bg-row-pressed);
   --env-color-bg-list-item: var(--env-color-bg-muted);
   --env-color-bg-list-item-hover: var(--env-color-bg-muted-hover);
   --env-color-bg-list-item-pressed: var(--env-color-bg-muted-pressed);

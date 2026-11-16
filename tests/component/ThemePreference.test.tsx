@@ -157,20 +157,17 @@ test('a provider releases the root scale, contrast and look once it stops applyi
       'data-env-contrast-source',
       'data-env-scale',
       'data-env-scale-source',
-      'data-env-surface',
       'data-env-selection',
       'data-env-corners',
     ].filter((name) => root.hasAttribute(name));
   mount(release);
   await expect.poll(attribute('data-env-contrast')).toBe('high');
   expect(attribute('data-env-scale')()).toBe('compact');
-  expect(attribute('data-env-surface')()).toBe('filled');
   expect(attribute('data-env-selection')()).toBe('accent');
   expect(attribute('data-env-corners')()).toBe('sharp');
   const token = (name: string) => getComputedStyle(root).getPropertyValue(name);
   expect(token('--env-color-bg-selected')).toBe(token('--env-color-bg-selected-accent'));
   expect(token('--env-color-fg-on-selected')).toBe(token('--env-color-fg-on-selected-accent'));
-  expect(token('--env-color-bg-item')).toBe(token('--env-color-bg-list-item'));
   expect(token('--env-radius-sm')).toBe('0.125rem');
   await page.getByRole('button', { name: 'Stop applying to the document' }).click();
   await expect.poll(released).toEqual([]);

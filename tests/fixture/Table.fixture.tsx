@@ -349,22 +349,6 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
           </Table.Row>
         </Table.Body>
       </Table.Root>
-      <Theme theme={theme} surface="filled">
-        <Table.Root aria-label={`Plain filled ${theme}`} plain>
-          <Table.Head>
-            <Table.Row>
-              <Table.HeaderCell>Report</Table.HeaderCell>
-              <Table.HeaderCell>Owner</Table.HeaderCell>
-            </Table.Row>
-          </Table.Head>
-          <Table.Body>
-            <Table.Row>
-              <Table.Cell>Quarterly report</Table.Cell>
-              <Table.Cell>Aurora</Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table.Root>
-      </Theme>
       <div className="fixture-table-frame">
         <Table.Root aria-label={`Work ${theme}`} columnWidths={[45, 25, 30]}>
           <Table.Head>

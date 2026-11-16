@@ -7,7 +7,6 @@ const theme = defineTheme({
   storageKey: 'fixture-release-theme',
   contrast: 'high',
   scale: 'compact',
-  surface: 'filled',
   selection: 'accent',
   corners: 'sharp',
 });

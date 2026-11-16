@@ -657,24 +657,6 @@
           }
         }
       },
-      "item": {
-        "$root": {
-          "$description": "The fill of an item of a list, a table or a grid of cards, at rest, by the Theme’s surface: none when plain, so the item lies on its surface, and the list item’s fill when filled.",
-          "$value": {
-            "colorSpace": "srgb",
-            "components": [0, 0, 0],
-            "alpha": 0
-          }
-        },
-        "hover": {
-          "$description": "An item under the pointer: the row’s state layer when plain, the list item’s hover fill when filled.",
-          "$value": "{color.bg.row.hover}"
-        },
-        "pressed": {
-          "$description": "An item while pressed: the row’s pressed layer when plain, the list item’s pressed fill when filled.",
-          "$value": "{color.bg.row.pressed}"
-        }
-      },
       "row": {
         "hover": {
           "$description": "The state layer over a tree or table row under the pointer: clear over the row's surface, and a step below the selection, so the selected row always reads strongest.",

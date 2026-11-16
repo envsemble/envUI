@@ -1,15 +1,5 @@
 import { useState } from 'react';
-import {
-  Avatar,
-  Button,
-  Checkbox,
-  EnvUIProvider,
-  Link,
-  List,
-  Column,
-  Theme,
-  useTheme,
-} from '@envsemble/envui';
+import { Avatar, Button, Checkbox, EnvUIProvider, Link, List, Column } from '@envsemble/envui';
 
 export const mount = 'standalone';
 
@@ -101,7 +91,6 @@ function WrappedSlides({ bare = false }: { bare?: boolean }) {
 
 export default function ListFixture() {
   const [checked, setChecked] = useState<string[]>(['Sam Lee']);
-  const theme = useTheme();
   return (
     <Column gap={5} className="fixture-section" style={{ inlineSize: '24rem' }}>
       <Slides testId="slides" />
@@ -133,13 +122,6 @@ export default function ListFixture() {
           />
         ))}
       </List.Root>
-      <Theme {...theme} surface="filled">
-        <List.Root aria-label="People filled">
-          {['Alex Morgan', 'Sam Lee'].map((name) => (
-            <List.Item key={name} label={name} description="Editor" />
-          ))}
-        </List.Root>
-      </Theme>
       <List.Root aria-label="Reviewers">
         {['Alex Morgan', 'Sam Lee', 'Priya Shah'].map((name) => (
           <List.Item

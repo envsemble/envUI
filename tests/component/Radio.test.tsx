@@ -37,22 +37,23 @@ test('keyboard focus rings a radio side by side, and the whole row of a row radi
     return getComputedStyle(probe).backgroundColor;
   };
   const tokens = {
-    hover: token('--env-color-bg-item-hover'),
+    row: token('--env-color-bg-list-item'),
+    selected: token('--env-color-bg-selected'),
     text: token('--env-color-fg-default'),
   };
   probe.remove();
   await page.getByRole('radio', { name: /Viewer/ }).click();
   await mouse.move(0, 0);
-  await expect.poll(() => css(chosen, 'background-color')).toBe('rgba(0, 0, 0, 0)');
+  await expect.poll(() => css(chosen, 'background-color')).toBe(tokens.selected);
   expect(css(chosen, 'color')).toBe(tokens.text);
-  expect(css(other, 'background-color')).toBe('rgba(0, 0, 0, 0)');
-  const chosenBox = box(chosen);
-  await mouse.move(chosenBox.x + chosenBox.width / 2, chosenBox.y + chosenBox.height / 2);
-  await expect.poll(() => css(chosen, 'background-color')).toBe(tokens.hover);
+  expect(css(other, 'background-color')).toBe(tokens.row);
+  const otherBox = box(other);
+  await mouse.move(otherBox.x + otherBox.width / 2, otherBox.y + otherBox.height / 2);
+  await expect.poll(() => css(other, 'background-color')).not.toBe(tokens.row);
 });
 
 test(
-  'vertical radio rows follow the surface as List rows do: plain rows parted by hairlines, filled tiles with the selected fill',
+  'vertical radio rows are tiles as List rows are, with the selected fill',
   { tags: ['engines'] },
   async () => {
     const rowsOf = () =>
@@ -62,27 +63,18 @@ test(
         .elements()
         .map(rootOf);
     const listRows = () =>
-      page.getByRole('list', { name: 'Remote access' }).getByRole('listitem').elements();
-    mount(surfaces, { search: 'surface=plain' });
-    const [first, chosen] = rowsOf();
-    const [firstListRow] = listRows();
-    expect(css(first!, 'background-color')).toBe('rgba(0, 0, 0, 0)');
-    expect(css(chosen!, 'background-color')).toBe('rgba(0, 0, 0, 0)');
-    expect(css(first!, 'padding-left')).toBe(css(firstListRow!, 'padding-left'));
-    expect(css(first!, 'border-top-left-radius')).toBe('0px');
-    expect(css(chosen!, 'border-top-width')).toBe(css(listRows()[1]!, 'border-top-width'));
-    expect(css(chosen!, 'border-top-color')).toBe(css(listRows()[1]!, 'border-top-color'));
-
-    mount(surfaces, { search: 'surface=filled' });
+      page.getByRole('list', { name: 'Paired devices' }).getByRole('listitem').elements();
+    mount(surfaces);
     const [tile, chosenTile, lastTile] = rowsOf();
-    const [listTile] = listRows();
+    const [listTile, lastListTile] = listRows();
     expect(css(tile!, 'background-color')).toBe(css(listTile!, 'background-color'));
+    expect(css(tile!, 'padding-left')).toBe(css(listTile!, 'padding-left'));
     expect(css(tile!, 'border-top-left-radius')).toBe(css(listTile!, 'border-top-left-radius'));
     expect(css(tile!, 'border-top-left-radius')).not.toBe('0px');
     expect(css(chosenTile!, 'border-top-width')).toBe('0px');
     expect(css(chosenTile!, 'background-color')).not.toBe(css(tile!, 'background-color'));
     expect(css(lastTile!, 'border-bottom-left-radius')).toBe(
-      css(listRows()[2]!, 'border-bottom-left-radius'),
+      css(lastListTile!, 'border-bottom-left-radius'),
     );
   },
 );

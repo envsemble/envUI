@@ -1,14 +1,4 @@
-import {
-  Checkbox,
-  List,
-  Radio,
-  RadioGroup,
-  SearchField,
-  SegmentedControl,
-  Slider,
-  Switch,
-  Theme,
-} from '@envsemble/envui';
+import { Checkbox, List, Radio, RadioGroup, Switch, Theme } from '@envsemble/envui';
 
 export const mount = 'standalone';
 
@@ -31,19 +21,6 @@ export default function RowControlsFixture() {
             </RadioGroup>
           }
         />
-        <List.Item
-          label="Density"
-          control={
-            <SegmentedControl
-              items={[
-                { value: 'compact', label: 'Compact' },
-                { value: 'comfortable', label: 'Comfortable' },
-              ]}
-            />
-          }
-        />
-        <List.Item label="Volume" description="Of every sound." control={<Slider />} />
-        <List.Item label="Filter" control={<SearchField />} />
         <List.Item label="Alerts" control={<Switch label="Mute alerts" />} />
       </List.Root>
     </Theme>

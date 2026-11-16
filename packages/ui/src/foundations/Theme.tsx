@@ -25,12 +25,6 @@ export type ThemeContrast = 'standard' | 'high' | 'system';
 export type ThemeScale = 'comfortable' | 'compact' | 'system';
 
 /**
- * How a Theme's rows, tables and cards draw: plain, on the surface they sit on, hovering by a state
- * layer; or filled, as tiles of the filled surface.
- */
-export type ThemeSurface = 'plain' | 'filled';
-
-/**
  * The tone of what is selected in a Theme, such as a navigation item, a row or an option: neutral,
  * a gray under the default text color; or accent, the brand's tint under its text color.
  */
@@ -56,7 +50,6 @@ export interface ThemeContextValue {
   theme: ColorScheme;
   contrast: ThemeContrast;
   scale: ThemeScale;
-  surface: ThemeSurface;
   selection: ThemeSelection;
   corners: ThemeCorners;
 }
@@ -80,11 +73,6 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
    * `data-env-scale` attribute passed to the Theme.
    */
   scale?: ThemeScale;
-  /**
-   * How rows, tables and cards draw inside: plain or filled. Defaults to the surface of the
-   * enclosing Theme, and to plain outside any.
-   */
-  surface?: ThemeSurface;
   /**
    * The tone of selected items inside: neutral or accent. Defaults to the selection of the
    * enclosing Theme, and to neutral outside any.
@@ -134,15 +122,14 @@ function themeReport(theme: unknown): string | undefined {
 }
 
 /**
- * An explicit, scoped theme: a color scheme, a contrast, a scale, and the surface, selection and
- * corners of the look, which nested Themes and envUI's popups keep. Theme preference and
+ * An explicit, scoped theme: a color scheme, a contrast, a scale, and the selection and corners
+ * of the look, which nested Themes and envUI's popups keep. Theme preference and
  * persistence belong to the app.
  */
 export function Theme({
   theme,
   contrast: ownContrast,
   scale: ownScale,
-  surface: ownSurface,
   selection: ownSelection,
   corners: ownCorners,
   className,
@@ -164,12 +151,11 @@ export function Theme({
     (scaleAttribute === 'comfortable' || scaleAttribute === 'compact' || scaleAttribute === 'system'
       ? scaleAttribute
       : inherited.scale);
-  const surface = ownSurface ?? inherited.surface;
   const selection = ownSelection ?? inherited.selection;
   const corners = ownCorners ?? inherited.corners;
   const value = useMemo(
-    () => ({ theme, contrast, scale, surface, selection, corners }),
-    [theme, contrast, scale, surface, selection, corners],
+    () => ({ theme, contrast, scale, selection, corners }),
+    [theme, contrast, scale, selection, corners],
   );
   const boundaryTakesRootLook = themeFromRootAttribute in props;
   return (
@@ -182,7 +168,6 @@ export function Theme({
           'data-env-theme': theme,
           'data-env-contrast': contrast === 'system' ? undefined : contrast,
           'data-env-scale': scale,
-          'data-env-surface': surface,
           'data-env-selection': selection,
           'data-env-corners': corners,
         })}
@@ -195,7 +180,7 @@ export function Theme({
 
 /**
  * The theme of the nearest Theme, including across React portals: its color scheme, contrast,
- * scale, surface, selection and corners. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of
+ * scale, selection and corners. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of
  * `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of
  * `system` leaves it to `pointer: fine`.
  */

@@ -6061,16 +6061,6 @@
           ]
         },
         {
-          "attribute": "data-env-surface",
-          "values": [
-            "filled",
-            "plain"
-          ],
-          "parts": [
-            "env-theme"
-          ]
-        },
-        {
           "attribute": "data-env-theme",
           "values": [
             "dark",
