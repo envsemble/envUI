@@ -182,9 +182,14 @@ describe('DocumentTabs', () => {
       if (event.target === darkStrip) lastContextMenu = event;
     });
     const stripBox = box(darkStrip);
-    const gap = { x: 2, y: 8 };
-    expect(document.elementFromPoint(stripBox.x + gap.x, stripBox.y + gap.y)).toBe(darkStrip);
-    await mouse.click(stripBox.x + gap.x, stripBox.y + gap.y, { button: 'right' });
+    const laterTabs = [...darkStrip.querySelectorAll<HTMLElement>('.env-document-tabs-item')].slice(
+      2,
+    );
+    for (const item of laterTabs) item.style.display = 'none';
+    const lastTab = box(darkStrip.querySelectorAll('.env-document-tabs-item')[1]!);
+    const gap = { x: lastTab.x + lastTab.width + 8, y: stripBox.y + 8 };
+    expect(document.elementFromPoint(gap.x, gap.y)).toBe(darkStrip);
+    await mouse.click(gap.x, gap.y, { button: 'right' });
     await expect.poll(() => lastContextMenu?.defaultPrevented).toBe(false);
     expect(
       darkStrip.dispatchEvent(
@@ -193,6 +198,7 @@ describe('DocumentTabs', () => {
     ).toBe(true);
     await nextFrames();
     expect(page.getByRole('menu').elements()).toHaveLength(0);
+    for (const item of laterTabs) item.style.display = '';
   });
 
   test(
