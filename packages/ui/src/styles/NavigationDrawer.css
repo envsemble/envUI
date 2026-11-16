@@ -7,11 +7,11 @@
     block-size: 100%;
     min-block-size: 0;
     padding: var(--env-space-3);
-    background: var(--_surface-color, var(--env-color-bg-page));
+    background: var(--_surface-color, var(--env-color-bg-default));
     color: var(--env-color-fg-default);
   }
-  .env-navigation-drawer[data-background='default'] {
-    background: var(--_surface-color, var(--env-color-bg-default));
+  .env-navigation-drawer[data-background='page'] {
+    background: var(--_surface-color, var(--env-color-bg-page));
   }
   .env-navigation-drawer-header,
   .env-navigation-drawer-footer {

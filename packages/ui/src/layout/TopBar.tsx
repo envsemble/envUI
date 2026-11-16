@@ -56,11 +56,11 @@ export interface TopBarProps
    */
   titleBar?: boolean;
   /**
-   * The bar's background, named as Surface's and Card's: page, the page's background, the same as
-   * the content beside it, from which a Scaffold sets it apart with a hairline; default, the
-   * default surface color, a plain rectangle that stands apart from the page. On a surface, such as
-   * a Sheet, both take the surface's color.
-   * @default 'page'
+   * The bar's background, named as Surface's and Card's: default, the default surface color, the
+   * app frame's own fill that stands apart from the page; page, the page's background, the same as
+   * the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such
+   * as a Sheet, both take the surface's color.
+   * @default 'default'
    */
   background?: NavigationBackground;
   /** Shows page progress along the bar's bottom edge, such as while the next page loads. */
@@ -93,7 +93,7 @@ export function TopBar({
   titleBar = false,
   loading = false,
   loadingLabel,
-  background = 'page',
+  background = 'default',
   render,
   skeleton = false,
   className,

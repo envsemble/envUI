@@ -8,11 +8,11 @@
     block-size: 100%;
     min-block-size: 0;
     padding-block: var(--env-space-3);
-    background: var(--_surface-color, var(--env-color-bg-page));
+    background: var(--_surface-color, var(--env-color-bg-default));
     color: var(--env-color-fg-default);
   }
-  .env-navigation-rail[data-background='default'] {
-    background: var(--_surface-color, var(--env-color-bg-default));
+  .env-navigation-rail[data-background='page'] {
+    background: var(--_surface-color, var(--env-color-bg-page));
   }
   .env-navigation-rail-header,
   .env-navigation-rail-footer {

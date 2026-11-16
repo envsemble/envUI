@@ -8,11 +8,11 @@
     padding-block: var(--env-space-2);
     padding-block-end: max(var(--env-space-2), env(safe-area-inset-bottom));
     padding-inline: var(--env-space-1);
-    background: var(--_surface-color, var(--env-color-bg-page));
+    background: var(--_surface-color, var(--env-color-bg-default));
     color: var(--env-color-fg-default);
   }
-  .env-navigation-bar[data-background='default'] {
-    background: var(--_surface-color, var(--env-color-bg-default));
+  .env-navigation-bar[data-background='page'] {
+    background: var(--_surface-color, var(--env-color-bg-page));
   }
   .env-navigation-bar-list {
     margin: 0;

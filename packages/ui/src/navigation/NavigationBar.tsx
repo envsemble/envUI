@@ -43,11 +43,11 @@ export interface NavigationBarProps
    */
   destinations: readonly Destination[];
   /**
-   * The bar's background, named as Surface's and Card's: page, the page's background, the same as
-   * the content beside it, from which a Scaffold sets it apart with a hairline; default, the
-   * default surface color, a plain rectangle that stands apart from the page. On a surface, such as
-   * a Sheet, both take the surface's color.
-   * @default 'page'
+   * The bar's background, named as Surface's and Card's: default, the default surface color, the
+   * app frame's own fill that stands apart from the page; page, the page's background, the same as
+   * the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such
+   * as a Sheet, both take the surface's color.
+   * @default 'default'
    */
   background?: NavigationBackground;
   /**
@@ -64,7 +64,7 @@ export interface NavigationBarProps
  */
 export function NavigationBar({
   destinations,
-  background = 'page',
+  background = 'default',
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
