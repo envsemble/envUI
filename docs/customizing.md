@@ -368,9 +368,9 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Radio
 
-- Parts: `env-radio`, `env-radio-description`, `env-radio-description-content` (slot), `env-radio-input`, `env-radio-label` (slot)
+- Parts: `env-radio`, `env-radio-control`, `env-radio-description`, `env-radio-description-content` (slot), `env-radio-input`, `env-radio-label` (slot)
 - States: `data-orientation` (`horizontal`, `vertical`)
-- Color properties: `--env-radio-container`, `--env-radio-content`, `--env-radio-selected`
+- Color properties: `--env-radio-content`, `--env-radio-selected`
 
 ### RadioGroup
 
@@ -528,8 +528,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### ConnectedRows
 
 - Parts: `env-connected-rows`, `env-connected-row`
-- States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-interactive` on `env-connected-row`; `data-orientation` (`horizontal`, `vertical`) on `env-connected-row`, `env-connected-rows`; `data-reorderable`; `data-selected` on `env-connected-row`; `data-start` on `env-connected-row`
-- Used by: List, Radio, RadioGroup
+- States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-interactive` on `env-connected-row`; `data-reorderable`; `data-selected` on `env-connected-row`; `data-start` on `env-connected-row`
+- Used by: List
 
 ### EditorChrome
 

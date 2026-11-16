@@ -369,13 +369,11 @@ test(
   },
 );
 
-test("a Switch, Checkbox or RadioGroup without a label of its own takes the row's name, and one with a label keeps it", async () => {
+test("a Switch or Checkbox without a label of its own takes the row's name, and one with a label keeps it", async () => {
   mount(rowControls);
   const list = page.getByRole('list', { name: 'Row controls', exact: true });
   const checkbox = list.getByRole('checkbox');
   await expect.element(checkbox).toHaveAccessibleName('Sync');
   await expect.element(checkbox).toHaveAccessibleDescription('Keep this computer in step.');
-  const channel = list.getByRole('group', { name: 'Channel', exact: true });
-  await expect.element(channel).toHaveAccessibleDescription('Where updates come from.');
   await expect.element(list.getByRole('switch')).toHaveAccessibleName('Mute alerts');
 });

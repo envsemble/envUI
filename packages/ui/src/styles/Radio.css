@@ -1,8 +1,4 @@
 @layer env.components {
-  @property --env-radio-container {
-    syntax: '*';
-    inherits: false;
-  }
   @property --env-radio-content {
     syntax: '*';
     inherits: false;
@@ -12,139 +8,125 @@
     inherits: false;
   }
 
-  @media (pointer: coarse) {
-    .env-radio {
-      min-height: var(--env-control-height-touch);
-    }
-  }
   .env-radio-group {
     overflow-wrap: break-word;
-    gap: calc(var(--env-space-1) / 2);
     margin: 0;
     padding: 0;
     border: 0;
   }
   .env-radio-group legend {
     max-inline-size: 100%;
-    margin-block-end: var(--env-space-4);
+    margin-block-end: var(--env-space-3);
     padding: 0;
     font: var(--env-type-body);
     font-size: var(--env-font-size-label);
     color: var(--env-color-fg-muted);
   }
-  .env-radio {
-    --_radio-accent: var(--env-radio-selected, var(--env-color-bg-primary-emphasis));
-    --_radio-accent-hover: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-hover));
-    /* prettier-ignore */
-    --_radio-accent-pressed: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-pressed));
-  }
   .env-radio-group[data-orientation='vertical'] {
-    --_radio-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
-    --_radio-row: var(--_surface-muted-ground)
-      color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent);
-    --_radio-row-hover: var(--_surface-muted-ground) var(--env-color-bg-neutral-muted);
-    --_radio-row-pressed: var(--_surface-muted-ground) var(--env-color-bg-neutral-muted-hover);
-    gap: calc(var(--env-space-1) / 2);
+    gap: var(--env-space-2);
   }
   .env-radio-group[data-orientation='vertical']
     > :is(.env-radio-group-description, .env-radio-group-error) {
-    margin-block-start: var(--env-space-2);
+    margin-block-start: var(--env-space-1);
   }
-  .env-radio[data-orientation='vertical'] {
-    --_radio-fill: var(--_radio-row, var(--env-color-bg-list-item));
-    --_radio-fill-hover: var(--_radio-row-hover, var(--env-color-bg-list-item-hover));
-    --_radio-fill-pressed: var(--_radio-row-pressed, var(--env-color-bg-list-item-pressed));
-    --_radio-layer: initial;
-    --_radio-content-gate: color-mix(in srgb, var(--env-radio-content) 0%, var(--_radio-fill));
-    --_radio-custom-base: var(--env-radio-container, var(--_radio-content-gate));
-    --_radio-custom-layered: color-mix(
-      in srgb,
-      var(--_radio-custom-base),
-      currentColor var(--_radio-layer)
-    );
-    --_radio-custom-fill: var(--_radio-custom-layered, var(--_radio-custom-base));
-    box-sizing: border-box;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--env-space-3);
-    min-width: 0;
-    min-height: calc(var(--env-control-height-sm) + 2 * var(--_radio-row-padding));
-    padding: var(--_radio-row-padding) var(--env-row-padding-inline);
-    background: var(--_radio-custom-fill, var(--_radio-fill));
-    font: var(--env-type-body-sm);
-    font-size: var(--env-font-size-body-sm);
-    color: var(--env-radio-content, var(--env-color-fg-default));
-    cursor: pointer;
-  }
-  .env-radio > span {
-    min-inline-size: 0;
-  }
-  .env-radio[data-orientation='vertical']:has(input:checked) {
-    --_radio-fill: var(--env-color-bg-selected);
-    --_radio-fill-hover: var(--env-color-bg-selected-hover);
-    --_radio-fill-pressed: var(--env-color-bg-selected-pressed);
-    --_radio-layer: calc(var(--env-state-hover-opacity) * 100%);
-  }
-  .env-radio[data-orientation='vertical']:hover:not(:has(input:disabled)) {
-    --_radio-layer: calc(var(--env-state-hover-opacity) * 100%);
-    background: var(--_radio-custom-fill, var(--_radio-fill-hover));
-  }
-  .env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
-    --_radio-layer: calc(var(--env-state-pressed-opacity) * 100%);
-    background: var(--_radio-custom-fill, var(--_radio-fill-pressed));
-  }
-  .env-radio[data-orientation='vertical']:has(input:focus-visible) {
-    outline: 2px solid var(--env-color-border-focus);
-    outline-offset: -2px;
-  }
-  .env-radio-input {
-    --_radio-size: 1rem;
-    width: var(--_radio-size);
-    height: var(--_radio-size);
-    flex: 0 0 auto;
-    font: inherit;
-    margin: calc((1lh - var(--_radio-size)) / 2) 0 0;
-    accent-color: var(--_radio-accent, var(--env-color-bg-primary-emphasis));
-    cursor: inherit;
-  }
-  .env-radio-input:hover:not(:disabled) {
-    accent-color: var(--_radio-accent-hover, var(--env-color-bg-primary-emphasis-hover));
-  }
-  .env-radio-input:active:not(:disabled) {
-    accent-color: var(--_radio-accent-pressed, var(--env-color-bg-primary-emphasis-pressed));
-  }
-  .env-radio[data-orientation='horizontal'] {
-    min-inline-size: 0;
-    max-inline-size: 100%;
-    overflow-wrap: break-word;
-    display: inline-flex;
-    align-items: flex-start;
-    gap: var(--env-space-3);
-    font: var(--env-type-body-sm);
-    font-size: var(--env-font-size-body-sm);
-    color: var(--env-color-fg-default);
-    cursor: pointer;
-  }
-  .env-radio[data-orientation='horizontal'] > .env-radio-input:focus-visible {
-    outline: 2px solid var(--env-color-border-focus);
-    outline-offset: 2px;
-  }
-  .env-radio:has(input:disabled) {
-    cursor: default;
-  }
-  .env-radio:has(input:disabled) > :where(.env-radio-input, span) {
-    opacity: var(--env-state-disabled-opacity);
-  }
-
   .env-radio-group[data-orientation='horizontal'] {
-    gap: var(--env-space-4) var(--env-space-6);
+    gap: var(--env-space-2) var(--env-space-6);
   }
   .env-radio-group[data-orientation='horizontal'] legend,
   .env-radio-group[data-orientation='horizontal'] > .env-radio-group-description,
   .env-radio-group[data-orientation='horizontal'] > .env-radio-group-error {
     flex-basis: 100%;
   }
+
+  .env-radio {
+    --_radio-icon: 1.25rem;
+    --_radio-stroke: 0.125rem;
+    --_radio-dot-radius: 0.3125rem;
+    --_radio-dot-edge: calc(var(--_radio-dot-radius) - 0.03125rem);
+    --_radio-layer-size: 2.5rem;
+    --_radio-reach: calc((var(--_radio-layer-size) - var(--_radio-icon)) / 2);
+    --_radio-chosen: var(--env-radio-selected, var(--env-color-bg-primary-emphasis));
+    --_radio-ring: var(--env-color-border-default);
+    --_radio-state: 0%;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-wrap: break-word;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--env-space-3);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
+    color: var(--env-radio-content, var(--env-color-fg-default));
+    cursor: pointer;
+  }
+  .env-radio[data-orientation='horizontal'] {
+    display: inline-flex;
+  }
+  .env-radio:has(input:checked) {
+    --_radio-ring: var(--_radio-chosen);
+  }
+  .env-radio > span:not(.env-radio-control) {
+    min-inline-size: 0;
+    padding-block-start: calc((var(--_radio-layer-size) - 1lh) / 2);
+  }
+  .env-radio-control {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    inline-size: var(--_radio-layer-size);
+    block-size: var(--_radio-layer-size);
+    margin-inline-start: calc(-1 * var(--_radio-reach));
+    border-radius: var(--env-radius-full);
+    background: color-mix(in srgb, var(--_radio-ring) var(--_radio-state), transparent);
+  }
+  .env-radio:hover:not(:has(input:disabled)) {
+    --_radio-state: calc(var(--env-state-hover-opacity) * 100%);
+  }
+  .env-radio:has(input:focus-visible) {
+    --_radio-state: calc(var(--env-state-focus-opacity) * 100%);
+  }
+  .env-radio:active:not(:has(input:disabled)) {
+    --_radio-state: calc(var(--env-state-pressed-opacity) * 100%);
+  }
+  .env-radio-control:has(.env-radio-input:focus-visible) {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 0;
+  }
+  .env-radio-input {
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    inline-size: var(--_radio-icon);
+    block-size: var(--_radio-icon);
+    margin: 0;
+    border: var(--_radio-stroke) solid var(--_radio-ring);
+    border-radius: var(--env-radius-full);
+    background: transparent;
+    font: inherit;
+    cursor: inherit;
+  }
+  .env-radio-input:checked {
+    background: radial-gradient(
+      circle closest-side,
+      var(--_radio-ring) var(--_radio-dot-edge),
+      transparent var(--_radio-dot-radius)
+    );
+  }
+  .env-radio-input:focus-visible {
+    outline: none;
+  }
+  @media (pointer: coarse) {
+    .env-radio {
+      min-block-size: var(--env-control-height-touch);
+    }
+  }
+  .env-radio:has(input:disabled) {
+    cursor: default;
+  }
+  .env-radio:has(input:disabled) > span {
+    opacity: var(--env-state-disabled-opacity);
+  }
+
   .env-radio-group-description,
   .env-radio-group-error {
     font: var(--env-type-body-sm);
@@ -168,27 +150,32 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .env-radio[data-orientation='vertical'],
+    .env-radio-control,
     .env-radio-input {
-      transition-property: background-color, color, border-color, transform;
+      transition-property: background-color, border-color;
       transition-duration: var(--env-motion-duration-fast);
       transition-timing-function: var(--env-motion-ease-enter);
     }
-    .env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
-      transform: scale(0.99);
-    }
-    .env-radio[data-orientation='horizontal']:active:not(:has(input:disabled)) .env-radio-input {
-      transform: scale(0.9);
-    }
   }
   @media (forced-colors: active) {
-    .env-radio[data-orientation='vertical']:has(input:checked) {
-      outline: 2px solid Highlight;
-      outline-offset: -2px;
+    .env-radio-input {
+      forced-color-adjust: none;
+      border-color: CanvasText;
+      background-color: Canvas;
     }
-    .env-radio[data-orientation='vertical']:has(input:focus-visible) {
-      outline: 2px solid CanvasText;
-      outline-offset: 2px;
+    .env-radio-input:checked {
+      border-color: Highlight;
+      background-image: radial-gradient(
+        circle closest-side,
+        Highlight var(--_radio-dot-edge),
+        Canvas var(--_radio-dot-radius)
+      );
+    }
+    .env-radio:has(input:disabled) .env-radio-input {
+      border-color: GrayText;
+    }
+    .env-radio-control:has(.env-radio-input:focus-visible) {
+      outline-color: CanvasText;
     }
   }
 }

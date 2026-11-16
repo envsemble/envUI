@@ -4354,6 +4354,10 @@
           "description": "One radio with its label."
         },
         {
+          "class": "env-radio-control",
+          "description": "The circle the radio sits in, which shows hover, focus and press."
+        },
+        {
           "class": "env-radio-description",
           "description": "A radio's description."
         },
@@ -4385,21 +4389,16 @@
         }
       ],
       "uses": [
-        "ConnectedRows",
         "Icon"
       ],
       "colors": [
         {
-          "property": "--env-radio-container",
-          "description": "The row's fill in a vertical group; the state layers lie over it."
-        },
-        {
           "property": "--env-radio-content",
-          "description": "The label, and the color of a row's state layers."
+          "description": "The label's and the description's text."
         },
         {
           "property": "--env-radio-selected",
-          "description": "The dot and ring of the chosen option."
+          "description": "The ring and dot of the chosen option, and its state layer."
         }
       ]
     },
@@ -4443,7 +4442,6 @@
         }
       ],
       "uses": [
-        "ConnectedRows",
         "Icon"
       ]
     },
@@ -6636,17 +6634,6 @@
           ]
         },
         {
-          "attribute": "data-orientation",
-          "values": [
-            "horizontal",
-            "vertical"
-          ],
-          "parts": [
-            "env-connected-row",
-            "env-connected-rows"
-          ]
-        },
-        {
           "attribute": "data-reorderable",
           "values": [
             ""
@@ -6675,9 +6662,7 @@
         }
       ],
       "usedBy": [
-        "List",
-        "Radio",
-        "RadioGroup"
+        "List"
       ]
     },
     "EditorChrome": {

@@ -292,7 +292,6 @@
     "--env-popup-blur",
     "--env-popup-opacity",
     "--env-popup-shadow",
-    "--env-radio-container",
     "--env-radio-content",
     "--env-radio-selected",
     "--env-radius-control",

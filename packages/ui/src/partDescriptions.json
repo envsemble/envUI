@@ -656,6 +656,7 @@
     },
     "Radio": {
       "env-radio": "One radio with its label.",
+      "env-radio-control": "The circle the radio sits in, which shows hover, focus and press.",
       "env-radio-description": "A radio's description.",
       "env-radio-description-content": "The slot of a radio's description.",
       "env-radio-input": "The native input.",
@@ -961,9 +962,8 @@
       "--env-navigation-rail-item-selected-content": "The icon of the current destination."
     },
     "Radio": {
-      "--env-radio-container": "The row's fill in a vertical group; the state layers lie over it.",
-      "--env-radio-content": "The label, and the color of a row's state layers.",
-      "--env-radio-selected": "The dot and ring of the chosen option."
+      "--env-radio-content": "The label's and the description's text.",
+      "--env-radio-selected": "The ring and dot of the chosen option, and its state layer."
     },
     "SegmentedControl": {
       "--env-segmented-control-container": "The track behind the options, the neutral fill by default.",

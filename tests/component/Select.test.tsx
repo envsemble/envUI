@@ -303,6 +303,7 @@ test(
     addStyle('.env-popup[data-ending-style] { transition-duration: 1s; }');
     const trigger = select('Plan');
     const element = trigger.element() as HTMLElement;
+    element.scrollIntoView({ block: 'center' });
     element.focus();
     await keyboard.press('Space');
     await isFocused(option('Starter'));

@@ -3906,7 +3906,7 @@
           "name": "control",
           "type": "ReactNode",
           "required": false,
-          "description": "The selection control the row is about, at the row's end: a Switch, a Checkbox or a RadioGroup, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select or a TextField, belongs in a form, with its label above it."
+          "description": "The selection control the row is about, at the row's end: a Switch or a Checkbox, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select, a TextField or a RadioGroup, belongs in a form, with its label above it."
         },
         {
           "name": "interactive",
@@ -6469,7 +6469,7 @@
     "RadioGroup": {
       "kind": "component",
       "source": "packages/ui/src/forms/Radio.tsx",
-      "description": "A set of options to choose exactly one from: a native fieldset whose legend names the group, with Radio options inline or as selectable rows.",
+      "description": "A set of up to five options to choose exactly one from, all in view: a native fieldset whose legend names the group, with its Radio options one under the other, or side by side.",
       "props": [
         {
           "name": "ref",
@@ -6481,7 +6481,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, a List.Item whose control it is names it, or name it with aria-label or aria-labelledby."
+          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, name it with aria-label or aria-labelledby."
         },
         {
           "name": "value",
@@ -6530,8 +6530,8 @@
           "name": "orientation",
           "type": "'horizontal' | 'vertical'",
           "required": false,
-          "default": "'horizontal'",
-          "description": "How the options are laid out: horizontal, radios before their labels side by side that wrap onto more lines; or vertical, rows that fill the width as a List's do, with the label and description at the start and the radio at the end, for options that need explaining. The rows follow the Theme's surface: plain, with hairlines between them and the radio showing the choice; filled, joined tiles where the chosen one takes the selected fill."
+          "default": "'vertical'",
+          "description": "How the options are laid out: vertical, one radio under the other, each before its label with its description under the label; or horizontal, side by side, wrapping onto more lines, for two or three short options."
         },
         {
           "name": "disabled",

@@ -60,10 +60,6 @@ const states: Record<string, [state: Target, rest: Target]> = {
     ['fieldset', { text: 'Plan', inner: '.env-radio' }],
     ['fieldset', { text: 'Plan', inner: '.env-radio', innerIndex: 1 }],
   ],
-  'a chosen radio row': [
-    ['.env-radio[data-orientation=vertical]'],
-    ['.env-radio[data-orientation=vertical]', { index: 1 }],
-  ],
   'an invalid field': [
     ['.env-text-field', { text: 'Invalid', inner: '.env-text-field-control' }],
     ['.env-text-field', { text: 'Valid', inner: '.env-text-field-control' }],
@@ -321,12 +317,6 @@ const focusCases: FocusCase[] = [
     ring: ['.env-document-tabs-item[data-active]'],
     over: 'fill',
     focus: ['.env-document-tabs-item[data-active] [role=tab]'],
-  },
-  {
-    name: 'a chosen radio row',
-    ring: ['.env-radio[data-orientation=vertical]'],
-    over: 'canvas',
-    focus: ['fieldset', { text: 'Role', inner: 'input' }],
   },
   {
     name: "today's calendar day",
