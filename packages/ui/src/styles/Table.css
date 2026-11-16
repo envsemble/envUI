@@ -101,13 +101,13 @@
     background: var(--_table-filled-surface, transparent);
   }
   .env-table:has(> .env-table-caption)
-    .env-table-head
+    > .env-table-head
     > .env-table-row:first-child
     > :where(.env-table-header-cell, .env-table-cell):first-child {
     border-start-start-radius: var(--_table-inner-radius, 0);
   }
   .env-table:has(> .env-table-caption)
-    .env-table-head
+    > .env-table-head
     > .env-table-row:first-child
     > :where(.env-table-header-cell, .env-table-cell):last-child {
     border-start-end-radius: var(--_table-inner-radius, 0);
