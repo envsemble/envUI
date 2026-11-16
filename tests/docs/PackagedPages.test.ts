@@ -30,8 +30,8 @@ const hasLine = (text, line) => text.split('\n').includes(line);
 test('Table ships each example once, by name in its frontmatter, its legends and keys, and no changelog', () => {
   const compiled = compileDocumentation();
   const table = compiled.get('components/table.md');
-  assert.ok(hasLine(table, '  ProjectStatus: overview'));
-  assert.ok(compiled.has('examples/table/ProjectStatus.tsx'));
+  assert.ok(hasLine(table, '  WorkItems: overview'));
+  assert.ok(compiled.has('examples/table/WorkItems.tsx'));
   assert.doesNotMatch(table, /^`{3,}tsx (?:example|do|dont|anatomy|variants|figure|source)=/m);
   assert.ok(table.includes('\n### Sort by a column\n\nExample: SortableColumns.\n'));
   assert.doesNotMatch(table, /^### Loading$/m);

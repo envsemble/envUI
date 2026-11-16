@@ -1,6 +1,6 @@
 ---
 title: Table
-summary: Records in rows and columns, which people can sort and select.
+summary: A shell for rows of anything; the frame, the rows, their states and layout are the table's, and what goes in the cells is yours.
 status: stable
 since: 1.0.0
 category: Data display
@@ -28,7 +28,7 @@ avoidWhen:
 components:
   - Table
 examples:
-  ProjectStatus:
+  WorkItems:
     role: overview
     stage: shaded
   RowDensity: example

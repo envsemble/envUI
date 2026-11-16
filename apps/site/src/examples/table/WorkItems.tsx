@@ -1,70 +1,105 @@
-import { Badge, Link, Table, Text } from '@envsemble/envui';
+import { Avatar, Column, Link, Row, Table, Text } from '@envsemble/envui';
+import { IconCheckCircle } from '@envsemble/envui/icons/CheckCircle';
+import { IconBlock } from '@envsemble/envui/icons/Block';
+import { IconProgressActivity } from '@envsemble/envui/icons/ProgressActivity';
 
-const projects = [
+const items = [
   {
-    id: 'website',
-    name: 'Website refresh',
-    team: 'Marketing',
+    id: 'NW-142',
+    title: 'Redesign the pricing page',
+    project: 'Website refresh',
+    status: 'active',
     owner: 'Alex Morgan',
-    openTasks: 12,
-    status: 'In progress',
+    done: 60,
+    updated: '2026-03-12',
   },
   {
-    id: 'onboarding',
-    name: 'Onboarding emails',
-    team: 'Growth',
+    id: 'NW-139',
+    title: 'Send the welcome series',
+    project: 'Onboarding emails',
+    status: 'blocked',
     owner: 'Sam Lee',
-    openTasks: 4,
-    status: 'Blocked',
+    done: 25,
+    updated: '2026-03-09',
   },
   {
-    id: 'billing',
-    name: 'Billing migration',
-    team: 'Finance',
+    id: 'NW-131',
+    title: 'Move invoices to the new ledger',
+    project: 'Billing migration',
+    status: 'done',
     owner: 'Priya Shah',
-    openTasks: 0,
-    status: 'Done',
-  },
-  {
-    id: 'checkout',
-    name: 'Mobile checkout',
-    team: 'Product',
-    owner: 'Alex Morgan',
-    openTasks: 27,
-    status: 'In progress',
+    done: 100,
+    updated: '2026-02-27',
   },
 ] as const;
 
-const tones = { 'In progress': 'primary', Blocked: 'warning', Done: 'success' } as const;
+const statuses = {
+  active: <IconProgressActivity tone="primary" label="In progress" />,
+  blocked: <IconBlock tone="warning" label="Blocked" />,
+  done: <IconCheckCircle tone="success" label="Done" />,
+};
 
-export default function ProjectStatus() {
+const day = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+
+export default function WorkItems() {
   return (
-    <Table.Root caption="Projects" narrowLayout="stack">
+    <Table.Root caption="Work" narrowLayout="stack">
       <Table.Head>
         <Table.Row>
-          <Table.HeaderCell>Project</Table.HeaderCell>
-          <Table.HeaderCell>Status</Table.HeaderCell>
+          <Table.HeaderCell>Item</Table.HeaderCell>
           <Table.HeaderCell>Owner</Table.HeaderCell>
-          <Table.HeaderCell numeric>Open tasks</Table.HeaderCell>
+          <Table.HeaderCell>Progress</Table.HeaderCell>
+          <Table.HeaderCell numeric>Updated</Table.HeaderCell>
         </Table.Row>
       </Table.Head>
       <Table.Body>
-        {projects.map((project) => (
-          <Table.Row key={project.id} interactive>
-            <Table.Cell nowrap>
-              <Link href={`/projects/${project.id}`} underline={false}>
-                {project.name}
-              </Link>
-              <Text variant="caption">{project.team}</Text>
-            </Table.Cell>
-            <Table.Cell label="Status">
-              <Badge tone={tones[project.status]}>{project.status}</Badge>
+        {items.map((item) => (
+          <Table.Row key={item.id} interactive>
+            <Table.Cell>
+              <Row gap={3} align="start">
+                {statuses[item.status]}
+                <Column gap={1}>
+                  <Link href={`/work/${item.id}`} underline={false} data-row-target>
+                    {item.title}
+                  </Link>
+                  <Text variant="caption">
+                    {item.id} · {item.project}
+                  </Text>
+                </Column>
+              </Row>
             </Table.Cell>
             <Table.Cell nowrap label="Owner">
-              {project.owner}
+              <Row gap={2} align="center">
+                <Avatar name={item.owner} size="sm" />
+                {item.owner}
+              </Row>
             </Table.Cell>
-            <Table.Cell numeric label="Open tasks">
-              {project.openTasks}
+            <Table.Cell label="Progress">
+              <Row gap={2} align="center">
+                <div
+                  style={{
+                    inlineSize: '5rem',
+                    blockSize: '0.375rem',
+                    borderRadius: 'var(--env-radius-full)',
+                    background: 'var(--env-color-bg-neutral-muted)',
+                  }}
+                >
+                  <div
+                    style={{
+                      inlineSize: `${item.done}%`,
+                      blockSize: '100%',
+                      borderRadius: 'inherit',
+                      background: 'var(--env-color-bg-primary-solid)',
+                    }}
+                  />
+                </div>
+                <Text variant="caption" tabularNumbers>
+                  {item.done}%
+                </Text>
+              </Row>
+            </Table.Cell>
+            <Table.Cell numeric label="Updated">
+              <time dateTime={item.updated}>{day.format(new Date(item.updated))}</time>
             </Table.Cell>
           </Table.Row>
         ))}
