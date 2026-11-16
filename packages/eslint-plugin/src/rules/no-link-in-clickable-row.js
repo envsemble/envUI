@@ -17,13 +17,21 @@ const rows = {
     props: ['href', 'onClick'],
     target: true,
     place: 'its end slot as a Button',
+    advice: ' When it goes where the row goes, mark it data-row-target instead.',
   },
   'Table.Row': {
     props: ['onClick'],
     target: false,
     place: 'a cell of its own as a Button',
+    advice:
+      ' When it goes where the row goes, mark it data-row-target and make the row interactive in place of its onClick.',
   },
-  Card: { props: ['href', 'onClick'], target: false, place: 'beside the card as a Button' },
+  Card: {
+    props: ['href', 'onClick'],
+    target: false,
+    place: 'beside the card as a Button',
+    advice: ' When it goes where the row goes, mark it data-row-target instead.',
+  },
 };
 
 const isSet = (attribute) => attribute !== undefined && staticValue(attribute) !== false;
@@ -40,7 +48,7 @@ export default {
     schema: [],
     messages: {
       nested:
-        '{{found}} inside a clickable {{row}}: the row takes the click. Move the action into {{place}}, or into a Menu. When it goes where the row goes, mark it data-row-target instead.',
+        '{{found}} inside a clickable {{row}}: the row takes the click. Move the action into {{place}}, or into a Menu.{{advice}}',
     },
   },
   create(context) {
@@ -96,7 +104,7 @@ export default {
             context.report({
               node: element.name,
               messageId: 'nested',
-              data: { found, row: name, place: row.place },
+              data: { found, row: name, place: row.place, advice: row.advice },
             });
         }
       },

@@ -1,7 +1,11 @@
 import rule from '../src/rules/no-link-in-clickable-row.js';
 import { named, ruleTester } from './RuleTester.mjs';
 
-const nested = (found, row, place) => ({ messageId: 'nested', data: { found, row, place } });
+const sameTarget = ' When it goes where the row goes, mark it data-row-target instead.';
+const nested = (found, row, place) => ({
+  messageId: 'nested',
+  data: { found, row, place, advice: sameTarget },
+});
 const endSlot = 'its end slot as a Button';
 
 ruleTester.run('no-link-in-clickable-row', rule, {
@@ -14,6 +18,7 @@ ruleTester.run('no-link-in-clickable-row', rule, {
         '<Table.Row interactive><Table.Cell><Link href="/p/1">Project</Link></Table.Cell></Table.Row>',
         '<List.Item interactive label={<Link href="/r/1" data-row-target>Report</Link>} />',
         '<List.Item interactive label={<Button variant="text" data-row-target onClick={open}>Report</Button>} />',
+        '<Table.Row interactive><Table.Cell><Link href="/r/1" data-row-target>Report</Link></Table.Cell><Table.Cell><Link href="/a">Author</Link></Table.Cell></Table.Row>',
       ],
     ),
     ...named("A Button that isn't link-styled, in the end slot", [
@@ -46,7 +51,7 @@ ruleTester.run('no-link-in-clickable-row', rule, {
       errors: [
         {
           message:
-            'A Button with variant="text" inside a clickable Table.Row: the row takes the click. Move the action into a cell of its own as a Button, or into a Menu. When it goes where the row goes, mark it data-row-target instead.',
+            'A Button with variant="text" inside a clickable Table.Row: the row takes the click. Move the action into a cell of its own as a Button, or into a Menu. When it goes where the row goes, mark it data-row-target and make the row interactive in place of its onClick.',
         },
       ],
     },
