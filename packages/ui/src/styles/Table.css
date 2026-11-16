@@ -64,7 +64,7 @@
     .env-table-region:where(:scope)[data-sticky-header] {
       overflow-y: auto;
     }
-    :where(.env-table-region:scope) .env-table {
+    .env-table {
       --_table-stacked: 0;
       --_table-row-padding: var(--env-row-padding-block-md);
       --_table-cell-padding: calc(var(--_table-row-padding) + var(--env-space-1)) var(--env-space-4);
@@ -78,16 +78,16 @@
       font: var(--env-type-body);
       text-align: start;
     }
-    :where(.env-table-region:scope) .env-table[data-density='xs'] {
+    .env-table[data-density='xs'] {
       --_table-row-padding: var(--env-row-padding-block-xs);
     }
-    :where(.env-table-region:scope) .env-table[data-density='sm'] {
+    .env-table[data-density='sm'] {
       --_table-row-padding: var(--env-row-padding-block-sm);
     }
-    :where(.env-table-region:scope) .env-table[data-density='lg'] {
+    .env-table[data-density='lg'] {
       --_table-row-padding: var(--env-row-padding-block-lg);
     }
-    :where(.env-table-region:scope) .env-table-caption {
+    .env-table-caption {
       padding: 0 0 var(--env-space-2);
       caption-side: top;
       color: var(--env-color-fg-default);
@@ -99,7 +99,7 @@
       border-radius: 0;
       background: none;
     }
-    :where(.env-table-region:scope) .env-table:has(> .env-table-caption) {
+    .env-table:has(> .env-table-caption) {
       border: var(--_table-frame-width, 0) solid var(--env-color-border-muted);
       border-radius: var(--_table-frame-radius, 0);
       background: var(--_table-filled-surface, transparent);
@@ -132,13 +132,13 @@
       > :where(.env-table-header-cell, .env-table-cell):last-child {
       border-end-end-radius: var(--_table-inner-radius, 0);
     }
-    :where(.env-table-region:scope) .env-table-header-cell,
-    :where(.env-table-region:scope) .env-table-cell {
+    .env-table-header-cell,
+    .env-table-cell {
       padding: var(--_table-cell-padding);
       text-align: start;
       vertical-align: middle;
     }
-    :where(.env-table-region:scope) .env-table-header-cell {
+    .env-table-header-cell {
       background-color: var(--_table-header-ground, transparent);
       background-image: var(--_table-band-image, none);
       color: var(--env-color-fg-muted);
@@ -200,10 +200,10 @@
       :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
       white-space: nowrap;
     }
-    :where(.env-table-region:scope) .env-table-row[data-interactive] {
+    .env-table-row[data-interactive] {
       transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
-    :where(.env-table-region:scope) .env-table-row[data-interactive]:has([data-row-target]) {
+    .env-table-row[data-interactive]:has([data-row-target]) {
       position: relative;
     }
     :where(.env-table-region:scope) .env-table-row[data-interactive] [data-row-target] {
@@ -249,21 +249,16 @@
       position: relative;
       z-index: calc(var(--env-z-raised) + 1);
     }
-    :where(.env-table-region:scope)
-      .env-table-row[data-interactive]:is(:hover, :has(:focus-visible)) {
+    .env-table-row[data-interactive]:is(:hover, :has(:focus-visible)) {
       --_avatar-group-ring-tint: var(--env-color-bg-row-hover);
       background: var(--env-color-bg-row-hover);
     }
-    :where(.env-table-region:scope)
-      .env-table-row[data-interactive]:not([aria-selected='true']):is(
-        :hover,
-        :has(:focus-visible)
-      ) {
+    .env-table-row[data-interactive]:not([aria-selected='true']):is(:hover, :has(:focus-visible)) {
       --env-color-fg-link: var(--env-color-fg-link-on-muted);
       --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
       --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
     }
-    :where(.env-table-region:scope) .env-table-row[aria-selected='true'] {
+    .env-table-row[aria-selected='true'] {
       --env-color-fg-link: var(--env-color-fg-on-selected);
       --env-color-fg-link-hover: var(--env-color-fg-on-selected);
       --env-color-fg-link-pressed: var(--env-color-fg-on-selected);
@@ -278,8 +273,7 @@
       --_avatar-group-ring-tint: var(--_table-selected);
       background: var(--_table-selected);
     }
-    :where(.env-table-region:scope)
-      .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :has(:focus-visible)) {
+    .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :has(:focus-visible)) {
       --_avatar-group-ring-tint: var(--env-color-bg-selected-hover);
       background: var(--env-color-bg-selected-hover);
     }
@@ -294,10 +288,10 @@
       box-shadow: inset -3px 0 0 var(--_table-selection-bar);
     }
 
-    :where(.env-table-region:scope) .env-table-header-cell[data-sortable] {
+    .env-table-header-cell[data-sortable] {
       padding: 0;
     }
-    :where(.env-table-region:scope) .env-table-sort-button {
+    .env-table-sort-button {
       --_table-sort-ring-inset: 0.125rem;
       --_table-sort-start-radius: var(--env-radius-sm);
       --_table-sort-end-radius: var(--env-radius-sm);
@@ -326,7 +320,7 @@
       .env-table-sort-button {
       flex-direction: row-reverse;
     }
-    :where(.env-table-region:scope) .env-table-sort-button:hover {
+    .env-table-sort-button:hover {
       color: var(--env-color-fg-default);
     }
     :where(.env-table-region:scope) .env-table-sort-button:hover .env-icon {
@@ -346,11 +340,11 @@
       .env-table-sort-button {
       --_table-sort-end-radius: var(--_table-inner-radius, var(--env-radius-sm));
     }
-    :where(.env-table-region:scope) .env-table-sort-button:focus-visible {
+    .env-table-sort-button:focus-visible {
       outline: 2px solid transparent;
       outline-offset: -2px;
     }
-    :where(.env-table-region:scope) .env-table-sort-button:focus-visible::after {
+    .env-table-sort-button:focus-visible::after {
       content: '';
       position: absolute;
       inset: var(--_table-sort-ring-inset);
@@ -391,24 +385,22 @@
         transition: none;
       }
     }
-    :where(.env-table-region:scope)
-      .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending']) {
+    .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending']) {
       color: var(--env-color-fg-default);
     }
-    :where(.env-table-region:scope)
-      .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending'])
+    .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending'])
       .env-table-sort-button
       .env-icon {
       color: inherit;
     }
-    :where(.env-table-region:scope) .env-table-header-label {
+    .env-table-header-label {
       display: block;
       min-inline-size: 0;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    :where(.env-table-region:scope) .env-table[data-fixed-layout] {
+    .env-table[data-fixed-layout] {
       table-layout: fixed;
     }
     :where(.env-table-region:scope)
@@ -422,7 +414,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    :where(.env-table-region:scope) .env-table-header-cell[data-resizable] {
+    .env-table-header-cell[data-resizable] {
       position: relative;
     }
     :where(.env-table-region:scope)
@@ -431,24 +423,24 @@
       .env-table-column-resize-handle::after {
       background: var(--env-color-border-muted);
     }
-    :where(.env-table-region:scope) .env-table[data-resizing] {
+    .env-table[data-resizing] {
       cursor: col-resize;
       -webkit-user-select: none;
       user-select: none;
     }
     @media (pointer: coarse) {
-      :where(.env-table-region:scope) .env-table-sort-button {
+      .env-table-sort-button {
         min-block-size: var(--env-control-height-touch);
       }
     }
     @media (prefers-reduced-motion: reduce) {
-      :where(.env-table-region:scope) .env-table-row[data-interactive],
-      :where(.env-table-region:scope) .env-table-sort-button {
+      .env-table-row[data-interactive],
+      .env-table-sort-button {
         transition: none;
       }
     }
 
-    :where(.env-table-region:scope) .env-table-cell-label {
+    .env-table-cell-label {
       display: none;
     }
     @container env-table (width < 37.5em) {
@@ -609,11 +601,11 @@
     }
 
     @media (forced-colors: active) {
-      :where(.env-table-region:scope) .env-table-row[aria-selected='true'] {
+      .env-table-row[aria-selected='true'] {
         outline: 2px solid Highlight;
         outline-offset: -2px;
       }
-      :where(.env-table-region:scope) .env-table-sort-button:focus-visible::after {
+      .env-table-sort-button:focus-visible::after {
         border-color: CanvasText;
       }
     }
