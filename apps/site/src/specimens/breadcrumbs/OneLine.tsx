@@ -1,5 +1,4 @@
 import OneLine from '../../examples/breadcrumbs/OneLine';
-import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
@@ -17,12 +16,10 @@ function Hovering() {
   return <OneLine />;
 }
 
-export default function LongLabel() {
+export default function OneLineMotion() {
   return (
-    <SpecimenFrame>
-      <MotionStage label="the whole label in a tooltip" height="10rem">
-        <Hovering />
-      </MotionStage>
-    </SpecimenFrame>
+    <MotionStage label="the whole label in a tooltip" height="10rem">
+      <Hovering />
+    </MotionStage>
   );
 }

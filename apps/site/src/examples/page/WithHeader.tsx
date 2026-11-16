@@ -1,9 +1,10 @@
-import { Button, Card, Page, PageHeader, Column, Text } from '@envsemble/envui';
+import { Button, List, Page, PageHeader } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 
 const projects = [
   { name: 'Northwind launch', owner: 'Alex Morgan' },
   { name: 'Annual report', owner: 'Priya Shah' },
+  { name: 'Website refresh', owner: 'Sam Lee' },
 ];
 
 export default function WithHeader() {
@@ -19,13 +20,15 @@ export default function WithHeader() {
         />
       }
     >
-      <Column gap={3}>
+      <List.Root aria-label="Projects">
         {projects.map((project) => (
-          <Card key={project.name} title={project.name}>
-            <Text variant="body-sm">Owned by {project.owner}</Text>
-          </Card>
+          <List.Item
+            key={project.name}
+            label={project.name}
+            description={`Owned by ${project.owner}`}
+          />
         ))}
-      </Column>
+      </List.Root>
     </Page>
   );
 }

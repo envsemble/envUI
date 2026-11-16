@@ -29,7 +29,7 @@ avoidWhen:
 components:
   - Spinner
 examples:
-  LoadingPreview:
+  LoadingFiles:
     role: overview
     motion: true
   Sizes: variants

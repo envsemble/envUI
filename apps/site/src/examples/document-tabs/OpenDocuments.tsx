@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, DocumentTabs, Surface, Text, type DocumentTabsItem } from '@envsemble/envui';
+import { Button, Column, DocumentTabs, Text, type DocumentTabsItem } from '@envsemble/envui';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 
 const documents: DocumentTabsItem[] = [
@@ -9,7 +9,7 @@ const documents: DocumentTabsItem[] = [
   { value: 'releases/october.md', label: 'October release notes and follow-ups.md' },
 ].map((tab) => ({ ...tab, icon: <IconDescription />, tooltip: tab.value }));
 
-const panelStyle = { minBlockSize: '8rem', padding: '1.5rem' } as const;
+const panelStyle = { minBlockSize: '8rem', paddingBlock: '1.5rem' } as const;
 
 export default function OpenDocuments() {
   const [tabs, setTabs] = useState(documents);
@@ -24,7 +24,7 @@ export default function OpenDocuments() {
   };
 
   return (
-    <Surface background="default" padding={0}>
+    <Column>
       <DocumentTabs
         aria-label="Open documents"
         items={tabs}
@@ -60,6 +60,6 @@ export default function OpenDocuments() {
           </Button>
         )}
       </div>
-    </Surface>
+    </Column>
   );
 }

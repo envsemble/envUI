@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, SegmentedControl, Column, Row, Surface } from '@envsemble/envui';
+import { Button, SegmentedControl, Column, Row } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconViewList } from '@envsemble/envui/icons/ViewList';
 import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
@@ -9,14 +9,7 @@ export default function SmallToolbar() {
   const [layout, setLayout] = useState('list');
   return (
     <Column gap={4} align="start">
-      <Surface
-        background="default"
-        padding={1}
-        radius="full"
-        role="group"
-        aria-label="Projects"
-        render={<Row wrap align="center" gap={4} />}
-      >
+      <Row wrap align="center" gap={4} role="group" aria-label="Projects">
         <SegmentedControl
           aria-label="Layout"
           size="sm"
@@ -31,7 +24,7 @@ export default function SmallToolbar() {
         <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
           New project
         </Button>
-      </Surface>
+      </Row>
     </Column>
   );
 }

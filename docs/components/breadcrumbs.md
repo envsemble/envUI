@@ -57,10 +57,6 @@ examples:
 
 ```
 
-```tsx figure=OneLine
-
-```
-
 ## Anatomy
 
 ```tsx figure=BreadcrumbsAnatomy
@@ -76,4 +72,6 @@ examples:
 
 ### Long labels
 
-<!-- specimen: LongLabel -->
+```tsx figure=OneLine motion
+
+```

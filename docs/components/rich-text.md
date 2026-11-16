@@ -35,7 +35,7 @@ components:
   - RichTextEditor
   - createRichTextExtensions
 examples:
-  EditAndPreview:
+  MeetingNotes:
     role: overview
     motion: true
   RichTextAnatomy: anatomy

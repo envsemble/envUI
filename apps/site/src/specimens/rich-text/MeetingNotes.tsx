@@ -1,4 +1,4 @@
-import EditAndPreview from '../../examples/rich-text/EditAndPreview';
+import MeetingNotes from '../../examples/rich-text/MeetingNotes';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
@@ -38,15 +38,14 @@ function Editing() {
   usePointer(script);
   return (
     <div style={{ inlineSize: '100%' }}>
-      <EditAndPreview />
+      <MeetingNotes />
     </div>
   );
 }
 
-// eslint-disable-next-line no-restricted-syntax
-export default function EditAndPreviewMotion() {
+export default function MeetingNotesMotion() {
   return (
-    <MotionStage label="the preview following the edits">
+    <MotionStage label="the notes formatted as they are edited">
       <Editing />
     </MotionStage>
   );

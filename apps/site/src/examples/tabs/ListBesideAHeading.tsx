@@ -1,32 +1,30 @@
-import { Card, Row, Tabs, Text } from '@envsemble/envui';
+import { Row, Tabs, Text } from '@envsemble/envui';
 
 export default function ListBesideAHeading() {
   return (
-    <Card>
-      <Tabs
-        aria-label="Orders"
-        size="sm"
-        renderList={(list) => (
-          <Row wrap align="center" justify="between" gap={3}>
-            <Text render={<h3 />} variant="title">
-              Orders
-            </Text>
-            {list}
-          </Row>
-        )}
-        items={[
-          {
-            value: 'recent',
-            label: 'Recent',
-            content: <Text>Northwind ordered 40 chairs today.</Text>,
-          },
-          {
-            value: 'returned',
-            label: 'Returned',
-            content: <Text>Sam Lee returned a desk on Monday.</Text>,
-          },
-        ]}
-      />
-    </Card>
+    <Tabs
+      aria-label="Orders"
+      size="sm"
+      renderList={(list) => (
+        <Row wrap align="center" justify="between" gap={3}>
+          <Text render={<h3 />} variant="title">
+            Orders
+          </Text>
+          {list}
+        </Row>
+      )}
+      items={[
+        {
+          value: 'recent',
+          label: 'Recent',
+          content: <Text>Northwind ordered 40 chairs today.</Text>,
+        },
+        {
+          value: 'returned',
+          label: 'Returned',
+          content: <Text>Sam Lee returned a desk on Monday.</Text>,
+        },
+      ]}
+    />
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconButton, Select, Column, Row, Surface, Text } from '@envsemble/envui';
+import { IconButton, Select, Column, Row, Text } from '@envsemble/envui';
 import { IconZoomIn } from '@envsemble/envui/icons/ZoomIn';
 import { IconZoomOut } from '@envsemble/envui/icons/ZoomOut';
 
@@ -14,19 +14,8 @@ export default function SmallToolbar() {
   };
   return (
     <Column gap={4} align="start">
-      <Surface
-        background="default"
-        padding={1}
-        radius="full"
-        role="group"
-        aria-label="Diagram"
-        render={<Row wrap align="center" gap={4} />}
-      >
-        <Text
-          render={<span />}
-          variant="body-sm"
-          style={{ paddingInlineStart: 'var(--env-space-3)' }}
-        >
+      <Row wrap align="center" gap={4} role="group" aria-label="Diagram">
+        <Text render={<span />} variant="body-sm">
           Northwind launch plan
         </Text>
         <IconButton
@@ -50,7 +39,7 @@ export default function SmallToolbar() {
           aria-label="Zoom in"
           onClick={() => step(1)}
         />
-      </Surface>
+      </Row>
     </Column>
   );
 }
