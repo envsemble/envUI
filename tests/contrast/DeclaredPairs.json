@@ -3315,6 +3315,13 @@
         "standard": 4.5
       }
     },
+    "--env-color-fg-default on document-tabs-strip": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-default on popup-frosted over popup-worst-backdrop": {
       "kind": "text",
       "minimum": {
@@ -4657,6 +4664,13 @@
         "high": 7
       }
     },
+    "--env-color-fg-muted on document-tabs-strip": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-muted on popup-frosted over popup-worst-backdrop": {
       "kind": "text",
       "minimum": {
@@ -4839,20 +4853,6 @@
         "high": 7
       }
     },
-    "--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-page": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-recessed": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
     "--env-color-fg-on-selected on --env-color-bg-selected": {
       "kind": "text",
       "minimum": {
@@ -4879,20 +4879,6 @@
       "minimum": {
         "standard": 0.03,
         "high": 0.04
-      }
-    },
-    "--env-color-fg-on-selected-accent on --env-color-bg-neutral-muted over --env-color-bg-page": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "--env-color-fg-on-selected-accent on --env-color-bg-neutral-muted over --env-color-bg-recessed": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
       }
     },
     "--env-color-fg-on-selected-accent on --env-color-bg-selected-accent": {
@@ -6562,6 +6548,10 @@
     "--env-color-fg-muted on catalogue-band",
     "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-hover",
     "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-pressed",
+    "--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-page",
+    "--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-recessed",
+    "--env-color-fg-on-selected-accent on --env-color-bg-neutral-muted over --env-color-bg-page",
+    "--env-color-fg-on-selected-accent on --env-color-bg-neutral-muted over --env-color-bg-recessed",
     "badge-outline-important on --env-color-bg-accent-strong",
     "badge-outline-important on --env-color-bg-danger-emphasis",
     "badge-outline-primary on --env-color-bg-accent-emphasis",

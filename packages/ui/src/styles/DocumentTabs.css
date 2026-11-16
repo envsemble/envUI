@@ -1,18 +1,4 @@
 @layer env.components {
-  .env-theme {
-    --_document-tabs-muted-weight: 88%;
-  }
-  .env-theme[data-env-theme='dark'] {
-    --_document-tabs-muted-weight: 65%;
-  }
-  .env-theme[data-env-contrast='high'] {
-    --_document-tabs-muted-weight: 100%;
-  }
-  @media (prefers-contrast: more) {
-    .env-theme:not([data-env-contrast='standard']) {
-      --_document-tabs-muted-weight: 100%;
-    }
-  }
   .env-document-tabs {
     --_document-tabs-close-size: 1.25rem;
     --_document-tabs-height: 2.1875rem;
@@ -20,17 +6,17 @@
     --_document-tabs-item-min: 5rem;
     --_document-tabs-rule: var(--env-control-border-width);
     --_document-tabs-panel: var(--_surface-color, var(--env-color-bg-page));
-    --_document-tabs-muted: color-mix(
+    --_document-tabs-strip: color-mix(
       in srgb,
-      var(--env-color-fg-muted) var(--_document-tabs-muted-weight),
-      var(--env-color-bg-muted)
+      var(--_document-tabs-panel),
+      var(--env-color-fg-default) 7%
     );
     --_document-tabs-fillet: var(--env-radius-sm);
     box-sizing: border-box;
     inline-size: 100%;
     max-inline-size: 100%;
     contain: inline-size;
-    background-color: var(--env-color-bg-muted);
+    background-color: var(--_document-tabs-strip);
   }
   .env-document-tabs-strip {
     box-sizing: border-box;
@@ -137,7 +123,7 @@
     display: inline-flex;
     align-items: center;
     padding-inline-end: var(--env-space-1);
-    color: var(--_document-tabs-muted);
+    color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
     white-space: nowrap;
     cursor: pointer;
@@ -147,12 +133,12 @@
       color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-document-tabs-item[data-active] {
-    --_document-tabs-fillet-start: radial-gradient(
+    --_document-tabs-fillet-left: radial-gradient(
       circle at 0 0,
       transparent var(--_document-tabs-fillet),
       var(--_document-tabs-panel) var(--_document-tabs-fillet)
     );
-    --_document-tabs-fillet-end: radial-gradient(
+    --_document-tabs-fillet-right: radial-gradient(
       circle at 100% 0,
       transparent var(--_document-tabs-fillet),
       var(--_document-tabs-panel) var(--_document-tabs-fillet)
@@ -168,7 +154,7 @@
     inset-block-end: 0;
     inset-inline: calc(-1 * var(--_document-tabs-fillet));
     block-size: var(--_document-tabs-fillet);
-    background-image: var(--_document-tabs-fillet-start), var(--_document-tabs-fillet-end);
+    background-image: var(--_document-tabs-fillet-left), var(--_document-tabs-fillet-right);
     background-position:
       left bottom,
       right bottom;
@@ -176,14 +162,11 @@
     background-size: var(--_document-tabs-fillet) 100%;
     pointer-events: none;
   }
-  .env-document-tabs-item[data-active]:dir(rtl)::after {
-    background-image: var(--_document-tabs-fillet-end), var(--_document-tabs-fillet-start);
-    background-position:
-      right bottom,
-      left bottom;
+  .env-document-tabs[data-first-active] .env-document-tabs-item[data-active]:not(:dir(rtl)) {
+    --_document-tabs-fillet-left: none;
   }
-  .env-document-tabs[data-first-active] .env-document-tabs-item[data-active] {
-    --_document-tabs-fillet-start: none;
+  .env-document-tabs[data-first-active] .env-document-tabs-item[data-active]:dir(rtl) {
+    --_document-tabs-fillet-right: none;
   }
   .env-document-tabs-item:has(> .env-document-tabs-tab:focus-visible) {
     outline: 2px solid var(--env-color-border-focus);

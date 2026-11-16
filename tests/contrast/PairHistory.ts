@@ -2,6 +2,26 @@ import { onPage, onRecessed, pairName, pairs, type Relaxation } from './Pairs.ts
 
 export const dropped: readonly { pair: string; rationale: string }[] = [
   {
+    pair: '--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-page',
+    rationale:
+      'The active document tab has no bar under it: it takes the panel’s fill and joins the panel, so no selection color sits on the neutral fill there.',
+  },
+  {
+    pair: '--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'The active document tab has no bar under it: it takes the panel’s fill and joins the panel, so no selection color sits on the neutral fill there.',
+  },
+  {
+    pair: '--env-color-fg-on-selected-accent on --env-color-bg-neutral-muted over --env-color-bg-page',
+    rationale:
+      'The active document tab has no bar under it: it takes the panel’s fill and joins the panel, so no selection color sits on the neutral fill there.',
+  },
+  {
+    pair: '--env-color-fg-on-selected-accent on --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'The active document tab has no bar under it: it takes the panel’s fill and joins the panel, so no selection color sits on the neutral fill there.',
+  },
+  {
     pair: '--env-color-bg-primary-emphasis on --env-color-bg-muted-hover',
     rationale:
       'A vertical RadioGroup stacks plain radios on the surface around it, with no row fill and no hover or pressed fill, so no radio, label or description sits on the muted fill’s hover or pressed grade.',
@@ -1592,6 +1612,18 @@ function apiReviewRenames() {
 }
 
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  {
+    from: '--env-color-fg-on-selected on --env-color-bg-neutral-muted over catalogue-canvas',
+    to: '--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  },
+  {
+    from: '--env-color-fg-on-selected-accent on --env-color-bg-neutral-muted over catalogue-canvas',
+    to: '--env-color-fg-on-selected-accent on --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  },
   {
     from: '--env-color-bg-brand-emphasis on --env-color-bg-muted-hover',
     to: '--env-color-bg-primary-emphasis on --env-color-bg-muted-hover',

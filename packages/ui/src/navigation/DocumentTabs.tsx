@@ -134,7 +134,11 @@ export function DocumentTabs({
   ...props
 }: DocumentTabsProps) {
   const ownPanelId = useId();
-  const controlledPanel = panelId ?? (children != null ? ownPanelId : undefined);
+  const tabIdPrefix = useId();
+  const hasPanel = children != null && children !== false;
+  const controlledPanel = panelId ?? (hasPanel ? ownPanelId : undefined);
+  const activeIndex = items.findIndex((item) => item.value === value);
+  const tabId = (index: number) => `${tabIdPrefix}-tab-${index}`;
   const messages = useMessages('documentTabs', documentTabs);
   const closeName = closeLabel ?? ((name: string) => messages.close({ label: name }));
   const list = useRef<HTMLDivElement | null>(null);
@@ -187,9 +191,10 @@ export function DocumentTabs({
       data-reordering={flag(drag)}
       onKeyDown={leaveModifiedKeysToApplication}
     >
-      {items.map((item) => (
+      {items.map((item, index) => (
         <DocumentTab
           key={item.value}
+          id={tabId(index)}
           item={item}
           active={item.value === value}
           focusable={item.value === focusable}
@@ -262,12 +267,15 @@ export function DocumentTabs({
             </Slot>
           )}
         </Row>
-        {children != null && (
+        {hasPanel && (
           <div
             className="env-document-tabs-panel"
-            role="tabpanel"
             id={controlledPanel}
-            aria-label={items.find((item) => item.value === value)?.label}
+            {...(activeIndex >= 0 && {
+              role: 'tabpanel',
+              'aria-labelledby': tabId(activeIndex),
+              tabIndex: 0,
+            })}
           >
             <Slot className="env-document-tabs-panel-content">{children}</Slot>
           </div>
@@ -305,6 +313,7 @@ const preventMiddlePressAutoscroll = (event: MouseEvent<HTMLDivElement>) => {
 };
 
 function DocumentTab({
+  id,
   item,
   active,
   focusable,
@@ -316,6 +325,7 @@ function DocumentTab({
   onClose,
   onPin,
 }: Pick<DocumentTabsProps, 'panelId' | 'onClose' | 'onPin'> & {
+  id: string;
   item: DocumentTabsItem;
   active: boolean;
   focusable: boolean;
@@ -339,6 +349,7 @@ function DocumentTab({
       }}
     >
       <BaseTabs.Tab
+        id={id}
         value={item.value}
         className="env-document-tabs-tab"
         aria-label={item.label}

@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { describe, expect, test } from 'vitest';
-import { DocumentTabs, Theme } from '@envsemble/envui';
+import { DocumentTabs, Surface, Theme } from '@envsemble/envui';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as tabsFixture from '../fixture/DocumentTabs.fixture.tsx';
 import * as rerenderFixture from '../fixture/DocumentTabsRerender.fixture.tsx';
@@ -186,19 +186,27 @@ describe('DocumentTabs', () => {
       2,
     );
     for (const item of laterTabs) item.style.display = 'none';
-    const lastTab = box(darkStrip.querySelectorAll('.env-document-tabs-item')[1]!);
-    const gap = { x: lastTab.x + lastTab.width + 8, y: stripBox.y + 8 };
-    expect(document.elementFromPoint(gap.x, gap.y)).toBe(darkStrip);
-    await mouse.click(gap.x, gap.y, { button: 'right' });
-    await expect.poll(() => lastContextMenu?.defaultPrevented).toBe(false);
-    expect(
-      darkStrip.dispatchEvent(
-        new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 1, clientY: 1 }),
-      ),
-    ).toBe(true);
-    await nextFrames();
-    expect(page.getByRole('menu').elements()).toHaveLength(0);
-    for (const item of laterTabs) item.style.display = '';
+    try {
+      const lastTab = box(darkStrip.querySelectorAll('.env-document-tabs-item')[1]!);
+      const gap = { x: lastTab.x + lastTab.width + 8, y: stripBox.y + 8 };
+      expect(document.elementFromPoint(gap.x, gap.y)).toBe(darkStrip);
+      await mouse.click(gap.x, gap.y, { button: 'right' });
+      await expect.poll(() => lastContextMenu?.defaultPrevented).toBe(false);
+      expect(
+        darkStrip.dispatchEvent(
+          new MouseEvent('contextmenu', {
+            bubbles: true,
+            cancelable: true,
+            clientX: 1,
+            clientY: 1,
+          }),
+        ),
+      ).toBe(true);
+      await nextFrames();
+      expect(page.getByRole('menu').elements()).toHaveLength(0);
+    } finally {
+      for (const item of laterTabs) item.style.display = '';
+    }
   });
 
   test(
@@ -357,6 +365,8 @@ test('children go in the panel the active tab controls, which the active tab joi
   await expect.element(panel).toBeVisible();
   const tab = page.getByRole('tab', { name: 'B.md' }).element();
   expect(tab.getAttribute('aria-controls')).toBe(panel.element().id);
+  expect(panel.element().getAttribute('aria-labelledby')).toBe(tab.id);
+  expect(panel.element().getAttribute('tabindex')).toBe('0');
   expect(panel.element().contains(page.getByTestId('panel-content').element())).toBe(true);
   const item = tab.closest('.env-document-tabs-item')!;
   expect(getComputedStyle(item).backgroundColor).toBe(
@@ -369,3 +379,57 @@ test('children go in the panel the active tab controls, which the active tab joi
   root.unmount();
   host.remove();
 });
+
+test(
+  'the strip is a step from the panel on every surface, and the first tab drops the fillet on its own side',
+  { tags: ['engines'] },
+  async () => {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const items = [
+      { value: 'a', label: 'A.md' },
+      { value: 'b', label: 'B.md' },
+    ];
+    const tabs = (dir: 'ltr' | 'rtl') => (
+      <div dir={dir}>
+        <DocumentTabs
+          aria-label={`Surface documents ${dir}`}
+          items={items}
+          value="a"
+          onValueChange={() => undefined}
+          onClose={() => undefined}
+        >
+          <p>Content</p>
+        </DocumentTabs>
+      </div>
+    );
+    for (const [theme, contrast] of [
+      ['light', 'standard'],
+      ['dark', 'standard'],
+      ['light', 'high'],
+    ] as const) {
+      root.render(
+        <Theme theme={theme} contrast={contrast}>
+          {tabs('ltr')}
+          <Surface background="muted">{tabs('rtl')}</Surface>
+          <Surface background="raised">{tabs('ltr')}</Surface>
+        </Theme>,
+      );
+      await expect.poll(() => host.querySelectorAll('.env-document-tabs').length).toBe(3);
+      for (const strip of host.querySelectorAll('.env-document-tabs')) {
+        const panel = strip.querySelector('.env-document-tabs-panel')!;
+        expect(getComputedStyle(strip).backgroundColor, `${theme} ${contrast}`).not.toBe(
+          getComputedStyle(panel).backgroundColor,
+        );
+        const active = strip.querySelector('.env-document-tabs-item[data-active]')!;
+        const fillets = getComputedStyle(active, '::after').backgroundImage;
+        const rtl = strip.closest('[dir]')!.getAttribute('dir') === 'rtl';
+        expect(fillets.startsWith('none'), `left fillet ${rtl ? 'rtl' : 'ltr'}`).toBe(!rtl);
+        expect(fillets.endsWith('none'), `right fillet ${rtl ? 'rtl' : 'ltr'}`).toBe(rtl);
+      }
+    }
+    root.unmount();
+    host.remove();
+  },
+);

@@ -397,7 +397,7 @@ const registry: readonly ContrastPair[] = merged([
       [layerPressed, surface],
       [layerHover, fill, page],
     ],
-    'Quiet buttons, menubar triggers and document tabs on hover and press, and hovered segments',
+    'Quiet buttons and menubar triggers on hover and press, and hovered segments',
   ),
   ...text(
     '--env-color-fg-danger',
@@ -454,6 +454,12 @@ const registry: readonly ContrastPair[] = merged([
     'Combobox chips in a field on a card or in a popover',
   ),
   ...text(
+    '--env-color-fg-muted',
+    ['document-tabs-strip'],
+    'An inactive document tab: the muted label on the strip, a step from the panel',
+  ),
+  ...text('--env-color-fg-default', ['document-tabs-strip'], 'Text on the document tab strip'),
+  ...text(
     '--env-color-fg-danger',
     [muted],
     'The message of an invalid field on a muted surface; the tone pairs below measure the others',
@@ -465,7 +471,7 @@ const registry: readonly ContrastPair[] = merged([
       [fill, surface],
       [fill, raised],
     ],
-    'Quiet fields while focused, the command palette search, active document tabs, keyboard keys, counters and own messages',
+    'Quiet fields while focused, the command palette search, keyboard keys, counters and own messages',
   ),
   ...text(
     '--env-color-fg-muted',
@@ -734,7 +740,6 @@ const registry: readonly ContrastPair[] = merged([
       ['--env-color-fg-muted'],
       'The current item of a navigation drawer against its other items',
     ),
-    ...nonText(label, [[fill, page]], 'The bar of the active document tab'),
   ]),
 
   ...[selected, selectedAccent].flatMap((selection) =>
@@ -1190,6 +1195,8 @@ const derived: Readonly<Record<string, string>> = {
       ofLabel(separator, `--env-color-fg-${label}`),
     ]),
   ),
+  'document-tabs-strip':
+    'color-mix(in srgb, var(--env-color-bg-page), var(--env-color-fg-default) 7%)',
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-primary) 30%, var(--env-color-bg-page))',
   'popup-frosted': 'color-mix(in srgb, var(--_popup-fill) var(--env-popup-opacity), transparent)',
