@@ -32,11 +32,6 @@ components:
   - MarkdownEditor
 examples:
   WriteNote: overview
-  EditDescription:
-    role: overview
-    caption: 'MarkdownEditor: a toolbar, and a preview of the text.'
-    motion: true
-    wide: true
   LinkPicker: example
   MarkdownEditorAnatomy: anatomy
   OpenInPanel: example

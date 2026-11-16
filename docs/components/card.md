@@ -41,7 +41,6 @@ examples:
   ActionStrip: example
   Destinations: example
   StartOptions: example
-  ImportPlans: example
   Backgrounds: variants
   CardAnatomy: anatomy
   InviteFeature: example
@@ -71,7 +70,7 @@ examples:
 
 ### Feature card
 
-```tsx figure=ImportPlans
+```tsx figure=InviteFeature widths="40 24" sweep
 
 ```
 
@@ -104,9 +103,3 @@ examples:
 ### Loading
 
 <!-- specimen: SkeletonFirst -->
-
-### Adapting to width
-
-```tsx figure=InviteFeature widths="40 24" sweep
-
-```

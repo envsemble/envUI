@@ -43,8 +43,6 @@ examples:
     caption: One primary button per group, at the end of its actions.
   ButtonAnatomy: anatomy
   Variants: variants
-  PrimaryTones: example
-  QuietToolbar: example
   ButtonLinks: example
   PendingAction: example
   ConfirmInPlace: example
@@ -67,18 +65,6 @@ examples:
 4. **Ghost**
 5. **Text**
 6. **Primary, accent**
-
-### Tones
-
-```tsx figure=PrimaryTones
-
-```
-
-### In a toolbar
-
-```tsx figure=QuietToolbar
-
-```
 
 ### Links
 

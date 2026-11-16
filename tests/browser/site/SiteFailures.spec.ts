@@ -189,8 +189,8 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(page.getByText('The example could not load')).toHaveCount(0);
   await expect(hero.getByRole('button')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
-  const toolbar = page.getByRole('group', { name: 'In a toolbar example', exact: true });
-  await expect(toolbar.getByRole('button').first()).toBeVisible();
+  const links = page.getByRole('group', { name: 'Links example', exact: true });
+  await expect(links.getByRole('link').first()).toBeVisible();
   await page
     .locator('.site-live-example-entry')
     .first()

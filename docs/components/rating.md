@@ -27,7 +27,6 @@ examples:
   ReviewScore: overview
   Scales: example
   RatingAnatomy: anatomy
-  ApplicationLabel: example
 ---
 
 # Rating
@@ -55,9 +54,3 @@ examples:
 ### Rounding
 
 <!-- specimen: Rounding -->
-
-### In another language
-
-```tsx figure=ApplicationLabel
-
-```

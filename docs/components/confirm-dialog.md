@@ -28,19 +28,12 @@ examples:
   DeleteProject:
     role: overview
     open: true
-  ArchiveProject: example
   ConfirmDialogAnatomy: anatomy
   AsyncWithError: example
   FromMenu: example
 ---
 
 # ConfirmDialog
-
-## Variants
-
-```tsx figure=ArchiveProject
-
-```
 
 ## Anatomy
 

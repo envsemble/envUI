@@ -26,7 +26,6 @@ examples:
   PagesOfAList:
     role: overview
     caption: The range counts items, as in 1–60 of 245.
-  SmallToolbar: example
   PaginationAnatomy: anatomy
   WithoutATotal: example
   ToolbarRow: example
@@ -38,7 +37,7 @@ examples:
 
 ### Quiet buttons
 
-```tsx figure=SmallToolbar
+```tsx figure=ToolbarRow widths="32 14" sweep
 
 ```
 
@@ -62,11 +61,5 @@ examples:
 ### Without a known total
 
 ```tsx figure=WithoutATotal
-
-```
-
-### Adapting to width
-
-```tsx figure=ToolbarRow widths="32 14" sweep
 
 ```

@@ -43,7 +43,6 @@ examples:
   PickerButtonOpen: example
   PresetSwatches: example
   Swatches: example
-  SwatchFormats: example
   ColorPickerAnatomy: anatomy
   FillWidth: example
 ---
@@ -51,10 +50,6 @@ examples:
 # ColorPicker
 
 ## Variants
-
-### Formats and values
-
-<!-- specimen: FormatMenu -->
 
 ### Several formats at once
 
@@ -77,10 +72,6 @@ examples:
 ### Color swatches
 
 ```tsx figure=Swatches
-
-```
-
-```tsx figure=SwatchFormats
 
 ```
 
