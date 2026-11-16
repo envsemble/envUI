@@ -30,6 +30,9 @@ const densityShots = [
 const surfaceShots = ['plain', 'filled'].flatMap((surface) =>
   ['light', 'dark'].map((theme) => ({ surface, theme })),
 );
+const exampleShots = [
+  { name: 'table-parts', page: 'table', example: 'WorkItemsWithParts' },
+].flatMap((shot) => (['light', 'dark'] as const).map((theme) => ({ ...shot, theme })));
 const frozenTime = new Date('2026-03-04T10:00:00Z');
 const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
 const stateMatrices: Record<string, string[]> = {
@@ -443,6 +446,23 @@ test.describe('surfaces', () => {
   }
 });
 
+test.describe('examples', () => {
+  for (const shot of exampleShots) {
+    test(`${shot.name} (${shot.theme})`, async ({ page }) => {
+      await page.clock.setFixedTime(frozenTime);
+      await page.goto(
+        `${fixtureUrl}/?fixture=layout-check&page=${shot.page}&name=${shot.example}&theme=${shot.theme}`,
+      );
+      await expect(page.locator('[data-example-error]')).toHaveCount(0);
+      await stageOf(page).and(page.locator('[data-rendered]')).waitFor();
+      await page.evaluate(() => document.fonts.load('1em "envUI Geist"'));
+      await settle(page);
+      await page.mouse.move(0, 0);
+      await expect(stageOf(page)).toHaveScreenshot(['examples', `${shot.theme}-${shot.name}.png`]);
+    });
+  }
+});
+
 test.describe('open lists', () => {
   for (const list of openLists) {
     for (const theme of allThemes.filter(({ name }) => list.themes.includes(name))) {
@@ -499,13 +519,14 @@ test.describe('open lists', () => {
 });
 
 // eslint-disable-next-line no-empty-pattern
-test('every snapshot folder belongs to a catalogue page, a density section, a surface or an open list', async ({}, testInfo) => {
+test('every snapshot folder belongs to a catalogue page, a density section, a surface, an example or an open list', async ({}, testInfo) => {
   const pages = new Set(groupedPages.map(({ document }) => document.id));
   const density = new Set(densityShots.map(({ section, theme }) => `${theme}-${section}.png`));
   const open = new Set(
     openLists.flatMap((list) => list.themes.map((theme) => `${theme}-${list.name}.png`)),
   );
   const surfaces = new Set(surfaceShots.map(({ surface, theme }) => `${theme}-${surface}.png`));
+  const examples = new Set(exampleShots.map(({ name, theme }) => `${theme}-${name}.png`));
   const stale = (folder: string, belongs: (entry: Dirent) => boolean) =>
     existsSync(join(snapshots, folder))
       ? readdirSync(join(snapshots, folder), { withFileTypes: true })
@@ -516,12 +537,14 @@ test('every snapshot folder belongs to a catalogue page, a density section, a su
     ...stale(
       '',
       (entry) =>
-        entry.isDirectory() && ['catalogue', 'density', 'open', 'surfaces'].includes(entry.name),
+        entry.isDirectory() &&
+        ['catalogue', 'density', 'examples', 'open', 'surfaces'].includes(entry.name),
     ),
     ...stale('catalogue', (entry) => entry.isDirectory() && pages.has(entry.name)),
     ...stale('density', (entry) => entry.isFile() && density.has(entry.name)),
     ...stale('open', (entry) => entry.isFile() && open.has(entry.name)),
     ...stale('surfaces', (entry) => entry.isFile() && surfaces.has(entry.name)),
+    ...stale('examples', (entry) => entry.isFile() && examples.has(entry.name)),
   ];
   if (updating(testInfo)) {
     for (const path of unused) rmSync(join(snapshots, path), { recursive: true });
