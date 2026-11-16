@@ -31,20 +31,11 @@ examples:
   DocsArticle:
     role: overview
     caption: The page's headings on its own, each nested under the one above it, with the section the reader is in marked.
-  CustomSections: example
   TableOfContentsAnatomy: anatomy
   LongLabels: example
 ---
 
 # TableOfContents
-
-## Variants
-
-### Sections of your own
-
-```tsx figure=CustomSections
-
-```
 
 ## Anatomy
 
