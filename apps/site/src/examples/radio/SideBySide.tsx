@@ -1,25 +1,11 @@
-import { useState } from 'react';
 import { Radio, RadioGroup } from '@envsemble/envui';
 
-export default function StackedOptions() {
-  const [visibility, setVisibility] = useState('team');
+export default function SideBySide() {
   return (
-    <RadioGroup
-      orientation="vertical"
-      label="Visibility"
-      name="visibility"
-      value={visibility}
-      onValueChange={setVisibility}
-      style={{ inlineSize: 'min(100%, 28rem)' }}
-    >
-      <Radio value="team" label="Team" description="Everyone at Northwind can open it." />
-      <Radio value="private" label="Private" description="Only the people you invite." />
-      <Radio
-        value="public"
-        label="Public"
-        description="Your administrator has turned off public projects."
-        disabled
-      />
+    <RadioGroup label="Export format" orientation="horizontal" defaultValue="csv">
+      <Radio value="csv" label="CSV" />
+      <Radio value="json" label="JSON" />
+      <Radio value="markdown" label="Markdown" />
     </RadioGroup>
   );
 }

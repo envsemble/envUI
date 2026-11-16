@@ -64,12 +64,7 @@ export default function FilterPanel() {
         }
       >
         <Column gap={5}>
-          <RadioGroup
-            orientation="vertical"
-            label="Status"
-            value={status}
-            onValueChange={setStatus}
-          >
+          <RadioGroup label="Status" value={status} onValueChange={setStatus}>
             <Radio value="any" label="Any status" />
             <Radio value="active" label="Active" />
             <Radio value="paused" label="Paused" />

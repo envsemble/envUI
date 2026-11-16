@@ -1,6 +1,6 @@
 ---
 title: Radio
-summary: One choice from a few options shown together, side by side or as selectable rows.
+summary: One choice from up to five options, all in view, listed one under the other.
 status: stable
 since: 1.0.0
 category: Forms & selection
@@ -8,7 +8,6 @@ aliases:
   - radio button
   - radio group
   - radio list
-  - radio rows
   - option group
   - option button
   - choice group
@@ -27,18 +26,21 @@ components:
   - RadioGroup
   - Radio
 examples:
-  ProjectAccess: overview
-  VisibilityRows: example
+  ChooseLanguage:
+    role: overview
+    open: true
+  SideBySide: example
   RadioAnatomy: anatomy
   RequiredChoice: example
-  WrappingOptions: example
 ---
 
 # Radio
 
 ## Variants
 
-```tsx figure=VisibilityRows
+### Side by side
+
+```tsx figure=SideBySide
 
 ```
 
@@ -54,6 +56,7 @@ examples:
 4. **Label** (`env-radio > span::text`, `label`)
 5. **Description** (`env-radio-description`, `description`)
 6. **Radio** (`env-radio-input`)
+7. **State layer** (`env-radio-control`)
 
 ## Behaviour
 
@@ -64,11 +67,5 @@ examples:
 ### A required choice
 
 ```tsx figure=RequiredChoice motion
-
-```
-
-### Adapting to width
-
-```tsx figure=WrappingOptions widths="30 14" sweep
 
 ```

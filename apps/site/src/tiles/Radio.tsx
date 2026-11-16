@@ -21,7 +21,7 @@ const script: PointerStep[] = [
 export default function RadioTile() {
   usePointer(script);
   return (
-    <RadioGroup orientation="vertical" aria-label="Visibility" defaultValue="team">
+    <RadioGroup aria-label="Visibility" defaultValue="team">
       <Radio value="team" label="Team" />
       <Radio value="private" label="Private" />
     </RadioGroup>
