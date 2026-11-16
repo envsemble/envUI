@@ -665,7 +665,7 @@ test(
     expect(css(target, 'text-decoration-line')).toBe('none');
     expect(css(target, 'color')).toBe(css(row.getByRole('cell').nth(1), 'color'));
 
-    const owner = middle(row.getByRole('cell', { name: 'Sam Lee' }));
+    const owner = middle(row.getByRole('cell', { name: /Sam Lee/ }));
     await mouse.click(owner.x, owner.y);
     await expect.poll(text('opened-light')).toBe('audit');
 
@@ -681,6 +681,14 @@ test(
     const second = middle(page.getByTestId('cut-roadmap-light'));
     await mouse.click(second.x, second.y);
     await expect.poll(text('opened-light')).toBe('audit audit roadmap');
+
+    const avatar = middle(page.getByTestId('avatar-audit-light'));
+    await mouse.click(avatar.x, avatar.y);
+    await expect.poll(text('opened-light')).toBe('audit audit roadmap audit');
+
+    await mouse.click(assign.x, assign.y);
+    await mouse.move(0, 0);
+    await expect.poll(() => css(row, 'background-color')).toBe('rgba(0, 0, 0, 0)');
 
     const cut = page.getByTestId('cut-audit-light').element() as HTMLElement;
     expect(cut.scrollWidth).toBeGreaterThan(cut.clientWidth);

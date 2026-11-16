@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Avatar,
   Badge,
   Button,
   Checkbox,
@@ -391,7 +392,14 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
                     A second line long enough to be cut short at the end of its narrow column
                   </span>
                 </Table.Cell>
-                <Table.Cell>{report.owner}</Table.Cell>
+                <Table.Cell>
+                  <Avatar
+                    name={report.owner}
+                    size="sm"
+                    data-testid={`avatar-${report.id}-${theme}`}
+                  />{' '}
+                  {report.owner}
+                </Table.Cell>
                 <Table.Cell>
                   <Button
                     variant="secondary"

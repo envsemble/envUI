@@ -144,7 +144,7 @@
   .env-table-region[data-sticky-header] .env-table-head .env-table-header-cell {
     position: sticky;
     inset-block-start: 0;
-    z-index: calc(var(--env-z-raised) + 1);
+    z-index: calc(var(--env-z-raised) + 2);
     background-color: var(--_table-surface);
   }
   .env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
@@ -185,6 +185,7 @@
   .env-table-row[data-interactive] [data-row-target]::after {
     content: '';
     position: absolute;
+    z-index: var(--env-z-raised);
     inset: 0;
   }
   .env-table-row[data-interactive] [data-row-target]:focus-visible {
@@ -208,13 +209,13 @@
       [contenteditable]
     ):where(:not([data-row-target], [data-row-target] *)) {
     position: relative;
-    z-index: var(--env-z-raised);
+    z-index: calc(var(--env-z-raised) + 1);
   }
-  .env-table-row[data-interactive]:is(:hover, :focus-within) {
+  .env-table-row[data-interactive]:is(:hover, :has(:focus-visible)) {
     --_avatar-group-ring-tint: var(--env-color-bg-row-hover);
     background: var(--env-color-bg-row-hover);
   }
-  .env-table-row[data-interactive]:not([aria-selected='true']):is(:hover, :focus-within) {
+  .env-table-row[data-interactive]:not([aria-selected='true']):is(:hover, :has(:focus-visible)) {
     --env-color-fg-link: var(--env-color-fg-link-on-muted);
     --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
     --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
@@ -234,7 +235,7 @@
     --_avatar-group-ring-tint: var(--_table-selected);
     background: var(--_table-selected);
   }
-  .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :focus-within) {
+  .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :has(:focus-visible)) {
     --_avatar-group-ring-tint: var(--env-color-bg-selected-hover);
     background: var(--env-color-bg-selected-hover);
   }
