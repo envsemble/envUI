@@ -2,10 +2,18 @@
   .env-document-tabs {
     --_document-tabs-close-size: 1.5rem;
     --_document-tabs-item-max: 14rem;
+    --_document-tabs-item-min: 7.5rem;
+    --_document-tabs-rule: var(--env-control-border-width);
     box-sizing: border-box;
+    inline-size: 100%;
     max-inline-size: 100%;
     block-size: var(--env-control-height-md);
     contain: inline-size;
+    background-color: var(--env-color-bg-default);
+    background-image: linear-gradient(var(--env-color-border-muted), var(--env-color-border-muted));
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: 100% var(--_document-tabs-rule);
   }
   .env-document-tabs-end {
     gap: var(--env-space-1);
@@ -16,9 +24,8 @@
     box-sizing: border-box;
     position: relative;
     flex: 1 1 auto;
-    gap: calc(var(--env-space-1) / 2);
     block-size: 100%;
-    padding-inline: var(--env-space-1);
+    padding-inline: var(--env-space-1) 0;
     overflow-x: auto;
     overflow-y: hidden;
     overscroll-behavior-x: contain;
@@ -92,15 +99,13 @@
   .env-document-tabs-item {
     box-sizing: border-box;
     position: relative;
-    flex: 0 0 auto;
-    --_document-tabs-tab-max-width: 14rem;
-    min-inline-size: 0;
-    max-inline-size: var(--_document-tabs-tab-max-width);
+    flex: 0 1 auto;
+    min-inline-size: var(--_document-tabs-item-min);
+    max-inline-size: var(--_document-tabs-item-max);
     display: inline-flex;
     align-items: center;
     padding-inline-end: var(--env-space-1);
-    border-start-start-radius: var(--env-radius-sm);
-    border-start-end-radius: var(--env-radius-sm);
+    border-inline-end: var(--_document-tabs-rule) solid var(--env-color-border-muted);
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
     white-space: nowrap;
@@ -111,24 +116,11 @@
       color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:hover {
-    background: var(--env-color-bg-neutral-subtle-hover);
     color: var(--env-color-fg-default);
-  }
-  :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:active {
-    background: var(--env-color-bg-neutral-subtle-pressed);
   }
   .env-document-tabs-item[data-active] {
     background: var(--_surface-color, var(--env-color-bg-page));
     color: var(--env-color-fg-default);
-  }
-  .env-document-tabs-item[data-active]::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0;
-    --_document-tabs-indicator-size: 0.125rem;
-    block-size: var(--_document-tabs-indicator-size);
-    border-radius: var(--_document-tabs-indicator-size) var(--_document-tabs-indicator-size) 0 0;
-    background: var(--env-color-fg-on-selected);
   }
   .env-document-tabs-item:has(> .env-document-tabs-tab:focus-visible) {
     outline: 2px solid var(--env-color-border-focus);
@@ -200,6 +192,9 @@
   }
 
   @media (forced-colors: active) {
+    .env-document-tabs {
+      border-block-end: var(--_document-tabs-rule) solid CanvasText;
+    }
     .env-document-tabs-item[data-active] {
       forced-color-adjust: none;
       background-color: Highlight;
@@ -207,9 +202,6 @@
     }
     .env-document-tabs-item[data-active] :where(*) {
       color: inherit;
-    }
-    .env-document-tabs-item[data-active]::after {
-      background-color: HighlightText;
     }
     .env-document-tabs-item[data-active]:has(> .env-document-tabs-tab:focus-visible) {
       outline-color: HighlightText;
