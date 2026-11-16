@@ -155,13 +155,6 @@
         "high": 4.5
       }
     },
-    "--env-color-bg-primary-emphasis on --env-color-bg-muted-hover": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
     "--env-color-bg-primary-emphasis on --env-color-bg-neutral-muted over --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
@@ -2548,20 +2541,6 @@
         "high": 7
       }
     },
-    "--env-color-fg-default on --env-color-bg-muted-hover": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on --env-color-bg-muted-pressed": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
     "--env-color-fg-default on --env-color-bg-neutral-muted over --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -4385,13 +4364,6 @@
       }
     },
     "--env-color-fg-muted on --env-color-bg-muted": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-muted on --env-color-bg-muted-hover": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -6552,6 +6524,7 @@
     "--env-color-avatar-fg on --env-color-avatar-bg-slate",
     "--env-color-avatar-fg on --env-color-avatar-bg-teal",
     "--env-color-avatar-fg on --env-color-avatar-bg-violet",
+    "--env-color-bg-primary-emphasis on --env-color-bg-muted-hover",
     "--env-color-border-accent-muted on --env-color-bg-default",
     "--env-color-border-accent-muted on --env-color-bg-page",
     "--env-color-border-accent-muted on --env-color-bg-recessed",
@@ -6580,9 +6553,12 @@
     "--env-color-fg-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-page",
     "--env-color-fg-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-raised",
     "--env-color-fg-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-muted-hover",
+    "--env-color-fg-default on --env-color-bg-muted-pressed",
     "--env-color-fg-default on --env-color-bg-neutral-muted over catalogue-band",
     "--env-color-fg-default on catalogue-band",
     "--env-color-fg-link on catalogue-band",
+    "--env-color-fg-muted on --env-color-bg-muted-hover",
     "--env-color-fg-muted on catalogue-band",
     "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-hover",
     "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-pressed",

@@ -613,26 +613,10 @@ const registry: readonly ContrastPair[] = merged([
     'Text typed in the command palette’s search',
   ),
 
-  ...text(
-    '--env-color-fg-default',
-    ['--env-color-bg-muted-hover', '--env-color-bg-muted-pressed'],
-    'Radio rows',
-  ),
-  ...text('--env-color-fg-muted', ['--env-color-bg-muted-hover'], 'Radio row details'),
   ...nonText(
     '--env-color-bg-primary-emphasis',
-    [
-      page,
-      surface,
-      muted,
-      '--env-color-bg-muted-hover',
-      popup,
-      popupHover,
-      ...selections,
-      raised,
-      row,
-    ],
-    'A chosen radio, also in a chosen row; a checked checkbox and the track of a switch that is on, also in a list item and a selected table row; check marks in menus and options, also on a selected option under the pointer; the chosen calendar day',
+    [page, surface, muted, popup, popupHover, ...selections, raised, row],
+    'A chosen radio; a checked checkbox and the track of a switch that is on, also in a list item and a selected table row; check marks in menus and options, also on a selected option under the pointer; the chosen calendar day',
   ),
 
   ...text(
@@ -1143,7 +1127,7 @@ const registry: readonly ContrastPair[] = merged([
       [fill, raised],
       [fill, fill, page],
     ],
-    'Inset rings sit on the focused element: menu and Select options, navigation items, tree rows, list rows, row radios, the command palette search and tabs, also while pressed',
+    'Inset rings sit on the focused element: menu and Select options, navigation items, tree rows, list rows, the command palette search and tabs, also while pressed',
   ),
 ]);
 

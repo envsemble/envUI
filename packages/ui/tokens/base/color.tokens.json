@@ -48,7 +48,7 @@
       },
       "muted": {
         "$root": {
-          "$description": "The filled surface: Surface background=\"muted\", cards, list and radio rows. A step apart from the default surface in every theme, so cards stand apart from a pane: lighter in dark, where the raised surface takes the same fill; in light a light gray, so cards and filled rows stand apart from the white page too.",
+          "$description": "The filled surface: Surface background=\"muted\", cards and list rows. A step apart from the default surface in every theme, so cards stand apart from a pane: lighter in dark, where the raised surface takes the same fill; in light a light gray, so cards and filled rows stand apart from the white page too.",
           "$value": "{palette.gray.4}"
         },
         "hover": {

@@ -286,7 +286,7 @@
       "env-confirm-dialog-form": "The form that holds the dialog's fields and its confirming action."
     },
     "ConnectedRows": {
-      "env-connected-rows": "Rows that, under a filled surface, join into one block with large outer and small inner corners.",
+      "env-connected-rows": "Rows that join into one block with large outer and small inner corners.",
       "env-connected-row": "One joined row."
     },
     "CopyButton": {
@@ -959,7 +959,7 @@
       "--env-navigation-rail-item-selected-content": "The icon of the current destination."
     },
     "Radio": {
-      "--env-radio-content": "The label's and the description's text.",
+      "--env-radio-content": "The label's text.",
       "--env-radio-selected": "The ring and dot of the chosen option, and its state layer."
     },
     "SegmentedControl": {

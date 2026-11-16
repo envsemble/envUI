@@ -1,6 +1,26 @@
 import { onPage, onRecessed, pairName, pairs, type Relaxation } from './Pairs.ts';
 
 export const dropped: readonly { pair: string; rationale: string }[] = [
+  {
+    pair: '--env-color-bg-primary-emphasis on --env-color-bg-muted-hover',
+    rationale:
+      'A vertical RadioGroup stacks plain radios on the surface around it, with no row fill and no hover or pressed fill, so no radio, label or description sits on the muted fill’s hover or pressed grade.',
+  },
+  {
+    pair: '--env-color-fg-default on --env-color-bg-muted-hover',
+    rationale:
+      'A vertical RadioGroup stacks plain radios on the surface around it, with no row fill and no hover or pressed fill, so no radio, label or description sits on the muted fill’s hover or pressed grade.',
+  },
+  {
+    pair: '--env-color-fg-default on --env-color-bg-muted-pressed',
+    rationale:
+      'A vertical RadioGroup stacks plain radios on the surface around it, with no row fill and no hover or pressed fill, so no radio, label or description sits on the muted fill’s hover or pressed grade.',
+  },
+  {
+    pair: '--env-color-fg-muted on --env-color-bg-muted-hover',
+    rationale:
+      'A vertical RadioGroup stacks plain radios on the surface around it, with no row fill and no hover or pressed fill, so no radio, label or description sits on the muted fill’s hover or pressed grade.',
+  },
   ...['', '-hover', '-pressed'].flatMap((state) =>
     [
       '--env-color-bg-default',
@@ -1572,6 +1592,12 @@ function apiReviewRenames() {
 }
 
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  {
+    from: '--env-color-bg-brand-emphasis on --env-color-bg-muted-hover',
+    to: '--env-color-bg-primary-emphasis on --env-color-bg-muted-hover',
+    rationale:
+      'The blue roles are primary: the chosen radio on a hovered radio row was measured as primary emphasis until the rows went.',
+  },
   ...(['success', 'info', 'danger'] as const).map((tone) => ({
     from: `--env-color-fg-${tone}-on-strong on toast-icon-disc-${tone} over --env-color-bg-neutral-strong`,
     to: `--env-color-fg-${tone}-on-strong on --env-color-bg-neutral-strong`,

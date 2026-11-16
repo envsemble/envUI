@@ -4318,7 +4318,7 @@
       "colors": [
         {
           "property": "--env-radio-content",
-          "description": "The label's and the description's text."
+          "description": "The label's text."
         },
         {
           "property": "--env-radio-selected",
@@ -6528,7 +6528,7 @@
       "parts": [
         {
           "class": "env-connected-rows",
-          "description": "Rows that, under a filled surface, join into one block with large outer and small inner corners."
+          "description": "Rows that join into one block with large outer and small inner corners."
         },
         {
           "class": "env-connected-row",
