@@ -17,7 +17,7 @@ useWhen:
   - Options that each need a sentence to explain them, such as roles
   - One of two to five options that must all stay in view, such as in a form
 avoidWhen:
-  - text: A setting in a list row whose options are short names, such as a theme.
+  - text: More options than fit in view, or ones people know, such as a time zone.
     use: Select
   - text: Views or filters of the content in front of people, such as List and Board.
     use: SegmentedControl

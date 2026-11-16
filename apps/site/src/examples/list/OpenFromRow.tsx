@@ -1,20 +1,23 @@
 import { useState } from 'react';
-import { IconButton, Link, List, Column, Menu, Text } from '@envsemble/envui';
+import { Badge, IconButton, Link, List, Column, Menu, Text } from '@envsemble/envui';
 import { IconMoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 const plans = [
-  { id: 'roadmap', name: 'Roadmap', updated: 'Updated today by Sam Lee' },
-  { id: 'pricing', name: 'Pricing research', updated: 'Updated yesterday by Priya Shah' },
+  { id: 'roadmap', name: 'Roadmap', updated: 'Updated today by Sam Lee', state: 'In review' },
+  {
+    id: 'pricing',
+    name: 'Pricing research',
+    updated: 'Updated yesterday by Priya Shah',
+    state: 'Draft',
+  },
 ];
-
-const aboveRowLink = { position: 'relative' } as const;
 
 export default function OpenFromRow() {
   const [result, setResult] = useState('');
   return (
     <Column gap={3}>
       <List.Root aria-label="Recent plans">
-        {plans.map(({ id, name, updated }) => (
+        {plans.map(({ id, name, updated, state }) => (
           <List.Item
             key={id}
             interactive
@@ -38,7 +41,6 @@ export default function OpenFromRow() {
                     variant="text"
                     icon={<IconMoreHoriz />}
                     aria-label={`More actions for ${name}`}
-                    style={aboveRowLink}
                   />
                 }
               >
@@ -47,7 +49,9 @@ export default function OpenFromRow() {
                 <Menu.Item onClick={() => setResult(`Archived ${name}`)}>Archive</Menu.Item>
               </Menu.Root>
             }
-          />
+          >
+            <Badge>{state}</Badge>
+          </List.Item>
         ))}
       </List.Root>
       <Text variant="caption" emphasis="muted" role="status">

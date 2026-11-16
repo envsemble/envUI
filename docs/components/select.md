@@ -17,7 +17,7 @@ aliases:
   - choose from a list
 useWhen:
   - One of several known options, such as a role, a sort order or a time zone
-  - A setting with a few options in a List.Item's control, such as a theme
+  - A setting in a form with its label above it, such as a digest's frequency
   - A choice in a toolbar, such as a zoom level
 avoidWhen:
   - text: Options that each need a sentence, or that must all stay in view.
@@ -35,7 +35,7 @@ examples:
   SmallToolbar: example
   SelectAnatomy: anatomy
   SelectListAnatomy: anatomy
-  SettingRows: example
+  SettingsForm: example
 ---
 
 # Select
@@ -79,8 +79,8 @@ examples:
 
 <!-- specimen: ProjectVisibility -->
 
-### In list rows
+### In a settings form
 
-```tsx figure=SettingRows
+```tsx figure=SettingsForm
 
 ```

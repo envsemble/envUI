@@ -36,14 +36,10 @@ export default function WithoutUrls() {
           {folders[folder].map((name) => (
             <List.Item
               key={name}
-              label={name}
-              end={
-                <Button
-                  variant="text"
-                  aria-label={`Open ${name}`}
-                  onClick={() => open([...path, name])}
-                >
-                  Open
+              interactive
+              label={
+                <Button variant="text" data-row-target onClick={() => open([...path, name])}>
+                  {name}
                 </Button>
               }
             />

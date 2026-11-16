@@ -1,4 +1,4 @@
-import { List, Select } from '@envsemble/envui';
+import { Column, Select, Text } from '@envsemble/envui';
 
 const digestOptions = [
   { value: 'daily', label: 'Daily' },
@@ -11,19 +11,24 @@ const reminderOptions = [
   { value: 'none', label: 'No reminder' },
 ];
 
-export default function SettingRows() {
+export default function SettingsForm() {
   return (
-    <List.Root title="Notifications">
-      <List.Item
+    <Column gap={4} render={<form />} style={{ inlineSize: 'min(100%, 24rem)' }}>
+      <Text variant="title" render={<h3 />}>
+        Notifications
+      </Text>
+      <Select
         label="E-mail digest"
         description="A summary of what changed in your projects."
-        control={<Select items={digestOptions} defaultValue="weekly" />}
+        items={digestOptions}
+        defaultValue="weekly"
       />
-      <List.Item
+      <Select
         label="Due date reminders"
         description="For tasks assigned to you."
-        control={<Select items={reminderOptions} defaultValue="1d" />}
+        items={reminderOptions}
+        defaultValue="1d"
       />
-    </List.Root>
+    </Column>
   );
 }

@@ -32,7 +32,7 @@ function Pointing() {
 
 export default function OpenFromRowMotion() {
   return (
-    <MotionStage label="a row and its action under the pointer" height="19.5rem">
+    <MotionStage label="a row and its action under the pointer" height="22rem">
       <Pointing />
     </MotionStage>
   );

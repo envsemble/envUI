@@ -1,6 +1,6 @@
 ---
 title: List
-summary: A vertical list of rows, each with a title, a detail and an action.
+summary: A column of discrete items people scan, open or choose, as joined filled rows.
 status: stable
 since: 1.0.0
 category: Data display
@@ -19,52 +19,27 @@ aliases:
   - drag and drop list
   - selectable rows
 useWhen:
-  - Related items with a title, a detail and an action each, such as settings
-  - Items that each open a page or a document, such as recent plans
+  - Items people open, such as agents, documents or messages
+  - Options people switch on and off, such as which alerts they get
   - The list beside an item's details, with its current row marked
 avoidWhen:
   - text: Data compared across columns, or rows people sort by a value.
     use: Table
-  - text: Destinations in an application's navigation.
-    use: NavigationDrawer
-  - text: A hierarchy people expand, such as folders.
-    use: Tree
+  - text: Settings with fields, such as a port or an address, which are a form.
+    use: Field
+  - text: Facts about one thing, as names and their values.
+    use: DescriptionList
 components:
   - List
 examples:
-  SettingsRows: overview
-  OnAPane: example
-  ExtraContent: example
-  RowDensity: example
+  Agents: overview
   ListAnatomy: anatomy
-  OpenFromRow: example
   CurrentRow: example
-  CheckedRows: example
-  Reorder: example
-  NarrowRows: example
+  OpenFromRow: example
+  SwitchRows: example
 ---
 
 # List
-
-## Variants
-
-### On a pane
-
-```tsx figure=OnAPane
-
-```
-
-### More content
-
-```tsx figure=ExtraContent
-
-```
-
-### Density
-
-```tsx figure=RowDensity motion
-
-```
 
 ## Anatomy
 
@@ -84,31 +59,19 @@ examples:
 
 ### Rows that open something
 
-```tsx figure=OpenFromRow motion
-
-```
-
-### The current row
-
 ```tsx figure=CurrentRow
 
 ```
 
-### Checked rows
+### Rows with a menu
 
-```tsx figure=CheckedRows motion
-
-```
-
-### Put in order
-
-```tsx figure=Reorder motion
+```tsx figure=OpenFromRow motion
 
 ```
 
-### Adapting to width
+### Rows with switches
 
-```tsx figure=NarrowRows widths="32 16" sweep
+```tsx figure=SwitchRows
 
 ```
 

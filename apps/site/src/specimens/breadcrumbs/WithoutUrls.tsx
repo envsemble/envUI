@@ -11,7 +11,7 @@ const folderWithListHeight = '13.5rem';
 
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: '[aria-label="Open Interviews"]', x: 0.5, y: 0.6 },
+  { to: '.env-list-item [data-row-target]', x: 0.5, y: 0.6 },
   { wait: 240 },
   { click: true },
   { wait: 1020 },
