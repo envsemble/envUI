@@ -28,20 +28,11 @@ components:
   - DocumentTabs
 examples:
   OpenDocuments: overview
-  CloseAllButton: example
   DocumentTabsAnatomy: anatomy
   ManyTabs: example
 ---
 
 # DocumentTabs
-
-## Variants
-
-### Buttons after the tabs
-
-```tsx figure=CloseAllButton
-
-```
 
 ## Anatomy
 
@@ -56,16 +47,9 @@ examples:
 5. **Label** (`env-document-tabs-tab-label`, `label`)
 6. **Close button** (`env-document-tabs-close`)
 7. **End** (`env-document-tabs-end`, `end`)
+8. **Panel** (`env-document-tabs-panel`, `children`)
 
 ## Behaviour
-
-### Closing
-
-<!-- specimen: Closing -->
-
-### Preview and reorder
-
-<!-- specimen: PreviewAndReorder -->
 
 ### Adapting to width
 

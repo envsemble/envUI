@@ -6,7 +6,7 @@ const documents: DocumentTabsItem[] = [
   { value: 'plans/roadmap.md', label: 'Roadmap.md' },
   { value: 'plans/decisions.md', label: 'Decisions.md' },
   { value: 'research/interviews.md', label: 'Interviews.md', preview: true },
-  { value: 'releases/october.md', label: 'October release notes and follow-ups.md' },
+  { value: 'releases/october.md', label: 'October release notes.md' },
 ].map((tab) => ({ ...tab, icon: <IconDescription />, tooltip: tab.value }));
 
 const contents: Record<string, string[]> = {
@@ -19,7 +19,7 @@ const contents: Record<string, string[]> = {
   'releases/october.md': ['What shipped in October, and what moved to November.'],
 };
 
-const panelStyle = { minBlockSize: '8rem', padding: '1rem 1.25rem' } as const;
+const documentStyle = { minBlockSize: '9rem', padding: '0.75rem 1rem 1rem' } as const;
 
 export default function OpenDocuments() {
   const [tabs, setTabs] = useState(documents);
@@ -34,35 +34,37 @@ export default function OpenDocuments() {
   };
 
   return (
-    <Column>
-      <DocumentTabs
-        aria-label="Open documents"
-        items={tabs}
-        value={value}
-        panelId="open-document"
-        onValueChange={setValue}
-        onClose={close}
-        onReorder={(ids) =>
-          setTabs((current) => ids.map((id) => current.find((tab) => tab.value === id)!))
-        }
-        onCloseAll={() => {
-          setTabs([]);
-          setValue(null);
-        }}
-        onPin={(id) =>
-          setTabs((current) =>
-            current.map((tab) => (tab.value === id ? { ...tab, preview: false } : tab)),
-          )
-        }
-      />
-      <div id="open-document" role="tabpanel" aria-label={active?.label} style={panelStyle}>
+    <DocumentTabs
+      aria-label="Open documents"
+      items={tabs}
+      value={value}
+      onValueChange={setValue}
+      onClose={close}
+      onReorder={(ids) =>
+        setTabs((current) => ids.map((id) => current.find((tab) => tab.value === id)!))
+      }
+      onCloseAll={() => {
+        setTabs([]);
+        setValue(null);
+      }}
+      onPin={(id) =>
+        setTabs((current) =>
+          current.map((tab) => (tab.value === id ? { ...tab, preview: false } : tab)),
+        )
+      }
+    >
+      <Column gap={2} style={documentStyle}>
         {active ? (
-          <Column gap={3}>
-            <Text variant="caption">{active.value}</Text>
+          <>
+            <Text variant="title" render={<h3 />}>
+              {active.label.replace(/\.md$/, '')}
+            </Text>
             {contents[active.value]?.map((line) => (
-              <Text key={line}>{line}</Text>
+              <Text key={line} variant="body-sm" emphasis="default">
+                {line}
+              </Text>
             ))}
-          </Column>
+          </>
         ) : (
           <Button
             variant="secondary"
@@ -74,7 +76,7 @@ export default function OpenDocuments() {
             Reopen the documents
           </Button>
         )}
-      </div>
-    </Column>
+      </Column>
+    </DocumentTabs>
   );
 }
