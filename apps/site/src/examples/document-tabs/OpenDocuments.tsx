@@ -9,7 +9,17 @@ const documents: DocumentTabsItem[] = [
   { value: 'releases/october.md', label: 'October release notes and follow-ups.md' },
 ].map((tab) => ({ ...tab, icon: <IconDescription />, tooltip: tab.value }));
 
-const panelStyle = { minBlockSize: '8rem', paddingBlock: '1.5rem' } as const;
+const contents: Record<string, string[]> = {
+  'plans/roadmap.md': [
+    'Ship the pricing page before the March release.',
+    'Move billing to the new ledger once the migration passes review.',
+  ],
+  'plans/decisions.md': ['Keep one plan per team, reviewed every Monday.'],
+  'research/interviews.md': ['Six interviews with Northwind admins, notes by Priya Shah.'],
+  'releases/october.md': ['What shipped in October, and what moved to November.'],
+};
+
+const panelStyle = { minBlockSize: '8rem', padding: '1rem 1.25rem' } as const;
 
 export default function OpenDocuments() {
   const [tabs, setTabs] = useState(documents);
@@ -47,7 +57,12 @@ export default function OpenDocuments() {
       />
       <div id="open-document" role="tabpanel" aria-label={active?.label} style={panelStyle}>
         {active ? (
-          <Text emphasis="muted">{active.tooltip}</Text>
+          <Column gap={3}>
+            <Text variant="caption">{active.value}</Text>
+            {contents[active.value]?.map((line) => (
+              <Text key={line}>{line}</Text>
+            ))}
+          </Column>
         ) : (
           <Button
             variant="secondary"
