@@ -27,7 +27,7 @@
     }
   }
   @scope (.env-table-region) to (.env-table-region) {
-    .env-table-region:where(:scope) {
+    .env-table-region:where(.env-table-region:scope) {
       --_table-framed: ;
       --_table-filled-surface: var(--_table-framed) var(--env-color-bg-raised);
       --_table-frame-width: var(--_table-framed) var(--env-control-border-width);
@@ -64,7 +64,7 @@
     .env-table-region:where(:scope)[data-sticky-header] {
       overflow-y: auto;
     }
-    :where(:scope) .env-table {
+    :where(.env-table-region:scope) .env-table {
       --_table-stacked: 0;
       --_table-row-padding: var(--env-row-padding-block-md);
       --_table-cell-padding: calc(var(--_table-row-padding) + var(--env-space-1)) var(--env-space-4);
@@ -78,16 +78,16 @@
       font: var(--env-type-body);
       text-align: start;
     }
-    :where(:scope) .env-table[data-density='xs'] {
+    :where(.env-table-region:scope) .env-table[data-density='xs'] {
       --_table-row-padding: var(--env-row-padding-block-xs);
     }
-    :where(:scope) .env-table[data-density='sm'] {
+    :where(.env-table-region:scope) .env-table[data-density='sm'] {
       --_table-row-padding: var(--env-row-padding-block-sm);
     }
-    :where(:scope) .env-table[data-density='lg'] {
+    :where(.env-table-region:scope) .env-table[data-density='lg'] {
       --_table-row-padding: var(--env-row-padding-block-lg);
     }
-    :where(:scope) .env-table-caption {
+    :where(.env-table-region:scope) .env-table-caption {
       padding: 0 0 var(--env-space-2);
       caption-side: top;
       color: var(--env-color-fg-default);
@@ -99,46 +99,46 @@
       border-radius: 0;
       background: none;
     }
-    :where(:scope) .env-table:has(> .env-table-caption) {
+    :where(.env-table-region:scope) .env-table:has(> .env-table-caption) {
       border: var(--_table-frame-width, 0) solid var(--env-color-border-muted);
       border-radius: var(--_table-frame-radius, 0);
       background: var(--_table-filled-surface, transparent);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table:has(> .env-table-caption)
       .env-table-head
       > .env-table-row:first-child
       > :where(.env-table-header-cell, .env-table-cell):first-child {
       border-start-start-radius: var(--_table-inner-radius, 0);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table:has(> .env-table-caption)
       .env-table-head
       > .env-table-row:first-child
       > :where(.env-table-header-cell, .env-table-cell):last-child {
       border-start-end-radius: var(--_table-inner-radius, 0);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table:has(> .env-table-caption)
       > :last-child
       > .env-table-row:last-child
       > :where(.env-table-header-cell, .env-table-cell):first-child {
       border-end-start-radius: var(--_table-inner-radius, 0);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table:has(> .env-table-caption)
       > :last-child
       > .env-table-row:last-child
       > :where(.env-table-header-cell, .env-table-cell):last-child {
       border-end-end-radius: var(--_table-inner-radius, 0);
     }
-    :where(:scope) .env-table-header-cell,
-    :where(:scope) .env-table-cell {
+    :where(.env-table-region:scope) .env-table-header-cell,
+    :where(.env-table-region:scope) .env-table-cell {
       padding: var(--_table-cell-padding);
       text-align: start;
       vertical-align: middle;
     }
-    :where(:scope) .env-table-header-cell {
+    :where(.env-table-region:scope) .env-table-header-cell {
       background-color: var(--_table-header-ground, transparent);
       background-image: var(--_table-band-image, none);
       color: var(--env-color-fg-muted);
@@ -146,7 +146,7 @@
       font-weight: var(--env-font-weight-medium);
       white-space: nowrap;
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table
       > .env-table-head
       > .env-table-row:last-child
@@ -159,67 +159,81 @@
       z-index: calc(var(--env-z-raised) + 2);
       background-color: var(--_table-surface);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table-body
       > .env-table-row
       + .env-table-row
       > :is(.env-table-cell, .env-table-header-cell) {
       border-block-start: 1px solid var(--_table-divider);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table-body
       + .env-table-body
       > .env-table-row:first-child
       > :is(.env-table-cell, .env-table-header-cell) {
       border-block-start: 1px solid var(--_table-divider);
     }
-    :where(:scope) .env-table-body .env-table-header-cell {
+    :where(.env-table-region:scope) .env-table-body .env-table-header-cell {
       background: transparent;
       color: var(--env-color-fg-default);
       font: inherit;
       font-weight: var(--env-font-weight-medium);
       white-space: normal;
     }
-    :where(:scope) .env-table :is(.env-table-cell, .env-table-header-cell)[data-align='end'] {
+    :where(.env-table-region:scope)
+      .env-table
+      :is(.env-table-cell, .env-table-header-cell)[data-align='end'] {
       text-align: end;
     }
-    :where(:scope) .env-table :is(.env-table-cell, .env-table-header-cell)[data-numeric] {
+    :where(.env-table-region:scope)
+      .env-table
+      :is(.env-table-cell, .env-table-header-cell)[data-numeric] {
       font-variant-numeric: tabular-nums;
     }
-    :where(:scope) .env-table:not([data-fixed-layout]) .env-table-cell[data-numeric] {
+    :where(.env-table-region:scope)
+      .env-table:not([data-fixed-layout])
+      .env-table-cell[data-numeric] {
       white-space: nowrap;
     }
-    :where(:scope) .env-table :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
+    :where(.env-table-region:scope)
+      .env-table
+      :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
       white-space: nowrap;
     }
-    :where(:scope) .env-table-row[data-interactive] {
+    :where(.env-table-region:scope) .env-table-row[data-interactive] {
       transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
-    :where(:scope) .env-table-row[data-interactive]:has([data-row-target]) {
+    :where(.env-table-region:scope) .env-table-row[data-interactive]:has([data-row-target]) {
       position: relative;
     }
-    :where(:scope) .env-table-row[data-interactive] [data-row-target] {
+    :where(.env-table-region:scope) .env-table-row[data-interactive] [data-row-target] {
       max-inline-size: none;
       -webkit-user-drag: none;
     }
-    :where(:scope) :where(.env-table-row[data-interactive]) :where([data-row-target]) {
+    :where(.env-table-region:scope)
+      :where(.env-table-row[data-interactive])
+      :where([data-row-target]) {
       text-decoration: none;
     }
-    :where(:scope) .env-table-row[data-interactive] [data-row-target]::after {
+    :where(.env-table-region:scope) .env-table-row[data-interactive] [data-row-target]::after {
       content: '';
       position: absolute;
       z-index: var(--env-z-raised);
       inset: 0;
     }
-    :where(:scope) .env-table-row[data-interactive] [data-row-target]:focus-visible {
+    :where(.env-table-region:scope)
+      .env-table-row[data-interactive]
+      [data-row-target]:focus-visible {
       outline: none;
     }
-    :where(:scope) .env-table-row[data-interactive] [data-row-target]:focus-visible::after {
+    :where(.env-table-region:scope)
+      .env-table-row[data-interactive]
+      [data-row-target]:focus-visible::after {
       --_table-row-focus-ring: 0.125rem;
       outline: var(--_table-row-focus-ring) solid var(--env-color-border-focus);
       outline-offset: calc(-1 * var(--_table-row-focus-ring));
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       :where(.env-table-row[data-interactive]:has([data-row-target]))
       :where(
         a[href],
@@ -235,11 +249,12 @@
       position: relative;
       z-index: calc(var(--env-z-raised) + 1);
     }
-    :where(:scope) .env-table-row[data-interactive]:is(:hover, :has(:focus-visible)) {
+    :where(.env-table-region:scope)
+      .env-table-row[data-interactive]:is(:hover, :has(:focus-visible)) {
       --_avatar-group-ring-tint: var(--env-color-bg-row-hover);
       background: var(--env-color-bg-row-hover);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table-row[data-interactive]:not([aria-selected='true']):is(
         :hover,
         :has(:focus-visible)
@@ -248,7 +263,7 @@
       --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
       --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
     }
-    :where(:scope) .env-table-row[aria-selected='true'] {
+    :where(.env-table-region:scope) .env-table-row[aria-selected='true'] {
       --env-color-fg-link: var(--env-color-fg-on-selected);
       --env-color-fg-link-hover: var(--env-color-fg-on-selected);
       --env-color-fg-link-pressed: var(--env-color-fg-on-selected);
@@ -263,26 +278,26 @@
       --_avatar-group-ring-tint: var(--_table-selected);
       background: var(--_table-selected);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :has(:focus-visible)) {
       --_avatar-group-ring-tint: var(--env-color-bg-selected-hover);
       background: var(--env-color-bg-selected-hover);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox']))
       > :where(.env-table-header-cell, .env-table-cell):first-child {
       box-shadow: inset 3px 0 0 var(--_table-selection-bar);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox']))
       > :where(.env-table-header-cell, .env-table-cell):first-child:dir(rtl) {
       box-shadow: inset -3px 0 0 var(--_table-selection-bar);
     }
 
-    :where(:scope) .env-table-header-cell[data-sortable] {
+    :where(.env-table-region:scope) .env-table-header-cell[data-sortable] {
       padding: 0;
     }
-    :where(:scope) .env-table-sort-button {
+    :where(.env-table-region:scope) .env-table-sort-button {
       --_table-sort-ring-inset: 0.125rem;
       --_table-sort-start-radius: var(--env-radius-sm);
       --_table-sort-end-radius: var(--env-radius-sm);
@@ -306,30 +321,36 @@
       cursor: pointer;
       transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
-    :where(:scope) .env-table-header-cell[data-align='end'] .env-table-sort-button {
+    :where(.env-table-region:scope)
+      .env-table-header-cell[data-align='end']
+      .env-table-sort-button {
       flex-direction: row-reverse;
     }
-    :where(:scope) .env-table-sort-button:hover {
+    :where(.env-table-region:scope) .env-table-sort-button:hover {
       color: var(--env-color-fg-default);
     }
-    :where(:scope) .env-table-sort-button:hover .env-icon {
+    :where(.env-table-region:scope) .env-table-sort-button:hover .env-icon {
       color: inherit;
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table-head
       .env-table-row:first-child
       > :first-child
       .env-table-sort-button {
       --_table-sort-start-radius: var(--_table-inner-radius, var(--env-radius-sm));
     }
-    :where(:scope) .env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
+    :where(.env-table-region:scope)
+      .env-table-head
+      .env-table-row:first-child
+      > :last-child
+      .env-table-sort-button {
       --_table-sort-end-radius: var(--_table-inner-radius, var(--env-radius-sm));
     }
-    :where(:scope) .env-table-sort-button:focus-visible {
+    :where(.env-table-region:scope) .env-table-sort-button:focus-visible {
       outline: 2px solid transparent;
       outline-offset: -2px;
     }
-    :where(:scope) .env-table-sort-button:focus-visible::after {
+    :where(.env-table-region:scope) .env-table-sort-button:focus-visible::after {
       content: '';
       position: absolute;
       inset: var(--_table-sort-ring-inset);
@@ -342,78 +363,92 @@
       border-end-end-radius: calc(var(--env-radius-sm) - var(--_table-sort-ring-inset));
       pointer-events: none;
     }
-    :where(:scope) .env-table-sort-button .env-icon {
+    :where(.env-table-region:scope) .env-table-sort-button .env-icon {
       color: var(--env-color-fg-muted);
       transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
     @media (hover: hover) {
-      :where(:scope) .env-table-header-cell[aria-sort='none'] .env-table-sort-button .env-icon {
+      :where(.env-table-region:scope)
+        .env-table-header-cell[aria-sort='none']
+        .env-table-sort-button
+        .env-icon {
         opacity: 0;
       }
-      :where(:scope) .env-table-head .env-table-row:hover .env-table-sort-button .env-icon,
-      :where(:scope) .env-table-header-cell .env-table-sort-button:focus-visible .env-icon {
+      :where(.env-table-region:scope)
+        .env-table-head
+        .env-table-row:hover
+        .env-table-sort-button
+        .env-icon,
+      :where(.env-table-region:scope)
+        .env-table-header-cell
+        .env-table-sort-button:focus-visible
+        .env-icon {
         opacity: 1;
       }
     }
     @media (prefers-reduced-motion: reduce) {
-      :where(:scope) .env-table-sort-button .env-icon {
+      :where(.env-table-region:scope) .env-table-sort-button .env-icon {
         transition: none;
       }
     }
-    :where(:scope) .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending']) {
+    :where(.env-table-region:scope)
+      .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending']) {
       color: var(--env-color-fg-default);
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending'])
       .env-table-sort-button
       .env-icon {
       color: inherit;
     }
-    :where(:scope) .env-table-header-label {
+    :where(.env-table-region:scope) .env-table-header-label {
       display: block;
       min-inline-size: 0;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    :where(:scope) .env-table[data-fixed-layout] {
+    :where(.env-table-region:scope) .env-table[data-fixed-layout] {
       table-layout: fixed;
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table[data-fixed-layout]
       :is(.env-table-cell, .env-table-body .env-table-header-cell) {
       overflow-wrap: break-word;
     }
-    :where(:scope)
+    :where(.env-table-region:scope)
       .env-table[data-fixed-layout]
       :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    :where(:scope) .env-table-header-cell[data-resizable] {
+    :where(.env-table-region:scope) .env-table-header-cell[data-resizable] {
       position: relative;
     }
-    :where(:scope) .env-table-head .env-table-row:hover .env-table-column-resize-handle::after {
+    :where(.env-table-region:scope)
+      .env-table-head
+      .env-table-row:hover
+      .env-table-column-resize-handle::after {
       background: var(--env-color-border-muted);
     }
-    :where(:scope) .env-table[data-resizing] {
+    :where(.env-table-region:scope) .env-table[data-resizing] {
       cursor: col-resize;
       -webkit-user-select: none;
       user-select: none;
     }
     @media (pointer: coarse) {
-      :where(:scope) .env-table-sort-button {
+      :where(.env-table-region:scope) .env-table-sort-button {
         min-block-size: var(--env-control-height-touch);
       }
     }
     @media (prefers-reduced-motion: reduce) {
-      :where(:scope) .env-table-row[data-interactive],
-      :where(:scope) .env-table-sort-button {
+      :where(.env-table-region:scope) .env-table-row[data-interactive],
+      :where(.env-table-region:scope) .env-table-sort-button {
         transition: none;
       }
     }
 
-    :where(:scope) .env-table-cell-label {
+    :where(.env-table-region:scope) .env-table-cell-label {
       display: none;
     }
     @container env-table (width < 37.5em) {
@@ -574,11 +609,11 @@
     }
 
     @media (forced-colors: active) {
-      :where(:scope) .env-table-row[aria-selected='true'] {
+      :where(.env-table-region:scope) .env-table-row[aria-selected='true'] {
         outline: 2px solid Highlight;
         outline-offset: -2px;
       }
-      :where(:scope) .env-table-sort-button:focus-visible::after {
+      :where(.env-table-region:scope) .env-table-sort-button:focus-visible::after {
         border-color: CanvasText;
       }
     }
