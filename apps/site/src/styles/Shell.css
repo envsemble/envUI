@@ -499,10 +499,6 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-.site-footer-version {
-  margin: 0;
-  font-variant-numeric: tabular-nums;
-}
 .site-footer-links {
   margin: 0;
   padding: 0;
@@ -523,6 +519,10 @@ body {
 :root[data-env-theme='dark'] .site-footer-maker-on-light,
 :root:not([data-env-theme='dark']) .site-footer-maker-on-dark {
   display: none;
+}
+.site-legal-points {
+  margin: 0;
+  padding-inline-start: var(--env-space-5);
 }
 .site-footer-links .env-link:hover {
   color: var(--env-color-fg-default);

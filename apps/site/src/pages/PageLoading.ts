@@ -80,6 +80,7 @@ const views = {
     contents: module.docsContents,
   })),
   tokens: viewIn('docs', (module) => ({ View: module.TokensPage, contents: module.docsContents })),
+  legal: viewIn('docs', (module) => ({ View: module.LegalPage, contents: module.docsContents })),
   'foundation-guide': viewIn('docs', (module) => ({
     View: module.FoundationGuidePage,
     contents: module.docsContents,

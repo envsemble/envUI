@@ -15,7 +15,7 @@ export type CatalogueSection = (typeof catalogueSections)[number];
 
 type DocumentKind = 'component' | 'foundation' | 'guide' | 'foundation-guide' | 'reference';
 
-type OwnKind = 'home' | 'foundations' | 'components' | 'docs-changelog' | 'tokens';
+type OwnKind = 'home' | 'foundations' | 'components' | 'docs-changelog' | 'tokens' | 'legal';
 
 export type PageKind = DocumentKind | OwnKind;
 
@@ -209,13 +209,34 @@ const docsPages: RoutePage[] = [
   },
 ];
 
-export const allPages: RoutePage[] = [...cataloguePages, ...docsPages];
+const legalPages: RoutePage[] = [
+  {
+    path: 'privacy',
+    title: 'Privacy',
+    area: 'docs',
+    section: 'About',
+    kind: 'legal',
+    summary: 'What the envUI package and this site do with your data.',
+  },
+  {
+    path: 'terms',
+    title: 'Terms',
+    area: 'docs',
+    section: 'About',
+    kind: 'legal',
+    summary: 'The terms of using envUI and this site.',
+  },
+];
+
+const listedPages: RoutePage[] = [...cataloguePages, ...docsPages];
+
+export const allPages: RoutePage[] = [...listedPages, ...legalPages];
 
 export function findPage(path: string) {
   return allPages.find((page) => page.path === path);
 }
 
-export const pagesOf = (area: Area) => allPages.filter((page) => page.area === area);
+export const pagesOf = (area: Area) => listedPages.filter((page) => page.area === area);
 
 export function sectionHome(section: CatalogueSection) {
   return cataloguePages.find((page) => page.section === section)!;

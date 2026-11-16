@@ -1,5 +1,4 @@
 import { Link, Row, Text } from '@envsemble/envui';
-import { version } from '@envsemble/envui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import envsembleOnDark from '../brand/envsemble-horizontal-on-dark.svg';
 import envsembleOnLight from '../brand/envsemble-horizontal-on-light.svg';
@@ -11,25 +10,22 @@ const links = [
   { label: 'Docs', href: routeHref(docsRoute) },
   { label: 'Changelog', href: routeHref('docs/changelog') },
   { label: 'Source', href: repository },
+  { label: 'Privacy', href: routeHref('privacy') },
+  { label: 'Terms', href: routeHref('terms') },
 ];
 
 export function PageFooter() {
   return (
     <footer className="site-footer">
       <Row gap={5} align="center" justify="between" wrap className="site-footer-inner">
-        <Row gap={3} align="center">
-          <Link
-            href={routeHref(homeRoute)}
-            underline={false}
-            className="site-footer-brand"
-            aria-label="envUI home"
-          >
-            <EnvUILogo />
-          </Link>
-          <Text variant="body-sm" emphasis="muted" className="site-footer-version">
-            v{version}
-          </Text>
-        </Row>
+        <Link
+          href={routeHref(homeRoute)}
+          underline={false}
+          className="site-footer-brand"
+          aria-label="envUI home"
+        >
+          <EnvUILogo />
+        </Link>
         <nav aria-label="Footer">
           <Row render={<ul />} gap={5} align="center" wrap className="site-footer-links">
             {links.map((link) => (

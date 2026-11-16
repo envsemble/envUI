@@ -23,6 +23,7 @@ import { ChangelogSkeleton } from './ChangelogOutline';
 import { tokenContents, TokenReferenceSkeleton } from './TokenTables';
 import { ReleaseNotes } from './ReleaseNotes';
 import { AgentSetup, agentSetupContents } from './AgentSetup';
+import { legalContents } from './LegalPages';
 import {
   CodeGuide,
   codeGuideContents,
@@ -82,6 +83,17 @@ export function TokensPage({ page }: { page: RoutePage }) {
           what="token reference"
           placeholder={<TokenReferenceSkeleton />}
         />
+      </Column>
+    </>
+  );
+}
+
+export function LegalPage({ page }: { page: RoutePage }) {
+  return (
+    <>
+      <SiteBanner title={page.title} breadcrumb="envUI" kind="docs" />
+      <Column gap={6} className="site-article">
+        {legalContents[page.path as keyof typeof legalContents]}
       </Column>
     </>
   );
