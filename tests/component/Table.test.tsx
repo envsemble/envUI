@@ -713,3 +713,37 @@ test('a row shows the focus ring of its data-row-target over the whole row', asy
     tokenColor(target.element(), '--env-color-border-focus'),
   );
 });
+
+test(
+  'a table nested in a full-width cell keeps its own look and behaviour, and the rows of several bodies are parted like any rows',
+  { tags: ['engines'] },
+  async () => {
+    mount(fixture);
+    const outer = table('Groups light');
+    const parts = table('Parts light');
+    await expect.poll(() => css(outer, 'display')).toBe('block');
+    expect(css(parts, 'display')).toBe('table');
+    expect(css(parts.getByRole('row').first(), 'display')).toBe('table-row');
+
+    const groupCell = page.getByTestId('group-cell-light').element();
+    const groupRow = groupCell.parentElement!;
+    expect(box(groupCell).width).toBeGreaterThan(box(groupRow).width - 40);
+
+    const nestedHeader = header(parts, 'Part').element();
+    expect(css(nestedHeader, 'position')).toBe('static');
+    expect(css(nestedHeader, 'background-image')).toContain('gradient');
+    expect(css(nestedHeader, 'font-weight')).toBe(css(header(parts, 'Steps'), 'font-weight'));
+
+    expect(css(parts.getByRole('cell', { name: '12,000' }), 'white-space')).toBe('normal');
+
+    const nestedTarget = parts.getByRole('link', { name: 'Copy' }).element();
+    expect(css(nestedTarget, 'position', '::after')).toBe('static');
+    const outerTarget = outer.getByRole('link', { name: 'Launch' }).element();
+    expect(css(outerTarget, 'position', '::after')).toBe('absolute');
+
+    const design = parts.getByRole('cell', { name: 'Design' }).element();
+    expect(css(design, 'border-top-width')).toBe('1px');
+    const billing = outer.getByRole('row', { name: /Billing/ }).element();
+    expect(css(billing, 'border-top-width')).toBe('1px');
+  },
+);

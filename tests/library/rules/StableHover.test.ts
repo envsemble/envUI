@@ -11,7 +11,7 @@ const layout =
   /^(?:margin|padding|inline-size|block-size|width|height|(?:min|max)-(?:inline-size|block-size|width|height)|gap|row-gap|column-gap|flex(?:-[a-z]+)?|grid(?:-[a-z]+)*|display|position|inset(?:-[a-z]+)*|top|right|bottom|left|font|font-size|font-weight|font-family|letter-spacing|word-spacing|line-height|white-space|border-(?:[a-z]+-)*width|aspect-ratio)(?:-[a-z]+)*$/;
 
 const layoutChangesOnFocusOnPurpose = new Set([
-  "Table.css .env-table-region[data-narrow-layout='stack'] .env-table-head:focus-within",
+  "Table.css .env-table-region:where(:scope)[data-narrow-layout='stack'] .env-table-head:focus-within",
 ]);
 
 const stateReadsThatMoveNothing = new Set([

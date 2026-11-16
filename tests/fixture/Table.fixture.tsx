@@ -414,6 +414,60 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
           </Table.Body>
         </Table.Root>
       </div>
+      <div className="fixture-stack-frame">
+        <Table.Root aria-label={`Groups ${theme}`} narrowLayout="stack" stickyHeader>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Work</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row interactive>
+              <Table.Cell>
+                <a href="#group-launch" data-row-target>
+                  Launch
+                </a>
+              </Table.Cell>
+              <Table.Cell label="Owner">Aurora</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell colSpan={2} data-testid={`group-cell-${theme}`}>
+                <Table.Root aria-label={`Parts ${theme}`} columnWidths={[70, 30]}>
+                  <Table.Head>
+                    <Table.Row>
+                      <Table.HeaderCell>Part</Table.HeaderCell>
+                      <Table.HeaderCell numeric>Steps</Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Head>
+                  <Table.Body>
+                    <Table.Row>
+                      <Table.Cell>
+                        <a href="#part-copy" data-row-target>
+                          Copy
+                        </a>
+                      </Table.Cell>
+                      <Table.Cell numeric>12,000</Table.Cell>
+                    </Table.Row>
+                  </Table.Body>
+                  <Table.Body>
+                    <Table.Row>
+                      <Table.Cell>Design</Table.Cell>
+                      <Table.Cell numeric>4</Table.Cell>
+                    </Table.Row>
+                  </Table.Body>
+                </Table.Root>
+              </Table.Cell>
+            </Table.Row>
+          </Table.Body>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Billing</Table.Cell>
+              <Table.Cell label="Owner">Sam Lee</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
+      </div>
       <output data-testid={`opened-${theme}`}>{opened.join(' ')}</output>
       <output data-testid={`pressed-${theme}`}>{pressed}</output>
       <span id={`due-date-${theme}`} hidden>
