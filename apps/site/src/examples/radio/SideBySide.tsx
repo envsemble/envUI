@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Radio, RadioGroup } from '@envsemble/envui';
 
-export default function VisibilityRows() {
+export default function StackedOptions() {
   const [visibility, setVisibility] = useState('team');
   return (
     <RadioGroup

@@ -11,6 +11,8 @@ const entryPoints = new Set(readData('entryPoints.json').entryPoints);
 
 const fields = new Set([
   'Select',
+  'RadioGroup',
+  'Radio',
   'Combobox',
   'TextField',
   'SearchField',
@@ -37,7 +39,7 @@ export default {
     schema: [],
     messages: {
       field:
-        "A {{field}} in a List.Item's {{slot}}: the row doesn't label it and a list row holds only a Switch, Checkbox or RadioGroup. Put it in a form as a field with its label above it.",
+        "A {{field}} in a List.Item's {{slot}}: the row doesn't label it and a list row holds only a Switch or a Checkbox. Put it in a form as a field with its label above it.",
     },
   },
   create(context) {
