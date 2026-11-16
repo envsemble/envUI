@@ -30,6 +30,7 @@ function groupingSubject(ruleId, message) {
     'envui/no-html-elements': /^Use envUI's (\S+) instead of (.+?)(?:, or |: import)/,
     'envui/no-raw-colors': /^Raw color (.+) in an inline style/,
     'envui/no-link-in-clickable-row': /^(.+?) inside a clickable (\S+):/,
+    'envui/no-field-in-list-row': /^A (\S+) in a List\.Item's/,
     'envui/label-vocabulary': /instead of "(.+)"\.$/,
     'envui/no-raw-graphics':
       /^(Use envUI's Graphic instead of a raw <img>|A raw <svg [^>]*>|Graphic needs alt|A margin on a Graphic|Use envUI's icons instead of [^:]+)/,

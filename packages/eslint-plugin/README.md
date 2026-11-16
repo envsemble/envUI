@@ -65,6 +65,14 @@ A link-styled action, a raw `<a>`, a `Link` or a `Button` with `variant="text"`,
 A Button with variant="text" inside a clickable List.Item: the row takes the click. Move the action into its end slot as a Button, or into a Menu. When it goes where the row goes, mark it data-row-target instead.
 ```
 
+### no-field-in-list-row
+
+A field, such as a `Select`, `Combobox`, `TextField`, `SearchField`, `Textarea`, `SegmentedControl`, `Slider` or a picker, in a `List.Item`'s `control` or `end`. A list row holds a `Switch`, a `Checkbox` or a `RadioGroup` that its label names; a field goes in a form, with its label above it.
+
+```text
+A Select in a List.Item's control: the row doesn't label it and a list row holds only a Switch, Checkbox or RadioGroup. Put it in a form as a field with its label above it.
+```
+
 ### label-vocabulary
 
 The label of an action, `Button`, `IconButton`, `ConfirmButton`, `CopyButton`, `Link` or `Menu.Item`, in its text or its `children`, `label`, `aria-label` or `…Label` prop, that is a word the vocabulary table of envUI's writing guide replaces, from [`src/data/vocabulary.json`](src/data/vocabulary.json). A label with more words, such as "Clone repository", passes.

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import labelVocabulary from './rules/label-vocabulary.js';
+import noFieldInListRow from './rules/no-field-in-list-row.js';
 import noHtmlElements from './rules/no-html-elements.js';
 import noLinkInClickableRow from './rules/no-link-in-clickable-row.js';
 import noRawColors from './rules/no-raw-colors.js';
@@ -11,6 +12,7 @@ const { name, version } = JSON.parse(
 
 const rules = {
   'label-vocabulary': labelVocabulary,
+  'no-field-in-list-row': noFieldInListRow,
   'no-html-elements': noHtmlElements,
   'no-link-in-clickable-row': noLinkInClickableRow,
   'no-raw-colors': noRawColors,

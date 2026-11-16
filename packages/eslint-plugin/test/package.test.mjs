@@ -29,6 +29,7 @@ test('the package ships the plugin, its data and its documentation, and nothing 
     'src/data/vocabulary.json',
     'src/index.js',
     'src/rules/label-vocabulary.js',
+    'src/rules/no-field-in-list-row.js',
     'src/rules/no-html-elements.js',
     'src/rules/no-link-in-clickable-row.js',
     'src/rules/no-raw-colors.js',
