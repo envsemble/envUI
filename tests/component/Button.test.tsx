@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 import { cdp, commands, page, server } from 'vitest/browser';
-import { Button } from '@envsemble/envui';
+import { createRoot } from 'react-dom/client';
+import { Button, Link, Theme } from '@envsemble/envui';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as buttonCounts from '../fixture/ButtonCounts.fixture.tsx';
 import * as colors from '../fixture/Colors.fixture.tsx';
@@ -280,4 +281,28 @@ test("a toolbar's and a field's ghost default stays outside their popovers", asy
   await expect
     .element(page.getByTestId('field-popover-button'))
     .toHaveAttribute('data-variant', 'primary');
+});
+
+test('a Link in running text stays in the line of the words around it', async () => {
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  root.render(
+    <Theme theme="light">
+      <p style={{ inlineSize: '30rem', margin: 0 }}>
+        Read the <Link href="#license">MIT license</Link> first.
+      </p>
+    </Theme>,
+  );
+  await expect.poll(() => host.querySelector('.env-link')).not.toBeNull();
+  const link = host.querySelector('.env-link')!;
+  const paragraph = link.parentElement!;
+  expect(link.getClientRects().length).toBe(1);
+  expect(box(link).y).toBeGreaterThanOrEqual(box(paragraph).y - 1);
+  expect(box(link).y + box(link).height).toBeLessThanOrEqual(
+    box(paragraph).y + box(paragraph).height + 1,
+  );
+  expect(box(paragraph).height).toBeLessThan(2 * Number.parseFloat(css(paragraph, 'line-height')));
+  root.unmount();
+  host.remove();
 });
