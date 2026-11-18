@@ -79,7 +79,7 @@
     /* contrast: text-field-read-only */
     --_text-field-read-only-fill: color-mix(
       in srgb,
-      var(--env-color-bg-neutral-muted) 35%,
+      var(--env-color-bg-neutral-muted) 45%,
       transparent
     );
     --env-icon-size: var(--env-control-icon-size);

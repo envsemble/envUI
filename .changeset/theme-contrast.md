@@ -6,7 +6,7 @@
 
 **The light and dark themes keep things apart, and alike.** Nothing changes its role or API; colors take other grades of the same roles, so apps that use the tokens follow without changes.
 
-- Light surfaces sit a step apart: the default, muted and recessed surfaces are a grade or two deeper, fields a grade deeper, and raised surfaces, recessed surfaces and popups take a faint frosted edge, as dark popups had, and `Surface background="raised"` takes the filled surface's fill in light, so a raised panel reads as its own background on the white page, as it does in dark.
+- Light surfaces sit a step apart: the default, muted and recessed surfaces are a grade or two deeper, fields a grade deeper, and raised surfaces, recessed surfaces and popups take a faint frosted edge, as dark popups had, and `Surface background="raised"` takes the default surface's tint in light, so a raised panel reads as its own background on the white page, as it does in dark.
 - The dark page is a grade darker, with the recessed surface and fields below it, and the muted surface a grade lighter, so panes, cards and navigation stand off the page.
 - Selection stays apart from hover, press and the list cursor: light selection is two grades deeper, popup rows give the cursor a quieter fill than the selection, light navigation hover and press are translucent layers, and dark table rows hover below a full-strength selection.
 - The light primary color is a grade deeper at rest, hover and press, and the light focus ring a grade deeper; dark primary and danger fills press two grades from rest.

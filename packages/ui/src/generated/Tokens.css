@@ -359,8 +359,8 @@
   --env-color-bg-field: #191a1b;
   --env-color-bg-inset: rgb(30 31 33 / 0.5);
   --env-color-bg-muted: #343638;
-  --env-color-bg-muted-hover: #383a3d;
-  --env-color-bg-muted-pressed: #424447;
+  --env-color-bg-muted-hover: #424447;
+  --env-color-bg-muted-pressed: #4b4d51;
   --env-color-bg-navigation-hover: #383a3d;
   --env-color-bg-navigation-pressed: #424447;
   --env-color-bg-neutral-emphasis: #bdbfc3;

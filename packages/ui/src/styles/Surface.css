@@ -49,10 +49,16 @@
   }
   .env-surface:where([data-background='raised']) {
     --_surface-edge: var(--_popup-frosted-edge);
-    --_surface-container-default: light-dark(var(--env-color-bg-muted), var(--env-color-bg-raised));
-    --_surface-hover: light-dark(var(--env-color-bg-muted-hover), var(--env-color-bg-raised-hover));
+    --_surface-container-default: light-dark(
+      var(--env-color-bg-default),
+      var(--env-color-bg-raised)
+    );
+    --_surface-hover: light-dark(
+      var(--env-color-bg-default-hover),
+      var(--env-color-bg-raised-hover)
+    );
     --_surface-pressed: light-dark(
-      var(--env-color-bg-muted-pressed),
+      var(--env-color-bg-default-pressed),
       var(--env-color-bg-raised-pressed)
     );
   }

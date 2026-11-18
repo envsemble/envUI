@@ -36,7 +36,7 @@ test('every Surface background takes its role and the role’s states', () => {
       const own = String.raw`var\(${token}\)`;
       const value =
         background === 'raised'
-          ? String.raw`light-dark\(\s*var\(--env-color-bg-muted${suffix}\),\s*${own}\s*\)`
+          ? String.raw`light-dark\(\s*var\(--env-color-bg-default${suffix}\),\s*${own}\s*\)`
           : own;
       assert.match(
         rule,
