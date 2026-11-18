@@ -37,15 +37,16 @@
     --_alert-hover: var(--env-color-bg-primary-subtle-hover);
     --_alert-pressed: var(--env-color-bg-primary-subtle-pressed);
     --_alert-high-contrast-edge: var(--_theme-high-contrast) var(--env-color-border-default);
-    box-sizing: border-box;
-    padding-block: calc(var(--env-space-4) - var(--env-space-1) / 2);
-    border: 1px solid var(--env-alert-outline, var(--_alert-high-contrast-edge, transparent));
-    border-radius: var(--env-radius-lg);
-    background: var(
+    --_alert-surface: var(
       --env-alert-container,
       linear-gradient(var(--_alert-fill), var(--_alert-fill))
         light-dark(var(--env-color-bg-raised), transparent)
     );
+    box-sizing: border-box;
+    padding-block: calc(var(--env-space-4) - var(--env-space-1) / 2);
+    border: 1px solid var(--env-alert-outline, var(--_alert-high-contrast-edge, transparent));
+    border-radius: var(--env-radius-lg);
+    background: var(--_alert-surface);
     color: var(--_alert-text-color);
     font: var(--env-type-body);
     overflow-wrap: break-word;
@@ -160,6 +161,9 @@
   .env-alert-title:empty:not([data-env-skeleton] *),
   .env-alert-message:empty:not([data-env-skeleton] *) {
     display: none;
+  }
+  .env-alert[data-env-skeleton]:not(env-none) {
+    background: var(--_skeleton-overlay), var(--_alert-surface);
   }
   [data-env-skeleton] :is(.env-alert-title, .env-alert-message) {
     --_skeleton-placeholder: inline-block;

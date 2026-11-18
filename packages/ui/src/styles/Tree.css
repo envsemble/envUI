@@ -74,10 +74,10 @@
     opacity: 0;
   }
   .env-tree-item:hover {
-    background: color-mix(in srgb, var(--env-color-bg-row-hover) 75%, transparent);
+    background: var(--env-color-bg-row-hover);
   }
   .env-tree-item:active {
-    background: var(--env-color-bg-row-hover);
+    background: var(--env-color-bg-row-pressed);
   }
   .env-tree-item[aria-selected='true'] {
     background: var(--env-color-bg-selected);

@@ -157,7 +157,7 @@
         },
         "pressed": {
           "$description": "A navigation item that isn’t selected, while pressed: two grades deeper than the hover in light. Its label and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.neutral.12}"
+          "$value": "{palette.neutral.11}"
         }
       },
       "neutral": {

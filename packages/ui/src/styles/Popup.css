@@ -25,7 +25,7 @@
   }
   .env-theme[data-env-theme='dark'] {
     --_popup-frosted-edge: oklch(from var(--env-color-fg-default) l c h / 0.12);
-    --_popup-row-highlight: var(--env-color-bg-neutral-subtle-hover);
+    --_popup-row-highlight: color-mix(in srgb, var(--env-color-bg-neutral-muted) 80%, transparent);
     --env-popup-opacity: 90%;
     --env-popup-shadow: 0 12px 32px -10px
       oklch(from var(--env-color-bg-page) calc(l * 0.8) c h / 0.85);

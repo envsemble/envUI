@@ -63,7 +63,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Alert
 
 - Parts: `env-alert`, `env-alert-action` (slot), `env-alert-content`, `env-alert-dismiss`, `env-alert-icon`, `env-alert-message` (slot), `env-alert-title`
-- States: `data-env-skeleton` on `env-alert-message`, `env-alert-title`; `data-tone` (`danger`, `info`, `success`, `warning`)
+- States: `data-env-skeleton` on `env-alert`, `env-alert-message`, `env-alert-title`; `data-tone` (`danger`, `info`, `success`, `warning`)
 - Color properties: `--env-alert-container`, `--env-alert-content`, `--env-alert-outline`, `--env-alert-icon`
 
 ### AnimatedNumber

@@ -45,7 +45,7 @@
     position: relative;
     aspect-ratio: 1;
     border-radius: var(--env-radius-none);
-    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media);
+    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-muted);
     cursor: crosshair;
   }
   .env-color-picker-thumb {
@@ -76,7 +76,7 @@
     position: relative;
     inline-size: var(--_color-picker-strip-width);
     border-radius: var(--env-radius-none);
-    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media);
+    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-muted);
     cursor: pointer;
   }
   .env-color-picker-slider .env-color-picker-thumb {

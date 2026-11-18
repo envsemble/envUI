@@ -16,9 +16,10 @@
     --_table-band: oklch(from var(--env-color-bg-neutral-muted) l c h / calc(alpha * 0.65));
     --_table-divider: color-mix(
       in srgb,
-      var(--env-color-border-muted) 60%,
+      var(--env-color-border-muted) 80%,
       var(--env-color-bg-raised)
     );
+    --_table-selected-weight: 100%;
   }
   @media (prefers-contrast: more) {
     .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
@@ -301,6 +302,22 @@
       .env-icon,
     .env-table-header-cell > .env-table-sort-button:focus-visible .env-icon {
       opacity: 1;
+    }
+    :where(.env-table-header-cell[data-sortable]):has(> .env-table-sort-button:hover) {
+      background-image:
+        linear-gradient(
+          var(--env-color-bg-neutral-subtle-hover),
+          var(--env-color-bg-neutral-subtle-hover)
+        ),
+        var(--_table-band-image, none);
+    }
+    :where(.env-table-header-cell[data-sortable]):has(> .env-table-sort-button:active) {
+      background-image:
+        linear-gradient(
+          var(--env-color-bg-neutral-subtle-pressed),
+          var(--env-color-bg-neutral-subtle-pressed)
+        ),
+        var(--_table-band-image, none);
     }
   }
   @media (prefers-reduced-motion: reduce) {

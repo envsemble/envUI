@@ -1,4 +1,17 @@
 @layer env.components {
+  .env-theme {
+    --_calendar-heatmap-empty: var(--env-color-bg-neutral-muted);
+  }
+  .env-theme[data-env-theme='dark']:not([data-env-contrast='high']) {
+    --_calendar-heatmap-empty: oklch(
+      from var(--env-color-bg-neutral-muted) l c h / calc(alpha * 0.65)
+    );
+  }
+  @media (prefers-contrast: more) {
+    .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
+      --_calendar-heatmap-empty: var(--env-color-bg-neutral-muted);
+    }
+  }
   .env-calendar-heatmap {
     --_calendar-heatmap-tone: var(--env-color-fg-primary);
     --_calendar-heatmap-cell: 0.75rem;
@@ -74,7 +87,7 @@
   .env-calendar-heatmap-day,
   .env-calendar-heatmap-swatch {
     border-radius: calc(var(--env-space-1) / 2);
-    background: var(--env-color-bg-neutral-muted);
+    background: var(--_calendar-heatmap-empty, var(--env-color-bg-neutral-muted));
   }
   .env-calendar-heatmap-day:not([data-level='0']),
   .env-calendar-heatmap-swatch:not([data-level='0']) {

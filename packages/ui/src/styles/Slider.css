@@ -31,7 +31,14 @@
     --_slider-height: var(--env-control-height);
     --_slider-handle-inset: calc(var(--_slider-height) / 4);
     --_slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
-    --_slider-fill: var(--env-slider-indicator, var(--env-color-bg-neutral-subtle-pressed));
+    /* contrast: slider-fill */
+    --_slider-fill: var(
+      --env-slider-indicator,
+      light-dark(
+        var(--env-color-bg-neutral-muted-pressed),
+        color-mix(in srgb, var(--env-color-bg-neutral-muted-hover) 90%, transparent)
+      )
+    );
     --_slider-ink: var(--env-slider-content, var(--env-color-fg-default));
     min-inline-size: 0;
   }
@@ -62,7 +69,7 @@
     container-type: inline-size;
   }
   .env-slider-indicator {
-    background: var(--_slider-fill, var(--env-color-bg-neutral-subtle-pressed));
+    background: var(--_slider-fill, var(--env-color-bg-neutral-muted-pressed));
   }
   .env-slider-indicator::after {
     --_slider-indicator-direction: to right;
@@ -181,7 +188,7 @@
     opacity: calc(1 - 0.75 * var(--_slider-veil));
   }
   .env-slider-control[data-ruler] .env-slider-track::after {
-    opacity: 0.35;
+    opacity: 0.5;
   }
   .env-slider[data-ticks] .env-slider-control[data-ruler] .env-slider-indicator {
     mask-image: linear-gradient(var(--env-color-fg-default) 0 0), var(--_slider-tick-lines);
@@ -197,6 +204,9 @@
   .env-slider-control:has(:focus-visible) {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: 2px;
+  }
+  .env-slider [data-invalid] > .env-slider-control {
+    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-danger-emphasis);
   }
   .env-slider[data-disabled] .env-slider-control {
     opacity: var(--env-state-disabled-opacity);

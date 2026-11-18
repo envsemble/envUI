@@ -58,7 +58,7 @@
   --env-color-bg-muted-pressed: #dadadc;
   --env-color-bg-navigation: transparent;
   --env-color-bg-navigation-hover: #dbdde1;
-  --env-color-bg-navigation-pressed: #d5d7db;
+  --env-color-bg-navigation-pressed: #d8dade;
   --env-color-bg-neutral-emphasis: #616164;
   --env-color-bg-neutral-muted: rgb(31 31 34 / 0.1);
   --env-color-bg-neutral-muted-hover: rgb(31 31 34 / 0.18);
@@ -359,8 +359,8 @@
   --env-color-bg-field: #191a1b;
   --env-color-bg-inset: rgb(30 31 33 / 0.5);
   --env-color-bg-muted: #303234;
-  --env-color-bg-muted-hover: #424447;
-  --env-color-bg-muted-pressed: #4b4d51;
+  --env-color-bg-muted-hover: #383a3d;
+  --env-color-bg-muted-pressed: #424447;
   --env-color-bg-navigation-hover: #383a3d;
   --env-color-bg-navigation-pressed: #424447;
   --env-color-bg-neutral-emphasis: #bdbfc3;
