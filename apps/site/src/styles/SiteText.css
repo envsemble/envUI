@@ -118,7 +118,10 @@
   }
 }
 .site-code-block > .env-code-block {
-  background: var(--_code-background-now, var(--env-color-bg-recessed));
+  background: var(
+    --_code-background-now,
+    light-dark(var(--env-color-bg-muted), var(--env-color-bg-recessed))
+  );
   padding: var(--env-space-4) calc(var(--site-code-corner) + var(--env-space-2)) var(--env-space-4)
     var(--env-space-4);
 }
