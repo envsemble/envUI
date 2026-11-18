@@ -185,6 +185,10 @@ function keepThumbOverChosenSegment(thumb: HTMLElement): () => void {
   const track = thumb.parentElement;
   if (!track) return () => {};
   let placedOver: HTMLElement | null = null;
+  const view = track.ownerDocument.defaultView;
+  const arrivedOnceTravelEnds = () => {
+    if (!thumb.getAnimations().length) thumb.removeAttribute('data-traveling');
+  };
   const place = () => {
     const chosen = track.querySelector<HTMLElement>(
       ':scope > .env-segmented-control-item[data-checked]',
@@ -195,7 +199,10 @@ function keepThumbOverChosenSegment(thumb: HTMLElement): () => void {
       thumb.removeAttribute('data-traveling');
       return;
     }
-    thumb.toggleAttribute('data-traveling', placedOver !== null && placedOver !== chosen);
+    if (placedOver !== null && placedOver !== chosen) {
+      thumb.setAttribute('data-traveling', '');
+      view?.requestAnimationFrame(arrivedOnceTravelEnds);
+    }
     placedOver = chosen;
     const box = chosen.getBoundingClientRect();
     const trackBox = track.getBoundingClientRect();
@@ -213,7 +220,8 @@ function keepThumbOverChosenSegment(thumb: HTMLElement): () => void {
     thumb.setAttribute('data-placed', '');
   };
   place();
-  const view = track.ownerDocument.defaultView;
+  thumb.addEventListener('transitionend', arrivedOnceTravelEnds);
+  thumb.addEventListener('transitioncancel', arrivedOnceTravelEnds);
   const resize =
     view && 'ResizeObserver' in view ? new view.ResizeObserver(() => place()) : undefined;
   const observeSegments = () => {
@@ -238,6 +246,8 @@ function keepThumbOverChosenSegment(thumb: HTMLElement): () => void {
     attributeFilter: ['data-checked'],
   });
   return () => {
+    thumb.removeEventListener('transitionend', arrivedOnceTravelEnds);
+    thumb.removeEventListener('transitioncancel', arrivedOnceTravelEnds);
     resize?.disconnect();
     choiceAndSegmentsObserver?.disconnect();
   };

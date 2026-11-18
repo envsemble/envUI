@@ -173,7 +173,17 @@ test('the thumb covers the chosen segment as the control resizes, and travels on
   expect(thumb.getAnimations()).toHaveLength(0);
   expect(covers(second!)).toBe(true);
   await page.elementLocator(first!).click();
+  await expect.poll(() => thumb.hasAttribute('data-traveling')).toBe(true);
+  container.style.inlineSize = '20rem';
+  await nextFrames();
+  expect(thumb.hasAttribute('data-traveling')).toBe(true);
+  expect(thumb.getAnimations().length).toBeGreaterThan(0);
+  await animationsDone(thumb);
+  await expect.poll(() => thumb.hasAttribute('data-traveling')).toBe(false);
+  expect(covers(first!)).toBe(true);
   container.style.inlineSize = '';
+  await nextFrames();
+  expect(thumb.getAnimations()).toHaveLength(0);
 });
 
 test('on a touch screen a full-width control wraps long labels instead, and a tap chooses', async () => {
