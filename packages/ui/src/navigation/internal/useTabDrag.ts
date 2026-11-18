@@ -21,6 +21,8 @@ export interface TabDrag {
 /**
  * A tab dragged with a mouse or pen follows the pointer as a floating copy, and a line in the strip
  * marks where it will land; the tabs take their new order when it is let go, and Escape cancels.
+ * Pressing a tab doesn't focus it, so a drag never selects it: a press let go without moving focuses
+ * the tab, which selects it, as a click does.
  * Touch scrolls the strip instead, and its long press opens the context menu with Move left and
  * Move right.
  */
@@ -40,6 +42,8 @@ export function useTabDrag({
     const strip = list.current;
     if (!onReorder || !strip || event.button !== 0 || event.pointerType === 'touch') return;
     if ((event.target as Element).closest('.env-document-tabs-close')) return;
+    const tab = tabElement(strip, id);
+    if (tab && !tab.contains(strip.ownerDocument.activeElement)) event.preventDefault();
     const startX = event.clientX;
     const startIndex = items.findIndex((item) => item.value === id);
     let moved = false;
@@ -77,7 +81,10 @@ export function useTabDrag({
     const onUp = () => {
       const dropped = moved;
       stop();
-      if (!dropped) return;
+      if (!dropped) {
+        tab?.focus();
+        return;
+      }
       const swallowClickThatEndsDrag = (click: MouseEvent) => click.stopPropagation();
       view.addEventListener('click', swallowClickThatEndsDrag, { capture: true, once: true });
       view.setTimeout(

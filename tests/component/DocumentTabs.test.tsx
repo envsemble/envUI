@@ -4,6 +4,7 @@ import { DocumentTabs, Surface, Theme } from '@envsemble/envui';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as tabsFixture from '../fixture/DocumentTabs.fixture.tsx';
 import * as rerenderFixture from '../fixture/DocumentTabsRerender.fixture.tsx';
+import * as reorderFixture from '../fixture/DocumentTabsReorder.fixture.tsx';
 import * as rtlFixture from '../fixture/DocumentTabsRtl.fixture.tsx';
 import { box, keyboard, mouse, nextFrames, shown, viewportRatio } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
@@ -12,6 +13,7 @@ const lastLog =
   (theme = 'light') =>
   () =>
     page.getByTestId(`document-tabs-log-${theme}`).element().textContent!.split('\n').at(-1);
+const reorderLog = () => page.getByTestId('reorder-log').element().textContent!.split('\n').at(-1);
 const isGone = (locator: Locator) => expect.poll(() => locator.query()).toBeNull();
 const focus = (locator: Locator) => (locator.element() as HTMLElement).focus();
 const texts = (locator: Locator) => locator.elements().map((element) => element.textContent);
@@ -208,6 +210,43 @@ describe('DocumentTabs', () => {
       for (const item of laterTabs) item.style.display = '';
     }
   });
+
+  test(
+    'dragging a tab that is not selected reorders the tabs and leaves the selection, and a click selects',
+    { tags: ['engines'] },
+    async () => {
+      mount(reorderFixture);
+      const strip = page.getByRole('tablist', { name: 'Reorderable documents' });
+      const tabs = () => strip.getByRole('tab').elements();
+      const selected = () =>
+        tabs()
+          .filter((tab) => tab.getAttribute('aria-selected') === 'true')
+          .map((tab) => tab.textContent);
+      const before = selected();
+      const [first, second, third] = tabs().filter(
+        (tab) => tab.getAttribute('aria-selected') !== 'true',
+      );
+      const dragged = second!.textContent;
+      const from = box(page.elementLocator(second!));
+      const to = box(page.elementLocator(third!));
+      await mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+      await mouse.down();
+      expect(selected()).toEqual(before);
+      await mouse.move(to.x + to.width - 4, to.y + to.height / 2, { steps: 8 });
+      expect(selected()).toEqual(before);
+      await mouse.up();
+      await expect.poll(reorderLog).toMatch(/^reorder /);
+      expect(selected()).toEqual(before);
+      expect(texts(strip.getByRole('tab')).indexOf(dragged)).toBeGreaterThan(
+        texts(strip.getByRole('tab')).indexOf(third!.textContent),
+      );
+      await nextFrames();
+      expect(selected()).toEqual(before);
+      await page.elementLocator(first!).click();
+      await expect.element(page.elementLocator(first!)).toHaveAttribute('aria-selected', 'true');
+      await expect.poll(reorderLog).toBe(`select ${first!.dataset.tabId}`);
+    },
+  );
 
   test(
     'the strip scrolls sideways and keeps the active tab in view',

@@ -145,7 +145,7 @@ export function DocumentTabs({
   const [direction] = useDirection(list);
   const focusable = items.some((item) => item.value === value) ? value : (items[0]?.value ?? null);
 
-  const fades = useTabStripScrolling(list, value, items);
+  useTabStripScrolling(list, value, items);
   const closeFocus = useTabCloseFocus(list, items, focusable);
   const { drag, onItemPointerDown } = useTabDrag({ list, items, onReorder });
 
@@ -186,8 +186,6 @@ export function DocumentTabs({
       activateOnFocus
       render={<Row align="stretch" />}
       className="env-document-tabs-list"
-      data-fade-left={flag(fades.left)}
-      data-fade-right={flag(fades.right)}
       data-reordering={flag(drag)}
       onKeyDown={leaveModifiedKeysToApplication}
     >

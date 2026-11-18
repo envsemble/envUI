@@ -2184,24 +2184,6 @@
           ]
         },
         {
-          "attribute": "data-fade-left",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-document-tabs-list"
-          ]
-        },
-        {
-          "attribute": "data-fade-right",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-document-tabs-list"
-          ]
-        },
-        {
           "attribute": "data-first-active",
           "values": [
             ""
