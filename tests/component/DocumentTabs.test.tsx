@@ -372,10 +372,11 @@ test('children go in the panel the active tab controls, which the active tab joi
   expect(getComputedStyle(item).backgroundColor).toBe(
     getComputedStyle(panel.element()).backgroundColor,
   );
-  expect(getComputedStyle(panel.element()).borderStartStartRadius).not.toBe('0px');
+  expect(getComputedStyle(panel.element()).borderStartStartRadius).toBe('0px');
+  expect(getComputedStyle(panel.element()).borderStartEndRadius).toBe('0px');
   const panelElement = panel.element();
   render('a');
-  await expect.poll(() => getComputedStyle(panelElement).borderStartStartRadius).toBe('0px');
+  await expect.poll(() => tab.closest('[data-first-active]')).not.toBeNull();
   root.unmount();
   host.remove();
 });

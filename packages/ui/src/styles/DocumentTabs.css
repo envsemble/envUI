@@ -27,12 +27,7 @@
   .env-document-tabs-panel {
     flex: 1 1 auto;
     min-block-size: 0;
-    border-start-start-radius: var(--_document-tabs-fillet);
-    border-start-end-radius: var(--_document-tabs-fillet);
     background: var(--_document-tabs-panel);
-  }
-  .env-document-tabs[data-first-active] > .env-document-tabs-panel {
-    border-start-start-radius: 0;
   }
   .env-document-tabs-end {
     gap: var(--env-space-1);
