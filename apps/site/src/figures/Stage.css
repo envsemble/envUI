@@ -140,7 +140,7 @@
     .env-panes,
     [data-env-name='key-figures'],
     .env-document-tabs-list,
-      .env-scaffold,
+    .env-scaffold,
     [data-env-skeleton],
     [data-env-container]
   )
