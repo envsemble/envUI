@@ -18,7 +18,7 @@ export default function ListDetailByWidth() {
       style={{ blockSize: '16rem' }}
     >
       <Panes.List label="Team inbox">
-        <Surface padding={2} style={{ minBlockSize: '100%' }}>
+        <Surface radius="none" padding={2} style={{ minBlockSize: '100%' }}>
           <List.Root aria-label="Messages">
             {messages.map((message) => (
               <List.Item
@@ -45,7 +45,12 @@ export default function ListDetailByWidth() {
         </Surface>
       </Panes.List>
       <Panes.Detail label={chosen.subject}>
-        <Surface padding={4} render={<Column gap={2} />} style={{ minBlockSize: '100%' }}>
+        <Surface
+          radius="none"
+          padding={4}
+          render={<Column gap={2} />}
+          style={{ minBlockSize: '100%' }}
+        >
           <Text variant="title" render={<h3 />}>
             {chosen.subject}
           </Text>

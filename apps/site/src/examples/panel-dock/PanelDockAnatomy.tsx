@@ -8,6 +8,7 @@ export default function PanelDockAnatomy() {
   ]);
   return (
     <Surface
+      radius="none"
       background="muted"
       padding={0}
       style={{

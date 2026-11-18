@@ -12,7 +12,12 @@ export default function ResizableDetails() {
       style={{ blockSize: '14rem' }}
     >
       <Panes.Main label="Launch banner">
-        <Surface padding={4} render={<Column gap={2} />} style={{ minBlockSize: '100%' }}>
+        <Surface
+          radius="none"
+          padding={4}
+          render={<Column gap={2} />}
+          style={{ minBlockSize: '100%' }}
+        >
           <Text variant="title" render={<h3 />}>
             Launch banner
           </Text>
@@ -24,7 +29,12 @@ export default function ResizableDetails() {
       </Panes.Main>
       <Panes.Divider label="Resize details" />
       <Panes.Supporting label="Banner details">
-        <Surface padding={4} render={<Column gap={2} />} style={{ minBlockSize: '100%' }}>
+        <Surface
+          radius="none"
+          padding={4}
+          render={<Column gap={2} />}
+          style={{ minBlockSize: '100%' }}
+        >
           <Text variant="title" render={<h3 />}>
             Details
           </Text>

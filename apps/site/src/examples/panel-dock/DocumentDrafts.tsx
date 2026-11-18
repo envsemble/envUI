@@ -146,6 +146,7 @@ export default function DocumentDrafts() {
   );
   return (
     <Surface
+      radius="none"
       background="muted"
       padding={0}
       style={{ position: 'relative', blockSize: '34rem', overflow: 'hidden' }}

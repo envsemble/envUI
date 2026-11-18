@@ -77,6 +77,7 @@ function Strip({ narrow }: { narrow: boolean }) {
   });
   return (
     <Surface
+      radius="none"
       background="default"
       padding={0}
       style={{ inlineSize: narrow ? '12.75rem' : '12.5rem' }}

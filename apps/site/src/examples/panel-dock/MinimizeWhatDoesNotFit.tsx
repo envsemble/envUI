@@ -23,6 +23,7 @@ export default function MinimizeWhatDoesNotFit() {
     });
   return (
     <Surface
+      radius="none"
       background="muted"
       padding={0}
       style={{

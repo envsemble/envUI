@@ -44,7 +44,12 @@ export default function PanesTile() {
       style={{ inlineSize: `${panesWidthRem}rem`, blockSize: '7rem' }}
     >
       <Panes.List label="Inbox">
-        <Surface padding={1} render={<Column gap={1} />} style={{ minBlockSize: '100%' }}>
+        <Surface
+          radius="none"
+          padding={1}
+          render={<Column gap={1} />}
+          style={{ minBlockSize: '100%' }}
+        >
           <Text variant="caption" emphasis="muted" style={{ padding: '0.25rem 0.75rem 0' }}>
             Inbox
           </Text>
@@ -57,6 +62,7 @@ export default function PanesTile() {
       <Panes.Divider label="Resize the inbox" />
       <Panes.Detail label="Plan">
         <Surface
+          radius="none"
           padding={2}
           render={<Column gap={1} align="start" />}
           style={{ minBlockSize: '100%' }}

@@ -27,6 +27,7 @@ export default function NarrowRegion() {
   const pageIsCovered = stacked && panels.some((panel) => panel.mode !== 'minimized');
   return (
     <Surface
+      radius="none"
       background="muted"
       padding={0}
       style={{

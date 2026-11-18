@@ -29,6 +29,7 @@ export default function MaximizedPanel() {
     });
   return (
     <Surface
+      radius="none"
       background="muted"
       padding={0}
       style={{ position: 'relative', blockSize: '30rem', overflow: 'hidden' }}
