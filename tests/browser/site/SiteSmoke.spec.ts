@@ -147,3 +147,31 @@ for (const { kind, path, act } of journeys)
     expect(errors).toEqual([]);
     expect(elsewhere).toEqual([]);
   });
+
+test("an open example's popup comes to rest where the screen draws at a fraction of a pixel", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 1536, height: 730 },
+    deviceScaleFactor: 1.75,
+  });
+  const page = await context.newPage();
+  await openSite(page, `${siteBuildUrl}/components/select`);
+  const room = page.locator('[data-open-example="ProjectVisibility"]');
+  await room.getByRole('listbox').waitFor();
+  const tops = await room.evaluate(
+    (element) =>
+      new Promise<number[]>((done) => {
+        const seen: number[] = [];
+        const frame = () => {
+          seen.push(element.querySelector('[role="listbox"]')!.getBoundingClientRect().top);
+          if (seen.length < 90) requestAnimationFrame(frame);
+          else done(seen);
+        };
+        frame();
+      }),
+  );
+  expect(new Set(tops.slice(45)).size).toBe(1);
+  expect(tops.filter((top, index) => index > 0 && top !== tops[index - 1]).length).toBeLessThan(6);
+  await context.close();
+});

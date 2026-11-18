@@ -206,7 +206,15 @@ export function steadyPadding(padding: Sides, scale: number): Sides {
   };
 }
 
-const ignoredPaddingChangePx = 1;
+const ignoredPaddingGrowthPx = 1;
+const ignoredPaddingShrinkPx = 2;
+
+/** @internal */
+export function settledPadding(current: number, measured: number) {
+  const change = measured - current;
+  const ignored = change > 0 ? ignoredPaddingGrowthPx : ignoredPaddingShrinkPx;
+  return Math.abs(change) > ignored ? measured : current;
+}
 
 export function makeRoom(room: HTMLElement, layer: HTMLElement, hold: boolean) {
   const found = overlays(layer);
@@ -236,11 +244,13 @@ export function makeRoom(room: HTMLElement, layer: HTMLElement, hold: boolean) {
         )
       : { top: 0, right: 0, bottom: 0, left: 0 };
   let changed = false;
-  for (const side of ['top', 'right', 'bottom', 'left'] as const)
-    if (Math.abs(next[side] - padding[side]) > ignoredPaddingChangePx) {
-      room.style.setProperty(`padding-${side}`, `${next[side]}px`);
+  for (const side of ['top', 'right', 'bottom', 'left'] as const) {
+    const settled = settledPadding(padding[side], next[side]);
+    if (settled !== padding[side]) {
+      room.style.setProperty(`padding-${side}`, `${settled}px`);
       changed = true;
     }
+  }
   if (grow !== undefined && Math.abs(grow) > pixelTolerance) {
     const height = (room.getBoundingClientRect().height + grow) / scale;
     const next = `${Math.max(0, Math.ceil(height))}px`;

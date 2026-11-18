@@ -252,6 +252,20 @@ test("an open example's room is padded so its popup centres with what opens it",
   assert.deepEqual(room.steadyPadding(measured, 2), measured);
 });
 
+test("an open example's room comes to rest when its popup rounds a step apart at each padding", () => {
+  const measuredAt = (padding: number) => (padding >= 80 ? 78 : 80);
+  let padding = 0;
+  const rested: number[] = [];
+  for (let frame = 0; frame < 8; frame++) {
+    padding = room.settledPadding(padding, measuredAt(padding));
+    rested.push(padding);
+  }
+  assert.deepEqual(new Set(rested.slice(1)), new Set([80]));
+  assert.equal(room.settledPadding(80, 76), 76);
+  assert.equal(room.settledPadding(80, 81.5), 81.5);
+  assert.equal(room.settledPadding(80, 80.5), 80);
+});
+
 test("a modal's screen fits what it needs, no smaller than the popups' least, and keeps it playing", () => {
   const stage = { across: 300, down: 200 };
   const scales = { overlay: 0.8, phone: false, steps: [], popupLeast: 0.55 };
