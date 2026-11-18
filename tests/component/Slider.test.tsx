@@ -229,6 +229,61 @@ test(
   },
 );
 
+async function pixelsOf(element: HTMLElement) {
+  const shot = await page.screenshot({ element, base64: true, save: false });
+  const image = new Image();
+  image.src = `data:image/png;base64,${shot}`;
+  await image.decode();
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const context = canvas.getContext('2d')!;
+  context.drawImage(image, 0, 0);
+  const scale = image.width / element.getBoundingClientRect().width;
+  return (x: number, y: number) => [
+    ...context.getImageData(Math.floor(x * scale), Math.floor(y * scale), 1, 1).data,
+  ];
+}
+
+test(
+  'the ticks keep their color as the fill passes under them while dragging',
+  { tags: ['engines'] },
+  async () => {
+    const state = stateOf();
+    const track = part(0, '.env-slider-track');
+    const field = box(state.control);
+    const y = field.y + field.height / 2;
+    const ticks = Number(css(slider(0), '--_slider-ticks'));
+    const step = box(track).width / ticks;
+    const clear = (name: string) => Number.parseFloat(css(state.control, name));
+    const ticksAt = async () => {
+      await expect.poll(state.ticks).toBe('0.35');
+      await animationsDone(state.control, true);
+      const pixel = await pixelsOf(track);
+      const middle = box(track).height / 2;
+      const [from, to] = [clear('--_slider-clear-start'), clear('--_slider-clear-end')];
+      return Array.from({ length: ticks - 1 }, (_, index) => (index + 1) * step - 0.5)
+        .filter((x) => x > from + step / 2 && x < to - step / 2)
+        .map((x) => pixel(x, middle));
+    };
+    await mouse.move(field.x + field.width * 0.03, y);
+    await mouse.down();
+    await mouse.move(field.x + field.width * 0.03 + 2, y);
+    const overTrack = await ticksAt();
+    await mouse.move(field.x + field.width * 0.97, y, { steps: 6 });
+    await expect.poll(() => Number(state.input.getAttribute('aria-valuenow'))).toBeGreaterThan(90);
+    const overFill = await ticksAt();
+    await mouse.up();
+    expect(overTrack.length).toBeGreaterThan(2);
+    expect(overFill).toHaveLength(overTrack.length);
+    overFill.forEach((color, index) =>
+      color.forEach((channel, at) =>
+        expect(Math.abs(channel - overTrack[index]![at]!)).toBeLessThanOrEqual(2),
+      ),
+    );
+  },
+);
+
 test(
   'keyboard focus shows the handle with the focus ring, faded behind text, and no ticks',
   { tags: ['engines'] },

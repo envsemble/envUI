@@ -113,27 +113,35 @@
   .env-slider-thumb:dir(rtl) {
     --_slider-thumb-side: -1;
   }
+  .env-slider[data-ticks] .env-slider-track {
+    --_slider-tick-step: calc(100cqi / var(--_slider-ticks));
+    --_slider-tick-direction: to right;
+    --_slider-tick-origin: 0rem;
+    --_slider-tick-lines: repeating-linear-gradient(
+      var(--_slider-tick-direction),
+      transparent 0 calc(var(--_slider-tick-step) - var(--env-control-border-width)),
+      var(--_slider-ink) 0 var(--_slider-tick-step)
+    );
+  }
+  .env-slider[data-ticks] .env-slider-track:dir(rtl) {
+    --_slider-tick-direction: to left;
+    --_slider-tick-origin: var(--_slider-tick-step);
+  }
   .env-slider[data-ticks] .env-slider-track::after {
     content: '';
     position: absolute;
     inset-block: 35%;
-    left: calc(100% / var(--_slider-ticks));
-    right: 0;
-    background: linear-gradient(
-        to right,
-        var(--_slider-ink) 0 var(--env-control-border-width),
-        transparent 0
-      )
-      0 0 / calc(100% / (var(--_slider-ticks) - 1)) 100% repeat-x;
+    inset-inline: 0 var(--_slider-tick-step);
+    background: var(--_slider-tick-lines);
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
-    --_slider-part: calc(100% / (var(--_slider-ticks) - 1));
     mask-image: linear-gradient(
       to right,
       color-mix(in srgb, var(--env-color-fg-default) 25%, transparent)
-        calc(var(--_slider-clear-start, 0%) - var(--_slider-part)),
-      var(--env-color-fg-default) 0 calc(var(--_slider-clear-end, 200%) - var(--_slider-part)),
+        calc(var(--_slider-clear-start, 0%) - var(--_slider-tick-origin)),
+      var(--env-color-fg-default) 0
+        calc(var(--_slider-clear-end, 200%) - var(--_slider-tick-origin)),
       color-mix(in srgb, var(--env-color-fg-default) 25%, transparent) 0
     );
   }
@@ -174,6 +182,17 @@
   }
   .env-slider-control[data-ruler] .env-slider-track::after {
     opacity: 0.35;
+  }
+  .env-slider[data-ticks] .env-slider-control[data-ruler] .env-slider-indicator {
+    mask-image: linear-gradient(var(--env-color-fg-default) 0 0), var(--_slider-tick-lines);
+    mask-position:
+      0 0,
+      0 50%;
+    mask-size:
+      100% 100%,
+      100% 30%;
+    mask-repeat: no-repeat;
+    mask-composite: subtract, add;
   }
   .env-slider-control:has(:focus-visible) {
     outline: 2px solid var(--env-color-border-focus);
