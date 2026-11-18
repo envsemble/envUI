@@ -36,11 +36,11 @@
   "panes": {
     "$type": "dimension",
     "size": {
-      "$description": "The width of the resized pane of Panes side by side, the supporting pane or the list, until people resize it: 22.5 rem; on Panes, the width it has now.",
+      "$description": "The width of the sized pane of Panes, until people resize it: 22.5 rem; on Panes, the width it has now.",
       "$value": { "value": 22.5, "unit": "rem" }
     },
     "other-min": {
-      "$description": "The least width the other pane of Panes side by side keeps beside the resized one: 16 rem.",
+      "$description": "The least width the other pane of Panes keeps beside the sized one: 16 rem.",
       "$value": { "value": 16, "unit": "rem" }
     }
   },

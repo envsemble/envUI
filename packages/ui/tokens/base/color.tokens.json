@@ -104,7 +104,7 @@
           }
         },
         "muted": {
-          "$description": "The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 20% in light and black at 30% in dark.",
+          "$description": "The lighter backdrop behind a panel that leaves the page usable: the dark page color at 20% in light and black at 30% in dark.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
