@@ -578,6 +578,10 @@
       background: Highlight;
       color: HighlightText;
     }
+    .env-button[aria-pressed='true']:is(:disabled, [aria-disabled='true']):not([data-pending]) {
+      background: GrayText;
+      color: Canvas;
+    }
   }
 
   [data-env-skeleton] .env-button {

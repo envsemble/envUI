@@ -2,7 +2,7 @@
 title: VisuallyHidden
 summary: Text that assistive technology reads and the screen doesn't show.
 status: beta
-since: 1.1.0
+since: 2.0.0
 category: Text & content
 aliases:
   - visually hidden

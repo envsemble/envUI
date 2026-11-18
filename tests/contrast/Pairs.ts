@@ -578,7 +578,7 @@ const registry: readonly ContrastPair[] = merged([
   ...nonText(
     'composer-hover-edge',
     [page, surface, muted, raised, popup],
-    'The only boundary of the composer under the pointer, 40% of the way to the focus edge',
+    'The only boundary of the composer under the pointer, 40% of the way from its rest edge to the default text color',
   ),
   ...nonText(
     '--env-color-border-danger-emphasis',
@@ -875,6 +875,13 @@ const registry: readonly ContrastPair[] = merged([
     'An item of the accent selection under the pointer against an unselected one under the pointer: navigation items, Select options, tree and table rows',
   ),
   ...different(selectedHover, [selected], 'A selected item under the pointer'),
+  ...[selectedHover, selectedPressed].flatMap((state) =>
+    distinct(
+      state,
+      [popup, surface, page, raised, recessed],
+      'A selected item under the pointer and pressed against the surfaces it lies on, the recessed well of a preview included',
+    ),
+  ),
   ...different(selectedAccentHover, [selectedAccent], 'An accent-selected item under the pointer'),
   ...different(popupHover, [popup], 'A highlighted option or menu item'),
   ...different(

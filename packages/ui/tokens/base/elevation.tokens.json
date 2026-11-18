@@ -25,7 +25,7 @@
     "3": {
       "border": {
         "$type": "color",
-        "$description": "The edge of dialogs, sheets and the command palette where they are solid: in light the default border's gray, a step stronger than level 2's, as the light backdrop dims the page to about level 2's gray; in dark the same as level 2's. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill.",
+        "$description": "The edge of dialogs, sheets and the command palette where they are solid: in light the default border's gray, a step stronger than level 2's, as the light backdrop dims the page to about level 2's gray; in dark the same as level 2's. A dialog and the palette otherwise part by their fill, the popups' faint frosted edge and their soft shadow, a sheet by its fill.",
         "$value": "{palette.gray.50}"
       }
     },

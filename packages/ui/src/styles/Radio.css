@@ -175,6 +175,9 @@
     }
   }
   @media (forced-colors: active) {
+    .env-radio:has(input:disabled) > span:not(.env-radio-control) {
+      color: GrayText;
+    }
     .env-radio-input {
       forced-color-adjust: none;
       border-color: CanvasText;

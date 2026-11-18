@@ -99,8 +99,8 @@
   --env-color-bg-selected-accent: #d7e5fd;
   --env-color-bg-selected-accent-hover: #cddefc;
   --env-color-bg-selected-accent-pressed: #c8dbfc;
-  --env-color-bg-selected-hover: #d7d7d9;
-  --env-color-bg-selected-pressed: #dadadc;
+  --env-color-bg-selected-hover: #bfbfc1;
+  --env-color-bg-selected-pressed: #bfbfc1;
   --env-color-bg-success-emphasis: #176f35;
   --env-color-bg-success-muted: rgb(109 195 137 / 0.2);
   --env-color-bg-success-strong: #236d52;
@@ -402,7 +402,7 @@
   --env-color-bg-selected-accent-hover: #33445f;
   --env-color-bg-selected-accent-pressed: #3c4e69;
   --env-color-bg-selected-hover: #434346;
-  --env-color-bg-selected-pressed: #39393d;
+  --env-color-bg-selected-pressed: #434346;
   --env-color-bg-success-emphasis: #7ad197;
   --env-color-bg-success-muted: rgb(60 144 86 / 0.18);
   --env-color-bg-success-subtle-hover: rgb(60 144 86 / 0.22);
@@ -547,6 +547,7 @@
   --env-color-bg-selected-accent: #c8dbfc;
   --env-color-bg-selected-accent-hover: #bfd5fb;
   --env-color-bg-selected-accent-pressed: #bad2fb;
+  --env-color-bg-selected-hover: #d7d7d9;
   --env-color-bg-selected-pressed: #dddddf;
   --env-color-bg-success-emphasis: #00441a;
   --env-color-bg-success-muted: rgb(0 68 26 / 0.08);
@@ -695,6 +696,7 @@
     --env-color-bg-selected-accent: #c8dbfc;
     --env-color-bg-selected-accent-hover: #bfd5fb;
     --env-color-bg-selected-accent-pressed: #bad2fb;
+    --env-color-bg-selected-hover: #d7d7d9;
     --env-color-bg-selected-pressed: #dddddf;
     --env-color-bg-success-emphasis: #00441a;
     --env-color-bg-success-muted: rgb(0 68 26 / 0.08);
@@ -843,8 +845,8 @@
   --env-color-bg-selected-accent: #1d2e47;
   --env-color-bg-selected-accent-hover: #253650;
   --env-color-bg-selected-accent-pressed: #293a55;
-  --env-color-bg-selected-hover: #39393d;
-  --env-color-bg-selected-pressed: #353539;
+  --env-color-bg-selected-hover: #4b4d51;
+  --env-color-bg-selected-pressed: #4b4d51;
   --env-color-bg-success-emphasis: #98f0b5;
   --env-color-bg-success-muted: rgb(152 240 181 / 0.1);
   --env-color-bg-success-subtle-hover: rgb(165 253 193 / 0.14);
@@ -985,8 +987,8 @@
     --env-color-bg-selected-accent: #1d2e47;
     --env-color-bg-selected-accent-hover: #253650;
     --env-color-bg-selected-accent-pressed: #293a55;
-    --env-color-bg-selected-hover: #39393d;
-    --env-color-bg-selected-pressed: #353539;
+    --env-color-bg-selected-hover: #4b4d51;
+    --env-color-bg-selected-pressed: #4b4d51;
     --env-color-bg-success-emphasis: #98f0b5;
     --env-color-bg-success-muted: rgb(152 240 181 / 0.1);
     --env-color-bg-success-subtle-hover: rgb(165 253 193 / 0.14);

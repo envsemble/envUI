@@ -101,7 +101,7 @@
           "$value": "{palette.gray.75}"
         },
         "pressed": {
-          "$value": "{palette.gray.80}"
+          "$value": "{palette.gray.75}"
         },
         "accent": {
           "$root": {

@@ -492,11 +492,81 @@
         "high": 0.02
       }
     },
+    "--env-color-bg-selected-hover on --env-color-bg-default": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
+    "--env-color-bg-selected-hover on --env-color-bg-page": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
+    "--env-color-bg-selected-hover on --env-color-bg-popup": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
+    "--env-color-bg-selected-hover on --env-color-bg-raised": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
+    "--env-color-bg-selected-hover on --env-color-bg-recessed": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
     "--env-color-bg-selected-hover on --env-color-bg-selected": {
       "kind": "difference",
       "minimum": {
         "standard": 0.02,
         "high": 0.02
+      }
+    },
+    "--env-color-bg-selected-pressed on --env-color-bg-default": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
+    "--env-color-bg-selected-pressed on --env-color-bg-page": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
+    "--env-color-bg-selected-pressed on --env-color-bg-popup": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
+    "--env-color-bg-selected-pressed on --env-color-bg-raised": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
+    "--env-color-bg-selected-pressed on --env-color-bg-recessed": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
       }
     },
     "--env-color-border-accent on --env-color-bg-default": {
@@ -7675,6 +7745,8 @@
     "--env-color-bg-selected-hover on --env-color-bg-row-hover over --env-color-bg-raised",
     "--env-color-bg-selected-hover on --env-color-bg-row-hover over --env-color-bg-recessed",
     "--env-color-bg-selected-hover on --env-color-bg-row-hover over catalogue-canvas",
+    "--env-color-bg-selected-hover on catalogue-canvas",
+    "--env-color-bg-selected-pressed on catalogue-canvas",
     "--env-color-border-accent on --env-color-list-item-bg",
     "--env-color-border-accent on --env-color-list-item-bg",
     "--env-color-border-accent on catalogue-canvas",
