@@ -7,11 +7,11 @@ export const markdownEditor = {
   empty: 'Nothing to preview.',
   /** Names the formatting toolbar. */
   toolbar: 'Markdown formatting',
-  /** Names the write and preview tabs. */
+  /** Names the Write and Preview switch. */
   views: 'Markdown editor views',
-  /** The write tab. */
+  /** The view of the source. */
   write: 'Write',
-  /** The preview tab. */
+  /** The view of the rendered preview. */
   preview: 'Preview',
   /** Said when the text changed while the application's link picker was open. */
   changedWhilePicking: 'The text changed while the picker was open. Insert the link again.',

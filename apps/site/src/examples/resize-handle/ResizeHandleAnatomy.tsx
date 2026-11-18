@@ -5,12 +5,18 @@ export default function ResizeHandleAnatomy() {
   const [width, setWidth] = useState(12);
   return (
     <Row align="stretch" style={{ inlineSize: 'min(100%, 28rem)', blockSize: '8rem' }}>
-      <Surface radius="none" padding={3} style={{ inlineSize: `${width}rem`, flex: 'none' }}>
+      <Surface
+        id="files"
+        radius="none"
+        padding={3}
+        style={{ inlineSize: `${width}rem`, flex: 'none' }}
+      >
         <Text>Files</Text>
       </Surface>
       <ResizeHandle
         axis="inline"
         label="Resize the files"
+        aria-controls="files"
         value={width}
         min={8}
         max={16}

@@ -5,7 +5,12 @@ export default function ProjectSidebar() {
   const [width, setWidth] = useState(14);
   return (
     <Row align="stretch" style={{ inlineSize: 'min(100%, 36rem)', blockSize: '16rem' }}>
-      <Surface radius="none" padding={2} style={{ inlineSize: `${width}rem`, flex: 'none' }}>
+      <Surface
+        id="projects"
+        radius="none"
+        padding={2}
+        style={{ inlineSize: `${width}rem`, flex: 'none' }}
+      >
         <List.Root aria-label="Projects">
           <List.Item label="Website refresh" current />
           <List.Item label="Northwind launch" />
@@ -15,6 +20,7 @@ export default function ProjectSidebar() {
       <ResizeHandle
         axis="inline"
         label="Resize the projects"
+        aria-controls="projects"
         value={width}
         min={10}
         max={20}

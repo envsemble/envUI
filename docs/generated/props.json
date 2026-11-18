@@ -4063,7 +4063,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Show Write/Preview tabs. Preview uses the same public Markdown renderer."
+          "description": "Show the Write and Preview switch above the source. Preview uses the same public Markdown renderer."
         },
         {
           "name": "previewProps",

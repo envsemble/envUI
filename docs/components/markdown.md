@@ -89,7 +89,7 @@ examples:
 
 ### Keyboard
 
-| Key                                                      | Action                                          |
-| -------------------------------------------------------- | ----------------------------------------------- |
-| <kbd>←</kbd>, <kbd>→</kbd>                               | Moves between tabs, or between toolbar actions. |
-| <kbd>Ctrl</kbd>+<kbd>B</kbd>, <kbd>I</kbd>, <kbd>K</kbd> | Bold, italic or a link, in the source.          |
+| Key                                                      | Action                                               |
+| -------------------------------------------------------- | ---------------------------------------------------- |
+| <kbd>←</kbd>, <kbd>→</kbd>                               | Moves between the views, or between toolbar actions. |
+| <kbd>Ctrl</kbd>+<kbd>B</kbd>, <kbd>I</kbd>, <kbd>K</kbd> | Bold, italic or a link, in the source.               |

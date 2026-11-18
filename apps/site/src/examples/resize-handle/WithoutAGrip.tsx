@@ -5,7 +5,7 @@ export default function WithoutAGrip() {
   const [height, setHeight] = useState(8);
   return (
     <Column style={{ inlineSize: 'min(100%, 28rem)' }}>
-      <div style={{ blockSize: `${height}rem` }}>
+      <div id="release-notes" style={{ blockSize: `${height}rem` }}>
         <Text variant="title" render={<h3 />}>
           Release notes
         </Text>
@@ -14,6 +14,7 @@ export default function WithoutAGrip() {
       <ResizeHandle
         axis="block"
         label="Resize the notes"
+        aria-controls="release-notes"
         grip={false}
         value={height}
         min={4}

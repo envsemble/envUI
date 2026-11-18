@@ -104,14 +104,6 @@ body:has(> #root > .env-theme > .env-scaffold) {
   flex-direction: column;
   block-size: 14rem;
 }
-.fixture-fill-tabs {
-  flex: 1;
-}
-.fixture-tabs-heading {
-  display: flex;
-  align-items: start;
-  gap: 1rem;
-}
 .fixture-section output[data-testid^='document-tabs-log'] {
   white-space: pre-line;
 }

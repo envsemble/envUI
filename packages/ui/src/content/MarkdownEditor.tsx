@@ -59,7 +59,10 @@ export interface MarkdownEditorProps extends Omit<
   onValueChange?: (value: string) => void;
   /** Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar. */
   toolbar?: readonly MarkdownCommand[] | false;
-  /** Show Write/Preview tabs. Preview uses the same public Markdown renderer. */
+  /**
+   * Show the Write and Preview switch above the source. Preview uses the same public Markdown
+   * renderer.
+   */
   preview?: boolean;
   /** Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable. */
   previewProps?: Pick<
