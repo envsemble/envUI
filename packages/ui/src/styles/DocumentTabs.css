@@ -200,7 +200,7 @@
     .env-document-tabs-item:not([data-active]):hover {
     border-start-start-radius: var(--_document-tabs-fillet);
     border-start-end-radius: var(--_document-tabs-fillet);
-    background: var(--env-color-bg-neutral-subtle-hover);
+    background: color-mix(in srgb, var(--_document-tabs-panel) 50%, var(--_document-tabs-strip));
   }
   .env-document-tabs-item:not([data-active]):active {
     background: var(--env-color-bg-neutral-subtle-pressed);

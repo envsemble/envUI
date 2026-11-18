@@ -21,15 +21,15 @@
       "recessed": {
         "$root": {
           "$description": "A recessed surface: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background=\"recessed\". The deepest surface in every theme: below the default surface and the page. Everything measured on the page keeps its minimum on it.",
-          "$value": "{palette.gray.7}"
+          "$value": "{palette.gray.11}"
         },
         "hover": {
           "$description": "An interactive recessed surface under the pointer.",
-          "$value": "{palette.gray.11}"
+          "$value": "{palette.gray.14}"
         },
         "pressed": {
           "$description": "An interactive recessed surface while pressed.",
-          "$value": "{palette.gray.14}"
+          "$value": "{palette.gray.20}"
         }
       },
       "default": {
@@ -258,15 +258,15 @@
         "emphasis": {
           "$root": {
             "$description": "The primary fill of chosen radios, checked checkboxes, switches that are on, the chosen calendar day, check marks, meters and spinners; paired with fg.on-emphasis. A saturated blue with white marks in light; in dark a lighter blue with dark marks, which keeps 3:1 against every surface, a selected row's too. Primary actions take color.bg.primary.strong.",
-            "$value": "{palette.blue.55}"
+            "$value": "{palette.blue.60}"
           },
           "hover": {
             "$description": "A checked control under the pointer: a grade further from its marks, darker in light and lighter in dark.",
-            "$value": "{palette.blue.65}"
+            "$value": "{palette.blue.70}"
           },
           "pressed": {
             "$description": "A checked control while pressed: in light a grade past its hover; in dark a step deeper than rest, still clear of its dark marks, so it reads as pressed rather than highlighted.",
-            "$value": "{palette.blue.75}"
+            "$value": "{palette.blue.80}"
           }
         },
         "strong": {
@@ -828,11 +828,11 @@
       },
       "primary": {
         "$description": "Primary text and icons: the primary tone, outlined button labels, the selected tab, a field's focused label, the icon of a pager link.",
-        "$value": "{palette.blue.65}"
+        "$value": "{palette.blue.70}"
       },
       "accent": {
         "$description": "Accent text and icons: the purple of an accent badge.",
-        "$value": "{palette.purple.65}"
+        "$value": "{palette.purple.70}"
       },
       "on-selected": {
         "$root": {
@@ -846,7 +846,7 @@
       },
       "success": {
         "$description": "Success text and icons.",
-        "$value": "{palette.green.65}"
+        "$value": "{palette.green.70}"
       },
       "warning": {
         "$description": "Warning text and icons.",
@@ -855,7 +855,7 @@
       "danger": {
         "$root": {
           "$description": "Danger text and icons, and field errors.",
-          "$value": "{palette.red.65}"
+          "$value": "{palette.red.70}"
         },
         "hover": {
           "$description": "A danger text button under the pointer: a grade darker in light and in dark, as a link is.",
@@ -868,7 +868,7 @@
       },
       "done": {
         "$description": "Done text and icons.",
-        "$value": "{palette.slate.65}"
+        "$value": "{palette.slate.70}"
       },
       "on-emphasis": {
         "$description": "Text and icons on the emphasis fills: white in light, dark in dark.",
@@ -893,7 +893,7 @@
       "link-on-muted": {
         "$root": {
           "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.primary.muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is a grade lighter than fg.link, so it keeps 4.5:1 on a hovered or pressed row, and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
-          "$value": "{palette.blue.65}"
+          "$value": "{palette.blue.70}"
         },
         "hover": {
           "$description": "A link on a tint under the pointer.",
@@ -1086,15 +1086,15 @@
       "default": {
         "$root": {
           "$description": "The boundary of a control that has no other edge: outlined fields and buttons, the track of a switch that is off. At least 3:1 on every surface.",
-          "$value": "{palette.gray.45}"
+          "$value": "{palette.gray.50}"
         },
         "hover": {
           "$description": "A control boundary under the pointer.",
-          "$value": "{palette.gray.60}"
+          "$value": "{palette.gray.65}"
         },
         "pressed": {
           "$description": "A control boundary while pressed.",
-          "$value": "{palette.gray.65}"
+          "$value": "{palette.gray.70}"
         }
       },
       "muted": {

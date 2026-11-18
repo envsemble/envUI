@@ -2,6 +2,56 @@ import { onPage, onRecessed, pairName, pairs, type Relaxation } from './Pairs.ts
 
 export const dropped: readonly { pair: string; rationale: string }[] = [
   {
+    pair: '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over --env-color-bg-default',
+    rationale:
+      'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
+  },
+  {
+    pair: '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over --env-color-bg-page',
+    rationale:
+      'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
+  },
+  {
+    pair: '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
+  },
+  {
+    pair: '--env-color-fg-control on --env-color-bg-neutral-muted-hover over --env-color-bg-neutral-muted over --env-color-bg-page',
+    rationale:
+      'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
+  },
+  {
+    pair: '--env-color-fg-control on --env-color-bg-neutral-muted-hover over --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
+  },
+  {
+    pair: '--env-color-fg-muted on --env-color-bg-neutral-subtle-hover over --env-color-bg-neutral-muted over --env-color-bg-page',
+    rationale:
+      'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
+  },
+  {
+    pair: '--env-color-fg-muted on --env-color-bg-neutral-subtle-hover over --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
+  },
+  {
+    pair: '--env-color-fg-muted on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over --env-color-bg-page',
+    rationale:
+      'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
+  },
+  {
+    pair: '--env-color-fg-muted on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
+  },
+  {
+    pair: '--env-color-fg-default on --env-color-bg-neutral-subtle-hover over document-tabs-strip',
+    rationale:
+      'A hovered inactive document tab takes a fill halfway from the strip to the panel rather than a neutral layer, so it never reads stronger than the active tab; its text is measured on the strip, the darker of the two in light and the lighter in dark.',
+  },
+  {
     pair: '--env-color-fg-primary on --env-color-bg-raised-hover',
     rationale:
       'A pager link is a quiet neutral link with no raised box: its icon is the muted text color on the surface it lies on, with the neutral hover layer, rather than the primary color on a raised fill.',
@@ -1622,6 +1672,30 @@ function apiReviewRenames() {
 }
 
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  {
+    from: '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over catalogue-canvas',
+    to: '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed; the tab rail this measured left with Tabs, so the recessed pair is dropped too.',
+  },
+  {
+    from: '--env-color-fg-control on --env-color-bg-neutral-muted-hover over --env-color-bg-neutral-muted over catalogue-canvas',
+    to: '--env-color-fg-control on --env-color-bg-neutral-muted-hover over --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed; the tab rail this measured left with Tabs, so the recessed pair is dropped too.',
+  },
+  {
+    from: '--env-color-fg-muted on --env-color-bg-neutral-subtle-hover over --env-color-bg-neutral-muted over catalogue-canvas',
+    to: '--env-color-fg-muted on --env-color-bg-neutral-subtle-hover over --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed; the tab rail this measured left with Tabs, so the recessed pair is dropped too.',
+  },
+  {
+    from: '--env-color-fg-muted on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over catalogue-canvas',
+    to: '--env-color-fg-muted on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed; the tab rail this measured left with Tabs, so the recessed pair is dropped too.',
+  },
   ...['-hover', '-pressed'].map((state) => ({
     from: `--env-color-fg-accent on --env-color-bg-raised${state}`,
     to: `--env-color-fg-primary on --env-color-bg-raised${state}`,

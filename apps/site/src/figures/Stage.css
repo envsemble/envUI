@@ -15,8 +15,7 @@
       calc(0.14 - l * 0.087)
   );
   --catalogue-card-shadow: 0 0.5rem 1.5rem var(--catalogue-card-shadow-color);
-  --catalogue-card-shadow-recessed: 0 0.5rem 1.5rem
-    light-dark(var(--catalogue-card-shadow-color), transparent);
+  --catalogue-card-shadow-recessed: none;
   --catalogue-card-shadow-raised: 0 0.75rem 2rem
     oklch(
       from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.3) calc(c * 0.5) h /
@@ -59,7 +58,7 @@
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-fan-card {
-  --catalogue-card-fill: light-dark(var(--env-color-bg-page), var(--env-color-bg-recessed));
+  --catalogue-card-fill: var(--env-color-bg-recessed);
   background-color: var(--catalogue-card-fill);
 }
 

@@ -542,11 +542,8 @@ const registry: readonly ContrastPair[] = merged([
   ...text('--env-color-fg-default', ['document-tabs-strip'], 'Text on the document tab strip'),
   ...text(
     '--env-color-fg-default',
-    [
-      ['--env-color-bg-neutral-subtle-hover', 'document-tabs-strip'],
-      ['--env-color-bg-neutral-subtle-pressed', 'document-tabs-strip'],
-    ],
-    'An inactive document tab under the pointer and pressed, on its layer over the strip',
+    [['--env-color-bg-neutral-subtle-pressed', 'document-tabs-strip']],
+    'A pressed inactive document tab, on its layer over the strip; under the pointer it takes a fill halfway from the strip to the panel, where the text on the strip measures it',
   ),
   ...text(
     '--env-color-fg-danger',
@@ -754,29 +751,12 @@ const registry: readonly ContrastPair[] = merged([
     'Details of selected tree rows and captions in selected table rows',
   ),
   ...text(
-    '--env-color-fg-muted',
-    [
-      [layerHover, fill, page],
-      [layerPressed, fill, page],
-    ],
-    'Unselected tabs on hover and press',
-  ),
-  ...text(
     '--env-color-fg-default',
     [
       [layerHover, fill, raised],
       [layerPressed, fill, raised],
     ],
     'A sortable header cell of a framed table under the pointer and pressed, on its band',
-  ),
-  ...text(
-    '--env-color-fg-control',
-    [
-      [fill, fill, page],
-      ['--env-color-bg-neutral-muted-hover', fill, page],
-      [fill, fill, surface],
-    ],
-    'The active tab of a secondary tab rail',
   ),
   ...[
     [segmentThumb, segmentThumbStandard] as const,

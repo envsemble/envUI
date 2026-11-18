@@ -45,7 +45,7 @@
           "$value": "{palette.neutral.75}"
         },
         "pressed": {
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.neutral.80}"
         }
       },
       "raised": {

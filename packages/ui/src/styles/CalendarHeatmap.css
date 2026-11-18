@@ -4,9 +4,6 @@
     --_calendar-heatmap-lift: 0;
   }
   .env-theme[data-env-theme='dark']:not([data-env-contrast='high']) {
-    --_calendar-heatmap-empty: oklch(
-      from var(--env-color-bg-neutral-muted) l c h / calc(alpha * 0.85)
-    );
     --_calendar-heatmap-lift: 0.12;
   }
   @media (prefers-contrast: more) {
