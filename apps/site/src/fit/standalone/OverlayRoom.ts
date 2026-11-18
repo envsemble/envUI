@@ -245,7 +245,7 @@ export function makeRoom(room: HTMLElement, layer: HTMLElement, hold: boolean) {
       : { top: 0, right: 0, bottom: 0, left: 0 };
   let changed = false;
   for (const side of ['top', 'right', 'bottom', 'left'] as const) {
-    const settled = settledPadding(padding[side], next[side]);
+    const settled = anchored.length ? settledPadding(padding[side], next[side]) : next[side];
     if (settled !== padding[side]) {
       room.style.setProperty(`padding-${side}`, `${settled}px`);
       changed = true;
