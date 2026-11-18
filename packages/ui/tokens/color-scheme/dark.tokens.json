@@ -50,7 +50,7 @@
       },
       "raised": {
         "$root": {
-          "$value": "{palette.neutral.84}"
+          "$value": "{palette.neutral.82}"
         },
         "hover": {
           "$value": "{palette.neutral.75}"
@@ -541,7 +541,7 @@
             "components": {
               "$ref": "#/palette/neutral/6/$value/components"
             },
-            "alpha": 0.18
+            "alpha": 0.1
           }
         },
         "pressed": {
@@ -550,7 +550,7 @@
             "components": {
               "$ref": "#/palette/neutral/6/$value/components"
             },
-            "alpha": 0.2
+            "alpha": 0.14
           }
         }
       },

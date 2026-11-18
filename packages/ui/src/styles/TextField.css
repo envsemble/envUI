@@ -139,7 +139,7 @@
   .env-text-field-control[data-variant='ghost'] {
     background: var(
       --_text-field-ghost-solid,
-      color-mix(in srgb, var(--env-color-bg-neutral-muted) 25%, transparent)
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 45%, transparent)
     );
   }
   .env-text-field-control[data-variant='ghost']:not(
@@ -148,7 +148,7 @@
     ) {
     background: var(
       --_text-field-ghost-solid,
-      color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent)
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 75%, transparent)
     );
   }
   @media (hover: hover) {

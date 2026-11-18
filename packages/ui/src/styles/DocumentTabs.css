@@ -193,6 +193,9 @@
     --env-control-icon-size: 1rem;
     visibility: hidden;
   }
+  :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:hover {
+    color: var(--env-color-fg-default);
+  }
   .env-document-tabs-item:is([data-active], :has(:focus-visible)) .env-document-tabs-close,
   :where(.env-document-tabs-list:not([data-reordering]))
     .env-document-tabs-item:hover

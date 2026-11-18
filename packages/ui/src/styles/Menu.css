@@ -182,7 +182,7 @@
   }
   .env-menu-item:is([data-highlighted], [data-popup-open]) {
     --_menu-item-layer: calc(var(--env-state-hover-opacity) * 100%);
-    background: var(--_menu-item-custom-fill, var(--env-color-bg-neutral-muted));
+    background: var(--_menu-item-custom-fill, var(--_popup-row-highlight));
   }
   .env-menu-submenu-chevron:dir(rtl) {
     transform: scaleX(-1);
