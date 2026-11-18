@@ -106,6 +106,7 @@
       "forms/Select.tsx": "composites",
       "navigation/Breadcrumbs.tsx": "composites",
       "navigation/DocumentTabs.tsx": "composites",
+      "layout/ResizeHandle.tsx": "base",
       "navigation/NavigationBar.tsx": "composites",
       "navigation/Pagination.tsx": "composites",
       "navigation/Tree.tsx": "composites",
@@ -308,9 +309,6 @@
           "layout/internal/scaffoldFocus.ts",
           "layout/internal/useNavigationFocusHandoff.ts"
         ]
-      },
-      "Panes": {
-        "modules": ["layout/internal/useSupportingSheet.ts"]
       },
       "List": {
         "modules": [
@@ -626,17 +624,9 @@
         },
         {
           "stylesheet": "Scaffold.css",
-          "classes": [
-            "env-panes",
-            "env-panes-main",
-            "env-panes-list",
-            "env-panes-detail",
-            "env-panes-supporting",
-            "env-panes-backdrop",
-            "env-panes-body"
-          ],
-          "properties": ["z-index", "overflow"],
-          "note": "Where the document scrolls, Panes in the body are as tall as their content, so a Scaffold fixes their supporting sheet and its backdrop to the window at the modal layers, as a Sheet is, and lets the panes grow with the page rather than scroll; it never restyles them."
+          "classes": ["env-panes", "env-panes-pane", "env-panes-body"],
+          "properties": ["overflow"],
+          "note": "Where the document scrolls, Panes in the body are as tall as their content, so a Scaffold lets the panes grow with the page rather than scroll; it never restyles them."
         },
         {
           "stylesheet": "Scaffold.css",

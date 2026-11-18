@@ -111,6 +111,7 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Scaffold](components/scaffold.md)
 - [Page](components/page.md)
 - [Panes](components/panes.md)
+- [ResizeHandle](components/resize-handle.md)
 - [TopBar](components/top-bar.md)
 - [Surface](components/surface.md)
 - [Card](components/card.md)

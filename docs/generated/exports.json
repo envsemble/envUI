@@ -189,6 +189,8 @@
     "RelativeTimeProps": "interface",
     "RelativeTimeValue": "type",
     "ResizeDetails": "interface",
+    "ResizeHandle": "function",
+    "ResizeHandleProps": "type",
     "Row": "function",
     "RowDensity": "type",
     "RowProps": "type",

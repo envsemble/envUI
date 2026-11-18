@@ -33,7 +33,7 @@ import {
 } from '../internal/dialog/DialogParts.js';
 import { withPendingAction } from './internal/DialogPendingAction.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
-import { ResizeHandle } from '../internal/resize/ResizeHandle.js';
+import { ResizeHandle } from '../layout/ResizeHandle.js';
 import { useResizableWidth, widthInRem } from '../internal/resize/useResizableWidth.js';
 import {
   containedModal,

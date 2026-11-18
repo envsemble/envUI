@@ -9,12 +9,12 @@ const panes = '.env-panes';
 
 const panesWidthRem = 38;
 
-const halfDividerGapRem = 0.5;
+const halfHandleReachRem = 0.375;
 
 const wide = { list: 5.25, widened: 9, least: 5 };
 const narrow = { list: 5, widened: 6.5, least: 5 };
 
-const listEndShare = (width: number) => (width + halfDividerGapRem) / panesWidthRem;
+const listEndShare = (width: number) => (width + halfHandleReachRem) / panesWidthRem;
 
 const scriptOf = ({ list, widened }: typeof wide): PointerStep[] => [
   { wait: 240 },
@@ -34,16 +34,14 @@ const scripts = { wide: scriptOf(wide), narrow: scriptOf(narrow) };
 export default function PanesTile() {
   const sizes = useMedia(narrowGallery) ? narrow : wide;
   usePointer(sizes === narrow ? scripts.narrow : scripts.wide);
-  useMustShow(sizes === narrow ? '.env-panes-divider' : '.env-panes-detail h3');
+  useMustShow(sizes === narrow ? '.env-panes-resize-handle' : '.env-panes-pane:last-child h3');
   return (
     <Panes.Root
-      behavior="list-detail"
-      splitAt="medium"
       defaultWidth={sizes.list}
       minWidth={sizes.least}
       style={{ inlineSize: `${panesWidthRem}rem`, blockSize: '7rem' }}
     >
-      <Panes.List label="Inbox">
+      <Panes.Pane label="Inbox">
         <Surface
           radius="none"
           padding={1}
@@ -58,12 +56,13 @@ export default function PanesTile() {
             <List.Item label="Team" />
           </List.Root>
         </Surface>
-      </Panes.List>
-      <Panes.Divider label="Resize the inbox" />
-      <Panes.Detail label="Plan">
+      </Panes.Pane>
+      <Panes.ResizeHandle label="Resize the inbox" />
+      <Panes.Pane label="Plan">
         <Surface
           radius="none"
           padding={2}
+          background="page"
           render={<Column gap={1} align="start" />}
           style={{ minBlockSize: '100%' }}
         >
@@ -74,7 +73,7 @@ export default function PanesTile() {
             May 4
           </Text>
         </Surface>
-      </Panes.Detail>
+      </Panes.Pane>
     </Panes.Root>
   );
 }

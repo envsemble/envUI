@@ -342,8 +342,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Panes
 
-- Parts: `env-panes`, `env-panes-back`, `env-panes-backdrop`, `env-panes-body`, `env-panes-close`, `env-panes-detail`, `env-panes-divider`, `env-panes-header`, `env-panes-header-content` (slot), `env-panes-list`, `env-panes-main`, `env-panes-supporting`, `env-panes-trigger`
-- States: `data-axis` on `env-panes-divider`; `data-behavior` (`list-detail`, `supporting`); `data-closed`; `data-env-layout` (`panes`); `data-env-name`; `data-open`; `data-sheet-only` on `env-panes-close`; `data-split-at` (`expanded`, `large`, `medium`)
+- Parts: `env-panes`, `env-panes-body`, `env-panes-header`, `env-panes-header-content` (slot), `env-panes-pane`, `env-panes-resize-handle`
+- States: `data-env-layout` (`panes`); `data-env-name`; `data-sized` (`end`, `start`); `data-stack-below` (`expanded`, `large`, `medium`)
 
 ### Popover
 
@@ -374,6 +374,11 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### RelativeTime
 
 - Parts: `env-relative-time`
+
+### ResizeHandle
+
+- Parts: `env-resize-handle`
+- States: `data-axis` (`block`, `inline`); `data-grip`; `data-resizing`
 
 ### RichText
 
@@ -565,16 +570,10 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 - Parts: `env-prose`
 - Used by: Markdown, RichText, RichTextEditor
 
-### ResizeHandle
-
-- Parts: `env-resize-handle`
-- States: `data-axis` (`block`, `inline`); `data-grip`; `data-resizing`
-- Used by: NavigationDrawer, Panes, Sheet
-
 ### Skeleton
 
 - Parts: `env-skeleton-content`, `env-skeleton-status`
-- Used by: Accordion, Alert, Breadcrumbs, CalendarHeatmap, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Panes, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
+- Used by: Accordion, Alert, Breadcrumbs, CalendarHeatmap, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
 
 ### TimeList
 

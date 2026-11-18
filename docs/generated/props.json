@@ -5715,33 +5715,29 @@
       "description": "",
       "parts": [
         "Panes.Root",
-        "Panes.Main",
-        "Panes.Supporting",
-        "Panes.List",
-        "Panes.Detail",
-        "Panes.Divider",
-        "Panes.Trigger"
+        "Panes.Pane",
+        "Panes.ResizeHandle"
       ],
       "entries": [
         "@envsemble/envui"
       ]
     },
-    "Panes.Detail": {
+    "Panes.Pane": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The detail pane of list-detail Panes, at the end. Below `splitAt` it shows only while `open`, with a back button to the list at its start, and focus follows what shows: the back button as the detail opens, the list's current row as it closes.",
+      "description": "One pane: the first or the last child of Panes.Root, with an optional header.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": "Names the pane, which makes it a region landmark that people can jump to, such as Documents. Name the panes of a page's main layout; leave small panes unnamed."
+          "description": "Names the pane, which makes it a region landmark that people can jump to, such as Messages. Name the panes of a page's main layout; leave small panes unnamed."
         },
         {
           "name": "header",
           "type": "ReactNode",
           "required": false,
-          "description": "The top of the pane, which stays in view while the pane's content scrolls, such as a PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit in its row."
+          "description": "The top of the pane, which stays in view while the pane's content scrolls under it, such as a PageHeader or a Toolbar."
         }
       ],
       "native": [
@@ -5751,67 +5747,30 @@
         "@envsemble/envui"
       ]
     },
-    "Panes.Divider": {
+    "Panes.ResizeHandle": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side. Place it between two surfaces, each pane's own, such as a Surface as tall as the pane, never beside content on the page.",
+      "description": "The ResizeHandle between the panes, which resizes the sized pane: invisible on the seam with its grip of three dots, a line along it under the pointer, while dragged and with keyboard focus. Its hit area reaches only into the pane after it, so the scrollbar and the controls at the edge of the pane before it stay reachable. The arrow keys move it 1 rem a step, 5 with Shift, and a double click returns the pane to its default width. It hides while the panes stack.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
           "default": "'Resize panes', or EnvUIProvider's messages.panes.resize",
-          "description": "The divider's name, which says what it resizes, such as Resize project list."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Panes.List": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The list pane of list-detail Panes, at the start. Below `splitAt` it hides while `open`.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": true,
-          "description": "Names the pane's region, such as Projects."
+          "description": "The handle's name, which says what it resizes, such as Resize the project list."
         },
         {
-          "name": "header",
-          "type": "ReactNode",
+          "name": "disabled",
+          "type": "boolean",
           "required": false,
-          "description": "The top of the pane, which stays in view while the pane's content scrolls, such as a PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit in its row."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Panes.Main": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The main pane of supporting Panes, at the start.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "description": "Names the pane, which makes it a region landmark that people can jump to, such as Documents. Name the panes of a page's main layout; leave small panes unnamed."
+          "description": "Leaves the size as it is and takes the handle out of the tab order; a drag in progress ends without a change, as when the handle goes while it is dragged."
         },
         {
-          "name": "header",
-          "type": "ReactNode",
+          "name": "grip",
+          "type": "boolean",
           "required": false,
-          "description": "The top of the pane, which stays in view while the pane's content scrolls, such as a PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit in its row."
+          "default": "true",
+          "description": "Shows a grip of three dots at the handle's middle. false leaves the handle invisible until the pointer is over it, it has keyboard focus or it is dragged."
         }
       ],
       "native": [
@@ -5824,92 +5783,59 @@
     "Panes.Root": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "Two panes side by side, and how they behave in less room: a main pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time. Its own width decides, in CSS, and one state says whether the supporting pane shows, in every presentation. Each pane's content scrolls on its own under its header when Panes has a height; an optional Panes.Divider resizes them.",
+      "description": "A region split into two panes side by side, such as a list and its detail: one pane has a width of its own, which a Panes.ResizeHandle between them resizes, and the other takes the rest. Each pane's content scrolls on its own under its header when Panes has a height. With `stackBelow` the panes stack in a narrow region. Panes fill their region with square corners; an application rounds them with its own class, and the panes follow, since the root clips them.",
       "props": [
         {
-          "name": "behavior",
-          "type": "'supporting' | 'list-detail'",
-          "required": true,
-          "description": "supporting: Panes.Main and Panes.Supporting, such as a document and its details; below `splitAt` the supporting pane is a sheet over the main one while `open`. list-detail: Panes.List and Panes.Detail, such as messages and the one chosen; below `splitAt` one shows at a time, the detail while `open`, with a back button to the list."
+          "name": "sized",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Which pane has a width of its own, which Panes.ResizeHandle resizes: the first, such as a list or a sidebar, or the last, such as details. The other pane takes the rest of the room."
         },
         {
-          "name": "splitAt",
+          "name": "stackBelow",
           "type": "'medium' | 'expanded' | 'large'",
           "required": false,
-          "default": "'expanded'",
-          "description": "The window class of the Panes' own width from which the panes sit side by side: medium (37.5 rem), expanded (52.5 rem) or large (75 rem). Narrower, they behave as `behavior` says. CSS decides it, so the server's markup is right before any script runs."
-        },
-        {
-          "name": "open",
-          "type": "boolean | null",
-          "required": false,
-          "description": "Whether the supporting pane shows, in every presentation: beside the main pane, or as a sheet over it below `splitAt`. null, until people open or close it, shows it where the panes sit side by side and keeps the sheet closed. In list-detail Panes, whether the detail shows instead of the list below `splitAt`, such as one that opens the detail as an item is chosen; side by side both panes show. For Panes the application controls with onOpenChange."
-        },
-        {
-          "name": "defaultOpen",
-          "type": "boolean | null",
-          "required": false,
-          "default": "null",
-          "description": "Whether uncontrolled Panes start with the supporting pane shown, as `open` says, or the detail shown below `splitAt`. Panes.Trigger opens the supporting pane, and Escape, the close button, the backdrop and the back button close what shows."
-        },
-        {
-          "name": "onOpenChange",
-          "type": "(open: boolean, details: OpenChangeDetails) => void",
-          "required": false,
-          "description": "Called with the new state, and why: true when Panes.Trigger opens the supporting pane, and false when people close what `open` shows: the close button closes the supporting pane beside the main pane or as a sheet, and Escape or a press on the backdrop closes the sheet; the back button returns from the detail to the list."
-        },
-        {
-          "name": "closeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Close', or EnvUIProvider's messages.panes.close",
-          "description": "The name of the supporting pane's close button."
-        },
-        {
-          "name": "backLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Back', or EnvUIProvider's messages.panes.back",
-          "description": "The back button's label in a list-detail's detail, below `splitAt`. Name where it goes, such as All projects."
+          "description": "The window class of the Panes' own width below which the panes stack, the first above the last, each half the height, and the resize handle hides: medium (37.5 rem), expanded (52.5 rem) or large (75 rem). CSS decides it, so the server's markup is right before any script runs. Without it the panes always sit side by side."
         },
         {
           "name": "width",
           "type": "number",
           "required": false,
-          "description": "The resized pane's width in rem, for Panes the application controls with onWidthChange: the supporting pane, or the list. It applies while the panes sit side by side."
+          "description": "The sized pane's width in rem, for Panes the application controls with onWidthChange."
         },
         {
           "name": "defaultWidth",
           "type": "number",
           "required": false,
           "default": "22.5",
-          "description": "The resized pane's width in rem until people choose one with Panes.Divider, or one is kept under `persist`, and the width a double click on the divider returns it to."
+          "description": "The sized pane's width in rem until people choose one with Panes.ResizeHandle, or one is kept under `persist`, and the width a double click on the handle returns it to."
         },
         {
           "name": "onWidthChange",
           "type": "(width: number, details: ResizeDetails) => void",
           "required": false,
-          "description": "Receives each new width of the resized pane, in rem: while dragging the divider with committed false, and with committed true as a drag ends, a key moves it or a double click resets it."
+          "description": "Receives each new width of the sized pane, in rem: while dragging the handle with committed false, and with committed true as a drag ends, a key moves it or a double click resets it."
         },
         {
           "name": "minWidth",
           "type": "number",
           "required": false,
           "default": "16",
-          "description": "The resized pane's smallest width, in rem."
+          "description": "The sized pane's smallest width, in rem."
         },
         {
           "name": "maxWidth",
           "type": "number",
           "required": false,
           "default": "40",
-          "description": "The resized pane's largest width, in rem. It never leaves the other pane less than 16 rem."
+          "description": "The sized pane's largest width, in rem. It never leaves the other pane less than 16 rem."
         },
         {
           "name": "persist",
           "type": "string",
           "required": false,
-          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the divider forgets it and returns to `defaultWidth`. Read it on the server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
+          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the handle forgets it and returns to `defaultWidth`. Read it on the server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
         },
         {
           "name": "persistedWidth",
@@ -5927,122 +5853,11 @@
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": "The panes: Panes.Main, an optional Panes.Divider and Panes.Supporting; or Panes.List, an optional Panes.Divider and Panes.Detail."
+          "description": "The two panes, with a Panes.ResizeHandle between them for people to resize them."
         }
       ],
       "native": [
         "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Panes.Supporting": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The supporting pane, at the end, such as details or filters for the main pane, with a close button in its header row. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one, fixed to the window inside a Scaffold whose document scrolls. As a sheet, the rest of the page is inert, Tab stays inside, and Escape, the close button or a press on the backdrop closes it, returning focus to where it was. In a contained PortalContainer the sheet belongs to the container and is not modal.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": true,
-          "description": "Names the pane's region, such as Details."
-        },
-        {
-          "name": "closeButton",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Shows the close button beside the main pane too, so people can close the pane in every presentation; as a sheet the pane always shows it. false keeps the pane beside the main one open, for a pane people never close there."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
-        },
-        {
-          "name": "header",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The top of the pane, which stays in view while the pane's content scrolls, such as a PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit in its row."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Panes.Trigger": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The button that opens the supporting pane; place it in the main pane. It shows while the pane doesn't: below `splitAt`, and beside the main pane once people close it. It says whether the pane is open with aria-expanded. It takes Button's props.",
-      "props": [
-        {
-          "name": "variant",
-          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
-          "required": false,
-          "default": "'primary'",
-          "description": "The emphasis, primary for a group's main action; without it, the container's, such as ghost in a toolbar, and else primary."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'danger' | 'accent'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "The meaning: neutral for most actions, danger for one that deletes or ends something, and accent, on a primary only, for a main action that must stand apart from the brand blue."
-        },
-        {
-          "name": "underline",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Show an underline for the text variant."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md."
-        },
-        {
-          "name": "fullWidth",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
-        },
-        {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
-        },
-        {
-          "name": "endIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
-        },
-        {
-          "name": "end",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
-        },
-        {
-          "name": "pending",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
-        }
-      ],
-      "native": [
-        "button"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6438,6 +6253,110 @@
       ],
       "native": [
         "time"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "ResizeHandle": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/ResizeHandle.tsx",
+      "description": "A handle that resizes what is beside it, such as two panes or a panel's edge: a focusable separator, named by its label, that the pointer drags and the arrow keys, Page Up, Page Down, Home and End move, with aria-valuenow, aria-valuemin, aria-valuemax and aria-valuetext. Its track is invisible, with a grip of three dots at its middle; a 1 px line shows along it under the pointer, while it is dragged and, in the focus color, with keyboard focus. The handle's box is what the pointer reaches: place and size it with a class on the edge it moves. The application keeps the size. <ResizeHandle axis=\"inline\" label=\"Resize the sidebar\" value={width} min={12} max={30} unit=\"rem\" step={1} onChange={(next) => setWidth(next)} className=\"app-sidebar-edge\" />",
+      "props": [
+        {
+          "name": "axis",
+          "type": "'inline' | 'block'",
+          "required": true,
+          "description": "The axis the handle moves along: inline, across a row of panes, such as a sidebar's edge, or block, up and down, such as a docked panel's top edge."
+        },
+        {
+          "name": "value",
+          "type": "number",
+          "required": true,
+          "description": "The size the handle controls, in `unit`."
+        },
+        {
+          "name": "min",
+          "type": "number",
+          "required": true,
+          "description": "The smallest size."
+        },
+        {
+          "name": "max",
+          "type": "number",
+          "required": true,
+          "description": "The largest size."
+        },
+        {
+          "name": "room",
+          "type": "(handle: HTMLElement) => number",
+          "required": false,
+          "description": "The largest size the room allows, in `unit`, read from the handle as a drag starts or a key moves it: where it is under `max`, the drag starts at it and goes no further."
+        },
+        {
+          "name": "step",
+          "type": "number",
+          "required": false,
+          "description": "How far an arrow key moves it; 10 by default."
+        },
+        {
+          "name": "largeStep",
+          "type": "number",
+          "required": false,
+          "description": "How far Page Up and Page Down, and an arrow key with Shift, move it; ten steps by default."
+        },
+        {
+          "name": "unit",
+          "type": "'px' | '%' | 'rem'",
+          "required": false,
+          "description": "The size's unit: px, % of `percentOf`, or rem, of the root's font size."
+        },
+        {
+          "name": "percentOf",
+          "type": "(handle: HTMLElement) => HTMLElement | null",
+          "required": false,
+          "description": "The element a size in % is a share of, such as a column's table: the handle's parent element by default."
+        },
+        {
+          "name": "reverse",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the size grows toward the start of the axis: a panel docked at the bottom grows up as its top edge moves up, and a pane at the inline end grows as its start edge moves toward the start. The text direction is applied on top, so the inline start is the right in RTL."
+        },
+        {
+          "name": "onChange",
+          "type": "(value: number, details: ResizeDetails) => void",
+          "required": true,
+          "description": "Receives each new size, clamped to min and max: while dragging with committed false, and once more with committed true as the drag ends or a key moves it. A cancelled drag ends at the size it began with."
+        },
+        {
+          "name": "valueText",
+          "type": "(value: number) => string",
+          "required": false,
+          "description": "The size as words, such as 240 pixels or Narrow, for assistive technology."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "Leaves the size as it is and takes the handle out of the tab order; a drag in progress ends without a change, as when the handle goes while it is dragged."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "The handle's name, which says what it resizes, such as Resize the project list."
+        },
+        {
+          "name": "grip",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Shows a grip of three dots at the handle's middle. false leaves the handle invisible until the pointer is over it, it has keyboard focus or it is dragged."
+        }
+      ],
+      "native": [
+        "div"
       ],
       "entries": [
         "@envsemble/envui"

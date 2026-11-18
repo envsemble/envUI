@@ -193,10 +193,10 @@ export default function MessagesFixture() {
           <Composer aria-label="Reply" defaultValue="Hello" onSend={() => {}} />
           <ColorPicker label="Accent" defaultValue="#336699" swatches={['#336699']} />
           <ColorPickerButton label="Border" defaultValue="#336699" />
-          <Panes.Root behavior="list-detail" open>
-            <Panes.List label="Start">Start</Panes.List>
-            <Panes.Divider />
-            <Panes.Detail>End</Panes.Detail>
+          <Panes.Root>
+            <Panes.Pane label="Start">Start</Panes.Pane>
+            <Panes.ResizeHandle />
+            <Panes.Pane>End</Panes.Pane>
           </Panes.Root>
           <Scaffold
             scroll="body"

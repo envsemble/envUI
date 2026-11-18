@@ -11,7 +11,7 @@ import { Text } from '../../foundations/Text.js';
 import { IconContrast } from '../../icons/Contrast.js';
 import { IconDarkMode } from '../../icons/DarkMode.js';
 import { IconLightMode } from '../../icons/LightMode.js';
-import { ResizeHandle } from '../../internal/resize/ResizeHandle.js';
+import { ResizeHandle } from '../../layout/ResizeHandle.js';
 import { useResizableWidth } from '../../internal/resize/useResizableWidth.js';
 import { remPixels } from '../../internal/dom/lengths.js';
 import * as Menu from '../../actions/menu/Menu.js';

@@ -229,23 +229,23 @@ export function HydrationApp() {
           }}
           description="Hydrated composer footer"
         />
-        <Panes.Root behavior="supporting" splitAt="medium">
-          <Panes.Main label="Hydrated main">Hydrated main pane</Panes.Main>
-          <Panes.Divider label="Hydrated split" />
-          <Panes.Supporting label="Hydrated supporting">Hydrated supporting pane</Panes.Supporting>
+        <Panes.Root sized="end" stackBelow="medium">
+          <Panes.Pane label="Hydrated main">Hydrated main pane</Panes.Pane>
+          <Panes.ResizeHandle label="Hydrated split" />
+          <Panes.Pane label="Hydrated supporting">Hydrated supporting pane</Panes.Pane>
         </Panes.Root>
         <Panes.Root
-          behavior="supporting"
-          splitAt="medium"
+          sized="end"
+          stackBelow="medium"
           persist="hydrated-kept-panes"
           persistedWidth={readPanesWidth(
             'theme=dark; hydrated-kept-panes=30',
             'hydrated-kept-panes',
           )}
         >
-          <Panes.Main label="Hydrated kept main">Kept main pane</Panes.Main>
-          <Panes.Divider label="Hydrated kept split" />
-          <Panes.Supporting label="Hydrated kept supporting">Kept supporting pane</Panes.Supporting>
+          <Panes.Pane label="Hydrated kept main">Kept main pane</Panes.Pane>
+          <Panes.ResizeHandle label="Hydrated kept split" />
+          <Panes.Pane label="Hydrated kept supporting">Kept supporting pane</Panes.Pane>
         </Panes.Root>
         <DropZone
           size="sm"

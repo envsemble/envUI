@@ -397,8 +397,8 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
   );
   return (
     <AppFrame destinations={destinations} onSearch={() => setSearching(true)}>
-      <Panes.Root behavior="supporting">
-        <Panes.Main label="Conversation">
+      <Panes.Root sized="end" stackBelow="expanded">
+        <Panes.Pane label="Conversation">
           <Page width="md" render={<Column gap={5} />} style={{ blockSize: '100%' }}>
             <PageHeader
               title="Retry failed webhook deliveries"
@@ -417,17 +417,16 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
                       onClick={() => setSettings(true)}
                     />
                   </Tooltip>
-                  <Panes.Trigger variant="secondary">Run</Panes.Trigger>
                   <Button startIcon={<IconCommit />}>Open pull request</Button>
                 </>
               }
             />
             <Conversation />
           </Page>
-        </Panes.Main>
-        <Panes.Supporting label="Run">
+        </Panes.Pane>
+        <Panes.Pane label="Run">
           <RunPanel />
-        </Panes.Supporting>
+        </Panes.Pane>
       </Panes.Root>
       <CommandPalette
         open={searching}

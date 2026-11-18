@@ -1,32 +1,37 @@
 'use client';
 
 import { useEffect, useRef, type ComponentPropsWithRef } from 'react';
-import { classNames } from '../classNames.js';
-import { setRef } from '../react/setRef.js';
-import { useResize, type ResizeOptions } from './useResize.js';
-import { useLatest } from '../useLatest.js';
-import { flag } from '../flag.js';
-import '../../styles/Base.css';
-import '../../styles/ResizeHandle.css';
+import { classNames } from '../internal/classNames.js';
+import { setRef } from '../internal/react/setRef.js';
+import { useResize, type ResizeOptions } from '../internal/resize/useResize.js';
+import { useLatest } from '../internal/useLatest.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/ResizeHandle.css';
 
 export type ResizeHandleProps = ResizeOptions &
   Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'children'> & {
-    /** The handle's name, such as Resize panes. */
+    /** The handle's name, which says what it resizes, such as Resize the project list. */
     label: string;
     /**
-     * Shows a grip, three dots at its middle, in place of the line: for a handle between two
-     * surfaces or on a surface's edge, as Panes.Divider, a side Sheet's and the NavigationDrawer's.
+     * Shows a grip of three dots at the handle's middle. false leaves the handle invisible until
+     * the pointer is over it, it has keyboard focus or it is dragged.
+     * @default true
      */
     grip?: boolean;
   };
 
 /**
- * A window splitter's handle on useResize: a focusable separator, named by its label, that shows a
- * line on hover, keyboard focus and while dragging, or with grip a grip of three dots that darkens
- * on hover and takes the focus color. The owner places it on the edge it moves.
+ * A handle that resizes what is beside it, such as two panes or a panel's edge: a focusable
+ * separator, named by its label, that the pointer drags and the arrow keys, Page Up, Page Down,
+ * Home and End move, with aria-valuenow, aria-valuemin, aria-valuemax and aria-valuetext. Its track
+ * is invisible, with a grip of three dots at its middle; a 1 px line shows along it under the
+ * pointer, while it is dragged and, in the focus color, with keyboard focus. The handle's box is
+ * what the pointer reaches: place and size it with a class on the edge it moves. The application
+ * keeps the size.
  *
- *   <ResizeHandle axis="inline" label="Resize panes" value={width} min={16} max={40} unit="rem"
- *     onChange={(next) => setWidth(next)} className="env-panes-divider" />
+ *   <ResizeHandle axis="inline" label="Resize the sidebar" value={width} min={12} max={30}
+ *     unit="rem" step={1} onChange={(next) => setWidth(next)} className="app-sidebar-edge" />
  */
 export function ResizeHandle({
   axis,
@@ -37,12 +42,13 @@ export function ResizeHandle({
   step,
   largeStep,
   unit,
+  percentOf,
   reverse,
   onChange,
   valueText,
   disabled,
   label,
-  grip = false,
+  grip = true,
   className,
   ref,
   ...props
@@ -56,6 +62,7 @@ export function ResizeHandle({
     step,
     largeStep,
     unit,
+    percentOf,
     reverse,
     onChange,
     valueText,

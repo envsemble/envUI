@@ -652,7 +652,6 @@ const activity = [
 export function ProjectsScreen() {
   const [current, setCurrent] = useState('/projects');
   const [openId, setOpenId] = useState('checkout-web');
-  const [details, setDetails] = useState<boolean | null>(null);
   const [searching, setSearching] = useState(false);
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState('all');
@@ -662,19 +661,11 @@ export function ProjectsScreen() {
     onClick: () => setCurrent(place.href),
   }));
   const project = projects.find(({ id }) => id === openId) ?? projects[0];
-  const table = (
-    <ProjectsTable
-      openId={openId}
-      onOpen={(id) => {
-        setOpenId(id);
-        setDetails(true);
-      }}
-    />
-  );
+  const table = <ProjectsTable openId={openId} onOpen={setOpenId} />;
   return (
     <AppFrame destinations={destinations} onSearch={() => setSearching(true)}>
-      <Panes.Root behavior="supporting" open={details} onOpenChange={setDetails}>
-        <Panes.Main label="Projects">
+      <Panes.Root sized="end" stackBelow="expanded">
+        <Panes.Pane label="Projects">
           <Page
             width="full"
             header={
@@ -708,10 +699,10 @@ export function ProjectsScreen() {
               {table}
             </Column>
           </Page>
-        </Panes.Main>
-        <Panes.Supporting label="Project details">
+        </Panes.Pane>
+        <Panes.Pane label="Project details">
           <ProjectDetails project={project} />
-        </Panes.Supporting>
+        </Panes.Pane>
       </Panes.Root>
       <CommandPalette
         open={searching}

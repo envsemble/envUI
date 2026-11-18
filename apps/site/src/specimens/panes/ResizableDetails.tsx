@@ -3,18 +3,15 @@ import { useMustShow } from '../../motion/Playback';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
-import { useOnScreen } from '../../figures/DeviceFrame';
-import { WidthSweep } from '../../motion/WidthSweep';
 
-const divider = '.env-panes-divider';
+const handle = '.env-panes-resize-handle';
 const panes = '.env-panes';
 
-const detailsBesideTheGap = '.env-panes-supporting .env-description-list-value';
-const mediumWindowWidthRem = 40;
+const detailsBesideTheSeam = '.env-panes-pane:last-child .env-description-list-value';
 
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: divider, x: 0.5, y: 0.5 },
+  { to: handle, x: 0.5, y: 0.5 },
   { wait: 240 },
   { press: true },
   { to: panes, x: 0.56, y: 0.5, duration: 1000 },
@@ -25,7 +22,7 @@ const script: PointerStep[] = [
   { wait: 180 },
   { leave: true },
   { wait: 300 },
-  { focus: divider },
+  { focus: handle },
   { wait: 300 },
   { key: 'ArrowLeft' },
   { wait: 270 },
@@ -41,14 +38,8 @@ const script: PointerStep[] = [
 
 function Resizing() {
   usePointer(script);
-  useMustShow(detailsBesideTheGap);
-  const onScreen = useOnScreen();
-  if (onScreen) return <ResizableDetails />;
-  return (
-    <WidthSweep widths={[mediumWindowWidthRem]} at={0} ruler={false} outline={false}>
-      <ResizableDetails />
-    </WidthSweep>
-  );
+  useMustShow(detailsBesideTheSeam);
+  return <ResizableDetails />;
 }
 
 export default function ResizableDetailsMotion() {

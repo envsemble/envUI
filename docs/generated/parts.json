@@ -3871,35 +3871,15 @@
       "parts": [
         {
           "class": "env-panes",
-          "description": "The panes: two panes side by side, or how they behave in less room; it never paints."
-        },
-        {
-          "class": "env-panes-back",
-          "description": "The button back to the list, when one pane shows at a time."
-        },
-        {
-          "class": "env-panes-backdrop",
-          "description": "The backdrop behind the supporting sheet."
+          "description": "The panes: a region split into two panes side by side, or stacked in less room; it never paints."
         },
         {
           "class": "env-panes-body",
           "description": "A pane's content, which scrolls on its own under its header."
         },
         {
-          "class": "env-panes-close",
-          "description": "The supporting pane's close button, at the end of its header row."
-        },
-        {
-          "class": "env-panes-detail",
-          "description": "The detail pane of list-detail panes."
-        },
-        {
-          "class": "env-panes-divider",
-          "description": "The gap between the panes, with its grip, that resizes them."
-        },
-        {
           "class": "env-panes-header",
-          "description": "A pane's header row, which stays in view: the back or close button and the application's header."
+          "description": "A pane's header row, which stays in view while its content scrolls."
         },
         {
           "class": "env-panes-header-content",
@@ -3907,49 +3887,15 @@
           "slot": true
         },
         {
-          "class": "env-panes-list",
-          "description": "The list pane of list-detail panes."
+          "class": "env-panes-pane",
+          "description": "One pane, the first or the last."
         },
         {
-          "class": "env-panes-main",
-          "description": "The main pane of supporting panes."
-        },
-        {
-          "class": "env-panes-supporting",
-          "description": "The supporting pane, a sheet over the main pane in less room."
-        },
-        {
-          "class": "env-panes-trigger",
-          "description": "The button in the main pane that opens the supporting pane, which shows while the pane doesn't."
+          "class": "env-panes-resize-handle",
+          "description": "The resize handle between the panes, on the seam, reaching into the pane after it."
         }
       ],
       "states": [
-        {
-          "attribute": "data-axis",
-          "values": [],
-          "parts": [
-            "env-panes-divider"
-          ]
-        },
-        {
-          "attribute": "data-behavior",
-          "values": [
-            "list-detail",
-            "supporting"
-          ],
-          "parts": [
-            "env-panes"
-          ]
-        },
-        {
-          "attribute": "data-closed",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-panes"
-          ]
-        },
         {
           "attribute": "data-env-layout",
           "values": [
@@ -3967,25 +3913,17 @@
           ]
         },
         {
-          "attribute": "data-open",
+          "attribute": "data-sized",
           "values": [
-            ""
+            "end",
+            "start"
           ],
           "parts": [
             "env-panes"
           ]
         },
         {
-          "attribute": "data-sheet-only",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-panes-close"
-          ]
-        },
-        {
-          "attribute": "data-split-at",
+          "attribute": "data-stack-below",
           "values": [
             "expanded",
             "large",
@@ -3997,11 +3935,7 @@
         }
       ],
       "uses": [
-        "Button",
-        "Icon",
-        "IconButton",
-        "ResizeHandle",
-        "Skeleton"
+        "ResizeHandle"
       ]
     },
     "Popover": {
@@ -4243,6 +4177,44 @@
         "Skeleton",
         "Theme",
         "Tooltip"
+      ]
+    },
+    "ResizeHandle": {
+      "root": "env-resize-handle",
+      "source": "packages/ui/src/layout/ResizeHandle.tsx",
+      "parts": [
+        {
+          "class": "env-resize-handle",
+          "description": "The handle: an invisible track that the pointer drags, with a grip of three dots at its middle and a line along it under the pointer, while dragged and with keyboard focus."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-axis",
+          "values": [
+            "block",
+            "inline"
+          ],
+          "parts": [
+            "env-resize-handle"
+          ]
+        },
+        {
+          "attribute": "data-grip",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-resize-handle"
+          ]
+        },
+        {
+          "attribute": "data-resizing",
+          "values": [],
+          "parts": [
+            "env-resize-handle"
+          ]
+        }
       ]
     },
     "RichText": {
@@ -6606,48 +6578,6 @@
         "RichTextEditor"
       ]
     },
-    "ResizeHandle": {
-      "root": "env-resize-handle",
-      "parts": [
-        {
-          "class": "env-resize-handle",
-          "description": "A handle that resizes a region."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-axis",
-          "values": [
-            "block",
-            "inline"
-          ],
-          "parts": [
-            "env-resize-handle"
-          ]
-        },
-        {
-          "attribute": "data-grip",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-resize-handle"
-          ]
-        },
-        {
-          "attribute": "data-resizing",
-          "values": [],
-          "parts": [
-            "env-resize-handle"
-          ]
-        }
-      ],
-      "usedBy": [
-        "NavigationDrawer",
-        "Panes",
-        "Sheet"
-      ]
-    },
     "Skeleton": {
       "root": null,
       "parts": [
@@ -6684,7 +6614,6 @@
         "NavigationBar",
         "NavigationDrawer",
         "NavigationRail",
-        "Panes",
         "Popover",
         "RelativeTime",
         "SegmentedControl",

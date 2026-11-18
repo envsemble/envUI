@@ -101,36 +101,42 @@ test('Scaffold without navigation renders no skip link to it, and scrolls the do
   assert.match(renderToString(h(Scaffold, { scroll: 'body' }, 'Body')), /data-scroll="body"/);
 });
 
-test('Panes renders its behavior, its split and its size for CSS, and the parts their roles', () => {
+test('Panes renders its sized pane, its stacking and its size for CSS, and names the pane the handle resizes', () => {
   const markup = renderToString(
     h(
       Panes.Root,
-      { behavior: 'supporting', name: 'doc', defaultWidth: 20 },
-      h(Panes.Main, { label: 'Document' }, 'Main'),
-      h(Panes.Divider),
-      h(Panes.Supporting, { label: 'Details' }, 'Side'),
+      { sized: 'end', stackBelow: 'medium', name: 'doc', defaultWidth: 20 },
+      h(Panes.Pane, { label: 'Document' }, 'Main'),
+      h(Panes.ResizeHandle),
+      h(Panes.Pane, { label: 'Details' }, 'Side'),
     ),
   );
   assert.match(
     markup,
-    /^<div class="env-panes" style="--env-panes-size:20rem" data-env-layout="panes" data-env-name="doc" data-behavior="supporting" data-split-at="expanded">/,
+    /^<div class="env-panes" style="--env-panes-size:20rem" data-env-layout="panes" data-env-name="doc" data-sized="end" data-stack-below="medium">/,
   );
-  assert.match(markup, /class="env-panes-main" role="region" aria-label="Document"/);
-  assert.match(markup, /role="region" aria-label="Details" class="env-panes-supporting"/);
+  assert.match(markup, /class="env-panes-pane" role="region" aria-label="Document"/);
   const controls = /aria-controls="([^"]+)"/.exec(markup)?.[1];
-  assert.ok(controls && markup.includes(`id="${controls}"`), markup);
+  assert.ok(controls, markup);
+  assert.match(
+    markup,
+    new RegExp(`id="${controls}" class="env-panes-pane" role="region" aria-label="Details"`),
+  );
   assert.match(markup, /role="separator"[^>]*aria-valuetext="20 rem"/);
-  assert.match(markup, /class="env-panes-backdrop" aria-hidden="true"/);
-  const open = renderToString(
+  assert.match(markup, /class="env-resize-handle env-panes-resize-handle"/);
+  assert.doesNotMatch(markup, /data-behavior|data-split-at|data-open|env-panes-backdrop/);
+  const plain = renderToString(
     h(
       Panes.Root,
-      { behavior: 'list-detail', open: true, splitAt: 'large' },
-      h(Panes.Detail, null, 'D'),
+      null,
+      h(Panes.Pane, { id: 'list' }, 'L'),
+      h(Panes.ResizeHandle),
+      h(Panes.Pane, null, 'D'),
     ),
   );
-  assert.match(open, /data-split-at="large" data-open=""/);
-  assert.match(open, /class="env-panes-back"/);
-  assert.doesNotMatch(open, /env-panes-backdrop/);
+  assert.match(plain, /data-sized="start"/);
+  assert.match(plain, /aria-controls="list"/);
+  assert.doesNotMatch(plain, /data-stack-below/);
 });
 
 test('Page renders invisible structure with its width, and its header above its content', () => {

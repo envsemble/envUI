@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   NavigationBar,
   Button,
@@ -27,7 +26,6 @@ const destinations: Destination[] = [
 ];
 
 export default function ScaffoldPanesFixture() {
-  const [open, setOpen] = useState<boolean | null>(null);
   return (
     <Scaffold
       topBar={<TopBar title="Mail" />}
@@ -38,11 +36,8 @@ export default function ScaffoldPanesFixture() {
       }}
     >
       <Page header={<PageHeader title="Inbox" sticky data-testid="page-header" />}>
-        <Panes.Root behavior="supporting" open={open} onOpenChange={setOpen}>
-          <Panes.Main label="Messages">
-            <Button variant="secondary" onClick={() => setOpen(true)}>
-              Show details
-            </Button>
+        <Panes.Root sized="end" stackBelow="medium">
+          <Panes.Pane label="Messages">
             <ul aria-label="Messages" data-testid="messages">
               {Array.from({ length: 60 }, (_, index) => (
                 <li key={index}>
@@ -50,14 +45,14 @@ export default function ScaffoldPanesFixture() {
                 </li>
               ))}
             </ul>
-          </Panes.Main>
-          <Panes.Supporting label="Details">
+          </Panes.Pane>
+          <Panes.Pane label="Details">
             <Text>From: Ada</Text>
             {Array.from({ length: 40 }, (_, index) => (
               <Text key={index}>Detail line {index + 1}</Text>
             ))}
             <Button variant="secondary">Reply</Button>
-          </Panes.Supporting>
+          </Panes.Pane>
         </Panes.Root>
       </Page>
     </Scaffold>

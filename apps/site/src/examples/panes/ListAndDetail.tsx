@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Column, Link, List, Panes, Surface, Text } from '@envsemble/envui';
+import { Button, Column, List, Panes, Surface, Text } from '@envsemble/envui';
 
 const messages = [
   { id: 'launch', from: 'Priya Shah', subject: 'Launch checklist', body: 'The venue is booked.' },
@@ -8,48 +8,39 @@ const messages = [
 ];
 
 export default function ListAndDetail() {
-  const [chosen, setChosen] = useState(messages[0]);
-  const [open, setOpen] = useState(false);
+  const [chosen, setChosen] = useState(messages[0]!);
   return (
     <Panes.Root
-      behavior="list-detail"
-      open={open}
-      onOpenChange={setOpen}
-      backLabel="Inbox"
-      style={{ blockSize: '18rem' }}
+      defaultWidth={16}
+      minWidth={12}
+      maxWidth={24}
+      style={{ inlineSize: 'min(100%, 40rem)', blockSize: '18rem' }}
     >
-      <Panes.List label="Inbox">
+      <Panes.Pane label="Inbox">
         <Surface radius="none" padding={2} style={{ minBlockSize: '100%' }}>
           <List.Root aria-label="Messages">
             {messages.map((message) => (
               <List.Item
                 key={message.id}
+                interactive
                 current={message.id === chosen.id}
                 label={
-                  <Link
-                    href={`/inbox/${message.id}`}
-                    underline={false}
-                    data-row-target
-                    aria-current={message.id === chosen.id || undefined}
-                    onClick={() => {
-                      setChosen(message);
-                      setOpen(true);
-                    }}
-                  >
+                  <Button variant="text" data-row-target onClick={() => setChosen(message)}>
                     {message.subject}
-                  </Link>
+                  </Button>
                 }
                 description={message.from}
               />
             ))}
           </List.Root>
         </Surface>
-      </Panes.List>
-      <Panes.Divider label="Resize the inbox" />
-      <Panes.Detail label={chosen.subject}>
+      </Panes.Pane>
+      <Panes.ResizeHandle label="Resize the inbox" />
+      <Panes.Pane label={chosen.subject}>
         <Surface
           radius="none"
           padding={4}
+          background="page"
           render={<Column gap={2} />}
           style={{ minBlockSize: '100%' }}
         >
@@ -58,7 +49,7 @@ export default function ListAndDetail() {
           </Text>
           <Text>{chosen.body}</Text>
         </Surface>
-      </Panes.Detail>
+      </Panes.Pane>
     </Panes.Root>
   );
 }

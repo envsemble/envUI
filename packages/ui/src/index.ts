@@ -119,6 +119,7 @@ export * from './layout/Surface.js';
 export * from './layout/Scaffold.js';
 export * from './layout/TopBar.js';
 export * as Panes from './layout/Panes.js';
+export * from './layout/ResizeHandle.js';
 export { readPanesWidth } from './layout/panesSize.js';
 export type { ResizeDetails } from './internal/resize/resizeDetails.js';
 export * from './layout/Page.js';

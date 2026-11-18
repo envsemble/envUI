@@ -101,7 +101,6 @@ test('no English default is left under a provider that sets every message', asyn
     '⟦toast.regionBottomEnd⟧',
     '⟦toast.regionTopCenter⟧',
     '⟦panes.resize⟧',
-    '⟦panes.back⟧',
     '⟦scaffold.skipToContent⟧',
     '⟦scaffold.skipToNavigation⟧',
   ])

@@ -10,7 +10,7 @@ Every `--env-*` custom property is now public: a token, a component's color prop
 - `--env-page-width-sm`, `--env-page-width-md` and `--env-page-width-lg`: a Page's column widths, 40, 60 and 76 rem.
 - `--env-navigation-rail-width`: a NavigationRail's width, 5 rem.
 - `--env-navigation-drawer-width`: the width a resizable NavigationDrawer starts at, 17.5 rem; on a resizable drawer, the width it has.
-- `--env-panes-size` and `--env-panes-other-min`: the resized pane of Panes side by side, 22.5 rem until people resize it, and the least width of the other pane, 16 rem.
+- `--env-panes-size` and `--env-panes-other-min`: the sized pane of Panes, 22.5 rem until people resize it, and the least width of the other pane, 16 rem.
 - `--env-sheet-width-md` and `--env-sheet-width-lg`: a side Sheet's widths, 24 and 44 rem.
 - `--env-dialog-width-md` and `--env-dialog-width-lg`: a Dialog's widths, 28 and 44 rem.
 

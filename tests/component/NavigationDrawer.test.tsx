@@ -32,7 +32,8 @@ describe('Drawer resizable', () => {
     expect(handleBox.width).toBeCloseTo(12, 0);
 
     focus(handle);
-    expect(css(handle, 'outline-style')).toBe('solid');
+    expect(css(handle, 'width', '::before')).toBe('2px');
+    expect(parseFloat(css(handle, 'left', '::before'))).toBeCloseTo(handleBox.width - 1, 0);
     await keyboard.press('ArrowRight');
     await expect.element(handle).toHaveAttribute('aria-valuetext', '18.5 rem');
     expect(widthOf(drawer)).toBeCloseTo(18.5 * 16, 0);

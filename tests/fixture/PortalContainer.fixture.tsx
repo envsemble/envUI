@@ -8,7 +8,6 @@ import {
   IconButton,
   Menu,
   Menubar,
-  Panes,
   PortalContainer,
   Theme,
   ToastProvider,
@@ -43,9 +42,7 @@ export default function PortalContainerFixture() {
   const [comboboxLayer, setComboboxLayer] = useState<HTMLDivElement | null>(null);
   const [contextLayer, setContextLayer] = useState<HTMLDivElement | null>(null);
   const [menubarLayer, setMenubarLayer] = useState<HTMLDivElement | null>(null);
-  const [panesLayer, setPanesLayer] = useState<HTMLDivElement | null>(null);
   const [pickerLayer, setPickerLayer] = useState<HTMLDivElement | null>(null);
-  const [panesOpen, setPanesOpen] = useState(true);
   const region = {
     position: 'relative',
     contain: 'layout',
@@ -120,19 +117,6 @@ export default function PortalContainerFixture() {
           </Menubar.Root>
         </PortalContainer>
         <div ref={setMenubarLayer} data-testid="menubar-layer" />
-      </div>
-      <div data-testid="panes-preview" style={{ ...region, inlineSize: '24rem' }}>
-        <PortalContainer container={panesLayer} contained>
-          <Panes.Root behavior="supporting" open={panesOpen} onOpenChange={setPanesOpen}>
-            <Panes.Main label="Document">
-              <Button>In the document</Button>
-            </Panes.Main>
-            <Panes.Supporting label="Details">
-              <Button>Edit details</Button>
-            </Panes.Supporting>
-          </Panes.Root>
-        </PortalContainer>
-        <div ref={setPanesLayer} data-testid="panes-layer" />
       </div>
       <div data-testid="picker-preview" style={region}>
         <PortalContainer container={pickerLayer} contained>

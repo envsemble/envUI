@@ -41,7 +41,7 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
   assert.match(markup, /aria-keyshortcuts="Control\+K"/);
   assert.match(markup, /--env-panes-size:22\.5rem/);
   assert.match(markup, /--env-panes-size:30rem/);
-  assert.match(markup, /data-split-at="medium"/);
+  assert.match(markup, /data-stack-below="medium"/);
   assert.match(markup, />in 2 days<\/time>/);
   assert.match(markup, />17 Mar 2026</);
   const localCalendar = markup.slice(markup.indexOf('aria-label="Hydrated local calendar"'));

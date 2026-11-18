@@ -3,18 +3,18 @@ import { Column, DescriptionList, Panes, Surface, Text } from '@envsemble/envui'
 export default function ResizableDetails() {
   return (
     <Panes.Root
-      behavior="supporting"
-      splitAt="medium"
+      sized="end"
       defaultWidth={18}
       minWidth={14}
       maxWidth={22}
       persist="example.details-width"
-      style={{ blockSize: '14rem' }}
+      style={{ inlineSize: 'min(100%, 44rem)', blockSize: '14rem' }}
     >
-      <Panes.Main label="Launch banner">
+      <Panes.Pane label="Launch banner">
         <Surface
           radius="none"
           padding={4}
+          background="page"
           render={<Column gap={2} />}
           style={{ minBlockSize: '100%' }}
         >
@@ -26,9 +26,9 @@ export default function ResizableDetails() {
             is due on Friday.
           </Text>
         </Surface>
-      </Panes.Main>
-      <Panes.Divider label="Resize details" />
-      <Panes.Supporting label="Banner details">
+      </Panes.Pane>
+      <Panes.ResizeHandle label="Resize details" />
+      <Panes.Pane label="Banner details">
         <Surface
           radius="none"
           padding={4}
@@ -45,7 +45,7 @@ export default function ResizableDetails() {
             <DescriptionList.Item label="Due">Friday</DescriptionList.Item>
           </DescriptionList.Root>
         </Surface>
-      </Panes.Supporting>
+      </Panes.Pane>
     </Panes.Root>
   );
 }

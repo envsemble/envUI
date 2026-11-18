@@ -24,7 +24,7 @@ import { IconUndo } from '@envsemble/envui/icons/Undo';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { PopupSurface } from '../../packages/ui/src/internal/popup/PopupSurface.js';
 import { ListRow } from '../../packages/ui/src/internal/list/ListRow.js';
-import { ResizeHandle } from '../../packages/ui/src/internal/resize/ResizeHandle.js';
+import { ResizeHandle } from '../../packages/ui/src/layout/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/forms/internal/useRovingFocus.js';
 import { useCopy } from '../../packages/ui/src/internal/useCopy.js';
 

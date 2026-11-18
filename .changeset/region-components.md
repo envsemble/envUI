@@ -8,4 +8,4 @@ Components that fill a region of the screen fill it edge to edge with square cor
 
 Breaking changes:
 
-- **Panes sit side by side on a hairline**: the gap between two panes is the control border width rather than 1 rem of the page. A `Panes.Divider` draws a 1 px line in `--env-color-border-muted` there, CanvasText under forced colors, and keeps a 0.75 rem hit area, the touch height under a coarse pointer, that reaches only into the pane after it, so the scrollbar and controls at the edge of the pane before it stay reachable; without a divider the panes are a hairline apart with no line. An application that wants the panes apart sets a margin or a gap on them.
+- **Panes sit side by side with no gap**: the panes touch, rather than 1 rem of the page apart; an application that wants them apart sets a margin or a gap on them.

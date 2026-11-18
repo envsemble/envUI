@@ -224,38 +224,7 @@
     }
   }
 
-  :where(.env-scaffold[data-scroll='document'])
-    .env-panes
-    > :is(.env-panes-main, .env-panes-list, .env-panes-detail)
-    > .env-panes-body {
+  :where(.env-scaffold[data-scroll='document']) .env-panes > .env-panes-pane > .env-panes-body {
     overflow: visible;
-  }
-  :where(.env-scaffold[data-scroll='document'])
-    .env-panes[data-behavior='supporting']
-    > .env-panes-supporting {
-    position: fixed;
-    z-index: var(--env-z-modal);
-    padding-block-end: env(safe-area-inset-bottom);
-  }
-  :where(.env-scaffold[data-scroll='document'])
-    .env-panes[data-behavior='supporting'][data-open]
-    > .env-panes-backdrop[aria-hidden] {
-    position: fixed;
-    z-index: var(--env-z-backdrop);
-  }
-  @container env-panes (width < 37.5rem) {
-    :where(.env-scaffold[data-scroll='document'])
-      .env-panes[data-behavior='supporting']
-      > .env-panes-supporting {
-      max-block-size: calc(100% - max(var(--env-space-8), env(safe-area-inset-top)));
-    }
-  }
-  @container env-panes (width >= 37.5rem) {
-    :where(.env-scaffold[data-scroll='document'])
-      .env-panes[data-behavior='supporting']
-      > .env-panes-supporting {
-      padding-block-start: env(safe-area-inset-top);
-      padding-inline-end: env(safe-area-inset-right);
-    }
   }
 }

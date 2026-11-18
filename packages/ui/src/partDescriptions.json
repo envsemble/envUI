@@ -48,10 +48,6 @@
     "Skeleton": {
       "prefix": "env-skeleton"
     },
-    "ResizeHandle": {
-      "prefix": "env-resize-handle",
-      "root": "env-resize-handle"
-    },
     "TimeList": {
       "prefix": "env-time-list",
       "root": "env-time-list"
@@ -594,19 +590,12 @@
       "env-pagination-range": "The range of items shown."
     },
     "Panes": {
-      "env-panes": "The panes: two panes side by side, or how they behave in less room; it never paints.",
-      "env-panes-main": "The main pane of supporting panes.",
-      "env-panes-supporting": "The supporting pane, a sheet over the main pane in less room.",
-      "env-panes-list": "The list pane of list-detail panes.",
-      "env-panes-detail": "The detail pane of list-detail panes.",
-      "env-panes-divider": "The gap between the panes, with its grip, that resizes them.",
-      "env-panes-back": "The button back to the list, when one pane shows at a time.",
-      "env-panes-close": "The supporting pane's close button, at the end of its header row.",
-      "env-panes-header": "A pane's header row, which stays in view: the back or close button and the application's header.",
+      "env-panes": "The panes: a region split into two panes side by side, or stacked in less room; it never paints.",
+      "env-panes-pane": "One pane, the first or the last.",
+      "env-panes-header": "A pane's header row, which stays in view while its content scrolls.",
       "env-panes-header-content": "The slot of a pane's header.",
       "env-panes-body": "A pane's content, which scrolls on its own under its header.",
-      "env-panes-backdrop": "The backdrop behind the supporting sheet.",
-      "env-panes-trigger": "The button in the main pane that opens the supporting pane, which shows while the pane doesn't."
+      "env-panes-resize-handle": "The resize handle between the panes, on the seam, reaching into the pane after it."
     },
     "PickerPopup": {
       "env-picker-popup": "The card DatePicker, TimePicker and MonthPicker open.",
@@ -661,7 +650,7 @@
       "env-relative-time": "A time relative to now, with the exact time in a tooltip."
     },
     "ResizeHandle": {
-      "env-resize-handle": "A handle that resizes a region."
+      "env-resize-handle": "The handle: an invisible track that the pointer drags, with a grip of three dots at its middle and a line along it under the pointer, while dragged and with keyboard focus."
     },
     "RichText": {
       "env-rich-text": "The rendered rich text.",

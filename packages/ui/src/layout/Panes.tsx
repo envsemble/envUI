@@ -1,143 +1,75 @@
 'use client';
 
 import {
+  Children,
+  cloneElement,
   createContext,
+  isValidElement,
   useCallback,
   useContext,
   useId,
   useLayoutEffect,
   useMemo,
-  useRef,
+  type ReactElement,
   type ComponentPropsWithRef,
-  type KeyboardEvent,
-  type MouseEvent,
   type ReactNode,
-  type RefObject,
 } from 'react';
-import { Button, IconButton, type ButtonAppearanceProps } from '../actions/Button.js';
 import { panes } from '../foundations/messages/panes.js';
-import { IconArrowBack } from '../icons/ArrowBack.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import { usePortalContainer } from '../internal/popup/PortalContainerContext.js';
-import { ResizeHandle } from '../internal/resize/ResizeHandle.js';
-import { setRef } from '../internal/react/setRef.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { readPanesWidth, writePanesWidth } from './panesSize.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
-import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/dom/lengths.js';
 import { useResizableWidth } from '../internal/resize/useResizableWidth.js';
-import { useControllableState } from '../internal/react/useControllableState.js';
-import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
-import { flag } from '../internal/flag.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { keepTabInside, useSupportingSheet } from './internal/useSupportingSheet.js';
+import { ResizeHandle as Handle, type ResizeHandleProps as HandleProps } from './ResizeHandle.js';
 import '../styles/Base.css';
 import '../styles/Panes.css';
 
-/**
- * How Panes behaves below `splitAt`: supporting, a main pane with a supporting pane that becomes a
- * sheet over it; list-detail, a list and the chosen item's detail, one at a time.
- */
-export type Behavior = 'supporting' | 'list-detail';
-
-/** The window class of Panes' own width from which its panes sit side by side. */
-export type SplitAt = 'medium' | 'expanded' | 'large';
-
-/**
- * Why Panes asks to open or close what `open` shows: Escape, the supporting pane's close button, a
- * press on the sheet's backdrop, the detail's back button, or Panes.Trigger.
- */
-export type OpenChangeReason = Extract<
-  OverlayOpenChangeReason,
-  'escape-key' | 'close-press' | 'outside-press' | 'back-press' | 'trigger-press'
->;
-
-/** What Panes.Root's onOpenChange receives beside the requested state. */
-export interface OpenChangeDetails {
-  /** Why it asks to open or close. */
-  reason: OpenChangeReason;
-}
+/** The window class of Panes' own width below which its panes stack, one above the other. */
+export type StackBelow = 'medium' | 'expanded' | 'large';
 
 export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /**
-   * supporting: Panes.Main and Panes.Supporting, such as a document and its details; below
-   * `splitAt` the supporting pane is a sheet over the main one while `open`. list-detail:
-   * Panes.List and Panes.Detail, such as messages and the one chosen; below `splitAt` one shows at a
-   * time, the detail while `open`, with a back button to the list.
+   * Which pane has a width of its own, which Panes.ResizeHandle resizes: the first, such as a list
+   * or a sidebar, or the last, such as details. The other pane takes the rest of the room.
+   * @default 'start'
    */
-  behavior: Behavior;
+  sized?: 'start' | 'end';
   /**
-   * The window class of the Panes' own width from which the panes sit side by side: medium
-   * (37.5 rem), expanded (52.5 rem) or large (75 rem). Narrower, they behave as `behavior` says. CSS
-   * decides it, so the server's markup is right before any script runs.
-   * @default 'expanded'
+   * The window class of the Panes' own width below which the panes stack, the first above the
+   * last, each half the height, and the resize handle hides: medium (37.5 rem), expanded
+   * (52.5 rem) or large (75 rem). CSS decides it, so the server's markup is right before any script
+   * runs. Without it the panes always sit side by side.
    */
-  splitAt?: SplitAt;
-  /**
-   * Whether the supporting pane shows, in every presentation: beside the main pane, or as a sheet
-   * over it below `splitAt`. null, until people open or close it, shows it where the panes sit
-   * side by side and keeps the sheet closed. In list-detail Panes, whether the detail shows instead
-   * of the list below `splitAt`, such as one that opens the detail as an item is chosen; side by
-   * side both panes show. For Panes the application controls with onOpenChange.
-   */
-  open?: boolean | null;
-  /**
-   * Whether uncontrolled Panes start with the supporting pane shown, as `open` says, or the detail
-   * shown below `splitAt`. Panes.Trigger opens the supporting pane, and Escape, the close button,
-   * the backdrop and the back button close what shows.
-   * @default null
-   */
-  defaultOpen?: boolean | null;
-  /**
-   * Called with the new state, and why: true when Panes.Trigger opens the supporting pane, and
-   * false when people close what `open` shows: the close button closes the supporting pane beside
-   * the main pane or as a sheet, and Escape or a press on the backdrop closes the sheet; the back
-   * button returns from the detail to the list.
-   */
-  onOpenChange?: (open: boolean, details: OpenChangeDetails) => void;
-  /**
-   * The name of the supporting pane's close button.
-   * @default 'Close', or EnvUIProvider's messages.panes.close
-   */
-  closeLabel?: string;
-  /**
-   * The back button's label in a list-detail's detail, below `splitAt`. Name where it goes, such as
-   * All projects.
-   * @default 'Back', or EnvUIProvider's messages.panes.back
-   */
-  backLabel?: string;
-  /**
-   * The resized pane's width in rem, for Panes the application controls with onWidthChange: the
-   * supporting pane, or the list. It applies while the panes sit side by side.
-   */
+  stackBelow?: StackBelow;
+  /** The sized pane's width in rem, for Panes the application controls with onWidthChange. */
   width?: number;
   /**
-   * The resized pane's width in rem until people choose one with Panes.Divider, or one is kept
-   * under `persist`, and the width a double click on the divider returns it to.
+   * The sized pane's width in rem until people choose one with Panes.ResizeHandle, or one is kept
+   * under `persist`, and the width a double click on the handle returns it to.
    * @default 22.5
    */
   defaultWidth?: number;
   /**
-   * Receives each new width of the resized pane, in rem: while dragging the divider with committed
+   * Receives each new width of the sized pane, in rem: while dragging the handle with committed
    * false, and with committed true as a drag ends, a key moves it or a double click resets it.
    */
   onWidthChange?: (width: number, details: ResizeDetails) => void;
   /**
-   * The resized pane's smallest width, in rem.
+   * The sized pane's smallest width, in rem.
    * @default 16
    */
   minWidth?: number;
   /**
-   * The resized pane's largest width, in rem. It never leaves the other pane less than 16 rem.
+   * The sized pane's largest width, in rem. It never leaves the other pane less than 16 rem.
    * @default 40
    */
   maxWidth?: number;
   /**
    * Keeps the width people choose in a cookie of this name, for Panes the application doesn't
-   * control; a double click on the divider forgets it and returns to `defaultWidth`. Read it on the
+   * control; a double click on the handle forgets it and returns to `defaultWidth`. Read it on the
    * server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's
    * markup has it and nothing moves as the page hydrates. Without that, the kept width applies
    * after the first render.
@@ -153,77 +85,51 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * `data-env-name`.
    */
   name?: string;
-  /**
-   * The panes: Panes.Main, an optional Panes.Divider and Panes.Supporting; or Panes.List, an
-   * optional Panes.Divider and Panes.Detail.
-   */
+  /** The two panes, with a Panes.ResizeHandle between them for people to resize them. */
   children: ReactNode;
 }
 
-interface PaneContentProps {
+export interface PaneProps extends ComponentPropsWithRef<'div'> {
   /**
-   * The top of the pane, which stays in view while the pane's content scrolls, such as a
-   * PageHeader or a Toolbar. The supporting pane's close button and the detail's back button sit
-   * in its row.
+   * Names the pane, which makes it a region landmark that people can jump to, such as Messages.
+   * Name the panes of a page's main layout; leave small panes unnamed.
+   */
+  label?: string;
+  /**
+   * The top of the pane, which stays in view while the pane's content scrolls under it, such as a
+   * PageHeader or a Toolbar.
    */
   header?: ReactNode;
 }
 
-export interface MainProps extends ComponentPropsWithRef<'div'>, PaneContentProps {
-  /**
-   * Names the pane, which makes it a region landmark that people can jump to, such as Documents.
-   * Name the panes of a page's main layout; leave small panes unnamed.
-   */
-  label?: string;
-}
-
-/** Panes.Detail's props: Panes.Main's, with its optional name. */
-export type DetailProps = MainProps;
-
-export interface ListProps extends ComponentPropsWithRef<'div'>, PaneContentProps {
-  /** Names the pane's region, such as Projects. */
-  label: string;
-}
-
-/**
- * The supporting pane: named, and a skeleton while what it holds loads. It stays busy and keeps
- * focus, as a sheet must, while its content is the skeleton, and inert.
- */
-export interface SupportingProps
-  extends ComponentPropsWithRef<'div'>, SkeletonProps, PaneContentProps {
-  /** Names the pane's region, such as Details. */
-  label: string;
-  /**
-   * Shows the close button beside the main pane too, so people can close the pane in every
-   * presentation; as a sheet the pane always shows it. false keeps the pane beside the main one
-   * open, for a pane people never close there.
-   * @default true
-   */
-  closeButton?: boolean;
-}
-
-export interface DividerProps extends Omit<
-  ComponentPropsWithRef<'div'>,
-  'children' | 'aria-label' | 'onChange'
+/** Panes.ResizeHandle's props: a ResizeHandle's look and name, with Panes keeping the width. */
+export interface ResizeHandleProps extends Omit<
+  HandleProps,
+  | 'axis'
+  | 'value'
+  | 'min'
+  | 'max'
+  | 'room'
+  | 'step'
+  | 'largeStep'
+  | 'unit'
+  | 'percentOf'
+  | 'reverse'
+  | 'onChange'
+  | 'valueText'
+  | 'label'
+  | 'aria-label'
 > {
   /**
-   * The divider's name, which says what it resizes, such as Resize project list.
+   * The handle's name, which says what it resizes, such as Resize the project list.
    * @default 'Resize panes', or EnvUIProvider's messages.panes.resize
    */
   label?: string;
 }
 
 interface PanesContextValue {
-  behavior: Behavior;
-  open: boolean | null;
-  close: (reason: OpenChangeReason) => void;
-  show: () => void;
-  backLabel: string | undefined;
-  closeLabel: string | undefined;
-  divider: ReturnType<typeof useResizableWidth>['handleProps'];
-  resizedId: string;
-  listRef: RefObject<HTMLDivElement | null>;
-  triggerRef: RefObject<HTMLButtonElement | null>;
+  handle: ReturnType<typeof useResizableWidth>['handleProps'];
+  sizedId: string;
 }
 
 const PanesContext = createContext<PanesContextValue | null>(null);
@@ -234,32 +140,20 @@ function usePanes(part: string) {
   return context;
 }
 
-const isBackdropThatClosesSheet = (element: Element) =>
-  element.classList.contains('env-panes-backdrop');
-
-const shownByCss = (element: HTMLElement | null) =>
-  element !== null && element.offsetParent !== null;
-
 const fallbackOtherPaneMinWidthRem = 16;
 
-function widestResizedPaneRem(divider: HTMLElement) {
-  const root = divider.parentElement;
+function widestSizedPaneRem(handle: HTMLElement) {
+  const root = handle.parentElement;
   if (!root) return Infinity;
-  const rem = remPixels(divider);
   const other =
     Number.parseFloat(getComputedStyle(root).getPropertyValue('--env-panes-other-min')) ||
     fallbackOtherPaneMinWidthRem;
-  return roundToHundredth((root.clientWidth - divider.offsetWidth) / rem - other);
+  return roundToHundredth(root.clientWidth / remPixels(handle) - other);
 }
 
 function Root({
-  behavior,
-  splitAt = 'expanded',
-  open: controlledOpen,
-  defaultOpen = null,
-  onOpenChange,
-  backLabel,
-  closeLabel,
+  sized = 'start',
+  stackBelow,
   width,
   defaultWidth = 22.5,
   onWidthChange,
@@ -274,7 +168,6 @@ function Root({
   ...props
 }: RootProps) {
   const sizeText = useMessages('panes', panes).size;
-  const resizedPaneIsAtEnd = behavior === 'supporting';
   const keep = useCallback(
     (kept: number | undefined) => {
       if (persist) writePanesWidth(persist, kept);
@@ -289,8 +182,8 @@ function Root({
     maxWidth,
     keptWidth: persistedWidth,
     keep,
-    room: widestResizedPaneRem,
-    reverse: resizedPaneIsAtEnd,
+    room: widestSizedPaneRem,
+    reverse: sized === 'end',
     widthText: (size) => sizeText({ size }),
   });
   const { restore } = resize;
@@ -298,31 +191,20 @@ function Root({
     const kept = persist ? readPanesWidth(document.cookie, persist) : undefined;
     if (kept !== undefined) restore(kept);
   }, [persist, restore]);
-
-  const [open, setOpen] = useControllableState<boolean | null, boolean, [OpenChangeDetails]>({
-    value: controlledOpen,
-    defaultValue: defaultOpen,
-    onChange: onOpenChange,
+  const fallbackId = `${useId()}-sized`;
+  const paneAt: number[] = [];
+  const given: ReactElement<PaneProps>[] = [];
+  Children.forEach(children, (child, index) => {
+    if (!isValidElement<PaneProps>(child) || child.type !== PanePart) return;
+    paneAt.push(index);
+    given.push(child);
   });
-  const close = useCallback((reason: OpenChangeReason) => setOpen(false, { reason }), [setOpen]);
-  const show = useCallback(() => setOpen(true, { reason: 'trigger-press' }), [setOpen]);
-  const resizedId = `${useId()}-resized`;
-  const listRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const sizedIndex = sized === 'start' ? paneAt[0] : paneAt.at(-1);
+  const sizedPane = sized === 'start' ? given[0] : given.at(-1);
+  const sizedId = sizedPane?.props.id ?? fallbackId;
   const context = useMemo<PanesContextValue>(
-    () => ({
-      behavior,
-      open,
-      close,
-      show,
-      backLabel,
-      closeLabel,
-      divider: resize.handleProps,
-      resizedId,
-      listRef,
-      triggerRef,
-    }),
-    [behavior, open, close, show, backLabel, closeLabel, resize.handleProps, resizedId],
+    () => ({ handle: resize.handleProps, sizedId }),
+    [resize.handleProps, sizedId],
   );
   return (
     <PanesContext value={context}>
@@ -332,314 +214,73 @@ function Root({
         style={{ '--env-panes-size': `${resize.width}rem`, ...style }}
         data-env-layout="panes"
         data-env-name={name}
-        data-behavior={behavior}
-        data-split-at={splitAt}
-        data-open={flag(open === true)}
-        data-closed={flag(behavior === 'supporting' && open === false)}
+        data-sized={sized}
+        data-stack-below={stackBelow}
       >
-        {children}
-        {behavior === 'supporting' && (
-          <div
-            className="env-panes-backdrop"
-            aria-hidden="true"
-            onClick={() => close('outside-press')}
-          />
+        {Children.map(children, (child, index) =>
+          index === sizedIndex && isValidElement<PaneProps>(child) && child.props.id === undefined
+            ? cloneElement(child, { id: sizedId })
+            : child,
         )}
       </div>
     </PanesContext>
   );
 }
 
-function PaneHeader({
-  header,
-  before,
-  after,
-}: PaneContentProps & { before?: ReactNode; after?: ReactNode }) {
-  if (header == null && before == null && after == null) return null;
+function Pane({ label, header, className, children, ...props }: PaneProps) {
+  usePanes('Pane');
   return (
-    <div className="env-panes-header">
-      {before}
+    <div
+      {...props}
+      className={classNames('env-panes-pane', className)}
+      {...(label !== undefined && { role: 'region', 'aria-label': label })}
+    >
       {header != null && (
-        <Slot className="env-panes-header-content" grow>
-          {header}
-        </Slot>
+        <div className="env-panes-header">
+          <Slot className="env-panes-header-content" grow>
+            {header}
+          </Slot>
+        </div>
       )}
-      {after}
+      <div className="env-panes-body">{children}</div>
     </div>
   );
 }
 
-const PaneBody = ({ children }: { children: ReactNode }) => (
-  <div className="env-panes-body">{children}</div>
-);
-
-function Main({ label, header, className, children, ...props }: MainProps) {
-  usePanes('Main');
-  return (
-    <div
-      {...props}
-      className={classNames('env-panes-main', className)}
-      {...(label !== undefined && { role: 'region', 'aria-label': label })}
-    >
-      <PaneHeader header={header} />
-      <PaneBody>{children}</PaneBody>
-    </div>
-  );
-}
-
-function Supporting({
-  label,
-  header,
-  closeButton = true,
-  skeleton = false,
-  className,
-  onKeyDown,
-  ref,
-  id,
-  children,
-  ...props
-}: SupportingProps) {
-  const { open, close, closeLabel, resizedId, triggerRef } = usePanes('Supporting');
-  const messages = useMessages('panes', panes);
-  const { contained } = usePortalContainer();
-  const pane = useRef<HTMLDivElement | null>(null);
-  const { sheet, modal } = useSupportingSheet(
-    pane,
-    open === true,
-    contained,
-    isBackdropThatClosesSheet,
-  );
-  const focusTriggerOnceClosed = useRef(false);
-  useLayoutEffect(() => {
-    if (open !== false || !focusTriggerOnceClosed.current) return;
-    focusTriggerOnceClosed.current = false;
-    triggerRef.current?.focus();
-  }, [open, triggerRef]);
-  const closePane = (reason: OpenChangeReason) => {
-    const element = pane.current;
-    focusTriggerOnceClosed.current =
-      !sheet && element !== null && element.contains(element.ownerDocument.activeElement);
-    close(reason);
-  };
-  return (
-    <div
-      tabIndex={-1}
-      {...props}
-      id={id ?? resizedId}
-      ref={(node) => {
-        pane.current = node;
-        setRef(ref, node);
-      }}
-      role={sheet ? 'dialog' : 'region'}
-      aria-modal={modal || undefined}
-      aria-label={label}
-      {...skeletonAttributes(skeleton)}
-      className={classNames('env-panes-supporting', className)}
-      onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => {
-        onKeyDown?.(event);
-        if (event.defaultPrevented || !sheet) return;
-        if (event.key === 'Escape') {
-          event.preventDefault();
-          close('escape-key');
-          return;
-        }
-        if (modal) keepTabInside(event);
-      }}
-    >
-      <PaneHeader
-        header={header}
-        after={
-          <div className="env-panes-close" data-sheet-only={flag(!closeButton)}>
-            <IconButton
-              variant="ghost"
-              icon={<IconClose />}
-              aria-label={closeLabel ?? messages.close}
-              onClick={() => closePane('close-press')}
-            />
-          </div>
-        }
-      />
-      <PaneBody>{inSkeleton(skeleton, children)}</PaneBody>
-    </div>
-  );
-}
-
-function focusCurrentRow(list: HTMLElement | null) {
-  if (!list) return;
-  const current = list.querySelector<HTMLElement>('[aria-current]:not([aria-current="false"])');
-  const target =
-    current?.matches(':is(a[href], button, [tabindex])') === true
-      ? current
-      : (current?.querySelector<HTMLElement>('a[href], button, [tabindex]') ?? current);
-  if (target && target.tabIndex >= 0) target.focus();
-  else {
-    if (!list.hasAttribute('tabindex')) list.tabIndex = -1;
-    list.focus();
-  }
-}
-
-function List({ label, header, className, ref, id, children, ...props }: ListProps) {
-  const { listRef, resizedId } = usePanes('List');
-  return (
-    <div
-      {...props}
-      id={id ?? resizedId}
-      ref={(node) => {
-        listRef.current = node;
-        setRef(ref, node);
-      }}
-      role="region"
-      aria-label={label}
-      className={classNames('env-panes-list', className)}
-    >
-      <PaneHeader header={header} />
-      <PaneBody>{children}</PaneBody>
-    </div>
-  );
-}
-
-function Detail({ label, header, className, children, ref, ...props }: DetailProps) {
-  const { open: state, close, backLabel, listRef } = usePanes('Detail');
-  const open = state === true;
-  const messages = useMessages('panes', panes);
-  const back = useRef<HTMLButtonElement>(null);
-  const detail = useRef<HTMLDivElement | null>(null);
-  const wasOpen = useRef(open);
-  useLayoutEffect(() => {
-    const opened = open && !wasOpen.current;
-    const closed = !open && wasOpen.current;
-    wasOpen.current = open;
-    if (!opened && !closed) return;
-    const oneAtATime = opened ? shownByCss(back.current) : !shownByCss(detail.current);
-    if (!oneAtATime) return;
-    const active = document.activeElement;
-    const root = detail.current?.parentElement;
-    const focusIsElsewhereOnPage = active && active !== document.body && !root?.contains(active);
-    if (focusIsElsewhereOnPage) return;
-    if (opened) back.current?.focus();
-    else if (closed) focusCurrentRow(listRef.current);
-  }, [open, listRef]);
-  return (
-    <div
-      {...props}
-      ref={(node) => {
-        detail.current = node;
-        setRef(ref, node);
-      }}
-      className={classNames('env-panes-detail', className)}
-      {...(label !== undefined && { role: 'region', 'aria-label': label })}
-    >
-      <PaneHeader
-        header={header}
-        before={
-          <div className="env-panes-back">
-            <Button
-              ref={back}
-              variant="text"
-              startIcon={<IconArrowBack />}
-              onClick={() => close('back-press')}
-            >
-              {backLabel ?? messages.back}
-            </Button>
-          </div>
-        }
-      />
-      <PaneBody>{children}</PaneBody>
-    </div>
-  );
-}
-
-function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
-  const { divider, resizedId } = usePanes('Divider');
+function ResizeHandle({ label, className, onDoubleClick, ...props }: ResizeHandleProps) {
+  const { handle, sizedId } = usePanes('ResizeHandle');
   const messages = useMessages('panes', panes);
   return (
-    <ResizeHandle
+    <Handle
       {...props}
-      {...divider}
+      {...handle}
       label={label ?? messages.resize}
-      grip
-      aria-controls={resizedId}
-      className={classNames('env-panes-divider', className)}
+      aria-controls={sizedId}
+      className={classNames('env-panes-resize-handle', className)}
       onDoubleClick={(event) => {
         onDoubleClick?.(event);
-        divider.onDoubleClick(event);
-      }}
-    />
-  );
-}
-
-/** Panes.Trigger's props: a Button's, as a native button. */
-export type TriggerProps = ButtonAppearanceProps &
-  ComponentPropsWithRef<'button'> & { href?: undefined };
-
-function Trigger({ className, onClick, ref, ...props }: TriggerProps) {
-  const { open, show, resizedId, triggerRef } = usePanes('Trigger');
-  return (
-    <Button
-      {...props}
-      ref={(node: HTMLButtonElement | null) => {
-        triggerRef.current = node;
-        setRef(ref, node);
-      }}
-      className={classNames('env-panes-trigger', className)}
-      aria-expanded={open === true}
-      aria-controls={resizedId}
-      onClick={(event: MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event);
-        if (!event.defaultPrevented) show();
+        handle.onDoubleClick(event);
       }}
     />
   );
 }
 
 /**
- * Two panes side by side, and how they behave in less room: a main pane with a supporting pane that
- * becomes a sheet over it, or a list and its detail, one at a time. Its own width decides, in CSS,
- * and one state says whether the supporting pane shows, in every presentation. Each pane's content
- * scrolls on its own under its header when Panes has a height; an optional Panes.Divider resizes
- * them.
+ * A region split into two panes side by side, such as a list and its detail: one pane has a width
+ * of its own, which a Panes.ResizeHandle between them resizes, and the other takes the rest. Each
+ * pane's content scrolls on its own under its header when Panes has a height. With `stackBelow`
+ * the panes stack in a narrow region. Panes fill their region with square corners; an application
+ * rounds them with its own class, and the panes follow, since the root clips them.
  */
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Panes.Root');
-/** The main pane of supporting Panes, at the start. */
-const MainPart = /* @__PURE__ */ withDisplayName(Main, 'Panes.Main');
+/** One pane: the first or the last child of Panes.Root, with an optional header. */
+const PanePart = /* @__PURE__ */ withDisplayName(Pane, 'Panes.Pane');
 /**
- * The supporting pane, at the end, such as details or filters for the main pane, with a close
- * button in its header row. Below `splitAt` it is a modal sheet over the main pane while `open`: a
- * side sheet in a medium width, a bottom sheet in a compact one, fixed to the window inside a
- * Scaffold whose document scrolls. As a sheet, the rest of the page is inert, Tab stays inside, and
- * Escape, the close button or a press on the backdrop closes it, returning focus to where it was. In
- * a contained PortalContainer the sheet belongs to the container and is not modal.
+ * The ResizeHandle between the panes, which resizes the sized pane: invisible on the seam with its
+ * grip of three dots, a line along it under the pointer, while dragged and with keyboard focus. Its
+ * hit area reaches only into the pane after it, so the scrollbar and the controls at the edge of the
+ * pane before it stay reachable. The arrow keys move it 1 rem a step, 5 with Shift, and a double
+ * click returns the pane to its default width. It hides while the panes stack.
  */
-const SupportingPart = /* @__PURE__ */ withDisplayName(Supporting, 'Panes.Supporting');
-/** The list pane of list-detail Panes, at the start. Below `splitAt` it hides while `open`. */
-const ListPart = /* @__PURE__ */ withDisplayName(List, 'Panes.List');
-/**
- * The detail pane of list-detail Panes, at the end. Below `splitAt` it shows only while `open`,
- * with a back button to the list at its start, and focus follows what shows: the back button as
- * the detail opens, the list's current row as it closes.
- */
-const DetailPart = /* @__PURE__ */ withDisplayName(Detail, 'Panes.Detail');
-/**
- * The divider between the panes, which resizes the supporting pane or the list: the gap between
- * them, with a small grip and no line. It is a focusable separator that the pointer drags and the
- * arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls.
- * A double click returns it to the default width. It shows only while the panes sit side by side.
- * Place it between two surfaces, each pane's own, such as a Surface as tall as the pane, never
- * beside content on the page.
- */
-const DividerPart = /* @__PURE__ */ withDisplayName(Divider, 'Panes.Divider');
-/**
- * The button that opens the supporting pane; place it in the main pane. It shows while the pane
- * doesn't: below `splitAt`, and beside the main pane once people close it. It says whether the pane
- * is open with aria-expanded. It takes Button's props.
- */
-const TriggerPart = /* @__PURE__ */ withDisplayName(Trigger, 'Panes.Trigger');
-export {
-  RootPart as Root,
-  MainPart as Main,
-  SupportingPart as Supporting,
-  ListPart as List,
-  DetailPart as Detail,
-  DividerPart as Divider,
-  TriggerPart as Trigger,
-};
+const ResizeHandlePart = /* @__PURE__ */ withDisplayName(ResizeHandle, 'Panes.ResizeHandle');
+export { RootPart as Root, PanePart as Pane, ResizeHandlePart as ResizeHandle };

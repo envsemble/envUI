@@ -4,7 +4,7 @@ import { EnvUIProvider, Menu, Menubar, SegmentedControl, Toolbar } from '@envsem
 import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
 import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
 import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
-import { ResizeHandle } from '../../packages/ui/src/internal/resize/ResizeHandle.js';
+import { ResizeHandle } from '../../packages/ui/src/layout/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/forms/internal/useRovingFocus.js';
 
 export const mount = 'standalone';

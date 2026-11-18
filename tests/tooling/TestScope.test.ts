@@ -99,7 +99,7 @@ test('a component runs the spec of its name, or of the name its alias gives', ()
 
 test('a file runs the specs whose fixtures use it, and a fixture the specs that open it', () => {
   assert.ok(specs('packages/ui/src/feedback/Progress.tsx').includes('Messages'));
-  assert.ok(specs('packages/ui/src/layout/Page.tsx').includes('Panes'));
+  assert.ok(specs('packages/ui/src/layout/Page.tsx').includes('Scaffold'));
   assert.ok(specs('packages/ui/src/forms/Calendar.tsx').includes('DatePicker'));
   assert.deepEqual(specs('tests/fixture/Combobox.fixture.tsx'), ['Combobox', 'Field']);
   assert.ok(specs('tests/fixture/CommandPalette.fixture.tsx').includes('CommandPalette'));

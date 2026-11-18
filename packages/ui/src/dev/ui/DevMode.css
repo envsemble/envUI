@@ -44,9 +44,11 @@
     inset-block: 0;
   }
   .env-dev-sidebar[data-side='tree'] > .env-dev-sidebar-resize {
+    --_resize-handle-at: 100%;
     inset-inline-end: 0;
   }
   .env-dev-sidebar[data-side='inspector'] > .env-dev-sidebar-resize {
+    --_resize-handle-at: 0%;
     inset-inline-start: 0;
   }
   @media (pointer: coarse) {

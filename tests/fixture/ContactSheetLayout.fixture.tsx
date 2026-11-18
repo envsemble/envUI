@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Avatar,
   AvatarButton,
@@ -28,7 +27,6 @@ import {
 import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
-import { IconInfo } from '@envsemble/envui/icons/Info';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { Block, Cell, Section, Strip, interactionStates } from './ContactSheetParts.fixture.js';
@@ -363,106 +361,63 @@ function Scaffolds() {
 }
 
 function PanesStrip() {
-  const [open, setOpen] = useState(true);
   return (
     <Section name="Panes">
       <Strip>
         <Cell caption="List and detail" width="50rem">
-          <Panes.Root
-            behavior="list-detail"
-            splitAt="medium"
-            defaultWidth={14}
-            style={{ blockSize: '12rem' }}
-          >
-            <Panes.List label="Inbox">
+          <Panes.Root defaultWidth={14} style={{ blockSize: '12rem' }}>
+            <Panes.Pane label="Inbox">
               <Surface padding={2} style={{ minBlockSize: '100%' }}>
                 <List.Root aria-label="Messages">
                   <List.Item label="Launch checklist" description="Priya Shah" current />
                   <List.Item label="Budget review" description="Sam Lee" />
                 </List.Root>
               </Surface>
-            </Panes.List>
-            <Panes.Divider label="Resize the inbox" />
-            <Panes.Detail label="Launch checklist">
+            </Panes.Pane>
+            <Panes.ResizeHandle label="Resize the inbox" />
+            <Panes.Pane label="Launch checklist">
               <Surface padding={4} render={<Column gap={2} />} style={{ minBlockSize: '100%' }}>
                 <Text variant="title" render={<h3 />}>
                   Launch checklist
                 </Text>
                 <Text>The venue is booked.</Text>
               </Surface>
-            </Panes.Detail>
+            </Panes.Pane>
           </Panes.Root>
         </Cell>
-        <Cell
-          caption="Divider: hover"
-          force="hover"
-          target=".env-panes-divider, [role=separator]"
-          width="50rem"
-        >
-          <Panes.Root
-            behavior="list-detail"
-            splitAt="medium"
-            defaultWidth={14}
-            style={{ blockSize: '8rem' }}
-          >
-            <Panes.List label="Inbox">
+        <Cell caption="Resize handle: hover" force="hover" target="[role=separator]" width="50rem">
+          <Panes.Root defaultWidth={14} style={{ blockSize: '8rem' }}>
+            <Panes.Pane label="Inbox">
               <Surface padding={2} style={{ minBlockSize: '100%' }}>
                 <Text>List</Text>
               </Surface>
-            </Panes.List>
-            <Panes.Divider label="Resize the inbox" />
-            <Panes.Detail label="Detail">
+            </Panes.Pane>
+            <Panes.ResizeHandle label="Resize the inbox" />
+            <Panes.Pane label="Detail">
               <Surface padding={2} style={{ minBlockSize: '100%' }}>
                 <Text>Detail</Text>
               </Surface>
-            </Panes.Detail>
+            </Panes.Pane>
           </Panes.Root>
         </Cell>
-        <Cell caption="Supporting pane open" width="50rem">
-          <Panes.Root
-            behavior="supporting"
-            splitAt="medium"
-            open={open}
-            onOpenChange={setOpen}
-            style={{ blockSize: '14rem' }}
-          >
-            <Panes.Main label="Quarterly report">
+        <Cell caption="Details at the end, no grip" width="50rem">
+          <Panes.Root sized="end" defaultWidth={18} style={{ blockSize: '10rem' }}>
+            <Panes.Pane label="Quarterly report">
               <Column gap={3} padding={4} align="start">
                 <Text variant="title" render={<h3 />}>
                   Quarterly report
                 </Text>
-                <Panes.Trigger variant="secondary" startIcon={<IconInfo />}>
-                  Details
-                </Panes.Trigger>
               </Column>
-            </Panes.Main>
-            <Panes.Supporting label="Report details">
+            </Panes.Pane>
+            <Panes.ResizeHandle label="Resize the details" grip={false} />
+            <Panes.Pane label="Report details">
               <Column padding={4}>
                 <DescriptionList.Root aria-label="About the report">
                   <DescriptionList.Item label="Owner">Sam Lee</DescriptionList.Item>
                   <DescriptionList.Item label="Due">31 March</DescriptionList.Item>
                 </DescriptionList.Root>
               </Column>
-            </Panes.Supporting>
-          </Panes.Root>
-        </Cell>
-        <Cell caption="Supporting pane skeleton" width="50rem">
-          <Panes.Root
-            behavior="supporting"
-            splitAt="medium"
-            defaultOpen
-            style={{ blockSize: '10rem' }}
-          >
-            <Panes.Main label="Report">
-              <Column padding={4}>
-                <Text>Main</Text>
-              </Column>
-            </Panes.Main>
-            <Panes.Supporting label="Details" skeleton>
-              <Column padding={4}>
-                <Text>Owner: Sam Lee</Text>
-              </Column>
-            </Panes.Supporting>
+            </Panes.Pane>
           </Panes.Root>
         </Cell>
       </Strip>

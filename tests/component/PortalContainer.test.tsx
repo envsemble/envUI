@@ -231,21 +231,4 @@ describe('PortalContainer, contained', () => {
     await isShown(layer.getByRole('menu', { name: 'Edit' }));
     await isGone(layer.getByRole('menu', { name: 'File' }));
   });
-
-  test('Panes open as a sheet in it leave the page in use', async () => {
-    mount(fixture);
-    const sheet = page.getByTestId('panes-preview').getByRole('dialog', { name: 'Details' });
-    await isShown(sheet);
-    await expect.element(sheet).not.toHaveAttribute('aria-modal');
-    expect(document.querySelectorAll('[inert]')).toHaveLength(0);
-    expect(document.activeElement).toBe(document.body);
-    const outside = page.getByTestId('outside');
-    (outside.element() as HTMLElement).focus();
-    await expect.element(outside).toHaveFocus();
-    const edit = sheet.getByRole('button', { name: 'Edit details' });
-    (edit.element() as HTMLElement).focus();
-    await keyboard.press('Tab');
-    await expect.element(edit).not.toHaveFocus();
-    expect(shown(sheet)).toBe(true);
-  });
 });

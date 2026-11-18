@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState, type MouseEvent } from 'react';
-import type { ResizeHandleProps } from './ResizeHandle.js';
+import type { ResizeOptions } from './useResize.js';
 import { useFormatters } from '../provider/useFormatters.js';
 import { remPixels, roundToHundredth } from '../dom/lengths.js';
 import type { ResizeDetails } from './resizeDetails.js';
@@ -136,7 +136,9 @@ export function useResizableWidth({
         onDoubleClick: (event: MouseEvent<HTMLDivElement>) => {
           if (!event.defaultPrevented) reset();
         },
-      }) satisfies Omit<ResizeHandleProps, 'label'>,
+      }) satisfies ResizeOptions & {
+        onDoubleClick: (event: MouseEvent<HTMLDivElement>) => void;
+      },
     [reverse, width, min, max, room, change, reset, latest, formatters],
   );
   const restore = useCallback((kept: number) => setChosen(kept), []);

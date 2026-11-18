@@ -1,7 +1,7 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Primitives.fixture.tsx';
-import { box, keyboard, mouse } from './support/Browser.ts';
+import { box, css, keyboard, mouse } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
@@ -44,3 +44,40 @@ test('follows the pointer and commits as the drag ends', { tags: ['engines'] }, 
   await expect.poll(committed('ltr')).toBe('250');
   await expect.element(handle).not.toHaveAttribute('data-resizing');
 });
+
+test(
+  'the track is invisible with a grip of three dots, and a line shows under the pointer, while dragged and with focus',
+  { tags: ['engines'] },
+  async () => {
+    const handle = page.getByTestId('resize-ltr').getByRole('separator');
+    const element = handle.element() as HTMLElement;
+    element.scrollIntoView({ block: 'center' });
+    const line = () => css(element, 'background-color', '::before');
+    const colorOf = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      element.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    expect(line()).toBe('rgba(0, 0, 0, 0)');
+    expect(css(element, 'background-color')).toBe('rgba(0, 0, 0, 0)');
+    expect(css(element, 'content', '::after')).not.toBe('none');
+    const { x, y, width, height } = box(handle);
+    await mouse.move(x + width / 2, y + height / 2);
+    await expect.poll(line).toBe(colorOf('--env-color-border-muted'));
+    expect(css(element, 'width', '::before')).toBe('1px');
+    await mouse.down();
+    await mouse.move(x + width / 2 + 20, y + height / 2, { steps: 3 });
+    await mouse.move(0, 0, { steps: 3 });
+    await expect.poll(line).toBe(colorOf('--env-color-border-muted'));
+    await mouse.up();
+    await expect.poll(line).toBe('rgba(0, 0, 0, 0)');
+    element.blur();
+    await keyboard.press('Escape');
+    element.focus();
+    await expect.poll(line).toBe(colorOf('--env-color-border-focus'));
+    expect(css(element, 'width', '::before')).toBe('2px');
+  },
+);
