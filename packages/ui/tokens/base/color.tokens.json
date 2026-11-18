@@ -117,15 +117,15 @@
       "selected": {
         "$root": {
           "$description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A neutral gray deeper than the surfaces in every theme, distinct from them at rest: ΔEOK 0.03 or more, 0.04 at high contrast. The item’s second cue, a bar, a check or its weight, tells it from a hovered item. Under Theme selection=\"accent\" it takes bg.selected.accent.",
-          "$value": "{palette.gray.13}"
+          "$value": "{palette.gray.15}"
         },
         "hover": {
           "$description": "A selected item under the pointer: a step toward the surface from the selection.",
-          "$value": "{palette.gray.10}"
+          "$value": "{palette.gray.12}"
         },
         "pressed": {
           "$description": "A selected item while pressed: another step toward the surface. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.gray.9}"
+          "$value": "{palette.gray.11}"
         },
         "accent": {
           "$root": {
@@ -246,15 +246,15 @@
         "emphasis": {
           "$root": {
             "$description": "The primary fill of chosen radios, checked checkboxes, switches that are on, the chosen calendar day, check marks, meters and spinners; paired with fg.on-emphasis. A saturated blue with white marks in light; in dark a lighter blue with dark marks, which keeps 3:1 against every surface, a selected row's too. Primary actions take color.bg.primary.strong.",
-            "$value": "{palette.blue.50}"
+            "$value": "{palette.blue.55}"
           },
           "hover": {
             "$description": "A checked control under the pointer: a grade further from its marks, darker in light and lighter in dark.",
-            "$value": "{palette.blue.60}"
+            "$value": "{palette.blue.65}"
           },
           "pressed": {
             "$description": "A checked control while pressed: in light a grade past its hover; in dark a step deeper than rest, still clear of its dark marks, so it reads as pressed rather than highlighted.",
-            "$value": "{palette.blue.70}"
+            "$value": "{palette.blue.75}"
           }
         },
         "strong": {

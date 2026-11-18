@@ -121,7 +121,7 @@
   }
   .env-badge[data-count]:where([data-variant='solid']) {
     background: var(--env-badge-container, var(--_badge-count-bg, var(--_badge-fill)));
-    color: var(--env-badge-content, var(--_badge-count-fg, var(--env-color-fg-on-emphasis)));
+    color: var(--env-badge-content, var(--_badge-count-fg, var(--_badge-on-fill)));
   }
   .env-badge[data-count]:where([data-variant='outline']) {
     /* prettier-ignore */

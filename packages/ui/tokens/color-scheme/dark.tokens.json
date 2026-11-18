@@ -222,7 +222,7 @@
             "$value": "{palette.blue.50}"
           },
           "pressed": {
-            "$value": "{palette.blue.60}"
+            "$value": "{palette.blue.65}"
           }
         },
         "subtle": {
@@ -370,7 +370,7 @@
             "$value": "{palette.red.50}"
           },
           "pressed": {
-            "$value": "{palette.red.60}"
+            "$value": "{palette.red.65}"
           }
         },
         "muted": {
