@@ -17,7 +17,7 @@
       },
       "recessed": {
         "$root": {
-          "$value": "{palette.neutral.94}"
+          "$value": "{palette.neutral.96}"
         },
         "hover": {
           "$value": "{palette.neutral.88}"
@@ -95,13 +95,13 @@
       },
       "selected": {
         "$root": {
-          "$value": "{palette.gray.75}"
+          "$value": "{palette.gray.70}"
         },
         "hover": {
-          "$value": "{palette.gray.80}"
+          "$value": "{palette.gray.75}"
         },
         "pressed": {
-          "$value": "{palette.gray.84}"
+          "$value": "{palette.gray.80}"
         },
         "accent": {
           "$root": {
@@ -124,10 +124,10 @@
           }
         },
         "hover": {
-          "$value": "{palette.neutral.75}"
+          "$value": "{palette.neutral.80}"
         },
         "pressed": {
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.neutral.75}"
         }
       },
       "neutral": {

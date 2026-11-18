@@ -24,11 +24,12 @@
     --_surface-hover: var(--env-color-bg-default-hover);
     --_surface-pressed: var(--env-color-bg-default-pressed);
     --_surface-muted-ground: initial;
+    --_surface-edge: initial;
     --_surface-color: var(--env-surface-container, var(--_surface-container-default));
     --_surface-padding: clamp(1.25rem, 3vw, 1.5rem);
     --_surface-radius: var(--env-radius-surface);
     padding: var(--_surface-padding);
-    border: var(--env-control-border-width) solid var(--env-surface-outline);
+    border: var(--env-control-border-width) solid var(--env-surface-outline, var(--_surface-edge));
     border-radius: var(--_surface-radius);
     background: var(--_surface-color);
     color: var(--env-surface-content);
@@ -47,6 +48,7 @@
     --_surface-pressed: var(--env-color-bg-page-pressed);
   }
   .env-surface:where([data-background='raised']) {
+    --_surface-edge: oklch(from var(--env-color-fg-default) l c h / 0.1);
     --_surface-container-default: var(--env-color-bg-raised);
     --_surface-hover: var(--env-color-bg-raised-hover);
     --_surface-pressed: var(--env-color-bg-raised-pressed);

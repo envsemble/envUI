@@ -10,7 +10,7 @@
     --env-tooltip-opacity: 82%;
     --env-tooltip-shadow: 0 6px 16px -6px oklch(from var(--env-color-fg-default) l c h / 0.3);
     --_popup-solid: initial;
-    --_popup-frosted-edge: transparent;
+    --_popup-frosted-edge: oklch(from var(--env-color-fg-default) l c h / 0.1);
     --_popup-row-height: calc(var(--env-row-height) + 0.25rem);
     --_popup-padding: calc(0.15 * var(--_popup-row-height));
     --_popup-row-radius: calc(0.35 * var(--_popup-row-height));
