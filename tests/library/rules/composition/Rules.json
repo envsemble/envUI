@@ -17,7 +17,6 @@
       "overlays/": "base",
       "layout/": "composites",
       "content/internal/markdown/": "composites",
-      "layout/panel-dock/": "shell",
       "forms/color/": "composites",
       "forms/rich-text/": "composites",
       "actions/menu/": "composites",
@@ -452,21 +451,6 @@
       "Message": {
         "modules": ["content/internal/MessageListFollow.tsx"]
       },
-      "PanelDock": {
-        "modules": [
-          "layout/panel-dock/internal/PanelFrame.tsx",
-          "layout/panel-dock/internal/PanelTab.tsx",
-          "layout/panel-dock/internal/dockLayout.ts",
-          "layout/panel-dock/internal/useEntrance.ts",
-          "layout/panel-dock/internal/PanelDockPanelContext.ts",
-          "layout/panel-dock/internal/useDockArrangement.ts",
-          "layout/panel-dock/internal/useDockFocus.ts",
-          "layout/panel-dock/internal/useDockMeasurements.ts",
-          "layout/panel-dock/internal/usePanelHeights.ts",
-          "layout/panel-dock/internal/useRecency.ts",
-          "layout/panel-dock/internal/useScrollPreservation.ts"
-        ]
-      },
       "TableOfContents": {
         "modules": [
           "navigation/internal/sectionScroll.ts",
@@ -639,12 +623,6 @@
           "classes": ["env-checkbox"],
           "properties": ["vertical-align"],
           "note": "A task list item lines its checkbox up with the item's text."
-        },
-        {
-          "stylesheet": "Scaffold.css",
-          "classes": ["env-panel-dock"],
-          "properties": ["container-type"],
-          "note": "A Scaffold's body places a PanelDock directly in it across its scrollport, so the dock stays over the body's visible area while it scrolls; the body, its own element, becomes a size container only while it holds a dock."
         },
         {
           "stylesheet": "Scaffold.css",

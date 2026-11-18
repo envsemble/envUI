@@ -20,7 +20,6 @@ const sheets = Object.fromEntries(
 const ownThresholds = {
   'DescriptionList.css': ['18rem'],
   'Table.css': ['37.5em'],
-  'PanelDock.css': ['37.5em'],
   'Calendar.css': ['14rem'],
   'EmptyState.css': ['24rem'],
 };

@@ -199,62 +199,6 @@ body:has(> #root > .env-theme > .env-scaffold) {
 .fixture-row-action {
   position: relative;
 }
-.fixture-dock-frame {
-  position: relative;
-  block-size: 40rem;
-  overflow: hidden;
-  border: 0.0625rem solid var(--env-color-border-muted);
-  border-radius: var(--env-radius-sm);
-}
-.fixture-dock-page {
-  display: grid;
-  justify-items: start;
-  gap: var(--env-space-3);
-  padding: var(--env-space-5);
-}
-.fixture-dock-body {
-  display: grid;
-  gap: var(--env-space-3);
-  padding: 0 var(--env-space-5) var(--env-space-5);
-}
-.fixture-dock-list {
-  max-block-size: 8rem;
-  margin: 0;
-  overflow-y: auto;
-}
-.fixture-dock-chat {
-  max-block-size: 4rem;
-  margin: 0;
-  overflow-y: auto;
-}
-.fixture-dock-tags {
-  display: flex;
-  gap: var(--env-space-2);
-  overflow-x: auto;
-  white-space: nowrap;
-}
-.fixture-dock-tags > button {
-  flex: none;
-}
-.fixture-dock-narrow {
-  inline-size: min(100%, 24rem);
-  block-size: 24rem;
-}
-.fixture-dock-minimizing {
-  inline-size: min(100%, 52rem);
-  block-size: 24rem;
-}
-.fixture-dock-wider-open {
-  inline-size: min(100%, 52rem);
-  block-size: 24rem;
-}
-.fixture-dock-wider-open .env-panel-dock-panel[data-mode='open'] {
-  --_panel-dock-panel-min-width: 420px;
-}
-.fixture-dock-single {
-  inline-size: min(100%, 42rem);
-  block-size: 24rem;
-}
 .fixture-avatar-row {
   inline-size: 17rem;
 }
@@ -359,12 +303,6 @@ body:has(.density-fixture) {
 .density-tight[data-layout='reverse'] {
   flex-direction: row-reverse;
   justify-content: start;
-}
-.density-dock-frame {
-  position: relative;
-  block-size: 12rem;
-  inline-size: 22rem;
-  outline: 0.0625rem dashed var(--env-color-border-muted);
 }
 .density-app {
   display: grid;

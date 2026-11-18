@@ -27,8 +27,6 @@ import {
   MessageList,
   CalendarHeatmap,
   Combobox,
-  PanelDock,
-  type PanelDockPanel,
   RelativeTime,
   AvatarGroup,
   CopyButton,
@@ -74,10 +72,6 @@ export function HydrationApp() {
   const [draft, setDraft] = useState('');
   const [message, setMessage] = useState('');
   const [files, setFiles] = useState('No files yet');
-  const [dockPanels, setDockPanels] = useState<PanelDockPanel[]>([
-    { id: 'notes', title: 'Hydrated notes', mode: 'open', active: true },
-    { id: 'budget', title: 'Hydrated budget', mode: 'minimized', attention: 'Hydrated changes' },
-  ]);
   const [person, setPerson] = useState('Nobody yet');
   const [page, setPage] = useState(1);
   return (
@@ -253,28 +247,6 @@ export function HydrationApp() {
           <Panes.Divider label="Hydrated kept split" />
           <Panes.Supporting label="Hydrated kept supporting">Kept supporting pane</Panes.Supporting>
         </Panes.Root>
-        <div style={{ position: 'relative', blockSize: '24rem' }}>
-          <PanelDock.Root
-            panels={dockPanels}
-            onModeChange={(id, mode) =>
-              setDockPanels((current) =>
-                current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
-              )
-            }
-            onClose={(id) => setDockPanels((current) => current.filter((panel) => panel.id !== id))}
-            minimizedLabel="Hydrated chips"
-            openLabel={(label) => `Open ${label}`}
-            closeLabel={(label) => `Discard ${label}`}
-            resizeLabel={(title) => `Height of ${title}`}
-          >
-            {(panel) => (
-              <>
-                <PanelDock.Header title={panel.title} headingLevel={3} />
-                <TextField label={`${panel.title} draft`} />
-              </>
-            )}
-          </PanelDock.Root>
-        </div>
         <DropZone
           size="sm"
           label="Hydrated files"

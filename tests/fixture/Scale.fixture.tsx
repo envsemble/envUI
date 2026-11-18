@@ -16,7 +16,6 @@ import {
   NavigationRail,
   type Destination,
   Pagination,
-  PanelDock,
   SearchField,
   SegmentedControl,
   Select,
@@ -503,30 +502,6 @@ const tightLayouts = [
   { name: 'reverse', title: 'A reversed row' },
 ] as const;
 
-function DockedPanel() {
-  return (
-    <div className="density-dock-frame">
-      <PanelDock.Root
-        panels={[{ id: 'report', title: 'Quarterly report', mode: 'open', active: true }]}
-        onModeChange={() => {}}
-        onClose={() => {}}
-      >
-        {(panel) => (
-          <PanelDock.Header
-            title={panel.title}
-            actions={
-              <>
-                <IconButton icon={<IconEdit />} aria-label="Edit the report" />
-                <IconButton icon={<IconMoreVert />} aria-label="More actions" />
-              </>
-            }
-          />
-        )}
-      </PanelDock.Root>
-    </div>
-  );
-}
-
 function LayoutsSection() {
   return (
     <div className="density-columns" data-columns="4">
@@ -553,9 +528,6 @@ function LayoutsSection() {
           </div>
         </Column>
       ))}
-      <Column title="A docked panel's header">
-        <DockedPanel />
-      </Column>
     </div>
   );
 }

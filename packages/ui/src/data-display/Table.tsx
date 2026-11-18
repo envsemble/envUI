@@ -81,8 +81,8 @@ export interface RootProps
   narrowLayout?: 'scroll' | 'stack';
   /**
    * The region width below which a table with narrowLayout="stack" stacks its rows: a CSS length
-   * such as 60rem or 480px, or a number of rem, such as 40 or "40", as PanelDock's. Wide tables,
-   * such as seven sortable columns, need more.
+   * such as 60rem or 480px, or a number of rem, such as 40 or "40". Wide tables, such as seven
+   * sortable columns, need more.
    */
   stackBelow?: string | number;
   /**

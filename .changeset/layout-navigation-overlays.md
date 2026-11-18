@@ -13,7 +13,7 @@ Layout, navigation and overlays place what applications give them without stylin
 - **Panes** keeps one state for the supporting pane, which every presentation follows. Its close button closes it beside the main pane too: the main pane takes the room, and Panes.Trigger shows and takes focus. `open` and `defaultOpen` take `null`, the new default: shown side by side, the sheet closed until people open it. `closeButton={false}` on Panes.Supporting keeps the pane open beside the main one. Each pane takes a `header`, which stays in view while the pane's content scrolls under it, so a pane never overflows.
 - **Modals stack in the order they open.** A Dialog opened from a Sheet, or any modal from another, covers it with a backdrop of its own. Backdrops and modal surfaces share `--env-z-modal`.
 - A Dialog's, a Sheet's and a ConfirmDialog's `description` is no longer a paragraph.
-- DocumentTabs' `end` and PanelDock.Header's `meta` and content only place what they hold; a panel's meta takes the smaller muted text from the heading around it.
+- DocumentTabs' `end` only places what it holds.
 
 Breaking changes:
 

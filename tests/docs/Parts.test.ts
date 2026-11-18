@@ -201,8 +201,8 @@ test('data-env-ssr-* attributes are private, and the contract leaves them out', 
   assert.equal(isPrivateState('data-env-ssr-placement'), true);
   assert.equal(isPrivateState('data-env-theme-switching'), true);
   assert.equal(isPrivateState('data-stacked'), false);
-  const dock = component('PanelDock');
-  assert.ok(state(dock, 'data-stacked'));
+  const table = component('Table');
+  assert.ok(state(table, 'data-stacked'));
   const groups = [...Object.values(parts.components), ...Object.values(parts.shared)];
   assert.deepEqual(
     groups.flatMap((group) => group.states.filter((item) => isPrivateState(item.attribute))),

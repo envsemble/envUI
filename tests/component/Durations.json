@@ -51,7 +51,6 @@
     "tests/component/NavigationRail.test.tsx": 0.2,
     "tests/component/PageHeader.test.tsx": 0.2,
     "tests/component/Pagination.test.tsx": 0.9,
-    "tests/component/PanelDock.test.tsx": 16.6,
     "tests/component/Panes.test.tsx": 1.4,
     "tests/component/PopupSurface.test.tsx": 0.3,
     "tests/component/PortalContainer.test.tsx": 4.1,

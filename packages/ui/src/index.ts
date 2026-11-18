@@ -121,8 +121,6 @@ export * from './layout/TopBar.js';
 export * as Panes from './layout/Panes.js';
 export { readPanesWidth } from './layout/panesSize.js';
 export type { ResizeDetails } from './internal/resize/resizeDetails.js';
-export * as PanelDock from './layout/panel-dock/PanelDock.js';
-export type { PanelDockMode, PanelDockPanel } from './layout/panel-dock/panelDockTypes.js';
 export * from './layout/Page.js';
 export * from './layout/PageHeader.js';
 export * from './layout/Card.js';

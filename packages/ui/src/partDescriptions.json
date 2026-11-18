@@ -593,27 +593,6 @@
       "env-pagination-button": "One page, previous or next button.",
       "env-pagination-range": "The range of items shown."
     },
-    "PanelDock": {
-      "env-panel-dock": "The dock of panels.",
-      "env-panel-dock-actions": "A panel's actions in its header.",
-      "env-panel-dock-content": "A panel's content.",
-      "env-panel-dock-controls": "A panel's window controls: minimize, maximize and close.",
-      "env-panel-dock-header": "A panel's header.",
-      "env-panel-dock-header-content": "The slot of the content below the title row, such as Tabs.",
-      "env-panel-dock-heading": "A panel's heading.",
-      "env-panel-dock-meta": "The slot of the supporting text under a panel's title.",
-      "env-panel-dock-panel": "One panel.",
-      "env-panel-dock-probe": "An invisible element that measures the dock's room.",
-      "env-panel-dock-resize-handle": "The handle that resizes the dock.",
-      "env-panel-dock-row": "The row of open panels.",
-      "env-panel-dock-strip": "The strip of minimized panels' tabs.",
-      "env-panel-dock-tab": "A minimized panel's tab.",
-      "env-panel-dock-tab-attention": "The mark of a tab that asks for attention.",
-      "env-panel-dock-tab-close": "A tab's close button.",
-      "env-panel-dock-tab-label": "A tab's title.",
-      "env-panel-dock-tab-restore": "The button that restores a minimized panel.",
-      "env-panel-dock-title": "A panel's title."
-    },
     "Panes": {
       "env-panes": "The panes: two panes side by side, or how they behave in less room; it never paints.",
       "env-panes-main": "The main pane of supporting panes.",

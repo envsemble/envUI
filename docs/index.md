@@ -112,7 +112,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Page](components/page.md)
 - [Panes](components/panes.md)
 - [TopBar](components/top-bar.md)
-- [PanelDock](components/panel-dock.md)
 - [Surface](components/surface.md)
 - [Card](components/card.md)
 - [Box](components/box.md)

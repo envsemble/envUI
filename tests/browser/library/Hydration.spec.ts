@@ -96,20 +96,6 @@ test('public components hydrate server output without recoverable errors', async
   await split.focus();
   await page.keyboard.press('ArrowLeft');
   await expect(split).toHaveAttribute('aria-valuetext', '23.5 rem');
-  const docked = page.getByRole('region', { name: 'Hydrated notes' });
-  await expect(docked.getByRole('heading', { level: 3, name: 'Hydrated notes' })).toBeVisible();
-  const chips = page.getByRole('list', { name: 'Hydrated chips' });
-  await expect(
-    chips.getByRole('button', { name: 'Open Hydrated budget' }),
-  ).toHaveAccessibleDescription('Hydrated changes');
-  await expect(chips.getByRole('button', { name: 'Discard Hydrated budget' })).toBeVisible();
-  const dockHandle = docked.getByRole('separator', { name: 'Height of Hydrated notes' });
-  await expect(dockHandle).toHaveAttribute('aria-valuenow', /\d+/);
-  const dockDraft = docked.getByRole('textbox', { name: 'Hydrated notes draft' });
-  await dockDraft.fill('Hydrated draft');
-  await docked.getByRole('button', { name: 'Minimize' }).click();
-  await chips.getByRole('button', { name: 'Open Hydrated notes' }).click();
-  await expect(dockDraft).toHaveValue('Hydrated draft');
   const activity = page.getByRole('grid', { name: 'Hydrated activity' });
   await expect(activity.getByRole('gridcell')).toHaveCount(31);
   const [peakName, nextName] = await page.evaluate(() => {

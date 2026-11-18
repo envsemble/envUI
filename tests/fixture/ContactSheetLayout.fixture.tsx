@@ -16,7 +16,6 @@ import {
   NavigationRail,
   Page,
   PageHeader,
-  PanelDock,
   Panes,
   Row,
   Scaffold,
@@ -25,13 +24,11 @@ import {
   Text,
   TopBar,
   type Destination,
-  type PanelDockPanel,
 } from '@envsemble/envui';
 import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconInfo } from '@envsemble/envui/icons/Info';
-import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { Block, Cell, Section, Strip, interactionStates } from './ContactSheetParts.fixture.js';
@@ -473,89 +470,6 @@ function PanesStrip() {
   );
 }
 
-function Dock({
-  initial,
-  overflow,
-}: {
-  initial: PanelDockPanel[];
-  overflow?: 'scroll' | 'minimize';
-}) {
-  const [panels, setPanels] = useState(initial);
-  return (
-    <Surface
-      background="muted"
-      padding={0}
-      style={{ position: 'relative', blockSize: '17rem', inlineSize: '100%', overflow: 'hidden' }}
-    >
-      <PanelDock.Root
-        panels={panels}
-        stackBelow="30rem"
-        overflow={overflow}
-        onModeChange={(id, mode) =>
-          setPanels((current) =>
-            current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
-          )
-        }
-        onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
-        onActivate={(id) =>
-          setPanels((current) => current.map((panel) => ({ ...panel, active: panel.id === id })))
-        }
-        onHeightChange={(id, height) =>
-          setPanels((current) =>
-            current.map((panel) => (panel.id === id ? { ...panel, height } : panel)),
-          )
-        }
-      >
-        {(panel) => (
-          <>
-            <PanelDock.Header
-              title={panel.title}
-              meta="Edited by Alex Morgan"
-              actions={
-                <IconButton variant="ghost" size="sm" icon={<IconMoreVert />} aria-label="More" />
-              }
-            />
-            <Text style={{ padding: '0 1.5rem 1.5rem' }}>The launch moves to May.</Text>
-          </>
-        )}
-      </PanelDock.Root>
-    </Surface>
-  );
-}
-
-function PanelDocks() {
-  return (
-    <Section name="PanelDock">
-      <Strip>
-        <Cell caption="One open and active, one minimized" width="34rem">
-          <Dock
-            initial={[
-              { id: 'press', title: 'Press release', mode: 'open', active: true, height: 12.5 },
-              { id: 'budget', title: 'Budget', mode: 'minimized' },
-            ]}
-          />
-        </Cell>
-        <Cell caption="Two open side by side, one minimized" width="44rem">
-          <Dock
-            initial={[
-              { id: 'press', title: 'Press release', mode: 'open', active: true, height: 12 },
-              { id: 'notes', title: 'Notes', mode: 'open', height: 10 },
-              { id: 'budget', title: 'Budget', mode: 'minimized' },
-            ]}
-          />
-        </Cell>
-        <Cell caption="Narrow: stacked" width="24rem">
-          <Dock
-            initial={[
-              { id: 'press', title: 'Press release', mode: 'open', active: true, height: 12.5 },
-            ]}
-          />
-        </Cell>
-      </Strip>
-    </Section>
-  );
-}
-
 export function LayoutSheet() {
   return (
     <>
@@ -566,7 +480,6 @@ export function LayoutSheet() {
       <TopBars />
       <Scaffolds />
       <PanesStrip />
-      <PanelDocks />
     </>
   );
 }

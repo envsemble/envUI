@@ -28,7 +28,6 @@ import { navigation } from './navigation.js';
 import { pager } from './pager.js';
 import { pagination } from './pagination.js';
 import { panes } from './panes.js';
-import { panelDock } from './panelDock.js';
 import { rating } from './rating.js';
 import { relativeTime } from './relativeTime.js';
 import { richText } from './richText.js';
@@ -80,7 +79,6 @@ export const defaultMessages = {
   pager,
   pagination,
   panes,
-  panelDock,
   rating,
   relativeTime,
   richText,

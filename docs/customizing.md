@@ -340,11 +340,6 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 - Parts: `env-pagination`, `env-pagination-button`, `env-pagination-range`
 - States: `data-direction` (`next`, `previous`) on `env-pagination-button`; `data-size` (`lg`, `md`, `sm`)
 
-### PanelDock
-
-- Parts: `env-panel-dock`, `env-panel-dock-actions`, `env-panel-dock-content`, `env-panel-dock-controls`, `env-panel-dock-header`, `env-panel-dock-header-content` (slot), `env-panel-dock-heading`, `env-panel-dock-meta` (slot), `env-panel-dock-panel`, `env-panel-dock-probe`, `env-panel-dock-resize-handle`, `env-panel-dock-row`, `env-panel-dock-strip`, `env-panel-dock-tab`, `env-panel-dock-tab-attention`, `env-panel-dock-tab-close`, `env-panel-dock-tab-label`, `env-panel-dock-tab-restore`, `env-panel-dock-title`
-- States: `data-active` on `env-panel-dock-panel`; `data-attention` on `env-panel-dock-tab`; `data-entering` on `env-panel-dock-panel`, `env-panel-dock-tab`; `data-filled`; `data-mode` (`maximized`, `minimized`, `open`) on `env-panel-dock-panel`, `env-panel-dock-tab`; `data-overflowing` on `env-panel-dock-row`; `data-panel-id` on `env-panel-dock-panel`, `env-panel-dock-tab`; `data-placement` (`fill`, `hidden`, `row`) on `env-panel-dock-panel`; `data-resizing` on `env-panel-dock-panel`; `data-scrolled` on `env-panel-dock-header`; `data-stacked`; `data-tabs`
-
 ### Panes
 
 - Parts: `env-panes`, `env-panes-back`, `env-panes-backdrop`, `env-panes-body`, `env-panes-close`, `env-panes-detail`, `env-panes-divider`, `env-panes-header`, `env-panes-header-content` (slot), `env-panes-list`, `env-panes-main`, `env-panes-supporting`, `env-panes-trigger`

@@ -35,23 +35,6 @@ function Ladder() {
         data-layer="loading-bar-contained"
         className="env-loading-bar env-loading-bar-contained"
       />
-      <div data-layer="panel-dock" className="env-panel-dock">
-        <div data-layer="panel-dock-panel" className="env-panel-dock-panel" />
-        <div data-layer="panel-dock-panel-active" className="env-panel-dock-panel" data-active="" />
-        <div
-          data-layer="panel-dock-panel-fill"
-          className="env-panel-dock-panel"
-          data-placement="fill"
-        />
-        <div
-          data-layer="panel-dock-panel-hidden"
-          className="env-panel-dock-panel"
-          data-placement="hidden"
-        />
-        <div data-layer="panel-dock-resize" className="env-panel-dock-resize-handle" />
-        <div data-layer="panel-dock-header" className="env-panel-dock-header" />
-        <div data-layer="panel-dock-strip" className="env-panel-dock-strip" />
-      </div>
       <div className="env-table-region" data-sticky-header="">
         <div className="env-table-head">
           <div data-layer="table-sticky-header-cell" className="env-table-header-cell" />

@@ -26,7 +26,6 @@ import {
   Textarea,
   ThemePreferenceProvider,
   ThemeToggle,
-  PanelDock,
   type EnvUIMessagesInput,
   Spinner,
   CodeBlock,
@@ -95,18 +94,6 @@ function FeedbackStrings() {
 function ShellAndEditorStrings() {
   return (
     <>
-      <div style={{ position: 'relative', blockSize: '24rem' }}>
-        <PanelDock.Root
-          panels={[
-            { id: 'notes', title: 'Notes', mode: 'open', active: true },
-            { id: 'budget', title: 'Budget', mode: 'minimized' },
-          ]}
-          onModeChange={() => {}}
-          onClose={() => {}}
-        >
-          {(panel) => <PanelDock.Header title={panel.title} />}
-        </PanelDock.Root>
-      </div>
       <CodeBlock copyable>npm run build</CodeBlock>
       <Markdown>
         {[

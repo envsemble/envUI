@@ -13,7 +13,7 @@ export const aliases: Record<string, string[]> = {
   ActionElement: ['Button'],
   MenuPopup: ['Menu', 'Menubar'],
   ResizeHandle: ['ResizeHandle', 'Panes'],
-  useResize: ['Panes', 'PanelDock'],
+  useResize: ['Panes'],
   PopupSurface: ['PopupSurface', 'PortalContainer'],
   PortalContainerContext: ['PortalContainer'],
   useDirection: ['Direction'],

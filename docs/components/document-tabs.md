@@ -20,8 +20,6 @@ useWhen:
 avoidWhen:
   - text: A fixed set of views of the same content, such as Overview and Settings.
     use: SegmentedControl
-  - text: Items people keep open beside the page, such as drafts.
-    use: PanelDock
   - text: Many documents in folders, browsed as a hierarchy.
     use: Tree
 components:
