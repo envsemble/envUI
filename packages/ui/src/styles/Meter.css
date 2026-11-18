@@ -79,7 +79,7 @@
     .env-progress[data-indeterminate] .env-progress-indicator {
       --_progress-indeterminate-stripe: color-mix(
         in srgb,
-        var(--env-color-bg-primary-emphasis) 35%,
+        var(--env-color-bg-primary-emphasis) 55%,
         transparent
       );
       inline-size: 100%;

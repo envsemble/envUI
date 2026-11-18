@@ -356,7 +356,7 @@
   --env-color-bg-default-pressed: #424447;
   --env-color-bg-done-emphasis: #aac1dd;
   --env-color-bg-done-muted: rgb(170 193 221 / 0.17);
-  --env-color-bg-field: #1e1f21;
+  --env-color-bg-field: #191a1b;
   --env-color-bg-inset: rgb(30 31 33 / 0.5);
   --env-color-bg-muted: #303234;
   --env-color-bg-muted-hover: #424447;
@@ -372,7 +372,7 @@
   --env-color-bg-neutral-strong-pressed: #72767b;
   --env-color-bg-neutral-subtle-hover: rgb(232 234 238 / 0.08);
   --env-color-bg-neutral-subtle-pressed: rgb(232 234 238 / 0.12);
-  --env-color-bg-page: #1e1f21;
+  --env-color-bg-page: #191a1b;
   --env-color-bg-page-hover: #2c2d30;
   --env-color-bg-page-pressed: #383a3d;
   --env-color-bg-popup: #343638;
@@ -392,11 +392,11 @@
   --env-color-bg-raised: #343638;
   --env-color-bg-raised-hover: #424447;
   --env-color-bg-raised-pressed: #4b4d51;
-  --env-color-bg-recessed: #121315;
+  --env-color-bg-recessed: #0a0a0c;
   --env-color-bg-recessed-hover: #28292b;
   --env-color-bg-recessed-pressed: #343638;
-  --env-color-bg-row-hover: rgb(232 234 238 / 0.1);
-  --env-color-bg-row-pressed: rgb(232 234 238 / 0.14);
+  --env-color-bg-row-hover: rgb(232 234 238 / 0.07);
+  --env-color-bg-row-pressed: rgb(232 234 238 / 0.11);
   --env-color-bg-selected: #4d4d50;
   --env-color-bg-selected-accent: #293a55;
   --env-color-bg-selected-accent-hover: #33445f;

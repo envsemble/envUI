@@ -54,6 +54,7 @@
     --_surface-pressed: var(--env-color-bg-raised-pressed);
   }
   .env-surface:where([data-background='recessed']) {
+    --_surface-edge: var(--_popup-frosted-edge);
     --_surface-container-default: var(--env-color-bg-recessed);
     --_surface-hover: var(--env-color-bg-recessed-hover);
     --_surface-pressed: var(--env-color-bg-recessed-pressed);

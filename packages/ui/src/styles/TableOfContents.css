@@ -49,7 +49,7 @@
     pointer-events: none;
   }
   .env-table-of-contents-wave path {
-    fill: var(--env-color-bg-neutral-muted);
+    fill: var(--env-color-bg-neutral-muted-hover);
   }
   .env-table-of-contents-wave:dir(rtl) {
     scale: -1 1;
