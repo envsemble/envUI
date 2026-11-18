@@ -17,16 +17,14 @@
     min-block-size: var(--env-control-height-touch);
     margin: 0;
     padding: var(--env-space-3) var(--env-space-4);
-    border: 1px solid var(--env-color-border-muted);
-    border-radius: var(--env-radius-lg);
-    background: var(--env-color-bg-raised);
+    border: 0;
+    border-radius: var(--env-radius-control);
+    background: transparent;
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
     text-align: start;
     text-decoration: none;
-    transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
-      border-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-pager-link-copy {
     display: grid;
@@ -45,15 +43,16 @@
   }
   .env-pager-link .env-icon {
     --env-icon-size: 1.25rem;
-    color: var(--env-color-fg-primary);
+    color: var(--env-color-fg-muted);
   }
   .env-pager-link:hover {
-    background: var(--env-color-bg-raised-hover);
-    border-color: var(--env-color-border-muted-hover);
+    background: var(--env-color-bg-neutral-subtle-hover);
+  }
+  .env-pager-link:hover .env-icon {
+    color: var(--env-color-fg-default);
   }
   .env-pager-link:active {
-    background: var(--env-color-bg-raised-pressed);
-    border-color: var(--env-color-border-muted-pressed);
+    background: var(--env-color-bg-neutral-subtle-pressed);
   }
   .env-pager-link:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
@@ -67,7 +66,7 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .env-pager-link {
-      transition-property: background-color, color, border-color, transform;
+      transition-property: background-color, color, transform;
       transition-duration: var(--env-motion-duration-fast);
       transition-timing-function: var(--env-motion-ease-enter);
     }

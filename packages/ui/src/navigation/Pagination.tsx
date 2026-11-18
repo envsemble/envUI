@@ -79,8 +79,8 @@ export interface PaginationProps extends Omit<
    */
   nextLabel?: string;
   /**
-   * The buttons' variant, as on IconButton, such as text for a quiet toolbar.
-   * @default 'secondary'
+   * The buttons' variant, as on IconButton: quiet neutral icon buttons by default.
+   * @default 'ghost'
    */
   variant?: ButtonVariant;
   /**
@@ -116,7 +116,7 @@ export function Pagination({
   formatRange,
   previousLabel,
   nextLabel,
-  variant = 'secondary',
+  variant = 'ghost',
   size,
   className,
   'aria-label': label,

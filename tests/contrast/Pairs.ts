@@ -321,9 +321,9 @@ const registry: readonly ContrastPair[] = merged([
     'The thumb of a switch that is off on its track under the pointer and pressed',
   ),
   ...text(
-    '--env-color-fg-primary',
-    [raised, '--env-color-bg-raised-hover', '--env-color-bg-raised-pressed'],
-    'The icon of a pager link',
+    '--env-color-fg-muted',
+    [page, surface, raised].flatMap((ground) => [ground, [layerHover, ground]]),
+    'The icon of a pager link, at rest and hovered',
   ),
   ...text(
     '--env-color-fg-primary',

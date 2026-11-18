@@ -16,7 +16,6 @@ aliases:
 useWhen:
   - A long list or table read a page at a time, such as invoices
   - A list read in batches whose total isn't known yet, such as a feed
-  - Paging in a toolbar with little room, beside a search field
 avoidWhen:
   - text: Links between the pages of an ordered sequence, such as the chapters of a guide.
     use: Pager
@@ -28,18 +27,9 @@ examples:
     caption: The range counts items, as in 1–60 of 245.
   PaginationAnatomy: anatomy
   WithoutATotal: example
-  ToolbarRow: example
 ---
 
 # Pagination
-
-## Variants
-
-### Quiet buttons
-
-```tsx figure=ToolbarRow widths="32 14" sweep
-
-```
 
 ## Anatomy
 

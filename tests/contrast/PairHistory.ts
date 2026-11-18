@@ -2,6 +2,16 @@ import { onPage, onRecessed, pairName, pairs, type Relaxation } from './Pairs.ts
 
 export const dropped: readonly { pair: string; rationale: string }[] = [
   {
+    pair: '--env-color-fg-primary on --env-color-bg-raised-hover',
+    rationale:
+      'A pager link is a quiet neutral link with no raised box: its icon is the muted text color on the surface it lies on, with the neutral hover layer, rather than the primary color on a raised fill.',
+  },
+  {
+    pair: '--env-color-fg-primary on --env-color-bg-raised-pressed',
+    rationale:
+      'A pager link is a quiet neutral link with no raised box: its icon is the muted text color on the surface it lies on, with the neutral hover layer, rather than the primary color on a raised fill.',
+  },
+  {
     pair: '--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-page',
     rationale:
       'The active document tab has no bar under it: it takes the panel’s fill and joins the panel, so no selection color sits on the neutral fill there.',
@@ -1612,6 +1622,12 @@ function apiReviewRenames() {
 }
 
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  ...['-hover', '-pressed'].map((state) => ({
+    from: `--env-color-fg-accent on --env-color-bg-raised${state}`,
+    to: `--env-color-fg-primary on --env-color-bg-raised${state}`,
+    rationale:
+      'The blue roles are primary, and the purple of accent actions is accent: one meaning for a tone on every component.',
+  })),
   {
     from: '--env-color-fg-on-selected on --env-color-bg-neutral-muted over catalogue-canvas',
     to: '--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-recessed',

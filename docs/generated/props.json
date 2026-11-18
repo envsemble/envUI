@@ -5685,8 +5685,8 @@
           "name": "variant",
           "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "default": "'secondary'",
-          "description": "The buttons' variant, as on IconButton, such as text for a quiet toolbar."
+          "default": "'ghost'",
+          "description": "The buttons' variant, as on IconButton: quiet neutral icon buttons by default."
         },
         {
           "name": "size",
