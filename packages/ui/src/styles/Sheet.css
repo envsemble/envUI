@@ -143,11 +143,11 @@
     position: sticky;
   }
   .env-sheet[data-resizable][data-side='end'] .env-sheet-resize-handle {
-    --_resize-handle-at: 0%;
+    --_resize-handle-at: calc(var(--_resize-handle-line) / 2);
     inset-inline-start: calc(-1 * var(--_sheet-padding-inline));
   }
   .env-sheet[data-resizable][data-side='start'] .env-sheet-resize-handle {
-    --_resize-handle-at: 100%;
+    --_resize-handle-at: calc(100% - var(--_resize-handle-line) / 2);
     inset-inline-end: calc(-1 * var(--_sheet-padding-inline));
   }
   @media (pointer: coarse) {

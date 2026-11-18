@@ -101,9 +101,12 @@
       forced-color-adjust: none;
     }
     .env-resize-handle:not([aria-disabled='true']):hover,
-    .env-resize-handle[data-resizing],
-    .env-resize-handle:focus-visible {
+    .env-resize-handle[data-resizing] {
       --_resize-handle-line-color: CanvasText;
+      --_resize-handle-grip-color: CanvasText;
+    }
+    .env-resize-handle:focus-visible {
+      --_resize-handle-line-color: Highlight;
       --_resize-handle-grip-color: CanvasText;
     }
   }

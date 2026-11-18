@@ -268,6 +268,7 @@ describe('Sheet resizable', () => {
     await keyboard.press('ArrowLeft');
     await expect.poll(valueText).toBe('25 rem');
     await expect.poll(() => css(handle, 'width', '::before')).toBe('2px');
+    expect(parseFloat(css(handle, 'left', '::before'))).toBeGreaterThanOrEqual(0);
     expect(width()).toBeCloseTo(25 * 16, 0);
     await keyboard.press('Home');
     await expect.poll(valueText).toBe('16 rem');

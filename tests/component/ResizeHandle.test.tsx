@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ResizeHandle, Theme } from '@envsemble/envui';
 import { beforeEach, expect, test } from 'vitest';
-import { page } from 'vitest/browser';
+import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/Primitives.fixture.tsx';
 import { box, css, keyboard, mouse } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
@@ -122,4 +122,32 @@ test("the caller's handlers run first, and one that prevents the default keeps t
   await expect.element(handle).toHaveAttribute('aria-valuenow', '21');
   root.unmount();
   host.remove();
+});
+
+test('under forced colors the line is CanvasText under the pointer and Highlight with keyboard focus', async () => {
+  await commands.emulateMedia({ forcedColors: 'active' });
+  try {
+    const handle = page.getByTestId('resize-ltr').getByRole('separator');
+    const element = handle.element() as HTMLElement;
+    element.scrollIntoView({ block: 'center' });
+    const line = () => css(element, 'background-color', '::before');
+    const system = (color: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = color;
+      document.body.append(probe);
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    };
+    const { x, y, width, height } = box(handle);
+    await mouse.move(x + width / 2, y + height / 2);
+    await expect.poll(line).toBe(system('CanvasText'));
+    await mouse.move(0, 0);
+    await keyboard.press('Escape');
+    element.focus();
+    await expect.poll(line).toBe(system('Highlight'));
+    expect(system('Highlight')).not.toBe(system('CanvasText'));
+  } finally {
+    await commands.emulateMedia({ forcedColors: 'none' });
+  }
 });
