@@ -134,7 +134,8 @@ export function useResizableWidth({
             formatters.number({ maximumFractionDigits: 1 }).format(roundToHundredth(value)),
           ),
         onDoubleClick: (event: MouseEvent<HTMLDivElement>) => {
-          if (!event.defaultPrevented) reset();
+          const disabled = event.currentTarget.getAttribute('aria-disabled') === 'true';
+          if (!event.defaultPrevented && !disabled) reset();
         },
       }) satisfies ResizeOptions & {
         onDoubleClick: (event: MouseEvent<HTMLDivElement>) => void;

@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { ResizeHandle, Theme } from '@envsemble/envui';
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Primitives.fixture.tsx';
@@ -81,3 +84,42 @@ test(
     expect(css(element, 'width', '::before')).toBe('2px');
   },
 );
+
+test("the caller's handlers run first, and one that prevents the default keeps the handle's own from running", async () => {
+  const keys: string[] = [];
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  function Handle() {
+    const [value, setValue] = useState(20);
+    return (
+      <Theme theme="light">
+        <ResizeHandle
+          axis="inline"
+          label="Resize the notes"
+          value={value}
+          min={10}
+          max={30}
+          step={1}
+          onChange={setValue}
+          onKeyDown={(event) => {
+            keys.push(event.key);
+            if (event.key === 'ArrowLeft') event.preventDefault();
+          }}
+        />
+      </Theme>
+    );
+  }
+  root.render(<Handle />);
+  const handle = page.getByRole('separator', { name: 'Resize the notes' });
+  await expect.element(handle).toHaveAttribute('aria-valuenow', '20');
+  (handle.element() as HTMLElement).focus();
+  await keyboard.press('Enter');
+  await keyboard.press('ArrowRight');
+  await expect.element(handle).toHaveAttribute('aria-valuenow', '21');
+  await keyboard.press('ArrowLeft');
+  expect(keys).toEqual(['Enter', 'ArrowRight', 'ArrowLeft']);
+  await expect.element(handle).toHaveAttribute('aria-valuenow', '21');
+  root.unmount();
+  host.remove();
+});

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type ComponentPropsWithRef } from 'react';
+import { useEffect, useRef, type ComponentPropsWithRef, type SyntheticEvent } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useResize, type ResizeOptions } from '../internal/resize/useResize.js';
@@ -10,7 +10,7 @@ import '../styles/Base.css';
 import '../styles/ResizeHandle.css';
 
 export type ResizeHandleProps = ResizeOptions &
-  Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'children'> & {
+  Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'children' | 'role' | 'tabIndex'> & {
     /** The handle's name, which says what it resizes, such as Resize the project list. */
     label: string;
     /**
@@ -26,12 +26,14 @@ export type ResizeHandleProps = ResizeOptions &
  * separator, named by its label, that the pointer drags and the arrow keys, Page Up, Page Down,
  * Home and End move, with aria-valuenow, aria-valuemin, aria-valuemax and aria-valuetext. Its track
  * is invisible, with a grip of three dots at its middle; a 1 px line shows along it under the
- * pointer, while it is dragged and, in the focus color, with keyboard focus. The handle's box is
+ * pointer and while it is dragged, and a 2 px line in the focus color with keyboard focus. The handle's box is
  * what the pointer reaches: place and size it with a class on the edge it moves. The application
- * keeps the size.
+ * keeps the size; give the handle `aria-controls` with the id of what it resizes. Handlers given to
+ * it run first, and one that calls preventDefault stops the handle's own.
  *
- *   <ResizeHandle axis="inline" label="Resize the sidebar" value={width} min={12} max={30}
- *     unit="rem" step={1} onChange={(next) => setWidth(next)} className="app-sidebar-edge" />
+ *   <ResizeHandle axis="inline" label="Resize the sidebar" aria-controls="sidebar" value={width}
+ *     min={12} max={30} unit="rem" step={1} onChange={(next) => setWidth(next)}
+ *     className="app-sidebar-edge" />
  */
 export function ResizeHandle({
   axis,
@@ -83,10 +85,27 @@ export function ResizeHandle({
     },
     [measures, latestMeasure],
   );
+  const {
+    onPointerDown,
+    onPointerMove,
+    onPointerUp,
+    onPointerCancel,
+    onLostPointerCapture,
+    onKeyDown,
+    onFocus,
+    ...own
+  } = handleProps;
   return (
     <div
       {...props}
-      {...handleProps}
+      {...own}
+      onPointerDown={first(props.onPointerDown, onPointerDown)}
+      onPointerMove={first(props.onPointerMove, onPointerMove)}
+      onPointerUp={first(props.onPointerUp, onPointerUp)}
+      onPointerCancel={first(props.onPointerCancel, onPointerCancel)}
+      onLostPointerCapture={first(props.onLostPointerCapture, onLostPointerCapture)}
+      onKeyDown={first(props.onKeyDown, onKeyDown)}
+      onFocus={first(props.onFocus, onFocus)}
       ref={(node) => {
         element.current = node;
         setRef(ref, node);
@@ -96,4 +115,16 @@ export function ResizeHandle({
       className={classNames('env-resize-handle', className)}
     />
   );
+}
+
+function first<Event extends SyntheticEvent>(
+  theirs: ((event: Event) => void) | undefined,
+  ours: ((event: Event) => void) | undefined,
+) {
+  if (!theirs) return ours;
+  if (!ours) return theirs;
+  return (event: Event) => {
+    theirs(event);
+    if (!event.defaultPrevented) ours(event);
+  };
 }

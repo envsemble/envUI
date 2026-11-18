@@ -158,6 +158,20 @@ test(
   },
 );
 
+test('a disabled handle neither moves nor resets on a double click, and keeps the kept width', async () => {
+  document.cookie = 'fixture-disabled=20.5; path=/';
+  try {
+    panes('width=60rem&persist=fixture-disabled&disabled');
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
+    await expect.element(handle()).toHaveAttribute('aria-disabled', 'true');
+    handle().element().dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
+    expect(document.cookie).toContain('fixture-disabled=20.5');
+  } finally {
+    document.cookie = 'fixture-disabled=; max-age=0; path=/';
+  }
+});
+
 test(
   'an application rounds Panes with a class, and the panes inside follow the corners',
   { tags: ['engines'] },

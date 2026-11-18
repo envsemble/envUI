@@ -40,7 +40,11 @@ export default function PanesFixture() {
             <div style={{ blockSize: '40rem' }} />
           </Panes.Pane>
           {handle && (
-            <Panes.ResizeHandle label="Resize projects" grip={query.get('grip') !== 'off'} />
+            <Panes.ResizeHandle
+              label="Resize projects"
+              grip={query.get('grip') !== 'off'}
+              disabled={query.has('disabled')}
+            />
           )}
           <Panes.Pane label="Northwind launch">
             <Surface padding={4} data-testid="detail-surface" style={{ minBlockSize: '100%' }}>
