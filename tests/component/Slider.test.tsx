@@ -194,7 +194,7 @@ test(
     await mouse.move(field.x + 2, y, { steps: 4 });
     await expect.poll(() => state.input.getAttribute('aria-valuenow')).toBe('0');
     await expect.poll(() => css(state.thumb, 'opacity')).toBe('0.25');
-    await expect.poll(state.ticks).toBe('0.35');
+    await expect.poll(state.ticks).toBe('0.5');
     await expect.poll(state.fillEnd).toBe('1');
     await mouse.move(field.x + field.width * 0.6, y, { steps: 4 });
     await expect.poll(() => css(state.thumb, 'opacity')).toBe('1');
@@ -208,10 +208,10 @@ test(
     await mouse.move(field.x + field.width * 0.3, y);
     await expect.poll(has(state.control, 'data-handle')).toBe(true);
     await expect.poll(() => css(state.thumb, 'opacity')).toBe('1');
-    await expect.poll(state.ticks).toBe('0.35');
+    await expect.poll(state.ticks).toBe('0.5');
     await mouse.down();
     await mouse.move(field.x + field.width * 0.9, field.y + field.height * 4, { steps: 3 });
-    await expect.poll(state.ticks).toBe('0.35');
+    await expect.poll(state.ticks).toBe('0.5');
     await mouse.up();
     await expectRest(state);
     await mouse.move(field.x + field.width * 0.5, y, { steps: 3 });
@@ -257,7 +257,7 @@ test(
     const step = box(track).width / ticks;
     const clear = (name: string) => Number.parseFloat(css(state.control, name));
     const ticksAt = async () => {
-      await expect.poll(state.ticks).toBe('0.35');
+      await expect.poll(state.ticks).toBe('0.5');
       await animationsDone(state.control, true);
       const pixel = await pixelsOf(track);
       const middle = box(track).height / 2;

@@ -80,7 +80,7 @@ describe('Menus', () => {
     expect(popup).toBe('rgb(255, 255, 255)');
     const frosted = popupSurface(menu);
     expect(frosted.background).toBe('color(srgb 1 1 1 / 0.88)');
-    expect(frosted.borderColor).toBe('oklch(0.240533 0.00566049 none / 0.16)');
+    expect(frosted.borderColor).toBe('oklch(0.240533 0.00566049 none / 0.22)');
     expect(frosted.shadow).not.toBe('none');
     expect(frosted.filter).toBe('blur(22px) saturate(1.4)');
     expect(frosted.radius).toBeCloseTo(20, 0);

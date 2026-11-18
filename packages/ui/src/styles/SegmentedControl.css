@@ -86,7 +86,11 @@
     --_segmented-control-shadow: var(
       --_segmented-control-high-contrast-edge,
       0 1px 2px oklch(from var(--env-color-bg-page) calc(l * 0.25) c h / calc(0.62 - l * 0.48)),
-      0 0 0 0.5px oklch(from var(--env-color-fg-default) l c h / 0.08)
+      0 0 0 0.5px
+        light-dark(
+          oklch(from var(--env-color-fg-default) l c h / 0.08),
+          oklch(from var(--env-color-fg-default) l c h / 0.3)
+        )
     );
     position: relative;
     isolation: isolate;

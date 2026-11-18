@@ -77,7 +77,10 @@
     block-size: var(--_radio-layer-size);
     margin-inline-start: calc(-1 * var(--_radio-reach));
     border-radius: var(--env-radius-full);
-    background: color-mix(in srgb, var(--_radio-ring) var(--_radio-state), transparent);
+    background: var(
+      --_radio-halo,
+      color-mix(in srgb, var(--_radio-ring) var(--_radio-state), transparent)
+    );
   }
   .env-radio:hover:not(:has(input:disabled)) {
     --_radio-state: calc(var(--env-state-hover-opacity) * 100%);
@@ -87,6 +90,13 @@
   }
   .env-radio:active:not(:has(input:disabled)) {
     --_radio-state: calc(var(--env-state-pressed-opacity) * 100%);
+  }
+  .env-radio:hover:not(:has(input:disabled, input:checked)) {
+    --_radio-halo: var(--env-color-bg-neutral-subtle-pressed);
+  }
+  .env-radio:active:not(:has(input:disabled, input:checked)) {
+    --_radio-halo: linear-gradient(var(--env-color-bg-neutral-subtle-pressed) 0 0)
+      var(--env-color-bg-neutral-subtle-pressed);
   }
   .env-radio-control:has(.env-radio-input:focus-visible) {
     outline: 2px solid var(--env-color-border-focus);

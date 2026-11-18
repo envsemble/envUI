@@ -53,11 +53,11 @@
         },
         "hover": {
           "$description": "An interactive muted surface under the pointer.",
-          "$value": "{palette.gray.8}"
+          "$value": "{palette.gray.10}"
         },
         "pressed": {
           "$description": "An interactive muted surface while pressed.",
-          "$value": "{palette.gray.11}"
+          "$value": "{palette.gray.12}"
         }
       },
       "raised": {

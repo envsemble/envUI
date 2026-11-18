@@ -35,7 +35,10 @@
     padding: calc(var(--env-space-1) / 2) calc(var(--env-space-2) + var(--env-control-border-width));
     border: var(--_badge-own-border, 1px solid transparent);
     border-radius: var(--env-radius-full);
-    background: var(--env-badge-container, var(--_badge-soft));
+    background: var(
+      --env-badge-container,
+      linear-gradient(var(--_badge-soft), var(--_badge-soft)) var(--_badge-soft-ground, transparent)
+    );
     color: var(--env-badge-content, var(--_badge-tone));
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
     white-space: nowrap;
@@ -80,9 +83,15 @@
   .env-badge[data-tone='done'] {
     --_badge-tone: var(--env-color-fg-done);
     --_badge-tint: var(--env-color-bg-done-muted);
-    --_badge-tonal: color-mix(in srgb, var(--env-color-bg-done-muted) 50%, transparent);
+    --_badge-tonal: light-dark(
+      var(--env-color-bg-done-muted),
+      color-mix(in srgb, var(--env-color-bg-done-muted) 50%, transparent)
+    );
     --_badge-fill: var(--env-color-bg-done-emphasis);
     --_badge-edge: var(--env-color-border-done);
+  }
+  .env-badge:not([data-tone='neutral']) {
+    --_badge-soft-ground: var(--_badge-ground, transparent);
   }
   .env-badge:not([data-variant='solid'], [data-variant='outline'], [data-count]) {
     font-weight: var(--env-font-weight-semibold);

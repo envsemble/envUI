@@ -11,7 +11,7 @@
     --env-tooltip-opacity: 82%;
     --env-tooltip-shadow: 0 6px 16px -6px oklch(from var(--env-color-fg-default) l c h / 0.3);
     --_popup-solid: initial;
-    --_popup-frosted-edge: oklch(from var(--env-color-fg-default) l c h / 0.16);
+    --_popup-frosted-edge: oklch(from var(--env-color-fg-default) l c h / 0.22);
     --_popup-row-height: calc(var(--env-row-height) + 0.25rem);
     --_popup-padding: calc(0.15 * var(--_popup-row-height));
     --_popup-row-radius: calc(0.35 * var(--_popup-row-height));
@@ -24,7 +24,7 @@
     --_popup-panel-padding: calc(0.35 * var(--_popup-row-height));
   }
   .env-theme[data-env-theme='dark'] {
-    --_popup-frosted-edge: oklch(from var(--env-color-fg-default) l c h / 0.12);
+    --_popup-frosted-edge: oklch(from var(--env-color-fg-default) l c h / 0.16);
     --_popup-row-highlight: color-mix(in srgb, var(--env-color-bg-neutral-muted) 80%, transparent);
     --env-popup-opacity: 90%;
     --env-popup-shadow: 0 12px 32px -10px

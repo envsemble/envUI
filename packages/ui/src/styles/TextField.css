@@ -63,6 +63,7 @@
   }
 
   .env-text-field-control {
+    --_text-field-hint: initial;
     --_text-field-border-base: var(--_text-field-edge, var(--env-color-border-default));
     --_text-field-interaction-color: var(
       --_text-field-accent,
@@ -139,14 +140,17 @@
     caret-color: var(--_text-field-accent, var(--env-color-border-primary-emphasis));
   }
   .env-text-field-input::placeholder {
-    color: var(--env-color-fg-muted);
+    color: var(--_text-field-hint, var(--env-color-fg-muted));
     opacity: 1;
   }
   .env-text-field-control[data-variant='ghost'] {
-    background: var(
-      --_text-field-ghost-solid,
-      color-mix(in srgb, var(--env-color-bg-neutral-muted) 75%, transparent)
+    /* contrast: text-field-ghost-hover */
+    --_text-field-ghost-hover: color-mix(
+      in srgb,
+      var(--env-color-bg-neutral-muted-hover) 67%,
+      var(--env-color-bg-neutral-muted)
     );
+    background: var(--_text-field-ghost-solid, var(--env-color-bg-neutral-muted));
   }
   .env-text-field-control[data-variant='ghost']:is(
       :has(> .env-text-field-input:disabled),
@@ -154,7 +158,7 @@
     ) {
     background: var(
       --_text-field-ghost-solid,
-      color-mix(in srgb, var(--env-color-bg-neutral-muted) 60%, transparent)
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 70%, transparent)
     );
   }
   .env-text-field-control[data-variant='ghost']:has(
@@ -167,7 +171,16 @@
         :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),
         [data-disabled]
       ) {
-      background: var(--_text-field-ghost-solid, var(--env-color-bg-neutral-muted));
+      --_text-field-hint: var(--env-color-fg-muted-hover);
+      background: var(--_text-field-ghost-solid, var(--_text-field-ghost-hover));
+      color: var(--env-color-fg-muted-hover);
+    }
+    .env-text-field-control[data-variant='ghost']:hover:not(
+        :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),
+        [data-disabled]
+      )
+      > :is(.env-text-field-prefix, .env-text-field-suffix) {
+      color: var(--env-color-fg-muted-hover);
     }
   }
   .env-text-field-control[data-variant='ghost']:not(

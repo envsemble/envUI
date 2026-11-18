@@ -912,6 +912,15 @@
           ]
         },
         {
+          "attribute": "data-emphasis",
+          "values": [
+            "muted"
+          ],
+          "parts": [
+            "env-card-description"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
           "parts": [

@@ -99,6 +99,7 @@ const sliderFillAtHigh = {
 } as const;
 const menubarPressed = 'menubar-trigger-pressed';
 const readOnlyFill = 'text-field-read-only';
+const ghostFieldHover = 'text-field-ghost-hover';
 const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
 const tooltipFrosted = 'tooltip-frosted';
@@ -364,12 +365,17 @@ const registry: readonly ContrastPair[] = merged([
   ...text(
     '--env-color-fg-muted',
     [page, surface, muted, raised].map((ground) => [fill, ground]),
-    'The placeholder and icons of a ghost field under the pointer',
+    'The placeholder and icons of a ghost field at rest',
   ),
   ...text(
     textFieldAffix,
     [page, surface, muted, raised].map((ground) => [fill, ground]),
-    'A prefix or a suffix in a ghost field under the pointer',
+    'A prefix or a suffix in a ghost field at rest',
+  ),
+  ...text(
+    '--env-color-fg-muted-hover',
+    [page, surface, muted, raised].map((ground) => [ghostFieldHover, ground]),
+    'The placeholder, prefix, suffix and icons of a ghost field under the pointer',
   ),
   ...(
     [
@@ -1385,6 +1391,10 @@ const derived: Readonly<Record<string, string>> = {
   'text-field-read-only': markedColor(
     'packages/ui/src/styles/TextField.css',
     'text-field-read-only',
+  ),
+  'text-field-ghost-hover': markedColor(
+    'packages/ui/src/styles/TextField.css',
+    'text-field-ghost-hover',
   ),
 };
 
