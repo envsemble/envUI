@@ -14,6 +14,15 @@ export interface EditorLink {
   href: string;
 }
 
+export interface LinkDialogProps {
+  selectedText: string;
+  /** Whether the editor can link to this destination, such as a URL or a relative path. */
+  isValid: (href: string) => boolean;
+  onInsert: (link: EditorLink) => void;
+  onCancel: () => void;
+  finalFocus: RefObject<HTMLElement | null>;
+}
+
 /**
  * The Insert link dialog MarkdownEditor and RichTextEditor share: the link's text, from the
  * selection, and its destination, which `isValid` checks before the link is inserted. Its words come
@@ -25,14 +34,7 @@ export function LinkDialog({
   onInsert,
   onCancel,
   finalFocus,
-}: {
-  selectedText: string;
-  /** Whether the editor can link to this destination, such as a URL or a relative path. */
-  isValid: (href: string) => boolean;
-  onInsert: (link: EditorLink) => void;
-  onCancel: () => void;
-  finalFocus: RefObject<HTMLElement | null>;
-}) {
+}: LinkDialogProps) {
   const messages = useMessages('linkDialog', linkDialogMessages);
   const [label, setLabel] = useState(selectedText);
   const [href, setHref] = useState('');

@@ -4,15 +4,7 @@ import { moduleFiles, requireSite, serveSite, siteUrl } from '../support/HostedS
 import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
 import { goTo } from '../support/SiteSpecHelpers';
 
-/**
- * Opens the overview of the hosted build, then the Button page with every file under /assets/ that
- * the overview had not loaded failing but the page's content, chosen by when it is asked for rather
- * than by module-files.json, so a file the map leaves out fails too. Returns the hero example, and a
- * setter: `assets` makes every file under /assets/ fail, as when only the map arrives, and `up`
- * serves every file.
- */
 async function openFailingButtonPage(page: Page) {
-  // The page's view and content, which a failure would take the whole page down with, arrive.
   const loaded = new Set([
     ...moduleFiles('src/pages/catalogue/CataloguePages.tsx'),
     ...moduleFiles('src/generated/pages/button.json'),
@@ -36,10 +28,6 @@ async function openFailingButtonPage(page: Page) {
   return { hero, set: (next: 'assets' | 'up') => (state = next) };
 }
 
-/**
- * Serves `file` with its export `name` replaced by a button that breaks it: once pressed, the
- * component throws as it renders again. It uses the React that Vite serves the catalogue.
- */
 async function breakOnPress(page: Page, file: string, name: string) {
   await page.route(file, async (route) => {
     const original = await (await route.fetch()).text();
@@ -47,7 +35,6 @@ async function breakOnPress(page: Page, file: string, name: string) {
     expect(version, `${file} imports Vite's prebundled dependencies`).toBeTruthy();
     await route.fulfill({
       contentType: 'text/javascript',
-      // Vite serves React, a CommonJS package, as a default export.
       body: `import React from '/node_modules/.vite/deps/react.js?v=${version}';
         const { createElement, useState } = React;
         function Broken() {
@@ -79,10 +66,7 @@ test('a page whose content fails to load says so, and loads it again on request'
 test('in the hosted build, an example whose file is missing offers a reload, which loads it', async ({
   page,
 }) => {
-  // A build's chunk that failed stays failed until the page reloads, in Chromium and WebKit, and
-  // in WebKit even then, unless it is fetched again.
   requireSite();
-  // The example's own file, the first it loads: the others it imports may be the page's too.
   const [file] = moduleFiles('src/examples/button/CreateProject.tsx');
   let failing = true;
   await serveSite(page, {
@@ -104,13 +88,10 @@ test("in the hosted build, a pre-rendered page whose view can't load says so in 
   page,
 }) => {
   requireSite();
-  // The page arrives pre-rendered, but the module that renders it does not.
   const [view] = moduleFiles('src/pages/catalogue/CataloguePages.tsx');
   await serveSite(page, { failing: (pathname) => pathname === view, failure: 'missing' });
   await page.goto(`${siteUrl}/components/button`);
   const main = page.getByRole('main');
-  // Its pre-rendered text gives way to the failure, as it can't hydrate without it; the banner,
-  // the navigation and the pager stay.
   await expect(main.getByText('The page could not load')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   await expect(main.getByRole('heading', { name: 'Overview' })).toHaveCount(0);
@@ -123,7 +104,6 @@ test("in the hosted build, a reload whose files can't be fetched keeps the page 
 }) => {
   requireSite();
   const { hero, set } = await openFailingButtonPage(page);
-  // module-files.json arrives, but none of the files it lists.
   set('assets');
   await page.evaluate(() => Object.assign(window, { stillHere: true }));
   await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
@@ -149,10 +129,8 @@ test('code that fails to load is asked for once, not on every render', async ({ 
     .first()
     .locator('.site-live-example-code summary')
     .click();
-  // The first figure's code opens right under it.
   const entry = page.getByRole('region', { name: 'Code, CreateProject.tsx', exact: true });
   await expect(entry.getByText('The code could not load')).toBeVisible();
-  // The example beside it is not loaded again.
   await expect(
     page.getByRole('group', { name: 'Button example', exact: true }).getByRole('button').first(),
   ).toBeVisible();
@@ -171,7 +149,6 @@ test('an example that fails to load says so in place, and a retry loads it and r
   await page.goto(`${siteDevUrl}/components/button`);
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
-  // The rest of the page is still there.
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   await expect(hero.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
   await page.unroute(example);
@@ -179,10 +156,7 @@ test('an example that fails to load says so in place, and a retry loads it and r
   await page.keyboard.press('Enter');
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
   await expect(hero.getByText('The example could not load')).toHaveCount(0);
-  // Focus stays where the example is, rather than falling to the page.
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
-  // Focus leaves for the page; the theme changes in another window, which moves no focus. The
-  // frame's body scrolls, not the document.
   const body = page.locator('#site-main');
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   await body.evaluate((element) => element.scrollTo(0, element.scrollHeight));
@@ -212,13 +186,11 @@ test('an example that fails to render says so in place, and the rest of the page
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('This example failed to render')).toBeVisible();
   await expect(hero.getByText('Broken example')).toBeVisible();
-  // It is not a failed load, which a retry or a reload could mend.
   await expect(page.getByText('The example could not load')).toHaveCount(0);
   await expect(hero.getByRole('button')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
-  // The other examples and the example's code render.
-  const toolbar = page.getByRole('group', { name: 'In a toolbar example', exact: true });
-  await expect(toolbar.getByRole('button').first()).toBeVisible();
+  const links = page.getByRole('group', { name: 'Links example', exact: true });
+  await expect(links.getByRole('link').first()).toBeVisible();
   await page
     .locator('.site-live-example-entry')
     .first()
@@ -226,7 +198,6 @@ test('an example that fails to render says so in place, and the rest of the page
     .click();
   const entry = page.getByRole('region', { name: 'Code, CreateProject.tsx', exact: true });
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
-  // And the navigation still leads elsewhere.
   await page
     .getByRole('navigation', { name: 'Components' })
     .getByRole('link', { name: 'Link', exact: true })
@@ -248,18 +219,14 @@ test('a page that fails to render says so, and the navigation leads to the other
   await expect(main.getByText('This page failed to render')).toBeVisible();
   await expect(main.getByText('Broken page')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('envUI');
-  // A link to the overview would lead here again; the overview offers a reload instead.
   await expect(main.getByRole('link', { name: 'Return to overview' })).toHaveCount(0);
   await expect(main.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
-  // The page failed as it opened, the first the catalogue loaded, so focus stays at the start of
-  // the document, as on any page that loads.
   await expect(main).not.toBeFocused();
   const navigation = page.getByRole('navigation', { name: 'Catalogue' });
   await navigation.getByRole('link', { name: 'Components', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Components');
   await expect(main.getByText('This page failed to render')).toHaveCount(0);
   await expect(main.getByRole('link', { name: /^Button/ }).first()).toBeVisible();
-  // Going back to the page that failed says so again.
   await page.goBack();
   await expect(main.getByText('This page failed to render')).toBeVisible();
 });
@@ -271,7 +238,6 @@ test('a page that fails after a press takes the focus it dropped, and leads to t
   await page.goto(`${siteDevUrl}/components`);
   const main = page.getByRole('main');
   const press = main.getByRole('button', { name: 'Break', exact: true });
-  // The page renders with its button, and focus moves to the content once the route has opened.
   await expect(async () => {
     await press.focus();
     await expect(press).toBeFocused({ timeout: 500 });

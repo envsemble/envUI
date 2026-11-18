@@ -1,5 +1,3 @@
-// Pager's markup: its links in the order given, each with its rel, and its strings from
-// EnvUIProvider's messages. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -38,7 +36,6 @@ test('the previous link comes first and the next link last, with strings from me
     links(mixed).map((link) => link.attributes.rel),
     ['prev', 'next'],
   );
-  // EnvUIProvider's messages name the landmark and caption the links.
   const translated = firstElement(
     renderToString(
       h(

@@ -1,6 +1,5 @@
 import { Graphic, List } from '@envsemble/envui';
 
-/** An icon of the application's own, as an SVG component with a viewBox. */
 function PipelineIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

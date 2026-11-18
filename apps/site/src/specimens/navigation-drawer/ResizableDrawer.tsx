@@ -5,20 +5,12 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
-/*
- * A frame 18 rem wide from the drawer's start, which keeps still while the drawer's edge moves:
- * the pointer aims at it. The handle is 0.75 rem wide, inside the drawer's end edge.
- */
+const stillTrackWidthRem = 18;
+const handleHalfWidthRem = 0.375;
 const track = '[data-resize-track]';
-const at = (width: number) => (width - 0.375) / 18;
+const at = (drawerWidthRem: number) => (drawerWidthRem - handleHalfWidthRem) / stillTrackWidthRem;
 const install = '.env-navigation-drawer-item[href="/guide/install"]';
 
-/*
- * The pointer drags the drawer's end edge from 17.5 rem to its narrowest, 15 rem: labels that no
- * longer fit end in an ellipsis. It rests on Install the app on your devices, whose tooltip gives
- * it in full, then drags the edge back. The example keeps the width people choose for their next visit; the
- * figure forgets it as it starts anew.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: track, x: at(17.5), y: 0.5 },
@@ -44,20 +36,25 @@ const script: PointerStep[] = [
 
 const storageKey = 'guide-drawer-width';
 
+function forgetChosenWidth() {
+  try {
+    localStorage.removeItem(storageKey);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function Resizing() {
   const [round, setRound] = useState(0);
   usePointer(script, {
     onCue: () => {
-      try {
-        localStorage.removeItem(storageKey);
-      } catch {
-        // Storage is blocked: the example keeps its width only while the page is open.
-      }
+      forgetChosenWidth();
       setRound((count) => count + 1);
     },
   });
   return (
-    <div style={{ position: 'relative', inlineSize: '18rem' }}>
+    <div style={{ position: 'relative', inlineSize: `${stillTrackWidthRem}rem` }}>
       <div data-resize-track style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
       <Renew round={round}>
         <div style={{ justifySelf: 'start' }}>
@@ -68,7 +65,6 @@ function Resizing() {
   );
 }
 
-/** A drawer resized by its end edge, by a pointer no one sees, its labels cut short as it narrows. */
 export default function ResizableDrawerMotion() {
   return (
     <MotionStage label="the drawer resized by its edge" height="22rem" stage="shaded">

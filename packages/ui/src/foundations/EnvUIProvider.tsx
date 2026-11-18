@@ -32,7 +32,6 @@ export interface EnvUIProviderProps {
   children?: ReactNode;
 }
 
-/** Whether two overrides have the same namespaces, each with the same messages. */
 function sameMessages(a: EnvUIMessagesInput | undefined, b: EnvUIMessagesInput | undefined) {
   if (a === b) return true;
   if (!a || !b) return false;
@@ -42,11 +41,9 @@ function sameMessages(a: EnvUIMessagesInput | undefined, b: EnvUIMessagesInput |
     const keys = Object.keys(x);
     return (
       keys.length === Object.keys(y).length &&
-      // Object.keys gives strings; these are the keys of x.
       keys.every((key) => Object.is(x[key as keyof typeof x], y[key as keyof typeof y]))
     );
   };
-  // Object.keys gives strings; these are the namespaces of a.
   const namespaces = Object.keys(a) as (keyof EnvUIMessagesInput)[];
   return (
     namespaces.length === Object.keys(b).length &&
@@ -54,10 +51,6 @@ function sameMessages(a: EnvUIMessagesInput | undefined, b: EnvUIMessagesInput |
   );
 }
 
-/**
- * The overrides as last given with the same messages: an object written inline in the provider's
- * props is a new one at each render, which would give every component inside a new context value.
- */
 function useStableMessages(messages: EnvUIMessagesInput | undefined) {
   const [stable, setStable] = useState(messages);
   if (stable === messages || sameMessages(stable, messages)) return stable;
@@ -65,7 +58,6 @@ function useStableMessages(messages: EnvUIMessagesInput | undefined) {
   return messages;
 }
 
-/** Merges inner overrides over outer ones, namespace by namespace. */
 function mergeMessages(
   outer: Readonly<Record<string, Readonly<Record<string, unknown>> | undefined>>,
   inner: EnvUIMessagesInput | undefined,

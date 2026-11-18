@@ -1,5 +1,3 @@
-// The layout primitives Box, Row, Column and Grid: the markup they render on the server, which
-// their style sheet reads, and the style sheet's zero specificity, so any class overrides them.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -23,7 +21,7 @@ test('a primitive adds no class of its own, so a part class names it', () => {
 
 test('Grid writes its columns as a template', () => {
   const columns = (value) =>
-    /--env-grid-columns:([^;"]+)/.exec(markup(h(Grid, { columns: value })))?.[1];
+    /--_grid-columns:([^;"]+)/.exec(markup(h(Grid, { columns: value })))?.[1];
   assert.equal(columns(3), 'repeat(3, minmax(0, 1fr))');
   assert.equal(columns('minmax(0, 2fr) 20rem'), 'minmax(0, 2fr) 20rem');
   assert.equal(columns({ min: '12rem' }), 'repeat(auto-fill, minmax(min(100%, 12rem), 1fr))');
@@ -34,7 +32,7 @@ test('Grid writes its columns as a template', () => {
 test('container names a size container, and the style keeps the application’s own', () => {
   assert.equal(
     markup(h(Box, { container: 'summary', style: { color: 'red' } })),
-    '<div data-env-layout="box" data-env-container="" style="--env-layout-container:summary;color:red"></div>',
+    '<div data-env-layout="box" data-env-container="" style="--_layout-container:summary;color:red"></div>',
   );
   assert.equal(
     markup(h(Row, { style: { margin: 0 } })),
@@ -62,7 +60,6 @@ test('every rule of the primitives has zero specificity', () => {
     list.split(/,(?![^(]*\))/).map((selector) => selector.trim()),
   );
   assert.ok(selectors.length > 20);
-  // A skeleton's content wrapper, which has no box, passes a primitive's rules on to its children.
   for (const selector of selectors)
     assert.match(
       selector,
@@ -95,7 +92,6 @@ test('render runs both event handlers, the element’s first, and gives both ref
   cleanup();
   assert.equal(objectRef.current, null);
   assert.equal(calls.at(-1), null);
-  // A single ref is passed on as it is.
   assert.equal(Row({ ref: objectRef, render: h('div') }).props.ref, objectRef);
 });
 
@@ -109,7 +105,6 @@ test('rows and columns lay out with flex and grids with grid, and no primitive p
     /:where\(\[data-env-layout='row'\], \[data-env-layout='column'\]\) \{\s*display: flex;/,
   );
   assert.match(css, /:where\(\[data-env-layout='grid'\]\) \{\s*display: grid;/);
-  // Spacing and sizing only: a primitive draws nothing of its own.
   const properties = [...css.matchAll(/^\s*([\w-]+):/gm)].map(([, property]) => property);
   assert.ok(properties.length > 20);
   for (const property of properties)

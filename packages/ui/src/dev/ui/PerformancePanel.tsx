@@ -1,9 +1,5 @@
 'use client';
 
-// The performance panel, which View settings turns on: the frame rate of dev mode's window, and
-// how often and how long dev mode measures the page, reads it for the inspector, copies the
-// planes' surfaces and renders the view. It counts frames only while it shows.
-
 import { useEffect, useRef, useState } from 'react';
 import * as DescriptionList from '../../data-display/DescriptionList.js';
 import { Surface } from '../../layout/Surface.js';
@@ -11,16 +7,14 @@ import { devStats, type WorkStats } from './stats.js';
 
 interface Sample {
   fps: number;
-  /** The longest frame of the last second, in ms. */
-  worstFrame: number;
+  worstFrameMs: number;
   geometry: string;
   reading: string;
   copies: string;
   renders: string;
 }
 
-/** How often a kind of work ran in the last second, and how long it took the last time. */
-const rate = (now: WorkStats, before: WorkStats) =>
+const rateInTheLastSecond = (now: WorkStats, before: WorkStats) =>
   `${now.count - before.count}/s · last ${now.lastMs.toFixed(1)} ms`;
 
 const copyOf = (stats: WorkStats) => ({ ...stats });
@@ -48,10 +42,10 @@ export function PerformancePanel({ planes }: { planes: number }) {
       const total = times.reduce((sum, time) => sum + time, 0);
       setSample({
         fps: times.length ? Math.round((times.length * 1000) / Math.max(total, 1)) : 0,
-        worstFrame: Math.round(Math.max(0, ...times)),
-        geometry: rate(devStats.geometry, before.geometry),
-        reading: rate(devStats.reading, before.reading),
-        copies: rate(devStats.copies, before.copies),
+        worstFrameMs: Math.round(Math.max(0, ...times)),
+        geometry: rateInTheLastSecond(devStats.geometry, before.geometry),
+        reading: rateInTheLastSecond(devStats.reading, before.reading),
+        copies: rateInTheLastSecond(devStats.copies, before.copies),
         renders: `${devStats.viewRenders - before.renders}/s`,
       });
       before = {
@@ -76,7 +70,7 @@ export function PerformancePanel({ planes }: { planes: number }) {
     >
       <DescriptionList.Root layout="inline">
         <DescriptionList.Item label="Frame rate">
-          {sample ? `${sample.fps} fps · worst ${sample.worstFrame} ms` : '…'}
+          {sample ? `${sample.fps} fps · worst ${sample.worstFrameMs} ms` : '…'}
         </DescriptionList.Item>
         <DescriptionList.Item label="Geometry">{sample?.geometry ?? '…'}</DescriptionList.Item>
         <DescriptionList.Item label="Readout">{sample?.reading ?? '…'}</DescriptionList.Item>

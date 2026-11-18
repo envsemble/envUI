@@ -1,5 +1,3 @@
-// Placing a figure a `tsx figure=Name` fence names: its attributes, each checked against its role
-// and the others, and the block the page shows it as.
 import type { Tokens } from 'marked';
 import type { ExampleEntry } from '../PageStructure.ts';
 import type {
@@ -8,16 +6,9 @@ import type {
 } from '../../../apps/site/src/documentation/DocumentationTypes.ts';
 import type { PageReading, ReadSection } from '../PageReaderTypes.ts';
 
-/**
- * A figure, placed by name: ```tsx figure=Name```, with optional attributes, written
- * name="value", and flags, such as `open`, written as their name alone. Its role and caption come
- * from the frontmatter.
- */
 export const figurePattern =
   /^tsx\s+figure=([A-Za-z]\w*)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^\s"]+))?)*)\s*$/;
-/** A fence that names an example by its kind, as pages wrote figures before: a figure= fence now. */
 export const kindFencePattern = /^tsx\s+(?:example|do|dont|anatomy|variants)=/;
-/** The attributes each role's figure takes, and those it needs. */
 const figureAttributes: Record<string, { allowed: string[]; required: string[] }> = {
   example: {
     allowed: ['widths', 'sweep', 'classes', 'fit', 'open', 'stage', 'wide', 'motion', 'device'],
@@ -29,31 +20,8 @@ const figureAttributes: Record<string, { allowed: string[]; required: string[] }
   anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width', 'specimen'], required: [] },
   variants: { allowed: ['stage'], required: [] },
 };
-/**
- * The fills a figure's stage takes besides the default, the canvas recessed from what it sits on:
- * `stage="shaded"`, a canvas deeper than both the page's and the navigation's backgrounds, where
- * the subject is a whole window that shows both, such as a Scaffold.
- */
 export const stageFills = ['shaded'];
-/**
- * The devices an example is drawn in on its page, at the device's real width and filling its
- * screen (`device="phone"` or `device="window"`): a whole screen of an application, such as a
- * Scaffold, rather than a box standing in for one. The catalogue's cards never draw one.
- */
 export const deviceKinds = ['phone', 'window'];
-/**
- * The attributes that are flags, written without a value: `open` shows the example's overlays
- * open on its stage, contained; `enlarge` shows an anatomy figure's subject half as large again
- * where its stage has room, so the callouts on its close-set parts don't crowd; and `wide` keeps an
- * example across the whole column, alone in its row, rather than beside the text before it, where
- * it needs the room, such as a popup open beside its trigger, or a do and a don't one above the
- * other. With `widths`, `sweep` shows one
- * frame whose width sweeps between them and back, `classes` names the window class on its ruler,
- * and `fit` draws the frame smaller where it must to reach its widest width on the stage; `motion`
- * plays the example in the catalogue: its playback, the specimen of the same name, takes its place; and
- * `specimen` numbers an anatomy figure's parts on its playback, the specimen of the same name, held in
- * a moment its parts show apart, such as a value caught as it rolls in.
- */
 const figureFlags = new Set([
   'open',
   'enlarge',
@@ -64,13 +32,11 @@ const figureFlags = new Set([
   'motion',
   'specimen',
 ]);
-/** A file name as words: ConnectedButtons is "Connected buttons". */
 export const fileWords = (name: string) =>
   name
     .replace(/(?<=[a-z\d])(?=[A-Z])/g, ' ')
     .replace(/ [A-Z](?=[a-z])/g, (word) => word.toLowerCase());
 
-/** Places the figure a `tsx figure=Name` fence names, with the attributes `rest` gives it. */
 export function placeFigure(
   page: PageReading,
   current: ReadSection,
@@ -97,8 +63,6 @@ export function placeFigure(
   if (current.id === 'changelog')
     problems.push(`figure ${name} belongs in a section before the changelog`);
   if (page.foundation) {
-    // A foundation's figure is the catalogue's own, from its page's preview, with the legend
-    // that follows it; an example file of its name, where it has one, is its code.
     if (rest.trim()) problems.push(`figure ${name} takes no attributes on a foundation page`);
     const block: FoundationFigureBlock = {
       kind: 'figure',
@@ -117,10 +81,6 @@ export function placeFigure(
   if (listed.role === 'anatomy' || listed.role === 'variants') page.legendOf = block;
 }
 
-/**
- * The attributes on an example's figure fence, each checked against those its role takes: a value,
- * or true for a flag. The caption is the frontmatter's.
- */
 function figureAttributesOf(page: PageReading, name: string, listed: ExampleEntry, rest: string) {
   const { problems } = page;
   const { role } = listed;
@@ -148,7 +108,6 @@ function figureAttributesOf(page: PageReading, name: string, listed: ExampleEntr
   return attributes;
 }
 
-/** The block of an example's figure, from its attributes, each checked against the others. */
 function exampleFigure(
   page: PageReading,
   name: string,

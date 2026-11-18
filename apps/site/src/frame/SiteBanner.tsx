@@ -3,19 +3,10 @@ import { Breadcrumbs, Card, Column, Text } from '@envsemble/envui';
 import { routeHref } from '../routes/Address';
 import type { TrailStep } from '../routes/Trails';
 import { BannerMotif, motifOf } from './BannerMotif';
-import { CatalogueBannerLines } from './CatalogueBannerLines';
-import { DocsBannerLines } from './DocsBannerLines';
 import { CompactContents } from './PageContents';
 
-/**
- * The kinds of banner, one card that reads from the start like a document, under its breadcrumbs,
- * with a LineArt drawing at its end (Banners.css): a catalogue page's drawing draws itself in, or
- * for the few with one is a motif drawn from what the page shows (BannerMotif.tsx); a Docs page's
- * is the same drawing, still.
- */
 type BannerKind = 'catalogue' | 'docs';
 
-/** A page's banner, composed from the library's card, text and layout primitives. */
 export function SiteBanner({
   title,
   breadcrumb,
@@ -29,21 +20,13 @@ export function SiteBanner({
   kind = 'catalogue',
 }: {
   title: string;
-  /** Where the page is, as a quiet line above the title, such as Components / Actions. */
   breadcrumb?: string;
-  /**
-   * The trail from the part's home to the page, as breadcrumbs above the title in place of
-   * `breadcrumb`, such as Docs / Components / Actions / Button.
-   */
   trail?: readonly TrailStep[];
   description?: string;
-  /** Facts about the page under its description, such as a component's status. */
   meta?: ReactNode;
-  /** The id of what a catalogue page shows, which gives the few that have one their motif. */
   subject?: string;
   children?: ReactNode;
   actions?: ReactNode;
-  /** What sits over the banner's top end corner, such as the Design | Code switch. */
   corner?: ReactNode;
   kind?: BannerKind;
 }) {
@@ -51,21 +34,13 @@ export function SiteBanner({
   return (
     <header className="site-page-header">
       <Card background="default" padding={6} className="site-page-banner site-banner">
-        {motif ? (
-          <BannerMotif motif={motif} />
-        ) : kind === 'catalogue' ? (
-          <CatalogueBannerLines subject={subject} />
-        ) : (
-          <DocsBannerLines title={title} />
-        )}
+        {motif && <BannerMotif motif={motif} />}
         <Column gap={6} className="site-page-banner-content">
           <div className="site-page-banner-heading">
             <Column gap={3}>
               {trail ? (
                 <Breadcrumbs
                   className="site-page-banner-breadcrumbs"
-                  // One line in a narrow banner too: the page's own name, the title below, is cut
-                  // short first.
                   wrap={false}
                   items={trail.map(({ label, route }) => ({
                     label,

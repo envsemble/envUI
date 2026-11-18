@@ -16,19 +16,15 @@ aliases:
   - opt-in
 useWhen:
   - Any number of options, each chosen on its own, such as which e-mails to receive
-  - Agreeing to or including one option, applied when a form is sent, such as the terms
+  - Agreeing to one option, applied when a form is sent, such as the terms
   - A parent that selects or clears a group, and shows when only some are chosen
 avoidWhen:
   - text: A setting that takes effect at once, such as turning notifications on.
     use: Switch
   - text: Exactly one choice from a few options.
     use: Radio
-  - text: One choice from a long list of options.
-    use: Select
   - text: Several choices from a long list, found by typing.
     use: Combobox
-  - text: Selecting rows of a table, which its selection column does.
-    use: Table
 components:
   - Checkbox
 examples:
@@ -36,9 +32,6 @@ examples:
   CheckboxAnatomy: anatomy
   SelectAll: example
   LongLabel: example
-  NamedGroup:
-    role: do
-    caption: Name a group with a legend, so each choice reads in context.
 ---
 
 # Checkbox
@@ -58,16 +51,9 @@ examples:
 
 ### States
 
-Pressing the box or its label toggles it. A mixed box shows a dash. A checked box that is disabled takes the neutral fill rather than the accent, as a disabled button does.
-
 <!-- specimen: States -->
 
 ### Select all
-
-A parent checks or clears all its children.
-
-- Checked when every child is.
-- Mixed when some are.
 
 ```tsx figure=SelectAll motion
 
@@ -75,85 +61,6 @@ A parent checks or clears all its children.
 
 ### Adapting to width
 
-The label wraps onto more lines, and the box stays centred beside it.
-
 ```tsx figure=LongLabel widths="30 14" sweep
 
 ```
-
-## Rules
-
-A checkbox says what it turns on, and a group of them has a name.
-
-```tsx figure=NamedGroup
-
-```
-
-### Labels
-
-Write the label as the choice it turns on, in sentence case, so checking it means yes.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                             | Action                                         |
-| ----------------------------------------------- | ---------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to the next or previous checkbox.        |
-| <kbd>Space</kbd>                                | Checks or unchecks it, and checks a mixed one. |
-
-### envUI provides
-
-- A native checkbox inside its `<label>`, named by the label's text.
-- The mixed state as `indeterminate` and `aria-checked="mixed"`.
-- A focus outline, and a 2.75 rem target on touch screens.
-
-### You provide
-
-- A `label`, or `aria-label` on a checkbox without one.
-- A name for a group, such as a fieldset's legend.
-- An error or description, linked with `aria-describedby`.
-
-## Compose
-
-### Usage
-
-A Checkbox is a native checkbox inside its `<label>`, named by `label`; an optional `description` is a short muted line under it, read with its name.
-
-- Uncontrolled: `defaultChecked`.
-- Controlled: `checked` and `onCheckedChange`, which receives the new state as a boolean.
-
-```tsx source=IncludeArchived
-
-```
-
-#### Mixed and select all
-
-`checked="mixed"` shows a dash, for a parent whose children are partly chosen; pressing a mixed checkbox reports `true`. The checkbox doesn't derive it: set the parent's `checked` from its children, `true` when all are checked, `'mixed'` when some are and `false` when none are, as the SelectAll example does.
-
-```tsx
-<Checkbox
-  label="All projects"
-  checked={selected.every(Boolean) ? true : selected.some(Boolean) ? 'mixed' : false}
-  onCheckedChange={(checked) => setSelected(selected.map(() => checked))}
-/>
-```
-
-#### In a form
-
-A checked box submits its `name` with its `value`; an unchecked one submits nothing. A reset restores `defaultChecked`. `new FormData(form).getAll('notify')` reads the values of a group's checked boxes. envUI has no checkbox group yet: name a group with a native `fieldset` and its `legend`, which is read with each choice.
-
-```tsx
-<form onSubmit={save}>
-  <fieldset>
-    <legend>Send me an e-mail about</legend>
-    <Checkbox name="notify" value="mentions" label="Mentions" defaultChecked />
-    <Checkbox name="notify" value="digest" label="A weekly digest" />
-  </fieldset>
-  <Button type="submit">Save preferences</Button>
-</form>
-```
-
-### Composition
-
-`className` and `style` reach the root, `env-checkbox`, the label around the box and the text; `ref` and the other native props, such as `name` and `required`, reach the input, `env-checkbox-input`, so a form library can register and focus it. The box is `env-checkbox-box`, the check `env-checkbox-indicator` and the text `env-checkbox-label`.

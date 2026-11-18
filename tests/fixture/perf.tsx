@@ -1,6 +1,3 @@
-// The runtime benchmarks' page (scripts/measure/MeasureRuntime.ts): big lists and popups on their own,
-// built for production. ?scenario= picks what it holds, and window.envuiPerf runs the measurements
-// the script asks for, timed with performance.now() around React's commit and to the frame after.
 import { useLayoutEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
@@ -28,10 +25,8 @@ const reports: Report[] = Array.from({ length: count }, (_, index) => ({
   status: statuses[index % statuses.length]!,
 }));
 
-/** Changes one row, as an application would after an edit: set by the table once it mounts. */
 let changeRow: (index: number) => void = () => {};
 
-/** A table of 1,000 rows, rendered as an application would, without memoizing its rows. */
 function BigTable() {
   const [rows, setRows] = useState(reports);
   useLayoutEffect(() => {
@@ -68,7 +63,6 @@ function BigTable() {
   );
 }
 
-/** A list of 1,000 rows with a description and a badge each. */
 function BigList() {
   return (
     <List.Root aria-label="Reports">
@@ -96,7 +90,6 @@ const visibilityOptions = [
   'Owners',
 ].map((label) => ({ value: label.toLowerCase(), label }));
 
-/** A menu, a select and a popover, each opened by the benchmark's pointer. */
 function Popups() {
   const [visibility, setVisibility] = useState<string | null>('team');
   return (
@@ -135,9 +128,8 @@ function Popups() {
 const scenarios = { table: BigTable, list: BigList, popups: Popups };
 type Scenario = keyof typeof scenarios;
 
-const container = document.getElementById('root')!; // perf.html has one.
+const container = document.getElementById('root')!;
 const root = createRoot(container);
-// MeasureRuntime.ts asks only for scenarios that exist.
 const scenario = (new URLSearchParams(location.search).get('scenario') ?? 'popups') as Scenario;
 const Content = scenarios[scenario];
 const page = (
@@ -146,7 +138,6 @@ const page = (
   </Theme>
 );
 
-/** Resolves once the frame after this moment has been produced: a frame, then a task after it. */
 function nextFrame() {
   return new Promise<number>((resolve) =>
     requestAnimationFrame(() => {
@@ -157,8 +148,6 @@ function nextFrame() {
   );
 }
 
-// Long tasks, and long animation frames (over 50 ms, with their rendering), from the start, for
-// the measurements to count those in their time.
 const longTasks: { start: number; duration: number }[] = [];
 const longFrames: { start: number; duration: number }[] = [];
 new PerformanceObserver((list) => {
@@ -169,15 +158,12 @@ new PerformanceObserver((list) => {
   for (const entry of list.getEntries())
     longFrames.push({ start: entry.startTime, duration: entry.duration });
 }).observe({ type: 'long-animation-frame', buffered: true });
-// Event timing: from a press's hardware time to the frame after its handlers. The cast:
-// TypeScript's PerformanceObserverInit lacks durationThreshold.
 const events: { name: string; start: number; duration: number }[] = [];
 new PerformanceObserver((list) => {
   for (const entry of list.getEntries())
     events.push({ name: entry.name, start: entry.startTime, duration: entry.duration });
 }).observe({ type: 'event', durationThreshold: 16, buffered: true } as PerformanceObserverInit);
 
-/** The long tasks and long frames between two moments: how many, and the longest frame. */
 function longTasksBetween(start: number, end: number) {
   const overlapping = (entry: { start: number; duration: number }) =>
     entry.start + entry.duration > start && entry.start < end;
@@ -202,10 +188,6 @@ function shown(selector: string) {
   return box.width > 0 && box.height > 0;
 }
 
-/**
- * Runs a change in a task of its own, as an event would, and times it: its commit, React's render
- * and effects (flushSync), and the time to the frame after, with the long tasks and frames between.
- */
 function timed(change: () => void) {
   return new Promise<Record<string, number>>((resolve) =>
     setTimeout(async () => {
@@ -213,7 +195,6 @@ function timed(change: () => void) {
       flushSync(change);
       const commit = performance.now() - start;
       const end = await nextFrame();
-      // Long frames are reported after they end.
       await nextFrame();
       resolve({ commit, frame: end - start, ...longTasksBetween(start, end) });
     }),
@@ -224,15 +205,8 @@ let pending: Promise<Record<string, number>> | undefined;
 
 const api = {
   scenario,
-  /** Renders the scenario. */
   mount: () => timed(() => root.render(page)),
-  /** Changes one row of the table, as mount does. */
   update: (index: number) => timed(() => changeRow(index)),
-  /**
-   * Waits for the next press and for the popup it opens: from the press to the frame after the
-   * popup is shown, with the long tasks between and the slowest event the press made. `result`
-   * gives the measurement once the popup has opened.
-   */
   arm(kind: keyof typeof popupSelectors) {
     const selector = popupSelectors[kind];
     pending = new Promise<Record<string, number>>((resolve) => {
@@ -242,7 +216,6 @@ const api = {
           const start = event.timeStamp;
           const finish = async () => {
             const end = await nextFrame();
-            // The event timing entries arrive after their frame.
             await nextFrame();
             const slowest = events
               .filter((entry) => entry.start >= start - 1)
@@ -269,7 +242,6 @@ const api = {
     if (!pending) throw new Error('Arm a popup before asking for its result.');
     return pending;
   },
-  /** Whether a popup is shown. */
   shown: (kind: keyof typeof popupSelectors) => shown(popupSelectors[kind]),
 };
 
@@ -279,5 +251,4 @@ declare global {
   }
 }
 window.envuiPerf = api;
-// The popups are there from the start; the big lists wait for the benchmark to time their render.
 if (scenario === 'popups') root.render(page);

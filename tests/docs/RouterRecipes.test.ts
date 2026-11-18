@@ -6,13 +6,8 @@ import { marked, type Tokens } from 'marked';
 import ts from 'typescript';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-// The setup page's "Connect your router" recipes, the ```tsx recipe fences in docs/setup.md, are
-// type-checked against envUI's source and minimal declarations of the routers
-// (tests/docs/router-shims.d.ts), so a recipe can't drift from LinkComponentProps.
-
 const directory = join(repositoryRoot, '.cache/router-recipes');
 
-/** The recipe fences of a Markdown page, in order. */
 function recipes(markdown: string) {
   return marked
     .lexer(markdown)
@@ -32,7 +27,6 @@ test('the router recipes type-check against LinkComponentProps', () => {
   const found = recipes(readFileSync(join(repositoryRoot, 'docs/setup.md'), 'utf8'));
   rmSync(directory, { recursive: true, force: true });
   mkdirSync(directory, { recursive: true });
-  // Each recipe is a module of its own, beside the router declarations.
   const files = found.map((source, index) => {
     const file = join(directory, `Recipe${index + 1}.tsx`);
     writeFileSync(file, source);
@@ -56,7 +50,6 @@ test('the router recipes type-check against LinkComponentProps', () => {
   const own = new Set(files.map((file) => file.replaceAll('\\', '/')));
   const diagnostics = ts
     .getPreEmitDiagnostics(program)
-    // Only the recipes' own errors: npm run typecheck checks envUI's source.
     .filter((diagnostic) => diagnostic.file && own.has(diagnostic.file.fileName))
     .map((diagnostic) => {
       const file = diagnostic.file;

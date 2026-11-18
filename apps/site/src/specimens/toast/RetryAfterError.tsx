@@ -7,11 +7,6 @@ import { Renew } from '../../motion/Renew';
 
 const retry = '.env-toast[data-tone="danger"] .env-toast-action';
 
-/*
- * The pointer presses Publish: it fails, and a danger notification with Try again stays. The
- * pointer presses Try again, the button works once more, and a success follows and closes by
- * itself. Then the page starts anew, its first attempt failing again.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: '.env-button', x: 0.5, y: 2 },
@@ -24,7 +19,6 @@ const script: PointerStep[] = [
   { click: true },
   { wait: 120 },
   { leave: true },
-  // The success arrives once publishing ends, and is gone well before the page starts anew.
   { wait: 6900 },
   { cue: 'renew' },
   { wait: 360 },
@@ -40,7 +34,6 @@ function Publishing() {
   );
 }
 
-/** Publish failing once and tried again by a pointer no one sees. */
 export default function RetryAfterErrorMotion() {
   return (
     <MotionStage label="a failure tried again from its notification" height="18rem">

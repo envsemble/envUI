@@ -1,6 +1,3 @@
-// A button's variant and tone from its container: a toolbar's ghost default where it has the
-// button's tone, followed by ConfirmButton and CopyButton, and a pair no variant is designed in
-// rendered neutral and reported. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -15,7 +12,6 @@ const { Button, ConfirmButton, CopyButton, Toolbar } = await importSource('Butto
   "export * as Toolbar from './packages/ui/src/actions/Toolbar.tsx';",
 ]);
 
-/** The variant and tone of each button in the markup, by its data-testid. */
 function emphasis(element: ReactElement) {
   return Object.fromEntries(
     elementsOf(firstElement(renderToString(element)))
@@ -43,10 +39,8 @@ test("a button takes its container's variant where it has the button's tone", ()
       copy('copy'),
     ),
   );
-  // Ghost has danger but no accent: an accent button stays the primary accent one.
   assert.deepEqual(toolbar.accent, ['primary', 'accent']);
   assert.deepEqual(toolbar.danger, ['ghost', 'danger']);
-  // ConfirmButton and CopyButton follow the toolbar, and else rest outline and secondary.
   assert.deepEqual(toolbar.confirm, ['ghost', 'neutral']);
   assert.deepEqual(toolbar.copy, ['ghost', 'neutral']);
   const resting = emphasis(h('div', null, confirm('confirm'), copy('copy')));
@@ -57,11 +51,10 @@ test("a button takes its container's variant where it has the button's tone", ()
 test('a pair no variant is designed in renders neutral, and is reported', (context) => {
   const errors: string[] = [];
   context.mock.method(console, 'error', (...args: unknown[]) => errors.push(args.join(' ')));
-  // Past the types on purpose: the undesigned pair the runtime check must catch.
-  const pair = emphasis(
+  const undesignedPairPastTheTypes = emphasis(
     h(Button, { variant: 'secondary', tone: 'danger', 'data-testid': 'undesigned' }, 'Undesigned'),
   );
-  assert.deepEqual(pair.undesigned, ['secondary', 'neutral']);
+  assert.deepEqual(undesignedPairPastTheTypes.undesigned, ['secondary', 'neutral']);
   assert.equal(
     errors.filter((text) => text.includes('a secondary button has no danger tone')).length,
     1,

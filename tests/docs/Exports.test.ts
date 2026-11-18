@@ -1,5 +1,3 @@
-// The record of the entry points' exports, docs/generated/exports.json: what counts as a change of
-// the public API, and which changesets record it.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { changedExports } from '../../scripts/docs/GenerateExports.ts';
@@ -20,7 +18,13 @@ test('an export that goes, or changes its kind, needs a major changeset that nam
     ['@envsemble/envui: Button (function, gone)', false],
     ['@envsemble/envui: ButtonProps (interface, now type)', false],
   ]);
-  // A name is named whole: ButtonProps doesn't name Button.
+  assert.deepEqual(
+    labels([changeset('minor', 'Breaking changes:\n\n- `ButtonProps` is a type.')]),
+    [
+      ['@envsemble/envui: Button (function, gone)', false],
+      ['@envsemble/envui: ButtonProps (interface, now type)', true],
+    ],
+  );
   assert.deepEqual(labels([changeset('major', 'ButtonProps is a type.')]), [
     ['@envsemble/envui: Button (function, gone)', false],
     ['@envsemble/envui: ButtonProps (interface, now type)', true],

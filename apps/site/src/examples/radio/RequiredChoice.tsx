@@ -14,7 +14,6 @@ export default function RequiredChoice() {
         event.preventDefault();
         if (!format) {
           setError('Choose a format to export.');
-          // Take people to the choice they missed.
           event.currentTarget.querySelector<HTMLInputElement>('input[name="format"]')?.focus();
           return;
         }

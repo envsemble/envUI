@@ -6,7 +6,6 @@ const reports = [
   { name: 'Pricing research', owner: 'Alex Morgan' },
 ];
 
-// Tighter rows for scanning: only the space in each row changes; the text keeps its size.
 export default function Rows() {
   return (
     <Table.Root aria-label="Reports" density="sm">

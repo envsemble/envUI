@@ -1,8 +1,7 @@
 import type { WindowClass } from '../../foundations/windowClasses.js';
 import type { ScaffoldForms, ScaffoldNavigation, ScaffoldNavigationForm } from '../Scaffold.js';
 
-/** The window classes, smallest first. */
-const classes = ['compact', 'medium', 'expanded', 'large'] as const;
+const windowClassesSmallestFirst = ['compact', 'medium', 'expanded', 'large'] as const;
 
 const defaultForms: Record<WindowClass, ScaffoldNavigationForm> = {
   compact: 'bar',
@@ -11,8 +10,7 @@ const defaultForms: Record<WindowClass, ScaffoldNavigationForm> = {
   large: 'drawer',
 };
 
-/** The forms that stand in for one that wasn't given, nearest first. */
-const standIns: Record<ScaffoldNavigationForm, readonly ScaffoldNavigationForm[]> = {
+const standInsNearestFirst: Record<ScaffoldNavigationForm, readonly ScaffoldNavigationForm[]> = {
   bar: ['bar', 'rail', 'drawer'],
   rail: ['rail', 'drawer', 'bar'],
   drawer: ['drawer', 'rail', 'bar'],
@@ -28,12 +26,11 @@ export function resolveNavigationForms(
   forms: ScaffoldForms | undefined,
 ): Record<WindowClass, ScaffoldNavigationForm | 'none'> {
   const given = (form: ScaffoldNavigationForm) => navigation?.[form] != null;
-  // Filled for every window class below.
   const resolved = {} as Record<WindowClass, ScaffoldNavigationForm | 'none'>;
-  for (const windowClass of classes) {
+  for (const windowClass of windowClassesSmallestFirst) {
     const asked = forms?.[windowClass] ?? defaultForms[windowClass];
     resolved[windowClass] =
-      asked === 'none' ? 'none' : (standIns[asked].find(given) ?? ('none' as const));
+      asked === 'none' ? 'none' : (standInsNearestFirst[asked].find(given) ?? ('none' as const));
   }
   return resolved;
 }

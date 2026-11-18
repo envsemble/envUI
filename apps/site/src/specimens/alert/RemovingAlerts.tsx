@@ -5,14 +5,10 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
-/*
- * A document under two alerts. Sync resumes, and Sync paused goes by itself; then the pointer
- * dismisses the tip, which may safely be hidden. A beat later the connection drops again, and the
- * figure starts over.
- */
+const keepFirstWaitWhole: PointerStep = { cue: 'start' };
+
 const script: PointerStep[] = [
-  // A cue first, so the wait after it is kept whole.
-  { cue: 'start' },
+  keepFirstWaitWhole,
   { wait: 960 },
   { cue: 'synced' },
   { wait: 540 },
@@ -38,7 +34,6 @@ function Removing() {
     },
   });
   return (
-    // The alerts sit above the document, which stays put as they go.
     <Column gap={3} justify="end" style={{ inlineSize: 'min(100%, 28rem)', minBlockSize: '16rem' }}>
       {paused && (
         <Alert tone="info" title="Sync paused">
@@ -60,7 +55,6 @@ function Removing() {
   );
 }
 
-/** Alerts removed as they stop applying: one by itself, one dismissed by a pointer no one sees. */
 export default function RemovingAlerts() {
   return (
     <SpecimenFrame>

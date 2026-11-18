@@ -1,11 +1,8 @@
-// Reads the repository's files as text for the checks that read what code and comments say: which
-// files a folder holds, and the comments and text of a module, as TypeScript parses them.
 import { readdir } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
 import ts from 'typescript';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-/** The files under `directory`, a path from the repository's root, as sorted root paths. */
 export async function listFiles(directory: string) {
   let entries;
   try {
@@ -25,17 +22,12 @@ export async function listFiles(directory: string) {
     .sort();
 }
 
-/** A comment, or a run of text in a module, at its offset. */
 export interface CodeText {
   kind: 'comment' | 'text';
   start: number;
   text: string;
 }
 
-/**
- * The comments, string and template literals and JSX text of a module, each `{ kind, start, text }`
- * with `kind` `comment` or `text`; module specifiers are file names and are left out.
- */
 export function codeText(path: string, text: string) {
   const kind = path.endsWith('.tsx')
     ? ts.ScriptKind.TSX
@@ -84,7 +76,6 @@ export function codeText(path: string, text: string) {
   return segments;
 }
 
-/** The comments of a style sheet, each `{ kind, start, text }` as codeText() gives them. */
 export function cssComments(text: string): CodeText[] {
   return [...text.matchAll(/\/\*[\s\S]*?\*\//g)].map((match) => ({
     kind: 'comment',

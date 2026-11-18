@@ -9,10 +9,6 @@ const sizes: readonly { size: ControlSize; title: string; caption?: string }[] =
   { size: 'lg', title: 'Large' },
 ];
 
-/**
- * The three sizes of Button and IconButton, which every control of a size shares: on the stage
- * every specimen sits on, each size named over its pair.
- */
 export default function Sizes() {
   return (
     <SpecimenFrame size="collection">

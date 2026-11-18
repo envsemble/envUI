@@ -19,17 +19,13 @@ const destinations: Destination[] = [
 
 export default function ScaffoldAnatomy() {
   return (
-    // The rail at every width, so the figure keeps its parts on a narrow page.
     <Scaffold
       scroll="body"
       landmarks={false}
       style={{ blockSize: '16rem' }}
       navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={
-        <TopBar
-          title="Northwind"
-          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
-        />
+        <TopBar title="Northwind" end={<IconButton icon={<IconSearch />} aria-label="Search" />} />
       }
       navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >

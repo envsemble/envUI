@@ -1,8 +1,3 @@
-// The data the site's pages read from the repository as the site app builds or serves
-// (apps/site/vite.config.ts): the documentation's data, generated again as its sources change; the
-// recorded sizes of the parts that load with a page and each example's lines of code, which their
-// skeletons keep; and the release notes and the outlines of the parts, as virtual modules
-// (`virtual:envui-*`, declared in apps/site/src/Vite.d.ts).
 import { readFileSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
 import type { Plugin } from 'vite';
@@ -23,20 +18,14 @@ import {
 } from './PartOutlines.ts';
 import { readReleaseNotes, releaseNotesSources } from './ReleaseNotes.ts';
 
-/** The recorded size of each part that loads with a page (scripts/site/RecordPartSizes.ts). */
 const partSizesFile = resolve(repositoryRoot, 'apps/site/src/generated/PartSizes.json');
 function readPartSizes(): Record<string, [number, number]> {
   const { $comment: _comment, ...sizes } = JSON.parse(readFileSync(partSizesFile, 'utf8'));
   return sizes;
 }
 
-/**
- * The key of a part of one page, an example, a specimen, the stage of an example shown open or a
- * guide's figure, with the page's id.
- */
 const pagePart = /^(?:example|specimen|open|figure):([^/]+)\//;
 
-/** Whether `path` is `directory` or inside it. */
 const inside = (directory: string, path: string) => {
   const contained = relative(directory, path);
   return !contained.startsWith('..') && !isAbsolute(contained);
@@ -44,26 +33,15 @@ const inside = (directory: string, path: string) => {
 
 const resolvedId = (id: string) => `\0${id}`;
 
-/** The plugins that give the site its data, in their order in the site's Vite config. */
 export function siteDataPlugins(): Plugin[] {
-  /** Whether the site is building rather than serving: set by envui-page-parts. */
   let building = false;
-  /** Every part's size and every example's lines, read once a build. */
   let pageParts: { sizes: Record<string, [number, number]>; lines: Record<string, number> } = {
     sizes: {},
     lines: {},
   };
 
-  /**
-   * Data the site's pages read as virtual modules: the release notes, and the outlines of the
-   * parts that load with a page, which their skeletons are drawn from. While serving, a change to
-   * their files reloads the page with the new data; an outline (`reloads: false`), which only
-   * shapes a skeleton, waits for the next load, so editing an example updates it in place.
-   */
   const siteData: Record<string, { read: () => unknown; sources: string[]; reloads?: false }> = {
     'virtual:envui-release-notes': { read: readReleaseNotes, sources: releaseNotesSources },
-    // In a build, a page's parts' sizes and lines go with its content (envui-page-parts), and the
-    // site's start keeps only the sizes of parts of no one page.
     'virtual:envui-part-sizes': {
       read: () =>
         building
@@ -98,7 +76,6 @@ export function siteDataPlugins(): Plugin[] {
         generateDocumentation();
       },
       configureServer(server) {
-        // Pages, generated props and the example and specimen files they reference.
         const sources = [documentationDirectory, examplesDirectory, specimensDirectory];
         server.watcher.add(sources);
         server.watcher.on('all', (event, path) => {
@@ -116,9 +93,6 @@ export function siteDataPlugins(): Plugin[] {
       },
     },
     {
-      // Each page's content file carries the recorded sizes of its examples and specimens and
-      // its examples' lines of code, which their skeletons keep, so the site's start doesn't
-      // carry every page's (the virtual modules, while developing).
       name: 'envui-page-parts',
       apply: 'build',
       enforce: 'pre',

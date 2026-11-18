@@ -3,7 +3,6 @@ import { siteDevUrl } from '../support/Servers';
 import { readFile, writeFile, unlink } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
 
-/** What the spec writes into the sources, each edit's mark. */
 const edits = [
   'data-env-live',
   '.env-button { padding-inline-start: 1.5rem; }',
@@ -11,18 +10,12 @@ const edits = [
   'Live documentation acceptance.',
 ];
 
-/** A file's address on the development server, whose root is the site's folder. */
 function served(path: string) {
   const inSite = relative(resolve('apps/site'), path);
   const address = inSite.startsWith('..') ? `/@fs/${path.replace(/^\//, '')}` : `/${inSite}`;
   return fetch(`${siteDevUrl}${address.replaceAll('\\', '/')}`);
 }
 
-/**
- * The files the development server still serves with one of the spec's edits in them: it serves a
- * module as it last transformed it until it sees the file change, and sends the page a hot update
- * then. The file the spec adds counts until the server has seen it removed.
- */
 async function editedOnServer(files: string[]) {
   const edited = await Promise.all(
     files.map(async (path) => {
@@ -44,29 +37,23 @@ test('public component, stylesheet, new export and Markdown documentation update
   const newComponent = resolve('packages/ui/src/LiveAcceptance.tsx');
   const modules = [buttonSource, stylesheet, index, example, newComponent];
   const paths = [buttonSource, stylesheet, index, example, documentation];
-  // What the server serves of the Markdown: the page's content and the summary of every page.
   const generated = [
     resolve('apps/site/src/generated/pages/text-field.json'),
     resolve('apps/site/src/generated/Documentation.ts'),
   ];
   const originals = await Promise.all(paths.map((path) => readFile(path, 'utf8')));
   const version = await readFile('packages/ui/package.json', 'utf8');
-  // An earlier run, such as a retry, puts the sources back as it ends, and the server can take a
-  // moment to see it. Its hot update of the library's index, an example or a page's Markdown then
-  // renders the page afresh, which would empty the draft below: start once it has seen them all.
   await expect.poll(() => editedOnServer([...modules, ...generated])).toEqual([]);
   try {
     await page.goto(`${siteDevUrl}/components/text-field`);
     await page.evaluate(() => {
       (window as unknown as { liveProof: string }).liveProof = 'same-document';
     });
-    // The overview's first example holds a draft that hot updates must keep.
     const projectName = page
       .getByRole('group', { name: 'TextField example', exact: true })
       .getByRole('textbox', { name: 'Project name', exact: true })
       .and(page.locator('[name="project"]'));
     await projectName.fill('Preserved draft');
-    // A Button of the site's own: the page's Display menu button.
     const displayButton = page
       .locator('.site-page-actions .site-wide-only')
       .getByRole('button', { name: 'Display', exact: true });
@@ -93,7 +80,6 @@ test('public component, stylesheet, new export and Markdown documentation update
       index,
       `${originals[2]}\nexport { LiveAcceptance } from './LiveAcceptance.js';\n`,
     );
-    // An example file uses the new export as an application would.
     const editedExample =
       `import { LiveAcceptance } from '@envsemble/envui';\n` +
       originals[3].replace(/(<(?:Row|Column)[^>]*>)/, '$1<LiveAcceptance />');
@@ -104,9 +90,8 @@ test('public component, stylesheet, new export and Markdown documentation update
         .getByRole('group', { name: 'Sizes example', exact: true })
         .getByTestId('live-new-component'),
     ).toHaveText('New shared component');
-    // A guideline added to the Markdown shows on the page.
     const editedDocumentation = originals[4].replace(
-      /### Labels\r?\n/,
+      /### Sizes\r?\n/,
       '$&\nLive documentation acceptance.\n',
     );
     expect(editedDocumentation).toContain('Live documentation acceptance.');
@@ -117,8 +102,6 @@ test('public component, stylesheet, new export and Markdown documentation update
     );
     expect(await readFile('packages/ui/package.json', 'utf8')).toBe(version);
   } finally {
-    // Only the files it changed: the server sends a hot update for a file written as it was, too,
-    // which the next run couldn't tell it must wait for.
     await Promise.all(
       paths.map(async (path, index) => {
         if ((await readFile(path, 'utf8')) !== originals[index])

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Column } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/code';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 import { MarkdownEditor } from '@envsemble/envui/markdown';
 
 const defaultSource =
@@ -73,7 +73,9 @@ export default function MarkdownEditorFixture() {
         <Button onClick={() => setBlock('const first = 1;')}>Show code workload</Button>
         <Button onClick={() => setBlock('const latest = 2;')}>Replace code workload</Button>
         <Button onClick={() => setBlock(null)}>Remove code workload</Button>
-        {block !== null && <CodeBlock language="javascript">{block}</CodeBlock>}
+        {block !== null && (
+          <HighlightedCodeBlock language="javascript">{block}</HighlightedCodeBlock>
+        )}
       </div>
     </Column>
   );

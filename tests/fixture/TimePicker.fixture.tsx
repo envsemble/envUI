@@ -3,10 +3,6 @@ import { Button, TimePicker } from '@envsemble/envui';
 
 export const mount = 'standalone';
 
-/**
- * Time pickers in a form, one controlled on a 12-hour clock and one read-only. Their clocks in other
- * locales, and their states, are tests/library/source/TimePicker.test.ts's.
- */
 export default function TimePickerFixture() {
   const [submitted, setSubmitted] = useState('');
   const [reminder, setReminder] = useState<string | null>('14:00');
@@ -45,7 +41,6 @@ export default function TimePickerFixture() {
           max="18:00"
           minuteStep={30}
         />
-        {/* Read-only, so its emptiness never keeps the form from submitting. */}
         <TimePicker label="Locked" name="locked" locale="en-GB" readOnly required />
         <div className="fixture-actions">
           <Button type="submit">Submit times</Button>

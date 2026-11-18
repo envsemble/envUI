@@ -44,10 +44,6 @@ const files: FileNode[] = [
 const row = (id: string) => `.env-tree-item[data-id="${id}"]`;
 const logo = row('design/brand/logo.md');
 
-/*
- * The pointer clicks Logo.md: it is previewed, as the line below says. A double click opens it to
- * keep. Then the pointer opens Engineering by its chevron, and the tree starts anew.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: logo, x: 0.3, y: 6 },
@@ -129,8 +125,7 @@ function Opening() {
   );
 }
 
-/** A file previewed by a click and opened by a double click, and a folder opened by its chevron. */
-// eslint-disable-next-line no-restricted-syntax -- previewing is the tree's own word, its action's `preview`
+// eslint-disable-next-line no-restricted-syntax
 export default function OpeningAndPreviewing() {
   return (
     <SpecimenFrame size="wide">

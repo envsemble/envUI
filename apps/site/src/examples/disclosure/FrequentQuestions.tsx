@@ -19,8 +19,6 @@ export default function FrequentQuestions() {
   return (
     <Column gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
       {questions.map(({ question, answer }, index) => (
-        // A shared name lets one answer stay open at a time, where the browser supports it; the
-        // first starts open.
         <Disclosure key={question} name="plan-questions" title={question} defaultOpen={index === 0}>
           <Text>{answer}</Text>
         </Disclosure>

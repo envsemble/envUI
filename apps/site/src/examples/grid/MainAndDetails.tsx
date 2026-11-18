@@ -2,8 +2,6 @@ import { Column, DescriptionList, Grid, Text } from '@envsemble/envui';
 
 export default function MainAndDetails() {
   return (
-    // Two columns, the main one twice as wide; minmax(0, …) lets long content wrap instead of
-    // widening a column.
     <Grid columns="minmax(0, 2fr) minmax(0, 1fr)" gap={6}>
       <Column gap={2}>
         <Text render={<h3 />} variant="title">

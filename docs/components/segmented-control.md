@@ -19,23 +19,15 @@ useWhen:
   - How a toolbar lays out content, such as List and Board
   - A choice between two scopes in a narrow container, such as a sidebar
 avoidWhen:
-  - text: Each option has a panel of its own, such as the sections of a settings page.
-    use: Tabs
-  - text: A choice in a form that is saved with it, or options that need explaining.
-    use: RadioGroup
-  - text: More than five options, or options with long names.
+  - text: A setting rather than a view, such as a theme, or more than five options.
     use: Select
-  - text: A setting that turns on or off.
-    use: Switch
-  - text: Actions, such as Save and Share, rather than a choice that stays selected.
-    use: ButtonGroup
+  - text: Options that each need a sentence to explain them.
+    use: RadioGroup
 components:
   - SegmentedControl
 examples:
   WorkItems: overview
-  SmallToolbar:
-    role: example
-    caption: Small, in a toolbar beside a small button.
+  SmallToolbar: example
   SegmentedControlAnatomy: anatomy
   FullWidthScope: example
 ---
@@ -45,8 +37,6 @@ examples:
 ## Variants
 
 ### Sizes
-
-Small, medium and large, the control heights of the [scale](../foundations/spacing.md). Without a size of its own it takes its container's.
 
 <!-- specimen: Sizes -->
 
@@ -71,81 +61,10 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 
 ### States
 
-Each option can show an icon and a count.
-
-- One option can be disabled, which the arrow keys skip, or the whole control.
-- The chosen option rises out of the track on a raised thumb.
-
 <!-- specimen: States -->
 
 ### Adapting to width
 
-The control is as wide as its options, or fills its container and splits it evenly.
-
-- A label too long for its share ends with an ellipsis and shows whole in a tooltip.
-- In a container too narrow for its options, a control as wide as its options scrolls.
-
 ```tsx figure=FullWidthScope widths="26 14" motion
 
 ```
-
-## Rules
-
-The option used most comes first, and each is named in a word or two.
-
-### Order
-
-Put the most used option first, and start on it.
-
-### Labels
-
-Name each option with a word or two for its view.
-
-- Name the whole control after what it switches, for assistive technology.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                             | Action                                                      |
-| ----------------------------------------------- | ----------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves into the control, to the chosen option, and out.      |
-| Arrow keys                                      | Choose the next or previous option, skipping disabled ones. |
-| <kbd>Esc</kbd> on a cut label                   | Closes its tooltip.                                         |
-
-### envUI provides
-
-- A `radiogroup` with each segment a `radio`, one tab stop and the arrow keys.
-- Each option named by its label and count, such as Open 12.
-- The whole label as the name when `fullWidth` cuts it short.
-
-### You provide
-
-- An `aria-label` that names what the control switches.
-- The content that follows the choice.
-
-## Compose
-
-### Usage
-
-```tsx
-<SegmentedControl
-  aria-label="Work items"
-  value={status}
-  onValueChange={setStatus}
-  items={[
-    { value: 'open', label: 'Open', count: 12 },
-    { value: 'done', label: 'Done', count: 4 },
-  ]}
-/>
-```
-
-Leave it uncontrolled, starting at `defaultValue`, the first item by default, or control it with `value` and `onValueChange`. `items` are two to five `SegmentedControlItem`s in the order they show, each with its `value`, a short `label`, and optionally a `count`, read as part of its name, a decorative `icon` and `disabled`. `aria-label` names the control, which has no visible label; `disabled` turns off the whole control.
-
-#### Size and width
-
-`size` is `sm`, `md` or `lg`; without it the control takes its container's, `md` unless the container sets another. Without `fullWidth` it is as wide as its items and scrolls in a container too narrow for them; with `fullWidth` it fills the width, split evenly, and a label too long for its share shows whole in a tooltip, or wraps on touch screens.
-
-### Composition
-
-The track, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen, when it is the thumb, and `data-disabled`.

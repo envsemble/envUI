@@ -4,24 +4,12 @@ import { StillMark } from './StillMark';
 import { pixelTolerance, remeasure } from '../shared/Remeasure';
 import { classNames } from '../shared/Attributes';
 
-/**
- * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
- * a section of a page. The titles of its parts take the level below.
- */
 export const SpecimenHeadingLevel = createContext<2 | 3>(2);
 
-/**
- * The level of the titles of a specimen's parts inside a SpecimenFrame: below its title, or at the
- * specimen's own level where it has none, so no level is skipped. Unset, they take the level below
- * the specimen's.
- */
+const overflowTolerancePx = 1;
+
 const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
 
-/**
- * The frame of a specimen, or of a foundation's figure drawn from the catalogue's own data: its
- * title and actions, what it shows, and its caption. What it shows is composed from envUI's public
- * components.
- */
 export function SpecimenFrame({
   title,
   actions,
@@ -39,7 +27,6 @@ export function SpecimenFrame({
   className?: string;
   gap?: SpaceStep;
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
-  /** Whether it shows the component still, such as in forced states, so it doesn't take input. */
   still?: boolean;
 }) {
   const level = useContext(SpecimenHeadingLevel);
@@ -74,7 +61,6 @@ export function SpecimenFrame({
   );
 }
 
-/** A titled part of a specimen, such as one state of a matrix, under a small muted label. */
 export function SpecimenPart({
   title,
   children,
@@ -89,7 +75,6 @@ export function SpecimenPart({
   const Heading = `h${level}` as const;
   return (
     <Column render={<section />} gap={2} className="catalogue-specimen">
-      {/* A small muted label, as the state matrix names its rows, quieter than the section's heading. */}
       <Text render={<Heading />} variant="body-sm">
         {title}
       </Text>
@@ -99,17 +84,11 @@ export function SpecimenPart({
   );
 }
 
-/**
- * Related specimens share a responsive grid; the components keep their own styling. On its own, as
- * a component's specimen, the grid is an example on the recessed canvas (Stage.css); inside a
- * figure, it takes the figure's.
- */
 export function SpecimenGrid({
   children,
   size = 'field',
 }: {
   children: ReactNode;
-  /** small: a run of small pictures, such as drawings, four across, or two where four don't fit. */
   size?: 'small' | 'compact' | 'field' | 'card' | 'wide';
 }) {
   return (
@@ -119,12 +98,6 @@ export function SpecimenGrid({
   );
 }
 
-/**
- * A matrix of states, such as each variant in each state, as a table. Where its columns don't fit
- * the page, as on a phone, it lays out one block to a row instead, the row's name over its cells
- * listed down, each named after its column (Examples.css), rather than cut off at the side. As a
- * component's specimen it is an example on the recessed canvas, as SpecimenGrid is.
- */
 export function MatrixScroll({
   label,
   className,
@@ -135,33 +108,29 @@ export function MatrixScroll({
   children: ReactNode;
 }) {
   const area = useRef<HTMLDivElement>(null);
-  // Set on the element alone, as it is measured: `data-stacked` where the columns don't fit.
   useLayoutEffect(() => {
     const element = area.current;
     const table = element?.querySelector('table');
     if (!element || !table) return;
-    // Each cell named after its column, for the blocks.
     const titles = [...table.querySelectorAll('thead th')].map((cell) => cell.textContent ?? '');
     for (const row of table.querySelectorAll('tbody tr'))
       [...row.children].forEach((cell, index) => {
         if (cell.tagName === 'TD') cell.setAttribute('data-catalogue-label', titles[index] ?? '');
       });
-    // Laid out as a table, whether a cell's content runs past its column.
-    const stack = () => {
+    const stackWhereColumnsOverflow = () => {
       element.removeAttribute('data-stacked');
       const cells = [...table.querySelectorAll<HTMLElement>('th, td')];
-      if (cells.some((cell) => cell.scrollWidth > cell.clientWidth + 1))
-        element.setAttribute('data-stacked', '');
+      const overflowsItsColumn = (cell: HTMLElement) =>
+        cell.scrollWidth > cell.clientWidth + overflowTolerancePx;
+      if (cells.some(overflowsItsColumn)) element.setAttribute('data-stacked', '');
     };
-    // Measured at once, then again at another width, and once the fonts have loaded, which lay
-    // the cells out anew at the same width.
     let width = -1;
     const widths = remeasure(
       (changed) => {
         const next = element.getBoundingClientRect().width;
         if (!changed.has('fonts') && Math.abs(next - width) < pixelTolerance) return;
         width = next;
-        stack();
+        stackWhereColumnsOverflow();
       },
       { first: 'now', resize: [element], fonts: true },
     );

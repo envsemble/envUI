@@ -4,15 +4,24 @@
     "$type": "dimension",
     "height-sm": {
       "$description": "The small control height: a control of size sm, the actions in a table cell, a title bar or a panel header.",
-      "$value": { "value": 2, "unit": "rem" }
+      "$value": {
+        "value": 2,
+        "unit": "rem"
+      }
     },
     "height-md": {
       "$description": "The medium control height, every control's default size.",
-      "$value": { "value": 2.5, "unit": "rem" }
+      "$value": {
+        "value": 2.5,
+        "unit": "rem"
+      }
     },
     "height-lg": {
       "$description": "The large control height, for a control of size lg, such as a prominent call to action.",
-      "$value": { "value": 3, "unit": "rem" }
+      "$value": {
+        "value": 3,
+        "unit": "rem"
+      }
     },
     "height": {
       "$description": "The height a control takes when it sets no size: md, unless a container sets it to another control height for what it holds, as a table cell does with sm.",
@@ -20,23 +29,38 @@
     },
     "target-min": {
       "$description": "The smallest a pressable target may be in either dimension, in both scales: WCAG 2.2's 24 px minimum. A control smaller than its size, such as a segment inside a small rail or an action inside a small field, keeps at least this.",
-      "$value": { "value": 1.5, "unit": "rem" }
+      "$value": {
+        "value": 1.5,
+        "unit": "rem"
+      }
     },
     "border-width": {
       "$description": "The hairline border of controls and fields, which stays 1 px in both scales.",
-      "$value": { "value": 1, "unit": "px" }
+      "$value": {
+        "value": 1,
+        "unit": "px"
+      }
     },
     "height-touch": {
       "$description": "The height every control grows to under a coarse pointer, whatever the scale, and the width of a button: its own box is its hit area. Rows grow to it too.",
-      "$value": { "value": 2.75, "unit": "rem" }
+      "$value": {
+        "value": 2.75,
+        "unit": "rem"
+      }
     },
     "icon-size": {
       "$description": "The icon in a control. 1 rem in both scales: icons never get smaller than this.",
-      "$value": { "value": 1, "unit": "rem" }
+      "$value": {
+        "value": 1,
+        "unit": "rem"
+      }
     },
     "gap": {
       "$description": "The space between a control's icon and its label.",
-      "$value": { "value": 0.4375, "unit": "rem" }
+      "$value": {
+        "value": 0.4375,
+        "unit": "rem"
+      }
     },
     "font-size": {
       "$description": "The text of a control and of a field's value: the body size, and 1 rem under a coarse pointer, where smaller text makes touch browsers zoom into a focused field.",
@@ -45,17 +69,27 @@
   },
   "icon": {
     "$type": "dimension",
+    "size": {
+      "$description": "The size of the icons here, which content lines up with: the control icon size, 1 rem, at the root; a component that sizes its icons, such as a button, a navigation item or a list row, sets it on its own element for the icons inside.",
+      "$value": "{control.icon-size}"
+    },
     "size-sm": {
       "$description": "A small icon, such as inside a control: the control's icon size, 1 rem.",
       "$value": "{control.icon-size}"
     },
     "size-md": {
       "$description": "An icon beside body text, such as in a tree or a select trigger.",
-      "$value": { "value": 1.125, "unit": "rem" }
+      "$value": {
+        "value": 1.125,
+        "unit": "rem"
+      }
     },
     "size-lg": {
       "$description": "A leading icon in a large row, such as a list item's.",
-      "$value": { "value": 1.25, "unit": "rem" }
+      "$value": {
+        "value": 1.25,
+        "unit": "rem"
+      }
     }
   },
   "picture": {
@@ -63,46 +97,76 @@
     "$description": "The sizes of a picture: an Avatar's and a Graphic's, the same in both scales.",
     "size-sm": {
       "$description": "A small picture, beside compact text such as a combobox option or the application's name in a top bar.",
-      "$value": { "value": 1.5, "unit": "rem" }
+      "$value": {
+        "value": 1.5,
+        "unit": "rem"
+      }
     },
     "size-md": {
       "$description": "A picture beside a name in a list, a comment or a toolbar: an avatar's default size.",
-      "$value": { "value": 2, "unit": "rem" }
+      "$value": {
+        "value": 2,
+        "unit": "rem"
+      }
     },
     "size-lg": {
       "$description": "A picture beside a name with a second line, such as an account header.",
-      "$value": { "value": 3, "unit": "rem" }
+      "$value": {
+        "value": 3,
+        "unit": "rem"
+      }
     },
     "size-xl": {
       "$description": "The largest picture, such as on a profile page or a sign-in screen.",
-      "$value": { "value": 5.5, "unit": "rem" }
+      "$value": {
+        "value": 5.5,
+        "unit": "rem"
+      }
     }
   },
   "row": {
     "$type": "dimension",
     "height": {
       "$description": "The day of a calendar, and the base of a popup's row: a menu's, a select's or a combobox's rows are a quarter rem taller.",
-      "$value": { "value": 2.25, "unit": "rem" }
+      "$value": {
+        "value": 2.25,
+        "unit": "rem"
+      }
     },
     "content-height": {
       "$description": "The line a tree row reserves for its label and icon, 20 px in both scales; the row's density adds its block padding around it.",
-      "$value": { "value": 1.25, "unit": "rem" }
+      "$value": {
+        "value": 1.25,
+        "unit": "rem"
+      }
     },
     "padding-block-xs": {
       "$description": "Row density xs: the block padding of each row of a data component, such as a table, a tree or a list.",
-      "$value": { "value": 0.125, "unit": "rem" }
+      "$value": {
+        "value": 0.125,
+        "unit": "rem"
+      }
     },
     "padding-block-sm": {
       "$description": "Row density sm: a tree's default.",
-      "$value": { "value": 0.25, "unit": "rem" }
+      "$value": {
+        "value": 0.25,
+        "unit": "rem"
+      }
     },
     "padding-block-md": {
       "$description": "Row density md: the default of tables and lists.",
-      "$value": { "value": 0.5, "unit": "rem" }
+      "$value": {
+        "value": 0.5,
+        "unit": "rem"
+      }
     },
     "padding-block-lg": {
       "$description": "Row density lg.",
-      "$value": { "value": 0.75, "unit": "rem" }
+      "$value": {
+        "value": 0.75,
+        "unit": "rem"
+      }
     }
   },
   "tree": {
@@ -124,21 +188,30 @@
     "$type": "dimension",
     "height": {
       "$description": "TopBar's height: a single row that holds controls of the control height with space around them.",
-      "$value": { "value": 3.25, "unit": "rem" }
+      "$value": {
+        "value": 3.25,
+        "unit": "rem"
+      }
     }
   },
   "badge-count": {
     "$type": "dimension",
     "height": {
       "$description": "The height, and the least width, of a counter badge and a diff stat.",
-      "$value": { "value": 1.25, "unit": "rem" }
+      "$value": {
+        "value": 1.25,
+        "unit": "rem"
+      }
     }
   },
   "title-bar": {
     "$type": "dimension",
     "height": {
       "$description": "A window title bar drawn by the application, which holds controls of size sm.",
-      "$value": { "value": 2.5, "unit": "rem" }
+      "$value": {
+        "value": 2.5,
+        "unit": "rem"
+      }
     }
   }
 }

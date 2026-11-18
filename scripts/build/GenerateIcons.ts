@@ -4,12 +4,10 @@ import { resolve } from 'node:path';
 import { readIfExists, writeIfChanged } from './GeneratedFiles.ts';
 import { libraryDirectory } from '../RepositoryPaths.ts';
 
-/** A variant's file of icon-manifest.json, with its hash. */
 interface IconVariant {
   source: string;
   sha256: string;
 }
-/** icon-manifest.json: the upstream revision, and each icon with its variants by fill. */
 interface IconManifest {
   schemaVersion: number;
   iconCount: number;
@@ -18,7 +16,6 @@ interface IconManifest {
   upstream: { revision: string };
   icons: { name: string; variants: Record<string, IconVariant> }[];
 }
-/** An SVG's view box and paths. */
 interface Geometry {
   viewBox: string;
   paths: string[];
@@ -49,7 +46,6 @@ if (
 ) {
   throw new Error('Official Material Symbols license hash mismatch');
 }
-/** The module's name, the symbol's in PascalCase, such as `Add` or `10k`. */
 function toModuleName(name: string) {
   return name
     .split('_')
@@ -65,12 +61,8 @@ async function readVerifiedGeometry(variant: IconVariant): Promise<Geometry> {
   const explicitViewBox = match?.[1].match(/\bviewBox="([^"]+)"/)?.[1];
   const width = match?.[1].match(/\bwidth="([\d.]+)"/)?.[1];
   const height = match?.[1].match(/\bheight="([\d.]+)"/)?.[1];
-  // Some legacy official symbols use a 24x24 viewport without a viewBox.
-  // Make that implicit coordinate system explicit before using relative sizes.
   const viewBox = explicitViewBox ?? (width && height ? `0 0 ${width} ${height}` : undefined);
   if (!match || !viewBox) throw new Error(`Missing viewBox: ${variant.source}`);
-  // Official monochrome symbols currently contain path elements only. Fail closed on
-  // a new upstream SVG shape rather than introducing an unchecked markup converter.
   const body = match[2].trim();
   const paths = [...body.matchAll(/<path d="([^"]+)"\s*\/>/g)].map((path) => path[1]);
   if (!paths.length || body.replace(/<path d="[^"]+"\s*\/>/g, '').trim())
@@ -83,7 +75,6 @@ function renderPaths(paths: string[]) {
     : `<>${paths.map((path) => `<path d=${JSON.stringify(path)} />`).join('')}</>`;
 }
 
-/** The start two single paths share, when it is long enough to be worth writing once. */
 function shareableStart(unfilled: string[], filled: string[]) {
   if (unfilled.length !== 1 || filled.length !== 1) return '';
   const [a, b] = [unfilled[0], filled[0]];
@@ -104,8 +95,6 @@ function renderIconModule(name: string, unfilled: Geometry, filled: Geometry) {
   const viewBox = identicalViewBox
     ? JSON.stringify(unfilled.viewBox)
     : `{filled ? ${JSON.stringify(filled.viewBox)} : ${JSON.stringify(unfilled.viewBox)}}`;
-  // Most symbols draw their two styles from one path whose start they share, such as a filled
-  // circle that the outlined style cuts a hole in: the shared start is written once.
   const sharedStart = identicalPaths ? '' : shareableStart(unfilled.paths, filled.paths);
   const sharedDeclaration = sharedStart
     ? `\n/** The path both styles start with. */\nconst start = ${JSON.stringify(sharedStart)};\n`
@@ -118,14 +107,10 @@ function renderIconModule(name: string, unfilled: Geometry, filled: Geometry) {
       ? `<path d={filled ? ${fromStart(filled.paths[0])} : ${fromStart(unfilled.paths[0])}} />`
       : `{filled ? ${renderPaths(filled.paths)} : ${renderPaths(unfilled.paths)}}`;
 
-  // An icon that follows the selection's fill reads it from context, so it is a client module for
-  // React Server Components; one without a filled variant renders on the server.
   const directive = hasFillVariant ? "'use client';\n\n" : '';
   return `// Generated from Google Material Symbols (${manifest.upstream.revision}); Apache-2.0.\n// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.\n${directive}import { Icon, type SymbolIconProps } from '../foundations/Icon.js';\n${fillImport}${sharedDeclaration}\nexport function ${name}({ filled: ${fillParameter}, ...props }: SymbolIconProps) {\n${fillState}  return <Icon viewBox=${viewBox} {...props}>${paths}</Icon>;\n}\n`;
 }
 
-// Every icon exports its module's name with the Icon prefix, `IconAdd` from icons/Add, so no icon
-// shares its name with a component, such as Link or Menu.
 const generatedFiles = new Set(['index.ts', 'Typography.tsx']);
 const moduleNames = new Set<string>();
 const iconEntries = manifest.icons.map((icon) => {
@@ -136,7 +121,7 @@ const iconEntries = manifest.icons.map((icon) => {
   return { module, name: 'Icon' + module, icon };
 });
 
-// Bound I/O concurrency; export order still follows the manifest's preflight above.
+const concurrentIconReads = 8;
 let nextIconIndex = 0;
 async function generateIconModules() {
   while (nextIconIndex < iconEntries.length) {
@@ -151,7 +136,7 @@ async function generateIconModules() {
     );
   }
 }
-await Promise.all(Array.from({ length: 8 }, () => generateIconModules()));
+await Promise.all(Array.from({ length: concurrentIconReads }, () => generateIconModules()));
 if (!moduleNames.has('TextFields'))
   throw new Error('Typography alias requires official text_fields');
 writeModule(
@@ -164,7 +149,6 @@ writeModule(
     iconEntries.map(({ module, name }) => `export { ${name} } from './${module}.js';`).join('\n') +
     "\nexport { IconTypography } from './Typography.js';\nexport type { SymbolIconProps } from '../foundations/Icon.js';\n",
 );
-// Remove only obsolete generated modules. Leave independently authored files alone.
 for (const file of await readdir(outputDirectory)) {
   if (generatedFiles.has(file) || !file.endsWith('.tsx')) continue;
   const source = await readFile(resolve(outputDirectory, file), 'utf8');

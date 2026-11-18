@@ -1,0 +1,14 @@
+{
+  "$comment": "The words envui/label-vocabulary reports in a label, each with the word to write instead. scripts/build/SyncLintPackages.ts writes this file from the vocabulary table of docs/writing.md before every pack, leaving out the words the table qualifies, those that are a word of the table themselves and those it lists under two words.",
+  "source": "docs/writing.md",
+  "words": {
+    "Modify": "Edit",
+    "Clone": "Duplicate",
+    "Undelete": "Restore",
+    "Log in": "Sign in",
+    "Login": "Sign in",
+    "Log out": "Sign out",
+    "Proceed": "Continue",
+    "Retry": "Try again"
+  }
+}

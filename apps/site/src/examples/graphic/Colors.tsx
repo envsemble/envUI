@@ -1,6 +1,5 @@
 import { Button, Graphic, Row } from '@envsemble/envui';
 
-/** Stands in for the import of the company's logo file, such as `import logo from './logo.svg'`. */
 const logo =
   'data:image/svg+xml,' +
   encodeURIComponent(
@@ -11,8 +10,7 @@ const logo =
       '<path d="M18 58 36 38l18 20Z" fill="#f97316"/></svg>',
   );
 
-/** The company's one-color mark, as its file draws it, in the brand's dark indigo. */
-const mark =
+const oneColorMark =
   'data:image/svg+xml,' +
   encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="8 9 32 30">' +
@@ -23,8 +21,8 @@ export default function Colors() {
   return (
     <Row wrap align="center" gap={5}>
       <Graphic src={logo} alt="Northwind" size="md" />
-      <Graphic src={mark} alt="Northwind" size="md" tint="text" />
-      <Button variant="primary" startIcon={<Graphic src={mark} alt="" tint="text" />}>
+      <Graphic src={oneColorMark} alt="Northwind" size="md" tint="text" />
+      <Button variant="primary" startIcon={<Graphic src={oneColorMark} alt="" tint="text" />}>
         Connect Northwind
       </Button>
     </Row>

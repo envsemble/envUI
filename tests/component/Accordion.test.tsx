@@ -9,11 +9,9 @@ beforeEach(async () => {
   mount(fixture);
 });
 
-/** Which of the indicator's two icons shows: plus while closed, minus while open. */
 function indicator(trigger: Locator) {
   const element = trigger.element();
   const [plus, minus] = element.querySelectorAll('.env-accordion-indicator > svg');
-  // The two share a cell and fade into each other; the one not shown is hidden.
   const iconShown = (icon: Element) => getComputedStyle(icon).visibility !== 'hidden';
   return {
     plus: iconShown(plus!),
@@ -29,7 +27,6 @@ test('one item opens at a time, with a plus that becomes a minus', async () => {
   const single = page.getByTestId('single');
   const first = single.getByRole('button', { name: 'First question' });
   const second = single.getByRole('button', { name: 'Second question' });
-  // Each title is a button inside a heading, at the default level.
   await isShown(single.getByRole('heading', { level: 3, name: 'First question' }));
   await expect.element(second).toHaveAttribute('aria-expanded', 'true');
   await expect.element(first).toHaveAttribute('aria-expanded', 'false');
@@ -44,7 +41,6 @@ test('one item opens at a time, with a plus that becomes a minus', async () => {
   await expect
     .poll(() => indicator(first))
     .toEqual({ plus: false, minus: true, transform: 'none' });
-  // A disabled item doesn't open.
   const disabled = single.getByRole('button', { name: 'Unavailable question' });
   await disabled.click({ force: true });
   await expect.element(disabled).toHaveAttribute('aria-expanded', 'false');
@@ -86,7 +82,6 @@ test(
     await expect.element(notifications).toHaveAttribute('aria-expanded', 'false');
     await keyboard.press('Tab');
     await expect.element(privacy).toHaveFocus();
-    // The arrow keys, Home and End don't move between headings: Tab does.
     for (const key of ['ArrowUp', 'Home', 'End']) {
       await keyboard.press(key);
       await expect.element(privacy).toHaveFocus();

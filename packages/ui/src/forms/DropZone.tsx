@@ -13,6 +13,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { FileInput } from './internal/FileInput.js';
 import { setRef } from '../internal/react/setRef.js';
@@ -77,11 +78,16 @@ export interface DropZoneProps extends Omit<
   /** The id of a form the zone belongs to when it is outside of it. */
   form?: string;
   /**
-   * The native file input that opens the file picker, for example from a Replace button. The zone
-   * holds no value a form library could register, as a field's input does, so ref reaches the zone
-   * itself, the drop target, and this ref the picker.
+   * The native file input that opens the file picker, for example from a Replace button; ref
+   * reaches the zone itself.
    */
   inputRef?: Ref<HTMLInputElement>;
+}
+
+const spaceReadInName = ' ';
+
+function takeOverDropFromBrowser(event: DragEvent) {
+  event.preventDefault();
 }
 
 function carriesFiles(event: DragEvent) {
@@ -109,18 +115,14 @@ export function DropZone({
   ...props
 }: DropZoneProps) {
   const id = useId();
-  // The picker opens the file dialog; a separate named input holds the files a form submits, so
-  // the picker can clear after every choice and people can choose the same file again.
-  const picker = useRef<HTMLInputElement>(null);
-  const field = useRef<HTMLInputElement>(null);
+  const filePicker = useRef<HTMLInputElement>(null);
+  const submittedFilesInput = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
-  // Entering a child of the zone leaves its parent first, so count the elements under the files.
-  const depth = useRef(0);
+  const elementsEnteredUnderDrag = useRef(0);
   const available = !disabled && !pending;
 
-  /** Native forms submit exactly these files, also when they were dropped. */
-  function hold(next: readonly File[]) {
-    const element = field.current;
+  function submitWithForm(next: readonly File[]) {
+    const element = submittedFilesInput.current;
     if (!element || typeof DataTransfer !== 'function') return;
     const transfer = new DataTransfer();
     next.forEach((file) => transfer.items.add(file));
@@ -128,35 +130,33 @@ export function DropZone({
   }
 
   useLayoutEffect(() => {
-    if (files !== undefined) hold(files);
+    if (files !== undefined) submitWithForm(files);
   }, [files, name]);
 
-  // The browser empties the named input; files the application keeps stay.
   useFormReset(
-    field,
+    submittedFilesInput,
     function keepFilesAfterFormReset() {
-      if (files !== undefined) hold(files);
+      if (files !== undefined) submitWithForm(files);
     },
     form,
   );
 
   function take(chosen: File[]) {
-    const matching = chosen.filter((file) => acceptsFile(file, accept));
+    const matching = chosen.filter((file) => matchesNativeAccept(file, accept));
     const taken = multiple ? matching : matching.slice(0, 1);
     const rejected = chosen.filter((file) => !taken.includes(file));
-    // Rejected files leave the held ones as they were, and files from the application win.
-    if (taken.length > 0 && files === undefined) hold(taken);
+    const applicationKeepsFiles = files !== undefined;
+    if (taken.length > 0 && !applicationKeepsFiles) submitWithForm(taken);
     if (rejected.length > 0) onFilesRejected?.(rejected);
     if (taken.length > 0) onFilesAccepted(taken);
   }
 
   function endDrag() {
-    depth.current = 0;
+    elementsEnteredUnderDrag.current = 0;
     setDragging(false);
   }
 
-  // The zone's name is its visible text, the label and the description; the error describes it.
-  const nameIds = [`${id}-label`, description != null && `${id}-description`]
+  const visibleTextIds = [`${id}-label`, description != null && `${id}-description`]
     .filter(Boolean)
     .join(' ');
 
@@ -164,10 +164,10 @@ export function DropZone({
     <ActionElement
       disabled={disabled}
       pending={pending}
-      aria-labelledby={nameIds}
+      aria-labelledby={visibleTextIds}
       aria-describedby={error != null ? `${id}-error` : undefined}
       onClick={() => {
-        if (available) picker.current?.click();
+        if (available) filePicker.current?.click();
       }}
     />
   );
@@ -177,18 +177,24 @@ export function DropZone({
         {pending ? (
           <Spinner size={size === 'sm' ? 'sm' : 'md'} />
         ) : (
-          <DecorativeIcon>{icon ?? <IconCloudUpload />}</DecorativeIcon>
+          <Slot className="env-drop-zone-icon-content" element="span" layout="row" shrink="never">
+            <DecorativeIcon>{icon ?? <IconCloudUpload />}</DecorativeIcon>
+          </Slot>
         )}
       </span>
       <Grid render={<span />} gap={size === 'sm' ? 0 : 1} className="env-drop-zone-text">
         <span className="env-drop-zone-label" id={`${id}-label`}>
-          {label}
+          <Slot className="env-drop-zone-label-content" element="span">
+            {label}
+          </Slot>
         </span>
         {description != null && (
           <>
-            {/* A space between the lines, so the visible text reads as the name does. */}{' '}
+            {spaceReadInName}
             <span className="env-drop-zone-description" id={`${id}-description`}>
-              {description}
+              <Slot className="env-drop-zone-description-content" element="span">
+                {description}
+              </Slot>
             </span>
           </>
         )}
@@ -207,19 +213,18 @@ export function DropZone({
       onDragEnter={(event) => {
         if (!carriesFiles(event)) return;
         event.preventDefault();
-        depth.current += 1;
+        elementsEnteredUnderDrag.current += 1;
         if (available) setDragging(true);
       }}
       onDragOver={(event) => {
         if (!carriesFiles(event)) return;
-        // Taking over the drop keeps the browser from opening the file, also while unavailable.
-        event.preventDefault();
+        takeOverDropFromBrowser(event);
         event.dataTransfer.dropEffect = available ? 'copy' : 'none';
       }}
       onDragLeave={(event) => {
         if (!carriesFiles(event)) return;
-        depth.current = Math.max(0, depth.current - 1);
-        if (depth.current === 0) setDragging(false);
+        elementsEnteredUnderDrag.current = Math.max(0, elementsEnteredUnderDrag.current - 1);
+        if (elementsEnteredUnderDrag.current === 0) setDragging(false);
       }}
       onDrop={(event) => {
         if (!carriesFiles(event)) return;
@@ -233,7 +238,7 @@ export function DropZone({
       </Grid>
       <FileInput
         ref={(node) => {
-          picker.current = node;
+          filePicker.current = node;
           setRef(inputRef, node);
         }}
         accept={accept}
@@ -244,19 +249,20 @@ export function DropZone({
         }}
       />
       {name ? (
-        // Holds the files a form submits; people never choose files in it.
-        <FileInput ref={field} multiple={multiple} name={name} form={form} disabled={disabled} />
+        <FileInput
+          ref={submittedFilesInput}
+          multiple={multiple}
+          name={name}
+          form={form}
+          disabled={disabled}
+        />
       ) : null}
       {error != null && <Field.Error id={`${id}-error`}>{error}</Field.Error>}
     </Field.Root>
   );
 }
 
-/**
- * Whether a file matches an accept list as the native file input reads it: MIME types such as
- * image/png, groups such as image/*, and file name extensions such as .webp, separated by commas.
- */
-function acceptsFile(file: File, accept: string | undefined) {
+function matchesNativeAccept(file: File, accept: string | undefined) {
   const patterns = (accept ?? '')
     .split(',')
     .map((pattern) => pattern.trim().toLowerCase())

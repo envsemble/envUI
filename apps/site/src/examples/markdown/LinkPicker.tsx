@@ -10,8 +10,6 @@ const documents = [
 
 export default function LinkPicker() {
   const [notes, setNotes] = useState('Read the launch plan before the review on Friday.');
-  // The application's own picker, here a dialog of documents: open while a link is asked for,
-  // with the text selected, and the answer the editor waits for.
   const [request, setRequest] = useState<{
     text: string;
     answer: (link: MarkdownLink | null) => void;

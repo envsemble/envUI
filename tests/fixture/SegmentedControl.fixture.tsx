@@ -32,7 +32,6 @@ export default function SegmentedControlFixture({ theme }: { theme: ColorScheme 
           { value: 'board', label: 'Board' },
         ]}
       />
-      {/* Two long labels in a container too narrow for them side by side. */}
       <EnvUIProvider locale="de-DE">
         <SegmentedControl
           aria-label={`Counts in German ${theme}`}

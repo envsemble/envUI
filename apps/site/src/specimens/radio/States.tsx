@@ -1,12 +1,10 @@
 import { Radio, RadioGroup } from '@envsemble/envui';
 import { SpecimenFrame, MatrixScroll } from '../../figures/SpecimenFrame';
 
-/** Unchosen and chosen, enabled and disabled. */
 export default function States() {
   return (
     <SpecimenFrame size="wide" still>
       <MatrixScroll label="Radio states">
-        {/* Two columns don't fill the stage: the table takes its own width, centred. */}
         <table
           className="catalogue-matrix"
           style={{ inlineSize: 'auto', minInlineSize: 0, marginInline: 'auto' }}

@@ -1,18 +1,3 @@
-// Checks that every page's contents list is whole from its first render: a part that loads with
-// the page, such as an example, a specimen or the token reference, and a section that renders after
-// the first, adds nothing to it, removes nothing and renames nothing. It opens every page of the
-// catalogue and the Docs in a desktop window, where the contents show beside the page, with the
-// parts held back, reads the contents in the first frame that paints the page, then lets the parts
-// load, scrolls through the page and reads them again. The contents come from the page's data
-// (usePageContents), so it also checks that they list the page's own h2 headings once loaded, in
-// order, by their ids and words: those of the page itself, not of its examples, figures or tiles.
-//
-//   node scripts/test/CheckContents.ts                the site at http://127.0.0.1:8770 (npm run dev)
-//   node scripts/test/CheckContents.ts <site URL>     another running site in development
-//   node scripts/test/CheckContents.ts -- --only components/button,docs/tokens
-//
-// It runs against the site in development, where each part is a file of its own that it can hold
-// back. It exits with 1 when a page's contents changed after its first render.
 import { chromium, type Browser, type Route } from '@playwright/test';
 import { defaultPorts } from './CheckoutMarker.ts';
 
@@ -20,19 +5,15 @@ const args = process.argv.slice(2).filter((arg) => arg !== '--');
 const onlyIndex = args.indexOf('--only');
 const only = onlyIndex === -1 ? undefined : args.splice(onlyIndex, 2)[1].split(',');
 const site = (args[0] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
-/** A desktop window, wide enough for the contents beside the page. */
 const window = { width: 1440, height: 1000 };
-/** The files of the parts a page loads after its first render, each its own file in development. */
 const parts =
   /\/src\/(examples|specimens|figures\/dev-mode)\/|\/src\/pages\/(TokenReference|Changelog)\.tsx|\/ColorPalette\.tsx|\/IconCatalogue\.tsx/;
-/** How many pages are checked at once. */
-const parallel = 4;
+const pagesCheckedAtOnce = 4;
 
-/** Every page of the catalogue and the Docs, from the galleries, the Docs' home and the navigation. */
 async function routes(browser: Browser) {
   const page = await browser.newPage({ viewport: window });
-  const found = new Set<string>(['components', 'patterns', 'foundations', 'docs']);
-  for (const index of ['components', 'patterns', 'foundations', 'docs']) {
+  const found = new Set<string>(['components', 'foundations', 'docs']);
+  for (const index of ['components', 'foundations', 'docs']) {
     await page.goto(`${site}/${index}`);
     await page.locator('.site-page-column h1').first().waitFor();
     const links = await page
@@ -45,7 +26,6 @@ async function routes(browser: Browser) {
   return [...found].sort();
 }
 
-/** The contents as a page shows them: each link's level, target and words, one to a line. */
 const readContents = () =>
   [...document.querySelectorAll<HTMLAnchorElement>('.site-contents-list a')].map((link) => {
     let depth = 0;
@@ -53,10 +33,6 @@ const readContents = () =>
     return `${'  '.repeat(depth - 1)}${link.getAttribute('href')} ${link.textContent.trim()}`;
   });
 
-/**
- * The page's own h2 headings, as the contents list them: those outside its examples, figures,
- * tiles and open dialogs, and outside what the page hides; none on a page without contents.
- */
 const readHeadings = () =>
   [
     ...(document.querySelector('.site-contents-list')
@@ -81,14 +57,12 @@ const readHeadings = () =>
       return `#${heading.id} ${copy.textContent.replace(/\s+/g, ' ').trim()}`;
     });
 
-/** The contents of one page at its first render and once it has loaded, as lines. */
 async function check(browser: Browser, route: string) {
   const context = await browser.newContext({ viewport: window });
   const page = await context.newPage();
   const held: Route[] = [];
   let holding = true;
   await page.route(parts, (request) => (holding ? held.push(request) : request.continue()));
-  // The contents in the first frame that paints the page's heading.
   await page.addInitScript(
     `(${(read: string) => {
       const take = () => {
@@ -101,7 +75,6 @@ async function check(browser: Browser, route: string) {
   );
   try {
     await page.goto(`${site}/${route}`);
-    // A part the first render waits for is let go after a while, and the first render read then.
     const first = await page
       .waitForFunction(() => (globalThis as { firstContents?: string[] }).firstContents, null, {
         timeout: 8000,
@@ -115,8 +88,6 @@ async function check(browser: Browser, route: string) {
       (await page
         .waitForFunction(() => (globalThis as { firstContents?: string[] }).firstContents)
         .then((handle) => handle.jsonValue() as Promise<string[]>));
-    // Everything loads: each section shows, every skeleton has gone, and parts near the view, as
-    // a gallery's tiles, load as the page scrolls through.
     await page.waitForFunction(
       () => !document.querySelector('.site-section-groups[aria-busy], .docs-api[aria-busy]'),
     );
@@ -149,7 +120,7 @@ try {
   console.log(`Checking the contents of ${all.length} pages at ${site}.`);
   const queue = [...all];
   await Promise.all(
-    Array.from({ length: parallel }, async () => {
+    Array.from({ length: pagesCheckedAtOnce }, async () => {
       for (let route = queue.shift(); route !== undefined; route = queue.shift()) {
         try {
           const { first, loaded, headings, waited } = await check(browser, route);

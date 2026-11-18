@@ -8,22 +8,13 @@ import '../../../styles/Base.css';
 import '../../../styles/ColorPicker.css';
 
 export interface ColorAreaProps {
-  /** The color it shows. */
   value: Color;
-  /** Receives the color as the area moves. */
   onChange: (color: Color) => void;
-  /** Receives the color once a drag or a key press ends. */
   onChangeEnd?: (color: Color) => void;
-  /** Whether it takes no input. */
   disabled: boolean;
-  /** The picker's label, which names the area with React Aria's "Color picker". */
   label: string;
 }
 
-/**
- * The saturation and brightness of a color over its hue, on React Aria's useColorArea: a group
- * with a thumb, and two visually hidden range inputs that the arrow keys move.
- */
 export function ColorArea({ value, onChange, onChangeEnd, disabled, label }: ColorAreaProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputXRef = useRef<HTMLInputElement>(null);

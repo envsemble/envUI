@@ -1,38 +1,28 @@
 'use client';
 
-// Dev mode's responsive frame: the rectangle the page is laid out in, floating above the planes of
-// the 3D view, labelled with its size, and its handles on its side edges, its bottom edge and its
-// bottom corners. Dragging a handle follows the pointer along the frame as it is seen, at any turn
-// of the view, and the arrow keys step an edge's handle. Like a colour plane, it is a control of
-// its own that no envUI component draws.
-
 import { useEffect, useRef, type HTMLAttributes, type KeyboardEvent } from 'react';
 import { Text } from '../../foundations/Text.js';
 import { roundToHundredth } from '../../internal/dom/lengths.js';
 import { windowClasses } from '../units.js';
 import { windowClassOfRem } from '../../foundations/windowClasses.js';
 
-/** The smallest and largest the frame lays the page out at, in rem. */
-const frameMin = 15;
-const frameMax = 120;
-/** How close to a window class boundary, in screen px, a dragged width snaps to it. */
-const snapDistance = 8;
+const frameMinRem = 15;
+const frameMaxRem = 120;
+const snapDistanceScreenPx = 8;
 
-/** The size the frame sets, in px, each null where the page keeps its own, and its device. */
 export interface FrameSize {
   width: number | null;
   height: number | null;
-  /** The device the size came from, or null for a free frame. */
   device: string | null;
 }
 
-/** The page at its own size: no frame set. */
-export const realSize: FrameSize = { width: null, height: null, device: null };
+export const pageOwnSize: FrameSize = { width: null, height: null, device: null };
+
+const centredSizeChangePerEdgeMove = 2;
 
 type FrameEdge = 'start' | 'end' | 'bottom' | 'bottom-start' | 'bottom-end';
 
-/** Which way each handle moves the width and the height: -1 shrinks as it moves right or down. */
-const directions: Record<FrameEdge, { x: -1 | 0 | 1; y: 0 | 1 }> = {
+const sizeChangePerHandleMove: Record<FrameEdge, { x: -1 | 0 | 1; y: 0 | 1 }> = {
   start: { x: -1, y: 0 },
   end: { x: 1, y: 0 },
   bottom: { x: 0, y: 1 },
@@ -40,7 +30,7 @@ const directions: Record<FrameEdge, { x: -1 | 0 | 1; y: 0 | 1 }> = {
   'bottom-end': { x: 1, y: 1 },
 };
 
-const names: Record<FrameEdge, string> = {
+const handleNames: Record<FrameEdge, string> = {
   start: 'Page width, left edge',
   end: 'Page width, right edge',
   bottom: 'Page height, bottom edge',
@@ -50,38 +40,36 @@ const names: Record<FrameEdge, string> = {
 
 interface FrameHandleProps {
   edge: FrameEdge;
-  /** The page's size now, in px. */
   width: number;
   height: number;
-  /** The size the frame sets. */
   size: FrameSize;
   rootPx: number;
-  /** The size in words, such as 393×852px · compact. */
-  text: string;
+  sizeText: string;
   onSizeChange: (size: FrameSize) => void;
 }
 
-/** A point's centre on screen. */
-function centre(element: Element) {
+function screenCentreOf(element: Element) {
   const box = element.getBoundingClientRect();
   return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
 }
 
-/**
- * One handle. It finds the side and bottom handles in its parent, by their edge, to know how the
- * frame's width and height run on screen. An edge's handle is a slider for its size; a corner's
- * moves both, with the pointer only, the edges giving the keyboard the same.
- */
-function FrameHandle({ edge, width, height, size, rootPx, text, onSizeChange }: FrameHandleProps) {
-  const direction = directions[edge];
+function FrameHandle({
+  edge,
+  width,
+  height,
+  size,
+  rootPx,
+  sizeText,
+  onSizeChange,
+}: FrameHandleProps) {
+  const direction = sizeChangePerHandleMove[edge];
   const vertical = edge === 'bottom';
-  const corner = direction.x !== 0 && direction.y !== 0;
+  const cornerTakesThePointerOnly = direction.x !== 0 && direction.y !== 0;
   const drag = useRef<{
     x: number;
     y: number;
-    /** Along the width and along the height on screen, and scene px per screen px each way. */
-    across: { x: number; y: number; perPx: number };
-    down: { x: number; y: number; perPx: number };
+    across: { x: number; y: number; scenePxPerScreenPx: number };
+    down: { x: number; y: number; scenePxPerScreenPx: number };
     width: number;
     height: number;
   } | null>(null);
@@ -89,9 +77,8 @@ function FrameHandle({ edge, width, height, size, rootPx, text, onSizeChange }: 
   const frame = useRef(0);
   useEffect(() => () => cancelAnimationFrame(frame.current), []);
   const clamp = (px: number) =>
-    Math.round(Math.min(frameMax * rootPx, Math.max(frameMin * rootPx, px)));
-  /** Sets the size at most once an animation frame, so dragging stays smooth. */
-  const request = (wanted: FrameSize) => {
+    Math.round(Math.min(frameMaxRem * rootPx, Math.max(frameMinRem * rootPx, px)));
+  const setSizeOncePerFrame = (wanted: FrameSize) => {
     next.current = wanted;
     if (frame.current) return;
     frame.current = requestAnimationFrame(() => {
@@ -105,19 +92,24 @@ function FrameHandle({ edge, width, height, size, rootPx, text, onSizeChange }: 
       event.stopPropagation();
       const parent = event.currentTarget.parentElement!;
       const handle = (name: FrameEdge) =>
-        centre(parent.querySelector(`.env-dev-frame-handle[data-edge="${name}"]`)!);
+        screenCentreOf(parent.querySelector(`.env-dev-frame-handle[data-edge="${name}"]`)!);
       const start = handle('start');
       const end = handle('end');
       const middle = { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 };
       const bottom = handle('bottom');
       const axis = (from: { x: number; y: number }, to: { x: number; y: number }, px: number) => {
         const span = Math.hypot(to.x - from.x, to.y - from.y);
-        return { x: (to.x - from.x) / span, y: (to.y - from.y) / span, perPx: px / span, span };
+        return {
+          x: (to.x - from.x) / span,
+          y: (to.y - from.y) / span,
+          scenePxPerScreenPx: px / span,
+          span,
+        };
       };
       const across = axis(start, end, width);
       const down = axis(middle, bottom, height / 2);
-      // Seen edge-on, a side can't be told from the other, and nothing is dragged that way.
-      if ((direction.x && across.span < 8) || (direction.y && down.span < 4)) return;
+      const seenEdgeOn = (direction.x && across.span < 8) || (direction.y && down.span < 4);
+      if (seenEdgeOn) return;
       drag.current = { x: event.clientX, y: event.clientY, across, down, width, height };
       event.currentTarget.setPointerCapture(event.pointerId);
     },
@@ -127,25 +119,32 @@ function FrameHandle({ edge, width, height, size, rootPx, text, onSizeChange }: 
       const dx = event.clientX - current.x;
       const dy = event.clientY - current.y;
       const along = (axis: { x: number; y: number }) => dx * axis.x + dy * axis.y;
-      // The model stays centred, so each edge moves half as far as the size changes.
       let nextWidth = size.width;
       if (direction.x) {
         nextWidth = clamp(
-          current.width + 2 * along(current.across) * current.across.perPx * direction.x,
+          current.width +
+            centredSizeChangePerEdgeMove *
+              along(current.across) *
+              current.across.scenePxPerScreenPx *
+              direction.x,
         );
         const snap = windowClasses
           .map((windowClass) => windowClass.from * rootPx)
           .find(
             (boundary) =>
-              boundary && Math.abs(boundary - nextWidth!) < snapDistance * current.across.perPx,
+              boundary &&
+              Math.abs(boundary - nextWidth!) <
+                snapDistanceScreenPx * current.across.scenePxPerScreenPx,
           );
         if (snap) nextWidth = snap;
       }
       const nextHeight = direction.y
-        ? clamp(current.height + 2 * along(current.down) * current.down.perPx)
+        ? clamp(
+            current.height +
+              centredSizeChangePerEdgeMove * along(current.down) * current.down.scenePxPerScreenPx,
+          )
         : size.height;
-      // A dragged frame is a free one, whatever device it came from.
-      request({ width: nextWidth, height: nextHeight, device: null });
+      setSizeOncePerFrame({ width: nextWidth, height: nextHeight, device: null });
     },
     onPointerUp: () => {
       drag.current = null;
@@ -154,8 +153,7 @@ function FrameHandle({ edge, width, height, size, rootPx, text, onSizeChange }: 
       drag.current = null;
     },
   };
-  // A corner moves both edges with the pointer; the edges' handles give the keyboard the same.
-  if (corner)
+  if (cornerTakesThePointerOnly)
     return <div className="env-dev-frame-handle" data-edge={edge} aria-hidden {...pointer} />;
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const step = (event.shiftKey ? 5 : 1) * rootPx;
@@ -167,11 +165,12 @@ function FrameHandle({ edge, width, height, size, rootPx, text, onSizeChange }: 
           : 0;
     if (!change) return;
     event.preventDefault();
-    // From the size last set, which the page may not have been measured at yet.
+    const lastSetHeight = size.height ?? height;
+    const lastSetWidth = size.width ?? width;
     onSizeChange(
       vertical
-        ? { ...size, height: clamp((size.height ?? height) + change), device: null }
-        : { ...size, width: clamp((size.width ?? width) + change), device: null },
+        ? { ...size, height: clamp(lastSetHeight + change), device: null }
+        : { ...size, width: clamp(lastSetWidth + change), device: null },
     );
   };
   return (
@@ -180,12 +179,12 @@ function FrameHandle({ edge, width, height, size, rootPx, text, onSizeChange }: 
       data-edge={edge}
       role="slider"
       tabIndex={0}
-      aria-label={names[edge]}
+      aria-label={handleNames[edge]}
       aria-orientation={vertical ? 'vertical' : 'horizontal'}
-      aria-valuemin={frameMin * rootPx}
-      aria-valuemax={frameMax * rootPx}
+      aria-valuemin={frameMinRem * rootPx}
+      aria-valuemax={frameMaxRem * rootPx}
       aria-valuenow={Math.round(vertical ? height : width)}
-      aria-valuetext={text}
+      aria-valuetext={sizeText}
       {...pointer}
       onKeyDown={onKeyDown}
     />
@@ -194,12 +193,6 @@ function FrameHandle({ edge, width, height, size, rootPx, text, onSizeChange }: 
 
 const frameEdges: FrameEdge[] = ['start', 'end', 'bottom', 'bottom-start', 'bottom-end'];
 
-/**
- * The responsive frame, while it is on: the rectangle the page is laid out in, at its size now,
- * floating above the planes, with handles on its side and bottom edges and its bottom corners.
- * The label above says its size in px and rem with its window class, and the device it came from.
- * Responsive frame, in the toolbar, turns it off.
- */
 export function Frame({
   width,
   height,
@@ -208,18 +201,15 @@ export function Frame({
   rootPx,
   onSizeChange,
 }: {
-  /** The page's size now, in px. */
   width: number;
   height: number;
-  /** How high it floats: above every plane, where its handles and label are never covered. */
   z: number;
-  /** The size the frame sets. */
   size: FrameSize;
   rootPx: number;
   onSizeChange: (size: FrameSize) => void;
 }) {
   const windowClass = windowClassOfRem(width / rootPx);
-  const text = [
+  const sizeText = [
     size.device,
     `${Math.round(width)}×${Math.round(height)}px`,
     `${roundToHundredth(width / rootPx)}×${roundToHundredth(height / rootPx)}rem`,
@@ -230,7 +220,7 @@ export function Frame({
   return (
     <div className="env-dev-frame" style={{ transform: `translateZ(${z}px)` }}>
       <Text variant="body-sm" emphasis="default" className="env-dev-frame-label">
-        {text}
+        {sizeText}
       </Text>
       {frameEdges.map((edge) => (
         <FrameHandle
@@ -240,7 +230,7 @@ export function Frame({
           height={height}
           size={size}
           rootPx={rootPx}
-          text={text}
+          sizeText={sizeText}
           onSizeChange={onSizeChange}
         />
       ))}

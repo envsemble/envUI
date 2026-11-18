@@ -1,25 +1,3 @@
-// Generates envUI's primitive palette, packages/ui/tokens/palette.tokens.json, from a few seed
-// colors per hue. Every grade is a band of WCAG 2 relative luminance, the same for every hue, so the
-// contrast between two palette colors follows from their grades alone (see `guarantees`):
-//
-//   contrast(a, b) ≈ 21^(|grade(a) − grade(b)| / 100)
-//
-// Grade 0 is white and grade 100 black; grade 50 has 4.58:1 against both. A grade's band is the
-// luminance of `grade ± bandHalfWidth`, so even at its edges a difference of 40 grades gives at
-// least 3:1, 50 at least 4.5:1 and 70 at least 7:1, for any two hues. tests/library/source/Palette.test.ts checks
-// those guarantees over the generated file. A hue may add in-between grades, such as gray's 2.75, in
-// narrower bands, keyed with `-` for the point (`gray.2-75`).
-//
-// Each hue keeps the hue and chroma of its seeds, which are today's colors: between two seeds both
-// are interpolated by grade, beyond the outermost seeds they hold. Chroma is reduced at constant
-// OKLCH lightness and hue until the color fits sRGB, and the lightness is solved so that the color's
-// luminance, after rounding to 8-bit sRGB, lands inside the grade's band. Values are written in
-// OKLCH with the sRGB hex they round to.
-//
-//   node scripts/build/GeneratePalette.ts [--check]
-//
-// --check writes nothing and fails when the committed palette differs from a fresh build. The
-// palette is internal: semantic tokens in packages/ui/tokens alias it, components never do.
 import { resolve } from 'node:path';
 import { converter, formatHex, parse, wcagLuminance, type Oklch, type Rgb } from 'culori';
 import { formatted, readIfExists, writeIfChanged } from './GeneratedFiles.ts';
@@ -31,57 +9,31 @@ const toOklch = converter('oklch');
 const toRgb = converter('rgb');
 const ln21 = Math.log(21);
 
-/**
- * The grades every hue has. Steps of 5 cover text, icons, borders and fills; the surface ranges are
- * finer. 0–6 in steps of 2 hold the light theme's pages and panes, and 3 its recessed surface, a
- * shade deeper than the page and lighter than the panes; 6–15 in steps of 1 hold its
- * selection, hover and pressed fills, which must stay apart from each other while muted text keeps
- * 4.5:1 on them (grade 10 and lighter) and an inset focus ring 3:1 (grade 13 and lighter). 80–100 in
- * steps of 2 hold the dark theme's surfaces. Grade 0 (white) and 100 (black) exist only in the
- * neutral hue.
- */
 export const grades = [
   0, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75,
   80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100,
 ];
 
-/** How far, in grades, a color's luminance may sit from its grade's exact value. */
 export const bandHalfWidth = 0.25;
 
-/**
- * How far an in-between grade, such as 2.75, may sit from its exact value: a hue may add grades
- * between the whole ones (`between`), with a band this narrow, so it keeps its place among them.
- */
 export const betweenHalfWidth = 0.1;
 
-/**
- * A grade's key in the palette: its number, an in-between grade's point written as `-` (2.75 as
- * `2-75`), since a design token's name is kebab-case and holds no `.`.
- */
 export const gradeKey = (grade: number) => String(grade).replace('.', '-');
 
-/** The grade a key in the palette names, `2-75` as 2.75. */
 export const keyGrade = (key: string) => Number(key.replace('-', '.'));
 
-/** The guarantees the grades give: a grade difference of at least `delta` gives at least `ratio`. */
 export const guarantees = [
   { delta: 40, ratio: 3 },
   { delta: 50, ratio: 4.5 },
   { delta: 70, ratio: 7 },
 ];
 
-/**
- * The hues and their seeds, mostly today's colors. A hue's seeds are ordered from light to dark;
- * each fixes the hue and chroma at its own grade. `between` adds in-between grades to a hue.
- */
-/** A hue of the palette: what it is for, its seeds, light to dark, and its in-between grades. */
 interface Hue {
   description: string;
   seeds: string[];
   between?: number[];
 }
 
-/** A seed of a hue: its color, the grade it measures at, and its OKLCH hue and chroma. */
 interface Seed {
   hex: string;
   grade: number;
@@ -89,7 +41,6 @@ interface Seed {
   c: number;
 }
 
-/** A grade's color, as the palette records it. */
 interface PaletteColor {
   hex: string;
   oklch: number[];
@@ -132,9 +83,6 @@ export const hues: Record<string, Hue> = {
       'The accent purple of important actions. Its light seed, a lilac at the chroma of the dark theme’s soft blue, keeps the dark accent fill as soft as the primary’s; from grade 40 the purple keeps its full chroma.',
     seeds: ['#dbb2ec', '#bc6ada', '#9b4ab8'],
   },
-  // The pastel hues of avatars, one palette rather than the hues above softened: a light seed for
-  // the fill and a deep one for the initials and figure, each a shade of the same hue, at a shared
-  // soft chroma so a group of avatars reads as one set.
   powder: { description: 'The powder blue of avatars.', seeds: ['#c2e4f8', '#2d5883'] },
   seafoam: { description: 'The seafoam of avatars.', seeds: ['#bae9e0', '#16615f'] },
   sage: { description: 'The sage of avatars.', seeds: ['#d0e6c5', '#425e3b'] },
@@ -145,14 +93,11 @@ export const hues: Record<string, Hue> = {
   oat: { description: 'The warm oat neutral of avatars.', seeds: ['#e8dccf', '#625245'] },
 };
 
-/** The relative luminance at the exact value of a grade. */
 export const gradeLuminance = (grade: number) => 1.05 * Math.exp((-grade / 100) * ln21) - 0.05;
 
-/** The grade whose exact luminance a color has, from 0 (white) to 100 (black). */
 export const luminanceGrade = (luminance: number) =>
   (100 * Math.log(1.05 / (luminance + 0.05))) / ln21;
 
-/** The band of relative luminance a grade allows, `[min, max]`. */
 export function gradeBand(grade: number) {
   if (grade === 0) return [1, 1];
   if (grade === 100) return [0, 0];
@@ -160,7 +105,6 @@ export function gradeBand(grade: number) {
   return [gradeLuminance(grade + half), gradeLuminance(grade - half)];
 }
 
-/** A hue's grades: every grade, with its in-between ones, white and black only in neutral. */
 export function hueGrades(name: string) {
   const hue = hues[name];
   return [...grades, ...(hue.between ?? [])]
@@ -168,14 +112,12 @@ export function hueGrades(name: string) {
     .sort((a, b) => a - b);
 }
 
-/** WCAG 2 contrast ratio of two relative luminances. */
 export const contrastRatio = (a: number, b: number) =>
   (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 
 const inGamut = ({ r, g, b }: Rgb) =>
   [r, g, b].every((channel) => channel >= -1e-7 && channel <= 1 + 1e-7);
 
-/** The color at an OKLCH lightness and hue with the most chroma up to `chroma` that sRGB shows. */
 function fitChroma(l: number, chroma: number, h: number): Oklch {
   if (inGamut(toRgb({ mode: 'oklch', l, c: chroma, h }))) return { mode: 'oklch', l, c: chroma, h };
   let low = 0;
@@ -190,8 +132,7 @@ function fitChroma(l: number, chroma: number, h: number): Oklch {
 
 const hexLuminance = (hex: string) => wcagLuminance(parse(hex));
 
-/** The 8-bit sRGB color closest to a target luminance at a hue and chroma, inside the band. */
-function solve(grade: number, { h, c }: { h: number; c: number }) {
+function closestInBand8BitColor(grade: number, { h, c }: { h: number; c: number }) {
   const target = gradeLuminance(grade);
   const [min, max] = gradeBand(grade);
   const colorAt = (l: number) => formatHex(toRgb(fitChroma(l, c, h)));
@@ -202,12 +143,10 @@ function solve(grade: number, { h, c }: { h: number; c: number }) {
     if (wcagLuminance(toRgb(fitChroma(mid, c, h))) < target) low = mid;
     else high = mid;
   }
-  // Rounding to 8 bits can push the luminance out of the band; search nearby lightness for the
-  // in-band color closest to the target.
-  const l = (low + high) / 2;
+  const unroundedLightness = (low + high) / 2;
   let best: { hex: string; distance: number } | null = null;
   for (let offset = 0; offset <= 0.02; offset += 0.0005) {
-    for (const candidate of [l - offset, l + offset]) {
+    for (const candidate of [unroundedLightness - offset, unroundedLightness + offset]) {
       const hex = colorAt(candidate);
       const luminance = hexLuminance(hex);
       if (luminance < min || luminance > max) continue;
@@ -220,8 +159,7 @@ function solve(grade: number, { h, c }: { h: number; c: number }) {
   return best.hex;
 }
 
-/** Hue and chroma at a grade, interpolated between a hue's seeds. */
-function seedAt(seeds: Seed[], grade: number) {
+function seedHueAndChromaAt(seeds: Seed[], grade: number) {
   if (grade <= seeds[0].grade) return seeds[0];
   if (grade >= seeds.at(-1)!.grade) return seeds.at(-1)!;
   const index = seeds.findIndex((seed) => seed.grade > grade);
@@ -233,7 +171,6 @@ function seedAt(seeds: Seed[], grade: number) {
 
 const round = (value: number, digits: number) => Number(value.toFixed(digits));
 
-/** The OKLCH components that round-trip to a hex, as short as they can be. */
 function oklchComponents(hex: string) {
   const { l, c, h } = toOklch(parse(hex));
   for (let digits = 4; digits <= 8; digits++) {
@@ -246,7 +183,6 @@ function oklchComponents(hex: string) {
   throw new Error(`OKLCH components of ${hex} do not round-trip.`);
 }
 
-/** The palette: hue → grade → { hex, oklch, luminance, grade (as measured) }. */
 export function generatePalette() {
   const palette: Record<string, Record<string, PaletteColor>> = {};
   for (const [name, hue] of Object.entries(hues)) {
@@ -259,7 +195,11 @@ export function generatePalette() {
     palette[name] = {};
     for (const grade of hueGrades(name)) {
       const hex =
-        grade === 0 ? '#ffffff' : grade === 100 ? '#000000' : solve(grade, seedAt(seeds, grade));
+        grade === 0
+          ? '#ffffff'
+          : grade === 100
+            ? '#000000'
+            : closestInBand8BitColor(grade, seedHueAndChromaAt(seeds, grade));
       const luminance = hexLuminance(hex);
       palette[name][gradeKey(grade)] = {
         hex,
@@ -272,7 +212,6 @@ export function generatePalette() {
   return palette;
 }
 
-/** The DTCG document of the palette. */
 export function paletteDocument(palette = generatePalette()) {
   const document: { $schema: string; palette: Record<string, unknown> } = {
     $schema: 'https://www.designtokens.org/schemas/2025.10/format.json',
@@ -305,21 +244,19 @@ export function paletteDocument(palette = generatePalette()) {
   return document;
 }
 
-/** JSON with groups expanded and each token on one line, which Prettier then wraps. */
-function compact(node: unknown, indent = ''): string {
+function jsonWithOneTokenPerLine(node: unknown, indent = ''): string {
   const leaf = (value: unknown) =>
     value === null || typeof value !== 'object' || Array.isArray(value) || '$value' in value;
   if (leaf(node)) return JSON.stringify(node);
   const inner = `${indent}  `;
   const entries = Object.entries(node as Record<string, unknown>).map(
-    ([key, value]) => `${inner}${JSON.stringify(key)}: ${compact(value, inner)}`,
+    ([key, value]) => `${inner}${JSON.stringify(key)}: ${jsonWithOneTokenPerLine(value, inner)}`,
   );
   return `{\n${entries.join(',\n')}\n${indent}}`;
 }
 
-/** Writes the palette, or with `check` compares it and throws when the committed one is stale. */
 export async function writePalette({ check = false } = {}) {
-  const contents = await formatted(paletteFile, compact(paletteDocument()));
+  const contents = await formatted(paletteFile, jsonWithOneTokenPerLine(paletteDocument()));
   if (!check) return writeIfChanged(paletteFile, contents);
   if (readIfExists(paletteFile) !== contents)
     throw new Error(

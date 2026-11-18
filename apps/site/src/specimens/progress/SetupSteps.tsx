@@ -3,13 +3,13 @@ import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../figures/MotionStage';
 import { useRounds } from './Rounds';
 
-/* The steps fill one at a time to the fourth; the bar fades and starts again from the first. */
 const values = [2, 3, 4, 4, 1];
-const steps = [660, 660, 1020, 210, 660];
+const stepDurationsMs = [660, 660, 1020, 210, 660];
+const restartStep = 4;
 
 function Filling() {
-  const step = useTimeline(steps);
-  const { round, style } = useRounds(step, 4);
+  const step = useTimeline(stepDurationsMs);
+  const { round, style } = useRounds(step, restartStep);
   const value = values[step];
   return (
     <Progress
@@ -25,7 +25,6 @@ function Filling() {
   );
 }
 
-/** The workspace's set-up, its steps filling one at a time. */
 export default function SetupStepsMotion() {
   return (
     <MotionStage label="the steps filling in turn">

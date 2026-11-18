@@ -1,9 +1,8 @@
-import { Badge, Column, Row, Surface, Text } from '@envsemble/envui';
+import { Badge, Column, Row, Text } from '@envsemble/envui';
 
-// The element follows the document's outline; the variant sets the style.
 export default function Screen() {
   return (
-    <Surface background="default" padding={6} radius="xl" render={<Column gap={6} />}>
+    <Column gap={6}>
       <Text render={<h3 />} variant="headline">
         Quarterly report
       </Text>
@@ -20,6 +19,6 @@ export default function Screen() {
         <Text variant="body-sm">Updated today by Priya Shah</Text>
       </Column>
       <Text variant="caption">Figures include tax.</Text>
-    </Surface>
+    </Column>
   );
 }

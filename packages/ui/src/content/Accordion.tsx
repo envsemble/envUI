@@ -5,15 +5,17 @@ import { createContext, useContext, type ComponentPropsWithRef, type ReactNode }
 import { IconAdd } from '../icons/Add.js';
 import { IconRemove } from '../icons/Remove.js';
 import { classNames } from '../internal/classNames.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/Accordion.css';
 
-/** The level of an accordion's headings, from h2 to h6. */
-
 const HeadingLevelContext = createContext<Exclude<HeadingLevel, 1>>(3);
+
+const asBaseUiMutableList = (values: readonly string[] | undefined) =>
+  values as string[] | undefined;
 
 export interface RootProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange'>, SkeletonProps {
@@ -57,7 +59,7 @@ export interface RootProps
 /**
  * A list of sections, each a heading that shows and hides its panel, separated by full-width
  * hairlines. A plus at the start of a heading becomes a minus while its section is open. One item
- * is open at a time unless `multiple` is set. Built on Base UI's Accordion.
+ * is open at a time unless `multiple` is set.
  */
 function Root({
   value,
@@ -78,9 +80,8 @@ function Root({
         {...props}
         {...skeletonAttributes(skeleton)}
         className={classNames('env-accordion', className)}
-        // Base UI takes a mutable list and never changes it; the items' values are strings.
-        value={value as string[] | undefined}
-        defaultValue={defaultValue as string[] | undefined}
+        value={asBaseUiMutableList(value)}
+        defaultValue={asBaseUiMutableList(defaultValue)}
         onValueChange={onValueChange ? (next) => onValueChange(next as string[]) : undefined}
         multiple={multiple}
         disabled={disabled}
@@ -123,8 +124,7 @@ function Item(allProps: ItemProps) {
   const { title, value, disabled, onOpenChange, className, children, ...props } = allProps;
   const level = useContext(HeadingLevelContext);
   const Heading = `h${level}` as const;
-  // A title given as undefined, as over a placeholder item, renders empty: a skeleton shows a bar.
-  const hasTitle = title != null || given(allProps, 'title');
+  const titleGivenEvenAsUndefined = title != null || given(allProps, 'title');
   return (
     <BaseAccordion.Item
       {...props}
@@ -134,15 +134,16 @@ function Item(allProps: ItemProps) {
       onOpenChange={onOpenChange ? (open) => onOpenChange(open) : undefined}
     >
       <BaseAccordion.Header render={<Heading />} className="env-accordion-header">
-        {/* data-interactive keeps the whole row a surface in a skeleton, so its title is a bar and
-            its indicator a shape, rather than one filled block. */}
         <BaseAccordion.Trigger className="env-accordion-trigger" data-interactive="">
-          {/* A plus while closed, a minus while open: two icons, one shown, never a turned one. */}
           <span className="env-accordion-indicator" aria-hidden="true">
             <IconAdd />
             <IconRemove />
           </span>
-          {hasTitle && <span className="env-accordion-label">{title}</span>}
+          {titleGivenEvenAsUndefined && (
+            <Slot className="env-accordion-label" element="span" grow>
+              {title}
+            </Slot>
+          )}
         </BaseAccordion.Trigger>
       </BaseAccordion.Header>
       <BaseAccordion.Panel className="env-accordion-panel">
@@ -152,8 +153,6 @@ function Item(allProps: ItemProps) {
   );
 }
 
-// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
-// application leaves unused.
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Accordion.Root');
 const ItemPart = /* @__PURE__ */ withDisplayName(Item, 'Accordion.Item');
 export { RootPart as Root, ItemPart as Item };

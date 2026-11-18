@@ -40,7 +40,6 @@ export default function MonthPickerFixture() {
           min="2026-04"
           max="2027-03"
         />
-        {/* Read-only, so its emptiness never keeps the form from submitting. */}
         <MonthPicker label="Closed" name="closed" locale="en-GB" readOnly required />
         <div className="fixture-actions">
           <Button type="submit">Submit months</Button>

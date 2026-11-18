@@ -1,5 +1,3 @@
-// Meter and Progress: the values assistive technology reads. Server markup; Spinner's is in
-// Spinner.test.ts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -16,8 +14,7 @@ const render = (element) => firstElement(renderToString(element));
 const withRole = (element, role) =>
   elementsOf(render(element)).find((each) => each.attributes.role === role);
 
-test('meters and progress bars read their values', () => {
-  // Without a text of the application's, Base UI's formatted value stays.
+test('meters and progress bars read their values, Base UI’s formatted value by default and Loading while indeterminate', () => {
   const storage = withRole(h(Meter, { label: 'Storage used', value: 40 }), 'meter');
   assert.equal(storage.attributes['aria-valuenow'], '40');
   assert.match(storage.attributes['aria-valuetext'], /40/);
@@ -28,7 +25,6 @@ test('meters and progress bars read their values', () => {
   );
   assert.equal(seats.attributes['aria-valuetext'], '2 of 5 seats');
 
-  // An indeterminate bar says that the work is loading.
   const importing = withRole(h(Progress, { label: 'Importing', value: null }), 'progressbar');
   assert.equal(importing.attributes['aria-valuenow'], undefined);
   assert.equal(importing.attributes['aria-valuetext'], 'Loading');

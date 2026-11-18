@@ -1,9 +1,5 @@
-// The site's style sheets ship without their comments (cssCommentsPlugin, in the site's Vite
-// config): cssMinify is off, so the token reference reads the values as written, and the comments
-// are about half the bytes.
 import type { Plugin } from 'vite';
 
-/** The plugin that takes the comments out of the build's style sheets. */
 export const cssCommentsPlugin = (): Plugin => ({
   name: 'envui-css-comments',
   apply: 'build',
@@ -15,10 +11,6 @@ export const cssCommentsPlugin = (): Plugin => ({
   },
 });
 
-/**
- * A style sheet without its comments, and without the lines they leave empty: strings, where a
- * comment's characters are text, stay as they are.
- */
 export function withoutComments(css: string) {
   let result = '';
   let index = 0;

@@ -9,22 +9,17 @@ const layouts = [
   { layout: 'stacked', name: 'Stacked' },
 ] as const;
 
-/*
- * One list at one width, wide enough for its labels beside their values, in each layout in turn:
- * automatic, which puts them beside their values at this width, inline, and stacked, which puts
- * them above.
- */
+const stackedListHeight = '9.5rem';
+
 function Layouts() {
   const step = useTimeline([1080, 1080, 1080]);
   const { layout, name } = layouts[step];
   return (
     <>
       <CornerLabel>{name}</CornerLabel>
-      {/* The width the list keeps, outlined, as tall as the stacked list, the list at its top, so
-          nothing moves but the labels. */}
       <div
         className="catalogue-fixed-frame"
-        style={{ inlineSize: 'min(100%, 26rem)', minBlockSize: '9.5rem' }}
+        style={{ inlineSize: 'min(100%, 26rem)', minBlockSize: stackedListHeight }}
       >
         <DescriptionList.Root layout={layout} aria-label="Project details">
           <DescriptionList.Item label="Owner">Alex Morgan</DescriptionList.Item>
@@ -36,7 +31,6 @@ function Layouts() {
   );
 }
 
-/** A list stepping through its layouts at one width. */
 export default function LayoutsMotion() {
   return (
     <MotionStage label="the list in each layout">

@@ -1,4 +1,3 @@
-// A page's figures: each example placed once, its fence's attributes, its specimen and its legend.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
@@ -8,7 +7,6 @@ import { pageFixture, switchBody, switchFrontmatter } from './DocumentationFixtu
 test('every example the frontmatter lists is placed once, but the overview, which nothing places', async () => {
   await pageFixture(async ({ rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // Examples: each listed once and placed once, but the overview's, which nothing places.
     await rejects(
       frontmatter + body.replace('```tsx figure=Instant\n', '```tsx figure=Narrow\n'),
       /figure Narrow is placed twice[\s\S]*example Instant is listed in the frontmatter but placed nowhere/,
@@ -44,7 +42,6 @@ test('every example the frontmatter lists is placed once, but the overview, whic
 test('an example the catalogue plays, or an anatomy held in a moment, needs its specimen', async () => {
   await pageFixture(async ({ page, read, rejects, specimens }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // An example the catalogue plays needs its specimen of the same name.
     await rejects(
       frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    motion: true') +
         body,
@@ -55,12 +52,10 @@ test('an example the catalogue plays, or an anatomy held in a moment, needs its 
         body.replace('figure=Narrow widths="16 30"', 'figure=Narrow motion widths="16 30"'),
       /example Narrow has motion but no playback/,
     );
-    // An anatomy figure held in a moment needs its specimen of the same name too.
     await rejects(
       frontmatter + body.replace('figure=Parts\n', 'figure=Parts specimen\n'),
       /anatomy Parts has specimen but no playback apps\/site\/src\/specimens\/switch\/Parts\.tsx/,
     );
-    // With its specimen, an example the catalogue plays says so, in the Overview and on its fence.
     await writeFile(join(specimens, 'switch', 'Basic.tsx'), 'export default function Basic() {}\n');
     await writeFile(
       join(specimens, 'switch', 'Narrow.tsx'),
@@ -82,9 +77,7 @@ test('an example the catalogue plays, or an anatomy held in a moment, needs its 
 test("a figure's fence takes the attributes its role takes, as values and flags", async () => {
   await pageFixture(async ({ page, read, rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // A figure's fence: the attributes its role takes, as name="value", and flags alone.
     await rejects(frontmatter + body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
-    // sweep shows one frame sweeping between at least two widths; classes needs a sweep.
     await rejects(
       frontmatter + body.replace('widths="16 30"', 'widths="16" sweep'),
       /example Narrow has sweep; give the widths it sweeps between/,
@@ -97,7 +90,6 @@ test("a figure's fence takes the attributes its role takes, as values and flags"
       frontmatter + body.replace('widths="16 30"', 'widths="16 30" fit'),
       /example Narrow has fit without sweep/,
     );
-    // A frame of each width shows the example closed: a live example is shown one way.
     await rejects(
       frontmatter + body.replace('widths="16 30"', 'widths="16 30" open'),
       /example Narrow has widths and open/,
@@ -134,7 +126,6 @@ test("a figure's fence takes the attributes its role takes, as values and flags"
       frontmatter + body.replace('figure=Instant', 'figure=Instant caption="Use it."'),
       /figure Instant has a caption on its fence; it goes under examples/,
     );
-    // A double quote inside a value, escaped or not, leaves the fence malformed.
     await rejects(
       frontmatter + body.replace('figure=Narrow widths="16 30"', 'figure=Narrow widths="16 "30""'),
       /the fence `tsx figure=Narrow widths="16 "30"" stage=shaded` is malformed/,
@@ -145,7 +136,6 @@ test("a figure's fence takes the attributes its role takes, as values and flags"
 test("a figure's legend names parts that exist, each by its name in bold", async () => {
   await pageFixture(async ({ rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // A legend names parts that exist, each starting with its name in bold.
     await rejects(
       frontmatter + body.replace('2. **Thumb** (`env-switch-input`)', '2. The thumb.'),
       /item 2 of the legend of anatomy Parts names no part/,
@@ -159,7 +149,6 @@ test("a figure's legend names parts that exist, each by its name in bold", async
         body.replace('2. **Thumb** (`env-switch-input`)', '2. **Knob** (`env-switch-knob`)'),
       /names env-switch-knob, which neither packages\/ui's CSS nor docs\/generated\/parts\.json has/,
     );
-    // A variants figure names each variant in bold, in a legend it can't do without.
     const variants = frontmatter.replace('  Parts: anatomy', '  Parts: variants');
     await rejects(
       variants + body.replace('1. **Track** (`env-switch`): the pill.', '1. Track'),

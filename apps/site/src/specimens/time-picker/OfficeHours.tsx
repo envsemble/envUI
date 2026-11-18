@@ -10,14 +10,9 @@ import { remPixels } from '../../shared/Lengths';
 const field = '.env-date-picker-control';
 const hours = '.env-time-list-column[data-part="hour"]';
 
-/** The last hour the wheel offers, the example's `max`. */
-const lastHour = 18;
+const examplesMaxHour = 18;
 
-/**
- * A row of the time wheels, in px, as TimeList.css sets it: a calendar day's height, a touch
- * target's on a coarse pointer.
- */
-function rowHeight() {
+function wheelRowHeightPx() {
   const root = document.querySelector('.env-theme') ?? document.documentElement;
   const style = getComputedStyle(root);
   const rem = remPixels();
@@ -27,21 +22,14 @@ function rowHeight() {
     : length('--env-row-height') - 0.25 * rem;
 }
 
-/** The hour the empty field's wheel opens on: now, to the half hour, as TimeList starts. */
-function startHour() {
+function hourTheWheelOpensOn() {
   const time = new Date();
-  const minutes = Math.round((time.getHours() * 60 + time.getMinutes()) / 30) * 30;
-  return Math.floor(minutes / 60) % 24;
+  const nowToTheHalfHour = Math.round((time.getHours() * 60 + time.getMinutes()) / 30) * 30;
+  return Math.floor(nowToTheHalfHour / 60) % 24;
 }
 
-/*
- * The pointer opens the empty field: the wheels offer only the hours from 08 to 18 and the half
- * hours. It turns the hour wheel slowly on to the last hour, one row at a time from the hour it
- * opens on, and turns it a little further, where it stops at the bound and settles back on 18.
- * Esc closes the popup, and the field starts anew, empty.
- */
 function scriptOf(row: number, from: number): PointerStep[] {
-  const rows = lastHour - from;
+  const rows = examplesMaxHour - from;
   return [
     { wait: 240 },
     { to: field, x: 0.4, y: 2 },
@@ -67,7 +55,7 @@ function scriptOf(row: number, from: number): PointerStep[] {
 function Booking() {
   const [round, setRound] = useState(0);
   const [escapes, setEscapes] = useState(0);
-  const [script] = useState(() => scriptOf(rowHeight(), startHour()));
+  const [script] = useState(() => scriptOf(wheelRowHeightPx(), hourTheWheelOpensOn()));
   usePointer(script, {
     onCue: (cue) => {
       if (cue === 'escape') return setEscapes((count) => count + 1);
@@ -78,8 +66,6 @@ function Booking() {
   return (
     <>
       <PressedKeys keys={escapes ? ['Esc'] : null} press={escapes} />
-      {/* The field at the top of the room its popup opens into, below it, as tall as the two are
-          open, so they sit in the middle of the stage. */}
       <div style={{ display: 'grid', inlineSize: '100%', blockSize: rowsAnd(7.125, 1.625) }}>
         <Renew round={round}>
           <OfficeHours />
@@ -89,7 +75,6 @@ function Booking() {
   );
 }
 
-/** Times within office hours, the hour wheel turned to its end by a pointer no one sees. */
 export default function OfficeHoursMotion() {
   return (
     <MotionStage label="the hour wheel stopping at the last hour">

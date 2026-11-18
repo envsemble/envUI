@@ -23,22 +23,25 @@ export function useSkeleton(): boolean {
 export function alignPulses() {
   if (typeof document === 'undefined' || typeof document.getAnimations !== 'function') return;
   for (const animation of document.getAnimations()) {
-    // A CSS animation's effect is a keyframe effect.
     const target = (animation.effect as KeyframeEffect | null)?.target;
-    // Only a pulse, on the document's timeline: a scroll-driven animation on the same root, such as
-    // a table region's edge fade, takes no start time.
-    if (
-      'animationName' in animation &&
-      animation.timeline === document.timeline &&
-      target?.hasAttribute('data-env-skeleton') &&
-      animation.startTime !== 0
-    )
-      animation.startTime = 0;
+    const isCssAnimation = 'animationName' in animation;
+    const scrollDriven = animation.timeline !== document.timeline;
+    const isSkeletonPulse =
+      isCssAnimation && !scrollDriven && target?.hasAttribute('data-env-skeleton');
+    if (isSkeletonPulse && animation.startTime !== 0) animation.startTime = 0;
   }
 }
 
-/** Whether alignPulses is due once the skeletons that mount in this commit have (SkeletonScope). */
-let aligning = false;
+let alignmentQueued = false;
+
+function alignPulsesOnceForSkeletonsMountingTogether() {
+  if (alignmentQueued) return;
+  alignmentQueued = true;
+  queueMicrotask(() => {
+    alignmentQueued = false;
+    alignPulses();
+  });
+}
 
 /**
  * Tells the components inside a skeleton that they are in one, and keeps its pulse in step with
@@ -49,25 +52,15 @@ export function SkeletonScope({ skeleton, children }: { skeleton: boolean; child
   const active = skeleton || inherited;
   useEffect(() => {
     if (!skeleton) return;
-    // Once for the skeletons that mount together: reading the page's animations works out the style
-    // of the whole page, and each skeleton aligning on its own would work it out again.
-    if (!aligning) {
-      aligning = true;
-      queueMicrotask(() => {
-        aligning = false;
-        alignPulses();
-      });
-    }
-    // Text that is there draws as rounded, pulsing bars, as missing text does. The script that
-    // measures it loads only once a skeleton shows; until it runs, CSS draws the text's fallback.
-    let release: (() => void) | undefined;
-    let left = false;
+    alignPulsesOnceForSkeletonsMountingTogether();
+    let releaseSkeletonText: (() => void) | undefined;
+    let unmounted = false;
     void import('./internal/skeletonText.js').then(({ retainSkeletonText }) => {
-      if (!left) release = retainSkeletonText();
+      if (!unmounted) releaseSkeletonText = retainSkeletonText();
     });
     return () => {
-      left = true;
-      release?.();
+      unmounted = true;
+      releaseSkeletonText?.();
     };
   }, [skeleton]);
   return <SkeletonContext value={active}>{children}</SkeletonContext>;

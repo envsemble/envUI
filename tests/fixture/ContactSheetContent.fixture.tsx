@@ -1,6 +1,8 @@
 import {
   Accordion,
   Button,
+  Code,
+  CodeBlock,
   Composer,
   Disclosure,
   IconButton,
@@ -8,7 +10,7 @@ import {
   Message,
   MessageList,
 } from '@envsemble/envui';
-import { Code, CodeBlock } from '@envsemble/envui/code';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 import { Markdown, MarkdownEditor } from '@envsemble/envui/markdown';
 import { CodeDiff } from '@envsemble/envui/diff';
 import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
@@ -117,14 +119,14 @@ function Codes() {
       </Strip>
       <Strip label="CodeBlock">
         <Cell caption="Language, label, copyable" width="30rem">
-          <CodeBlock language="tsx" label="Save.tsx" copyable>
+          <HighlightedCodeBlock language="tsx" label="Save.tsx" copyable>
             {source}
-          </CodeBlock>
+          </HighlightedCodeBlock>
         </Cell>
         <Cell caption="Copy: hover" force="hover" target="button" width="30rem">
-          <CodeBlock language="tsx" copyable>
+          <HighlightedCodeBlock language="tsx" copyable>
             {source}
-          </CodeBlock>
+          </HighlightedCodeBlock>
         </Cell>
         <Cell caption="Wrapping, no language" width="20rem">
           <CodeBlock wrap>

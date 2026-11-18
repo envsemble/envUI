@@ -15,16 +15,24 @@ after(async () => {
   if (packed) await rm(packed.directory, { recursive: true, force: true });
 });
 
-test('the package ships the config, its color policy, its token names and its documentation, and nothing else', () => {
+test('the package ships the config, its rules, its data and its documentation, and nothing else', () => {
   assert.deepEqual(packed.files, [
     'CHANGELOG.md',
     'LICENSE',
     'README.md',
     'package.json',
     'src/colorPolicy.js',
+    'src/data/customProperties.json',
+    'src/data/scales.json',
     'src/data/tokens.json',
     'src/index.js',
+    'src/rules/no-contrast-breaking-pairs.js',
+    'src/rules/no-focus-outline-removal.js',
+    'src/rules/no-off-scale-values.js',
+    'src/rules/no-px.js',
+    'src/rules/no-unknown-custom-properties.js',
     'src/tokens.js',
+    'src/values.js',
   ]);
 });
 
@@ -35,7 +43,7 @@ test('an application extends the installed config by name', async () => {
     `
     import stylelint from 'stylelint';
     const { results } = await stylelint.lint({
-      code: '.card .env-card-title { color: #fff; padding: 16px; z-index: 3; }',
+      code: '.card .env-card-title { color: #fff; padding: 16px; z-index: 3; width: 20px; --env-nope: 0; }',
       config: { extends: ['@envsemble/stylelint-config-envui'] },
       configBasedir: process.cwd(),
     });
@@ -45,6 +53,8 @@ test('an application extends the installed config by name', async () => {
   assert.deepEqual(JSON.parse(runNode(script, [], packed.directory)), [
     'color-no-hex',
     'declaration-property-value-allowed-list',
-    'unit-disallowed-list',
+    'envui/no-off-scale-values',
+    'envui/no-px',
+    'envui/no-unknown-custom-properties',
   ]);
 });

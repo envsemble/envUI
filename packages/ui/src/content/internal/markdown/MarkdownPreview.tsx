@@ -6,15 +6,11 @@ import { Text } from '../../../foundations/Text.js';
 
 type PreviewOptions = Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>;
 
-interface PreviewSnapshot extends PreviewOptions {
+interface RetainedPreview extends PreviewOptions {
   source: string;
   content: ReactNode;
 }
 
-/**
- * Defer the first preview, then retain its mounted state without parsing inactive edits. An empty
- * source shows `empty`, such as Nothing to preview.
- */
 export function MarkdownPreview({
   active,
   source,
@@ -23,18 +19,15 @@ export function MarkdownPreview({
   codeCopyable,
   empty,
 }: PreviewOptions & { active: boolean; source: string; empty: string }) {
-  const [snapshot, setSnapshot] = useState<PreviewSnapshot | null>(null);
-  if (
-    active &&
-    (snapshot === null ||
-      snapshot.source !== source ||
-      snapshot.headingOffset !== headingOffset ||
-      snapshot.renderLink !== renderLink ||
-      snapshot.codeCopyable !== codeCopyable)
-  ) {
-    // Adjust this component's own state during render so activation commits current content.
-    // Returning the same element while inactive preserves custom links and code-block state.
-    setSnapshot({
+  const [retainedPreview, setRetainedPreview] = useState<RetainedPreview | null>(null);
+  const retainedPreviewOutdated =
+    retainedPreview === null ||
+    retainedPreview.source !== source ||
+    retainedPreview.headingOffset !== headingOffset ||
+    retainedPreview.renderLink !== renderLink ||
+    retainedPreview.codeCopyable !== codeCopyable;
+  if (active && retainedPreviewOutdated) {
+    setRetainedPreview({
       source,
       headingOffset,
       renderLink,
@@ -48,5 +41,5 @@ export function MarkdownPreview({
       ),
     });
   }
-  return snapshot?.content ?? null;
+  return retainedPreview?.content ?? null;
 }

@@ -1,5 +1,3 @@
-// What NavigationBar, NavigationRail and NavigationDrawer share over the same destinations: the
-// landmark and its name, the current destination, counts and links. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -64,7 +62,6 @@ test('the current destination reports aria-current and fills its icon, also wrap
     { label: 'Home', icon: h(IconHome), current: current === 'Home', onClick() {} },
     {
       label: 'Settings',
-      // A Material Symbol inside the application's own wrapper fills too.
       icon: h('span', null, h(IconSettings)),
       current: current === 'Settings',
       onClick() {},
@@ -83,7 +80,6 @@ test('the current destination reports aria-current and fills its icon, also wrap
       assert.equal(all(nav, (element) => 'aria-current' in element.attributes).length, 1);
     }
     for (const label of ['Home', 'Settings']) {
-      // Each icon is drawn once: a filled symbol replaces the outlined one.
       assert.equal(iconPaths(item(before, label)).length, 1);
       assert.notDeepEqual(iconPaths(item(before, label)), iconPaths(item(after, label)));
     }
@@ -99,12 +95,10 @@ test('a count shows on its destination, capped at 999+, and its name says it', (
     assert.equal(inbox.attributes['aria-label'], 'Inbox, 3 new');
     assert.deepEqual(count(inbox).map(textOf), ['3']);
     assert.equal(count(inbox)[0].attributes['aria-hidden'], 'true');
-    // Its text is the label, then the count, apart, in the order its name gives them.
     assert.equal(textOf(inbox), 'Inbox 3');
     const sent = item(nav, 'Sent');
     assert.equal(sent.attributes['aria-label'], 'Sent, 999+ new');
     assert.deepEqual(count(sent).map(textOf), ['999+']);
-    // A count of 0 shows nothing, and the label alone names the destination.
     const drafts = item(nav, 'Drafts');
     assert.equal(drafts.attributes['aria-label'], undefined);
     assert.equal(textOf(drafts), 'Drafts');
@@ -127,7 +121,6 @@ test('a destination with href is a link through the LinkProvider', () => {
     assert.equal(home.attributes.href, '#home');
     assert.equal(home.attributes['data-router-link'], '');
     assert.equal(home.attributes['aria-current'], 'page');
-    // Outside a LinkProvider, a destination is a native anchor.
     const plain = item(render(h(Navigation, { destinations: linked })), 'Inbox');
     assert.equal(plain.tag, 'a');
     assert.equal(plain.attributes['data-router-link'], undefined);

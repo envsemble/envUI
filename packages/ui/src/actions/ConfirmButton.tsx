@@ -37,13 +37,6 @@ type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
     armedDuration?: number;
   };
 
-/**
- * The resting emphasis, among Button's designed pairs; armed, the button is always a primary danger
- * one. Without a variant it takes its container's, such as ghost in a toolbar, and else outline, or
- * secondary for an icon-only button, like IconButton; variant="primary" tone="danger" looks armed at
- * rest too. `RestingTone` is the tones the variant it falls back to takes. As Button's, the pairs
- * nest by tone, so a variant typed as a union of variants takes the tones all of them take.
- */
 type ConfirmButtonEmphasisProps<RestingTone extends ButtonTone> =
   | {
       variant?: undefined;
@@ -106,17 +99,15 @@ export function ConfirmButton({
   ...props
 }: ConfirmButtonProps) {
   const messages = useMessages('confirmButton', confirmButton);
-  // At rest the button follows its container's variant, as Button does, but falls back to outline.
-  // The rule resolves to a designed pair.
   const resting = useButtonEmphasis({
     variant,
     tone,
     fallbackVariant: icon == null ? 'outline' : 'secondary',
   }) as ButtonEmphasisProps;
   const [armedAt, setArmedAt] = useState<number | null>(null);
-  // Disabling the button or starting its work ends an earlier arming.
-  if ((disabled || pending) && armedAt !== null) setArmedAt(null);
-  const armed = armedAt !== null && !disabled && !pending;
+  const unavailable = disabled || pending;
+  if (unavailable && armedAt !== null) setArmedAt(null);
+  const armed = armedAt !== null && !unavailable;
   useEffect(() => {
     if (!armed) return;
     const disarmTimer = setTimeout(() => setArmedAt(null), armedDuration);
@@ -134,8 +125,8 @@ export function ConfirmButton({
         setArmedAt(event.timeStamp);
         return;
       }
-      // A double click arms the button only: the second press must be deliberate.
-      if (event.timeStamp - armedAt < doublePressGuard) return;
+      const secondClickOfTheArmingDoubleClick = event.timeStamp - armedAt < doubleClickInterval;
+      if (secondClickOfTheArmingDoubleClick) return;
       setArmedAt(null);
       onConfirm();
     },
@@ -153,8 +144,6 @@ export function ConfirmButton({
   };
   return (
     <>
-      {/* At rest an icon-only button is round and named by its label; armed, it grows to name the
-          consequence beside its icon. Both are the same button, so focus stays on it. */}
       {icon != null && !armed ? (
         <ButtonBase
           {...shared}
@@ -169,13 +158,11 @@ export function ConfirmButton({
           fallbackVariant="primary"
           startIcon={armed && icon != null ? icon : startIcon}
           endIcon={endIcon}
-          // Armed, the visible confirm label names the button.
           aria-label={armed ? undefined : label}
         >
           {armed ? confirmLabel : children}
         </ButtonBase>
       )}
-      {/* A label change on a focused button is not reliably announced, so the armed state is. */}
       <span className="env-confirm-button-status" role="status">
         {armed && (
           <>
@@ -187,5 +174,4 @@ export function ConfirmButton({
   );
 }
 
-/** A press this soon after the one that armed the button, in milliseconds, is a double click. */
-const doublePressGuard = 400;
+const doubleClickInterval = 400;

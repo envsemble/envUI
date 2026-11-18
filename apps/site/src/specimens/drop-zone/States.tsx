@@ -8,12 +8,9 @@ import { Renew } from '../../motion/Renew';
 
 const zone = '.env-drop-zone-target';
 
-/*
- * A zone that takes an image. The pointer carries report.pdf over it and drops it: the zone turns
- * it away with an error. Then it drops cover.jpg: a spinner takes the icon's place while it
- * uploads, and a second image carried over meanwhile is refused, the zone staying as it is. Then
- * the zone starts anew.
- */
+const uploadDurationMs = 2600;
+const zoneWithErrorHeight = '11.5rem';
+
 const script: PointerStep[] = [
   { wait: 300 },
   { carry: 'report.pdf', as: 'application/pdf' },
@@ -45,13 +42,12 @@ const script: PointerStep[] = [
   { wait: 420 },
 ];
 
-/** The zone: an image only, with its error, and pending while an image uploads. */
 function CoverZone() {
   const [uploading, setUploading] = useState<string | null>(null);
   const [error, setError] = useState<string>();
   useEffect(() => {
     if (!uploading) return;
-    const timer = window.setTimeout(() => setUploading(null), 2600);
+    const timer = window.setTimeout(() => setUploading(null), uploadDurationMs);
     return () => window.clearTimeout(timer);
   }, [uploading]);
   return (
@@ -75,13 +71,12 @@ function Dropping() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the zone with its error, so it stays put as the error shows.
     <div
       style={{
         display: 'grid',
         alignContent: 'start',
         inlineSize: '100%',
-        minBlockSize: '11.5rem',
+        minBlockSize: zoneWithErrorHeight,
       }}
     >
       <Renew round={round}>
@@ -91,7 +86,6 @@ function Dropping() {
   );
 }
 
-/** A zone that turns away a file it can't take, then is pending while an image uploads. */
 export default function States() {
   return (
     <SpecimenFrame>

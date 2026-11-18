@@ -9,10 +9,6 @@ const people = ['Alex Morgan', 'Sam Lee'];
 
 const remove = '.env-list-item:nth-child(2) button';
 
-/**
- * Presses Remove once, which asks in place, "Remove Sam"; pressed again, Sam leaves the list. A
- * while later the list is drawn again as it began, with a short fade (Renew).
- */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: remove, x: 0.5 },
@@ -50,7 +46,6 @@ function Members() {
   );
 }
 
-/** Two members with access, each with a button that removes them once confirmed in place. */
 export default function ConfirmButtonTile() {
   const [round, setRound] = useState(0);
   useHeldView();

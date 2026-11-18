@@ -8,11 +8,6 @@ import { Renew } from '../../motion/Renew';
 const source = 'textarea.env-markdown-editor-input';
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item) .env-button`;
 
-/*
- * The pointer selects "launch plan" in the notes and presses Insert link: the application's picker
- * opens, and the pointer runs down its documents and chooses Launch plan. The picker closes, and
- * the link is in the source. The notes are then drawn anew as they began (Renew).
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: source, text: 'launch plan', x: 0.05 },
@@ -50,7 +45,6 @@ function Linking() {
   );
 }
 
-/** A link inserted from the application's picker by a pointer no one sees. */
 export default function LinkPickerMotion() {
   return (
     <MotionStage label="a link inserted from the picker" height="24rem">

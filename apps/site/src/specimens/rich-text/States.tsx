@@ -3,7 +3,6 @@ import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/Specime
 
 const notes = 'Send the **press kit** to Priya Shah by Friday.';
 
-/** The editor's looks and states, for review: two to a row, each three lines tall. */
 export default function States() {
   return (
     <SpecimenFrame size="collection">

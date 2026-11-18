@@ -22,7 +22,7 @@ import { useStackedReport } from '../internal/react/useStackedReport.js';
 import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconUnfoldMore } from '../icons/UnfoldMore.js';
-import { useColumnIndex, useTableColumns, type TableColumns } from './internal/tableColumns.js';
+import { useEndColumnIndex, useTableColumns, type TableColumns } from './internal/tableColumns.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { optionModule, useOptionModule } from '../internal/react/useOptionModule.js';
@@ -31,11 +31,11 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { flag } from '../internal/flag.js';
+import { Slot } from '../internal/layout/Slot.js';
 import '../styles/Base.css';
 import '../styles/Table.css';
 
-/** A table that stacks its rows names the role of each part, since display changes can drop them. */
-const TableStackContext = createContext(false);
+const StackingTableNamesPartRolesContext = createContext(false);
 const TableColumnsContext = createContext<TableColumns | null>(null);
 const TableSectionContext = createContext<'head' | 'body' | null>(null);
 
@@ -63,6 +63,12 @@ export interface RootProps
    * scrolls vertically too, so give it a height through regionClassName or the surrounding layout.
    */
   stickyHeader?: boolean;
+  /**
+   * Drops the frame, the raised surface and the header's shaded band: a hairline under the header
+   * and between the rows, the table lying on the surface around it.
+   * @default false
+   */
+  plain?: boolean;
   /** Class of the scroll region around the table, for example to limit its height. */
   regionClassName?: string;
   /**
@@ -75,8 +81,8 @@ export interface RootProps
   narrowLayout?: 'scroll' | 'stack';
   /**
    * The region width below which a table with narrowLayout="stack" stacks its rows: a CSS length
-   * such as 60rem or 480px, or a number of rem, such as 40 or "40", as PanelDock's. Wide tables,
-   * such as seven sortable columns, need more.
+   * such as 60rem or 480px, or a number of rem, such as 40 or "40". Wide tables, such as seven
+   * sortable columns, need more.
    */
   stackBelow?: string | number;
   /**
@@ -118,20 +124,11 @@ export interface RootProps
   resizableColumns?: boolean;
 }
 
-/**
- * The column resize handles' module, which only a table with resizableColumns loads: the table
- * starts loading it as it renders, so it is there by the time its header cells, which find their
- * columns once they are in the document, show the handles.
- */
-const columnResize = optionModule(() => import('./internal/ColumnResizeHandle.js'));
+const columnResizeLoadedOnlyByResizableTables = optionModule(
+  () => import('./internal/ColumnResizeHandle.js'),
+);
 
-/**
- * Whether a stacking table's rows are stacked, as its container query on the region laid them
- * out: read from the table's --env-table-stacked once it is in the document, and again as the
- * region or the table resizes. CSS decides the layout; this only reports it, so the server's
- * markup and the first paint already stack where the region is narrow.
- */
-function useStacked(
+function useStackingAsTheContainerQueryLaidItOut(
   region: RefObject<HTMLElement | null>,
   table: RefObject<HTMLElement | null>,
   enabled: boolean,
@@ -141,46 +138,43 @@ function useStacked(
   useLayoutEffect(() => {
     const element = region.current;
     const grid = table.current;
-    // A table that stops stacking starts over, so stacking again never reuses an old reading.
     if (!enabled || !element || !grid) {
       setStacked(false);
       return;
     }
     const read = () => {
-      // A hidden region, such as one in a hidden tab panel, lays nothing out; it keeps its state
-      // until it shows again.
-      if (element.getClientRects().length === 0) return;
-      setStacked(getComputedStyle(grid).getPropertyValue('--env-table-stacked').trim() === '1');
+      const hiddenRegionLaysNothingOut = element.getClientRects().length === 0;
+      if (hiddenRegionLaysNothingOut) return;
+      setStacked(getComputedStyle(grid).getPropertyValue('--_table-stacked').trim() === '1');
     };
     read();
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(read);
     observer.observe(element);
-    // The table changes size as its rows stack, and as the text size changes the threshold.
     observer.observe(grid);
     return () => observer.disconnect();
   }, [region, table, enabled, stackBelow]);
   return enabled && stacked;
 }
 
-/**
- * The region width below which a stacking table stacks. Not a window class: the region measures its
- * own width, often narrower than the window's, and a wide table sets more with stackBelow.
- */
-const defaultStackBelow = '36rem';
+const defaultStackBelowRegionWidth = '36rem';
+const keyboardScrollTabStop = 0;
 
 /**
- * A semantic data table on a rounded surface, in a focusable region that scrolls sideways when the
- * columns do not fit.
+ * A semantic data table, in a focusable region that scrolls sideways when the columns do not fit.
+ * It is a shell for rows of anything: the frame, the rows, their states and their layout are the
+ * table's, and the cells place what they hold as given. It lies on a rounded raised surface, its
+ * header on a shaded band and its rows parted by hairlines; plain drops the frame and the band.
  */
 function Root({
   'aria-label': label,
   caption,
   density = 'md',
   stickyHeader = false,
+  plain = false,
   regionClassName,
   narrowLayout = 'scroll',
-  stackBelow = defaultStackBelow,
+  stackBelow = defaultStackBelowRegionWidth,
   onStackedChange,
   columnWidths,
   defaultColumnWidths,
@@ -194,13 +188,11 @@ function Root({
   ...props
 }: RootProps) {
   const captionId = useId();
-  // The region takes the table's name, from its caption, aria-labelledby or aria-label, so a
-  // keyboard user who scrolls it hears what it holds.
   const labelledBy = caption != null ? captionId : props['aria-labelledby'];
   const stack = narrowLayout === 'stack';
   const region = useRef<HTMLDivElement>(null);
   const table = useRef<HTMLTableElement>(null);
-  const stacked = useStacked(region, table, stack, stackBelow);
+  const stacked = useStackingAsTheContainerQueryLaidItOut(region, table, stack, stackBelow);
   useStackedReport(stacked, onStackedChange);
   const { widths, columns, resizing } = useTableColumns({
     columnWidths,
@@ -209,7 +201,7 @@ function Root({
     minColumnWidths,
     resizableColumns,
   });
-  if (columns?.resizable) columnResize.preload();
+  if (columns?.resizable) columnResizeLoadedOnlyByResizableTables.preload();
 
   return (
     <div
@@ -217,16 +209,14 @@ function Root({
       className={classNames('env-table-region', regionClassName)}
       {...skeletonAttributes(skeleton)}
       role="region"
-      // The region is a tab stop so keyboard users can scroll wide tables.
-      tabIndex={0}
+      tabIndex={keyboardScrollTabStop}
       aria-label={labelledBy === undefined ? label : undefined}
       aria-labelledby={labelledBy}
+      data-plain={flag(plain)}
       data-sticky-header={flag(stickyHeader)}
       data-narrow-layout={stack ? 'stack' : undefined}
       data-stacked={flag(stacked)}
-      // The container query compares the region with 37.5em, an em of stackBelow / 37.5: in a
-      // query, em is the container's own.
-      style={stack ? { '--env-table-stack-below': remLength(stackBelow) } : undefined}
+      style={stack ? { '--_table-stack-below': remLength(stackBelow) } : undefined}
     >
       {inSkeleton(
         skeleton,
@@ -256,9 +246,9 @@ function Root({
               ))}
             </colgroup>
           )}
-          <TableStackContext value={stack}>
+          <StackingTableNamesPartRolesContext value={stack}>
             <TableColumnsContext value={columns}>{children}</TableColumnsContext>
-          </TableStackContext>
+          </StackingTableNamesPartRolesContext>
         </table>,
       )}
     </div>
@@ -269,7 +259,7 @@ export type HeadProps = ComponentPropsWithRef<'thead'>;
 
 /** The header rows of a table, a native thead, which hold the column headers. */
 function Head({ className, ...props }: HeadProps) {
-  const stack = useContext(TableStackContext);
+  const stack = useContext(StackingTableNamesPartRolesContext);
   return (
     <TableSectionContext value="head">
       <thead
@@ -285,7 +275,7 @@ export type BodyProps = ComponentPropsWithRef<'tbody'>;
 
 /** The data rows of a table, a native tbody, separated by hairlines. */
 function Body({ className, ...props }: BodyProps) {
-  const stack = useContext(TableStackContext);
+  const stack = useContext(StackingTableNamesPartRolesContext);
   return (
     <TableSectionContext value="body">
       <tbody
@@ -299,8 +289,11 @@ function Body({ className, ...props }: BodyProps) {
 
 export interface RowProps extends ComponentPropsWithRef<'tr'> {
   /**
-   * The row highlights on hover and while focus is inside it, for rows that open something through
-   * a link or button in a cell. It adds no behavior of its own.
+   * The row opens something through a link or button in a cell: it highlights on hover and while
+   * focus is inside it. Mark that link or button `data-row-target` to stretch it over the row, so a
+   * click anywhere in the row follows it and the row shows its focus ring; the other links, buttons
+   * and fields in the row stay clickable above it.
+   * @default false
    */
   interactive?: boolean;
   /**
@@ -311,9 +304,9 @@ export interface RowProps extends ComponentPropsWithRef<'tr'> {
   selected?: boolean;
 }
 
-/** A row of a table, a native tr, which can highlight on hover or be selected. */
+/** A row of a table, a native tr, which can open something, highlight on hover or be selected. */
 function Row({ interactive = false, selected, className, ...props }: RowProps) {
-  const stack = useContext(TableStackContext);
+  const stack = useContext(StackingTableNamesPartRolesContext);
   return (
     <tr
       role={stack ? 'row' : undefined}
@@ -407,7 +400,7 @@ function HeaderCell({
   ...props
 }: HeaderCellProps) {
   const messages = useMessages('table', tableMessages);
-  const stack = useContext(TableStackContext);
+  const stack = useContext(StackingTableNamesPartRolesContext);
   const columns = useContext(TableColumnsContext);
   const section = useContext(TableSectionContext);
   const id = useId();
@@ -419,19 +412,19 @@ function HeaderCell({
     },
     [ref],
   );
-  const column = useColumnIndex(cell, section === 'head' && columns?.resizable === true);
-  const resize = useOptionModule(columnResize, columns?.resizable === true);
+  const column = useEndColumnIndex(cell, section === 'head' && columns?.resizable === true);
+  const resize = useOptionModule(
+    columnResizeLoadedOnlyByResizableTables,
+    columns?.resizable === true,
+  );
   const handle = resize && columns && column !== undefined && column + 1 < columns.widths.length;
   const sortable = onSortChange !== undefined;
   const nextSort = sortDirection === 'ascending' ? 'descending' : 'ascending';
-  // The header keeps its own name; the controls inside add what they do to it through
-  // aria-labelledby, so the children render once. A header named by aria-labelledby or aria-label
-  // lends that name to its controls.
-  const labelled = sortable || Boolean(handle);
+  const controlsAddTheirActionToTheHeadersName = sortable || Boolean(handle);
   const ownLabel = props['aria-label'];
   const nameIds =
     props['aria-labelledby'] ?? (ownLabel !== undefined ? `${id}-name` : `${id}-label`);
-  const label = labelled ? (
+  const label = controlsAddTheirActionToTheHeadersName ? (
     <span id={`${id}-label`} className="env-table-header-label">
       {children}
     </span>
@@ -442,7 +435,11 @@ function HeaderCell({
     <th
       role={stack ? (scope === 'row' ? 'rowheader' : 'columnheader') : undefined}
       aria-sort={sortable ? (sortDirection ?? 'none') : sortDirection}
-      aria-labelledby={labelled && props['aria-label'] === undefined ? `${id}-label` : undefined}
+      aria-labelledby={
+        controlsAddTheirActionToTheHeadersName && props['aria-label'] === undefined
+          ? `${id}-label`
+          : undefined
+      }
       {...props}
       ref={setCell}
       scope={scope}
@@ -464,7 +461,7 @@ function HeaderCell({
       ) : (
         label
       )}
-      {labelled && nameIds === `${id}-name` && (
+      {controlsAddTheirActionToTheHeadersName && nameIds === `${id}-name` && (
         <span id={`${id}-name`} hidden>
           {ownLabel}
         </span>
@@ -499,9 +496,12 @@ export interface CellProps extends Omit<ComponentPropsWithRef<'td'>, 'align'>, T
   label?: ReactNode;
 }
 
-/** A data cell, a native td, with a label that names its value while rows stack. */
+/**
+ * A data cell, a native td, which places what it holds as given, with a label that names its value
+ * while rows stack.
+ */
 function Cell({ align, numeric, nowrap, label, className, children, ...props }: CellProps) {
-  const stack = useContext(TableStackContext);
+  const stack = useContext(StackingTableNamesPartRolesContext);
   const labelled = stack && label != null;
   return (
     <td
@@ -516,7 +516,7 @@ function Cell({ align, numeric, nowrap, label, className, children, ...props }: 
           <span className="env-table-cell-label" aria-hidden="true">
             {label}
           </span>
-          <div className="env-table-cell-content">{children}</div>
+          <Slot className="env-table-cell-content">{children}</Slot>
         </>
       ) : (
         children
@@ -525,16 +525,16 @@ function Cell({ align, numeric, nowrap, label, className, children, ...props }: 
   );
 }
 
-// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
-// application leaves unused.
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Table.Root');
 const HeadPart = /* @__PURE__ */ withDisplayName(Head, 'Table.Head');
 const BodyPart = /* @__PURE__ */ withDisplayName(Body, 'Table.Body');
 const RowPart = /* @__PURE__ */ withDisplayName(Row, 'Table.Row');
 const HeaderCellPart = /* @__PURE__ */ withDisplayName(HeaderCell, 'Table.HeaderCell');
-// A cell whose props are unchanged, such as one holding text, renders nothing again when its row
-// does: an application that renders its rows anew changes only the cells whose values changed.
-const CellPart = /* @__PURE__ */ withDisplayName(/* @__PURE__ */ memo(Cell), 'Table.Cell');
+const CellRenderedAgainOnlyWhenItsPropsChange = /* @__PURE__ */ memo(Cell);
+const CellPart = /* @__PURE__ */ withDisplayName(
+  CellRenderedAgainOnlyWhenItsPropsChange,
+  'Table.Cell',
+);
 export {
   RootPart as Root,
   HeadPart as Head,

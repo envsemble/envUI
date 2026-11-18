@@ -27,8 +27,6 @@ import {
   MessageList,
   CalendarHeatmap,
   Combobox,
-  PanelDock,
-  type PanelDockPanel,
   RelativeTime,
   AvatarGroup,
   CopyButton,
@@ -51,7 +49,6 @@ function NotificationTrigger() {
   return <Button onClick={() => toast.show({ message: 'Hydrated notice' })}>Notify</Button>;
 }
 
-/** The search trigger pattern: Ctrl on the server and while hydrating, ⌘ after on Apple platforms. */
 function SearchTrigger() {
   const modifier = useModifierKey();
   return (
@@ -75,10 +72,6 @@ export function HydrationApp() {
   const [draft, setDraft] = useState('');
   const [message, setMessage] = useState('');
   const [files, setFiles] = useState('No files yet');
-  const [dockPanels, setDockPanels] = useState<PanelDockPanel[]>([
-    { id: 'notes', title: 'Hydrated notes', mode: 'open', active: true },
-    { id: 'budget', title: 'Hydrated budget', mode: 'minimized', attention: 'Hydrated changes' },
-  ]);
   const [person, setPerson] = useState('Nobody yet');
   const [page, setPage] = useState(1);
   return (
@@ -152,12 +145,9 @@ export function HydrationApp() {
           locale="en-GB"
           weekStart={1}
         />
-        {/* Without a locale, the server and the browser each have their own language, time zone
-            and today, as they can in production. */}
         <DatePicker label="Hydrated local date" defaultValue="2026-03-17" />
         <Calendar aria-label="Hydrated local calendar" defaultValue="2026-03-17" />
         <Calendar aria-label="Hydrated today" />
-        {/* The server renders in March 2026, at its first month; the browser in a later one. */}
         <Calendar aria-label="Hydrated bounded today" min="2026-03-01" max="2031-05-31" />
         <Dialog title="Hydrated dialog" trigger={<Button>Open hydrated dialog</Button>}>
           <p>Server-rendered content</p>
@@ -239,48 +229,24 @@ export function HydrationApp() {
           }}
           description="Hydrated composer footer"
         />
-        <Panes.Root behavior="supporting" splitAt="medium">
-          <Panes.Main label="Hydrated main">Hydrated main pane</Panes.Main>
-          <Panes.Divider label="Hydrated split" />
-          <Panes.Supporting label="Hydrated supporting">Hydrated supporting pane</Panes.Supporting>
+        <Panes.Root sized="end" stackBelow="medium">
+          <Panes.Pane label="Hydrated main">Hydrated main pane</Panes.Pane>
+          <Panes.ResizeHandle label="Hydrated split" />
+          <Panes.Pane label="Hydrated supporting">Hydrated supporting pane</Panes.Pane>
         </Panes.Root>
-        {/* A width kept under `persist`, which the server read from the request's cookies and the
-            page passes on as it hydrates: the server's markup has it, and nothing moves. */}
         <Panes.Root
-          behavior="supporting"
-          splitAt="medium"
+          sized="end"
+          stackBelow="medium"
           persist="hydrated-kept-panes"
           persistedWidth={readPanesWidth(
             'theme=dark; hydrated-kept-panes=30',
             'hydrated-kept-panes',
           )}
         >
-          <Panes.Main label="Hydrated kept main">Kept main pane</Panes.Main>
-          <Panes.Divider label="Hydrated kept split" />
-          <Panes.Supporting label="Hydrated kept supporting">Kept supporting pane</Panes.Supporting>
+          <Panes.Pane label="Hydrated kept main">Kept main pane</Panes.Pane>
+          <Panes.ResizeHandle label="Hydrated kept split" />
+          <Panes.Pane label="Hydrated kept supporting">Kept supporting pane</Panes.Pane>
         </Panes.Root>
-        <div style={{ position: 'relative', blockSize: '24rem' }}>
-          <PanelDock.Root
-            panels={dockPanels}
-            onModeChange={(id, mode) =>
-              setDockPanels((current) =>
-                current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
-              )
-            }
-            onClose={(id) => setDockPanels((current) => current.filter((panel) => panel.id !== id))}
-            minimizedLabel="Hydrated chips"
-            openLabel={(label) => `Open ${label}`}
-            closeLabel={(label) => `Discard ${label}`}
-            resizeLabel={(title) => `Height of ${title}`}
-          >
-            {(panel) => (
-              <>
-                <PanelDock.Header title={panel.title} headingLevel={3} />
-                <TextField label={`${panel.title} draft`} />
-              </>
-            )}
-          </PanelDock.Root>
-        </div>
         <DropZone
           size="sm"
           label="Hydrated files"
@@ -302,8 +268,6 @@ export function HydrationApp() {
           data-testid="hydrated-relative-time"
           value="2026-10-16T12:00:00Z"
           now={Date.parse('2026-10-14T12:00:00Z')}
-          // The server and the browser use different languages, as they can in production, so
-          // the texts differ while hydrating.
           locale={typeof window === 'undefined' ? 'en' : 'de'}
         />
         <RelativeTime data-testid="hydrated-live-time" value="2020-01-01T00:00:00Z" />

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Menu, Theme, Tree, type ColorScheme, type TreeItem } from '@envsemble/envui';
+import { Badge, Menu, Theme, Tree, type ColorScheme, type TreeItem } from '@envsemble/envui';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 
@@ -11,7 +11,6 @@ interface FileNode {
   children?: FileNode[];
 }
 
-/** 40 folders of 30 documents, with a nested folder in the first: over 1,200 rows when expanded. */
 function sampleFiles(): FileNode[] {
   return Array.from({ length: 40 }, (_, folder) => ({
     id: `folder-${folder + 1}`,
@@ -114,6 +113,29 @@ export default function TreeFixture({ theme }: { theme: ColorScheme }) {
         </button>
       </div>
       <output data-testid={`tree-log-${theme}`}>{log.join('\n')}</output>
+      <div className="fixture-tree-frame">
+        <Tree
+          aria-label={`Ends ${theme}`}
+          items={[
+            {
+              value: 'long',
+              depth: 0,
+              label: 'Quarterly planning notes and decisions.md',
+              icon: <IconDescription />,
+              end: <Badge tone="warning">Changed</Badge>,
+            },
+            {
+              value: 'short',
+              depth: 0,
+              label: 'Notes.md',
+              icon: <IconDescription />,
+              end: <Badge tone="warning">Changed</Badge>,
+            },
+          ]}
+          onAction={() => undefined}
+          onExpandedChange={() => undefined}
+        />
+      </div>
     </Theme>
   );
 }

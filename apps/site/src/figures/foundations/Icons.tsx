@@ -32,12 +32,6 @@ import { SpecimenFrame } from '../SpecimenFrame';
 import type { FoundationFigureEntry } from './FoundationFigures';
 import { FoundationFrame } from './FoundationFrame';
 
-/*
- * The figures of the Icons foundation. Its words are in docs/foundations/icons.md, the page's one
- * source, which places each figure by name and gives it its legend.
- */
-
-/** The sizes the buttons step through, and the tone the message takes at each step. */
 const followSteps: readonly { size: ControlSize; tone: AlertTone; title: string }[] = [
   { size: 'md', tone: 'success', title: 'The report is shared' },
   { size: 'lg', tone: 'info', title: 'A new version is ready' },
@@ -45,12 +39,10 @@ const followSteps: readonly { size: ControlSize; tone: AlertTone; title: string 
   { size: 'md', tone: 'danger', title: 'The report wasn’t saved' },
 ];
 
-/**
- * Buttons stepping through their sizes and a message through its tones: each icon grows and
- * shrinks with its label and takes the color of its words.
- */
+const followStepMs = 1560;
+
 function FollowTextSteps() {
-  const step = useTimeline(followSteps.map(() => 1560));
+  const step = useTimeline(followSteps.map(() => followStepMs));
   const { size, tone, title } = followSteps[step]!;
   return (
     <Column gap={4} align="center" className="catalogue-icons-sample">
@@ -79,24 +71,19 @@ function FollowTextFigure() {
   );
 }
 
-/** A destination of the bar, by its place from 1. */
-const destination = (index: number) =>
-  `.env-navigation-bar-list > li:nth-child(${index}) > .env-navigation-bar-item`;
+const destinationAt = (position: number) =>
+  `.env-navigation-bar-list > li:nth-child(${position}) > .env-navigation-bar-item`;
 
-/**
- * The pointer taps across the destinations and back to the first: each one it selects fills its
- * icon, and the one it leaves goes back to outlined.
- */
 const destinationsScript: PointerStep[] = [
   { wait: 420 },
-  { to: destination(2), y: 0.4 },
+  { to: destinationAt(2), y: 0.4 },
   { wait: 180 },
   ...[2, 3, 4, 5].flatMap((index): PointerStep[] => [
-    ...(index > 2 ? [{ to: destination(index), y: 0.4, duration: 450 }, { wait: 90 }] : []),
+    ...(index > 2 ? [{ to: destinationAt(index), y: 0.4, duration: 450 }, { wait: 90 }] : []),
     { click: true },
     { wait: 660 },
   ]),
-  { to: destination(1), y: 0.4, duration: 900 },
+  { to: destinationAt(1), y: 0.4, duration: 900 },
   { wait: 90 },
   { click: true },
   { wait: 540 },
@@ -112,7 +99,6 @@ const places = [
   { label: 'Settings', icon: <IconSettings /> },
 ] as const;
 
-/** A bar of five destinations, the selected one with its icon filled, used by the pointer. */
 function DestinationSteps() {
   const [current, setCurrent] = useState('Home');
   usePointer(destinationsScript);
@@ -128,7 +114,6 @@ function DestinationSteps() {
   );
 }
 
-/** Outlined destinations, the selected one filled, as the pointer moves between them. */
 function OutlinedAndFilledFigure() {
   return (
     <FoundationFrame label="Outlined and filled" motion="the selected icon filling">
@@ -137,22 +122,15 @@ function OutlinedAndFilledFigure() {
   );
 }
 
-/** Every icon, a tool rather than a figure: its list loads when it is shown. */
 const iconList = lazyPart(
   () => import('./IconCatalogue'),
   (module) => module.IconCatalogue,
   'src/figures/foundations/IconCatalogue.tsx',
 );
 
-/** How many icons a page of the list shows (IconCatalogue.tsx), and its skeleton. */
 export const iconPageSize = 72;
-/** Lengths of the icons' names on the list's first page, in turn, for the skeleton's bars. */
-const nameLengths = [6, 4, 4, 5, 8, 12, 8, 3, 6, 10, 4, 13];
+const firstPageNameLengths = [6, 4, 4, 5, 8, 12, 8, 3, 6, 10, 4, 13];
 
-/**
- * Every icon while the list loads: the list's own search, switch, page of icons and pager, as a
- * skeleton, each icon a shape over a bar of its name.
- */
 function IconCatalogueSkeleton() {
   return (
     <PartSkeleton what="icons">
@@ -172,7 +150,7 @@ function IconCatalogueSkeleton() {
                   emphasis="default"
                   className="catalogue-icon-label"
                 >
-                  {placeholderText(nameLengths[index % nameLengths.length]!)}
+                  {placeholderText(firstPageNameLengths[index % firstPageNameLengths.length]!)}
                 </Text>
               </span>
             </li>
@@ -207,7 +185,6 @@ function CatalogueFigure() {
   );
 }
 
-/** The figures docs/foundations/icons.md places, by name. */
 export const iconsFigures: Record<string, FoundationFigureEntry> = {
   FollowText: { render: FollowTextFigure },
   OutlinedAndFilled: { render: OutlinedAndFilledFigure },

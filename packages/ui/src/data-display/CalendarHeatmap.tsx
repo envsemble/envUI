@@ -106,7 +106,6 @@ interface CalendarHeatmapOptions {
   moreLabel?: string;
 }
 
-/** The grid of days needs a name: aria-label or aria-labelledby. */
 type CalendarHeatmapName =
   | {
       /** Names the grid of days, such as "Deployments in the last year"; this or aria-labelledby. */
@@ -150,7 +149,6 @@ export function CalendarHeatmap({
   style,
   ...props
 }: CalendarHeatmapProps) {
-  // A prop wins over the provider's messages and locale, which win over English and the runtime's.
   const messages = useMessages('calendarHeatmap', calendarHeatmapMessages);
   const lessLabel = ownLessLabel ?? messages.less;
   const moreLabel = ownMoreLabel ?? messages.more;
@@ -161,7 +159,6 @@ export function CalendarHeatmap({
     monthLabels: ownMonthLabels,
     weekdayLabels: ownWeekdayLabels,
   });
-  // Thresholds compare by value, so a new array with the same steps keeps the model.
   const thresholdsKey = thresholds?.join(' ');
   const model = useMemo(
     () =>
@@ -191,8 +188,6 @@ export function CalendarHeatmap({
     ],
   );
 
-  // A date it can't read, such as 2026-02-31, is left out rather than moved to another day: said
-  // while developing, once.
   reportInDevelopment(
     () =>
       process.env.NODE_ENV !== 'production' &&
@@ -210,16 +205,15 @@ export function CalendarHeatmap({
   const scroller = useRef<HTMLDivElement>(null);
   const { tip, gridHandlers, onOpenChange, popupProps } = useHeatmapTooltip(grid, setActiveDay);
 
-  // Narrow containers scroll inside the heatmap, starting at the most recent weeks: the scroller is a
-  // reversed row, whose scroll origin is its end (CalendarHeatmap.css), so the server's markup and
-  // the first paint already show them and they stay in view as the weeks settle, such as when the
-  // web font loads. A later end, such as new data, scrolls back to them.
   const shownEnd = useRef(model.end);
-  useLayoutEffect(() => {
-    if (shownEnd.current === model.end) return;
-    shownEnd.current = model.end;
-    if (scroller.current) scroller.current.scrollLeft = 0;
-  }, [model.end]);
+  useLayoutEffect(
+    function scrollBackToTheMostRecentWeeksOnANewEnd() {
+      if (shownEnd.current === model.end) return;
+      shownEnd.current = model.end;
+      if (scroller.current) scroller.current.scrollLeft = reversedRowScrollOriginAtMostRecentWeek;
+    },
+    [model.end],
+  );
 
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     if (event.altKey || event.metaKey) return;
@@ -296,7 +290,9 @@ export function CalendarHeatmap({
   );
 }
 
-/** The month row and the seven weekday rows; hovering and the tooltip do not render them again. */
+const reversedRowScrollOriginAtMostRecentWeek = 0;
+const weeksAMonthNeedsForItsName = 2;
+
 const CalendarHeatmapDays = memo(function CalendarHeatmapDays({
   model,
   active,
@@ -316,8 +312,7 @@ const CalendarHeatmapDays = memo(function CalendarHeatmapDays({
           <th className="env-calendar-heatmap-corner" />
           {model.months.map(({ column, span, label }) => (
             <th key={column} colSpan={span} className="env-calendar-heatmap-month">
-              {/* A month shorter than two weeks leaves its name out, so names never overlap. */}
-              {span >= 2 && <span>{label}</span>}
+              {span >= weeksAMonthNeedsForItsName && <span>{label}</span>}
             </th>
           ))}
         </tr>
@@ -333,7 +328,6 @@ const CalendarHeatmapDays = memo(function CalendarHeatmapDays({
               {weeks.map((week) => {
                 const day = model.first + week * 7 + row;
                 const entry = model.days.get(day);
-                // Keyed by day, so the tooltip's anchor stays with its day when the range changes.
                 if (!entry)
                   return <td key={day} className="env-calendar-heatmap-pad" aria-hidden="true" />;
                 return (

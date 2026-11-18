@@ -1,5 +1,3 @@
-// What the packed package holds: its files, its style sheet, scoped to envUI's elements, its fonts,
-// licenses, icons, README, documentation and contract data, and the command it installs.
 import assert from 'node:assert/strict';
 import { before, test } from 'node:test';
 import { existsSync } from 'node:fs';
@@ -16,8 +14,6 @@ before(async () => (consumer = await packedConsumer()), { timeout: installTimeou
 test('the packed package ships no logos', () => {
   assert.ok(consumer.packedFiles.includes('dist/assets/Geist.woff2'), 'The pack lists its files.');
   const images = consumer.packedFiles.filter((path) => /\.(?:svg|png|ico)$/i.test(path));
-  // The README's captures of the website's overview and its components' gallery, and the spark
-  // that marks a bullet in formatted text (Prose.css), are the only images the package ships.
   assert.deepEqual(
     images.filter(
       (path) =>
@@ -79,7 +75,6 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     '.env-theme ~ *',
   ])
     assert.ok(!scopedSelector(selector), selector);
-  // A statement such as @layer a; does not hide the rule after it.
   assert.deepEqual(ruleSelectors('@layer envui-document; body { color: red }'), ['body']);
 });
 
@@ -114,10 +109,10 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   );
   const ruleHeaders = ruleSelectors(css);
   assert.ok(ruleHeaders.length > 50, 'Inspect the full component stylesheet.');
+  const keyframeOffsets = /^(?:from|to|\d+(?:\.\d+)?%)(?:\s*,\s*(?:from|to|\d+(?:\.\d+)?%))*$/;
   for (const header of ruleHeaders) {
     if (header.startsWith('@')) continue;
-    // Keyframe steps inside @keyframes are offsets, not element selectors.
-    if (/^(?:from|to|\d+(?:\.\d+)?%)(?:\s*,\s*(?:from|to|\d+(?:\.\d+)?%))*$/.test(header)) continue;
+    if (keyframeOffsets.test(header)) continue;
     for (const selector of splitSelectors(header)) {
       assert.ok(scopedSelector(selector), `Unscoped CSS selector: ${selector}`);
     }
@@ -141,7 +136,6 @@ test('the package includes scoped CSS, local fonts, branding and license notices
       `Missing packaged guidance: ${filename}`,
     );
   }
-  // The contract data resolves by name, so an application never keeps a copy of it.
   const parts = JSON.parse(await readFile(consumer.require.resolve('@envsemble/envui/parts.json')));
   assert.ok(parts.components.Button, 'parts.json lists the components');
   const props = JSON.parse(await readFile(consumer.require.resolve('@envsemble/envui/props.json')));
@@ -150,16 +144,11 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     await readFile(consumer.require.resolve('@envsemble/envui/tokens.json')),
   );
   assert.ok(tokens.tokens.length > 100, 'tokens.json lists the tokens');
-  // The agent tooling of the prereleases is gone: agents read docs/, and the site serves the setup
-  // skill and llms.txt.
   for (const removed of ['skills', 'manifest.json', 'llms.txt', 'llms-full.txt'])
     assert.equal(existsSync(join(consumer.installedDirectory, removed)), false, removed);
   const installedManifest = JSON.parse(
     await readFile(join(consumer.installedDirectory, 'package.json'), 'utf8'),
   );
-  // The one command is envui-graphic, which trims a picture's empty edges; it loads sharp only
-  // when it runs, so an application without sharp installs and runs envUI as before, and the
-  // command says what to install.
   assert.deepEqual(installedManifest.bin, { 'envui-graphic': 'bin/envui-graphic.js' });
   const graphicBin = join(consumer.installedDirectory, 'bin/envui-graphic.js');
   assert.match(consumer.run(graphicBin, ['--help']), /^Usage: npx envui-graphic <file>/);
@@ -207,8 +196,6 @@ test('the packed README links only what the package ships, and the packed docume
       `README resource is absent from the installed package: ${target}`,
     );
   }
-  // The package ships the compiled pages: examples and generated props filled in, the example
-  // sources beside them, and the props of every export as JSON.
   const compiled = compileDocumentation();
   assert.ok(compiled.has('components/dialog.md'));
   assert.ok(compiled.has('components/rich-text.md'));

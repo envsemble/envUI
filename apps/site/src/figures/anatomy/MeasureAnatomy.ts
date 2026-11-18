@@ -1,9 +1,3 @@
-/*
- * Measures what an anatomy figure's callouts are placed by (PlaceCallouts.ts, PlaceVariants.ts),
- * in its stage (useAnatomyLayout.ts): what shows of each part a legend item names, its corners and
- * edge, the labels in the subject, and in a variants figure, its items and the room their names
- * and uses take. Nothing here changes the figure.
- */
 import type { AnatomyLegendItem } from '../../documentation/DocumentationTypes';
 import { union, type Box } from '../../fit/FitGeometry';
 import { openerBox } from '../../fit/standalone/OverlayRoom';
@@ -12,25 +6,18 @@ import { partSelector } from './Parts';
 import type { AnatomyGeometry, Corners, Part } from './PlaceCallouts';
 import type { UseSize, VariantGeometry } from './PlaceVariants';
 
-/**
- * Whether an element is only text, such as a label or a description, with no fill or edge of its
- * own: its box is then its text's, as an outline around the whole box would run through what lies
- * beside the text, such as a field's prefix under its floated label.
- */
+const isTransparent = (color: string) => /[,/]\s*0\)$|^transparent$/.test(color);
+
 function holdsText(element: Element) {
   if (!element.textContent?.trim()) return false;
   const style = getComputedStyle(element);
   if (parseFloat(style.borderTopWidth) || parseFloat(style.borderBottomWidth)) return false;
-  if (!/[,/]\s*0\)$|^transparent$/.test(style.backgroundColor)) return false;
+  if (!isTransparent(style.backgroundColor)) return false;
   return [...element.children].every((child) =>
     getComputedStyle(child).display.startsWith('inline'),
   );
 }
 
-/**
- * Whether an element draws an edge of its own: a fill, a border or a shadow, on itself or on a
- * pseudo-element, as a segmented control's outline is drawn.
- */
 function hasEdge(element: Element) {
   return [null, '::before', '::after'].some((pseudo) => {
     const style = getComputedStyle(element, pseudo);
@@ -40,22 +27,16 @@ function hasEdge(element: Element) {
         parseFloat(style.getPropertyValue(`border-${side}-width`)) > 0 &&
         style.getPropertyValue(`border-${side}-style`) !== 'none',
     );
-    const fill =
-      !/[,/]\s*0\)$|^transparent$/.test(style.backgroundColor) || style.backgroundImage !== 'none';
+    const fill = !isTransparent(style.backgroundColor) || style.backgroundImage !== 'none';
     return border || fill || style.boxShadow !== 'none';
   });
 }
 
-/** Whether an element has text of its own, outside its child elements. */
 const ownText = (element: Element) =>
   [...element.childNodes].some(
     (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
   );
 
-/**
- * What shows of a part: the part, or where it is only a frame around one thing, with no edge or
- * text of its own, that thing, as an icon's slot holds its icon, so the callout meets what shows.
- */
 function drawnPart(element: Element): Element {
   let drawn = element;
   while (drawn.children.length === 1 && !ownText(drawn) && !hasEdge(drawn))
@@ -63,10 +44,8 @@ function drawnPart(element: Element): Element {
   return drawn;
 }
 
-/**
- * The box of a text input's value, as drawn: the input's own box spans its field, wider than the
- * words in it. Undefined for an empty input or one of another kind.
- */
+const valueLineHeightEm = 1.25;
+
 function valueBox(element: Element, origin: DOMRect): Box | undefined {
   if (!(element instanceof HTMLInputElement) || !element.value) return undefined;
   if (!/^(?:text|search|url|email|tel|number)$/.test(element.type)) return undefined;
@@ -75,15 +54,14 @@ function valueBox(element: Element, origin: DOMRect): Box | undefined {
   if (!context) return undefined;
   context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
   const rect = element.getBoundingClientRect();
-  // Drawn larger or smaller than laid out, as an enlarged figure's subject is.
-  const scale = element.offsetWidth ? rect.width / element.offsetWidth : 1;
-  const start = (parseFloat(style.paddingLeft) + parseFloat(style.borderLeftWidth)) * scale;
-  const end = (parseFloat(style.paddingRight) + parseFloat(style.borderRightWidth)) * scale;
+  const drawnScale = element.offsetWidth ? rect.width / element.offsetWidth : 1;
+  const start = (parseFloat(style.paddingLeft) + parseFloat(style.borderLeftWidth)) * drawnScale;
+  const end = (parseFloat(style.paddingRight) + parseFloat(style.borderRightWidth)) * drawnScale;
   const width = Math.min(
-    context.measureText(element.value).width * scale,
+    context.measureText(element.value).width * drawnScale,
     rect.width - start - end,
   );
-  const height = parseFloat(style.fontSize) * 1.25 * scale;
+  const height = parseFloat(style.fontSize) * valueLineHeightEm * drawnScale;
   const left = style.direction === 'rtl' ? rect.right - end - width : rect.left + start;
   const top = rect.top + (rect.height - height) / 2;
   return {
@@ -94,14 +72,12 @@ function valueBox(element: Element, origin: DOMRect): Box | undefined {
   };
 }
 
-/** The box of a part, or of its own text, relative to the stage. */
 function boxOf(element: Element, text: boolean, origin: DOMRect): Box | undefined {
   let rects: DOMRect[] = [element.getBoundingClientRect()];
   if (!text && holdsText(element)) {
     const range = document.createRange();
     range.selectNodeContents(element);
     const own = range.getBoundingClientRect();
-    // A field's text, such as a textarea's, lays out no nodes of its own: its box stays.
     if (own.width && own.height) rects = [own];
   } else if (text) {
     rects = [];
@@ -123,16 +99,13 @@ function boxOf(element: Element, text: boolean, origin: DOMRect): Box | undefine
   };
 }
 
-/** The boxes of the labels that show in the subject, relative to the stage. */
 function labelBoxes(subject: Element, origin: DOMRect): Box[] {
   return [...subject.querySelectorAll('label')].flatMap((label) => {
     const rect = label.getBoundingClientRect();
-    // A label that shows has a box of its own (boxOf).
     return rect.width > 1 && rect.height > 1 ? [boxOf(label, false, origin)!] : [];
   });
 }
 
-/** A part's corner radii, in px, as drawn: none for the text of a part. */
 function cornersOf(element: Element, text: boolean, box: Box): Corners {
   const style = getComputedStyle(element);
   const most = Math.min(box.right - box.left, box.bottom - box.top) / 2;
@@ -145,24 +118,18 @@ function cornersOf(element: Element, text: boolean, box: Box): Corners {
   };
 }
 
-/** Whether an element comes after text in its line, such as a time inside a sentence. */
 function followsText(element: Element) {
   for (let node = element.previousSibling; node; node = node.previousSibling)
     if (node.textContent?.trim()) return true;
   return false;
 }
 
-/** Whether an element holds more than one thing that shows. */
 const holdsSeveral = (element: Element) =>
   [...element.children].filter((child) => {
     const rect = child.getBoundingClientRect();
     return rect.width > 1 && rect.height > 1;
   }).length > 1;
 
-/**
- * The parts the legend names, as they show in the subject, in the stage's coordinates, with what
- * the callouts keep clear of: the labels in the subject and what opens a popup shown open.
- */
 export function measureParts(
   stage: HTMLElement,
   subject: HTMLElement,
@@ -176,7 +143,6 @@ export function measureParts(
     try {
       element = subject.querySelector(selector);
     } catch {
-      // A reference that is no selector numbers nothing; the legend still lists it.
       return [];
     }
     if (!element) return [];
@@ -218,17 +184,11 @@ export function measureParts(
   };
 }
 
-/** The room an earlier measure set above an item for what the item before it is for. */
-const added = (element: Element) =>
+const roomAddedAbove = (element: Element) =>
   element instanceof HTMLElement && element.hasAttribute('data-catalogue-spread')
     ? parseFloat(element.style.marginBlockStart) || 0
     : 0;
 
-/**
- * A variants figure's items, each with the variant's name: the item a legend item's part names,
- * or else the example's items in the legend's order, the children of its root, or of the wrapper
- * the root holds alone, that show, leaving out such as a select's hidden input.
- */
 export function measureVariantItems(
   stage: HTMLElement,
   subject: HTMLElement,
@@ -267,19 +227,12 @@ export function measureVariantItems(
       number,
       box,
       label,
-      added: added(element),
+      added: roomAddedAbove(element),
     })),
     elements: found.map(({ element }) => element),
   };
 }
 
-/**
- * The names' widths in px, as the figure sets them, measured off-screen in the stage, or kept in
- * `known` from an earlier measure: a name's width follows the root's font size and the fonts, not
- * the stage's width, and placing a probe in the stage restyles the whole example, which every
- * frame of a resize made it lag. Those still to measure are all placed before any is read, so the
- * browser lays out once for them all.
- */
 export function labelWidths(stage: HTMLElement, texts: string[], known: Map<string, number>) {
   const rem = remPixels();
   const keyOf = (text: string) => `${rem} ${text}`;
@@ -298,14 +251,9 @@ export function labelWidths(stage: HTMLElement, texts: string[], known: Map<stri
     );
     for (const probe of probes) probe.remove();
   }
-  // Each is measured above where it wasn't before.
   return texts.map((text) => known.get(keyOf(text))!);
 }
 
-/**
- * The sizes in px of what each variant is for, as the figure sets them, each wrapped at `room`,
- * measured as the names are (labelWidths).
- */
 export function sizesOfUses(
   stage: HTMLElement,
   uses: string[][],
@@ -333,7 +281,6 @@ export function sizesOfUses(
     });
     for (const probe of probes) probe.remove();
   }
-  // Each is measured above where it wasn't before.
   return uses.map((lines) => ({
     width: known.get(keyOf(lines, 'width'))!,
     height: known.get(keyOf(lines, 'height'))!,

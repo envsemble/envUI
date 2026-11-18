@@ -5,7 +5,6 @@ export default function ResizableDetails() {
     <Sheet
       title="Northwind launch"
       description="Active · Priya Shah"
-      // People drag its start edge, or move it with the arrow keys, for a wider or narrower view.
       resizable
       minWidth={20}
       maxWidth={48}

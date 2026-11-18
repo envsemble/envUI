@@ -1,8 +1,8 @@
-// The coding agents the Docs' setup prompt works with, as the small round marks before it. Their
-// shapes are Simple Icons' (CC0); the marks are their makers' trademarks, shown only to say the
-// prompt works in those agents. Catalogue artwork: envUI ships no logos.
+/*
+ * The marks' shapes are Simple Icons' (CC0 licence); the marks are their makers' trademarks, shown
+ * only to say the prompt works in those agents. Catalogue artwork: envUI ships no logos.
+ */
 
-/** Each agent's mark on its own colors, from the start; each overlaps the next, the first on top. */
 const agents = [
   {
     name: 'OpenAI',
@@ -24,7 +24,6 @@ const agents = [
   },
 ] as const;
 
-/** The agents' marks in a small overlapping row, named together for assistive technology. */
 export function AgentLogos({ className }: { className?: string }) {
   return (
     <span

@@ -1,4 +1,3 @@
-// settings.envui.reexportModules: where a path entry is read from, and how it matches imports.
 import assert from 'node:assert/strict';
 import { Linter } from 'eslint';
 import { mkdtempSync, rmSync, symlinkSync } from 'node:fs';
@@ -8,14 +7,9 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import rule from '../src/rules/no-html-elements.js';
 
-/** An application whose `src/ui/index.ts` re-exports envUI. */
 const fixture = fileURLToPath(new URL('fixtures/app/', import.meta.url));
 const app = resolve(fixture, 'src/App.js');
 
-/**
- * The rules that report `<Table.Root role="table">` imported from <source>: none when the source
- * is a module that re-exports envUI, whose Table.Root owns the role, else `no-html-elements`.
- */
 function lint(reexportModules, { cwd = fixture, filename = app, source = './ui' } = {}) {
   return new Linter({ cwd })
     .verify(
@@ -31,7 +25,6 @@ function lint(reexportModules, { cwd = fixture, filename = app, source = './ui' 
     .map((message) => message.ruleId ?? message.message);
 }
 
-/** What a source that matches an entry reports: nothing. */
 const matched = [];
 
 test('an absolute entry matches from any working directory', () => {
@@ -47,7 +40,7 @@ test('a relative entry is read from the working directory', () => {
   assert.deepEqual(lint(['./ui'], { cwd: resolve(fixture, 'src') }), matched);
 });
 
-test('a path entry that names no module is a configuration error', () => {
+test('a path entry that names no module is a configuration error, and an alias names no file to look for', () => {
   const elsewhere = resolve(fixture, '..');
   const missing = resolve(elsewhere, 'src/ui');
   assert.throws(
@@ -59,17 +52,14 @@ test('a path entry that names no module is a configuration error', () => {
       error.message.includes('path.resolve(import.meta.dirname'),
   );
   assert.throws(() => lint([resolve(fixture, 'src/missing')]), /names no module/);
-  // An alias is not a path, and names no file to look for.
   assert.deepEqual(lint(['@/components/ui']), ['envui/no-html-elements']);
 });
 
-test('a module reached through a link matches its real path', (t) => {
+test('a module reached through a link matches its real path, from either side of the link', (t) => {
   const directory = mkdtempSync(join(tmpdir(), 'envui-settings-'));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const link = join(directory, 'app');
-  // A junction needs no privileges on Windows; elsewhere the type is ignored.
   symlinkSync(fixture, link, 'junction');
-  // A file under the link imports the module the entry names by its real path, and the other way.
   const linked = { cwd: directory, filename: join(link, 'src/App.js') };
   assert.deepEqual(lint([resolve(fixture, 'src/ui')], linked), matched);
   assert.deepEqual(lint([join(link, 'src/ui')]), matched);

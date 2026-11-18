@@ -1,5 +1,3 @@
-// The parts of culori that scripts/build and the contrast gate (tests/contrast/Contrast.ts) use:
-// culori ships no types.
 declare module 'culori' {
   export interface Rgb {
     mode: 'rgb';

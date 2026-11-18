@@ -21,7 +21,6 @@ const sections = [
 
 export default function Sticky() {
   return (
-    // A box that scrolls stands in for the window; the header sticks at its top edge.
     <div style={{ blockSize: '18rem', overflow: 'auto' }}>
       <Page
         width="md"

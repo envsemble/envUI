@@ -8,20 +8,17 @@ beforeEach(() => {
   mount(fixture);
 });
 
-/**
- * Parts that paint a fill as content or by design, not as a field's well: a color picker's area,
- * thumbs and swatch, Select's trigger, a Button, and the indicator of an editor's tabs.
- */
 const content = [
   'env-color-picker-area',
   'env-color-picker-thumb',
   'env-color-swatch-sample',
   'env-select-trigger',
-  'env-tabs-indicator',
+  'env-segmented-control',
+  'env-segmented-control-item',
+  'env-segmented-control-thumb',
 ];
 
 test('fields and editors take the background of what they sit on, or a fill from their container property', async () => {
-  // Every field and editor has rendered, the editors included.
   await expect.poll(() => document.querySelectorAll('[data-field]').length).toBe(2 * 4 * 13);
   await expect
     .poll(() => document.querySelectorAll('.env-rich-text-editor-content [contenteditable]').length)
@@ -32,7 +29,6 @@ test('fields and editors take the background of what they sit on, or a fill from
       for (const element of box.querySelectorAll<HTMLElement>('*')) {
         const { width, height } = element.getBoundingClientRect();
         const style = getComputedStyle(element);
-        // Visually hidden inputs, such as a slider's, paint nothing people see.
         if (width < 2 || height < 2 || style.clipPath !== 'none') continue;
         if (content.some((name) => element.classList.contains(name))) continue;
         if (style.backgroundColor !== 'rgba(0, 0, 0, 0)')
@@ -42,7 +38,6 @@ test('fields and editors take the background of what they sit on, or a fill from
       }
   expect(painted).toEqual([]);
 
-  // A fill set on the component's root, as its style prop does, reaches its well.
   const card = page.getByTestId('dark-card').element();
   card
     .querySelector<HTMLElement>('[data-field="date-picker"] > .env-date-picker')!

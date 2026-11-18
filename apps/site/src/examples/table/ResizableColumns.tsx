@@ -14,7 +14,6 @@ const documents = [
 ];
 
 export default function ResizableColumns() {
-  // Keep the widths, for example to restore them on the next visit.
   const [widths, setWidths] = useState([46, 22, 16, 16]);
   return (
     <Table.Root
@@ -35,7 +34,6 @@ export default function ResizableColumns() {
       <Table.Body>
         {documents.map((entry) => (
           <Table.Row key={entry.id}>
-            {/* A name too long for its column ends with an ellipsis. */}
             <Table.Cell nowrap>{entry.name}</Table.Cell>
             <Table.Cell nowrap>{entry.owner}</Table.Cell>
             <Table.Cell nowrap>{entry.updated}</Table.Cell>

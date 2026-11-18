@@ -8,14 +8,12 @@ import type { CommandPaletteItem } from '../CommandPalette.js';
 import '../../styles/Base.css';
 import '../../styles/CommandPalette.css';
 
-/** A run of consecutive items with the same group. */
 export interface CommandPaletteSection {
   id: string;
   label: string | undefined;
   items: CommandPaletteItem[];
 }
 
-/** Consecutive items with the same group share a labelled group. */
 export function sectionsOf(items: readonly CommandPaletteItem[]) {
   const sections: CommandPaletteSection[] = [];
   for (const item of items) {
@@ -26,15 +24,10 @@ export function sectionsOf(items: readonly CommandPaletteItem[]) {
   return sections;
 }
 
-/** An item's text, which Autocomplete reads for its value and typeahead. */
 export function textOf(item: CommandPaletteItem) {
   return item.textValue ?? (typeof item.label === 'string' ? item.label : item.id);
 }
 
-/**
- * CommandPalette's list of options, grouped under headings where its items have groups; `onAct`
- * receives the pressed option and whether Ctrl or Cmd was held.
- */
 export function CommandPaletteOptions({
   grouped,
   label,

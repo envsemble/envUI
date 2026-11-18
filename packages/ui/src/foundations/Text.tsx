@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, ReactElement, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { flag } from '../internal/flag.js';
 import { markText } from '../internal/trigger/textMark.js';
 import { renderElement } from '../internal/react/renderElement.js';
 import '../styles/Base.css';
@@ -32,6 +33,11 @@ export type TextProps<RenderedElement extends HTMLElement = HTMLParagraphElement
    */
   emphasis?: TextEmphasis;
   /**
+   * Gives every digit the same width, so numbers line up in a column and a value that changes, such
+   * as a countdown or a code, doesn't shift the text around it.
+   */
+  tabularNumbers?: boolean;
+  /**
    * The element to render, for its meaning, such as render={<h2 />} for a heading or
    * render={<span />} inside a line; a p by default. The text's class and attributes merge into its
    * props.
@@ -50,6 +56,7 @@ export type TextProps<RenderedElement extends HTMLElement = HTMLParagraphElement
 export function Text<RenderedElement extends HTMLElement = HTMLParagraphElement>({
   variant = 'body',
   emphasis,
+  tabularNumbers = false,
   render,
   className,
   ...props
@@ -59,8 +66,8 @@ export function Text<RenderedElement extends HTMLElement = HTMLParagraphElement>
     className: classNames('env-text', className),
     'data-variant': variant,
     'data-emphasis': emphasis,
+    'data-tabular-numbers': flag(tabularNumbers),
   });
 }
 
-// A HoverCard or Tooltip underlines a Text trigger that holds text (see hoverDetail).
 markText(Text);

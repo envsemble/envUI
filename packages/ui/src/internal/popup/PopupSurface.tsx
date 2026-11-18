@@ -39,7 +39,6 @@ export type PopupSide = 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | '
 /** How the popup lines up with the anchor along its side. */
 export type PopupAlign = 'start' | 'center' | 'end';
 
-/** What Base UI's offset functions receive. */
 interface OffsetData {
   side: PopupSide;
   align: PopupAlign;
@@ -47,7 +46,6 @@ interface OffsetData {
   positioner: { width: number; height: number };
 }
 
-/** An element, a ref to one, or Base UI's virtual element, for a popup that opens away from its trigger. */
 type Anchor = Element | RefObject<Element | null> | { getBoundingClientRect(): DOMRect };
 
 /**
@@ -60,7 +58,6 @@ export type PopupElementProps = Omit<ComponentPropsWithRef<'div'>, 'children' | 
   [attribute: `data-${string}`]: string | boolean | undefined;
 };
 
-/** What PopupSurface gives a Base UI positioner: props every one of them takes. */
 interface PositionerProps {
   side?: PopupSide;
   align?: PopupAlign;
@@ -73,10 +70,6 @@ interface PositionerProps {
   children: ReactNode;
 }
 
-/**
- * What PopupSurface gives a Base UI popup. Tooltip's and PreviewCard's take no focus targets, which
- * PopupSurface passes only where an owner gives them.
- */
 interface PopupProps extends PopupElementProps {
   initialFocus?: FocusTarget;
   finalFocus?: FocusTarget;
@@ -152,17 +145,8 @@ export interface PopupSurfaceProps {
   children?: ReactNode;
 }
 
-/**
- * Milliseconds after a popup appears in which focus that arrives in it is the focus Base UI moves
- * as it opens. Base UI moves it once the popup is placed, a few animation frames after it appears,
- * from no event of its own that tells it apart from focus people move: in Chromium about 20 ms,
- * six frames, after the popup element attaches. The window leaves room for a slow machine and ends
- * before people can reach into a popup that has just appeared. tests/component/PortalContainer.test.tsx
- * checks both sides: Base UI's opening focus goes back, and focus moved in after the window stays.
- */
-const openingFocusWindow = 500;
+const baseUiOpeningFocusWindowMs = 500;
 
-/** The element an anchor stands for, if it is one. */
 function anchorElement(anchor: Anchor | undefined): Element | null {
   if (!anchor) return null;
   if (anchor instanceof Element) return anchor;
@@ -170,17 +154,12 @@ function anchorElement(anchor: Anchor | undefined): Element | null {
   return null;
 }
 
-/** The computed direction at the anchor, else the trigger, else where focus is. */
 function directionAt(anchor: Anchor | undefined, trigger: RefObject<Element | null> | undefined) {
   return computedDirection(
     anchorElement(anchor) ?? trigger?.current ?? document.activeElement ?? document.documentElement,
   );
 }
 
-/**
- * The popup's content in a direction: the given one, the provider's, or else the anchor's or the
- * trigger's on opening.
- */
 function Directed({
   dir,
   anchor,
@@ -193,26 +172,23 @@ function Directed({
   children: (direction: Direction | undefined) => ReactNode;
 }) {
   const provided = useEnvUI().dir;
-  // It mounts as the popup opens, in the browser only, so the direction is read as it first
-  // renders: the popup renders once, in its direction, rather than again once an effect has read
-  // it. Read before the popup is in the document, it brings no new element's style up to date.
-  const [read, setRead] = useState(() =>
+  const [directionAtOpening, setDirectionAtOpening] = useState(() =>
     dir || provided || typeof document === 'undefined' ? undefined : directionAt(anchor, trigger),
   );
-  // Read again where the anchor or the trigger changes while it is open; the same direction
-  // renders nothing again.
-  useLayoutEffect(() => {
-    if (dir || provided) return;
-    const next = directionAt(anchor, trigger);
-    setRead((current) => (current === next ? current : next));
-  }, [dir, provided, anchor, trigger]);
-  const direction = dir ?? provided ?? read;
-  // The provider is always there, so the popup isn't remounted once the direction is read: a
-  // remounted popup returns focus to where it was before opening, and a menu closes as it opens.
-  // Until then it passes on the direction around it.
-  const inherited = useDirection();
+  useLayoutEffect(
+    function readAgainWhenAnchorOrTriggerChanges() {
+      if (dir || provided) return;
+      const next = directionAt(anchor, trigger);
+      setDirectionAtOpening((current) => (current === next ? current : next));
+    },
+    [dir, provided, anchor, trigger],
+  );
+  const direction = dir ?? provided ?? directionAtOpening;
+  const directionAroundUntilRead = useDirection();
   return (
-    <DirectionProvider direction={direction ?? inherited}>{children(direction)}</DirectionProvider>
+    <DirectionProvider direction={direction ?? directionAroundUntilRead}>
+      {children(direction)}
+    </DirectionProvider>
   );
 }
 
@@ -249,9 +225,7 @@ export function PopupSurface({
   const theme = useTheme();
   const { container, contained } = usePortalContainer();
   const { style: ownStyle, ref: ownRef, onFocusCapture: ownFocusCapture } = popupProps ?? {};
-  // When the popup appeared, to tell the focus Base UI moves into it as it opens.
   const openedAt = useRef(0);
-  // Where focus goes as the popup starts to close (closingFocus.ts).
   const closingFocus = useRef<ClosingFocus>(closingFocusState());
   useLayoutEffect(() => {
     closingFocus.current.finalFocus = finalFocus;
@@ -261,9 +235,8 @@ export function PopupSurface({
   const attachPopup = useCallback(
     (node: HTMLDivElement) => {
       openedAt.current = performance.now();
-      // A popup that mounts afresh starts anew; the same one attached again, as when its owner
-      // passes a new ref, keeps what it has seen.
-      if (node !== shownPopup.current) {
+      const mountedAfresh = node !== shownPopup.current;
+      if (mountedAfresh) {
         closingFocus.current = {
           ...closingFocusState(),
           finalFocus: closingFocus.current.finalFocus,
@@ -282,14 +255,9 @@ export function PopupSurface({
     },
     [ownRef],
   );
-  /**
-   * In a contained container a popup takes no focus as it opens, such as a menu open from the
-   * start: focus that arrives within openingFocusWindow from outside the container and the trigger
-   * goes back where it was. Focus from the trigger, or that people move in later, stays.
-   */
-  const keepFocusOut = (event: FocusEvent<HTMLDivElement>) => {
+  const sendBackBaseUiOpeningFocus = (event: FocusEvent<HTMLDivElement>) => {
     ownFocusCapture?.(event);
-    if (performance.now() - openedAt.current > openingFocusWindow) return;
+    if (performance.now() - openedAt.current > baseUiOpeningFocusWindowMs) return;
     const from = event.relatedTarget;
     const own = [container, trigger?.current, anchorElement(anchor), event.currentTarget];
     if (from instanceof Node && own.some((element) => element?.contains(from))) return;
@@ -317,7 +285,7 @@ export function PopupSurface({
                 ref={attachPopup}
                 {...(contained && {
                   style: { ...containedPopupStyle, ...ownStyle },
-                  onFocusCapture: keepFocusOut,
+                  onFocusCapture: sendBackBaseUiOpeningFocus,
                 })}
                 {...skeletonAttributes(skeleton)}
                 {...(initialFocus !== undefined && { initialFocus })}

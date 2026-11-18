@@ -13,7 +13,7 @@ aliases:
   - person card
   - peek
 useWhen:
-  - A glance at what a link or a name refers to, such as a document's summary or a person's role
+  - A glance at what a link or a name refers to, such as a person's role
 avoidWhen:
   - text: A short hint that names a control.
     use: Tooltip
@@ -25,9 +25,7 @@ examples:
   DocumentPreview:
     role: overview
     open: true
-  PersonDetails:
-    role: example
-    caption: Large, with an avatar beside the name.
+  PersonDetails: example
   Placement: example
   HoverCardAnatomy: anatomy
   TextDetails: example
@@ -39,20 +37,11 @@ examples:
 
 ### Widths
 
-The card is as wide as its content, within its width's range, and narrows to fit the window.
-
-| Width  | Use for                                                         |
-| ------ | --------------------------------------------------------------- |
-| Medium | A short summary, such as a document's last change. The default. |
-| Large  | Richer details, such as a person with an avatar and a role.     |
-
 ```tsx figure=PersonDetails open
 
 ```
 
 ### Placement
-
-The card opens below its trigger, centred on it, or on another side or lined up with one end, such as above a link near the bottom of a pane.
 
 ```tsx figure=Placement open
 
@@ -71,97 +60,10 @@ The card opens below its trigger, centred on it, or on another side or lined up 
 
 ### Hover and focus
 
-The pointer can move from the trigger onto the card without closing it, and focus stays on the trigger.
-
 <!-- specimen: HoverAndFocus -->
 
 ### Text triggers
 
-Text that isn't a link can open a card too, with the dotted underline and the focus a [tooltip on text](tooltip.md#text) takes.
-
 ```tsx figure=TextDetails motion
 
 ```
-
-## Rules
-
-### Supplementary details
-
-Keep the details supplementary: the page the link leads to has them too.
-
-### Interactive content
-
-No links, buttons or fields in the card: the keyboard and touch can't reach them.
-
-### Tooltips
-
-No [Tooltip](tooltip.md) around a hover card or as its trigger; put what it would say in the card.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                             | Action                                                            |
-| ----------------------------------------------- | ----------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Focus on the trigger opens the card at once; moving on closes it. |
-| <kbd>Esc</kbd>                                  | Closes the card and leaves focus on the trigger.                  |
-
-### envUI provides
-
-- A card that opens on keyboard focus as on hover, and closes with <kbd>Esc</kbd>.
-- Focus that stays on the trigger: the card never takes it and isn't a dialog.
-- The theme of its trigger, above dialogs.
-
-### You provide
-
-- A trigger that works on its own, such as a link to a page with the same details.
-- `tabIndex={0}` on a text trigger, so keyboard focus reaches it.
-- Headings and emphasis inside the card, such as Text in the title type.
-
-## Compose
-
-### Usage
-
-A HoverCard opens its details, `children`, beside its `trigger`, which receives the ref.
-
-- It opens on hover after `delay`, 600 ms by default, and at once on keyboard focus.
-- It closes `closeDelay`, 300 ms, after the pointer leaves the trigger and the card.
-- Leave it uncontrolled, or control it with `open` and `onOpenChange`; `defaultOpen` opens it on the first render.
-
-```tsx source=DocumentPreview
-
-```
-
-#### Text triggers
-
-A trigger that is text rather than a link, such as a span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`. Make it focusable with `tabIndex={0}`, so keyboard focus opens the card too; envUI warns in the console while developing when it isn't. A link or another control keeps its own look.
-
-```tsx
-<HoverCard trigger={<span tabIndex={0}>28 h 9 min</span>}>
-  <Text emphasis="muted">Reviews 11 h 40 min, drafting 9 h 5 min, meetings 7 h 24 min.</Text>
-</HoverCard>
-```
-
-#### Width and placement
-
-`width` sets how wide the card grows with its content: `md`, the default, from 12 rem up to 20 rem, or `lg`, from 20 rem up to 28 rem. It narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; `align` is `center`, the default, `start` or `end`.
-
-```tsx
-<HoverCard
-  side="top"
-  align="start"
-  trigger={<Link href="/plans/sync-conflicts">sync conflicts</Link>}
->
-  …
-</HoverCard>
-```
-
-### Composition
-
-Put a heading in it as Text in the title type, and keep links, buttons and fields out of it. A Tooltip around a HoverCard, or as its `trigger`, shows no tooltip.
-
-### Customize
-
-The card, `env-hover-card`, renders on PopupSurface in its trigger's theme and text direction, above dialogs, and takes `className`, `style`, `ref` and data attributes.
-
-Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.

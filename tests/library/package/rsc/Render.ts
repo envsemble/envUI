@@ -1,7 +1,3 @@
-// Renders React elements as a React Server Components server does, far enough to check what
-// envUI's server modules do there: server components run (without hooks, which React's server build
-// lacks), client references stay references, and every prop that reaches a client component or an
-// element must be serializable. Prints the rendered tree as JSON, or the first problem.
 import { Fragment } from 'react';
 
 const clientReference = Symbol.for('react.client.reference');
@@ -9,7 +5,6 @@ const forwardRef = Symbol.for('react.forward_ref');
 const memo = Symbol.for('react.memo');
 const element = Symbol.for('react.transitional.element');
 
-/** A prop value as the server would send it; throws for one it cannot send. */
 function serialize(value, path) {
   if (typeof value === 'function')
     throw new Error(`${path} is a function, which a server cannot pass to the client.`);
@@ -23,7 +18,6 @@ function serialize(value, path) {
   return value;
 }
 
-/** The server's output for a node. */
 export function render(node, path = 'root') {
   if (node == null || typeof node === 'boolean') return null;
   if (typeof node === 'string' || typeof node === 'number') return node;

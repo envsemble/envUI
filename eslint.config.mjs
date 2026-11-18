@@ -1,5 +1,3 @@
-// ESLint for the library, the catalogue, tests and scripts. Formatting belongs to Prettier and
-// styles to Stylelint; this config only reports likely bugs.
 import envui from '@envsemble/eslint-plugin-envui';
 import js from '@eslint/js';
 import { readdirSync } from 'node:fs';
@@ -7,31 +5,33 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import { repositoryPlugin } from './scripts/lint/NoComments.ts';
 
-/**
- * The library's families, the folders of packages/ui/src that hold components. A family's
- * internal/ folder is its own: code two families use sits in the top-level internal/ (packages/ui/AGENTS.md).
- */
+const commentFreeFiles = [
+  'scripts/**',
+  'tests/**',
+  'packages/eslint-plugin/**',
+  'packages/stylelint-config/**',
+  'packages/ui/src/**',
+  'apps/site/**',
+  '*.{js,mjs,cjs,ts}',
+];
+const publicApiWithDocComments = '^packages/ui/src/(?!icons/|generated/)';
+
 const families = readdirSync(new URL('packages/ui/src/', import.meta.url), { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name)
   .filter((name) => !['internal', 'styles', 'assets', 'generated', 'icons'].includes(name));
 
-/** An import of another family's internal/ folder, which a module of `family` may not make. */
 const otherFamiliesInternals = (family) => ({
   regex: String.raw`^(\.\./)+(${families
     .filter((other) => other !== family)
     .join('|')})/([\w-]+/)*internal(/|$)`,
-  message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/ (packages/ui/AGENTS.md).`,
+  message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/.`,
 });
 
-/**
- * Folders of a family's internal/ that only the modules listed with them may import, besides each
- * other: the Markdown editor's editing, links and preview are its own.
- */
 const privateFolders = { 'content/internal/markdown': ['content/MarkdownEditor.tsx'] };
 
-/** Browser globals that are easy to use by accident in place of a local, such as `event`. */
 const confusingBrowserGlobals = [
   'close',
   'closed',
@@ -49,46 +49,32 @@ const confusingBrowserGlobals = [
   'top',
 ];
 
-/**
- * The site reaches the library through its entry points, and the few internals listed below
- * through @envui-internal (apps/site/AGENTS.md): a relative path into its source would break
- * unseen when a file there moves. The site imports nothing of the scripts, which import the
- * site's documentation model.
- */
 const siteImports = {
   regex: String.raw`^(\.\./)+(packages/ui/src|scripts)(/|$)`,
   message:
-    'Import the library from @envsemble/envui and its internals from @envui-internal/*; the site imports nothing of scripts/ (apps/site/AGENTS.md).',
+    'Import the library from @envsemble/envui and its internals from @envui-internal/*; the site imports nothing of scripts/.',
 };
 
-/**
- * The library's internals the site may import, from packages/ui/src: what it must share with the
- * library rather than keep a copy of. Anything smaller the site keeps in its own shared/.
- */
-const siteInternals = [
-  // The pre-rendered page's code tokens and Markdown trees, handed to the library's components
-  // before they hydrate, and the highlighter that makes the tokens.
-  'content/internal/codeHighlighting',
-  'content/internal/givenCodeTokens',
-  'content/internal/givenMarkdownTrees',
-  // The link component an application gives the library, which the site's own links follow.
-  'internal/provider/LinkComponentContext',
-  // What a box paints, as dev mode decides it, which the fit centres a picture on.
-  'internal/dom/paints',
-  // How a motion token is read and eased, as the library's own motion reads it.
-  'internal/motion/motionTokens',
-];
+const siteInternals = {
+  'content/internal/codeHighlighting':
+    'The highlighter that makes the code tokens a pre-rendered page hands the library.',
+  'content/internal/givenCodeTokens':
+    'The pre-rendered page’s code tokens, handed to the library’s components before they hydrate.',
+  'content/internal/givenMarkdownTrees':
+    'The pre-rendered page’s Markdown trees, handed to the library’s components before they hydrate.',
+  'internal/provider/LinkComponentContext':
+    'The link component an application gives the library, which the site’s own links follow.',
+  'internal/dom/paints':
+    'What a box paints, as dev mode decides it, which the fit centres a picture on.',
+  'internal/motion/motionTokens':
+    'How a motion token is read and eased, as the library’s own motion reads it.',
+};
 const siteInternalImports = {
-  regex: String.raw`^@envui-internal/(?!(${siteInternals.join('|')})$)`,
+  regex: String.raw`^@envui-internal/(?!(${Object.keys(siteInternals).join('|')})$)`,
   message:
     'The site imports only the library internals listed in eslint.config.mjs (siteInternals): keep a small helper of its own in apps/site/src/shared/, or list the module with its reason.',
 };
 
-/**
- * The folders of apps/site/src from the top down: a folder imports only the folders after it, so
- * imports between them run one way (apps/site/AGENTS.md). A rule per depth of file, as a relative
- * path to another folder starts with one ../ for each folder the file is in.
- */
 const siteFolders = [
   'navigation',
   'pages',
@@ -110,8 +96,9 @@ const siteFolders = [
   'generated',
   'documentation',
 ];
+const folderDepths = [1, 2, 3];
 const siteFolderOrder = siteFolders.slice(1).flatMap((folder, index) =>
-  [1, 2, 3].map((depth) => ({
+  folderDepths.map((depth) => ({
     files: [`apps/site/src/${folder}/${'*/'.repeat(depth - 1)}*.{ts,tsx}`],
     rules: {
       'no-restricted-imports': [
@@ -122,7 +109,7 @@ const siteFolderOrder = siteFolders.slice(1).flatMap((folder, index) =>
             siteInternalImports,
             {
               regex: String.raw`^(\.\./){${depth}}(${siteFolders.slice(0, index + 1).join('|')})(/|$)`,
-              message: `${folder}/ imports only the folders after it in apps/site/AGENTS.md's order: move what both use into ${folder}/ or below it.`,
+              message: `${folder}/ imports only the folders after it in siteFolders, in eslint.config.mjs: move what both use into ${folder}/ or below it.`,
             },
           ],
         },
@@ -131,21 +118,12 @@ const siteFolderOrder = siteFolders.slice(1).flatMap((folder, index) =>
   })),
 );
 
-/**
- * The site measures sizes through its one measuring loop, remeasure (apps/site/src/shared/
- * Remeasure.ts), which owns the site's only ResizeObserver.
- */
 const siteResizeObserver = {
   selector: "NewExpression[callee.name='ResizeObserver']",
   message:
     'Measure through remeasure (apps/site/src/shared/Remeasure.ts), the site’s one measuring loop.',
 };
 
-/**
- * Names the site declares with "preview" in them: the site's words for what it shows are example,
- * specimen, tile, figure and stage (apps/site/AGENTS.md), and preview is an older name. Names it only reads,
- * such as a library prop or an example's import, are left to where they are declared.
- */
 const previewNames = [
   'VariableDeclarator > Identifier.id',
   'FunctionDeclaration > Identifier.id',
@@ -160,13 +138,9 @@ const previewNames = [
 ].map((declared) => ({
   selector: `${declared}[name=/preview/i]`,
   message:
-    'Name it with the site’s words, example, specimen, tile, figure or stage (apps/site/AGENTS.md): preview is an older name.',
+    'Name it with the site’s words, example, specimen, tile, figure or stage: preview is an older name.',
 }));
 
-/**
- * A `data-*` attribute set by a conditional between `''` and `undefined`, in JSX or in an object of
- * props: a state that is on or off goes through `flag()` (packages/ui/AGENTS.md).
- */
 const emptyOrUndefined = `ConditionalExpression:matches([consequent.value=''][alternate.name='undefined'], [consequent.name='undefined'][alternate.value=''])`;
 const inlineFlags = [
   `JSXAttribute[name.name=/^data-/] > JSXExpressionContainer > ${emptyOrUndefined}`,
@@ -176,21 +150,66 @@ const inlineFlags = [
   message: 'Set a state attribute that is on or off with flag() (src/internal/flag.ts).',
 }));
 
+const buildOutput = ['**/dist/**', '**/node_modules/**', '.cache/**'];
+const wranglerDevState = ['.wrangler/**'];
+const testReports = ['test-results/**', 'playwright-report/**'];
+const generatedByScripts = [
+  'packages/ui/src/icons/**',
+  'apps/site/src/brand/EnvUILogo.tsx',
+  'apps/site/src/generated/**',
+];
+const packagedDocumentation = ['packages/ui/docs/**'];
+
+const correctnessBeyondRecommended = {
+  eqeqeq: ['error', 'always', { null: 'ignore' }],
+  'array-callback-return': 'error',
+  'no-constructor-return': 'error',
+  'no-restricted-globals': ['error', ...confusingBrowserGlobals],
+  'no-self-compare': 'error',
+  'no-template-curly-in-string': 'error',
+  'no-unmodified-loop-condition': 'error',
+  'no-unreachable-loop': 'error',
+};
+const propsInterfacesExtendingOneBase = {
+  '@typescript-eslint/no-empty-object-type': ['error', { allowInterfaces: 'with-single-extends' }],
+};
+const underscoreKeepsABinding = {
+  '@typescript-eslint/no-unused-vars': [
+    'error',
+    {
+      argsIgnorePattern: '^_',
+      varsIgnorePattern: '^_',
+      caughtErrorsIgnorePattern: '^_',
+      destructuredArrayIgnorePattern: '^_',
+      ignoreRestSiblings: true,
+    },
+  ],
+};
+const directivesWithoutReasons = {
+  '@typescript-eslint/ban-ts-comment': ['error', { 'ts-expect-error': false }],
+};
+
+const reactCompilerRulesThatReportBugsWithoutTheCompiler = {
+  'react-hooks/error-boundaries': 'error',
+  'react-hooks/globals': 'error',
+  'react-hooks/immutability': 'error',
+  'react-hooks/set-state-in-render': 'error',
+  'react-hooks/static-components': 'error',
+};
+
+const strictContentSecurityPolicy = {
+  'no-eval': 'error',
+  'no-implied-eval': 'error',
+  'no-new-func': 'error',
+};
+
 export default defineConfig(
   globalIgnores([
-    '**/dist/**',
-    '**/node_modules/**',
-    '.cache/**',
-    // Local state of `wrangler dev`.
-    '.wrangler/**',
-    'test-results/**',
-    'playwright-report/**',
-    // Generated from pinned inputs by scripts; edit the generator instead.
-    'packages/ui/src/icons/**',
-    'apps/site/src/brand/EnvUILogo.tsx',
-    'apps/site/src/generated/**',
-    // Packaged copies of the documentation.
-    'packages/ui/docs/**',
+    ...buildOutput,
+    ...wranglerDevState,
+    ...testReports,
+    ...generatedByScripts,
+    ...packagedDocumentation,
   ]),
   {
     files: ['**/*.{ts,tsx,mjs,js,cjs}'],
@@ -198,33 +217,16 @@ export default defineConfig(
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
     linterOptions: { reportUnusedDisableDirectives: 'error' },
     rules: {
-      // Correctness rules beyond the recommended sets; each is clean on the current code.
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
-      'array-callback-return': 'error',
-      'no-constructor-return': 'error',
-      'no-restricted-globals': ['error', ...confusingBrowserGlobals],
-      'no-self-compare': 'error',
-      'no-template-curly-in-string': 'error',
-      'no-unmodified-loop-condition': 'error',
-      'no-unreachable-loop': 'error',
-      // Public `*Props` interfaces that extend one base type are deliberate, documented names.
-      '@typescript-eslint/no-empty-object-type': [
-        'error',
-        { allowInterfaces: 'with-single-extends' },
-      ],
-      // A leading underscore marks a binding kept on purpose, such as `node: _node` to keep a prop
-      // out of a spread.
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-          destructuredArrayIgnorePattern: '^_',
-          ignoreRestSiblings: true,
-        },
-      ],
+      ...correctnessBeyondRecommended,
+      ...propsInterfacesExtendingOneBase,
+      ...underscoreKeepsABinding,
+      ...directivesWithoutReasons,
     },
+  },
+  {
+    files: commentFreeFiles,
+    plugins: { repository: repositoryPlugin },
+    rules: { 'repository/no-comments': ['error', { publicApi: publicApiWithDocComments }] },
   },
   {
     files: ['**/*.{ts,tsx}'],
@@ -232,26 +234,12 @@ export default defineConfig(
     rules: {
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
-      // The plugin's React Compiler rules that report bugs whether or not the compiler runs.
-      // envUI is not compiled with React Compiler, so the rules that only report what the compiler
-      // cannot optimize (refs, set-state-in-effect, purity, use-memo, preserve-manual-memoization,
-      // incompatible-library, unsupported-syntax, config, gating) stay off.
-      'react-hooks/error-boundaries': 'error',
-      'react-hooks/globals': 'error',
-      'react-hooks/immutability': 'error',
-      'react-hooks/set-state-in-render': 'error',
-      'react-hooks/static-components': 'error',
+      ...reactCompilerRulesThatReportBugsWithoutTheCompiler,
     },
   },
   {
-    // Shipped code: no logging, and nothing that a strict Content Security Policy blocks.
     files: ['packages/ui/src/**', 'apps/site/src/**'],
-    rules: {
-      'no-console': 'error',
-      'no-eval': 'error',
-      'no-implied-eval': 'error',
-      'no-new-func': 'error',
-    },
+    rules: { 'no-console': 'error', ...strictContentSecurityPolicy },
   },
   {
     files: ['packages/ui/src/**/*.{ts,tsx}'],
@@ -287,14 +275,11 @@ export default defineConfig(
     };
   }),
   {
-    // The site's own code. Examples are application code, where a preview is the product's word,
-    // such as a file's or the Markdown editor's, and where a ResizeObserver is the application's.
     files: ['apps/site/src/**/*.{ts,tsx}'],
     ignores: ['apps/site/src/examples/**'],
     rules: { 'no-restricted-syntax': ['error', ...previewNames, siteResizeObserver] },
   },
   {
-    // The measuring loop is the one place in the site that creates a ResizeObserver.
     files: ['apps/site/src/shared/Remeasure.ts'],
     rules: { 'no-restricted-syntax': ['error', ...previewNames] },
   },
@@ -304,8 +289,6 @@ export default defineConfig(
   },
   ...siteFolderOrder,
   {
-    // Examples and templates are the code applications and agents copy, so they follow the rules
-    // envUI asks of applications: envUI's components over raw elements and no raw colors.
     ...envui.configs.recommended,
     files: ['apps/site/src/examples/**/*.{ts,tsx}'],
   },

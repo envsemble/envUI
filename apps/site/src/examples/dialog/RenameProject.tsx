@@ -2,6 +2,8 @@ import { useId, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Button, Dialog, Column, Text, TextField } from '@envsemble/envui';
 
+const simulatedSaveMs = 2000;
+
 export default function RenameProject() {
   const formId = useId();
   const [open, setOpen] = useState(false);
@@ -15,12 +17,11 @@ export default function RenameProject() {
   const save = (event: FormEvent) => {
     event.preventDefault();
     setSaving(true);
-    // Saving takes a moment; a timer stands in for it here.
     window.setTimeout(() => {
       setSaving(false);
       setName(draft.trim() || name);
       setOpen(false);
-    }, 2000);
+    }, simulatedSaveMs);
   };
   return (
     <Column gap={4} align="start">

@@ -21,15 +21,6 @@ afterEach(() => {
   document.documentElement.removeAttribute('dir');
 });
 
-/**
- * Fakes the notices' clock, setTimeout and Date, so a notice's timer runs only as far as the test
- * moves it, however long its steps take on a busy engine. Frames and transitions run as they do,
- * so a notice's exit plays once its timer is up.
- */
-/**
- * Fakes the clock as a running one, which the test can also move on at once: past a notice's
- * duration, say.
- */
 const fakeClock = () =>
   vi.useFakeTimers({
     toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'],
@@ -39,7 +30,6 @@ const stopClock = () =>
   vi.useFakeTimers({
     toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'],
   });
-/** Waits until a condition holds, moving the stopped clock on as a running one would. */
 const whileTimeRuns = <T,>(read: () => T) =>
   expect.poll(() => {
     vi.advanceTimersByTime(50);
@@ -48,7 +38,6 @@ const whileTimeRuns = <T,>(read: () => T) =>
 
 const region = (placement = 'bottom-end') =>
   document.querySelector<HTMLElement>(`.env-toast-viewport[data-placement="${placement}"]`)!;
-/** The notices at a placement, in every provider's region there. */
 const notices = (placement = 'bottom-end') => [
   ...document.querySelectorAll<HTMLElement>(
     `.env-toast-viewport[data-placement="${placement}"] .env-toast`,
@@ -62,7 +51,6 @@ const notice = (message: string, placement = 'bottom-end') =>
   ) ?? null;
 const count = (message: string, placement?: string) => () =>
   notice(message, placement) === null ? 0 : 1;
-/** Whether a notice is there and not leaving. */
 const staying = (message: string, placement?: string) => () => {
   const element = notice(message, placement);
   return element !== null && !element.hasAttribute('data-ending-style');
@@ -72,16 +60,11 @@ const visible = (message: string, placement?: string) => () => {
   return element !== null && element.checkVisibility({ visibilityProperty: true });
 };
 const trigger = (testId: string) => page.getByTestId(testId);
-/** The middle of an element, scrolled into view first, as Playwright's click() finds it. */
 const middle = (element: Element) => {
   element.scrollIntoView({ block: 'nearest' });
   const { x, y, width, height } = box(element);
   return { x: x + width / 2, y: y + height / 2 };
 };
-/**
- * Presses an element as Playwright's click() does: the mouse moves onto it, and presses once the
- * element is what the point hits, as a stack hovered spreads its notices apart.
- */
 async function click(element: Element) {
   let point = middle(element);
   await mouse.move(point.x, point.y);
@@ -95,7 +78,6 @@ async function click(element: Element) {
 }
 const dismiss = (element: Element) =>
   click(element.querySelector('[aria-label="Dismiss notification"]')!);
-/** A notice's action button, such as Undo notice. */
 const actionOf = (element: Element) =>
   [...element.querySelectorAll('button')].find(
     (button) => button.getAttribute('aria-label') !== 'Dismiss notification',
@@ -122,7 +104,6 @@ test('newest notices stay visible and older notices return independently per pla
     .poll(() => document.querySelectorAll('.env-toast-viewport .env-toast').length)
     .toBe(0);
 
-  // In right-to-left text the bottom-end stack sits at the left and the top stack stays centred.
   document.documentElement.setAttribute('dir', 'rtl');
   mount(fixture);
   await trigger('toast-queue-bottom').click();
@@ -137,7 +118,6 @@ test('newest notices stay visible and older notices return independently per pla
       return Math.abs(top.x + top.width / 2 - width / 2);
     })
     .toBeLessThan(1);
-  // A swipe toward the end of the line, to the left here, dismisses a notice.
   const leaving = notice('Bottom queue 4')!;
   const start = middle(leaving.querySelector('.env-toast-message')!);
   await mouse.move(start.x, start.y);
@@ -166,12 +146,9 @@ test('danger notices are alerts at once and never wait behind the hidden count',
   const danger = notice('Persistent error notice')!;
   expect(danger.getAttribute('data-tone')).toBe('danger');
   expect(danger.hasAttribute('data-limited')).toBe(false);
-  // It is an alert as it appears, readable without focusing the region first.
   expect(danger.getAttribute('role')).toBe('alert');
   expect(danger.hasAttribute('aria-hidden')).toBe(false);
   expect(page.getByRole('alert').elements()).toHaveLength(1);
-  // The alert is announced once: no polite live region holds it, and the polite status that reads
-  // the ordinary notices leaves it out.
   let live: string | null = null;
   for (let node = danger.parentElement; node && live === null; node = node.parentElement) {
     const region = node.getAttribute('aria-live');
@@ -182,15 +159,34 @@ test('danger notices are alerts at once and never wait behind the hidden count',
   expect(announcer().getAttribute('role')).toBe('status');
   await expect.poll(() => announcer().textContent).toContain('Bottom queue 4');
   expect(announcer().textContent).not.toContain('Persistent error notice');
-  // It takes a place of its own, so two of the four ordinary notices wait.
   await expect.poll(() => shownNotices().length).toBe(3);
   expect(region().querySelector('.env-toast-queued-count')?.textContent).toContain(
     '2 older notifications hidden',
   );
 });
 
+test('each notice is a status, or an alert for danger, without a heading, inside the notifications region', async () => {
+  await trigger('toast-neutral').click();
+  await trigger('toast-error').click();
+  await expect.poll(() => notices().length).toBe(2);
+  const notifications = page.getByRole('region', { name: 'Notifications' });
+  await expect.element(notifications.getByRole('status')).toHaveTextContent('Neutral notice');
+  await expect
+    .element(notifications.getByRole('alert'))
+    .toHaveTextContent('Persistent error notice');
+  expect(notices().map((each) => each.getAttribute('role'))).toEqual(
+    expect.arrayContaining(['status', 'alert']),
+  );
+  for (const each of notices()) {
+    expect(each.hasAttribute('aria-modal')).toBe(false);
+    expect(each.querySelector('h1, h2, h3, h4, h5, h6, [role="heading"]')).toBeNull();
+  }
+  expect(document.querySelector('[role="dialog"], [role="alertdialog"]')).toBeNull();
+  expect(notice('Neutral notice')!.getAttribute('aria-live')).toBe('off');
+  await expect.poll(() => announcer().textContent).toContain('Neutral notice');
+});
+
 test('notice timers run out after five seconds by default, and pause for focus, hover and the region together', async () => {
-  // Ordinary notices expire after the default five seconds.
   stopClock();
   await trigger('toast-neutral').click();
   await expect.poll(count('Neutral notice')).toBe(1);
@@ -200,12 +196,10 @@ test('notice timers run out after five seconds by default, and pause for focus, 
   vi.advanceTimersByTime(1_100);
   await whileTimeRuns(count('Neutral notice')).toBe(0);
 
-  // Visible timers pause for focus and hover together and resume after both leave.
   await trigger('toast-short').click();
   await expect.poll(count('Short notice')).toBe(1);
   const short = notice('Short notice')!;
   const close = short.querySelector<HTMLElement>('[aria-label="Dismiss notification"]')!;
-  // Timer pauses follow keyboard-visible focus; establish keyboard interaction first.
   await keyboard.press('Tab');
   close.focus();
   const over = middle(short);
@@ -218,7 +212,6 @@ test('notice timers run out after five seconds by default, and pause for focus, 
   vi.advanceTimersByTime(500);
   await whileTimeRuns(count('Short notice')).toBe(0);
 
-  // Focus in the region pauses the timers there and those of notices shown meanwhile.
   await trigger('toast-short').click();
   await keyboard.press('F6');
   await expect.element(region()).toHaveFocus();
@@ -251,7 +244,6 @@ test('Strict Mode mount effects preserve capacity after effect replay', async ()
   await expect.poll(active).toBe(1);
   await page.getByRole('button', { name: 'Add strict notices' }).click();
   await expect.poll(active).toBe(3);
-  // Past the render in which an effect replayed twice would have dropped one.
   await nextFrames();
   expect(active()).toBe(3);
 });
@@ -282,8 +274,6 @@ test('placement stacks, keyboard access, wrapped sizing and contextual action st
   await trigger('toast-clear').click();
   await trigger('toast-queue-actions').click();
   await page.viewport(320, 160);
-  // Cleared toasts finish their exit transition, and the new ones their entrance, before the stack
-  // is measured.
   await expect
     .poll(() => region().querySelectorAll('.env-toast[data-ending-style]').length)
     .toBe(0);
@@ -309,7 +299,6 @@ test('placement stacks, keyboard access, wrapped sizing and contextual action st
     if (index) expect(row.top).toBeGreaterThanOrEqual(rows[index - 1]!.bottom);
   });
 
-  // On a coarse pointer the dismiss button grows to the touch height, in either scale.
   await commands.emulateTouch(true);
   try {
     await page.viewport(1440, 1000);
@@ -337,10 +326,8 @@ test('the hidden count sits beyond the stack: above at the bottom end, below and
     const hidden = viewport.querySelector('.env-toast-queued-count')!;
     expect(hidden.classList.contains('env-badge')).toBe(true);
     expect(hidden.getAttribute('data-count')).toBe('');
-    // The status announces the full meaning; the badge shows the number.
     expect(hidden.textContent).toContain('1 older notification hidden');
     expect(hidden.querySelector('[aria-hidden="true"]')?.textContent).toBe('+1');
-    // Entrances and glides move the notices for a moment; poll until they settle.
     await expect
       .poll(
         () => {
@@ -360,11 +347,10 @@ test('the hidden count sits beyond the stack: above at the bottom end, below and
 });
 
 test('dismissed notices step out at once, so the stack neither grows, scrolls nor jumps, at either placement and motion', async () => {
-  // A long exit keeps the leaving notices in view while the stack is measured.
-  // Letter spacing gives the messages fractional widths, which a pinned notice must keep.
-  addStyle(
-    '.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 1.5s; } .env-toast-message { letter-spacing: 0.0137em; }',
-  );
+  const longExit =
+    '.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 1.5s; }';
+  const fractionalMessageWidths = '.env-toast-message { letter-spacing: 0.0137em; }';
+  addStyle(`${longExit} ${fractionalMessageWidths}`);
   for (const motion of ['reduce', 'no-preference'] as const)
     for (const placement of ['bottom-end', 'top-center'] as const) {
       const name = `${placement}, ${motion} motion`;
@@ -384,10 +370,8 @@ test('dismissed notices step out at once, so the stack neither grows, scrolls no
       const height = stack().getBoundingClientRect().height;
       const first = queued(4)()!;
       const drawn = box(first);
-      // Two in a row: each steps out at once while the hidden notice takes its turn.
       await dismiss(first);
       await expect.poll(() => first.getAttribute('data-leaving'), { message: name }).toBe('');
-      // Its message keeps its lines while it fades.
       expect(Math.abs(box(first).height - drawn.height), name).toBeLessThan(1);
       if (motion === 'reduce') {
         const pinned = box(first);
@@ -401,7 +385,6 @@ test('dismissed notices step out at once, so the stack neither grows, scrolls no
       await dismiss(third);
       await expect.poll(() => third.getAttribute('data-leaving'), { message: name }).toBe('');
       expect(stack().getBoundingClientRect().height, name).toBeLessThan(height + 1);
-      // Meanwhile the stack does not scroll, so no scrollbar flashes.
       expect(stack().hasAttribute('data-settling'), name).toBe(true);
       expect(css(stack(), 'overflow-y'), name).toBe('visible');
       await expect.poll(() => first.isConnected, { message: name, timeout: 8_000 }).toBe(false);
@@ -415,8 +398,9 @@ test(
   'a stack taller than the window keeps scrolling while a notice leaves',
   { tags: ['engines'] },
   async () => {
-    // A long exit keeps the leaving notice in the stack while it is checked.
-    addStyle('.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 4s; }');
+    const longExit =
+      '.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 4s; }';
+    addStyle(longExit);
     await page.viewport(320, 160);
     await trigger('toast-queue-actions').click();
     await expect
@@ -425,7 +409,6 @@ test(
     await expect.poll(() => region().hasAttribute('data-settling')).toBe(false);
     await expect.poll(() => region().scrollHeight > region().clientHeight).toBe(true);
     await dismiss(shownNotices()[0]!);
-    // It stays a scroll container: no overflow switch, which would lose the scroll position.
     await expect.poll(() => region().querySelectorAll('.env-toast[data-leaving]').length).toBe(1);
     expect(region().hasAttribute('data-settling')).toBe(false);
     expect(css(region(), 'overflow-y')).toBe('auto');
@@ -437,14 +420,13 @@ test('notices wait while a modal dialog is open and then show for their full dur
   await expect.poll(visible('Neutral notice')).toBe(true);
   fakeClock();
   await trigger('toast-dialog').click();
-  // The notice that was showing steps back, and one shown from the dialog waits too.
   await expect.poll(visible('Neutral notice')).toBe(false);
   await trigger('toast-from-dialog').click();
   await expect.poll(visible('Notice from a dialog')).toBe(false);
   expect(announcer().textContent).not.toContain('Notice from a dialog');
   expect(document.querySelector('.env-toast-queued-count')).toBeNull();
-  // Past the default 5 s, nothing has left while it waited.
-  vi.advanceTimersByTime(6_000);
+  const pastDefaultDuration = 6_000;
+  vi.advanceTimersByTime(pastDefaultDuration);
   await trigger('toast-dialog-close').click();
   await expect.poll(visible('Neutral notice')).toBe(true);
   await expect.poll(visible('Notice from a dialog')).toBe(true);

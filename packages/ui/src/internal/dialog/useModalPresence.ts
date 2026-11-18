@@ -2,13 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from 'react';
 
-/**
- * The modal surfaces open in each portal container: Dialog, Sheet, ConfirmDialog and
- * CommandPalette count themselves through their backdrop while it is mounted, so toasts in the same
- * container wait until the last one has closed rather than covering its actions. The document's body
- * is the undefined container.
- */
-const open = new Map<HTMLElement | undefined, number>();
+const openModalsPerContainer = new Map<HTMLElement | undefined, number>();
 const listeners = new Set<() => void>();
 
 function notify() {
@@ -25,14 +19,13 @@ function subscribe(listener: () => void) {
 /** Counts a modal surface open in its container while the calling component is mounted. */
 export function useModalPresence(container: HTMLElement | null | undefined) {
   useEffect(() => {
-    // A container that is still mounting holds no overlays yet.
     if (container === null) return;
-    open.set(container, (open.get(container) ?? 0) + 1);
+    openModalsPerContainer.set(container, (openModalsPerContainer.get(container) ?? 0) + 1);
     notify();
     return () => {
-      const count = (open.get(container) ?? 1) - 1;
-      if (count > 0) open.set(container, count);
-      else open.delete(container);
+      const count = (openModalsPerContainer.get(container) ?? 1) - 1;
+      if (count > 0) openModalsPerContainer.set(container, count);
+      else openModalsPerContainer.delete(container);
       notify();
     };
   }, [container]);
@@ -42,7 +35,7 @@ export function useModalPresence(container: HTMLElement | null | undefined) {
 export function useModalOpen(container: HTMLElement | null | undefined) {
   return useSyncExternalStore(
     subscribe,
-    () => container !== null && open.has(container),
+    () => container !== null && openModalsPerContainer.has(container),
     () => false,
   );
 }

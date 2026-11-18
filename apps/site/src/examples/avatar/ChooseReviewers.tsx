@@ -14,7 +14,6 @@ export default function ChooseReviewers() {
       {people.map((person) => {
         const on = chosen.includes(person.id);
         return (
-          // The checkbox says who is chosen; the avatar's ring and check show it at a glance.
           <Checkbox
             key={person.id}
             checked={on}

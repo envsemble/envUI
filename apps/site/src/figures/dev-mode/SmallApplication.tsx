@@ -20,14 +20,8 @@ import { IconGroup } from '@envsemble/envui/icons/Group';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
-/** Stands in for the window: a Scaffold fills its container, the window's height by default. */
-const windowBox: CSSProperties = { blockSize: '30rem' };
+const windowStandIn: CSSProperties = { blockSize: '30rem' };
 
-/**
- * A small application: a Scaffold with a top bar, the same destinations as a bar, a rail or a
- * drawer, and a page of cards and a list. With `fixedColumns`, the cards keep three columns at any
- * width, which squeezes them in a narrow window: the problem dev mode finds.
- */
 export function SmallApplication({ fixedColumns = false }: { fixedColumns?: boolean }) {
   const [current, setCurrent] = useState('/projects');
   const destinations: Destination[] = places.map((place) => ({
@@ -39,8 +33,8 @@ export function SmallApplication({ fixedColumns = false }: { fixedColumns?: bool
     <Scaffold
       scroll="body"
       landmarks={false}
-      style={windowBox}
-      topBar={<TopBar title="Northwind" actions={<AvatarButton name="Alex Morgan" />} />}
+      style={windowStandIn}
+      topBar={<TopBar title="Northwind" end={<AvatarButton name="Alex Morgan" />} />}
       navigation={{
         bar: <NavigationBar destinations={destinations} />,
         rail: <NavigationRail destinations={destinations} />,
@@ -54,7 +48,6 @@ export function SmallApplication({ fixedColumns = false }: { fixedColumns?: bool
         }
       >
         <Column gap={6}>
-          {/* As many columns as fit at 14 rem; three fixed columns squeeze the cards. */}
           <Grid name="projects" columns={fixedColumns ? 3 : { min: '14rem' }} gap={4}>
             {projects.map((project) => (
               <Card

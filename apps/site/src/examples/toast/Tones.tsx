@@ -14,8 +14,6 @@ const notifications: ToastNotification[] = [
 
 function EachTone() {
   const toast = useToast();
-  // Shown at once in the docs, one of each tone, and kept; an application shows each with
-  // toast.show after what it reports.
   useEffect(() => {
     const ids = notifications.map((notification) =>
       toast.show({ ...notification, duration: Infinity }),

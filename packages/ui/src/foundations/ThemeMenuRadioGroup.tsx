@@ -65,7 +65,6 @@ export function ThemeMenuRadioGroup({
   return (
     <Menu.RadioGroup
       value={current}
-      // The radio items carry the preferences as their values.
       onValueChange={(next) => change(next as ThemePreference)}
       label={label}
       aria-labelledby={labelledBy}

@@ -2,6 +2,7 @@ import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 're
 import {
   Badge,
   Button,
+  CodeBlock,
   Column,
   CommandPalette,
   Composer,
@@ -33,7 +34,7 @@ import {
   type CommandPaletteItem,
   type Destination,
 } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/code';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 import { CodeDiff, countDiffLines } from '@envsemble/envui/diff';
 import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
 import { IconBolt } from '@envsemble/envui/icons/Bolt';
@@ -97,7 +98,6 @@ const steps: { label: string; detail: string; state: StepState }[] = [
   { label: 'Open a pull request', detail: 'Waiting for approval', state: 'queued' },
 ];
 
-/** A run step's state as an icon, in the tone that says it. */
 function StepIcon({ state }: { state: StepState }) {
   if (state === 'running') return <Spinner size="sm" label="Running" />;
   if (state === 'done') return <IconCheckCircle tone="success" aria-label="Done" />;
@@ -113,7 +113,6 @@ function Conversation() {
   const { additions, deletions } = countDiffLines(before, after, 'deliver.ts');
   const [running, setRunning] = useState(true);
   const log = useRef<HTMLDivElement>(null);
-  // The log opens at its end, on the latest reply, and stays there as the diff renders.
   useLayoutEffect(() => {
     const node = log.current;
     if (!node) return;
@@ -124,8 +123,6 @@ function Conversation() {
     return () => observer.disconnect();
   }, []);
   return (
-    // The log scrolls between the page's header and the composer. Layout glue: the log takes the
-    // height left in the page, which no layout component can say.
     <>
       <MessageList
         ref={log}
@@ -154,9 +151,9 @@ function Conversation() {
               First I ran the delivery tests 50 times against a partner stub that fails at random.
               One case fails today:
             </Text>
-            <CodeBlock language="bash" label="Terminal" copyable>
+            <HighlightedCodeBlock language="bash" label="Terminal" copyable>
               {command}
-            </CodeBlock>
+            </HighlightedCodeBlock>
             <CodeBlock label="Output">{output}</CodeBlock>
           </Column>
         </Message>
@@ -252,15 +249,12 @@ function RunPanel() {
         <Text render={<h3 />} variant="title">
           Preview
         </Text>
-        {/* The empty state. Finding: no empty state component; it is a Surface and a centred
-            Column, with the centring and its height as layout glue. */}
         <Surface background="muted" padding={5}>
           <Column gap={3} align="center" style={{ textAlign: 'center' }}>
             <Text render={<span />} emphasis="muted">
               <IconVisibility width="2rem" height="2rem" />
             </Text>
             <Column gap={1} align="center">
-              {/* Under the section's title, the state's heading is body text in the default color. */}
               <Text render={<h4 />}>No preview yet</Text>
               <Text variant="body-sm" emphasis="muted">
                 A preview deploys once the tests pass.
@@ -381,7 +375,6 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
   const [searching, setSearching] = useState(overlay === 'palette');
   const [settings, setSettings] = useState(overlay === 'dialog');
   const [query, setQuery] = useState('');
-  // The push finished as the screen opened. Dismissed on unmount, as Strict Mode's remount does.
   useEffect(() => {
     const id = toast.show({
       message: 'Pushed 2 commits to agent/webhook-retries.',
@@ -404,11 +397,8 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
   );
   return (
     <AppFrame destinations={destinations} onSearch={() => setSearching(true)}>
-      <Panes.Root behavior="supporting">
-        <Panes.Main label="Conversation">
-          {/* The page as a column as tall as the pane, so its header stays and the conversation
-              takes the rest. Layout glue: Page has no way to fill the pane's height, and its
-              header prop would wrap the conversation in a block that can't. */}
+      <Panes.Root sized="end" stackBelow="expanded">
+        <Panes.Pane label="Conversation">
           <Page width="md" render={<Column gap={5} />} style={{ blockSize: '100%' }}>
             <PageHeader
               title="Retry failed webhook deliveries"
@@ -427,17 +417,16 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
                       onClick={() => setSettings(true)}
                     />
                   </Tooltip>
-                  <Panes.Trigger variant="secondary">Run</Panes.Trigger>
                   <Button startIcon={<IconCommit />}>Open pull request</Button>
                 </>
               }
             />
             <Conversation />
           </Page>
-        </Panes.Main>
-        <Panes.Supporting label="Run">
+        </Panes.Pane>
+        <Panes.Pane label="Run">
           <RunPanel />
-        </Panes.Supporting>
+        </Panes.Pane>
       </Panes.Root>
       <CommandPalette
         open={searching}

@@ -4,8 +4,6 @@ import * as fixture from '../fixture/Primitives.fixture.tsx';
 import { keyboard } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-// Primitives.fixture.tsx mounts a grid and a list that move focus with useRovingFocus among
-// envUI's primitives.
 beforeEach(() => {
   mount(fixture);
 });
@@ -23,7 +21,6 @@ describe('useRovingFocus', () => {
     await keyboard.press('ArrowRight');
     await keyboard.press('ArrowRight');
     await expect.element(cell('4')).toHaveFocus();
-    // Day 5 is disabled: the move skips to day 6.
     await keyboard.press('ArrowRight');
     await expect.element(cell('6')).toHaveFocus();
     await keyboard.press('End');

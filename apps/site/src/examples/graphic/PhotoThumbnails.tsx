@@ -1,6 +1,5 @@
 import { Column, Graphic, List } from '@envsemble/envui';
 
-/** Stands in for a photo from the application's data, such as a project's cover image. */
 const photo =
   'data:image/svg+xml,' +
   encodeURIComponent(

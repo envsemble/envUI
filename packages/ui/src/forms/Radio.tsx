@@ -15,9 +15,18 @@ import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
+import { Slot } from '../internal/layout/Slot.js';
 import '../styles/Base.css';
 import '../styles/Radio.css';
-import '../styles/ConnectedRows.css';
+
+function FieldsetErrorLikeFieldError({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <Row align="start" gap={2} id={id} className="env-radio-group-error">
+      <IconError aria-hidden="true" focusable="false" />
+      <span>{children}</span>
+    </Row>
+  );
+}
 
 interface RadioContextValue {
   value: string | undefined;
@@ -37,7 +46,8 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   ref?: Ref<HTMLFieldSetElement>;
   /**
    * The group's visible name, such as Visibility, as the fieldset's legend above the options. It
-   * names the group for assistive technology; without it, use aria-label or aria-labelledby.
+   * names the group for assistive technology. Without it, name it with aria-label or
+   * aria-labelledby.
    */
   label?: ReactNode;
   /**
@@ -70,10 +80,10 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   /** Require a choice before the form submits, through native constraint validation. */
   required?: boolean;
   /**
-   * How the options are laid out: horizontal, radios before their labels side by side that wrap
-   * onto more lines; or vertical, connected selectable rows that fill the width, with the label and
-   * description at the start and the radio at the end, for options that need explaining.
-   * @default 'horizontal'
+   * How the options are laid out: vertical, one radio under the other, each before its label with
+   * its description under the label; or horizontal, side by side, wrapping onto more lines, for two
+   * or three short options.
+   * @default 'vertical'
    */
   orientation?: 'horizontal' | 'vertical';
   /** Disable every option of the group; a disabled group can't be focused or changed. */
@@ -81,8 +91,8 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
 }
 
 /**
- * A set of options to choose exactly one from: a native fieldset whose legend names the group, with
- * Radio options inline or as selectable rows.
+ * A set of up to five options to choose exactly one from, all in view: a native fieldset whose
+ * legend names the group, with its Radio options one under the other, or side by side.
  */
 export function RadioGroup({
   ref,
@@ -95,7 +105,7 @@ export function RadioGroup({
   name: suppliedName,
   required = false,
   disabled = false,
-  orientation = 'horizontal',
+  orientation = 'vertical',
   className,
   children,
   ...props
@@ -103,7 +113,6 @@ export function RadioGroup({
   const id = useId();
   const name = suppliedName ?? id;
   const fieldsetRef = useRef<HTMLFieldSetElement>(null);
-  // null is none while controlled, as undefined leaves the group to itself.
   const [selectedValue, select, keepOwn] = useControllableState({
     value: controlledValue,
     defaultValue: defaultValue ?? null,
@@ -140,29 +149,28 @@ export function RadioGroup({
       disabled={disabled}
       aria-describedby={describedBy}
       data-orientation={orientation}
-      className={classNames(
-        'env-radio-group',
-        orientation === 'vertical' ? 'env-connected-rows' : undefined,
-        className,
-      )}
+      className={classNames('env-radio-group', className)}
     />
   );
   const content = (
     <>
-      {label != null && <legend>{label}</legend>}
+      {label != null && (
+        <legend>
+          <Slot className="env-radio-group-label" element="span">
+            {label}
+          </Slot>
+        </legend>
+      )}
       {children}
       {description != null && (
         <small id={ids.description} className="env-radio-group-description">
-          {description}
+          <Slot className="env-radio-group-description-content" element="span">
+            {description}
+          </Slot>
         </small>
       )}
-      {/* The error looks as a field's does, the error icon before the message (Radio.css); a
-          fieldset has no Field.Root for Field.Error to join. */}
       {error != null && (
-        <Row align="start" gap={2} id={ids.error} className="env-radio-group-error">
-          <IconError aria-hidden="true" focusable="false" />
-          <span>{error}</span>
-        </Row>
+        <FieldsetErrorLikeFieldError id={ids.error}>{error}</FieldsetErrorLikeFieldError>
       )}
     </>
   );
@@ -264,19 +272,26 @@ export function Radio({
   );
   const labelContent = (
     <span>
-      {label}
-      {description != null && <small className="env-radio-description">{description}</small>}
+      <Slot className="env-radio-label" element="span">
+        {label}
+      </Slot>
+      {description != null && (
+        <small className="env-radio-description">
+          <Slot className="env-radio-description-content" element="span">
+            {description}
+          </Slot>
+        </small>
+      )}
     </span>
   );
-  const vertical = group.orientation === 'vertical';
   return (
     <label
-      className={classNames('env-radio', vertical ? 'env-connected-row' : undefined, className)}
+      className={classNames('env-radio', className)}
       style={style}
       data-orientation={group.orientation}
     >
-      {vertical ? labelContent : radioInput}
-      {vertical ? radioInput : labelContent}
+      <span className="env-radio-control">{radioInput}</span>
+      {labelContent}
     </label>
   );
 }

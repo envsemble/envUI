@@ -2,53 +2,33 @@
 
 import { createContext, isValidElement } from 'react';
 
-/**
- * Marks the envUI components that take their control as an element `trigger`, which a Tooltip
- * around them moves onto: Menu.Root, Popover, Dialog, Sheet, ConfirmDialog and HoverCard. An
- * explicit marker, so a Tooltip never moves onto the `trigger` prop of another component.
- */
 const triggerOwnerKey = Symbol.for('envui.triggerOwner');
 const tooltipKey = Symbol.for('envui.tooltip');
 const lazyType = Symbol.for('react.lazy');
 
-/** Stands for a lazy element type that hasn't loaded, or failed to. */
-const unresolved = Symbol('unresolved');
+const notLoadedOrFailed = Symbol('notLoadedOrFailed');
 
-/**
- * The most lazy wrappers read through before a type counts as unresolved: a client reference wraps
- * a component once, so more means a loop rather than a component.
- */
-const lazyDepthLimit = 8;
+const lazyWrappersBeforeALoop = 8;
 
-/**
- * React's lazy element type, by the private fields React 19 gives it (checked against 19.3):
- * `$$typeof` marks it, and `_init(_payload)` returns the component or throws while it loads.
- * `tests/library/source/TriggerOwner.test.ts` reads them through React's own lazy, and fails if they
- * change.
- */
-interface Lazy {
+interface ReactLazyPrivateFields {
   $$typeof: symbol;
   _payload: unknown;
   _init: (payload: unknown) => unknown;
 }
 
-const isLazy = (type: unknown): type is Lazy =>
-  // Any object, read for the field that marks a lazy component.
-  typeof type === 'object' && type !== null && (type as Lazy).$$typeof === lazyType;
+const isLazy = (type: unknown): type is ReactLazyPrivateFields =>
+  typeof type === 'object' &&
+  type !== null &&
+  (type as ReactLazyPrivateFields).$$typeof === lazyType;
 
-/**
- * An element's type, through any lazy wrapper: a client component's type reaches the client as
- * one when a server component writes the element. Reading a lazy type that hasn't loaded throws
- * its promise, which stays here rather than suspending the render.
- */
-function resolve(type: unknown): unknown {
+function resolveThroughLazyWrappers(type: unknown): unknown {
   let current = type;
   for (let depth = 0; isLazy(current); depth += 1) {
-    if (depth === lazyDepthLimit) return unresolved;
+    if (depth === lazyWrappersBeforeALoop) return notLoadedOrFailed;
     try {
       current = current._init(current._payload);
     } catch {
-      return unresolved;
+      return notLoadedOrFailed;
     }
   }
   return current;
@@ -56,7 +36,6 @@ function resolve(type: unknown): unknown {
 
 const marked = (type: unknown, key: symbol) =>
   (typeof type === 'function' || (typeof type === 'object' && type !== null)) &&
-  // Any component, read for the mark.
   (type as Record<symbol, unknown>)[key] === true;
 
 /**
@@ -72,8 +51,8 @@ export function markTriggerOwner<Component extends object>(component: Component)
  * that hasn't loaded counts as one where its `trigger` prop is an element.
  */
 export function isTriggerOwner(type: unknown, props?: { trigger?: unknown }): boolean {
-  const resolved = resolve(type);
-  if (resolved === unresolved) return isValidElement(props?.trigger);
+  const resolved = resolveThroughLazyWrappers(type);
+  if (resolved === notLoadedOrFailed) return isValidElement(props?.trigger);
   return marked(resolved, triggerOwnerKey);
 }
 
@@ -84,7 +63,7 @@ export function markTooltip<Component extends object>(component: Component): Com
 
 /** Whether an element's type is envUI's Tooltip, through a lazy wrapper that has loaded. */
 export function isTooltip(type: unknown): boolean {
-  return marked(resolve(type), tooltipKey);
+  return marked(resolveThroughLazyWrappers(type), tooltipKey);
 }
 
 /**

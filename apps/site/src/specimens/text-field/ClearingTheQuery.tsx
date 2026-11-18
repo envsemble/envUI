@@ -9,10 +9,6 @@ import { PressedKeys } from '../../motion/PressedKeys';
 const input = 'input[type="search"]';
 const clear = 'button[aria-label="Clear search"]';
 
-/*
- * The pointer types a name into the search, and Esc empties it. It types another, and the clear
- * button empties it again.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: input, x: 0.5, y: 2.2 },
@@ -54,7 +50,6 @@ function Searching() {
   );
 }
 
-/** A search, emptied by Esc and then by its clear button, by a pointer no one sees. */
 export default function ClearingTheQuery() {
   return (
     <SpecimenFrame size="wide">

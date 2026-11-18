@@ -27,16 +27,13 @@ export function usePortalContainer(): PortalContainerValue {
   return useContext(PortalContainerContext);
 }
 
-/** A node, across documents and realms. */
-const isNode = (target: unknown): target is Node =>
+const isNodeOfAnyRealm = (target: unknown): target is Node =>
   !!target && typeof (target as Node).nodeType === 'number';
 
-/** Where an event happened: the innermost node of its path, inside a shadow root too. */
 function originOf(event: Event | null | undefined) {
   return event?.composedPath?.()[0] ?? event?.target ?? undefined;
 }
 
-/** What Base UI's onOpenChange of an overlay's root receives beside the requested state. */
 interface OpenChangeEventDetails {
   event?: Event | null | undefined;
   reason: string;
@@ -44,29 +41,20 @@ interface OpenChangeEventDetails {
   cancel: () => void;
 }
 
-/**
- * Whether a contained overlay keeps itself open against a change: a close that came from outside
- * its container and its own trigger, such as a press elsewhere on the page or Esc while focus is
- * elsewhere, or from no event, such as another tooltip opening, other than code that closes it.
- * Its trigger, which may sit outside the container, still closes it, as do its own controls.
- */
-function keepsOpen(
+function keepsItselfOpenAgainstOutsideClose(
   { container, contained }: PortalContainerValue,
   next: boolean,
   details: OpenChangeEventDetails,
   trigger: Element | null | undefined,
 ) {
   if (!contained || next || !container) return false;
-  // Pressing, hovering away from or leaving the trigger closes it, as it would anywhere, and so
-  // does another menu of its menubar or menu opening in its place, or the arrow keys moving to one.
-  if (
+  const closesAsAnywhere =
     details.reason.startsWith('trigger-') ||
     details.reason === 'sibling-open' ||
-    details.reason === 'list-navigation'
-  )
-    return false;
+    details.reason === 'list-navigation';
+  if (closesAsAnywhere) return false;
   const origin = originOf(details.event);
-  if (!isNode(origin)) return details.reason !== 'imperative-action';
+  if (!isNodeOfAnyRealm(origin)) return details.reason !== 'imperative-action';
   const own = [container, trigger, details.trigger].filter(
     (element): element is Element => element instanceof Node,
   );
@@ -75,7 +63,7 @@ function keepsOpen(
 
 /**
  * The onOpenChange of an overlay's Base UI root: in a contained PortalContainer it cancels a change
- * the overlay keeps itself open against (see keepsOpen), and hands every other change to `handle`.
+ * the overlay keeps itself open against (see keepsItselfOpenAgainstOutsideClose), and hands every other change to `handle`.
  * `trigger` is the overlay's own control, such as its button or a combobox's text field, which
  * closes it from outside the container too; null where it has none, or where Base UI names it in
  * the details, as a dialog's root does.
@@ -86,7 +74,8 @@ export function containedOpenChange<Details extends OpenChangeEventDetails>(
   handle: (next: boolean, details: Details) => void,
 ) {
   return (next: boolean, details: Details) => {
-    if (keepsOpen(portal, next, details, trigger?.current)) details.cancel();
+    if (keepsItselfOpenAgainstOutsideClose(portal, next, details, trigger?.current))
+      details.cancel();
     else handle(next, details);
   };
 }

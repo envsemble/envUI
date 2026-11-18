@@ -24,6 +24,18 @@ export type ThemeContrast = 'standard' | 'high' | 'system';
  */
 export type ThemeScale = 'comfortable' | 'compact' | 'system';
 
+/**
+ * The tone of what is selected in a Theme, such as a navigation item, a row or an option: neutral,
+ * a gray under the default text color; or accent, the brand's tint under its text color.
+ */
+export type ThemeSelection = 'neutral' | 'accent';
+
+/**
+ * The corner shape of a Theme: sharp, with corners close to square; rounded; or round, with larger
+ * corners. Parts that are always circles, such as avatars and radios, stay circles.
+ */
+export type ThemeCorners = 'sharp' | 'rounded' | 'round';
+
 export type { ControlSize } from '../internal/control/controlTypes.js';
 
 /**
@@ -38,6 +50,8 @@ export interface ThemeContextValue {
   theme: ColorScheme;
   contrast: ThemeContrast;
   scale: ThemeScale;
+  selection: ThemeSelection;
+  corners: ThemeCorners;
 }
 
 export interface ThemeProps extends ComponentPropsWithRef<'div'> {
@@ -59,42 +73,48 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
    * `data-env-scale` attribute passed to the Theme.
    */
   scale?: ThemeScale;
+  /**
+   * The tone of selected items inside: neutral or accent. Defaults to the selection of the
+   * enclosing Theme, and to neutral outside any.
+   */
+  selection?: ThemeSelection;
+  /**
+   * The corner shape inside: sharp, rounded or round. Defaults to the corners of the enclosing
+   * Theme, and to rounded outside any.
+   */
+  corners?: ThemeCorners;
 }
 
 const ThemeContext = createContext<ThemeContextValue>(outsideTheme);
 
-/** A theme as a warning shows it; JSON for an object, without throwing on any value. */
-function showTheme(theme: unknown): string {
+const unshowableObject = 'an object';
+
+function describeThemeInReport(theme: unknown): string {
   if (typeof theme !== 'object' || theme === null) return String(theme);
   try {
-    // The objects that contain the one being shown: only a value among them is circular, so an
-    // object that merely appears twice is shown both times.
-    const ancestors: unknown[] = [];
+    const objectsContainingValue: unknown[] = [];
     const shown = JSON.stringify(theme, function (this: unknown, _key, value: unknown) {
       if (typeof value === 'bigint') return `${value}n`;
       if (typeof value !== 'object' || value === null) return value;
-      // `this` holds `value`; the objects shown since, which don't contain it, are left.
-      while (ancestors.length > 0 && ancestors[ancestors.length - 1] !== this) ancestors.pop();
-      if (ancestors.includes(value)) return '[Circular]';
-      ancestors.push(value);
+      while (
+        objectsContainingValue.length > 0 &&
+        objectsContainingValue[objectsContainingValue.length - 1] !== this
+      )
+        objectsContainingValue.pop();
+      if (objectsContainingValue.includes(value)) return '[Circular]';
+      objectsContainingValue.push(value);
       return value;
     }) as string | undefined;
-    // A toJSON that returns undefined, or a function, leaves nothing to show.
-    return shown ?? 'an object';
+    return shown ?? unshowableObject;
   } catch {
-    // A getter, toJSON or proxy that throws.
-    return 'an object';
+    return unshowableObject;
   }
 }
 
-/**
- * In development, the report about a theme that is neither light nor dark. In JavaScript, 0.x's
- * `<Theme theme={useTheme()}>` now passes `{ theme, contrast }`, which would theme nothing.
- */
 function themeReport(theme: unknown): string | undefined {
   if (theme === 'light' || theme === 'dark') return undefined;
   return (
-    `Theme takes a theme of "light" or "dark", not ${showTheme(theme)}.` +
+    `Theme takes a theme of "light" or "dark", not ${describeThemeInReport(theme)}.` +
     (typeof theme === 'object' && theme !== null
       ? ' useTheme() returns { theme, contrast }: write <Theme {...useTheme()}>.'
       : '')
@@ -102,46 +122,54 @@ function themeReport(theme: unknown): string | undefined {
 }
 
 /**
- * An explicit, scoped theme: a color scheme, a contrast and a scale, which nested Themes and envUI's
- * popups keep. Theme preference and persistence belong to the app.
+ * An explicit, scoped theme: a color scheme, a contrast, a scale, and the selection and corners
+ * of the look, which nested Themes and envUI's popups keep. Theme preference and
+ * persistence belong to the app.
  */
 export function Theme({
   theme,
   contrast: ownContrast,
   scale: ownScale,
+  selection: ownSelection,
+  corners: ownCorners,
   className,
   children,
   ...props
 }: ThemeProps) {
   reportInDevelopment(() => process.env.NODE_ENV !== 'production' && themeReport(theme));
   const inherited = useContext(ThemeContext);
-  // The prop wins; without it, a data-env-contrast or data-env-scale written on the Theme counts,
-  // so that the context its nested Themes and popups read agrees with the attribute.
-  const attributes = props as Record<string, unknown>;
-  const contrastAttribute = attributes['data-env-contrast'];
+  const writtenAttributes = props as Record<string, unknown>;
+  const contrastAttribute = writtenAttributes['data-env-contrast'];
   const contrast =
     ownContrast ??
     (contrastAttribute === 'high' || contrastAttribute === 'standard'
       ? contrastAttribute
       : inherited.contrast);
-  const scaleAttribute = attributes['data-env-scale'];
+  const scaleAttribute = writtenAttributes['data-env-scale'];
   const scale =
     ownScale ??
     (scaleAttribute === 'comfortable' || scaleAttribute === 'compact' || scaleAttribute === 'system'
       ? scaleAttribute
       : inherited.scale);
-  const value = useMemo(() => ({ theme, contrast, scale }), [theme, contrast, scale]);
+  const selection = ownSelection ?? inherited.selection;
+  const corners = ownCorners ?? inherited.corners;
+  const value = useMemo(
+    () => ({ theme, contrast, scale, selection, corners }),
+    [theme, contrast, scale, selection, corners],
+  );
+  const boundaryTakesRootLook = themeFromRootAttribute in props;
   return (
     <ThemeContext value={value}>
       <div
         {...props}
         className={className}
-        // A ThemePreferenceProvider's boundary that themes the root takes the root's look.
-        {...(!(themeFromRootAttribute in props) && {
+        {...(!boundaryTakesRootLook && {
           className: classNames('env-theme', className),
           'data-env-theme': theme,
           'data-env-contrast': contrast === 'system' ? undefined : contrast,
           'data-env-scale': scale,
+          'data-env-selection': selection,
+          'data-env-corners': corners,
         })}
       >
         {children}
@@ -151,8 +179,8 @@ export function Theme({
 }
 
 /**
- * The theme of the nearest Theme, including across React portals: its color scheme, contrast and
- * scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of
+ * The theme of the nearest Theme, including across React portals: its color scheme, contrast,
+ * scale, selection and corners. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of
  * `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of
  * `system` leaves it to `pointer: fine`.
  */

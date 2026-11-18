@@ -1,5 +1,3 @@
-// The address where a server renders the site, as the build pre-renders each page: there is no
-// location, and the route is the one of the path it renders (renderAt, routes/Address.ts).
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { importSource } from '../support/ImportSource.ts';

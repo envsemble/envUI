@@ -31,7 +31,6 @@ npm run build
 `;
 
 export default function ProjectNote() {
-  // The note sits under the page's h2, so its headings start one level lower.
   return (
     <Markdown headingOffset={1} codeCopyable>
       {note}

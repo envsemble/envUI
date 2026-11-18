@@ -61,7 +61,6 @@ export default function DatePickerFixture({ theme }: { theme: ColorScheme }) {
           min="2026-10-10"
           max="2026-11-15"
         />
-        {/* Read-only, so its emptiness never keeps the form from submitting. */}
         <DatePicker
           label={`Approved on ${theme}`}
           name="approved"
@@ -114,7 +113,6 @@ export default function DatePickerFixture({ theme }: { theme: ColorScheme }) {
         <DatePicker label={`Invalid date ${theme}`} locale="en-GB" error="Choose a later day." />
       </div>
       <div className="fixture-actions">
-        {/* Days before 1970 count back from it. */}
         <DatePicker
           label={`Launch ${theme}`}
           locale="en-GB"
@@ -158,8 +156,6 @@ export default function DatePickerFixture({ theme }: { theme: ColorScheme }) {
           defaultValue="2026-10-22T14:00"
         />
       </Dialog>
-      {/* A toolbar sized to its content keeps the field and its button on one row, and a container
-          narrower than the field's minimum width shrinks it. */}
       <div style={{ display: 'flex' }}>
         <Surface
           background="default"

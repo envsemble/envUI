@@ -33,7 +33,6 @@ import { Cell, Section, Stage, Strip, interactionStates } from './ContactSheetPa
 
 const variants = ['primary', 'secondary', 'outline', 'ghost', 'text'] as const;
 const sizes = ['sm', 'md', 'lg'] as const;
-/** The tones each variant takes: secondary is always neutral, and accent is for primary only. */
 const tonesOf = (variant: (typeof variants)[number]) =>
   variant === 'primary'
     ? (['neutral', 'accent', 'danger'] as const)
@@ -41,10 +40,6 @@ const tonesOf = (variant: (typeof variants)[number]) =>
       ? (['neutral'] as const)
       : (['neutral', 'danger'] as const);
 
-/**
- * A variant and tone from the loops: Button's props only take the pairs that exist, which the
- * loops keep to, so they pass as one of them.
- */
 const look = (variant: (typeof variants)[number], tone: 'neutral' | 'accent' | 'danger') =>
   ({ variant, tone }) as unknown as { variant: 'primary'; tone: 'neutral' };
 
@@ -163,10 +158,6 @@ function IconButtons() {
   );
 }
 
-/**
- * Arms the ConfirmButton inside by a press that takes no focus, so a later click elsewhere on the
- * sheet, which moves focus and would disarm a focused one, leaves it armed.
- */
 function Armed({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -338,14 +329,15 @@ function Groups() {
 }
 
 function ThemeToggles() {
-  // The toggle shows a provider's preference: one that starts at the sheet's theme and scale.
   const params = new URLSearchParams(location.search);
   return (
     <Section name="ThemeToggle">
       <ThemePreferenceProvider
-        storageKey="contact-sheet-theme"
-        defaultPreference={params.get('theme') === 'dark' ? 'dark' : 'light'}
-        scale={params.get('scale') === 'system' ? 'system' : 'comfortable'}
+        theme={{
+          storageKey: 'contact-sheet-theme',
+          defaultPreference: params.get('theme') === 'dark' ? 'dark' : 'light',
+          scale: params.get('scale') === 'system' ? 'system' : 'comfortable',
+        }}
       >
         <Strip>
           {interactionStates.map(({ caption, force }) => (

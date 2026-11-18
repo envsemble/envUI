@@ -6,7 +6,6 @@ const ownerOptions = [
   { value: 'sam', label: 'Sam Lee' },
 ];
 
-/** Nothing chosen, chosen, invalid and disabled selects, side by side. */
 export default function States() {
   return (
     <SpecimenFrame size="collection">

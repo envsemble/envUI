@@ -1,5 +1,4 @@
-import { Column, DescriptionList, Text, type TableOfContentsItem } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/code';
+import { Code, Column, DescriptionList, Text, type TableOfContentsItem } from '@envsemble/envui';
 import { ExampleSource } from '../../figures/LiveExample';
 import { UsageFigure } from '../../figures/Figures';
 import { ColorPaletteSkeleton } from '../../figures/foundations/ColorPaletteSkeleton';
@@ -15,12 +14,6 @@ import { providesOf } from '../../documentation/CatalogueContent';
 import { guideSubsections, raisedHeadings, wordsInCode } from '../../documentation/DocsContent';
 import { headingSlug } from '../../documentation/SearchAnchors';
 
-/*
- * The sections of the Docs' pages, each from what a page's file writes or its exports generate,
- * as the route views place them (DocsPages.tsx).
- */
-
-/** The headings of the Docs' sections that always read the same: each one's id and words. */
 export const docsHeadings = {
   palette: { id: 'palette', label: 'Try the palette' },
   partNames: { id: 'part-names', label: 'Part names' },
@@ -31,7 +24,6 @@ export const docsHeadings = {
   strings: { id: 'strings', label: 'Strings' },
 } satisfies Record<string, TableOfContentsItem>;
 
-/** A section's heading, from docsHeadings. */
 function SectionHeading({ heading }: { heading: { id: string; label: string } }) {
   return (
     <Text render={<h2 />} variant="title" className="site-section-title" id={heading.id}>
@@ -40,10 +32,6 @@ function SectionHeading({ heading }: { heading: { id: string; label: string } })
   );
 }
 
-/**
- * The colors guide's editable palette: every role a component paints, by its token, with its value
- * in the current theme, each a swatch that picks another color for this visit.
- */
 export function PaletteSection() {
   return (
     <Column render={<section />} gap={5} aria-labelledby={docsHeadings.palette.id}>
@@ -63,10 +51,6 @@ export function PaletteSection() {
   );
 }
 
-/**
- * The values a state attribute takes: each as code, except the empty value of an attribute set
- * without one, which reads as Present; with no values listed, any value or presence alone selects it.
- */
 function StateValues({ values }: { values: readonly string[] }) {
   if (!values.length) return <>Any value, or present</>;
   return values.map((value, index) => (
@@ -77,14 +61,12 @@ function StateValues({ values }: { values: readonly string[] }) {
   ));
 }
 
-/** The exports of a page with part names, each with its parts. */
 export const partEntries = (components: readonly string[]) =>
   components.flatMap((name) => {
     const parts = partsOf(name);
     return parts ? [{ name, parts }] : [];
   });
 
-/** The part names and state attributes of the exports a page documents, as simple lists. */
 export function PartNames({ components }: { components: readonly string[] }) {
   const entries = partEntries(components);
   const outline = useSectionOutline();
@@ -132,17 +114,11 @@ export function PartNames({ components }: { components: readonly string[] }) {
   );
 }
 
-/** Whether a page writes what envUI or the application provides, which Provides shows. */
 export const hasProvides = (document: DocumentationEntry) => {
   const { envui, app } = providesOf(document.sections ?? []);
   return Boolean(envui || app);
 };
 
-/**
- * What an application adds for a component or pattern to be accessible, and what envUI does for
- * it, as the Accessibility section of its page writes them: plain lists under Accessibility, a
- * heading of the section's own.
- */
 export function Provides({ document }: { document: DocumentationEntry }) {
   const { envui, app } = providesOf(document.sections ?? []);
   const outline = useSectionOutline();
@@ -176,19 +152,12 @@ export function Provides({ document }: { document: DocumentationEntry }) {
   );
 }
 
-/** The sections of a page's guide (CodeGuide): its Compose subsections' headings. */
 export const codeGuideContents = (document: DocumentationEntry): TableOfContentsItem[] =>
   guideSubsections(document.sections).map(({ title }) => ({
     id: headingSlug(title),
     label: title,
   }));
 
-/**
- * The guide at the top of a page in the Docs, from the page's "## Compose": how to import it, its
- * common uses in code, how its parts compose and how to customize it, each a section of its own,
- * with an example file of the page shown as code where the page names one. With `showExample`, as a
- * component's, Usage opens with the component, live and compact (UsageFigure).
- */
 export function CodeGuide({
   document,
   showExample = false,
@@ -220,11 +189,6 @@ export function CodeGuide({
   });
 }
 
-/**
- * The words a page gives people, from its "## Words to use", each with the code it means: the
- * table's In code column, which the catalogue leaves out, beside the words. Nothing where the
- * page has no such column.
- */
 export function WordsInCode({ document }: { document: DocumentationEntry }) {
   const markdown = wordsInCode(document.sections);
   const outline = useSectionOutline();
@@ -242,14 +206,12 @@ export function WordsInCode({ document }: { document: DocumentationEntry }) {
   );
 }
 
-/** The exports of a page with color properties, each with its properties. */
 export const colorEntries = (components: readonly string[]) =>
   components.flatMap((name) => {
     const colors = partsOf(name)?.colors ?? [];
     return colors.length ? [{ name, colors }] : [];
   });
 
-/** The color properties of the exports a page documents, from docs/generated/parts.json. */
 export function ColorProperties({ components }: { components: readonly string[] }) {
   const entries = colorEntries(components);
   const outline = useSectionOutline();
@@ -287,7 +249,6 @@ export function ColorProperties({ components }: { components: readonly string[] 
   );
 }
 
-/** Every export's props, generated from their types, under Props. */
 export function PropsSection({ document }: { document: DocumentationEntry }) {
   return (
     <Column
@@ -302,7 +263,6 @@ export function PropsSection({ document }: { document: DocumentationEntry }) {
   );
 }
 
-/** The built-in strings a page's exports show, each a key of EnvUIProvider's `messages`. */
 export function Strings({ document }: { document: DocumentationEntry }) {
   const strings = document.strings ?? [];
   const outline = useSectionOutline();

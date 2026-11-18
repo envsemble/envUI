@@ -31,7 +31,6 @@ const tones = { Shipped: 'primary', Processing: 'warning', Delivered: 'success' 
 
 export default function StackedRows() {
   return (
-    // Below stackBelow, 36 rem of the table's region, each row becomes a block.
     <Table.Root aria-label="Orders" narrowLayout="stack">
       <Table.Head>
         <Table.Row>
@@ -44,12 +43,10 @@ export default function StackedRows() {
       <Table.Body>
         {orders.map((order) => (
           <Table.Row key={order.id}>
-            {/* The first cell titles the stacked row. */}
             <Table.Cell>
               Order {order.id} · {order.customer}
               <Text variant="caption">Placed {order.placed}</Text>
             </Table.Cell>
-            {/* Stacked, the first labelled value sits beside the title without its label. */}
             <Table.Cell label="Status">
               <Badge tone={tones[order.status]}>{order.status}</Badge>
             </Table.Cell>

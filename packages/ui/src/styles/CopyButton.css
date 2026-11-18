@@ -1,14 +1,11 @@
 @layer env.components {
-  /* CopyButton: a Button that copies text, at a Button's sizes. The result is announced from a visually hidden status beside the button; the fallback copies
-     from a hidden field there for a moment. */
   .env-copy-button-status,
   .env-copy-button-field {
-    /* Visually hidden: a pixel's box, clipped away, still read. */
-    --env-copy-button-field-size: 0.0625rem;
+    --_copy-button-visually-hidden-size: 0.0625rem;
     position: absolute;
-    inline-size: var(--env-copy-button-field-size);
-    block-size: var(--env-copy-button-field-size);
-    margin: calc(-1 * var(--env-copy-button-field-size));
+    inline-size: var(--_copy-button-visually-hidden-size);
+    block-size: var(--_copy-button-visually-hidden-size);
+    margin: calc(-1 * var(--_copy-button-visually-hidden-size));
     padding: 0;
     border: 0;
     overflow: hidden;

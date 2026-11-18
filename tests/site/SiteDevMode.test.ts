@@ -1,5 +1,3 @@
-// The hosted site holds dev mode in the dev mode page's files only, and every figure a guide
-// places is one its page registers.
 import assert from 'node:assert/strict';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -13,8 +11,7 @@ import {
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import type { ViteManifest } from '../../scripts/site/SiteModuleFiles.ts';
 
-/** A build as the catalogue's is: dev mode in a chunk of its own that only the dev mode page's figures load. */
-function build() {
+function catalogueLikeBuild() {
   const manifest: ViteManifest = {
     'index.html': {
       file: 'assets/index-1.js',
@@ -55,28 +52,24 @@ function build() {
 }
 
 test("dev mode in chunks of its own, which only the dev mode page's figures load, is no problem", () => {
-  const { manifest, contents } = build();
+  const { manifest, contents } = catalogueLikeBuild();
   assert.deepEqual(devModeProblems(manifest, contents), []);
 });
 
 test('dev mode anywhere else is a problem', () => {
-  // Another page loads it lazily too.
-  let { manifest, contents } = build();
+  let { manifest, contents } = catalogueLikeBuild();
   manifest['src/examples/button/CreateProject.tsx'].dynamicImports = [devEntry];
   assert.match(devModeProblems(manifest, contents).join('\n'), /CreateProject\.tsx loads/);
 
-  // The page imports it with its entry.
-  ({ manifest, contents } = build());
+  ({ manifest, contents } = catalogueLikeBuild());
   manifest['index.html']?.imports?.push(devEntry);
   assert.match(devModeProblems(manifest, contents).join('\n'), /index\.html imports/);
 
-  // Its code lands in a chunk other pages load.
-  ({ manifest, contents } = build());
+  ({ manifest, contents } = catalogueLikeBuild());
   contents['assets/Button-1.js'] += devMarker;
   assert.match(devModeProblems(manifest, contents).join('\n'), /Button-1\.js holds dev mode/);
 
-  // It isn't a lazy chunk at all.
-  ({ manifest, contents } = build());
+  ({ manifest, contents } = catalogueLikeBuild());
   delete manifest[devEntry];
   assert.match(devModeProblems(manifest, contents).join('\n'), /not a chunk of its own/);
 });

@@ -1,6 +1,5 @@
 import { useEffect, useState, type RefObject } from 'react';
 
-/** Whether an element is in the viewport now, so an animation plays only where it can be seen. */
 export function useInView(element: RefObject<HTMLElement | null>) {
   const [inView, setInView] = useState(false);
   useEffect(() => {

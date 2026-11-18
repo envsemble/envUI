@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { Button, Checkbox, Column, IconButton, Row, TextField } from '@envsemble/envui';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
-// Tab follows the order the controls are written in; every field has a label, and the button that
-// is only an icon a name.
 export default function Keyboard() {
   const [shared, setShared] = useState(true);
   return (

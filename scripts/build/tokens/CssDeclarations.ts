@@ -1,22 +1,10 @@
-// Reading the declarations of a style sheet: what Tokens.css declares in each theme rule, and the
-// custom properties TokensHandwritten.css would replace a token with.
-
 interface CssDeclaration {
   property: string;
   value: string;
-  /** The preludes of the at-rules around the declaration, outermost first. */
   atRules: string[];
-  /** The selector of its rule: the innermost, since nested style rules are not read apart. */
   selector: string | undefined;
 }
 
-/**
- * The declarations of a style sheet, each with its property, its value, the preludes of the
- * at-rules around it (outermost first) and the selector of its rule, with whitespace collapsed.
- * Comments are dropped; quoted strings and parentheses are read whole, so a `;` or a brace inside
- * them ends nothing. Nested style rules are not read apart: a declaration takes the innermost
- * selector.
- */
 export function cssDeclarations(css: string) {
   const declarations: CssDeclaration[] = [];
   const blocks: { prelude: string; atRule: boolean }[] = [];
@@ -57,22 +45,13 @@ export function cssDeclarations(css: string) {
   return declarations;
 }
 
-/**
- * The media queries under which TokensHandwritten.css may change a token's value: the touch sizes
- * under a coarse pointer, which the resolver has no modifier for. Only these: a token's value in
- * another condition, such as `prefers-contrast: more`, belongs in the tokens, where the token list
- * sees it, and a declaration under any other at-rule (`@layer`, `@supports`, `@container`,
- * another media query or a list of them) can apply in every theme, so it replaces the token.
- */
-const conditionalMediaQueries = ['(pointer: coarse)'];
+const touchSizeMediaQueriesWithoutResolverModifier = ['(pointer: coarse)'];
 
 const compact = (text: string) => text.replace(/\s+/g, '').toLowerCase();
-const conditional = new Set(conditionalMediaQueries.map((query) => compact(`@media ${query}`)));
+const conditional = new Set(
+  touchSizeMediaQueriesWithoutResolverModifier.map((query) => compact(`@media ${query}`)),
+);
 
-/**
- * The custom properties a style sheet declares that replace a token wherever they apply: every
- * declaration, in any rule, except under a media query of conditionalMediaQueries.
- */
 export function overridingCustomProperties(css: string) {
   return new Set(
     cssDeclarations(css)

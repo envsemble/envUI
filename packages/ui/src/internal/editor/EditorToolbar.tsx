@@ -10,14 +10,9 @@ import { editorCommandGroup, editorCommands, type EditorCommand } from './editor
 import '../../styles/Base.css';
 import '../../styles/Editor.css';
 
-/** A press on a toolbar button keeps focus, and the selection, in the editor. */
-const keepFocus = (event: MouseEvent) => event.preventDefault();
+const keepFocusAndSelectionInEditor = (event: MouseEvent) => event.preventDefault();
 
-/**
- * The commands in runs of one kind, in the order given: each run is a group of the toolbar, such as
- * the text styles or the lists.
- */
-function groupsOf<Command extends EditorCommand>(commands: readonly Command[]) {
+function runsOfOneKind<Command extends EditorCommand>(commands: readonly Command[]) {
   const groups: Command[][] = [];
   for (const command of commands) {
     const last = groups.at(-1);
@@ -25,6 +20,24 @@ function groupsOf<Command extends EditorCommand>(commands: readonly Command[]) {
     else groups.push([command]);
   }
   return groups;
+}
+
+const leadsWithSeparator = (groupIndex: number) => groupIndex > 0;
+
+export interface EditorToolbarProps<Command extends EditorCommand> {
+  /** Names the toolbar, such as Markdown formatting. */
+  label: string;
+  commands: readonly Command[];
+  /** The commands on at the selection, drawn pressed; undefined where the editor can't tell. */
+  active?: readonly Command[];
+  disabled: boolean;
+  canUndo: boolean;
+  canRedo: boolean;
+  onCommand: (command: Command) => void;
+  onUndo: () => void;
+  onRedo: () => void;
+  /** The editor's own buttons after Undo and Redo, such as Attach files. */
+  children?: ReactNode;
 }
 
 /**
@@ -46,24 +59,10 @@ export function EditorToolbar<Command extends EditorCommand>({
   onUndo,
   onRedo,
   children,
-}: {
-  /** Names the toolbar, such as Markdown formatting. */
-  label: string;
-  commands: readonly Command[];
-  /** The commands on at the selection, drawn pressed; undefined where the editor can't tell. */
-  active?: readonly Command[];
-  disabled: boolean;
-  canUndo: boolean;
-  canRedo: boolean;
-  onCommand: (command: Command) => void;
-  onUndo: () => void;
-  onRedo: () => void;
-  /** The editor's own buttons after Undo and Redo, such as Attach files. */
-  children?: ReactNode;
-}) {
+}: EditorToolbarProps<Command>) {
   const messages = useMessages('editor', editorMessages);
   const own = Children.toArray(children);
-  const groups: { key: string; buttons: ReactNode }[] = groupsOf(commands).map((group) => ({
+  const groups: { key: string; buttons: ReactNode }[] = runsOfOneKind(commands).map((group) => ({
     key: group.join(' '),
     buttons: group.map((command) => {
       const { icon: Icon, message } = editorCommands[command];
@@ -73,7 +72,7 @@ export function EditorToolbar<Command extends EditorCommand>({
           icon={<Icon />}
           label={messages[message]}
           pressed={active?.includes(command)}
-          onMouseDown={keepFocus}
+          onMouseDown={keepFocusAndSelectionInEditor}
           onClick={() => onCommand(command)}
         />
       );
@@ -87,14 +86,14 @@ export function EditorToolbar<Command extends EditorCommand>({
           icon={<IconUndo />}
           label={messages.undo}
           disabled={!canUndo}
-          onMouseDown={keepFocus}
+          onMouseDown={keepFocusAndSelectionInEditor}
           onClick={onUndo}
         />
         <Toolbar.Button
           icon={<IconRedo />}
           label={messages.redo}
           disabled={!canRedo}
-          onMouseDown={keepFocus}
+          onMouseDown={keepFocusAndSelectionInEditor}
           onClick={onRedo}
         />
       </>
@@ -104,11 +103,9 @@ export function EditorToolbar<Command extends EditorCommand>({
   return (
     <div className="env-editor-toolbar">
       <Toolbar.Root aria-label={label} disabled={disabled}>
-        {/* Each group after the first leads with its separator, so where the groups wrap onto
-            more rows, a row never ends with one; Editor.css hides the one a row starts with. */}
         {groups.map(({ key, buttons }, index) => (
           <Toolbar.Group key={key}>
-            {index > 0 && <Toolbar.Separator />}
+            {leadsWithSeparator(index) && <Toolbar.Separator />}
             {buttons}
           </Toolbar.Group>
         ))}
@@ -117,4 +114,4 @@ export function EditorToolbar<Command extends EditorCommand>({
   );
 }
 
-export { keepFocus as keepEditorFocus };
+export { keepFocusAndSelectionInEditor as keepEditorFocus };

@@ -27,3 +27,28 @@ test(
       .toBe('Starred, Labels');
   },
 );
+
+test('the top bar and each navigation form take the default surface color, and background="page" the page', async () => {
+  mount(fixture);
+  const scope = page.getByTestId('backgrounds').first().element();
+  const color = (token: string) => {
+    const probe = document.createElement('span');
+    probe.style.backgroundColor = `var(${token})`;
+    scope.append(probe);
+    const value = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return value;
+  };
+  const fill = (selector: string) =>
+    getComputedStyle(scope.querySelector(selector)!).backgroundColor;
+  for (const part of [
+    'env-top-bar',
+    'env-navigation-drawer',
+    'env-navigation-rail',
+    'env-navigation-bar',
+  ]) {
+    expect(fill(`.${part}[data-background='default']`), part).toBe(color('--env-color-bg-default'));
+    expect(fill(`.${part}[data-background='page']`), part).toBe(color('--env-color-bg-page'));
+  }
+  expect(fill('.env-top-bar:not([data-background="page"])')).toBe(color('--env-color-bg-default'));
+});

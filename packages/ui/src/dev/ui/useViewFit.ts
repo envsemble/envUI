@@ -5,12 +5,6 @@ import type { Snapshot } from '../model.js';
 import { angles, fitted, type Angle, type useCamera } from './camera.js';
 import type { FrameSize } from './Frame.js';
 
-/**
- * Fitting the page into the 3D view: the angle the view is at, which the View dropdown marks until
- * a drag turns it, a function that turns the view to an angle with the whole page in view, and the
- * Responsive dropdown's frame change, after which the view fits the page again. The first
- * measurement fits the page too; dragging the frame keeps the camera where it is.
- */
 export function useViewFit({
   snapshot,
   snapshotRef,
@@ -19,7 +13,6 @@ export function useViewFit({
   onFrameChange,
 }: {
   snapshot: Snapshot | null;
-  /** The latest snapshot, for callbacks that stay the same across measurements. */
   snapshotRef: RefObject<Snapshot | null>;
   view: RefObject<HTMLDivElement | null>;
   camera: ReturnType<typeof useCamera>;
@@ -27,8 +20,7 @@ export function useViewFit({
 }) {
   const [angle, setAngle] = useState<Angle | null>('tilted');
 
-  /** The camera that shows the whole page at an angle, centred in the view. */
-  const fittedAt = useCallback(
+  const cameraFittingTheWholePageAt = useCallback(
     (at: { rx: number; ry: number }) => {
       const current = snapshotRef.current;
       const room = view.current?.getBoundingClientRect();
@@ -40,39 +32,38 @@ export function useViewFit({
 
   const turnTo = useCallback(
     (next: Angle) => {
-      const target = fittedAt(angles[next]);
+      const target = cameraFittingTheWholePageAt(angles[next]);
       if (!target) return;
       camera.glideTo(target);
       setAngle(next);
     },
-    [camera, fittedAt],
+    [camera, cameraFittingTheWholePageAt],
   );
 
-  // A new size from the Responsive dropdown refits the view once the page is measured at it, at
-  // the angle the view is at.
-  const fittedOnce = useRef(false);
-  const refitFrom = useRef<{ w: number; h: number } | null>(null);
+  const fittedTheFirstMeasurement = useRef(false);
+  const sizeBeforeResponsiveChange = useRef<{ w: number; h: number } | null>(null);
   useLayoutEffect(() => {
     if (!snapshot) return;
     const box = snapshot.root.box;
-    if (!fittedOnce.current) {
-      fittedOnce.current = true;
-      const target = fittedAt(angles.tilted);
+    const measuredAtTheNewResponsiveSize =
+      sizeBeforeResponsiveChange.current !== null &&
+      (sizeBeforeResponsiveChange.current.w !== box.w ||
+        sizeBeforeResponsiveChange.current.h !== box.h);
+    if (!fittedTheFirstMeasurement.current) {
+      fittedTheFirstMeasurement.current = true;
+      const target = cameraFittingTheWholePageAt(angles.tilted);
       if (target) camera.set(target);
-    } else if (
-      refitFrom.current &&
-      (refitFrom.current.w !== box.w || refitFrom.current.h !== box.h)
-    ) {
-      refitFrom.current = null;
-      const target = fittedAt(camera.camera.current);
+    } else if (measuredAtTheNewResponsiveSize) {
+      sizeBeforeResponsiveChange.current = null;
+      const target = cameraFittingTheWholePageAt(camera.camera.current);
       if (target) camera.glideTo(target);
     }
-  }, [snapshot, camera, fittedAt]);
+  }, [snapshot, camera, cameraFittingTheWholePageAt]);
 
   const changeFrameFromMenu = useCallback(
     (next: FrameSize) => {
       const box = snapshotRef.current?.root.box;
-      refitFrom.current = box ? { w: box.w, h: box.h } : null;
+      sizeBeforeResponsiveChange.current = box ? { w: box.w, h: box.h } : null;
       onFrameChange(next);
     },
     [snapshotRef, onFrameChange],

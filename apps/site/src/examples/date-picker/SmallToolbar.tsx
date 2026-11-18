@@ -1,15 +1,8 @@
-import { Button, DatePicker, Surface, Row } from '@envsemble/envui';
+import { Button, DatePicker, Row } from '@envsemble/envui';
 
 export default function SmallToolbar() {
   return (
-    <Surface
-      background="default"
-      padding={1}
-      radius="full"
-      role="group"
-      aria-label="Schedule toolbar"
-      render={<Row wrap align="center" gap={4} />}
-    >
+    <Row wrap align="center" gap={4} role="group" aria-label="Schedule toolbar">
       <DatePicker
         size="sm"
         visibleLabel={false}
@@ -21,6 +14,6 @@ export default function SmallToolbar() {
       <Button variant="outline" size="sm">
         Schedule
       </Button>
-    </Surface>
+    </Row>
   );
 }

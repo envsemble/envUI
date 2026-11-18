@@ -10,11 +10,6 @@ import { Renew } from '../motion/Renew';
 
 const button = (label: string) => `.env-toolbar-button[aria-label="${label}"]`;
 
-/**
- * Turns on bold and italic, one after the other. The pointer then leaves, so the two pressed
- * toggles hold their pressed fill a while, and then the toolbar is drawn again as it began, with a
- * short fade (Renew).
- */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: button('Bold') },
@@ -31,7 +26,6 @@ const script: PointerStep[] = [
   { wait: 300 },
 ];
 
-/** A formatting toolbar: two toggles, a list and undo. */
 export default function ToolbarTile() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
@@ -42,7 +36,6 @@ export default function ToolbarTile() {
   );
 }
 
-/** The toolbar, with its two toggles off when it is drawn. */
 function Formatting() {
   const [bold, setBold] = useState(false);
   const [italic, setItalic] = useState(false);

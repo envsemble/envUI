@@ -117,8 +117,11 @@
     {
       "id": "[role=tablist]",
       "role": "tablist",
-      "owners": ["Tabs", "DocumentTabs"],
-      "use": [{ "component": "Tabs" }]
+      "owners": ["DocumentTabs"],
+      "use": [
+        { "component": "SegmentedControl" },
+        { "component": "DocumentTabs", "when": "for documents people open and close" }
+      ]
     },
     { "id": "[role=tree]", "role": "tree", "owners": ["Tree"], "use": [{ "component": "Tree" }] },
     {

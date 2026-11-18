@@ -11,7 +11,6 @@ export default function GroupsAndSeparators() {
     <Menu.Root
       aria-label="New"
       align="start"
-      // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
       trigger={<Button startIcon={<IconAdd />}>New</Button>}
     >

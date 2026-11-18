@@ -2,9 +2,6 @@ import { expect } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
 import { box, keyboard, mouse } from './Browser.ts';
 
-// The popups of the theme-contrast fixture, which ThemeContrast.test and ForcedColors.test open.
-
-/** Every kind of popup envUI portals, each of which the fixture opens from every boundary. */
 export const popupKinds = [
   'menu',
   'compact menu',
@@ -24,13 +21,11 @@ export const popupKinds = [
 ] as const;
 export type PopupKind = (typeof popupKinds)[number];
 
-/** The popup an element of a class holds a text in, such as a tooltip. */
 const withText = (selector: string, text: string) =>
   [...document.querySelectorAll<HTMLElement>(selector)].find((element) =>
     element.textContent?.includes(text),
   ) ?? null;
 
-/** The middle of an element, scrolled into view first, as Playwright's hover() finds it. */
 function middle(element: Element) {
   element.scrollIntoView({ block: 'nearest' });
   const { x, y, width, height } = box(element);
@@ -42,10 +37,6 @@ async function hover(locator: Locator) {
   await mouse.move(x, y);
 }
 
-/**
- * Opens one popup of a boundary of the fixture and returns a function that finds it: a popup
- * leaves the page as it closes, and some are found by their text alone.
- */
 export async function openPopup(kind: PopupKind, name: string): Promise<() => HTMLElement | null> {
   const button = (label: string) => page.getByRole('button', { name: label, exact: true });
   const role = (locator: Locator) => () => locator.query() as HTMLElement | null;
@@ -72,7 +63,6 @@ export async function openPopup(kind: PopupKind, name: string): Promise<() => HT
       await page.getByRole('combobox', { name: `Sort ${name}`, exact: true }).click();
       return list;
     case 'combobox': {
-      // The floating label covers an empty field, so the keyboard opens its list.
       const field = page.getByRole('combobox', { name: `Person ${name}`, exact: true });
       (field.element() as HTMLElement).focus();
       await keyboard.press('ArrowDown');
@@ -105,7 +95,6 @@ export async function openPopup(kind: PopupKind, name: string): Promise<() => HT
   }
 }
 
-/** Whether a popup openPopup found is in the page and shows, as Playwright's toBeVisible reads it. */
 export function popupShown(popup: () => HTMLElement | null) {
   const element = popup();
   if (!element) return false;
@@ -113,7 +102,6 @@ export function popupShown(popup: () => HTMLElement | null) {
   return width > 0 && height > 0 && getComputedStyle(element).visibility !== 'hidden';
 }
 
-/** Closes a popup that openPopup opened, and waits until it is gone. */
 export async function closePopup(kind: PopupKind, popup: () => HTMLElement | null) {
   if (kind === 'tooltip' || kind === 'hover card') await mouse.move(0, 0);
   else if (kind === 'toast') {

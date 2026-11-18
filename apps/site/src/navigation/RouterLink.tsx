@@ -5,23 +5,15 @@ import { findPage } from '../routes/SiteRoutes';
 import { normalizeRoute } from '../routes/OldAddresses';
 import { pageLoaded, preloadPage } from '../pages/PageLoading';
 
-/** The page of a route, such as components/button?section=props. */
 const pageOfRoute = (route: string) => findPage(route.split('?')[0]);
 
-/** Starts loading what the page a link leads to needs, as a press on it is coming. */
 function preload(href: string | undefined) {
   const route = href === undefined ? undefined : routeOfLink(href);
   if (route !== undefined) void preloadPage(pageOfRoute(normalizeRoute(route || 'overview')));
 }
 
-/** The latest press on a link, which a press made while an earlier page loads takes over. */
 let latestPress = 0;
 
-/**
- * The route a press on a link leads to while its page loads, before the address changes: the
- * navigation shows it as the reader's destination at once (App.tsx), so the press shows on the
- * first frame however long the page takes.
- */
 let pendingRoute: string | undefined;
 const pendingListeners = new Set<() => void>();
 function setPendingRoute(route: string | undefined) {
@@ -34,7 +26,6 @@ const subscribePending = (listener: () => void) => {
   return () => pendingListeners.delete(listener);
 };
 
-/** The route a pressed link leads to while its page loads (setPendingRoute), if any. */
 export const usePendingRoute = () =>
   useSyncExternalStore(
     subscribePending,
@@ -42,15 +33,6 @@ export const usePendingRoute = () =>
     () => undefined,
   );
 
-/**
- * The anchor of every envUI destination on the site, through LinkProvider. A plain press on a link
- * to one of its pages, the catalogue's or the Docs', shows the page without loading the site again; a
- * press with a modifier and a link to a file or another site behave as anchors do. An example's
- * links, which a stage keeps from navigating, stay in place. A pointer over a link, or a press
- * starting on it, starts loading what its page needs; the address and the page change together,
- * once that has loaded, rather than the address first with the page before it still shown, and
- * meanwhile the navigation shows the destination (usePendingRoute).
- */
 export function RouterLink({
   onClick,
   onPointerEnter,
@@ -72,7 +54,9 @@ export function RouterLink({
         onClick?.(event);
         if (event.defaultPrevented || event.button !== 0) return;
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        if ((props.target && props.target !== '_self') || props.download !== undefined) return;
+        const opensElsewhere =
+          (props.target && props.target !== '_self') || props.download !== undefined;
+        if (opensElsewhere) return;
         const route = routeOfLink(props.href);
         if (route === undefined) return;
         event.preventDefault();

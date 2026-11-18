@@ -94,6 +94,13 @@ export type NavigationDrawerDestination = DestinationFields & {
    * @default none
    */
   badge?: ReactNode;
+  /**
+   * A control of its own at the end of the destination's row, outside its link or button, such as
+   * an IconButton that deletes it or a Menu of its actions. It keeps its size, and the row's fill
+   * reaches under it. Drawer alone shows it; Rail and Bar leave it out.
+   * @default none
+   */
+  end?: ReactNode;
 } & (
     | (DestinationTarget & NestedDestinations)
     | {

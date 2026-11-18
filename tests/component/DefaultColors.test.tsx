@@ -4,17 +4,7 @@ import * as fixture from '../fixture/DefaultColors.fixture.tsx';
 import { addStyle } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/**
- * envUI's own colors don't change when the color properties are added: with none set, every
- * component that has them paints, in every state and theme, what the integration branch painted.
- * DefaultColors.json holds a hash of each control's colors, and its parts', in each state and theme,
- * recorded from the integration branch's style sheets (1.0.0-prerelease.1). A deliberate change to
- * a default color records it again: delete DefaultColors.json and run the test, which writes it
- * and fails until it is committed.
- */
-/** From the repository's root, where the browser's file commands start. */
-const snapshotFile = 'tests/component/DefaultColors.json';
-/** The note DefaultColors.json opens with: it is recorded, not edited. */
+const snapshotFileFromRepositoryRoot = 'tests/component/DefaultColors.json';
 const generatedNote =
   'Recorded by tests/component/DefaultColors.test.tsx when the file is missing; do not edit.';
 
@@ -32,7 +22,6 @@ const themes = [
 ] as const;
 
 const section = '[data-testid="default-colors"]';
-/** The controls, each forced into every state; popups render outside the section. */
 const targets = [
   `${section} .env-button`,
   `${section} .env-card`,
@@ -41,7 +30,6 @@ const targets = [
   `${section} .env-navigation-drawer-item`,
   `${section} .env-navigation-rail-item`,
   `${section} .env-navigation-bar-item`,
-  `${section} .env-tabs-tab`,
   `${section} .env-segmented-control-item`,
   `${section} .env-text-field-control`,
   `${section} .env-checkbox-input`,
@@ -70,11 +58,6 @@ const states = {
   focus: ['focus', 'focus-visible', 'focus-within'],
 } as const;
 
-/**
- * The colors an element and its parts paint, as one line. A slider's native range input is left
- * out: Base UI hides it visually, so it paints nothing, and its colors are the browser's own, which
- * differ by platform (Chromium colors an enabled range input #101010 on Windows, #9d968e on Linux).
- */
 function paint(element: Element) {
   const properties = [
     'background-color',
@@ -102,7 +85,6 @@ function paint(element: Element) {
   ].join('\n');
 }
 
-/** The first 16 hex digits of a text's SHA-1. */
 async function hash(text: string) {
   const digest = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(text));
   return [...new Uint8Array(digest)]
@@ -119,10 +101,6 @@ type DomNode = {
   contentDocument?: DomNode;
 };
 
-/**
- * The DevTools node of this test's document: the page holds it in a frame, beside the frames of
- * other test files, so the document marks its root element to be found by.
- */
 async function ownDocument(session: ReturnType<typeof cdp>) {
   const mark = String(Math.random());
   document.documentElement.dataset.colorsFrame = mark;
@@ -145,8 +123,6 @@ async function ownDocument(session: ReturnType<typeof cdp>) {
   return own;
 }
 
-// One test per theme: the four together read about 1,500 states, which on CI's two-core runner
-// take longer than one test's timeout.
 test.each(themes)(
   'with no color property set, every component paints its colors of before in every state, in $name',
   { timeout: 90_000 },
@@ -180,10 +156,8 @@ test.each(themes)(
         expect(ids.length, `${selector} renders`).toBeGreaterThan(0);
         expect(ids.length).toBe(elements.length);
         for (const [index, nodeId] of ids.entries()) {
-          // A row is pressed through its target, which the row's style reads.
           const inner = await nodes(nodeId, '[data-row-target]');
           for (const [state, classes] of Object.entries(states)) {
-            // Each state's classes replace the last's.
             await force([nodeId], classes);
             if (state === 'pressed') await force(inner, ['active']);
             const value = paint(elements[index]!);
@@ -196,14 +170,13 @@ test.each(themes)(
         }
       }
     }
-    const saved = await commands.readFile(snapshotFile).catch(() => undefined);
+    const saved = await commands.readFile(snapshotFileFromRepositoryRoot).catch(() => undefined);
     const file: Record<string, string> = saved === undefined ? {} : JSON.parse(saved);
     const ownKey = (key: string) => key.startsWith(`${theme.name} `);
     if (!Object.keys(file).some(ownKey)) {
-      // Missing, or missing this theme: each theme's test records its own colors beside the others'.
       const { $comment: _old, ...others } = file;
       await commands.writeFile(
-        snapshotFile,
+        snapshotFileFromRepositoryRoot,
         `${JSON.stringify({ $comment: generatedNote, ...others, ...measured }, null, 2)}\n`,
       );
       expect.fail(

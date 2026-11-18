@@ -8,7 +8,6 @@ const sizes: readonly { size: ControlSize; title: string; caption: string }[] = 
 ];
 const ignore = () => undefined;
 
-/** The three sizes, the control heights every control of a size shares. */
 export default function Sizes() {
   return (
     <SpecimenFrame size="collection">

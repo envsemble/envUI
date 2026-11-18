@@ -3,7 +3,6 @@ import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 
-/** Moves along the connected buttons to Edit, then to the split button's menu button. */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: '.env-button-group:first-child > :nth-child(2)' },
@@ -14,10 +13,6 @@ const script: PointerStep[] = [
   { wait: 360 },
 ];
 
-/**
- * Two groups of connected buttons: three actions of a project, and a split button, Publish with the
- * menu button for its other options.
- */
 export default function ButtonGroupTile() {
   usePointer(script);
   return (

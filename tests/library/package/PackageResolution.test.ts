@@ -1,5 +1,3 @@
-// How an application resolves the packed package: its compiled entry points and their exports, its
-// own React, the declarations a strict TypeScript consumer reads, and what a bundler takes of it.
 import assert from 'node:assert/strict';
 import { before, test } from 'node:test';
 import { existsSync } from 'node:fs';
@@ -10,13 +8,8 @@ import { installTimeout, packedConsumer } from '../../support/PackedConsumer.ts'
 let consumer;
 before(async () => (consumer = await packedConsumer()), { timeout: installTimeout });
 
-/** envUI's cascade layers, in their order. */
 const envLayers = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env.utilities'];
 
-/**
- * The cascade layers a style sheet names, in the order they first appear, which is their order: a
- * bundler may merge blocks of a layer or drop a statement that repeats an order already set.
- */
 function layerOrder(css) {
   const names = [];
   for (const [, list] of css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/@layer\s+([^{;]+)[{;]/g))
@@ -25,7 +18,7 @@ function layerOrder(css) {
   return names;
 }
 
-test('a packed consumer resolves compiled public exports and its own React installation', async () => {
+test('a packed consumer resolves compiled public exports and its own React installation, with Base UI the only dependency and React the only peers', async () => {
   const resolved = await consumer.runScript(
     'ResolutionConsumer.mjs',
     `
@@ -43,7 +36,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
   );
   assert.equal((await lstat(consumer.installedDirectory)).isSymbolicLink(), false);
   assert.match(resolved.module, /\/node_modules\/@envsemble\/envui\/dist\/index\.js$/);
-  // Icons are imported one by one: there is no barrel of them all.
   assert.equal(resolved.iconsBarrel, null);
   assert.match(resolved.homeModule, /\/dist\/icons\/Home\.js$/);
   assert.match(resolved.reactModule, /\/consumer\/node_modules\/react\/index\.js$/);
@@ -103,7 +95,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     await readFile(join(consumer.installedDirectory, 'package.json'), 'utf8'),
   );
   assert.match(installedManifest.peerDependencies.react, /19/);
-  // ColorPicker, ColorPickerButton and ColorSwatch come from the color entry alone, on React Aria.
   assert.deepEqual(resolved.colorExports.sort(), [
     'ColorPicker',
     'ColorPickerButton',
@@ -113,8 +104,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     assert.ok(!resolved.exports.includes(name), `The main entry no longer exports ${name}`);
   assert.equal(installedManifest.dependencies['react-colorful'], undefined);
   assert.equal(installedManifest.exports['./color'].import, './dist/color.js');
-  // Basic UI installs without the code, markdown, rich-text, diff and color stacks; apps using those entries add
-  // them. They aren't peers either, as npm installs every peer the registry doesn't mark optional.
   assert.deepEqual(Object.keys(installedManifest.dependencies), ['@base-ui/react']);
   assert.deepEqual(Object.keys(installedManifest.peerDependencies).sort(), ['react', 'react-dom']);
   assert.match(
@@ -157,14 +146,15 @@ test('a packed consumer imports the dev entry, which types its readout and does 
     const handle: DevModeHandle = installDevMode({ parts, root: '#app', button: false, shortcut: false });
     const results: LayoutAtResult[] = layout.at(['22rem', 960]);
     const problems: LayoutProblem[] = window.envui?.layout?.check() ?? [];
-    // @ts-expect-error at() takes px numbers or lengths, not options.
-    layout.at({ width: '40rem' });
-    void [handle, results, problems];
+    // @ts-expect-error
+    const layoutAtTakesPxOrLengthsNotOptions = layout.at({ width: '40rem' });
+    void [handle, results, problems, layoutAtTakesPxOrLengthsNotOptions];
   `,
   );
 });
 
 test('installed declarations typecheck a React 19 consumer without source aliases', async () => {
+  const viteTypesDeclaringStyleSheetImports = 'vite/client';
   const typedFiles = await consumer.typecheck(
     'Consumer',
     `
@@ -219,32 +209,31 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
       <ToastProvider><NotificationAction /></ToastProvider>
     </Theme>;
-    // @ts-expect-error Icon-only actions require an accessible name.
-    const unnamedIconButton = <IconButton icon={<IconHome />} />;
-    // @ts-expect-error The theme boundary has only the two owned themes.
-    const unknownTheme = <Theme theme="system" />;
-    // @ts-expect-error Button variants are the explicit public contract.
-    const unknownButton = <Button variant="custom">Example</Button>;
-    // @ts-expect-error A secondary button has no danger tone: tones come in designed pairs.
-    const undesignedTone = <Button variant="secondary" tone="danger">Example</Button>;
-    // @ts-expect-error Connected buttons support rows or columns.
-    const unknownOrientation = <ButtonGroup orientation="diagonal" />;
-    // @ts-expect-error Layout gap must use the defined spacing scale.
-    const unknownGap = <Row gap={10} />;
-    // @ts-expect-error A pager link takes its direction from its part.
-    const unknownDirection = <Pager.Next direction="up" href="/guide">Guide</Pager.Next>;
-    // @ts-expect-error A pager link requires a destination URL.
-    const missingDestination = <Pager.Next>Guide</Pager.Next>;
-    // @ts-expect-error A multiple combobox takes a list of values.
-    const singleValueForSeveral = <Combobox multiple items={people} value="first" />;
-    void singleValueForSeveral;
-    // @ts-expect-error A color picker requires a visible label.
-    const unnamedColorPicker = <ColorPicker defaultValue="#abcdef" />;
-    void unnamedColorPicker;
-    void [unnamedIconButton, unknownTheme, unknownButton, undesignedTone, unknownOrientation, unknownGap, unknownDirection, missingDestination];
+    // @ts-expect-error
+    const iconOnlyActionNeedsAName = <IconButton icon={<IconHome />} />;
+    // @ts-expect-error
+    const themeIsOneOfTheTwoOwnedThemes = <Theme theme="system" />;
+    // @ts-expect-error
+    const buttonVariantsAreTheExplicitContract = <Button variant="custom">Example</Button>;
+    // @ts-expect-error
+    const secondaryButtonHasNoDangerTone = <Button variant="secondary" tone="danger">Example</Button>;
+    // @ts-expect-error
+    const buttonGroupIsARowOrAColumn = <ButtonGroup orientation="diagonal" />;
+    // @ts-expect-error
+    const gapUsesTheSpacingScale = <Row gap={10} />;
+    // @ts-expect-error
+    const pagerLinkTakesItsDirectionFromItsPart = <Pager.Next direction="up" href="/guide">Guide</Pager.Next>;
+    // @ts-expect-error
+    const pagerLinkNeedsADestination = <Pager.Next>Guide</Pager.Next>;
+    // @ts-expect-error
+    const multipleComboboxTakesAListOfValues = <Combobox multiple items={people} value="first" />;
+    void multipleComboboxTakesAListOfValues;
+    // @ts-expect-error
+    const colorPickerNeedsAVisibleLabel = <ColorPicker defaultValue="#abcdef" />;
+    void colorPickerNeedsAVisibleLabel;
+    void [iconOnlyActionNeedsAName, themeIsOneOfTheTwoOwnedThemes, buttonVariantsAreTheExplicitContract, secondaryButtonHasNoDangerTone, buttonGroupIsARowOrAColumn, gapUsesTheSpacingScale, pagerLinkTakesItsDirectionFromItsPart, pagerLinkNeedsADestination];
   `,
-    // A bundler's types declare the style sheet's import, as Vite's do in an application.
-    { types: ['react', 'react-dom', 'vite/client'] },
+    { types: ['react', 'react-dom', viteTypesDeclaringStyleSheetImports] },
   );
   assert.ok(typedFiles.length > 10, 'Typecheck the installed declarations and dependencies.');
   for (const file of typedFiles) {
@@ -282,7 +271,6 @@ test('a small independent bundle excludes unused icons and Base UI', async () =>
     `Unexpected icons in consumer bundle: ${iconInputs.join(', ')}`,
   );
   assert.match(iconInputs[0], /\/Home\.js$/);
-  // Its size is held by tests/library/package/SizeBudgets.test.ts (Theme + Button + Icon, minified).
   assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
     result.emittedInputs.every(
@@ -298,8 +286,6 @@ test('a small independent bundle excludes unused icons and Base UI', async () =>
     result.emittedInputs.every((path) => !path.includes('/src/')),
     'The release consumer must not resolve the development source condition.',
   );
-  // esbuild bundles the style sheets the modules import, the base first with the layer order. It
-  // keeps those of the modules it shakes out too, so the CSS isn't any smaller than styles.css.
   assert.deepEqual(layerOrder(result.css), envLayers);
   assert.match(result.css, /--env-color-bg-primary-emphasis-hover:/);
   assert.match(result.css, /\.env-button\s*\{/);
@@ -336,7 +322,6 @@ test('a Vite application loads the style sheets of the components it uses, and r
     console.log(JSON.stringify({ css, html }));
   `,
   );
-  // The client's CSS: the base, with the layer order first, and Button's, and no other component's.
   assert.deepEqual(layerOrder(result.css), envLayers);
   assert.match(result.css, /--env-color-bg-primary-emphasis-hover:/);
   assert.match(result.css, /\.env-button\s*\{/);

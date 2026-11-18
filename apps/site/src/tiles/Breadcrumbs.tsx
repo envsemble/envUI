@@ -7,14 +7,6 @@ import type { TileWindow } from './Tiles';
 
 const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .env-breadcrumbs-link`;
 
-/**
- * Moves along the trail, then presses Plans, one level back: the trail now ends there, with Plans
- * as the current page. The pointer rests on it a moment, so the press reads as what shortened the
- * trail, and the trail holds a while after the pointer leaves. When the loop starts over, the whole
- * trail is drawn again and crossfades in (Crossfade), since nothing on the trail leads forward
- * again, and the pointer walks along it again. So the loop is paced across the whole time a reader
- * looks at the card, rather than holding still after its first seconds.
- */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: link(1), y: 0.6 },
@@ -29,14 +21,8 @@ const script: PointerStep[] = [
   { wait: 300 },
 ];
 
-/** How long the new trail takes to crossfade in over the one it replaces: the slow motion token. */
-const fade = () => rootMotionDuration('slow');
+const crossfadeDuration = () => rootMotionDuration('slow');
 
-/**
- * Draws its children again whenever `round` changes. The new ones fade in over the old ones, which
- * fade out underneath once the new ones are half visible, in the same place. So what the two share,
- * such as a trail's first levels, holds still, and the tile is never empty between them.
- */
 function Crossfade({ round, children }: { round: number; children: ReactNode }) {
   const [rounds, setRounds] = useState({ current: round, leaving: null as number | null });
   if (rounds.current !== round) setRounds({ current: round, leaving: rounds.current });
@@ -45,7 +31,7 @@ function Crossfade({ round, children }: { round: number; children: ReactNode }) 
     if (leaving === null) return;
     const timer = window.setTimeout(
       () => setRounds((now) => ({ current: now.current, leaving: null })),
-      fade(),
+      crossfadeDuration(),
     );
     return () => window.clearTimeout(timer);
   }, [leaving]);
@@ -63,10 +49,6 @@ function Crossfade({ round, children }: { round: number; children: ReactNode }) 
   );
 }
 
-/**
- * One round of a crossfade: fading in as it arrives, or fading out under the next one as it goes,
- * and unreachable then.
- */
 function Layer({
   entering = false,
   leaving = false,
@@ -82,14 +64,14 @@ function Layer({
     if (arrived.current) return;
     arrived.current = true;
     element.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
-      duration: fade(),
+      duration: crossfadeDuration(),
       easing: rootMotionEasing(),
     });
   }, []);
   useEffect(() => {
     if (!leaving) return;
     element.current?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
-      duration: fade(),
+      duration: crossfadeDuration(),
       fill: 'forwards',
     });
   }, [leaving]);
@@ -117,11 +99,6 @@ const levels = [
   { label: 'Q3', href: '/plans/q3' },
 ];
 
-/**
- * The trail, where a pressed link goes back to its level inside the tile rather than navigating the
- * site. Its last level is short and the same at every width, so the trail is drawn at about its own
- * size in a phone's narrower tile too.
- */
 function Trail() {
   const [depth, setDepth] = useState(levels.length);
   return (
@@ -143,15 +120,8 @@ function Trail() {
   );
 }
 
-/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 15, height: 11.25 };
 
-/**
- * A trail of three levels, the last one the current page, on one line at every width. The trail
- * keeps its start in place as it shortens: it sits at the start of a box as wide as the whole
- * trail, which a hidden copy of the trail after it holds open. The copy is hidden so that the
- * pointer's aims find the trail itself.
- */
 export default function BreadcrumbsTile() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });

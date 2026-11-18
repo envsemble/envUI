@@ -13,15 +13,9 @@ import { useMessages } from '../../../internal/provider/EnvUIContext.js';
 import { RichTextRenderingContext } from './Reference.js';
 import { readOnlyCheckboxProps } from './readOnlyCheckbox.js';
 import '../../../styles/Base.css';
-// Rich text's rules refine the prose typography, so Prose.css comes first.
 import '../../../styles/Prose.css';
 import '../../../styles/RichText.css';
 
-/**
- * A task item in the editor: envUI's Checkbox beside the item's text, named by the text, which
- * checks the item; it is read-only, in its colors, while the editor is read-only, and unavailable
- * while it is disabled.
- */
 function TaskItemView({ node, updateAttributes, editor }: NodeViewProps) {
   const context = useContext(RichTextRenderingContext);
   const messages = useMessages('richText', richTextMessages);
@@ -44,7 +38,6 @@ function TaskItemView({ node, updateAttributes, editor }: NodeViewProps) {
   );
 }
 
-/** The editor's view of a task item, a list item that holds envUI's Checkbox and the item's text. */
 export function createTaskItemNodeView() {
   return ReactNodeViewRenderer(TaskItemView, { as: 'li' });
 }

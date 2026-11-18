@@ -10,7 +10,6 @@ const formats = [
 ];
 
 export default function ShortcutHints() {
-  // Shown open in the docs on Bold; without defaultOpen, each opens on hover and focus.
   return (
     <Row wrap align="center" gap={4}>
       {formats.map(({ label, shortcut, keys, icon }) => (
@@ -20,7 +19,6 @@ export default function ShortcutHints() {
           side="bottom"
           defaultOpen={label === 'Bold'}
         >
-          {/* aria-keyshortcuts tells assistive technology what the tooltip shows. */}
           <IconButton icon={icon} aria-label={label} aria-keyshortcuts={keys} variant="ghost" />
         </Tooltip>
       ))}

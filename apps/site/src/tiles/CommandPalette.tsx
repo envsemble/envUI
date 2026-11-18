@@ -16,10 +16,6 @@ const items: CommandPaletteItem[] = [
 
 const input = '.env-command-palette-input';
 
-/**
- * Types a search, which narrows the commands to one, and erases it; then another, and erases it, as
- * it began.
- */
 const script: PointerStep[] = [
   { wait: 360 },
   { type: 'inv', into: input, every: 220 },
@@ -32,11 +28,6 @@ const script: PointerStep[] = [
   { wait: 540 },
 ];
 
-/**
- * On a phone: types a search that finds the other command, which takes the first one's place, and
- * erases it, as it began. A search that finds nothing would show the palette's message, which is
- * taller than the stage shows.
- */
 const narrowScript: PointerStep[] = [
   { wait: 360 },
   { type: 'inv', into: input, every: 220 },
@@ -45,18 +36,8 @@ const narrowScript: PointerStep[] = [
   { wait: 720 },
 ];
 
-/**
- * The tiles' window (TileStage.css), with a lower least scale for its popup: a palette with its two
- * commands is taller than a phone's stage at a popup's least.
- */
 export const tileWindow: TileWindow = { popupLeast: 0.7 };
 
-/**
- * A command palette, open with its two commands under its search. A phone's lower stage shows it
- * whole too, drawn as small as that takes (tileWindow). It is framed on all of it, so while a
- * search narrows the list and is erased, the palette, which stays at its top, changes in place and
- * nothing in its tile moves.
- */
 export default function CommandPaletteTile() {
   const narrow = useMedia(narrowGallery);
   return <Palette key={String(narrow)} narrow={narrow} />;

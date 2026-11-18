@@ -4,7 +4,6 @@ import {
   Button,
   Column,
   Row,
-  Surface,
   Text,
   Theme,
   useTheme,
@@ -17,18 +16,10 @@ import { MarkedSubject } from './Marks';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
 import { FigurePart, FoundationFrame, NumberedLegend, type LegendEntry } from './FoundationFrame';
 
-/*
- * The figures of the Typography foundation. Its words are in docs/foundations/typography.md, the
- * page's one source, which places each figure by name and gives it its legend: the name of each
- * numbered mark, or of each style, and what it means.
- */
-
-/** A figure's words, from the page's Markdown. */
 interface FigureWords {
   legend: readonly LegendEntry[];
 }
 
-/** A small report screen with each text style it uses marked. */
 function ScreenFigure({ legend }: FigureWords) {
   return (
     <FoundationFrame
@@ -37,13 +28,7 @@ function ScreenFigure({ legend }: FigureWords) {
       legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
-        <Surface
-          background="default"
-          padding={6}
-          radius="xl"
-          className="catalogue-type-screen"
-          render={<Column gap={6} />}
-        >
+        <Column gap={6} className="catalogue-type-screen">
           <Text render={<p />} variant="headline" data-catalogue-mark="1">
             Quarterly report
           </Text>
@@ -64,13 +49,12 @@ function ScreenFigure({ legend }: FigureWords) {
           <Text variant="caption" data-catalogue-mark="5">
             Figures include tax.
           </Text>
-        </Surface>
+        </Column>
       </MarkedSubject>
     </FoundationFrame>
   );
 }
 
-/** Every text style, largest first, in the legend's order. */
 const variants: readonly TextVariant[] = [
   'display',
   'headline',
@@ -80,10 +64,6 @@ const variants: readonly TextVariant[] = [
   'caption',
 ];
 
-/**
- * The text styles as a specimen of the system, on the page: each sample in its style, with the
- * legend's name and job of the style in the same place.
- */
 function StylesFigure({ legend }: FigureWords) {
   return (
     <ol
@@ -110,10 +90,6 @@ function StylesFigure({ legend }: FigureWords) {
   );
 }
 
-/**
- * A short screen whose text reads in order: a lead in the main color, the detail after it quieter,
- * and a section's note in the small style.
- */
 function HierarchyFigure({ legend }: FigureWords) {
   return (
     <FoundationFrame
@@ -122,13 +98,7 @@ function HierarchyFigure({ legend }: FigureWords) {
       legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
-        <Surface
-          background="default"
-          padding={6}
-          radius="xl"
-          className="catalogue-type-screen"
-          render={<Column gap={5} />}
-        >
+        <Column gap={5} className="catalogue-type-screen">
           <Column gap={2}>
             <Text render={<p />} variant="headline">
               Billing
@@ -149,13 +119,12 @@ function HierarchyFigure({ legend }: FigureWords) {
               The card we charge each month
             </Text>
           </Column>
-        </Surface>
+        </Column>
       </MarkedSubject>
     </FoundationFrame>
   );
 }
 
-/** The same size of text in the main color and the quieter one. */
 function EmphasisFigure() {
   return (
     <FoundationFrame label="Quieter text">
@@ -167,10 +136,9 @@ function EmphasisFigure() {
   );
 }
 
-/** A small card of every kind of text: a title, a paragraph, a note and a button's label. */
 function BookClub() {
   return (
-    <Surface background="default" padding={5} radius="xl" render={<Column gap={3} />}>
+    <Column gap={3}>
       <Column gap={1}>
         <Text render={<p />} variant="title">
           Book club
@@ -181,25 +149,21 @@ function BookClub() {
         <Text variant="body-sm">12 members going</Text>
         <Button size="sm">Join</Button>
       </Row>
-    </Surface>
+    </Column>
   );
 }
 
-/** The text sizes the card steps through, then the compact scale, each with its label. */
 const textSteps: readonly { size: number; compact: boolean; label: string }[] = [
   { size: 1, compact: false, label: 'Usual text size' },
   { size: 1.25, compact: false, label: 'Larger text' },
   { size: 1.5, compact: false, label: 'Larger still' },
   { size: 1, compact: true, label: 'Compact' },
 ];
+const textStepMs = 1440;
 
-/**
- * The card in a frame of one width as the reader's text size steps up, then in the compact scale:
- * every style grows and shrinks with the others, and the card rewraps in its frame.
- */
 function TextSizeSteps() {
   const theme = useTheme();
-  const step = useTimeline(textSteps.map(() => 1440));
+  const step = useTimeline(textSteps.map(() => textStepMs));
   return (
     <>
       <CornerLabel>{textSteps[step]!.label}</CornerLabel>
@@ -234,10 +198,6 @@ function TextSizeFigure() {
   );
 }
 
-/**
- * A paragraph in a frame that widens: it rewraps until its lines reach a comfortable length, the
- * dashed line, and then stops growing while the frame goes on widening.
- */
 function MeasureFigure() {
   return (
     <FoundationFrame
@@ -263,7 +223,6 @@ function MeasureFigure() {
   );
 }
 
-/** The figures docs/foundations/typography.md places, by name. */
 export const typographyFigures: Record<string, FoundationFigureEntry> = {
   Screen: { render: ScreenFigure, wide: true },
   Styles: { render: StylesFigure, wide: true },

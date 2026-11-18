@@ -12,7 +12,6 @@ test(
     mount(fixture);
     await expect.poll(text('content-size')).toBe('276 × 76');
     await expect.poll(text('border-size')).toBe('300 × 100');
-    // In vertical text the inline size is the height: the box is 200 px wide and 80 px tall.
     await expect.poll(text('vertical-size')).toBe('80 × 200');
     await page.getByRole('button', { name: 'Widen the box' }).click();
     await expect.poll(text('content-size')).toBe('396 × 76');

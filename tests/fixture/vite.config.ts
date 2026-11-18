@@ -7,9 +7,6 @@ import { resetClosedConnections } from '../../scripts/test/ServerSockets.ts';
 
 export default defineConfig({
   root: fileURLToPath(new URL('./', import.meta.url)),
-  // The contrast gate measures the tokens as the token files hold them, even before a rebuild.
-  // The marker tells the browser tests which checkout this server serves, and the closed
-  // connections of their many short-lived browser contexts leave no ports behind.
   plugins: [checkoutMarker(), resetClosedConnections(), tokensVitePlugin(), react()],
   resolve: {
     conditions: ['envui-source', 'module', 'browser', 'development|production'],

@@ -7,7 +7,7 @@ export default function TitleFirstToGo() {
     <TopBar
       start={<IconButton icon={<IconArrowBack />} aria-label="Back to projects" variant="ghost" />}
       title="Website refresh for the spring launch"
-      actions={
+      end={
         <>
           <IconButton icon={<IconSearch />} aria-label="Search" variant="ghost" />
           <AvatarButton name="Alex Morgan" />

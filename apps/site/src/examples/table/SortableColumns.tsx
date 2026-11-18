@@ -39,7 +39,6 @@ function compare(column: Column) {
 
 export default function SortableColumns() {
   const [sort, setSort] = useState<Sort>({ column: 'name', direction: 'ascending' });
-  // The table shows the order; the application sorts the rows.
   const rows = [...files].sort((first, second) =>
     sort.direction === 'ascending'
       ? compare(sort.column)(first, second)
@@ -47,9 +46,8 @@ export default function SortableColumns() {
   );
   const direction = (column: Column): Table.SortDirection =>
     sort.column === column ? sort.direction : 'none';
-  // A header asks for the order pressing it gives: descending once sorted ascending.
-  const sortBy = (column: Column) => (next: Sort['direction']) =>
-    setSort({ column, direction: next });
+  const sortBy = (column: Column) => (requestedDirection: Sort['direction']) =>
+    setSort({ column, direction: requestedDirection });
   return (
     <Table.Root aria-label="Files">
       <Table.Head>

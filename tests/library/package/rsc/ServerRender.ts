@@ -1,6 +1,3 @@
-// Run by tests/library/package/ClientDirectives.test.ts with `--conditions=react-server` and ClientReferences.ts:
-// imports every entry point of the built package as a server component's module graph would, and
-// renders envUI on the server. Prints what it found as JSON.
 import { readFileSync } from 'node:fs';
 import { createElement as h } from 'react';
 import * as ui from '@envsemble/envui';
@@ -18,18 +15,15 @@ import { repositoryRoot } from '../../../../scripts/RepositoryPaths.ts';
 
 const clientReference = Symbol.for('react.client.reference');
 const isClientReference = (value) => value?.$$typeof === clientReference;
-/** forwardRef and memo give objects rather than functions; they are components all the same. */
 const wrappedComponents = new Set([Symbol.for('react.forward_ref'), Symbol.for('react.memo')]);
 const isComponent = (name, value) =>
   /^[A-Z]/.test(name.split('.').at(-1)) &&
   (typeof value === 'function' || wrappedComponents.has(value?.$$typeof));
 
-/** The documented props of each component, which choose the props each one is rendered with. */
 const documented = JSON.parse(
   readFileSync(join(repositoryRoot, 'docs/generated/props.json'), 'utf8'),
 ).exports;
 
-/** Props that a component needs to render at all, beyond the shared ones below. */
 const requiredProps = {
   AvatarGroup: { people: [{ name: 'Alex Morgan' }, { name: 'Sam Lee' }] },
   DiffStat: { additions: 12, deletions: 3 },
@@ -37,11 +31,6 @@ const requiredProps = {
 
 const icon = h(IconHome);
 
-/**
- * The props a component is rendered with beyond its defaults, from its documented props: each
- * boolean on, each value of a union of literals, an icon in each icon slot, and a destination,
- * also disabled or pending, and icon-only, where it takes them.
- */
 function variantsOf(name) {
   const props = documented[name]?.props ?? [];
   const takes = (prop) => props.some((candidate) => candidate.name === prop);
@@ -63,7 +52,6 @@ function variantsOf(name) {
   return variants;
 }
 
-/** A variant's props as a reader writes them: `pending`, `href="/destination"`, `icon={…}`. */
 const describe = (variant) =>
   Object.entries(variant)
     .filter(([, value]) => value !== undefined)
@@ -72,11 +60,6 @@ const describe = (variant) =>
     )
     .join(' ');
 
-/**
- * Every export of an entry: client references, server components (each rendered on the server,
- * with its defaults and with each variant of its props, which `variants` lists by component), and
- * plain values, with the server components that failed to render, with which props and why.
- */
 function survey(entry, exports) {
   const found = { client: [], server: [], values: [], failed: [], renders: 0, variants: {} };
   const visit = (name, value) => {
@@ -104,7 +87,6 @@ function survey(entry, exports) {
   return found;
 }
 
-/** A plain function's result on the server, or the error it threw. */
 function attempt(run) {
   try {
     return { result: run() };
@@ -130,7 +112,6 @@ const page = render(
   ),
 );
 
-// A list that isn't reorderable is markup alone: its current rows are marked on the server.
 const list = render(
   h(
     ui.List.Root,

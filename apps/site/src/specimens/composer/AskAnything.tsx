@@ -6,11 +6,9 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const field = '.env-composer-input';
 
-/*
- * The pointer clicks into the empty field and types a question, which grows the field by a line.
- * Enter sends it: the field empties, and the send button becomes a stop button while the reply
- * runs, then turns back. The example is drawn anew at the end, which clears what it says it sent.
- */
+const untilTheReplyEndsMs = 4920;
+const twoLineFieldWithNoteHeight = '7rem';
+
 const script: PointerStep[] = [
   { wait: 300 },
   { to: field, x: 0.3, y: 0.5 },
@@ -26,8 +24,7 @@ const script: PointerStep[] = [
   { key: 'Enter', on: field },
   { wait: 180 },
   { leave: true },
-  // The reply runs for 4 s.
-  { wait: 4920 },
+  { wait: untilTheReplyEndsMs },
   { cue: 'again' },
   { wait: 180 },
 ];
@@ -36,15 +33,13 @@ function Asking() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the field at two lines and what it says below it, the field at its top, so the
-    // field grows down and nothing else moves.
     <div
       style={{
         display: 'grid',
         alignContent: 'start',
         justifyItems: 'center',
         inlineSize: '100%',
-        minBlockSize: '7rem',
+        minBlockSize: twoLineFieldWithNoteHeight,
       }}
     >
       <AskAnything key={round} />
@@ -52,7 +47,6 @@ function Asking() {
   );
 }
 
-/** The overview's composer, typed into and sent from by a pointer no one sees. */
 export default function AskAnythingMotion() {
   return (
     <MotionStage label="the field growing, sending and the reply running">

@@ -16,68 +16,42 @@ import {
   walk,
 } from '../utilities.js';
 
-/**
- * A component to render instead, and for an alternative, when to.
- * @typedef {{ component: string, when?: string }} Suggestion
- */
+/** @typedef {{ component: string, when?: string }} Suggestion */
+
+/** @typedef {boolean | (string | null)[]} AttributeCondition */
 
 /**
- * An attribute's condition: true when it is present, false when it is absent, or a list of static
- * values, compared case-insensitively, where null stands for an absent attribute and a trailing `*`
- * matches a prefix. A condition on absence is not met while the element spreads props, which may
- * supply the attribute.
- * @typedef {boolean | (string | null)[]} AttributeCondition
- */
-
-/**
- * An entry of `data/elements.json`, of a widget role or of an element.
  * @typedef {object} Entry
  * @property {string} id What the rule's `allow` option names the entry by.
  * @property {string} [role] The role a `role` attribute names, on any JSX element.
- * @property {string[]} [owners] For a role, the envUI components that render it themselves, so that
- *   a role on one refines its own, as Popover renders a dialog; the suggested components count too.
+ * @property {string[]} [owners] The envUI components that render the role themselves.
  * @property {string} [element] The element's tag, or `*` for any element but those of `except`.
  * @property {string[]} [except] For `*`, the tags it leaves.
- * @property {Record<string, AttributeCondition>} [attributes] What the element's attributes must
- *   meet for the entry to match.
- * @property {Suggestion[] | null} use The component to render and its alternatives; null lets
- *   the element pass.
+ * @property {Record<string, AttributeCondition>} [attributes] What the element's attributes must meet.
+ * @property {Suggestion[] | null} use The component to render and its alternatives; null lets the element pass.
  * @property {string[]} [import] The bindings to import, by default the namespaces of `use`.
  * @property {string} [from] The entry point they come from, by default `@envsemble/envui`.
  * @property {string} [describe] How the message names what was found, `{tag}` standing for its tag.
  * @property {string} [note] A sentence the message adds.
  */
 
-/**
- * The table: roles, checked first, then elements in order, the first that matches deciding.
- * @type {{ roles: Entry[], elements: Entry[] }}
- */
+/** @type {{ roles: Entry[], elements: Entry[] }} */
 const { roles, elements } = readData('elements.json');
 const rolesByName = new Map(roles.map((entry) => [entry.role, entry]));
 const knownIds = new Set([...roles, ...elements].flatMap((entry) => [entry.id, entry.element]));
 knownIds.delete(undefined);
 knownIds.delete('*');
 
-/**
- * The envUI components that render a role themselves, so that the role on one refines its own:
- * the entry's owners and the components it suggests.
- */
 function ownersOf(entry) {
   return new Set([...(entry.owners ?? []), ...entry.use.map(({ component }) => component)]);
 }
 
-/**
- * The specifiers of envUI's entry points, whose names count as envUI's. Those without components,
- * such as `/dev`, export none of the owners' names.
- */
 const entryPoints = new Set(readData('entryPoints.json').entryPoints);
 
-/** The bindings an entry imports: its own list, or the namespaces of the components it uses. */
 function bindings(entry) {
   return entry.import ?? [...new Set(entry.use.map(({ component }) => component.split('.')[0]))];
 }
 
-/** Whether a static attribute value meets one item of a value list, `prefix*` matching a prefix. */
 function valueMatches(value, item) {
   if (item === null) return false;
   const text = String(value).toLowerCase();
@@ -85,7 +59,6 @@ function valueMatches(value, item) {
   return expected.endsWith('*') ? text.startsWith(expected.slice(0, -1)) : text === expected;
 }
 
-/** Whether an element meets an entry's attribute conditions, as AttributeCondition says. */
 function attributesMatch(element, conditions = {}) {
   const spreads = spreadsProps(element);
   return Object.entries(conditions).every(([name, condition]) => {
@@ -98,7 +71,6 @@ function attributesMatch(element, conditions = {}) {
   });
 }
 
-/** An element hidden from assistive technology and out of the tab order is not a control. */
 function isDecoy(element) {
   const hidden = findAttribute(element, 'aria-hidden');
   const tabIndex = findAttribute(element, 'tabIndex');
@@ -110,14 +82,8 @@ function isDecoy(element) {
   );
 }
 
-/**
- * The entry that a link adapter, the component LinkProvider renders for envUI's destinations,
- * renders itself: it receives native anchor props and draws the anchor, so envUI's Link, which
- * would render the adapter again, cannot replace it.
- */
 const adapterEntry = 'a[href]';
 
-/** Whether a type annotation names envUI's LinkComponentProps, as an adapter's props are typed. */
 function namesLinkComponentProps(annotation, visitorKeys) {
   let found = false;
   walk(annotation, visitorKeys, (node) => {
@@ -132,10 +98,6 @@ function namesLinkComponentProps(annotation, visitorKeys) {
   return found;
 }
 
-/**
- * Whether a function's props are typed as LinkComponentProps: `({ href }: LinkComponentProps)`,
- * `const RouterLink: ComponentType<LinkComponentProps> = …` or `forwardRef<…, LinkComponentProps>(…)`.
- */
 function hasLinkComponentProps(fn, visitorKeys) {
   const [props] = fn.params;
   const annotation = props?.typeAnnotation ?? props?.left?.typeAnnotation;
@@ -153,7 +115,6 @@ function hasLinkComponentProps(fn, visitorKeys) {
   );
 }
 
-/** How the message names what was found, such as `a raw <input type="email">`. */
 function describeElement(entry, element, tag) {
   if (entry.describe) return entry.describe.replace('{tag}', tag);
   if (tag !== 'input') return `a raw <${tag}>`;
@@ -163,10 +124,19 @@ function describeElement(entry, element, tag) {
   return value === undefined ? 'a raw <input type={…}>' : `a raw <input type="${value}">`;
 }
 
+const buttonEntry = 'button';
+
+const passedThrough =
+  /^(?:aria-[\w-]+|data-[\w-]+|on[A-Z]\w*|id|key|ref|name|value|form|formAction|formMethod|formNoValidate|formTarget|formEncType|title|disabled|type|tabIndex|autoFocus)$/;
+
+const isBaseUi = (source) =>
+  typeof source === 'string' && /^@base-ui(?:-components)?\/react(?:\/|$)/.test(source);
+
 /** @type {import('eslint').Rule.RuleModule} */
 export default {
   meta: {
     type: 'suggestion',
+    fixable: 'code',
     docs: {
       description:
         'Disallow raw HTML elements and widget roles that envUI already provides as components',
@@ -196,14 +166,13 @@ export default {
     defaultOptions: [{ allow: [], renderProps: ['render'] }],
     messages: {
       useComponent:
-        "Use envUI's {{use}} instead of {{found}}{{alternatives}}: import { {{imports}} } from '{{source}}'.{{note}} If envUI can't do what you need, propose an addition to envUI instead of a local copy.",
+        "Use envUI's {{use}} instead of {{found}}{{alternatives}}: import { {{imports}} } from '{{source}}'.{{note}}",
     },
   },
   create(context) {
     const [{ allow, renderProps }] = context.options;
     const { sourceCode } = context;
     const { isReexportModule } = pluginSettings(context);
-    /** Whether names from a module are envUI's: an entry point, or a module that re-exports one. */
     const isEnvuiSource = (source) => entryPoints.has(source) || isReexportModule(source);
     const unknown = allow.filter((id) => !knownIds.has(id));
     if (unknown.length > 0)
@@ -217,7 +186,9 @@ export default {
 
     function report(node, entry, found) {
       const [primary, ...alternatives] = entry.use;
+      const fix = entry.id === buttonEntry ? buttonFix(node) : undefined;
       context.report({
+        ...(fix ? { fix } : {}),
         node: node.name,
         messageId: 'useComponent',
         data: {
@@ -233,12 +204,60 @@ export default {
       });
     }
 
-    /** The functions that LinkProvider elements in this file render as their link component. */
+    function buttonFix(node) {
+      const element = node.parent;
+      if (!element.closingElement || spreadsProps(node)) return undefined;
+      if (!node.attributes.every((attribute) => passedThrough.test(jsxName(attribute.name))))
+        return undefined;
+      const type = findAttribute(node, 'type');
+      if (!type || !['button', 'submit', 'reset'].includes(String(staticValue(type))))
+        return undefined;
+      const labelled = element.children.some(
+        (child) => child.type === 'JSXText' && child.value.trim() !== '',
+      );
+      if (!labelled) return undefined;
+      const bound = resolveVariable(sourceCode, node, 'Button');
+      const envuiButton = (definition) =>
+        definition.type === 'ImportBinding' &&
+        definition.node.type === 'ImportSpecifier' &&
+        moduleExportName(definition.node.imported) === 'Button' &&
+        isEnvuiSource(definition.parent.source.value);
+      if (bound?.defs.length && !bound.defs.every(envuiButton)) return undefined;
+      return (fixer) => {
+        const fixes = [
+          fixer.replaceText(node.name, 'Button'),
+          fixer.replaceText(element.closingElement.name, 'Button'),
+        ];
+        if (bound?.defs.length) return fixes;
+        const program = sourceCode.ast;
+        const envuiImport = program.body.find(
+          (statement) =>
+            statement.type === 'ImportDeclaration' &&
+            statement.source.value === '@envsemble/envui' &&
+            /** @type {{ importKind?: string }} */ (statement).importKind !== 'type' &&
+            statement.specifiers.length > 0 &&
+            statement.specifiers.every((specifier) => specifier.type === 'ImportSpecifier'),
+        );
+        if (envuiImport)
+          fixes.push(
+            fixer.insertTextAfter(/** @type {any} */ (envuiImport).specifiers.at(-1), ', Button'),
+          );
+        else {
+          const first = program.body.find(
+            (statement) => !('directive' in statement && statement.directive),
+          );
+          const line = "import { Button } from '@envsemble/envui';\n";
+          fixes.push(
+            first ? fixer.insertTextBefore(first, line) : fixer.insertTextAfterRange([0, 0], line),
+          );
+        }
+        return fixes;
+      };
+    }
+
     const adapters = new Set();
-    /** Raw anchors inside functions, decided at the end, once every LinkProvider is known. */
     const anchors = [];
 
-    /** The expressions a variable is set to where it is declared, and its function declarations. */
     function valuesOf(identifier) {
       const variable = resolveVariable(sourceCode, identifier, identifier.name);
       return (variable?.defs ?? []).flatMap((definition) =>
@@ -250,10 +269,6 @@ export default {
       );
     }
 
-    /**
-     * The expressions a member such as `adapters.link` or `config.adapters['link']` stands for: the
-     * values of that property in the object literals its object stands for.
-     */
     function membersOf(member, seen) {
       const { property } = member;
       const name = member.computed
@@ -276,7 +291,6 @@ export default {
       );
     }
 
-    /** The object literals an expression stands for, through variables and members. */
     function objectsOf(expression, seen) {
       const node = unwrapExpression(expression);
       if (!node || seen.has(node)) return [];
@@ -289,22 +303,17 @@ export default {
       return [];
     }
 
-    /** The functions an expression stands for: itself, a wrapped one, a variable's or a member's. */
     function functionsOf(expression, seen = new Set()) {
       const node = unwrapExpression(expression);
       if (!node || seen.has(node)) return [];
       seen.add(node);
       if (isFunction(node)) return [node];
-      // memo(forwardRef(function RouterLink(…) {…}))
       if (node.type === 'CallExpression')
         return node.arguments.flatMap((argument) => functionsOf(argument, seen));
       if (node.type === 'Identifier')
         return valuesOf(node).flatMap((value) => functionsOf(value, seen));
-      // component={adapters.link}
       if (node.type === 'MemberExpression')
         return membersOf(node, seen).flatMap((value) => functionsOf(value, seen));
-      // component={external ? ExternalLink : RouterLink} and component={custom ?? RouterLink}:
-      // either may be rendered, so each is an adapter.
       if (node.type === 'ConditionalExpression')
         return [node.consequent, node.alternate].flatMap((branch) => functionsOf(branch, seen));
       if (node.type === 'LogicalExpression')
@@ -314,12 +323,6 @@ export default {
 
     const isAdapter = (fn) => adapters.has(fn) || hasLinkComponentProps(fn, sourceCode.visitorKeys);
 
-    /**
-     * Whether a component element renders a role itself, so that a role on it refines its own: an
-     * envUI component of the role's owners, by the name its entry point, or a module listed in
-     * `settings.envui.reexportModules`, exports when it is imported, or by its written name when
-     * nothing in the file declares it, as in `<Menu.Root role="menu">` without its import.
-     */
     function ownsRole(node, entry) {
       const owners = ownersOf(entry);
       const imported = importedComponent(sourceCode, node.name);
@@ -346,10 +349,9 @@ export default {
           typeof role === 'string'
             ? rolesByName.get(role.trim().split(/\s+/)[0].toLowerCase())
             : null;
-        // An envUI component that renders the role itself, such as <Popover role="dialog">, refines
-        // its own; on any other, such as <Surface role="dialog"> or another library's Dialog, the
-        // role hand-rolls the widget.
         if (roleEntry && !isIntrinsic(node.name) && ownsRole(node, roleEntry)) return;
+        if (!isIntrinsic(node.name) && isBaseUi(importedComponent(sourceCode, node.name)?.source))
+          return;
         if (roleEntry) {
           if (isAllowed(roleEntry)) return;
           if (insideRenderProp(node)) return;

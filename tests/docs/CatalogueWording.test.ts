@@ -1,5 +1,3 @@
-// The catalogue's text: option tables read as legends, text with no structure or too long, and
-// headings inside code fences.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
@@ -19,8 +17,6 @@ import { pageFixture, switchBody, switchFrontmatter } from './DocumentationFixtu
 test('an option table names each option in a few words, once, and says what it is for', async () => {
   await pageFixture(async ({ page, read, rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // An option table, whose last column is Use for, shows in the catalogue as a legend of tags:
-    // each names its option in a few plain words, once, and says what it is for.
     const options = (rows) =>
       frontmatter +
       body.replace(
@@ -69,12 +65,10 @@ test('an option table is read for the catalogue as a legend', () => {
     ],
   );
   assert.deepEqual(optionTableProblems(options), []);
-  // Only a table whose last column is Use for is an option table.
   assert.equal(
     optionTable(marked.lexer('| Key | Action |\n| --- | --- |\n| Tab | Moves. |\n')[0]),
     undefined,
   );
-  // The catalogue's Markdown is cut at its option tables, keeping each table's source.
   const source = 'Intro.\n\n| Size | Use for |\n| --- | --- |\n| Small | Lists. |\n\nAfter.\n';
   const pieces = optionPieces(source);
   assert.deepEqual(
@@ -108,7 +102,6 @@ test('Catalogue text with no structure is found: loose after a figure, or a four
       {
         id: 'anatomy',
         title: 'Anatomy',
-        // The sentence after an anatomy legend names what the figure can't show; it belongs to it.
         blocks: [
           markdown('## Anatomy\n\n'),
           figure('anatomy'),
@@ -124,7 +117,6 @@ test('Catalogue text with no structure is found: loose after a figure, or a four
           ),
         ],
       },
-      // The developer part is not the catalogue's.
       { id: 'code', title: 'Compose', blocks: [markdown('## Compose\n\nOne.\n\nTwo.\n')] },
     ],
   });
@@ -147,7 +139,6 @@ test('long paragraphs of catalogue text are found, measured as people read them'
         id: 'rules',
         title: 'Rules',
         blocks: [
-          // A link counts as its words, not its address.
           markdown(
             `## Rules
 
@@ -192,7 +183,6 @@ test("a heading in a fence's code is no heading, whichever marker opens it and w
     subsections(markdown).map((chunk) => chunk.split('\n')[0]),
     ['', '## Rules', '### Last'],
   );
-  // The last subsection holds a fence, so no figure sits beside it.
   assert.equal(lastSubsection(markdown), undefined);
   assert.deepEqual(
     lastSubsection(`## Rules\n\n${fenced}\n\n### Last\n\nText.`)?.[1],

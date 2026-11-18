@@ -8,7 +8,6 @@ export default function CopyValue() {
       <CopyButton value="RPT-2041" variant="outline">
         Copy ID
       </CopyButton>
-      {/* The field takes the room the button leaves. */}
       <Grid
         columns="minmax(0, 1fr) auto"
         align="center"

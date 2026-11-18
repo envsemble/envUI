@@ -1,5 +1,3 @@
-// What a public contract of the library, such as its parts or its exports, was at the merge-base
-// with the integration branch, and the pending changesets that record a change to it.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -8,17 +6,17 @@ import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const changesetDirectory = resolve(repositoryRoot, '.changeset');
 
-/** Whether a changeset's front matter bumps @envsemble/envui at all. */
 export const bumpsLibrary = (changeset: string) =>
   /^---\r?\n[\s\S]*?^\s*['"]?@envsemble\/envui['"]?\s*:\s*(?:major|minor|patch)\s*$[\s\S]*?^---/m.test(
     changeset,
   );
 
-/** Whether a changeset's front matter makes it a major change of @envsemble/envui. */
-export const isMajor = (changeset: string) =>
+const isMajor = (changeset: string) =>
   /^---\r?\n[\s\S]*?^\s*['"]?@envsemble\/envui['"]?\s*:\s*major\s*$[\s\S]*?^---/m.test(changeset);
 
-/** Whether a text names a name whole, so a changeset about env-card-header doesn't name env-card. */
+export const recordsBreakingChange = (changeset: string) =>
+  isMajor(changeset) || (bumpsLibrary(changeset) && /^Breaking changes:\s*$/m.test(changeset));
+
 export const names = (text: string, name: string) =>
   new RegExp(String.raw`(?<![\w-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\w-])`).test(
     text,
@@ -32,10 +30,6 @@ function git(args: string[]) {
   });
 }
 
-/**
- * A file of the repository, parsed as JSON, at the merge-base with the check tiers' base branch;
- * else why it couldn't be read.
- */
 export function baseContract<T>(
   path: string,
   base: string | undefined,
@@ -54,7 +48,6 @@ export function baseContract<T>(
   }
 }
 
-/** The pending changesets' text, one per changeset. */
 export function pendingChangesets() {
   if (!existsSync(changesetDirectory)) return [];
   return readdirSync(changesetDirectory)
@@ -62,7 +55,6 @@ export function pendingChangesets() {
     .map((name) => readFileSync(resolve(changesetDirectory, name), 'utf8'));
 }
 
-/** The `--base <ref>` a check was given, if any. */
 export function baseOption(argv = process.argv) {
   const option = argv.indexOf('--base');
   return option === -1 ? undefined : argv[option + 1];

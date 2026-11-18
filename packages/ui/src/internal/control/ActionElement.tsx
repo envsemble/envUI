@@ -37,8 +37,7 @@ export type ActionElementProps =
       disabled?: boolean;
     });
 
-/** Blocks activation while work runs, including form submission and navigation. */
-const preventActivation = (event: MouseEvent<HTMLElement>) => event.preventDefault();
+const blockActivationWhileWorkRuns = (event: MouseEvent<HTMLElement>) => event.preventDefault();
 
 /**
  * One native action implementation for button links, navigation and interactive cards. `pending`
@@ -69,7 +68,7 @@ export function ActionElement({
         'aria-busy': true,
         'aria-disabled': true,
         'data-pending': '',
-        onClick: preventActivation,
+        onClick: blockActivationWhileWorkRuns,
       }
     : rest;
   const LinkComponent = useLinkComponent();
@@ -81,12 +80,10 @@ export function ActionElement({
       'aria-disabled': disabled || anchorProps['aria-disabled'],
       tabIndex: disabled ? -1 : tabIndex,
     };
-    // A disabled destination has no href, so it stays a native anchor outside the router.
     if (disabled) return <a {...sharedProps} onClick={(event) => event.preventDefault()} />;
     return LinkComponent === 'a' ? (
       <a {...sharedProps} href={href} onClick={onClick} />
     ) : (
-      // The link component comes from LinkProvider and keeps its identity between renders.
       // eslint-disable-next-line react-hooks/static-components
       <LinkComponent {...sharedProps} href={href} onClick={onClick} />
     );

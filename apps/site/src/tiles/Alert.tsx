@@ -5,11 +5,6 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const upgrade = '.env-alert .env-button:not(.env-alert-dismiss)';
 
-/**
- * Takes the alert's action: Upgrade is pressed, and the warning gives way to the result, storage to
- * spare. That holds for about a second, then storage is low again, which rests a while before the
- * loop starts over.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: '.env-alert-message', x: 0.4 },
@@ -24,7 +19,6 @@ const script: PointerStep[] = [
   { wait: 1500 },
 ];
 
-/** A warning alert with its title, message and action. A click on the action resolves it. */
 export default function AlertTile() {
   const [upgraded, setUpgraded] = useState(false);
   usePointer(script, { onCue: () => setUpgraded(false) });

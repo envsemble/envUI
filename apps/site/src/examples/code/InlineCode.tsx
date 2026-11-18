@@ -1,5 +1,4 @@
-import { Text } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/code';
+import { Code, Text } from '@envsemble/envui';
 
 export default function InlineCode() {
   return (

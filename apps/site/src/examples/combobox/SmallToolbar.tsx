@@ -1,4 +1,4 @@
-import { Button, Combobox, Surface, type ComboboxGroup, Row } from '@envsemble/envui';
+import { Button, Combobox, type ComboboxGroup, Row } from '@envsemble/envui';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 
@@ -22,14 +22,7 @@ const documents: ComboboxGroup[] = [
 
 export default function SmallToolbar() {
   return (
-    <Surface
-      background="default"
-      padding={1}
-      radius="full"
-      role="group"
-      aria-label="Document toolbar"
-      render={<Row wrap align="center" gap={4} />}
-    >
+    <Row wrap align="center" gap={4} role="group" aria-label="Document toolbar">
       <Combobox
         size="sm"
         visibleLabel={false}
@@ -40,6 +33,6 @@ export default function SmallToolbar() {
       <Button variant="outline" size="sm">
         Open
       </Button>
-    </Surface>
+    </Row>
   );
 }

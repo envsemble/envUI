@@ -1,4 +1,3 @@
-// Not a client module, so a server component can count a diff as well as a client one.
 import { parseDiffFromFile } from '@pierre/diffs';
 
 /** How many lines a change adds and removes, as a DiffStat shows them. */

@@ -17,8 +17,7 @@ import { IconLeftPanelClose } from '@envsemble/envui/icons/LeftPanelClose';
 import { IconLeftPanelOpen } from '@envsemble/envui/icons/LeftPanelOpen';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
-/** Stands in for the window: a Scaffold fills its container, the window's height by default. */
-const preview: CSSProperties = { blockSize: '22rem' };
+const previewWindow: CSSProperties = { blockSize: '22rem' };
 const storageKey = 'navigation-narrow';
 const projects = ['Launch brief', 'Budget 2026', 'Hiring plan'];
 
@@ -29,7 +28,6 @@ const destinations: Destination[] = [
 ];
 
 export default function NarrowNavigation() {
-  // The choice is remembered between visits.
   const [narrow, setNarrow] = useState(
     () => typeof localStorage !== 'undefined' && localStorage.getItem(storageKey) === 'true',
   );
@@ -38,12 +36,10 @@ export default function NarrowNavigation() {
     setNarrow(!narrow);
   };
   return (
-    // The button doesn't hide or restyle the navigation: it asks the Scaffold for the rail in
-    // place of the drawer through forms, and a compact width keeps the bar.
     <Scaffold
       scroll="body"
       landmarks={false}
-      style={preview}
+      style={previewWindow}
       navigationForms={narrow ? { expanded: 'rail', large: 'rail' } : undefined}
       topBar={
         <TopBar

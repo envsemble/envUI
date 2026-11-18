@@ -29,8 +29,7 @@ import { useControllableState } from '../internal/react/useControllableState.js'
 import '../styles/Base.css';
 import '../styles/Popover.css';
 
-/** Whether keyboard focus reaches a text trigger: it has a tabIndex of 0 or more. */
-function takesFocus(trigger: ReactElement) {
+function reachableByKeyboard(trigger: ReactElement) {
   const tabIndex = (trigger.props as { tabIndex?: number | string }).tabIndex;
   return tabIndex !== undefined && Number(tabIndex) >= 0;
 }
@@ -126,21 +125,17 @@ export function HoverCard({
   });
   const portal = usePortalContainer();
   const openRef = useRef(open);
-  // The card takes the text direction at its trigger.
   const triggerRef = useRef<HTMLAnchorElement>(null);
   openRef.current = open;
-  // A Tooltip as the trigger passes the props on to its control, which is the one to tell.
   const control = isTooltip(trigger.type)
     ? (trigger.props as { children?: unknown }).children
     : trigger;
   const textTrigger = isValidElement(control) && isTextTrigger(control);
-  // Text takes no focus of its own: without a tabIndex, the card's details are out of the
-  // keyboard's reach. Said while developing, once.
   reportInDevelopment(
     () =>
       process.env.NODE_ENV !== 'production' &&
       textTrigger &&
-      !takesFocus(control) &&
+      !reachableByKeyboard(control) &&
       'A HoverCard whose trigger is text needs tabIndex={0} on it, so keyboard focus opens the card too.',
     { level: 'warn' },
   );
@@ -149,8 +144,7 @@ export function HoverCard({
     openRef.current = next;
     changeOpen(next, { reason });
   }
-  // Base UI waits for the hover delay on focus too; keyboard focus opens the card at once.
-  function openOnKeyboardFocus(event: FocusEvent<HTMLElement>) {
+  function openWithoutHoverDelayOnKeyboardFocus(event: FocusEvent<HTMLElement>) {
     if (isFocusVisible(event.currentTarget)) setOpen(true, 'trigger-focus');
   }
   return (
@@ -160,7 +154,6 @@ export function HoverCard({
         setOpen(next, details.reason),
       )}
     >
-      {/* A Tooltip as the trigger, or around the HoverCard, shows no tooltip (see Tooltip). */}
       <HoverCardTriggerContext value={isTooltip(trigger.type)}>
         <BasePreviewCard.Trigger
           ref={triggerRef}
@@ -168,7 +161,7 @@ export function HoverCard({
           className={textTrigger ? hoverDetailClass : undefined}
           delay={delay}
           closeDelay={closeDelay}
-          onFocus={openOnKeyboardFocus}
+          onFocus={openWithoutHoverDelayOnKeyboardFocus}
         />
       </HoverCardTriggerContext>
       <PopupSurface

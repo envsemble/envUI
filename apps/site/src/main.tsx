@@ -1,8 +1,6 @@
 import { startTransition } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { SiteRoot } from './App';
-// After App: its envUI components bring envUI's style sheets, which declare the order of the env
-// cascade layers that the site's style sheets build on.
 import './styles/index.css';
 import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
@@ -12,25 +10,14 @@ import { Started } from './loading/Started';
 import { givePageCode } from './pages/PageCode';
 import { givePageMarkdown } from './pages/PageMarkdownTrees';
 
-// index.html holds the root, which the build pre-renders for each page, naming the page's route
-// (scripts/site/PrerenderSite.ts).
 const container = document.getElementById('root')!;
 const page = findPage(currentRoute().split('?')[0]);
-// The site renders once what the page it opens on needs has loaded, which started as it did, so
-// its first paint has the whole page rather than the frame and then the page; a pre-rendered page
-// hydrates without suspending.
 const opening = preloadFirstPage(page);
-// The page pre-rendered for the address hydrates. While developing, at an old hash address, and at
-// an address the build has no page for, which the host answers with Page not found (404.html),
-// such as an old address that leads to another page, the site renders on the client alone.
-const prerendered = container.dataset.sitePage;
+const prerenderedRoute = container.dataset.sitePage;
 const hydrates =
-  prerendered !== undefined && oldHashRoute() === undefined && page?.path === prerendered;
+  prerenderedRoute !== undefined && oldHashRoute() === undefined && page?.path === prerenderedRoute;
 
 void opening.then(() => {
-  // The head hides a page it can't tell is the address's (PrerenderSite.ts): an old address, or
-  // one with no page of its own, whose page renders here in place of it. It shows before the
-  // site's effects run, which scroll to and focus the section an address names.
   document.documentElement.removeAttribute('data-site-unrendered');
   const site = (
     <Started hydrating={hydrates}>
@@ -38,17 +25,12 @@ void opening.then(() => {
     </Started>
   );
   if (hydrates) {
-    // Its code blocks hydrate highlighted, and its Markdown from its trees, as the server rendered
-    // them.
     givePageCode();
     givePageMarkdown();
-    // As a transition, which yields to the browser as it goes, as the page shows already.
     startTransition(() => {
       hydrateRoot(container, site, {
-        // A page whose first render differs from its pre-rendered HTML renders again on the
-        // client, which the browser tests watch the console for (SitePrerender.spec.ts).
         onRecoverableError(error) {
-          // eslint-disable-next-line no-console -- a mismatch is a bug the browser tests catch here
+          // eslint-disable-next-line no-console
           console.error('The pre-rendered page did not hydrate:', error);
         },
       });
@@ -59,8 +41,6 @@ void opening.then(() => {
   }
 });
 
-// Those modules serve the start alone: a change to them, such as the documentation's while
-// developing, updates the pages that use them in place rather than loading the site again.
 import.meta.hot?.accept(
   ['./routes/SiteRoutes', './routes/useSiteRoute', './pages/PageLoading'],
   () => {},

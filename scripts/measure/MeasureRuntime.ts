@@ -1,33 +1,3 @@
-// Runtime benchmarks in Chromium: how long envUI takes to render big lists, open popups and switch
-// themes, and what a still page keeps doing. The numbers depend on the machine and what else runs
-// on it: a measure to compare before and after a change on one machine, not a pass/fail test.
-//
-//   node scripts/measure/MeasureRuntime.ts [--runs <n>] [--only <scenarios>] [--no-build]
-//
-// It builds, for production with source maps, the benchmarks' fixture page (tests/fixture/perf.html)
-// and the site into .cache/perf, serves both with `vite preview` on ENVUI_FIXTURE_PORT and
-// ENVUI_SITE_PORT (8779 and 8778 by default), and prints JSON. --no-build serves the last build.
-// Each scenario runs once to warm up and then --runs times (7 by default); the median is reported,
-// with the fastest and slowest run. --only takes some of table, list, popups, theme, idle and
-// resize.
-//
-// - table, list: a 1,000-row Table and a 1,000-item List, first render on a fresh page; the table
-//   then changes one row. `commit` is React's render and commit (flushSync), `frame` that and the
-//   frame after it, both from performance.now().
-// - popups: Menu, Select and Popover, from the press (the pointerdown's time) to the frame after
-//   the popup is shown, with the long tasks between and the slowest event timing entry.
-// - theme: light ↔ dark on the catalogue's Button page, its figures paused, switched as another
-//   window would (a storage event): to the frame after, and the style recalculation, layout and
-//   script time CDP's Performance domain counts over the next 600 ms.
-// - idle: the Button page left still for 5 s, its figures paused, off-screen or playing:
-//   requestAnimationFrame calls by caller, and from a trace the frames, timers and layouts, forced
-//   ones (synchronous, from script) by where in the source they were forced.
-// - resize: the site's NavigationDrawer dragged by its handle, there and back, on the catalogue's
-//   Button page, its figures paused, and on the Docs' Button page, whose drawer lists every page:
-//   a mouse that moves 1.5 px every 8 ms for 100 moves, not waiting for the page. The frames
-//   dropped and the longest, the long animation frames, React's commits and the components they
-//   rendered (counted through React's DevTools hook) for each pointermove the page received, and
-//   the script, style and layout time CDP's Performance domain counts, for each frame.
 import { availableParallelism, cpus, platform, release } from 'node:os';
 import { mkdir, readFile } from 'node:fs/promises';
 import { SourceMap } from 'node:module';
@@ -38,7 +8,6 @@ import { build, preview, type PreviewServer } from 'vite';
 import { median } from './Median.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
-/** What the benchmarks' page (tests/fixture/perf.tsx) gives the script, as window.envuiPerf. */
 interface PerfPage {
   mount(): Promise<Record<string, number>>;
   update(index: number): Promise<Record<string, number>>;
@@ -79,25 +48,22 @@ const wants = (name: string) => only.includes(name);
 const needsSite = wants('theme') || wants('idle') || wants('resize');
 const needsFixture = wants('table') || wants('list') || wants('popups');
 
-/** Rounded to a tenth of a millisecond. */
-const tenth = (value: number) => Math.round(value * 10) / 10;
+const roundToTenth = (value: number) => Math.round(value * 10) / 10;
 
-/** The median of the runs, with the fastest and the slowest, for each number they share. */
 function summarize(results: Record<string, number>[]) {
   const summary: Record<string, { median: number; min: number; max: number }> = {};
   for (const key of Object.keys(results[0] ?? {})) {
     const values = results.map((result) => result[key]).sort((a, b) => a - b);
     summary[key] = {
-      median: tenth(median(values)),
-      min: tenth(values[0]),
-      max: tenth(values[values.length - 1]),
+      median: roundToTenth(median(values)),
+      min: roundToTenth(values[0]),
+      max: roundToTenth(values[values.length - 1]),
     };
   }
   return summary;
 }
 
-/** Runs a measurement once to warm up and then `runs` times. */
-async function repeat(measure: () => Promise<Record<string, number>>) {
+async function warmUpThenRepeat(measure: () => Promise<Record<string, number>>) {
   await measure();
   const results: Record<string, number>[] = [];
   for (let run = 0; run < runs; run += 1) results.push(await measure());
@@ -145,18 +111,19 @@ const fixtureUrl = (scenario: string) =>
 const siteUrl = (path: string) => `http://127.0.0.1:${ports.site}/${path}`;
 const catalogueUrl = siteUrl('components/button');
 
+const loadFontBeforeMeasuring = (page: Page) =>
+  page.evaluate(() => document.fonts.load("16px 'envUI Geist'").then(() => undefined));
+
 async function openFixture(browser: Browser, scenario: string) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   await page.goto(fixtureUrl(scenario));
   await page.waitForFunction(() => 'envuiPerf' in window);
-  // The font loads before the measurements, not when their text first asks for it.
-  await page.evaluate(() => document.fonts.load("16px 'envUI Geist'").then(() => undefined));
+  await loadFontBeforeMeasuring(page);
   return page;
 }
 
-/** A big list's first render, on a fresh page each run. */
 async function firstRender(browser: Browser, scenario: 'table' | 'list') {
-  return repeat(async () => {
+  return warmUpThenRepeat(async () => {
     const page = await openFixture(browser, scenario);
     const result = await page.evaluate(() => window.envuiPerf.mount());
     await page.close();
@@ -164,12 +131,11 @@ async function firstRender(browser: Browser, scenario: 'table' | 'list') {
   });
 }
 
-/** One row of the 1,000-row table changing, a different row each run. */
 async function rowUpdate(browser: Browser) {
   const page = await openFixture(browser, 'table');
   await page.evaluate(() => window.envuiPerf.mount());
   let row = 0;
-  const result = await repeat(async () => {
+  const result = await warmUpThenRepeat(async () => {
     row = (row + 137) % 1000;
     return page.evaluate((index) => window.envuiPerf.update(index), row);
   });
@@ -177,7 +143,6 @@ async function rowUpdate(browser: Browser) {
   return result;
 }
 
-/** Each popup opened by a press, then closed with Escape before the next. */
 async function popups(browser: Browser) {
   const page = await openFixture(browser, 'popups');
   const triggers = {
@@ -191,7 +156,7 @@ async function popups(browser: Browser) {
     typeof triggers.menu,
   ][]) {
     const box = (await trigger.boundingBox())!;
-    results[kind] = await repeat(async () => {
+    results[kind] = await warmUpThenRepeat(async () => {
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 100)));
       await page.evaluate((which) => window.envuiPerf.arm(which), kind);
@@ -209,10 +174,6 @@ async function popups(browser: Browser) {
 
 const storageKeys = { theme: 'envui-site-theme', motion: 'envui-site-motion' };
 
-/**
- * A fresh page of the catalogue, with the theme and the figures' playback stored before it loads,
- * and requestAnimationFrame counted by caller while `window.envuiIdle.counting` is on.
- */
 async function openCatalogue(
   browser: Browser,
   theme: string,
@@ -249,7 +210,6 @@ async function openCatalogue(
 const settle = (page: Page, milliseconds: number) =>
   page.evaluate((delay) => new Promise((resolve) => setTimeout(resolve, delay)), milliseconds);
 
-/** CDP's counters of style, layout and script time, in milliseconds, and their counts. */
 async function metrics(page: Page) {
   const session = await page.context().newCDPSession(page);
   await session.send('Performance.enable');
@@ -273,7 +233,6 @@ function difference<T extends Record<string, number>>(after: T, before: T) {
   ) as T;
 }
 
-/** Light ↔ dark on the Button page, as a choice made in another window applies. */
 async function themeSwitch(browser: Browser) {
   const page = await openCatalogue(browser, 'light', 'paused');
   await settle(page, 1500);
@@ -290,7 +249,6 @@ async function themeSwitch(browser: Browser) {
           const done = () =>
             requestAnimationFrame(() => {
               const channel = new MessageChannel();
-              // The colours that ease to the new theme, each restyled every frame until done.
               channel.port1.onmessage = () =>
                 resolve({
                   toPaint: performance.now() - start,
@@ -314,7 +272,6 @@ async function themeSwitch(browser: Browser) {
     await settle(page, 600);
     return { ...switched, ...difference(await read(), before) };
   };
-  // Each run switches there and back; the two directions are reported apart.
   const toDark: Record<string, number>[] = [];
   const toLight: Record<string, number>[] = [];
   await switchOnce();
@@ -323,9 +280,12 @@ async function themeSwitch(browser: Browser) {
     toDark.push(await switchOnce());
     toLight.push(await switchOnce());
   }
-  // One more switch, traced: its largest style recalculation, and how many it took.
-  const events = await traced(browser, page, async () => void (await switchOnce()));
-  const recalcs = named(events, 'UpdateLayoutTree');
+  const tracedSwitchEvents = await traceMainThread(
+    browser,
+    page,
+    async () => void (await switchOnce()),
+  );
+  const recalcs = named(tracedSwitchEvents, 'UpdateLayoutTree');
   const largest = recalcs.reduce<TraceEvent | undefined>(
     (found, event) => ((event.dur ?? 0) > (found?.dur ?? 0) ? event : found),
     undefined,
@@ -336,7 +296,7 @@ async function themeSwitch(browser: Browser) {
     'dark → light': summarize(toLight),
     traced: {
       styleRecalcs: recalcs.length,
-      largestRecalcMs: tenth((largest?.dur ?? 0) / 1000),
+      largestRecalcMs: roundToTenth((largest?.dur ?? 0) / 1000),
       largestRecalcElements: largest?.args?.elementCount ?? 0,
     },
   };
@@ -363,8 +323,7 @@ interface TraceEvent {
   };
 }
 
-/** The page's main thread's trace events while `during` runs. */
-async function traced(browser: Browser, page: Page, during: () => Promise<void>) {
+async function traceMainThread(browser: Browser, page: Page, during: () => Promise<void>) {
   await browser.startTracing(page, {
     categories: [
       'devtools.timeline',
@@ -376,22 +335,20 @@ async function traced(browser: Browser, page: Page, during: () => Promise<void>)
   const trace = JSON.parse((await browser.stopTracing()).toString('utf8')) as {
     traceEvents: TraceEvent[];
   };
-  // The renderer's CrRendererMain.
-  const main = new Set(
+  const rendererMainThreads = new Set(
     trace.traceEvents
       .filter((event) => event.name === 'thread_name' && event.args?.name === 'CrRendererMain')
       .map((event) => `${event.pid}:${event.tid}`),
   );
-  return trace.traceEvents.filter((event) => main.has(`${event.pid}:${event.tid}`));
+  return trace.traceEvents.filter((event) => rendererMainThreads.has(`${event.pid}:${event.tid}`));
 }
 
-/** The events of a name, each once: a begin and its end count as one. */
+const endOfBeginEndPairPhase = 'E';
 const named = (events: TraceEvent[], name: string) =>
-  events.filter((event) => event.name === name && event.ph !== 'E');
+  events.filter((event) => event.name === name && event.ph !== endOfBeginEndPairPhase);
 
-/** Maps a built file's position to the source it came from, through the build's source maps. */
 const sourceMaps = new Map<string, Promise<{ map: SourceMap; directory: string } | null>>();
-async function original(url: string | undefined, line: number, column: number) {
+async function originalSourcePosition(url: string | undefined, line: number, column: number) {
   if (!url) return 'unknown';
   const address = new URL(url);
   const output = address.port === String(ports.site) ? outputs.site : outputs.fixture;
@@ -415,22 +372,24 @@ async function original(url: string | undefined, line: number, column: number) {
   return `${source}:${entry.originalLine + 1}`;
 }
 
-/** Where a stack starts, in the source: its first frames, from envUI or the site where any are. */
-async function where(stack: TraceFrame[] | undefined) {
+const leadingFramesToMap = 8;
+
+async function sourceWhereStackStarts(stack: TraceFrame[] | undefined) {
   if (!stack?.length) return 'unknown';
   const frames = await Promise.all(
     stack
-      .slice(0, 8)
-      .map((frame) => original(frame.url, frame.lineNumber ?? 0, frame.columnNumber ?? 0)),
+      .slice(0, leadingFramesToMap)
+      .map((frame) =>
+        originalSourcePosition(frame.url, frame.lineNumber ?? 0, frame.columnNumber ?? 0),
+      ),
   );
   const own = frames.findIndex((frame) => !frame.includes('node_modules'));
   return frames.slice(0, Math.max(1, own + 1)).join(' < ');
 }
 
-/** "at name (url:line:column)" from Error.stack, mapped to the source. */
-async function caller(line: string) {
+async function sourceOfErrorStackLine(line: string) {
   const match = /\(?(https?:\/\/[^\s)]+):(\d+):(\d+)\)?$/.exec(line);
-  return match ? original(match[1], Number(match[2]), Number(match[3])) : line;
+  return match ? originalSourcePosition(match[1], Number(match[2]), Number(match[3])) : line;
 }
 
 const tally = (entries: string[]) =>
@@ -443,7 +402,6 @@ const tally = (entries: string[]) =>
     ).sort((first, second) => second[1] - first[1]),
   );
 
-/** The Button page left still for 5 s: what runs, and where it forces layout. */
 async function idle(browser: Browser, figures: 'paused' | 'offScreen' | 'playing') {
   const page = await openCatalogue(browser, 'light', figures === 'paused' ? 'paused' : 'playing');
   if (figures !== 'offScreen')
@@ -461,7 +419,7 @@ async function idle(browser: Browser, figures: 'paused' | 'offScreen' | 'playing
   const read = await metrics(page);
   let frames = { total: 0, callers: {} as Record<string, number> };
   let counters = await read();
-  const events = await traced(browser, page, async () => {
+  const events = await traceMainThread(browser, page, async () => {
     const before = await read();
     await page.evaluate(() => {
       (window as unknown as { envuiIdle: { counting: boolean } }).envuiIdle.counting = true;
@@ -486,7 +444,7 @@ async function idle(browser: Browser, figures: 'paused' | 'offScreen' | 'playing
   );
   const requested: string[] = [];
   for (const [line, count] of Object.entries(frames.callers)) {
-    const at = await caller(line);
+    const at = await sourceOfErrorStackLine(line);
     for (let index = 0; index < count; index += 1) requested.push(at);
   }
   return {
@@ -498,19 +456,16 @@ async function idle(browser: Browser, figures: 'paused' | 'offScreen' | 'playing
     layouts: named(events, 'Layout').length,
     styleRecalcs: named(events, 'UpdateLayoutTree').length,
     forcedLayouts: forced.length,
-    forcedBy: tally(await Promise.all(forced.map((event) => where(stackOf(event))))),
-    scriptMs: tenth(counters.script),
-    styleMs: tenth(counters.recalcStyle),
-    layoutMs: tenth(counters.layout),
+    forcedBy: tally(
+      await Promise.all(forced.map((event) => sourceWhereStackStarts(stackOf(event)))),
+    ),
+    scriptMs: roundToTenth(counters.script),
+    styleMs: roundToTenth(counters.recalcStyle),
+    layoutMs: roundToTenth(counters.layout),
   };
 }
 
-/**
- * Counts React's commits, and the components each rendered, while `window.envuiRenders.counting`
- * is on, through the hook React DevTools installs: a component counts where React rendered it (its
- * fiber's PerformedWork flag), not where it kept the subtree it had.
- */
-function countRenders() {
+function countReactRendersThroughDevToolsHook() {
   interface Fiber {
     tag: number;
     flags: number;
@@ -520,8 +475,19 @@ function countRenders() {
   }
   const renders = { counting: false, commits: 0, components: 0 };
   (window as unknown as { envuiRenders: typeof renders }).envuiRenders = renders;
-  // Function, class, forwardRef, memo and simple memo components.
-  const components = new Set([0, 1, 11, 14, 15]);
+  const functionComponent = 0;
+  const classComponent = 1;
+  const forwardRef = 11;
+  const memoComponent = 14;
+  const simpleMemoComponent = 15;
+  const performedWorkFlag = 1;
+  const components = new Set([
+    functionComponent,
+    classComponent,
+    forwardRef,
+    memoComponent,
+    simpleMemoComponent,
+  ]);
   const mounted = (first: Fiber | null) => {
     for (let fiber = first; fiber; fiber = fiber.sibling) {
       if (components.has(fiber.tag)) renders.components += 1;
@@ -536,9 +502,9 @@ function countRenders() {
         mounted(fiber.child);
         continue;
       }
-      if (components.has(fiber.tag) && fiber.flags & 1) renders.components += 1;
-      // Where React bailed out, the fiber keeps the children it had, which didn't render.
-      if (fiber.child !== before.child) updated(fiber);
+      if (components.has(fiber.tag) && fiber.flags & performedWorkFlag) renders.components += 1;
+      const reactBailedOutKeepingChildren = fiber.child === before.child;
+      if (!reactBailedOutKeepingChildren) updated(fiber);
     }
   };
   Object.assign(window, {
@@ -562,7 +528,6 @@ function countRenders() {
   });
 }
 
-/** What the page records through one drag. */
 interface DragRecord {
   frames: number[];
   longFrames: number;
@@ -577,11 +542,10 @@ declare global {
   }
 }
 
-/** The site's drawer dragged by its handle, there and back, as a mouse at 125 Hz does. */
 async function resizeDrawer(browser: Browser, path: string) {
   const page = await openCatalogue(browser, 'light', 'paused', {
     url: siteUrl(path),
-    before: countRenders,
+    before: countReactRendersThroughDevToolsHook,
   });
   await settle(page, 1500);
   const read = await metrics(page);
@@ -590,6 +554,7 @@ async function resizeDrawer(browser: Browser, path: string) {
   const moves = 100;
   const step = 1.5;
   const frameTime = 1000 / 60;
+  const mouseAt125HzInterval = 1000 / 125;
   const mouse = (
     type: 'mouseMoved' | 'mousePressed' | 'mouseReleased',
     x: number,
@@ -640,13 +605,12 @@ async function resizeDrawer(browser: Browser, path: string) {
     const sent: Promise<unknown>[] = [];
     for (let move = 1; move <= moves; move += 1) {
       sent.push(mouse('mouseMoved', x + direction * move * step, y, 1));
-      await new Promise((resolve) => setTimeout(resolve, 8));
+      await new Promise((resolve) => setTimeout(resolve, mouseAt125HzInterval));
     }
     await Promise.all(sent);
-    // The frame that draws the last move.
-    await page.evaluate(
-      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
-    );
+    await page.evaluate(function waitForTheFrameThatDrawsTheLastMove() {
+      return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    });
     const counters = difference(await read(), before);
     const record = await page.evaluate(() => window.envuiDrag.stop());
     await mouse('mouseReleased', x + direction * moves * step, y, 0);
@@ -671,7 +635,7 @@ async function resizeDrawer(browser: Browser, path: string) {
       layoutsPerFrame: counters.layoutCount / frames,
     };
   };
-  const result = await repeat(dragOnce);
+  const result = await warmUpThenRepeat(dragOnce);
   await page.context().close();
   return result;
 }
@@ -712,10 +676,11 @@ try {
       catalogue: await resizeDrawer(browser, 'components/button'),
       docs: await resizeDrawer(browser, 'docs/components/button'),
     };
-  // One line for each measurement's median, fastest and slowest.
+  const medianMinMaxOnSeveralLines =
+    /\{\s+"median": ([\d.]+),\s+"min": ([\d.]+),\s+"max": ([\d.]+)\s+\}/g;
   console.log(
     JSON.stringify(report, null, 2).replace(
-      /\{\s+"median": ([\d.]+),\s+"min": ([\d.]+),\s+"max": ([\d.]+)\s+\}/g,
+      medianMinMaxOnSeveralLines,
       '{ "median": $1, "min": $2, "max": $3 }',
     ),
   );

@@ -1,4 +1,4 @@
-import { CodeBlock } from '@envsemble/envui/code';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 
 const description =
   'Long lines wrap when reading them matters more than keeping the source layout. ' +
@@ -10,8 +10,8 @@ const settings = `{
 
 export default function WrapLongLines() {
   return (
-    <CodeBlock language="json" label="settings.json" wrap copyable>
+    <HighlightedCodeBlock language="json" label="settings.json" wrap copyable>
       {settings}
-    </CodeBlock>
+    </HighlightedCodeBlock>
   );
 }

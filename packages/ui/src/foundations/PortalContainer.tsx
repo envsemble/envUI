@@ -1,6 +1,6 @@
 'use client';
 
-// @client-module It provides the portal container context, which React reads only in client modules.
+// @client-module
 
 import { useMemo, type ReactNode } from 'react';
 import { PortalContainerContext } from '../internal/popup/PortalContainerContext.js';
@@ -23,7 +23,6 @@ export interface PortalContainerProps {
    * give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size
    * container, or else as the window. A ContextMenu opens there too, at the pointer or below the
    * focused element, without hiding the page or locking its scroll; a long press doesn't open it.
-   * Panes' supporting pane, as a sheet there, isn't modal either: the page stays in use.
    * @default false
    */
   contained?: boolean;

@@ -27,25 +27,15 @@ aliases:
   - change size
 useWhen:
   - A short state beside what it describes, such as In review or Blocked
-  - A name or a category on an item, such as a team or a folder
-  - Neutral metadata beside related content, such as a plan
   - A number that belongs to a label, such as unread messages
   - The size of a change beside a file, such as +12 −3 (DiffStat)
 avoidWhen:
-  - text: An action, or a choice people turn on and off, even when it looks like a pill.
+  - text: An action, even when it looks like a pill.
     use: Button
-  - text: Choosing one of a few filters or views.
-    use: SegmentedControl
   - text: A message about a page or section that needs a sentence.
     use: Alert
   - text: How full or complete something is, such as storage used.
     use: Meter
-  - text: A headline number with its label and trend, such as on a dashboard.
-    see: key-figures
-  - text: A count beside a destination in the navigation, which a NavigationDrawer item shows itself.
-    use: NavigationDrawer
-  - text: An identifier or a command in text.
-    use: Code
 components:
   - Badge
   - DiffStat
@@ -61,12 +51,6 @@ examples:
   Tones: variants
   BadgeAnatomy: anatomy
   LongState: example
-  SoftInLists:
-    role: do
-    caption: Soft badges in a list, and solid only for the state that must stand out.
-  SolidEverywhere:
-    role: dont
-    caption: 'Solid badges everywhere: none of them stands out.'
 ---
 
 # Badge
@@ -81,15 +65,7 @@ examples:
 2. **Solid**
 3. **Outline**
 
-| Variant | Use for                                             |
-| ------- | --------------------------------------------------- |
-| Soft    | Most states, in lists, tables and headings.         |
-| Solid   | The one state that must stand out, such as Overdue. |
-| Outline | Names and categories, such as a team or a folder.   |
-
 ### Tones
-
-A badge takes every status tone, which [Colors & themes](../foundations/colors.md) describes.
 
 ```tsx figure=Tones
 
@@ -102,13 +78,6 @@ A badge takes every status tone, which [Colors & themes](../foundations/colors.m
 5. **Warning**
 6. **Danger**
 7. **Done**
-
-### Counts
-
-A count takes the same tones and variants.
-
-- By default it is neutral and soft.
-- A count that needs attention is solid, in the primary tone.
 
 ## Anatomy
 
@@ -124,107 +93,6 @@ A count takes the same tones and variants.
 
 ### Adapting to width
 
-A badge stays on one line and ends with an ellipsis where its container is narrower.
-
 ```tsx figure=LongState widths="20 10" sweep
 
 ```
-
-## Rules
-
-A badge's word carries its meaning, and only the state that must stand out is solid.
-
-```tsx figure=SoftInLists
-
-```
-
-```tsx figure=SolidEverywhere
-
-```
-
-### Words and tones
-
-Give the same state the same word and tone everywhere. Let the word carry the meaning, never the tone alone.
-
-Give a routine state most rows share, such as healthy, the neutral tone in the column's one variant, so the states that need someone stand out.
-
-### Content
-
-Show 99+ beyond two digits. Give the full count in the count's name, for assistive technology.
-
-## Accessibility
-
-### envUI provides
-
-- The label as text, read in place; the icon hidden.
-- A count's `aria-label` read instead of its number.
-- A DiffStat named once, such as 12 added lines and 3 removed lines, or from `formatLabel`.
-
-### You provide
-
-- An `aria-label` on a count whose number doesn't explain itself, such as 12 unread.
-- A status region where a change of count must be announced.
-
-## Compose
-
-### Usage
-
-A Badge's label is its `children`, a state, a name or a category in a word or two, with an optional decorative `icon` before it. It stays on one line and ends with an ellipsis where it is wider than its container.
-
-```tsx source=ProjectStatus
-
-```
-
-#### Variants and tones
-
-`variant` is one of:
-
-- `soft`, the default: it tints the background without an edge. Primary, accent, success, warning and danger take the tone's stronger tint, with a semibold label.
-- `solid`: it fills the background with the tone.
-- `outline`: it draws a border.
-
-`tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`. Done is the slate of completed work: a quiet blue-gray in a fainter tint than neutral, so finished things recede, apart from the success green, the accent purple and the primary blue. A done badge leads with a check mark, which tells it from a neutral one by more than its hue; another `icon` replaces it, and `icon={null}` leaves it out.
-
-```tsx
-<Badge tone="success">Ready</Badge>
-<Badge tone="danger" variant="solid">Overdue</Badge>
-<Badge variant="outline">Design team</Badge>
-```
-
-#### Counts
-
-`count` takes a number, such as `12`, or short text, such as `99+`, in place of a label: a compact round pill in tabular figures. Pass `99+` yourself beyond two digits. Its `aria-label`, such as 12 unread, is read in place of the number. Counts take the same tones and variants; `tone="accent" variant="solid"` draws attention to one.
-
-```tsx
-<Button>
-  Comments <Badge count={4} />
-</Button>
-<Button>
-  Review requests <Badge count={2} tone="primary" variant="solid" />
-</Button>
-```
-
-#### DiffStat
-
-DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in the danger tone, in the locale's digits, and leaves out a side that is 0, so a change that only adds reads +40. It is named once for assistive technology, such as 12 added lines and 3 removed lines, or from its own `formatLabel`.
-
-```tsx
-<DiffStat additions={12} deletions={3} />
-```
-
-#### In navigation
-
-A NavigationDrawer destination's `count` shows the count at its end and adds it to the destination's name, such as Inbox, 12 new.
-
-```tsx
-const destinations: Destination[] = [
-  { label: 'Inbox', icon: <IconInbox />, href: '/inbox', count: 12, current: true },
-  { label: 'Later', icon: <IconSchedule />, href: '/later', count: 1200 },
-];
-
-<NavigationDrawer aria-label="Workspace" destinations={destinations} />;
-```
-
-### Composition
-
-The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.

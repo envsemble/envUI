@@ -4,10 +4,6 @@ import * as fixture from '../fixture/Sheet.fixture.tsx';
 import { box, css, keyboard, mouse, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/**
- * The warnings the file's mounts print: the resizable sheet with a CSS length warns as it mounts,
- * once a page.
- */
 const warnings: string[] = [];
 const warn = console.warn;
 beforeAll(() => {
@@ -33,11 +29,6 @@ const center = (target: Element | Locator) => {
   return { x: x + width / 2, y: y + height / 2 };
 };
 
-/**
- * Waits for an opened sheet's entrance to end. Base UI marks the first frame with
- * data-starting-style, and only once it removes that do the transitions start: a busy engine can
- * read no animations before then, and the sheet would still be sliding in.
- */
 async function slidIn(sheet: Locator) {
   await isShown(sheet);
   const element = sheet.element();
@@ -46,7 +37,6 @@ async function slidIn(sheet: Locator) {
   await Promise.all(element.getAnimations().map((animation) => animation.finished));
 }
 
-/** Opens a sheet from its trigger and waits for it to slide in. */
 async function open(trigger: string, name: string) {
   await page.getByRole('button', { name: trigger, exact: true }).click();
   const sheet = dialog(name);
@@ -59,7 +49,6 @@ async function close(sheet: Locator) {
   await isHidden(sheet);
 }
 
-/** A tap of a finger on an element. */
 async function tap(target: Element | Locator) {
   const { x, y } = center(target);
   await commands.touch('touchStart', x, y);
@@ -69,7 +58,7 @@ async function tap(target: Element | Locator) {
 describe('Sheet', () => {
   test('opens at its edge in either direction, sliding from that edge, at the bottom as tall as its content, and across a compact window', async () => {
     const width = innerWidth;
-    const offset = (sheet: Locator, axis = 'x') => css(sheet, `--env-sheet-offset-${axis}`);
+    const offset = (sheet: Locator, axis = 'x') => css(sheet, `--_sheet-offset-${axis}`);
 
     const end = await open('Open filters', 'Filters');
     const endBox = box(end);
@@ -78,7 +67,6 @@ describe('Sheet', () => {
     expect(offset(end)).toBe('2rem');
     await close(end);
 
-    // Named by aria-label, without a title; its width a CSS length.
     const start = await open('Open navigation', 'Navigation');
     const startBox = box(start);
     expect(startBox.x).toBeCloseTo(0, 0);
@@ -87,15 +75,12 @@ describe('Sheet', () => {
     expect(start.getByRole('heading').elements()).toHaveLength(0);
     await close(start);
 
-    // In right-to-left text the end is the left edge, and the sheet slides in from it.
     const rtl = await open('Open details rtl', 'Details');
     expect(rtl.element().closest('[dir]')!.getAttribute('dir')).toBe('rtl');
     expect(box(rtl).x).toBeCloseTo(0, 0);
     expect(offset(rtl)).toBe('-2rem');
     await close(rtl);
 
-    // A bottom sheet: at most 40 rem wide, centered, flush with the bottom edge and shorter than
-    // the window.
     await page.viewport(900, 700);
     const bottom = await open('Open choices', 'Choices');
     const bottomBox = box(bottom);
@@ -108,7 +93,6 @@ describe('Sheet', () => {
     expect(offset(bottom, 'y')).toBe('2rem');
     await close(bottom);
 
-    // A md side sheet takes the whole width of a compact window.
     await page.viewport(400, 700);
     const compact = await open('Open filters', 'Filters');
     expect(box(compact).width).toBeCloseTo(400, 0);
@@ -124,8 +108,6 @@ describe('Sheet', () => {
       ] as const) {
         const sheet = await open(trigger, name);
         const rest = box(sheet);
-        // Press on the heading's text, away from the controls, and drag well past the distance
-        // that would close it by touch, toward the edge.
         const heading = box(sheet.getByRole('heading', { name }));
         const start = { x: heading.x + 4, y: heading.y + heading.height / 2 };
         await mouse.move(start.x, start.y);
@@ -166,11 +148,9 @@ describe('Sheet', () => {
     }
   });
 
-  // Touch input goes through Chromium's DevTools protocol, so this runs in Chromium alone.
   test('opened by touch, it focuses the sheet, not a field inside; by keyboard, the field', async () => {
     await commands.emulateTouch(true);
     try {
-      // Its first element that takes Tab is a field; a field focused by touch opens the keyboard.
       const trigger = page.getByRole('button', { name: 'Open search' });
       await tap(trigger);
       const sheet = dialog('Search');
@@ -190,13 +170,11 @@ describe('Sheet', () => {
     const controlled = dialog('Controlled');
     await isShown(controlled);
     expect(box(controlled).width).toBeCloseTo(44 * 16, 0);
-    // closeButton={false} leaves out the close button; Escape still closes it.
     expect(controlled.getByRole('button', { name: 'Close' }).elements()).toHaveLength(0);
     await close(controlled);
     expect(page.getByTestId('sheet-reason').element().textContent).toBe('escape-key');
     await isFocused(page.getByTestId('sheet-main'));
 
-    // The navigation's fill, the default surface, which a Drawer has at the window's edge.
     const probe = document.createElement('div');
     probe.style.background = 'var(--env-color-bg-default)';
     document.querySelector('.env-theme')!.append(probe);
@@ -204,7 +182,6 @@ describe('Sheet', () => {
     probe.remove();
     const filters = await open('Open filters', 'Filters');
     expect(css(filters, 'background-color')).toBe(navigation);
-    // No edge of its own.
     expect(css(filters, 'border-inline-start-color')).toBe('rgba(0, 0, 0, 0)');
     expect(css(filters, 'box-shadow')).toBe('none');
     await close(filters);
@@ -215,7 +192,6 @@ describe('Sheet', () => {
     );
     await close(sheet);
 
-    // At high contrast its edge returns.
     await commands.emulateMedia({ contrast: 'more' });
     mount(fixture);
     const contrasted = await open('Open filters', 'Filters');
@@ -223,7 +199,6 @@ describe('Sheet', () => {
   });
 
   test('a sheet too short for its content scrolls its body and keeps its heading and actions in view; one with room keeps its actions at its foot', async () => {
-    // However little its body holds, a side sheet keeps its actions at its foot.
     const filters = await open('Open filters', 'Filters');
     const apply = box(filters.getByRole('button', { name: 'Apply' }));
     const filtersBox = box(filters);
@@ -243,7 +218,6 @@ describe('Sheet', () => {
         action: box(sheet.getByRole('button', { name: 'Show 5 projects' })),
       });
       const before = parts();
-      // The sheet keeps to the window, with its actions inside it.
       expect(before.sheet.y + before.sheet.height).toBeLessThanOrEqual(400.5);
       expect(before.action.y + before.action.height).toBeLessThanOrEqual(
         before.sheet.y + before.sheet.height,
@@ -251,7 +225,6 @@ describe('Sheet', () => {
       expect(body.scrollHeight > body.clientHeight).toBe(true);
       const element = sheet.element();
       expect(element.scrollHeight - element.clientHeight).toBe(0);
-      // Scrolled to its end, the body moves under them; the heading and the actions stay.
       body.scrollTo({ top: body.scrollHeight });
       expect(body.scrollTop).toBeGreaterThan(0);
       const after = parts();
@@ -281,24 +254,21 @@ describe('Sheet resizable', () => {
     expect(valueText()).toBe('24 rem');
     const width = () => box(sheet).width;
     expect(width()).toBeCloseTo(24 * 16, 0);
-    // The handle runs down the sheet's start edge, inside its edge, toward the page.
     const sheetBox = box(sheet);
     const handleBox = box(handle);
     expect(handleBox.x).toBeCloseTo(sheetBox.x + 1, 0);
     expect(handleBox.height).toBeGreaterThanOrEqual(sheetBox.height - 1);
-    // The same handle as between Panes, as wide as their gap: a grip of three dots, never a line,
-    // which would stick to the middle of the sheet should the sheet itself scroll.
     expect(handle.element().hasAttribute('data-grip')).toBe(true);
     expect(css(handle, 'background-image', '::after').match(/radial-gradient/g)).toHaveLength(3);
     expect(css(handle, 'position', '::after')).toBe('sticky');
     expect(parseFloat(css(handle, 'height', '::after'))).toBeLessThan(20);
     expect(handleBox.width).toBeCloseTo(16, 0);
 
-    // At the end edge, it grows as its start edge moves toward the start. Keyboard focus rings it.
     (handle.element() as HTMLElement).focus();
     await keyboard.press('ArrowLeft');
     await expect.poll(valueText).toBe('25 rem');
-    await expect.poll(() => css(handle, 'outline-style')).toBe('solid');
+    await expect.poll(() => css(handle, 'width', '::before')).toBe('2px');
+    expect(parseFloat(css(handle, 'left', '::before'))).toBeGreaterThanOrEqual(0);
     expect(width()).toBeCloseTo(25 * 16, 0);
     await keyboard.press('Home');
     await expect.poll(valueText).toBe('16 rem');
@@ -308,7 +278,6 @@ describe('Sheet resizable', () => {
     await mouse.down();
     await mouse.move(grip.x - 64, grip.y, { steps: 4 });
     await expect.poll(valueText).toBe('20 rem');
-    // Toward the sheet's own edge, the way a swipe closes it, the drag stops at the least width.
     await mouse.move(grip.x + 400, grip.y, { steps: 6 });
     await mouse.up();
     await expect.poll(valueText).toBe('16 rem');
@@ -326,7 +295,6 @@ describe('Sheet resizable', () => {
       const sheet = await open('Open kept width', 'Kept width');
       const handle = sheet.getByRole('separator');
       const committed = () => page.getByTestId('sheet-committed').element().textContent;
-      // A start sheet's handle is on its end edge; it starts at the width the application keeps.
       const sheetBox = box(sheet);
       expect(sheetBox.x).toBeCloseTo(0, 0);
       expect(sheetBox.width).toBeCloseTo(30 * 16, 0);
@@ -335,14 +303,12 @@ describe('Sheet resizable', () => {
       (handle.element() as HTMLElement).focus();
       await keyboard.press('ArrowRight');
       await expect.poll(committed).toBe('31');
-      // End goes no further than the window: 640 pixels are 40 rem.
       await keyboard.press('End');
       await expect.poll(committed).toBe('40');
       expect(box(sheet).width).toBeCloseTo(640, 0);
       await keyboard.press('Shift+ArrowLeft');
       await expect.poll(() => page.getByTestId('sheet-width').element().textContent).toBe('35');
 
-      // Its body scrolled to its end, the handle still runs along the whole edge.
       const body = sheet.element().querySelector('.env-sheet-body')!;
       body.scrollTo({ top: body.scrollHeight });
       const scrolled = box(sheet);

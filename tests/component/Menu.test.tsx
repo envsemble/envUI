@@ -14,7 +14,6 @@ import {
 } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** Computed colors of theme tokens, read beside an element so they resolve in its theme. */
 function tokenColors(locator: Locator, tokens: string[]) {
   const probe = document.createElement('div');
   locator.element().parentElement!.append(probe);
@@ -26,11 +25,9 @@ function tokenColors(locator: Locator, tokens: string[]) {
   return colors;
 }
 
-/** Waits until a popup is open and has finished growing in, so its boxes have their final size. */
 async function settled(locator: Locator) {
   await expect.poll(() => shown(locator)).toBe(true);
   await expect.element(locator).not.toHaveAttribute('data-starting-style');
-  // The transition starts in the frame after the starting style is removed.
   await nextFrames();
   await Promise.allSettled(
     locator
@@ -46,25 +43,18 @@ const isGone = (locator: Locator) => expect.poll(() => locator.elements().length
 const isFocused = (locator: Locator) => expect.element(locator).toHaveFocus();
 const hasText = (locator: Locator, text: string) =>
   expect.poll(() => locator.query()?.textContent).toBe(text);
-/** The theme or scale the nearest ancestor of an element gives it, as `data-env-<name>`. */
 const ancestorAttribute = (locator: Locator, name: string) =>
   locator.element().parentElement!.closest(`[data-env-${name}]`)!.getAttribute(`data-env-${name}`);
 
-/**
- * Waits until a menu holds focus, which it takes in the frame after it opens: until then a key goes
- * to the element it opened from.
- */
 const holdsFocus = (menu: Locator) =>
   expect.poll(() => menu.query()?.contains(document.activeElement)).toBe(true);
 
-/** Moves focus to a menu item once the menu holds focus, which would otherwise race with the move. */
 async function focusItem(menu: Locator, item: Locator) {
   await holdsFocus(menu);
   (item.element() as HTMLElement).focus();
   await isFocused(item);
 }
 
-/** The menu popup's own surface: fill, border and corners. */
 function popupSurface(menu: Locator) {
   const style = getComputedStyle(menu.element());
   return {
@@ -86,19 +76,16 @@ describe('Menus', () => {
     await section('light').getByRole('button', { name: 'View options' }).click();
     const menu = page.getByRole('menu', { name: 'View options' });
     await settled(menu);
-    // Frosted: the popup color, white in light as the raised surfaces are, at 88 % over a blur, no
-    // visible edge, and a soft shadow that parts it from a white card or table beneath.
     const [popup] = tokenColors(menu, ['--env-color-bg-popup']);
     expect(popup).toBe('rgb(255, 255, 255)');
     const frosted = popupSurface(menu);
     expect(frosted.background).toBe('color(srgb 1 1 1 / 0.88)');
-    expect(frosted.borderColor).toBe('rgba(0, 0, 0, 0)');
+    expect(frosted.borderColor).toBe('oklch(0.240533 0.00566049 none / 0.22)');
     expect(frosted.shadow).not.toBe('none');
     expect(frosted.filter).toBe('blur(22px) saturate(1.4)');
     expect(frosted.radius).toBeCloseTo(20, 0);
     expect(frosted.padding).toBeCloseTo(6, 0);
     expect(box(menu.getByRole('menuitemradio', { name: 'Name' })).height).toBeCloseTo(40, 0);
-    // A group's label sits 10 px in, a little ahead of the rows' 12 px, whatever leads them.
     const label = menu.element().querySelector('.env-menu-group-label')!;
     expect(Number.parseFloat(css(label, 'padding-left'))).toBeCloseTo(10, 0);
     await keyboard.press('Escape');
@@ -134,16 +121,11 @@ describe('Menus', () => {
         await section('light').getByRole('button', { name: 'View options' }).click();
         const menu = page.getByRole('menu', { name: 'View options' });
         await settled(menu);
-        // The edge is its elevation's, and at high contrast a modal's, the strongest.
         const [popup, edge] = tokenColors(menu, [
           '--env-color-bg-popup',
           why === 'high contrast' ? '--env-elevation-3-border' : '--env-elevation-2-border',
         ]);
         const solid = popupSurface(menu);
-        // Opaque: the popup color itself, white in light as the raised surfaces are; high contrast
-        // keeps its own steps, the popup a gray between its page and its raised surfaces. With no
-        // shadow, the edge alone parts it from a surface of its color beneath, so the edge is an
-        // opaque color apart from the fill.
         const [expected, srgb] =
           why === 'high contrast'
             ? ['rgb(245, 245, 247)', 'color(srgb 0.960784 0.960784 0.968627)']
@@ -181,7 +163,6 @@ describe('Submenus', () => {
     await isShown(submenu);
     await expect.element(recent).toHaveAttribute('data-popup-open', '');
     await settled(submenu);
-    // It opens at the inline end, just clear of the menu, with its first row beside the trigger row.
     const [menuBox, submenuBox, rowBox, firstBox] = [
       box(menu),
       box(submenu),
@@ -192,11 +173,9 @@ describe('Submenus', () => {
     expect(submenuBox.x).toBeLessThanOrEqual(menuBox.x + menuBox.width + 4);
     expect(Math.abs(firstBox.y - rowBox.y)).toBeLessThanOrEqual(1.5);
     expect(firstBox.height).toBeCloseTo(40, 0);
-    // The submenu row stays highlighted while its submenu is open.
     const [popup] = tokenColors(menu, ['--env-color-bg-popup']);
     expect(css(recent, 'background-color')).not.toBe(popup);
 
-    // Several levels nest; choosing a deep item runs it and closes every menu.
     await submenu.getByRole('menuitem', { name: 'More documents' }).hover();
     const nested = page.getByRole('menu', { name: 'More documents' });
     await settled(nested);
@@ -208,7 +187,6 @@ describe('Submenus', () => {
     await isHidden(submenu);
     await isHidden(nested);
     await hasText(page.getByTestId('menu-log-light'), 'Open Budget');
-    // onOpenChange reports the submenu opening, for example to load its items.
     await hasText(page.getByTestId('submenu-state-light'), 'system 1');
     expect(errors).toEqual([]);
   });
@@ -223,7 +201,6 @@ describe('Submenus', () => {
     await isShown(menu);
     const recent = menu.getByRole('menuitem', { name: 'Open recent' });
     await focusItem(menu, recent);
-    // ArrowRight opens the submenu with its first row highlighted; ArrowLeft returns to the row.
     await keyboard.press('ArrowRight');
     const submenu = page.getByRole('menu', { name: 'Open recent' });
     await isShown(submenu);
@@ -234,20 +211,17 @@ describe('Submenus', () => {
     await isHidden(submenu);
     await isFocused(recent);
     await isShown(menu);
-    // Enter opens it too; Escape closes only the submenu.
     await keyboard.press('Enter');
     await isFocused(first);
     await keyboard.press('Escape');
     await isHidden(submenu);
     await isShown(menu);
     await isFocused(recent);
-    // A disabled submenu row does not open.
     const unavailable = menu.getByRole('menuitem', { name: 'Unavailable documents' });
     await expect.element(unavailable).toHaveAttribute('aria-disabled', 'true');
     await focusItem(menu, unavailable);
     await keyboard.press('ArrowRight');
     await isGone(page.getByRole('menu', { name: 'Unavailable documents' }));
-    // Radio items in a submenu keep their choice.
     await focusItem(menu, menu.getByRole('menuitem', { name: 'Appearance' }));
     await keyboard.press('ArrowRight');
     const choices = page.getByRole('menu', { name: 'Appearance' });
@@ -269,7 +243,6 @@ describe('Submenus', () => {
     { tags: ['engines'] },
     async () => {
       mount(menus);
-      // The light section's controls move to the inline end of the window.
       addStyle(
         '.fixture-main { max-width: none; } [data-testid="menus-light"] { justify-items: end; }',
       );
@@ -289,7 +262,6 @@ describe('Submenus', () => {
 
   test('submenus follow the scale and theme of their menu', async () => {
     mount(menus);
-    // A dark menu opens a dark submenu.
     await section('dark').getByRole('button', { name: 'View options' }).click();
     const menu = page.getByRole('menu', { name: 'View options' });
     await isShown(menu);
@@ -303,7 +275,6 @@ describe('Submenus', () => {
     await isHidden(menu);
     await hasText(page.getByTestId('menu-log-dark'), 'Split right');
 
-    // A context menu in a compact region opens compact submenus.
     await section('light').getByRole('button', { name: 'Open at the button' }).click();
     const actions = page.getByRole('menu', { name: 'Programmatic actions' });
     await isShown(actions);
@@ -332,7 +303,6 @@ describe('ContextMenu', () => {
       const menu = page.getByRole('menu', { name: 'Document actions' });
       await isShown(menu);
       expect(ancestorAttribute(menu, 'theme')).toBe(theme);
-      // The menu opens at the pointer; near the viewport edge it shifts to stay visible.
       const menuBox = box(menu);
       const pointerY = rowBox.y + rowBox.height / 2;
       expect(pointerY).toBeGreaterThanOrEqual(menuBox.y - 16);
@@ -365,7 +335,6 @@ describe('ContextMenu', () => {
       mount(menus);
       const area = page.getByTestId('context-area-light');
       const row = area.getByRole('button', { name: 'Gamma' });
-      // The open menu is modal, so the row is measured first.
       row.element().scrollIntoView({ block: 'nearest' });
       const rowBox = box(row);
       (row.element() as HTMLElement).focus();
@@ -402,7 +371,6 @@ describe('ContextMenu', () => {
       const area = page.getByTestId('context-area-light');
       const field = area.getByRole('textbox', { name: 'Note light' });
       const text = area.getByText('Plain text');
-      // Records, after every listener, whether each contextmenu or ContextMenu-key event was cancelled.
       const cancelled: string[] = [];
       const record = (event: Event) => {
         if (event.type === 'keydown' && (event as KeyboardEvent).key !== 'F10') return;
@@ -411,7 +379,6 @@ describe('ContextMenu', () => {
       for (const type of ['contextmenu', 'keydown'])
         window.addEventListener(type, record, { capture: true });
       try {
-        // The field's content is false, as from editable && <Menu.Item>; the text's is ''.
         await field.click({ button: 'right' });
         await text.click({ button: 'right' });
         (field.element() as HTMLElement).focus();
@@ -419,8 +386,6 @@ describe('ContextMenu', () => {
         await expect
           .poll(() => cancelled.slice(0, 3))
           .toEqual(['contextmenu false', 'contextmenu false', 'keydown false']);
-        // Two frames on, past the frame a menu would mount in, none has, and the contextmenu event
-        // some browsers send after Shift+F10 was not cancelled either.
         await nextFrames();
         expect(cancelled.filter((entry) => entry.endsWith('true'))).toEqual([]);
         expect(page.getByRole('menu').elements()).toHaveLength(0);
@@ -451,8 +416,6 @@ test("a menu takes its trigger's name, and keeps its own choices from their defa
   mount(menus);
   await section('light').getByRole('button', { name: 'Density' }).click();
   const menu = page.getByRole('menu', { name: 'Density' });
-  // Open in full before its row is pressed, as a person sees it: a press in the moment the menu
-  // opens may not choose.
   await settled(menu);
   await expect
     .element(menu.getByRole('menuitemradio', { name: 'Cozy' }))
@@ -463,8 +426,6 @@ test("a menu takes its trigger's name, and keeps its own choices from their defa
   await expect
     .element(page.getByTestId('density-separator-light'))
     .toHaveClass(/env-menu-separator/);
-  // One column of check marks and one of labels, though one row holds an icon too and the others
-  // don't.
   const starts = (selector: string) =>
     [...menu.element().querySelectorAll(selector)].map((element) => box(element).x);
   const checks = starts('.env-menu-item-indicator-slot');
@@ -492,8 +453,6 @@ test('menu groups, radio and checkbox items keep their choice', async () => {
   const name = menu.getByRole('menuitemradio', { name: 'Name' });
   const date = menu.getByRole('menuitemradio', { name: 'Date' });
   await expect.element(name).toHaveAttribute('aria-checked', 'true');
-  // The chosen radio row takes the selection's fill and text with its check mark; the other keeps
-  // none.
   const [selected, onSelected] = tokenColors(menu, [
     '--env-color-bg-selected',
     '--env-color-fg-on-selected',
@@ -515,7 +474,6 @@ test('menu groups, radio and checkbox items keep their choice', async () => {
     .toHaveAttribute('aria-checked', 'true');
   const hidden = menu.getByRole('menuitemcheckbox', { name: 'Show hidden files' });
   await hidden.click();
-  // Checkbox items keep the menu open, so several options can change.
   await isShown(menu);
   await expect.element(hidden).toHaveAttribute('aria-checked', 'true');
   await hasText(state, 'date hidden shown');
@@ -523,10 +481,7 @@ test('menu groups, radio and checkbox items keep their choice', async () => {
   await expect.element(palette).toHaveAttribute('aria-keyshortcuts', 'Control+Shift+P');
   const keys = (item: Locator, selector = 'kbd.env-kbd') =>
     [...item.element().querySelectorAll(selector)].map((key) => key.textContent);
-  // The hint shows as keys.
   expect(keys(palette, '.env-menu-item-shortcut kbd.env-kbd')).toEqual(['Ctrl', 'Shift', 'P']);
-  // Muted text in one unit, no chip per key: the keys carry no fill and the + between them shows;
-  // the chords of a sequence stand apart by space.
   const spacing = (itemName: string) => {
     const shortcut = menu
       .getByRole('menuitem', { name: itemName })
@@ -549,11 +504,9 @@ test('menu groups, radio and checkbox items keep their choice', async () => {
     shown: true,
   });
   expect(spacing('Keyboard shortcuts').gaps).toEqual([7, 10, 7]);
-  // The plus key keeps its name, and a sequence shows its keys without claiming a single shortcut.
   const zoom = menu.getByRole('menuitem', { name: 'Zoom in' });
   await expect.element(zoom).toHaveAttribute('aria-keyshortcuts', 'Control+Plus');
   expect(keys(zoom)).toEqual(['Ctrl', '+']);
-  // An arrow shows as its glyph and is announced by its key name.
   const back = menu.getByRole('menuitem', { name: 'Back' });
   await expect.element(back).toHaveAttribute('aria-keyshortcuts', 'Alt+ArrowLeft');
   expect(keys(back)).toEqual(['Alt', '←']);
@@ -576,8 +529,6 @@ test('Menu supports keyboard navigation, actions and routed destinations', async
   const menu = page.getByRole('menu', { name: 'Account', exact: true });
   await isShown(menu);
   expect(menu.getByRole('menuitem').elements()).toHaveLength(2);
-  // The header, the account menu pattern's avatar centered above the name, is not an item, and
-  // the menu keeps its own name.
   await settled(menu);
   const [avatar, name] = [
     box(menu.getByTestId('account-avatar')),
@@ -585,7 +536,6 @@ test('Menu supports keyboard navigation, actions and routed destinations', async
   ];
   expect(avatar.y + avatar.height).toBeLessThanOrEqual(name.y);
   expect(Math.abs(avatar.x + avatar.width / 2 - (name.x + name.width / 2))).toBeLessThan(1);
-  // Opening from the keyboard highlights the first item.
   await isFocused(menu.getByRole('menuitem', { name: 'Account settings' }));
   await keyboard.press('ArrowDown');
   await isFocused(menu.getByRole('menuitem', { name: 'Sign out' }));
@@ -599,13 +549,11 @@ test('Menu supports keyboard navigation, actions and routed destinations', async
   await expect.element(link).toHaveAttribute('data-router-link', '');
   await link.click();
   await expect.poll(() => document.body.dataset.navigatedTo).toBe('/account');
-  // Its onClick runs too, such as to record the choice.
   await hasText(page.getByTestId('menu-action'), 'Followed account settings');
   expect(errors).toEqual([]);
 });
 
 describe('Focus as a menu closes', { tags: ['engines'] }, () => {
-  /** Counts the focus events an element receives from now on. */
   const countFocus = (element: Locator) => {
     const node = element.element() as HTMLElement;
     node.dataset.focusCount = '0';
@@ -625,20 +573,17 @@ describe('Focus as a menu closes', { tags: ['engines'] }, () => {
 
   beforeEach(() => {
     mount(menus);
-    // The exit lasts long enough to act while the closing menu still fades out.
     addStyle('.env-popup[data-ending-style] { transition-duration: 1.5s; }');
   });
 
   test('a press outside leaves focus to the press, never taking it to the trigger first', async () => {
     const { button, menu } = await openCompact();
     countFocus(button);
-    // Away from the menu and its trigger: the press lands on the menu's backdrop.
     const at = box(menu);
     await mouse.click(at.x + at.width + 200, at.y + at.height / 2);
     await expect.element(menu).toHaveAttribute('data-ending-style');
     await expect.element(button).not.toHaveFocus();
     await expect.element(button).toHaveAttribute('data-focus-count', '0');
-    // Base UI decides once the menu has gone, and moves focus once at most.
     await isGone(menu);
     await expect
       .element(button)
@@ -650,7 +595,6 @@ describe('Focus as a menu closes', { tags: ['engines'] }, () => {
     countFocus(button);
     await keyboard.press('Tab');
     await expect.element(menu).toHaveAttribute('data-ending-style');
-    // Past the trigger, to the control after it, without passing through the trigger.
     const next = section('light').getByRole('button', { name: 'Density' });
     await isFocused(next);
     await isGone(menu);
@@ -679,7 +623,6 @@ describe('Focus as a menu closes', { tags: ['engines'] }, () => {
     await keyboard.press('ArrowUp');
     const save = menu.getByRole('menuitem', { name: 'Save' });
     await isFocused(save);
-    // Gone, the submenu leaves focus where it moved rather than taking it back to its row.
     await isGone(recent);
     await isFocused(save);
   });

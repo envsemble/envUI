@@ -6,7 +6,6 @@ function SaveButton() {
   const [saving, setSaving] = useState(false);
   const save = () => {
     setSaving(true);
-    // Saving takes a moment; a timer stands in for it here.
     window.setTimeout(() => {
       setSaving(false);
       toast.show({ tone: 'success', message: 'Changes saved.' });
@@ -20,7 +19,6 @@ function SaveButton() {
 }
 
 export default function SaveChanges() {
-  // An application puts one ToastProvider near its root.
   return (
     <ToastProvider>
       <SaveButton />

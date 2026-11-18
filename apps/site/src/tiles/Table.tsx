@@ -6,7 +6,6 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 import type { TileWindow } from './Tiles';
 
-/** Two projects, so the table shows whole, its frame in view, in a gallery's low tile. */
 const projects = [
   { name: 'Website', tasks: 12 },
   { name: 'Billing', tasks: 4 },
@@ -15,10 +14,6 @@ const projects = [
 const row = (index: number) => `.env-table-body .env-table-row:nth-child(${index})`;
 const sort = '.env-table-sort-button';
 
-/*
- * Moves down the rows and chooses the first. Sorts its column the other way, which moves the chosen
- * row below the other, and back, then clears the row again.
- */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: row(1), x: 0.3 },
@@ -43,10 +38,8 @@ const script: PointerStep[] = [
   { wait: 300 },
 ];
 
-/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 16, height: 12 };
 
-/** A table of projects and their open tasks, sortable by the tasks, whose rows can be chosen. */
 export default function TableTile() {
   const narrow = useMedia(narrowGallery);
   const [direction, setDirection] = useState<Table.SortDirection>('ascending');

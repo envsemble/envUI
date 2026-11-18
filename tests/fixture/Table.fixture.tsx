@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Avatar,
   Badge,
   Button,
   Checkbox,
@@ -49,6 +50,8 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
     layout: 'stack' as 'stack' | 'scroll',
   });
   const [prioritySort, setPrioritySort] = useState<Table.SortDirection>('none');
+  const [opened, setOpened] = useState<string[]>([]);
+  const [pressed, setPressed] = useState('');
   const rows = sort
     ? [...reports].sort((first, second) =>
         sort.direction === 'ascending'
@@ -317,7 +320,6 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
             </Table.Row>
           </Table.Body>
         </Table.Root>
-        {/* A number of pixels works as well. */}
         <Table.Root aria-label={`Number threshold ${theme}`} narrowLayout="stack" stackBelow={37.5}>
           <Table.Head>
             <Table.Row>
@@ -333,6 +335,125 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
           </Table.Body>
         </Table.Root>
       </div>
+      <Table.Root aria-label={`Plain ${theme}`} plain>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Report</Table.HeaderCell>
+            <Table.HeaderCell>Owner</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>Quarterly report</Table.Cell>
+            <Table.Cell>Aurora</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
+      <div className="fixture-table-frame">
+        <Table.Root aria-label={`Work ${theme}`} columnWidths={[45, 25, 30]}>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Work</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+              <Table.HeaderCell>Actions</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            {reports.map((report) => (
+              <Table.Row key={report.id} interactive>
+                <Table.Cell>
+                  <a
+                    href={`#work-${report.id}`}
+                    data-row-target
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setOpened((list) => [...list, report.id]);
+                    }}
+                  >
+                    {report.title}
+                  </a>
+                  <span className="fixture-cut-short" data-testid={`cut-${report.id}-${theme}`}>
+                    A second line long enough to be cut short at the end of its narrow column
+                  </span>
+                </Table.Cell>
+                <Table.Cell>
+                  <Avatar
+                    name={report.owner}
+                    size="sm"
+                    data-testid={`avatar-${report.id}-${theme}`}
+                  />{' '}
+                  {report.owner}
+                </Table.Cell>
+                <Table.Cell>
+                  <Button
+                    variant="secondary"
+                    aria-label={`Assign ${report.title}`}
+                    onClick={() => setPressed(report.id)}
+                  >
+                    Assign
+                  </Button>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </div>
+      <div className="fixture-stack-frame">
+        <Table.Root aria-label={`Groups ${theme}`} narrowLayout="stack" stickyHeader>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Work</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row interactive>
+              <Table.Cell>
+                <a href="#group-launch" data-row-target>
+                  Launch
+                </a>
+              </Table.Cell>
+              <Table.Cell label="Owner">Aurora</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell colSpan={2} data-testid={`group-cell-${theme}`}>
+                <Table.Root aria-label={`Parts ${theme}`} columnWidths={[70, 30]}>
+                  <Table.Head>
+                    <Table.Row>
+                      <Table.HeaderCell>Part</Table.HeaderCell>
+                      <Table.HeaderCell numeric>Steps</Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Head>
+                  <Table.Body>
+                    <Table.Row>
+                      <Table.Cell>
+                        <a href="#part-copy" data-row-target>
+                          Copy
+                        </a>
+                      </Table.Cell>
+                      <Table.Cell numeric>12,000</Table.Cell>
+                    </Table.Row>
+                  </Table.Body>
+                  <Table.Body>
+                    <Table.Row>
+                      <Table.Cell>Design</Table.Cell>
+                      <Table.Cell numeric>4</Table.Cell>
+                    </Table.Row>
+                  </Table.Body>
+                </Table.Root>
+              </Table.Cell>
+            </Table.Row>
+          </Table.Body>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Billing</Table.Cell>
+              <Table.Cell label="Owner">Sam Lee</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
+      </div>
+      <output data-testid={`opened-${theme}`}>{opened.join(' ')}</output>
+      <output data-testid={`pressed-${theme}`}>{pressed}</output>
       <span id={`due-date-${theme}`} hidden>
         Due date
       </span>
@@ -399,7 +520,6 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
           </Table.Body>
         </Table.Root>
       </div>
-      {/* A table named by a heading, whose strings come from EnvUIProvider. */}
       <h3 id={'labelled-table-' + theme}>Quarterly figures {theme}</h3>
       <EnvUIProvider messages={{ table: { sortAscending: 'aufsteigend sortieren' } }}>
         <Table.Root aria-labelledby={'labelled-table-' + theme}>

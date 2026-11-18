@@ -7,7 +7,6 @@ import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 export default function TabletDestinations() {
-  // The router knows the current page; here a press stands in for it.
   const [current, setCurrent] = useState('/inbox');
   const destination = (href: string) => ({
     href,
@@ -21,7 +20,6 @@ export default function TabletDestinations() {
     { label: 'Settings', icon: <IconSettings />, ...destination('/settings') },
   ];
   return (
-    // As tall as a short window; in an app, Scaffold gives the rail the window's height.
     <div style={{ blockSize: '24rem' }}>
       <NavigationRail
         destinations={destinations}

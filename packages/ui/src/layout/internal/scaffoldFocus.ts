@@ -13,11 +13,11 @@ export const showing = (slot: Element) => getComputedStyle(slot).display !== 'no
 
 /** Moves focus to a region without scrolling it under the top bar, as a skip link does. */
 export function focusRegion(target: HTMLElement) {
-  // A region that takes no focus takes it for as long as it keeps it, so a press inside it later
-  // doesn't focus the region itself.
-  if (!target.hasAttribute('tabindex')) {
+  const takesNoFocusOfItsOwn = !target.hasAttribute('tabindex');
+  if (takesNoFocusOfItsOwn) {
     target.setAttribute('tabindex', '-1');
-    target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+    const stopTakingFocusSoLaterPressesInsideDoNot = () => target.removeAttribute('tabindex');
+    target.addEventListener('blur', stopTakingFocusSoLaterPressesInsideDoNot, { once: true });
   }
   target.focus();
 }

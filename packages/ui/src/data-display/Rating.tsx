@@ -48,7 +48,6 @@ export function Rating({
   className,
   ...props
 }: RatingProps) {
-  // formatLabel wins over the provider's messages, which win over the English default.
   const messages = useMessages('rating', ratingMessages);
   const number = useFormatters().number({ maximumFractionDigits: 1 });
   const count = Number.isFinite(max) && max >= 1 ? Math.round(max) : 5;

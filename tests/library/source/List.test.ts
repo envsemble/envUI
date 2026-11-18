@@ -1,6 +1,3 @@
-// List's markup: a reorderable list's handles, also on rows of a component that passes its props on
-// to List.Item, and none on one that drops them; and the current row marked on its target. Server
-// markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -14,7 +11,6 @@ const { List } = await importSource('List', [
 
 const slides = ['Intro', 'Roadmap', 'Budget', 'Questions'];
 const link = (slide) => h('a', { href: `#${slide.toLowerCase()}`, 'data-row-target': '' }, slide);
-/** The list and what follows it, as one root, so its handles' description is in reach. */
 const render = (list) => firstElement(renderToString(h('div', null, list)));
 const handles = (root) =>
   elementsOf(root).filter((element) => hasClass(element, 'env-list-item-handle'));
@@ -33,13 +29,11 @@ test('rows of a component that passes its props on to List.Item get their handle
     found.map((handle) => handle.attributes['aria-label']),
     slides.map((slide) => `Reorder ${slide}`),
   );
-  // The handle says how to move its row without a pointer, and whether the row is lifted.
   for (const handle of found) {
     assert.equal(handle.tag, 'button');
     assert.equal(handle.attributes['aria-pressed'], 'false');
     assert.match(descriptions(root, handle)[0], /^Press Space or Enter, or click/);
   }
-  // A component that drops them leaves its rows without handles.
   const BareSlideRow = ({ slide }) => h(List.Item, { interactive: true, label: link(slide) });
   const bare = render(
     h(

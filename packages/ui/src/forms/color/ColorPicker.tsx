@@ -28,6 +28,7 @@ import { ColorChangeContext } from './internal/colorChange.js';
 import { useColorState, useFormResetOf } from './internal/useColorState.js';
 import { formatColor, sameColor, toColor, type ColorFormat } from './internal/colorValue.js';
 import { flag } from '../../internal/flag.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import '../../styles/Base.css';
 import '../../styles/ColorPicker.css';
 
@@ -92,7 +93,6 @@ export function ColorPicker({
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
   const formats = ownFormats && ownFormats.length > 0 ? ownFormats : allFormats;
-  // Two or more formats show together; one, or none given, one at a time.
   const together = formats.length > 1 && ownFormats !== undefined;
   const [chosenFormat, setFormat] = useState(formats[0]);
   const format = formats.includes(chosenFormat) ? chosenFormat : formats[0];
@@ -173,7 +173,7 @@ export function ColorPicker({
           color={color}
           onChange={change}
           formats={formats}
-          format={format}
+          oneAtATimeFormat={format}
           onFormatChange={setFormat}
           together={together}
           alpha={alpha}
@@ -194,11 +194,10 @@ export function ColorPicker({
         )}
         {description != null && (
           <div id={`${id}-description`} className="env-color-picker-description">
-            {description}
+            <Slot className="env-color-picker-description-content">{description}</Slot>
           </div>
         )}
         {error != null && (
-          // Field's error, with its icon before the message, as under every field.
           <Field.Root invalid>
             <Field.Error id={`${id}-error`} className="env-color-picker-error">
               {error}

@@ -11,7 +11,6 @@ import {
   useTheme,
 } from '@envsemble/envui';
 
-// A lavender scheme: the roles an area takes, with their hover and press, in each theme.
 const lavender = {
   light: {
     '--env-color-bg-default': 'oklch(0.955 0.024 300)',
@@ -30,12 +29,14 @@ const lavender = {
     '--env-color-bg-primary-emphasis-pressed': 'oklch(0.77 0.08 300)',
     '--env-color-bg-primary-solid': 'oklch(0.84 0.08 300)',
     '--env-color-fg-on-emphasis': 'oklch(0.2 0.04 300)',
+    '--env-color-bg-primary-strong': 'oklch(0.48 0.13 300)',
+    '--env-color-bg-primary-strong-hover': 'oklch(0.52 0.13 300)',
+    '--env-color-bg-primary-strong-pressed': 'oklch(0.44 0.13 300)',
     '--env-color-fg-primary': 'oklch(0.84 0.08 300)',
     '--env-color-border-focus': 'oklch(0.84 0.08 300)',
   },
 };
 
-// A nested Theme recolors its area: every component inside follows, hover and press included.
 function LavenderArea({ children }: { children: ReactNode }) {
   const { theme } = useTheme();
   return (

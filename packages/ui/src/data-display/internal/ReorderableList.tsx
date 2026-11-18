@@ -29,57 +29,39 @@ import '../../styles/Base.css';
 import '../../styles/List.css';
 import '../../styles/ConnectedRows.css';
 
-/**
- * The client side of List, as ActionElement is Button's: List.Root and List.Item stay server
- * components and render these islands only for a reorderable list: the list, which handles its
- * rows' Alt+↑ and Alt+↓ and announces the moves, and each row's handle.
- */
-
 interface Reorder {
   handlers: ReorderHandlers;
-  /** The id of the handles' instructions, which describe them. */
-  instructions: string;
+  instructionsId: string;
 }
 
-/** The nearest reorderable list's handlers and instructions, or null. */
 const ReorderContext = createContext<Reorder | null>(null);
 
-/**
- * The polite live regions that announce a move, in the document's body, so they add nothing to
- * the list's container. Each announcement goes to the other region and empties the last one, so
- * the same words twice, such as reaching the end of the list again, are announced again.
- */
-function Announcer({ announcement }: { announcement: Announcement }) {
+function AlternatingAnnouncer({ announcement }: { announcement: Announcement }) {
   const hydrated = useHydrated();
   const { container } = usePortalContainer();
   if (!hydrated || container === null) return null;
-  const shown = announcement.count % 2;
+  const speakingRegion = announcement.count % 2;
   return createPortal(
     <div className="env-list-announcer">
-      <div role="status">{shown === 1 ? announcement.text : ''}</div>
-      <div role="status">{shown === 0 ? announcement.text : ''}</div>
+      <div role="status">{speakingRegion === 1 ? announcement.text : ''}</div>
+      <div role="status">{speakingRegion === 0 ? announcement.text : ''}</div>
     </div>,
     container ?? document.body,
   );
 }
 
-/** The row of the list that holds an element: the list's `li` child around it. */
 function rowOf(list: HTMLElement, element: EventTarget | null) {
   let node = element instanceof Element ? element : null;
   while (node && node.parentElement !== list) node = node.parentElement;
   return node instanceof HTMLElement && node.tagName === 'LI' ? node : null;
 }
 
-/** A row's label, as its handle has it, or the row's text where it has no handle. */
 const labelOf = (row: HTMLElement) =>
-  row
-    .querySelector(':scope > .env-list-item-start > .env-list-item-handle')
-    ?.getAttribute('data-label') ??
+  row.querySelector(':scope > .env-list-item-handle')?.getAttribute('data-label') ??
   row.textContent?.trim() ??
   '';
 
-/** What a reorderable list says while developing when rows of it have no drag handle. */
-function rowsWithoutHandle(list: HTMLUListElement | null) {
+function reportOfRowsWithoutHandle(list: HTMLUListElement | null) {
   const bare = Array.from(list?.children ?? []).filter(
     (row) => row.tagName === 'LI' && !row.querySelector('.env-list-item-handle'),
   ).length;
@@ -90,10 +72,6 @@ function rowsWithoutHandle(list: HTMLUListElement | null) {
   );
 }
 
-/**
- * List.Root with onReorder: the list, Alt+↑ and Alt+↓ on its rows' targets, the handles'
- * instructions and the announcements.
- */
 export function ReorderableList({
   density,
   onReorder,
@@ -102,20 +80,20 @@ export function ReorderableList({
   onKeyDown,
   children,
   ...props
-}: RootProps & { onReorder: NonNullable<RootProps['onReorder']> }) {
+}: Omit<RootProps, 'title' | 'headingLevel' | 'description'> & {
+  onReorder: NonNullable<RootProps['onReorder']>;
+}) {
   const element = useRef<HTMLUListElement | null>(null);
   const messages = useMessages('list', listMessages);
   const format = useFormatters();
   const formatNumber = useCallback((value: number) => format.number().format(value), [format]);
   const { announcement, handlers } = useReorder(element, onReorder, messages, formatNumber);
-  const instructions = `${useId()}-instructions`;
-  const reorder = useMemo(() => ({ handlers, instructions }), [handlers, instructions]);
-  // A row without a handle, such as one of a component that doesn't pass List.Root's props on to
-  // its List.Item, can't be moved: say so while developing. Each list says so once.
-  useLayoutEffect(() => {
+  const instructionsId = `${useId()}-instructions`;
+  const reorder = useMemo(() => ({ handlers, instructionsId }), [handlers, instructionsId]);
+  useLayoutEffect(function reportRowsThatCannotMoveOncePerList() {
     reportInDevelopment(
-      () => process.env.NODE_ENV !== 'production' && rowsWithoutHandle(element.current),
-      { key: instructions },
+      () => process.env.NODE_ENV !== 'production' && reportOfRowsWithoutHandle(element.current),
+      { key: instructionsId },
     );
   });
   const forward = useCallback(
@@ -147,37 +125,38 @@ export function ReorderableList({
       >
         {children}
       </Grid>
-      <span id={instructions} hidden>
+      <span id={instructionsId} hidden>
         {messages.instructions}
       </span>
-      <Announcer announcement={announcement} />
+      <AlternatingAnnouncer announcement={announcement} />
     </ReorderContext>
   );
 }
 
-/**
- * A reorderable row's drag handle: pressed, by keyboard or by a click, it lifts the row and drops
- * it; dragged, the row follows it. Outside a reorderable list it renders nothing.
- */
 export function ListReorderHandle({ textValue }: { textValue?: string }) {
   const reorder = useContext(ReorderContext);
   const messages = useMessages('list', listMessages);
   const button = useRef<HTMLButtonElement | null>(null);
-  // A label that isn't text names the handle by what it shows, followed as it changes.
-  const [shownLabel, setShownLabel] = useState('');
-  useLayoutEffect(() => {
-    if (textValue !== undefined || !reorder) return;
-    const content = button.current?.closest('li')?.querySelector(':scope > .env-list-item-content');
-    if (!content) return;
-    const read = () => setShownLabel(content.firstChild?.textContent?.trim() ?? '');
-    read();
-    const observer = new MutationObserver(read);
-    observer.observe(content, { childList: true, characterData: true, subtree: true });
-    return () => observer.disconnect();
-  }, [textValue, reorder]);
+  const [labelShownAsText, setLabelShownAsText] = useState('');
+  useLayoutEffect(
+    function followTheShownTextOfALabelThatIsNotText() {
+      if (textValue !== undefined || !reorder) return;
+      const content = button.current
+        ?.closest('li')
+        ?.querySelector(':scope > .env-list-item-content > .env-list-item-label');
+      if (!content) return;
+      const read = () => setLabelShownAsText(content.textContent?.trim() ?? '');
+      read();
+      const observer = new MutationObserver(read);
+      observer.observe(content, { childList: true, characterData: true, subtree: true });
+      return () => observer.disconnect();
+    },
+    [textValue, reorder],
+  );
   if (!reorder) return null;
-  const { handlers, instructions } = reorder;
-  const text = textValue ?? shownLabel;
+  const { handlers, instructionsId } = reorder;
+  const text = textValue ?? labelShownAsText;
+  const notLiftedUntilTheReorderLiftsIt = false;
   const row = () => button.current?.closest('li') ?? null;
   return (
     <IconButton
@@ -186,9 +165,8 @@ export function ListReorderHandle({ textValue }: { textValue?: string }) {
       size="sm"
       icon={<IconDragIndicator />}
       aria-label={messages.reorder({ label: text })}
-      aria-describedby={instructions}
-      // Whether the row is lifted; the reorder sets it as the row lifts and drops.
-      aria-pressed={false}
+      aria-describedby={instructionsId}
+      aria-pressed={notLiftedUntilTheReorderLiftsIt}
       data-label={text}
       className="env-list-item-handle"
       onClick={(event) => {

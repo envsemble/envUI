@@ -15,21 +15,13 @@ import {
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
-/**
- * The Base UI parts of a menu's popup, for Menu.Root, Menu.Submenu, Menubar.Menu and a contained
- * ContextMenu; a ContextMenu over the window takes BaseContextMenu's.
- */
 export const menuParts = {
   Portal: BaseMenu.Portal,
   Positioner: BaseMenu.Positioner,
   Popup: BaseMenu.Popup,
 };
 
-/**
- * Renders a menu popup element with, when given, its own name. Base UI names a menu after its
- * trigger; a label replaces that name.
- */
-function renderMenuPopup(label: string | undefined) {
+function renderPopupNamedByLabelOverTrigger(label: string | undefined) {
   return function renderPopup(props: ComponentPropsWithRef<'div'>) {
     return (
       <Grid
@@ -42,33 +34,25 @@ function renderMenuPopup(label: string | undefined) {
   };
 }
 
+const baseUIMenuCollisionPadding = 5;
+
 export interface MenuPopupProps {
-  /** The Base UI parts of the menu: Menu's or ContextMenu's Portal, Positioner and Popup. */
   parts: PopupParts;
-  /** The menu's accessible name, in place of its trigger's. */
   label?: string;
   side?: PopupSide;
   align?: PopupAlign;
   sideOffset?: PopupSurfaceProps['sideOffset'];
   alignOffset?: PopupSurfaceProps['alignOffset'];
   anchor?: PopupSurfaceProps['anchor'];
-  /** The menu's trigger, whose text direction the menu takes as it opens. */
   trigger?: PopupSurfaceProps['trigger'];
   finalFocus?: PopupSurfaceProps['finalFocus'];
-  /** The application's class for the popup, beside env-menu. */
   className?: string;
-  /** The popup element's ref. */
   popupRef?: Ref<HTMLDivElement>;
-  /** More props for the popup element, such as style and handlers. */
   popupProps?: PopupElementProps;
   skeleton?: boolean;
   children?: ReactNode;
 }
 
-/**
- * The popup of every envUI menu (Menu.Root, Menu.Submenu, ContextMenu and Menubar.Menu): a
- * PopupSurface with the menu's own look, env-menu, and its own name.
- */
 export function MenuPopup({
   parts,
   label,
@@ -92,14 +76,17 @@ export function MenuPopup({
       align={align}
       sideOffset={sideOffset}
       alignOffset={alignOffset}
-      // Base UI's own room from the window's edges for menus.
-      collisionPadding={5}
+      collisionPadding={baseUIMenuCollisionPadding}
       anchor={anchor}
       trigger={trigger}
       finalFocus={finalFocus}
       className={classNames('env-menu', className)}
       positionerClassName="env-menu-positioner"
-      popupProps={{ ...popupProps, ref: popupRef, render: renderMenuPopup(label) }}
+      popupProps={{
+        ...popupProps,
+        ref: popupRef,
+        render: renderPopupNamedByLabelOverTrigger(label),
+      }}
       skeleton={skeleton}
     >
       {children}
@@ -107,8 +94,7 @@ export function MenuPopup({
   );
 }
 
-/** Padding and border between a menu popup's block-start edge and its first row, in pixels. */
-export function menuPopupInset(element: Element | null | undefined) {
+export function menuPopupBlockStartInset(element: Element | null | undefined) {
   if (!element) return 0;
   const style = getComputedStyle(element);
   return (
@@ -117,8 +103,7 @@ export function menuPopupInset(element: Element | null | undefined) {
   );
 }
 
-/** Padding and border between a menu popup's inline-end edge and its rows, in pixels. */
-export function menuPopupInlineInset(element: Element | null | undefined) {
+export function menuPopupInlineEndInset(element: Element | null | undefined) {
   if (!element) return 0;
   const style = getComputedStyle(element);
   return (

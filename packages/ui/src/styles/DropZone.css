@@ -1,8 +1,6 @@
 @layer env.components {
-  /* A drop target for files: a dashed area with an icon, a label and a description that opens the file
-     picker when pressed. Files over it turn the outline solid blue on the selection tint. */
   .env-drop-zone {
-    --env-drop-zone-border: var(--env-color-border-default);
+    --_drop-zone-border: var(--env-color-border-default);
     min-inline-size: 0;
   }
   .env-drop-zone[hidden] {
@@ -13,11 +11,11 @@
     justify-items: center;
     align-content: center;
     inline-size: 100%;
-    --env-drop-zone-min-height: 9rem;
-    min-block-size: var(--env-drop-zone-min-height);
+    --_drop-zone-min-height: 9rem;
+    min-block-size: var(--_drop-zone-min-height);
     margin: 0;
     padding: var(--env-space-5) var(--env-space-4);
-    border: 2px dashed var(--env-drop-zone-border);
+    border: 2px dashed var(--_drop-zone-border);
     border-radius: var(--env-radius-lg);
     background: transparent;
     color: var(--env-color-fg-default);
@@ -30,19 +28,16 @@
       background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-drop-zone-icon {
-    /* The round well of the icon, smaller in the small size. */
-    --env-drop-zone-icon-well: 2.75rem;
+    --_drop-zone-icon-well: 2.75rem;
+    --env-icon-size: 1.5rem;
     display: grid;
     place-items: center;
-    inline-size: var(--env-drop-zone-icon-well);
-    block-size: var(--env-drop-zone-icon-well);
+    inline-size: var(--_drop-zone-icon-well);
+    block-size: var(--_drop-zone-icon-well);
     border-radius: 50%;
     background: var(--env-color-bg-neutral-muted);
     color: var(--env-color-fg-muted);
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
-  }
-  .env-drop-zone-icon > .env-icon {
-    --env-icon-size: 1.5rem;
   }
   .env-drop-zone-label {
     font-weight: var(--env-font-weight-medium);
@@ -53,19 +48,25 @@
   }
   @media (hover: hover) {
     .env-drop-zone-target:hover:not(:disabled, [aria-disabled='true']) {
-      --env-drop-zone-border: var(--env-color-border-primary-emphasis-hover);
-      background: var(--env-color-bg-neutral-subtle-hover);
+      --_drop-zone-border: var(--env-color-border-primary-emphasis-hover);
+      background: light-dark(
+        var(--env-color-bg-neutral-subtle-hover),
+        var(--env-color-bg-neutral-subtle-pressed)
+      );
     }
   }
   .env-drop-zone-target:active:not(:disabled, [aria-disabled='true']) {
-    background: var(--env-color-bg-neutral-subtle-pressed);
+    background: light-dark(
+      var(--env-color-bg-neutral-subtle-pressed),
+      var(--env-color-bg-neutral-muted-hover)
+    );
   }
   .env-drop-zone-target:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: 2px;
   }
   .env-drop-zone[data-drag-over] .env-drop-zone-target {
-    --env-drop-zone-border: var(--env-color-border-primary-emphasis);
+    --_drop-zone-border: var(--env-color-border-primary-emphasis);
     border-style: solid;
     background: var(--env-color-bg-selected);
   }
@@ -73,7 +74,7 @@
     color: var(--env-color-border-primary-emphasis);
   }
   .env-drop-zone[data-invalid] .env-drop-zone-target {
-    --env-drop-zone-border: var(--env-color-fg-danger);
+    --_drop-zone-border: var(--env-color-fg-danger);
   }
   .env-drop-zone[data-pending] .env-drop-zone-target {
     cursor: progress;
@@ -82,7 +83,6 @@
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
   }
-  /* A small zone is one row: the icon, then the label above the description. */
   .env-drop-zone[data-size='sm'] .env-drop-zone-target {
     grid-template-columns: auto minmax(0, 1fr);
     justify-items: start;
@@ -92,11 +92,8 @@
     text-align: start;
   }
   .env-drop-zone[data-size='sm'] .env-drop-zone-icon {
-    --env-drop-zone-icon-well: 2rem;
-  }
-  .env-drop-zone[data-size='sm'] .env-drop-zone-icon > .env-icon {
-    inline-size: var(--env-control-icon-size);
-    block-size: var(--env-control-icon-size);
+    --_drop-zone-icon-well: 2rem;
+    --env-icon-size: var(--env-control-icon-size);
   }
   .env-drop-zone[data-size='sm'] .env-drop-zone-label {
     font: var(--env-type-body-sm);
@@ -109,8 +106,6 @@
     }
   }
 
-  /* Forced colors: the system paints no fills or shadows, so a zone that a file is dragged over
-     takes the selection color for its edge. */
   @media (forced-colors: active) {
     .env-drop-zone[data-drag-over] .env-drop-zone-target {
       border-color: Highlight;

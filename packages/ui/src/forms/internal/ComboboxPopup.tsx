@@ -18,7 +18,6 @@ const popupParts = {
   Popup: BaseCombobox.Popup,
 };
 
-/** A Combobox's popup: its loading status, its empty state and its options, in groups or not. */
 export function ComboboxPopup<Item extends ComboboxItem>({
   popupRef,
   direction,
@@ -32,7 +31,6 @@ export function ComboboxPopup<Item extends ComboboxItem>({
   loading: boolean;
   loadingLabel: ReactNode;
   emptyLabel: ReactNode;
-  /** Some option has start content, so every row keeps room for it. */
   startSlot: boolean;
 }) {
   return (
@@ -56,8 +54,6 @@ export function ComboboxPopup<Item extends ComboboxItem>({
       <BaseCombobox.Empty className="env-combobox-empty">
         {loading ? null : emptyLabel}
       </BaseCombobox.Empty>
-      {/* The options are busy while they load, not the popup, whose status announces
-          the loading label meanwhile. */}
       <BaseCombobox.List
         render={<Grid />}
         className="env-combobox-list"
@@ -89,7 +85,6 @@ export function ComboboxPopup<Item extends ComboboxItem>({
   );
 }
 
-/** An option row: a check mark slot, optional start content, the label and its description. */
 function ComboboxOption<Item extends ComboboxItem>({
   item,
   startSlot,
@@ -117,7 +112,6 @@ function ComboboxOption<Item extends ComboboxItem>({
       label={item.label}
       description={
         item.description ? (
-          // Announced through aria-describedby rather than as part of the option's name.
           <span id={descriptionId} aria-hidden="true">
             {item.description}
           </span>

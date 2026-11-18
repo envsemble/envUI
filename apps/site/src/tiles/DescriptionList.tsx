@@ -1,6 +1,5 @@
 import { Badge, DescriptionList } from '@envsemble/envui';
 
-/** A project's details: its owner, its state and its open tasks, as a details pane shows them. */
 export default function DescriptionListTile() {
   return (
     <DescriptionList.Root layout="inline" aria-label="Project details">

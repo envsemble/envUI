@@ -1,7 +1,6 @@
 import { DatePicker } from '@envsemble/envui';
 import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
-/** Invalid, read-only and disabled fields. */
 export default function States() {
   return (
     <SpecimenFrame size="collection">

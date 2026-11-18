@@ -9,10 +9,6 @@ const projects = ['Website refresh', 'Pricing page'];
 
 const input = '.env-text-field-input';
 
-/**
- * Types a query, which narrows the two projects to one, then clears it with the field's clear
- * button, which brings them all back, as it began.
- */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: input, x: 0.4 },
@@ -30,11 +26,6 @@ const script: PointerStep[] = [
   { wait: 480 },
 ];
 
-/**
- * A search field above the projects it filters, controlled, as an application keeps its query: each
- * letter typed narrows the list, and the clear button empties the query. It rests with every
- * project shown, its largest state, framed on that, so nothing moves as the list narrows.
- */
 export default function SearchFieldTile() {
   const [query, setQuery] = useState('');
   useHeldView();

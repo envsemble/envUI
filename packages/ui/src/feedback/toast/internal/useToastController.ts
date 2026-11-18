@@ -10,7 +10,14 @@ import {
 import type { ToastNotification, ToastPlacement } from '../toastTypes.js';
 import { useLatest } from '../../../internal/useLatest.js';
 
-/** Delivers notifications immediately and tracks pause-aware visible lifetimes. */
+const longestTimeoutBrowsersKeep = 2_147_483_647;
+const baseUIPriorityThatDoesNotHideUntilFocused = 'low';
+
+function dropHoverAndFocusPauses(timer: ToastTimer) {
+  timer.pauseReasons.delete('hover');
+  timer.pauseReasons.delete('focus');
+}
+
 export function useToastController(defaultPlacement: ToastPlacement) {
   const notificationIdPrefix = useId();
   const notificationSequence = useRef(0);
@@ -30,15 +37,13 @@ export function useToastController(defaultPlacement: ToastPlacement) {
     function scheduleDismissal(id: string, timer: ToastTimer) {
       if (timer.pauseReasons.size || !isMounted.current) return;
       timer.startedAt = Date.now();
-      // Browsers clamp longer delays to a signed 32-bit integer. Schedule long
-      // finite durations in chunks rather than accidentally dismissing immediately.
       timer.handle = setTimeout(
         () => {
           timer.remainingMs = Math.max(0, timer.remainingMs - (Date.now() - timer.startedAt));
           if (timer.remainingMs > 0) scheduleDismissal(id, timer);
           else dismiss(id);
         },
-        Math.min(timer.remainingMs, 2_147_483_647),
+        Math.min(timer.remainingMs, longestTimeoutBrowsersKeep),
       );
     }
     function pause(id: string, reason: string) {
@@ -80,9 +85,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
           title: entry.message,
           type: entry.tone,
           data: entry,
-          // Danger notifications announce themselves as alerts (ToastRegion), so Base UI's
-          // high-priority copy, which hides the notification until the region has focus, is unused.
-          priority: 'low',
+          priority: baseUIPriorityThatDoesNotHideUntilFocused,
           timeout: 0,
           onClose() {
             notifications.current.delete(entry.id);
@@ -102,9 +105,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
           resume(entry.id, 'hidden');
         } else {
           pause(entry.id, 'hidden');
-          // Hidden roots cannot retain pointer or keyboard interaction pauses.
-          timer.pauseReasons.delete('hover');
-          timer.pauseReasons.delete('focus');
+          dropHoverAndFocusPauses(timer);
         }
       }
     }
@@ -142,11 +143,12 @@ export function useToastController(defaultPlacement: ToastPlacement) {
     function clear() {
       for (const id of notifications.current.keys()) dismiss(id);
     }
-    function registerPlacementStore(placement: ToastPlacement, delivery: ToastDelivery) {
+    function registerPlacementStoreForControllersLifetime(
+      placement: ToastPlacement,
+      delivery: ToastDelivery,
+    ) {
       placementStores.current.set(placement, delivery);
       deliverPendingNotifications();
-      // Retain the delivery through layout cleanup so passive cleanup can close
-      // its store during Strict Mode replay. The controller owns both regions.
     }
     function setViewportFocused(placement: ToastPlacement, focused: boolean) {
       if (focused) focusedViewports.current.add(placement);
@@ -166,7 +168,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
     }
     return {
       manager: { show, dismiss, clear },
-      registerPlacementStore,
+      registerPlacementStoreForControllersLifetime,
       deliverPendingNotifications,
       setVisibleNotifications,
       pause,
@@ -177,7 +179,6 @@ export function useToastController(defaultPlacement: ToastPlacement) {
     };
   }, [notificationIdPrefix, currentDefaultPlacement]);
   useEffect(() => {
-    // The refs hold the same collections for the controller's lifetime.
     const entries = notifications.current;
     const viewports = focusedViewports.current;
     const timers = dismissalTimers.current;

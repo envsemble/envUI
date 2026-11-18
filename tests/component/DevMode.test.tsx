@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, expect, onTestFinished, test, vi } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
-// The type brings dev mode's `window.envui` with it.
 import type { LayoutProblem } from '@envsemble/envui/dev';
 import * as fixture from '../fixture/DevMode.fixture.tsx';
 import {
@@ -26,7 +25,6 @@ afterEach(() => {
   document.title = title;
 });
 
-/** Mounts the fixture, as `?fixture=dev-mode&<search>`, once dev mode has installed its layout. */
 async function open(search?: string) {
   mount(fixture, { search });
   await expect.poll(() => window.envui?.layout).toBeDefined();
@@ -44,10 +42,6 @@ const themeRoot = () => document.querySelector<HTMLElement>('.env-theme')!;
 const button = (scope: Pick<Locator, 'getByRole'>, name: string) =>
   scope.getByRole('button', { name, exact: true });
 
-/**
- * Opens dev mode over the fixture's page, as `open()` does, for a test that needs no tab of its
- * own; Escape closes it again. Returns its panel.
- */
 async function openOver() {
   await expect.poll(() => window.envuiDevMode).toBeDefined();
   window.envuiDevMode!.open();
@@ -55,13 +49,11 @@ async function openOver() {
   return panel();
 }
 
-/** Picks an angle in the toolbar's View dropdown, which also brings the whole page into view. */
 async function turnTo(name: string) {
   await button(panel().getByRole('toolbar', { name: '3D view' }), 'View').click();
   await button(page.getByRole('dialog', { name: 'View' }), name).click();
 }
 
-/** Turns on the responsive frame and picks a device in the toolbar's Responsive dropdown. */
 async function pickDevice(device: RegExp) {
   await button(panel(), 'Responsive').click();
   const frame = page.getByRole('menuitemcheckbox', { name: /^Responsive frame/ });
@@ -76,7 +68,6 @@ function centre(target: Locator | Element) {
   return { x: x + width / 2, y: y + height / 2 };
 }
 
-/** The scene's style, which holds the view's turn and zoom. */
 const sceneStyle = () =>
   panel().element().querySelector('.env-dev-scene')!.getAttribute('style') ?? '';
 const zoom = () => Number(/scale\(([\d.]+)\)/.exec(sceneStyle())?.[1]);
@@ -88,8 +79,6 @@ test('the readout describes and checks the layout nodes, also at other widths', 
   await page.viewport(1024, 720);
   await open();
   const text = layout().describe();
-  // The tree: kinds and names, the container and the threshold its queries test, the resolved
-  // grid columns, identical siblings folded, hidden nodes counted.
   expect(text).toMatch(
     /^scaffold "app" · [\d.]+×[\d.]+rem · expanded · container env-scaffold \(queried at 37\.5(?:, 52\.5, 75)?rem\)/m,
   );
@@ -109,8 +98,6 @@ test('the readout describes and checks the layout nodes, also at other widths', 
   ]);
   expect(problems[0]!.path).toMatch(/^scaffold "app" > grid "frame" > page > /);
 
-  // At 22rem the scaffold stacks and the 30rem content overflows its grid; at 60rem it fits. The
-  // root gets its own width back after each, and no style attribute it didn't have.
   const before = box(themeRoot()).width;
   const results = layout().at(['22rem', 960]);
   expect(results.map(({ width, windowClass }) => `${width} ${windowClass}`)).toEqual([
@@ -122,20 +109,17 @@ test('the readout describes and checks the layout nodes, also at other widths', 
   expect(rules(results[1]!.problems)).not.toContain('child-overflow grid "wide"');
   expect(box(themeRoot()).width).toBe(before);
   expect(themeRoot().hasAttribute('style')).toBe(false);
-  // A height too, as a window of that size would show the page.
   const [sized] = layout().at([{ width: '22rem', height: '20rem' }]);
   expect(sized).toMatchObject({ width: '22rem', height: '20rem', windowClass: 'compact' });
   expect(sized!.text).toMatch(/^root .*· 22×20rem · compact/m);
   expect(themeRoot().hasAttribute('style')).toBe(false);
 
-  // A dialog, in its positioner fixed over the window, is an open overlay.
   await page.getByRole('button', { name: 'Open the dialog' }).click();
   await isShown(page.getByRole('dialog', { name: 'Details' }));
   expect(layout().describe()).toMatch(/open overlays \(1\):\n {2}dialog\b/);
   await keyboard.press('Escape');
   await isGone(page.getByRole('dialog'));
 
-  // An open overlay is listed with where it landed, and found off the window.
   await page.getByRole('button', { name: 'Open the popover' }).click();
   expect(layout().describe()).toMatch(
     /open overlays \(1\):\n {2}popover · 10×[\d.]+rem · .* · at -4,2rem in the window/,
@@ -147,7 +131,6 @@ test('the readout describes and checks the layout nodes, also at other widths', 
 test('the button and the shortcut open dev mode in a new tab, which only closing ends', async () => {
   await page.viewport(1024, 720);
   await open();
-  // The test stands in for the browser's new tab: it records the address and returns a window.
   const opened: string[] = [];
   vi.spyOn(window, 'open').mockImplementation((url) => {
     opened.push(String(url));
@@ -157,25 +140,19 @@ test('the button and the shortcut open dev mode in a new tab, which only closing
   await expect.element(corner).toHaveAttribute('aria-keyshortcuts', 'Alt+Shift+D');
   await corner.click();
   await expect.poll(() => opened.length).toBe(1);
-  // The tab is the page's address, marked as dev mode's.
   const address = new URL(opened[0]!);
   expect(address.pathname).toBe(location.pathname);
   expect(address.searchParams.has('envui-dev')).toBe(true);
-  // The page it came from stays as it was, with no dev mode over it.
   expect(panel().elements()).toHaveLength(0);
   expect(themeRoot().inert).toBe(false);
-  // The shortcut opens another.
   await keyboard.press('Alt+Shift+D');
   await expect.poll(() => opened.length).toBe(2);
 
-  // In the tab, dev mode is open at once, over the whole window, and says so in the tab's title.
   await open(address.search.slice(1));
   await isShown(panel());
   await expect.poll(() => document.title).toMatch(/^Dev mode/);
   expect(box(panel())).toEqual({ x: 0, y: 0, width: innerWidth, height: innerHeight });
   await planeCount();
-  // Nothing in it leaves dev mode: no close button, no corner button, and Esc and the shortcut
-  // leave it open.
   expect(page.getByRole('button', { name: /^(Dev mode|Close dev mode)$/ }).elements()).toHaveLength(
     0,
   );
@@ -189,12 +166,9 @@ test('the button and the shortcut open dev mode in a new tab, which only closing
 test('opened over the page, it covers it until Escape, and shows the nodes and the inspector, each control in one place', async () => {
   await open();
   await openOver();
-  // Focus moves into the panel, and the page under it is inert.
   await isFocused(panel());
   expect(themeRoot().inert).toBe(true);
-  // A plane for every shown node, each carrying copies of what the node holds.
   await planeCount();
-  // The copies fill in after their planes, a frame later on a slow machine.
   await expect
     .poll(() => panel().element().querySelectorAll('.env-dev-plane[data-problems]').length)
     .toBe(2);
@@ -207,8 +181,6 @@ test('opened over the page, it covers it until Escape, and shows the nodes and t
     )
     .toBe(1);
 
-  // Each control has one place: no two controls share a name, nor with a dropdown open, where
-  // the View dropdown's angles are named once and nothing else in it repeats one.
   const host = document.querySelector('[data-env-dev-host]')!;
   const roles = ['button', 'menuitem', 'menuitemcheckbox', 'menuitemradio'];
   const names = () =>
@@ -238,11 +210,9 @@ test('opened over the page, it covers it until Escape, and shows the nodes and t
       .toBe(true);
     unique(names());
     await keyboard.press('Escape');
-    // The next dropdown opens once this one has closed, so the two are never counted together.
     await expect.poll(() => popups().length).toBe(0);
   }
 
-  // The tree, in its sidebar, lists the nodes; the inspector shows the selected one.
   await panel()
     .getByRole('complementary', { name: 'Layout nodes' })
     .getByRole('treeitem', { name: /row "painted"/ })
@@ -251,17 +221,15 @@ test('opened over the page, it covers it until Escape, and shows the nodes and t
     .getByRole('complementary', { name: 'Dev mode inspector' })
     .getByRole('region', { name: 'Details of row "painted"' });
   await expect.poll(() => details.query()?.textContent).toContain('Layout never paints');
-  await panel().getByRole('tab', { name: 'Readout' }).click();
+  await panel().getByRole('radio', { name: 'Readout' }).click();
   await expect
     .poll(
       () =>
-        panel().getByRole('tabpanel', { name: 'Readout' }).element().querySelector('pre')
+        panel().getByRole('region', { name: 'Readout', exact: true }).element().querySelector('pre')
           ?.textContent,
     )
     .toContain('scaffold "app"');
-  // The readout leaves dev mode's own UI out, also while it is open.
   expect(layout().describe()).not.toContain('env-dev');
-  // Escape closes it and gives the page back.
   (panel().element() as HTMLElement).focus();
   await keyboard.press('Escape');
   await isHidden(panel());
@@ -288,13 +256,11 @@ test(
     for (const [name, turned] of angles) {
       await turnTo(name);
       await expect.poll(sceneStyle).toContain(turned);
-      // The dropdown closes; opened again, it marks the angle the view is at.
       await expect.poll(() => shown(page.getByRole('group', { name: 'Angles' }))).toBe(false);
     }
     await button(toolbar, 'View').click();
     await expect.element(button(page, 'Tilted')).toHaveAttribute('aria-pressed', 'true');
     await expect.element(button(page, 'Front')).toHaveAttribute('aria-pressed', 'false');
-    // Picking the angle the view is at again brings the whole page back after zooming.
     await keyboard.press('Escape');
     const fittedZoom = zoom();
     const view = box(panel().element().querySelector('.env-dev-view')!);
@@ -305,15 +271,12 @@ test(
     await expect.poll(zoom).toBeGreaterThan(fittedZoom * 1.2);
     await turnTo('Tilted');
     await expect.poll(zoom).toBeCloseTo(fittedZoom, 3);
-    // The toolbar's buttons show their names at once, with no wait: the clock stands still but
-    // for a millisecond.
     stopTimers();
     const show = centre(button(toolbar, 'Show'));
     await mouse.move(show.x, show.y);
     await passTime(1);
     await expect.poll(() => page.getByRole('tooltip').query()?.textContent).toBe('Show');
     vi.useRealTimers();
-    // The arrow keys move between the toolbar's dropdowns.
     (button(toolbar, 'View').element() as HTMLElement).focus();
     await keyboard.press('ArrowRight');
     await isFocused(button(toolbar, 'Show'));
@@ -340,8 +303,7 @@ test(
       signal: listening.signal,
     });
     const view = centre(panel().element().querySelector('.env-dev-view')!);
-    /** Drags across the view's middle, 150px right and 50px down, and returns the rotation. */
-    const drag = async () => {
+    const rotationAfterDragAcrossView = async () => {
       await mouse.move(view.x, view.y);
       await mouse.down();
       await mouse.move(view.x + 150, view.y + 50, { steps: 10 });
@@ -351,14 +313,11 @@ test(
         .slice(1)
         .map(Number);
     };
-    // From the tilted view, 38 and -22 degrees, a drag turns it 0.3 degrees a pixel.
-    expect(await drag()).toEqual([23, 23]);
-    // Text selected across the view, as by Ctrl+A or a selection dragged out of a sidebar, used
-    // to be dragged as a picture, which cancelled the pointer and stopped the view turning.
+    expect(await rotationAfterDragAcrossView()).toEqual([23, 23]);
     await panel().getByRole('heading', { name: 'Nodes' }).click();
     await keyboard.press('ControlOrMeta+A');
     expect(String(getSelection()).length).toBeGreaterThan(0);
-    expect(await drag()).toEqual([8, 68]);
+    expect(await rotationAfterDragAcrossView()).toEqual([8, 68]);
     listening.abort();
     expect(seen).toEqual({ drags: 0, cancels: 0 });
   },
@@ -370,7 +329,6 @@ test('"only the selected" shows the selected node and what is inside it', async 
   const show = button(panel(), 'Show');
   const only = page.getByRole('menuitemcheckbox', { name: /^Only the selected/ });
   const count = (expected: number) => expect.poll(() => planes().length).toBe(expected);
-  /** Turns Only the selected on or off in the Show dropdown, which stays open, and closes it. */
   const toggleOnly = async (checked: boolean) => {
     await show.click();
     await only.click();
@@ -379,26 +337,21 @@ test('"only the selected" shows the selected node and what is inside it', async 
     await isHidden(only);
   };
   await count(15);
-  // On, with nothing selected, every plane shows, also under the pointer.
   await toggleOnly(true);
   const first = centre(planes()[0]!);
   await mouse.move(first.x, first.y);
   await count(15);
-  // Selecting the cards' row shows it and its three cards; another node, that one alone.
   const tree = (name: RegExp) => panel().getByRole('treeitem', { name });
   await tree(/row "cards"/).click();
   await count(4);
   expect(panel().element().querySelectorAll('.env-dev-plane[data-selected]')).toHaveLength(1);
   await tree(/row "painted"/).click();
   await count(1);
-  // Clicking the selected row again clears the selection, and everything shows.
   await tree(/row "painted"/).click();
   await count(15);
-  // Off, the selection no longer filters.
   await tree(/row "cards"/).click();
   await toggleOnly(false);
   await count(15);
-  // Escape closed only the dropdown each time: dev mode is still open.
   expect(shown(panel())).toBe(true);
 });
 
@@ -429,15 +382,12 @@ test(
     const deviceMenu = page.getByRole('menuitem', { name: /^Device/ });
     const portrait = page.getByRole('menuitemradio', { name: 'Portrait' });
     const landscape = page.getByRole('menuitemradio', { name: 'Landscape' });
-    // Off by default: the page at its own size, with no frame, handles or label, and the device
-    // and the orientation wait until it is on.
     await responsive.click();
     await expect.element(toggle).toHaveAttribute('aria-checked', 'false');
     await expect.element(deviceMenu).toHaveAttribute('aria-disabled', 'true');
     await expect.element(portrait).toHaveAttribute('aria-disabled', 'true');
     expect(frames()).toBe(0);
     expect(right.elements()).toHaveLength(0);
-    // Turned on, the frame starts at the page's own size; turned off, it goes again.
     await toggle.click();
     await expect.element(toggle).toHaveAttribute('aria-checked', 'true');
     await expect.element(right).toHaveAttribute('aria-valuenow', String(Math.round(ownWidth)));
@@ -446,8 +396,6 @@ test(
     await expect.poll(frames).toBe(0);
     await expect.poll(rootSize).toBe(own);
 
-    // On, a device lays the page out at its size, and the planes follow; the window and the view
-    // keep theirs.
     await toggle.click();
     await deviceMenu.click();
     await page.getByRole('menuitemradio', { name: /^iPhone SE/ }).click();
@@ -457,23 +405,20 @@ test(
     expect(right.element().getAttribute('aria-valuetext')).toMatch(/^iPhone SE · 375×667px/);
     expect([innerWidth, innerHeight]).toEqual([1280, 720]);
     expect(box(view())).toEqual(viewBox);
-    // The inspector's readout follows the size.
-    await scope.getByRole('tab', { name: 'Readout' }).click();
+    await scope.getByRole('radio', { name: 'Readout' }).click();
     await expect
       .poll(
         () =>
-          scope.getByRole('tabpanel', { name: 'Readout' }).element().querySelector('pre')
+          scope.getByRole('region', { name: 'Readout', exact: true }).element().querySelector('pre')
             ?.textContent,
       )
       .toContain('scaffold "app" · 23.44×');
-    // Landscape swaps the width and the height, and keeps the device.
     await responsive.click();
     await expect.element(portrait).toHaveAttribute('aria-checked', 'true');
     await landscape.click();
     await expect.poll(rootSize).toBe('667×375');
     await expect.poll(label).toContain('iPhone SE · 667×375px · 41.69×23.44rem · medium');
 
-    // The arrow keys on an edge step by 1rem, with Shift by 5rem; stepping makes it a free frame.
     (bottom.element() as HTMLElement).focus();
     await keyboard.press('ArrowUp');
     await expect.poll(rootSize).toBe('667×391');
@@ -481,11 +426,7 @@ test(
     (right.element() as HTMLElement).focus();
     await keyboard.press('Shift+ArrowLeft');
     await expect.poll(rootWidth).toBe(587);
-    // Dragging the right edge to the left narrows it, with the whole frame in view, once the view
-    // has turned there.
     await turnTo('Tilted');
-    // The View menu gone, and the view at rest: unchanged across a few frames, which a busy
-    // machine spaces further apart.
     await expect.poll(() => page.getByRole('dialog', { name: 'View' }).query()).toBeNull();
     await expect
       .poll(async () => {
@@ -501,7 +442,6 @@ test(
     await mouse.up();
     await expect.poll(rootWidth).toBeLessThan(587);
 
-    // Responsive frame off: the frame goes, and the root's style is as it was.
     await responsive.click();
     await toggle.click();
     await keyboard.press('Escape');
@@ -509,9 +449,6 @@ test(
     expect(frames()).toBe(0);
     expect(themeRoot().hasAttribute('style')).toBe(false);
 
-    // A device wider than the window lays the root out whole: its planes are as wide, cut off by
-    // nothing around the root, and once the page settles every plane carries a copy of its node
-    // at the node's size.
     await pickDevice(/^Full HD/);
     const widest = () =>
       Math.max(
@@ -533,7 +470,6 @@ test(
           }).length,
       )
       .toBe(0);
-    // Closing dev mode with a size set puts it back too.
     (panel().element() as HTMLElement).focus();
     await keyboard.press('Escape');
     await isHidden(panel());
@@ -552,7 +488,6 @@ test("dev mode's own theme switches at the tree's foot, persists, leaves the pag
   const pageBefore = pageAttributes();
   const pageTheme = boundary().getAttribute('data-env-theme')!;
   const other = pageTheme === 'dark' ? 'Light' : 'Dark';
-  // By default dev mode takes the page's theme.
   expect(editor().getAttribute('data-env-theme')).toBe(pageTheme);
   const themeButton = () =>
     panel()
@@ -565,25 +500,19 @@ test("dev mode's own theme switches at the tree's foot, persists, leaves the pag
   await themeButton().click();
   await page.getByRole('menuitemcheckbox', { name: 'High contrast' }).click();
   await expect.poll(() => editor().getAttribute('data-env-contrast')).toBe('high');
-  // The check item leaves its menu open; Escape closes the menu first.
   await keyboard.press('Escape');
   await isHidden(page.getByRole('menu'));
-  // The page keeps its own theme.
   expect(pageAttributes()).toBe(pageBefore);
 
-  // The choice outlasts a reload.
   await open();
   await openOver();
   await expect.poll(() => editor().getAttribute('data-env-theme')).toBe(other.toLowerCase());
   expect(editor().getAttribute('data-env-contrast')).toBe('high');
   expect(pageAttributes()).toBe(pageBefore);
-  // Same as the page goes back to the page's theme.
   await themeButton().click();
   await page.getByRole('menuitemradio', { name: 'Same as the page' }).click();
   await expect.poll(() => editor().getAttribute('data-env-theme')).toBe(pageTheme);
 
-  // The root sits in a nested theme boundary of the other theme, such as a dark region of a light
-  // page: dev mode takes the root's theme, not the document's.
   await open('root=.dev-page');
   const nested = other.toLowerCase();
   const scaffold = document.querySelector('.dev-scaffold')!;
@@ -602,7 +531,6 @@ test('each sidebar hides from its header, comes back from its corner, resizes by
   const view = () => panel().element().querySelector('.env-dev-view')!;
   const width = (target: Locator | Element) => box(target).width;
   const both = width(view());
-  // No toolbar button shows or hides a sidebar.
   expect(
     panel()
       .getByRole('toolbar', { name: '3D view' })
@@ -610,7 +538,6 @@ test('each sidebar hides from its header, comes back from its corner, resizes by
       .elements(),
   ).toHaveLength(0);
 
-  // Hidden, a sidebar leaves its button in the same top corner of the window.
   const hideTree = tree().getByRole('button', { name: 'Hide the nodes' });
   const hideInspector = inspector().getByRole('button', { name: 'Hide the inspector' });
   const treeCorner = box(hideTree);
@@ -632,8 +559,6 @@ test('each sidebar hides from its header, comes back from its corner, resizes by
   await isShown(inspector());
   expect(width(view())).toBe(both);
 
-  // Each resizes by its inner edge, as a resizable Drawer does: by dragging, the arrow keys and a
-  // double click back to its width.
   const treeHandle = panel().getByRole('separator', { name: 'Resize the nodes' });
   const inspectorHandle = panel().getByRole('separator', { name: 'Resize the inspector' });
   const treeWidth = width(tree());
@@ -650,8 +575,6 @@ test('each sidebar hides from its header, comes back from its corner, resizes by
   await keyboard.press('ArrowLeft');
   await expect.poll(() => width(inspector())).toBeGreaterThan(inspectorWidth);
 
-  // A sidebar widens well past half the window; narrowed again, the readout's lines wrap inside
-  // it, and nothing runs past its edge.
   const edge = centre(inspectorHandle);
   await mouse.move(edge.x, edge.y);
   await mouse.down();
@@ -659,9 +582,9 @@ test('each sidebar hides from its header, comes back from its corner, resizes by
   await mouse.up();
   await expect.poll(() => width(inspector())).toBeGreaterThan(720);
   await inspectorHandle.dblClick();
-  await panel().getByRole('tab', { name: 'Readout' }).click();
+  await panel().getByRole('radio', { name: 'Readout' }).click();
   const readout = () =>
-    panel().getByRole('tabpanel', { name: 'Readout' }).element().querySelector('pre')!;
+    panel().getByRole('region', { name: 'Readout', exact: true }).element().querySelector('pre')!;
   await expect.poll(() => readout().textContent).toContain('scaffold "app"');
   expect({
     overflow: readout().scrollWidth - readout().clientWidth,
@@ -670,7 +593,6 @@ test('each sidebar hides from its header, comes back from its corner, resizes by
       readout().closest('aside')!.getBoundingClientRect().right,
   }).toEqual({ overflow: 0, inside: true });
 
-  // The widths and what is hidden outlast a reload.
   (inspectorHandle.element() as HTMLElement).focus();
   await keyboard.press('ArrowLeft');
   const kept = width(inspector());
@@ -685,22 +607,19 @@ test(
   'in a short window the wheel scrolls the tree to its last node, the inspector and the device menu, and the page once dev mode closes',
   { tags: ['engines'] },
   async () => {
-    await page.viewport(1280, 300);
+    await page.viewport(1280, 240);
     await open();
     const scrollY = () => document.scrollingElement!.scrollTop;
     await openOver();
-    /** Where an element's scroll is: its offset and the most it takes. */
     const scroll = (element: Element) => [
       element.scrollTop,
       element.scrollHeight - element.clientHeight,
     ];
-    /** Turns the wheel down over the visible middle of an element, more than it can scroll. */
     const wheelOver = async (target: Locator) => {
       const { x, y, width, height } = box(target);
-      await mouse.move(x + width / 2, (y + Math.min(y + height, 300)) / 2);
+      await mouse.move(x + width / 2, (y + Math.min(y + height, 240)) / 2);
       for (let turn = 0; turn < 12; turn += 1) await mouse.wheel(0, 200);
     };
-    /** Scrolled to its end, which is further than it shows. */
     const atEnd = (target: Locator) =>
       expect
         .poll(() => {
@@ -709,26 +628,23 @@ test(
         })
         .toBe(true);
 
-    // The tree scrolls itself, to its last node.
     const tree = panel().getByRole('tree', { name: 'Layout nodes' });
     await wheelOver(tree);
     await atEnd(tree);
     await expect.element(tree.getByRole('treeitem', { name: /box "hidden"/ })).toBeInViewport();
-    // The inspector's column scrolls the details, and the readout.
     await tree.getByRole('treeitem', { name: /row "painted"/ }).click();
-    const details = panel().getByRole('tabpanel', { name: 'Details' });
+    const details = panel().getByRole('region', { name: 'Details', exact: true });
     await isShown(details.getByRole('region', { name: 'Details of row "painted"' }));
     await wheelOver(details);
     await atEnd(details);
-    await panel().getByRole('tab', { name: 'Readout' }).click();
-    const readout = panel().getByRole('tabpanel', { name: 'Readout' });
+    await panel().getByRole('radio', { name: 'Readout' }).click();
+    const readout = panel().getByRole('region', { name: 'Readout', exact: true });
     await expect
       .poll(() => readout.element().querySelector('pre')?.textContent)
       .toContain('problems (2):');
     readout.element().scrollTo(0, 0);
     await wheelOver(readout);
     await atEnd(readout);
-    // The device menu, taller than the window, scrolls to its last device.
     await button(panel(), 'Responsive').click();
     await page.getByRole('menuitemcheckbox', { name: /^Responsive frame/ }).click();
     await page.getByRole('menuitem', { name: /^Device/ }).click();
@@ -737,21 +653,15 @@ test(
     await wheelOver(menu);
     await atEnd(menu);
     await expect.element(menu.getByRole('menuitemradio').last()).toBeInViewport();
-    // Escape closes the device menu, then the Responsive one, or both at once in some engines;
-    // dev mode stays open.
     await keyboard.press('Escape');
     await isHidden(menu);
     if (page.getByRole('menu').elements().length) await keyboard.press('Escape');
     await isGone(page.getByRole('menu'));
     expect(shown(panel())).toBe(true);
-    // The wheel past the columns' ends, or where nothing in dev mode scrolls, leaves the page
-    // under it where it was.
     await wheelOver(panel().getByRole('heading', { name: 'Nodes' }));
     await wheelOver(panel().getByRole('toolbar', { name: '3D view' }));
     expect(scrollY()).toBe(0);
 
-    // Closed, dev mode leaves nothing that stops the page scrolling. Focus leaves the Responsive
-    // button first, whose tooltip Escape would close before dev mode.
     await mouse.move(640, 290);
     (panel().element() as HTMLElement).focus();
     await isGone(page.getByRole('tooltip'));
@@ -774,9 +684,7 @@ test(
   { tags: ['engines'] },
   async () => {
     await page.viewport(1280, 720);
-    // The page is the root, inside a scaffold that scrolls; its clipped column scrolls too.
     await open('root=.dev-page');
-    // After the fixture's own style sheet, which is in the body, so these rules win.
     const style = document.createElement('style');
     style.textContent =
       '.dev-scaffold { block-size: 20rem; overflow: auto; } .dev-clip { overflow: auto; }';
@@ -799,10 +707,6 @@ test(
         each.querySelector(':scope > .env-dev-name')?.textContent?.includes(name),
       )!;
     await turnTo('Front');
-    /**
-     * Rests the pointer on a plane, near its bottom edge, clear of the planes above it; again
-     * while the planes still move to where the page now is.
-     */
     const restOn = (name: string) =>
       expect
         .poll(async () => {
@@ -813,17 +717,14 @@ test(
         })
         .toBe(true);
 
-    // Over a node in a scroller, the wheel scrolls it.
     await restOn('column "clipped"');
     await mouse.wheel(0, 100);
     await expect.poll(() => clip.scrollTop).toBeGreaterThan(0);
-    // Over a node nothing in the root scrolls, the wheel zooms; what is outside the root stays.
     const before = zoom();
     await restOn('row "painted"');
     await mouse.wheel(0, 100);
     await expect.poll(zoom).toBeLessThan(before);
     expect(scaffold.scrollTop).toBe(0);
-    // Ctrl+wheel zooms anywhere.
     const out = zoom();
     await restOn('column "clipped"');
     await keyboard.down('Control');
@@ -831,7 +732,6 @@ test(
     await keyboard.up('Control');
     await expect.poll(zoom).toBeGreaterThan(out);
 
-    // With a height from a device, the root scrolls in it, as a window would.
     await pickDevice(/^iPhone SE/);
     await expect.poll(() => css(root, 'overflow-y')).toBe('auto');
     await turnTo('Tilted');
@@ -840,7 +740,6 @@ test(
     await expect.poll(() => root.scrollTop).toBeGreaterThan(0);
     expect(scaffold.scrollTop).toBe(0);
 
-    // Closed, the root is as it was, and the page scrolls again.
     (panel().element() as HTMLElement).focus();
     await keyboard.press('Escape');
     await isHidden(panel());

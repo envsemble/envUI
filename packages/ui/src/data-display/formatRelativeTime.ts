@@ -1,5 +1,3 @@
-// formatRelativeTime and what RelativeTime shares with it. It uses nothing but Intl, so a server
-// component can call it: it is no client module, unlike RelativeTime, which follows the clock.
 import { relativeTime as relativeTimeMessages } from '../foundations/messages/relativeTime.js';
 import { day, hour, minute, second } from '../internal/time/durations.js';
 
@@ -37,16 +35,18 @@ export interface RelativeTimeOptions {
 const month = 30.436875 * day;
 const year = 365.2425 * day;
 
-/** Milliseconds since 1970, or NaN for an invalid moment or one outside the range of Date. */
+function calendarDaysBetween(from: number, to: number) {
+  const startOfDay = (time: number) => {
+    const date = new Date(time);
+    return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  };
+  return Math.round((startOfDay(to) - startOfDay(from)) / day);
+}
+
 export function toTime(value: RelativeTimeValue | undefined) {
   return new Date(value ?? Number.NaN).getTime();
 }
 
-/**
- * The unit and count that describe a distance in time, rounded so the text changes at the
- * midpoints: under 45 seconds is now, then minutes below 45, hours below 22, days below a week,
- * weeks below 26 days, months below 11 and years.
- */
 function relativeUnit(distance: number): [number, Intl.RelativeTimeFormatUnit] | undefined {
   const away = Math.abs(distance);
   const sign = distance < 0 ? -1 : 1;
@@ -65,52 +65,62 @@ function relativeUnit(distance: number): [number, Intl.RelativeTimeFormatUnit] |
 
 const formatters = new Map<string, Intl.RelativeTimeFormat | Intl.DateTimeFormat>();
 
+function cachedFormatter<Formatter extends Intl.RelativeTimeFormat | Intl.DateTimeFormat>(
+  key: string,
+  create: () => Formatter,
+): Formatter {
+  let formatter = formatters.get(key) as Formatter | undefined;
+  if (!formatter) {
+    formatter = create();
+    formatters.set(key, formatter);
+  }
+  return formatter;
+}
+
 function relativeFormatter(
   locale: RelativeTimeOptions['locale'],
   style: NonNullable<RelativeTimeOptions['format']>,
   numeric: 'always' | 'auto',
 ) {
-  const key = `relative|${String(locale ?? '')}|${style}|${numeric}`;
-  // The key's prefix says which formatter it holds, and the locale is the one Intl takes.
-  let formatter = formatters.get(key) as Intl.RelativeTimeFormat | undefined;
-  if (!formatter) {
-    formatter = new Intl.RelativeTimeFormat(locale as Intl.LocalesArgument, { style, numeric });
-    formatters.set(key, formatter);
-  }
-  return formatter;
+  return cachedFormatter(
+    `relative|${String(locale ?? '')}|${style}|${numeric}`,
+    () => new Intl.RelativeTimeFormat(locale as Intl.LocalesArgument, { style, numeric }),
+  );
 }
 
 export function dateTimeFormatter(locale: RelativeTimeOptions['locale']) {
-  const key = `absolute|${String(locale ?? '')}`;
-  // The key's prefix says which formatter it holds, and the locale is the one Intl takes.
-  let formatter = formatters.get(key) as Intl.DateTimeFormat | undefined;
-  if (!formatter) {
-    formatter = new Intl.DateTimeFormat(locale as Intl.LocalesArgument, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    });
-    formatters.set(key, formatter);
-  }
-  return formatter;
+  return cachedFormatter(
+    `absolute|${String(locale ?? '')}`,
+    () =>
+      new Intl.DateTimeFormat(locale as Intl.LocalesArgument, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      }),
+  );
 }
 
 /**
  * A moment as text relative to another, by default the current time, such as "in 2 days",
- * "3 hours ago" or "just now", through Intl.RelativeTimeFormat. An invalid moment gives an empty
+ * "3 hours ago", "yesterday" or "just now", through Intl.RelativeTimeFormat. A moment a day or so
+ * away on the next or the previous calendar day reads "tomorrow" or "yesterday", in the locale's
+ * words. An invalid moment gives an empty
  * string; an invalid now is ignored, as by RelativeTime, for the current time.
  */
 export function formatRelativeTime(value: RelativeTimeValue, options: RelativeTimeOptions = {}) {
   const { locale, format = 'long', nowLabel } = options;
   const time = toTime(value);
-  const given = toTime(options.now);
-  const now = Number.isFinite(given) ? given : Date.now();
+  const givenNow = toTime(options.now);
+  const now = Number.isFinite(givenNow) ? givenNow : Date.now();
   if (!Number.isFinite(time)) return '';
   const unit = relativeUnit(time - now);
+  const calendarDays = calendarDaysBetween(now, time);
+  if (unit?.[1] === 'day' && Math.abs(calendarDays) === 1)
+    return relativeFormatter(locale, format, 'auto').format(calendarDays, 'day');
   if (unit) return relativeFormatter(locale, format, 'always').format(...unit);
   if (nowLabel !== undefined) return nowLabel;
   const auto = relativeFormatter(locale, format, 'auto');
-  // English says just now of a moment that has passed; Intl has only now, in every language.
-  if (time <= now && auto.resolvedOptions().locale.split('-')[0] === 'en')
-    return relativeTimeMessages.now;
+  const english = auto.resolvedOptions().locale.split('-')[0] === 'en';
+  const englishJustNowThatIntlLacks = time <= now && english;
+  if (englishJustNowThatIntlLacks) return relativeTimeMessages.now;
   return auto.format(0, 'second');
 }

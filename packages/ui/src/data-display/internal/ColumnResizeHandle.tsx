@@ -7,34 +7,29 @@ import '../../styles/Base.css';
 import '../../styles/Table.css';
 import '../../styles/ColumnResizeHandle.css';
 
-/**
- * Keyboard steps of a resize handle in percent: arrow keys, and Page Up, Page Down or arrow keys
- * with Shift.
- */
-const columnResizeStep = 1;
-const columnResizeLargeStep = 5;
+const columnResizeStepPercent = 1;
+const columnResizeLargeStepPercent = 5;
 
-/** The range a column can take while the boundary after it moves: only it and the next change. */
-function columnBounds(widths: readonly number[], minimums: readonly number[], column: number) {
+function boundsSharedWithNextColumn(
+  widths: readonly number[],
+  minimums: readonly number[],
+  column: number,
+) {
   const pair = (widths[column] ?? 0) + (widths[column + 1] ?? 0);
   const min = Math.min(minimums[column] ?? 0, pair);
   return { min, max: Math.max(min, pair - (minimums[column + 1] ?? 0)) };
 }
 
-/**
- * Move the boundary after a column by a number of percent. The column and the next one share the
- * change, so every other column and the width of the table stay as they are.
- */
-function resizeColumns(
+function moveBoundaryAfterColumn(
   widths: readonly number[],
   minimums: readonly number[],
   column: number,
-  delta: number,
+  deltaPercent: number,
 ) {
   if (column < 0 || column + 1 >= widths.length) return [...widths];
-  const { min, max } = columnBounds(widths, minimums, column);
+  const { min, max } = boundsSharedWithNextColumn(widths, minimums, column);
   const pair = widths[column] + widths[column + 1];
-  const width = Math.min(max, Math.max(min, widths[column] + delta));
+  const width = Math.min(max, Math.max(min, widths[column] + deltaPercent));
   const next = [...widths];
   next[column] = width;
   next[column + 1] = pair - width;
@@ -43,10 +38,6 @@ function resizeColumns(
 
 const tableOf = (handle: HTMLElement) => handle.closest('table');
 
-/**
- * A separator at the inline end of a header cell that moves the boundary to the next column: a
- * window splitter's handle on useResize, its size the column's width in percent of the table.
- */
 export function ColumnResizeHandle({
   column,
   columns,
@@ -60,10 +51,9 @@ export function ColumnResizeHandle({
 }) {
   const { widths, minimums, change, reset, setResizing } = columns;
   const width = widths[column];
-  const { min, max } = columnBounds(widths, minimums, column);
-  // A column's handle always moves along the inline axis, so its part takes no data-axis.
+  const { min, max } = boundsSharedWithNextColumn(widths, minimums, column);
   const {
-    handleProps: { 'data-axis': _axis, ...handleProps },
+    handleProps: { 'data-axis': _alwaysInline, ...handleProps },
     dragging,
   } = useResize({
     axis: 'inline',
@@ -72,14 +62,12 @@ export function ColumnResizeHandle({
     value: width,
     min,
     max,
-    step: columnResizeStep,
-    largeStep: columnResizeLargeStep,
-    // Only this column and the next change, so the boundary moves to the new width from any widths.
+    step: columnResizeStepPercent,
+    largeStep: columnResizeLargeStepPercent,
     onChange: (next, { committed }) =>
-      change(resizeColumns(widths, minimums, column, next - width), committed),
+      change(moveBoundaryAfterColumn(widths, minimums, column, next - width), committed),
     valueText: (value) => `${Math.round(value)}%`,
   });
-  // The table shows that a column is resizing while this handle is dragged.
   useEffect(() => {
     if (!dragging) return;
     setResizing(true);

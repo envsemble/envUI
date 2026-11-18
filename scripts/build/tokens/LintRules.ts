@@ -1,13 +1,6 @@
-// envUI's own lint rules for the tokens, which Terrazzo runs before every build.
 import type { LintRule } from '@terrazzo/parser';
 import { cssVariable, isInternal, isSemanticColor, prefix } from './Themes.ts';
 
-/**
- * `envui/color-schemes`: every semantic color is declared in the dark scheme, so dark is designed
- * rather than inherited, and every other color outside the palette is an alias, which follows its
- * target into each scheme. (core/required-modes reads only the legacy `$extensions.mode`, so with a
- * resolver it sees no modes on any token.)
- */
 const colorSchemesRule: LintRule<never, { dark: string[] }> = {
   meta: { docs: { description: 'Every semantic color has a dark value; other colors alias.' } },
   defaultOptions: { dark: [] },
@@ -25,10 +18,6 @@ const colorSchemesRule: LintRule<never, { dark: string[] }> = {
   },
 };
 
-/**
- * `envui/high-contrast`: contrast/high.tokens.json points roles at `contrast-high.*`, which both
- * schemes must define, and the two schemes define the same high-contrast values.
- */
 const highContrastRule: LintRule<
   never,
   { light: string[]; dark: string[]; pointers: Record<string, string> }
@@ -52,11 +41,6 @@ const highContrastRule: LintRule<
   },
 };
 
-/**
- * `envui/unique-css-names`: no two tokens become the same custom property, compared as Tokens.css
- * writes them, and a token's path spells its property after the prefix: `space.4+` would be
- * written `--env-space-4`, where space.4 already is.
- */
 const uniqueNamesRule: LintRule<never> = {
   meta: { docs: { description: 'Every token has its own CSS custom property, its path.' } },
   defaultOptions: {},
@@ -76,10 +60,6 @@ const uniqueNamesRule: LintRule<never> = {
   },
 };
 
-/**
- * `envui/declared-once`: each token is declared in one source file of its set or modifier context,
- * as duplicateTokens() reads them from the resolver.
- */
 const declaredOnceRule: LintRule<never, { duplicates: string[] }> = {
   meta: { docs: { description: 'A set or context declares each token in one file.' } },
   defaultOptions: { duplicates: [] },

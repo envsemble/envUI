@@ -45,7 +45,6 @@ import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popove
 import '../styles/Base.css';
 import '../styles/Tooltip.css';
 
-/** The props of the control a Tooltip describes, as far as the tooltip reads them. */
 interface TriggerProps {
   disabled?: boolean;
   children?: ReactNode;
@@ -124,12 +123,10 @@ export interface TooltipProps extends Omit<
 /** What a tooltip's onOpenChange receives beside the requested state: a popover's details. */
 export type TooltipOpenChangeDetails = PopoverOpenChangeDetails;
 
-/** Whether a control's popup, such as its menu, is open, by its aria-expanded state. */
 const isExpanded = (props: TriggerProps) =>
   props['aria-expanded'] === true || props['aria-expanded'] === 'true';
 
-/** A component's name for a report. */
-function typeName(type: unknown): string {
+function componentNameForReport(type: unknown): string {
   if (typeof type === 'string') return type;
   const named = type as { displayName?: string; name?: string } | null;
   return named?.displayName || named?.name || 'a component';
@@ -140,12 +137,7 @@ type Forwarded = Omit<
   'content' | 'children' | 'side' | 'align' | 'delay' | 'popupClassName' | 'open' | 'onOpenChange'
 >;
 
-/**
- * The control with the Tooltip's own props joined to its own, handlers chained and the control's
- * values first, as Base UI's render does, so a trigger's press handler, aria-expanded and ref
- * reach it.
- */
-function useControl(children: ReactElement<TriggerProps>, forwarded: Forwarded) {
+function useControlWithForwardedProps(children: ReactElement<TriggerProps>, forwarded: Forwarded) {
   const forwardedRef = forwarded.ref;
   const childRef = children.props.ref;
   const controlRef = useCallback(
@@ -184,9 +176,8 @@ export function Tooltip(props: TooltipProps) {
     ...forwarded
   } = props;
   const hoverCardTrigger = useContext(HoverCardTriggerContext);
-  // Text, a Fragment or a list can't take the trigger's props and ref.
-  if (!isValidElement(children) || children.type === Fragment) {
-    // Says what a Tooltip can't do while developing, once per message, as React reports a prop.
+  const takesPropsAndRef = isValidElement(children) && children.type !== Fragment;
+  if (!takesPropsAndRef) {
     reportInDevelopment(
       () =>
         process.env.NODE_ENV !== 'production' &&
@@ -195,16 +186,11 @@ export function Tooltip(props: TooltipProps) {
     );
     return <>{children}</>;
   }
-  // Around an envUI component that takes its control as trigger, such as Menu.Root or Popover,
-  // the tooltip goes to that control, where the component's own props, ref and popup stay its own.
   const owner = children.props;
   if (isTriggerOwner(children.type, owner) && isValidElement(owner.trigger))
     return cloneElement(children, {
-      // isValidElement narrows to the element, not its props.
       trigger: <Tooltip {...props}>{owner.trigger as ReactElement<TriggerProps>}</Tooltip>,
     });
-  // A HoverCard's trigger opens the card on the same hover and focus, which the tooltip would
-  // cover.
   if (hoverCardTrigger) {
     reportInDevelopment(
       () =>
@@ -244,28 +230,16 @@ function ControlWithoutTooltip({
   children: ReactElement<TriggerProps>;
   forwarded: Forwarded;
 }) {
-  return useControl(children, forwarded);
+  return useControlWithForwardedProps(children, forwarded);
 }
 
-/**
- * Whether focus came to the control back from its popup: from the popup, or from nowhere, as the
- * popup is gone by the time its focus returns. Focus from elsewhere in the page is no return.
- */
-function returnsFrom(popupId: string | null, event: Event) {
+function focusReturnedFromPopup(popupId: string | null, event: Event) {
   const from = (event as FocusEvent).relatedTarget;
   if (!(from instanceof Node) || !from.isConnected) return true;
   return popupId !== null && Boolean(document.getElementById(popupId)?.contains(from));
 }
 
-/**
- * Once the control's own popup closes, such as on Esc, focus returns to the control: that focus
- * opens no tooltip, which would take a second Esc. The next key press or pointer entry ends the
- * wait, so focus from the keyboard opens it again, as does focus that comes from elsewhere in the
- * page, such as after a click outside moved it away. A ref, as the key press that moves focus comes
- * before any render. Returns whether an opening is that returning focus, which ends the wait
- * otherwise.
- */
-function useFocusReturn(expanded: boolean, trigger: RefObject<HTMLElement | null>) {
+function useFocusReturnFromPopup(expanded: boolean, trigger: RefObject<HTMLElement | null>) {
   const returning = useRef(false);
   const wasExpanded = useRef(expanded);
   const popupId = useRef<string | null>(null);
@@ -275,15 +249,15 @@ function useFocusReturn(expanded: boolean, trigger: RefObject<HTMLElement | null
     if (expanded) popupId.current = trigger.current?.getAttribute('aria-controls') ?? null;
     if (!closed) return;
     returning.current = true;
-    const end = () => {
+    const endWaitOnKeyPress = () => {
       returning.current = false;
     };
-    document.addEventListener('keydown', end, { capture: true, once: true });
-    return () => document.removeEventListener('keydown', end, { capture: true });
+    document.addEventListener('keydown', endWaitOnKeyPress, { capture: true, once: true });
+    return () => document.removeEventListener('keydown', endWaitOnKeyPress, { capture: true });
   }, [expanded, trigger]);
   return (reason: string, event: Event) => {
     if (!returning.current) return false;
-    if (reason === 'trigger-focus' && returnsFrom(popupId.current, event)) return true;
+    if (reason === 'trigger-focus' && focusReturnedFromPopup(popupId.current, event)) return true;
     returning.current = false;
     return false;
   };
@@ -312,11 +286,9 @@ function TooltipTrigger({
   popupClassName?: string;
   forwarded: Forwarded;
 }) {
-  const control = useControl(children, forwarded);
+  const control = useControlWithForwardedProps(children, forwarded);
   const trigger = control.props;
   const isDisabled = Boolean(trigger.disabled);
-  // A control whose own popup is open, such as a menu button, shows no tooltip over it, so Esc
-  // closes that popup and the tooltip doesn't cover it.
   const expanded = isExpanded(trigger);
   const popupId = `${useId()}-tooltip`;
   const [openState, setOpen, keepOwn] = useControllableState({
@@ -324,53 +296,47 @@ function TooltipTrigger({
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
-  // A tooltip that keeps its own state closes as the popup opens, rather than coming back as it
-  // closes.
-  if (openState && expanded) keepOwn(false);
+  const popupOpenedOverTooltip = openState && expanded;
+  if (popupOpenedOverTooltip) keepOwn(false);
   const open = openState && !expanded;
   const portal = usePortalContainer();
-  // The tooltip takes the text direction at its trigger, the control or its wrapper.
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const focusReturning = useFocusReturn(expanded, triggerRef);
+  const focusReturning = useFocusReturnFromPopup(expanded, triggerRef);
   const fallbackName = ownName(trigger);
   const [name, setName] = useTriggerName(triggerRef, open, isDisabled, fallbackName);
-  // A disabled control's wrapper stands in for it (see standInRole).
   const stand = useStandIn(triggerRef, isDisabled, fallbackName);
-  // A component that doesn't pass the ref on to its element gives the tooltip nothing to open on.
   const childType = children.type;
-  useLayoutEffect(() => {
-    if (!isDisabled && !triggerRef.current)
-      reportInDevelopment(
-        () =>
-          process.env.NODE_ENV !== 'production' &&
-          `A Tooltip's child, ${typeName(childType)}, doesn't pass the ref on to its element, so ` +
-            'no tooltip opens: have it take ref as a prop and give it to its element.',
-      );
-  }, [isDisabled, childType]);
+  useLayoutEffect(
+    function reportChildThatKeepsRef() {
+      if (!isDisabled && !triggerRef.current)
+        reportInDevelopment(
+          () =>
+            process.env.NODE_ENV !== 'production' &&
+            `A Tooltip's child, ${componentNameForReport(childType)}, doesn't pass the ref on to its element, so ` +
+              'no tooltip opens: have it take ref as a prop and give it to its element.',
+        );
+    },
+    [isDisabled, childType],
+  );
   const standsIn = isDisabled && stand.name !== undefined && stand.role !== undefined;
   const ownWords = isDisabled ? stand.name : name;
-  // A control named by the same words needs no description that repeats them.
+  const repeatsOwnName = typeof content === 'string' && content.trim() === ownWords;
   const describes =
-    useContext(TooltipDescribesContext) &&
-    ownWords !== undefined &&
-    !(typeof content === 'string' && content.trim() === ownWords);
+    useContext(TooltipDescribesContext) && ownWords !== undefined && !repeatsOwnName;
   const describedBy =
     open && describes && (!isDisabled || standsIn)
       ? [trigger['aria-describedby'], popupId].filter(Boolean).join(' ')
       : trigger['aria-describedby'];
+  const freshRootPerTriggerElement = isDisabled ? 'disabled' : 'enabled';
   return (
-    // A control that becomes enabled or disabled changes the trigger element; a fresh tooltip
-    // listens to the new one, so hovering it still opens the tooltip.
     <TooltipNestingContext value>
       <BaseTooltip.Root
-        key={isDisabled ? 'disabled' : 'enabled'}
+        key={freshRootPerTriggerElement}
         open={open}
         onOpenChange={containedOpenChange(portal, triggerRef, (next, details) => {
           if (next && expanded) return;
           if (next && focusReturning(details.reason, details.event)) return;
           if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
-          // Base UI's tooltip reasons are a popover's, and disabled for a root it disables, which
-          // this tooltip never does: a control that becomes disabled gets a fresh root (key).
           setOpen(next, { reason: details.reason as PopoverOpenChangeReason });
         })}
       >
@@ -380,27 +346,19 @@ function TooltipTrigger({
           aria-describedby={describedBy}
           render={
             isDisabled ? (
-              // Disabled controls receive no pointer or focus events, so the wrapper carries them.
-              // It takes the control's place for assistive technology, with its role, name and
-              // states, disabled, and a tab stop, where it can read them and the role needs no
-              // state it can't carry (see standInRole in internal/tooltipTriggerName.ts).
               <span
                 className="env-tooltip-disabled-target"
                 role={standsIn ? stand.role : undefined}
                 aria-label={standsIn ? stand.name : undefined}
                 aria-disabled={standsIn || undefined}
                 tabIndex={standsIn ? 0 : undefined}
-                // The copied states are ARIA attributes with their values as the control had them.
                 {...((standsIn ? stand.states : {}) as AriaAttributes)}
               />
             ) : (
-              // The control's own aria-describedby would win over the trigger's, so it carries
-              // the joined one. Text that shows more takes the dotted underline.
               cloneElement(control, {
                 'aria-describedby': describedBy,
                 ...(isTextTrigger(children) && {
                   className: classNames(
-                    // A text trigger is an element that takes a class name (isTextTrigger).
                     (control.props as { className?: string }).className,
                     hoverDetailClass,
                   ),
@@ -409,12 +367,9 @@ function TooltipTrigger({
             )
           }
         >
-          {
-            // aria-hidden goes on whatever element the control is.
-            isDisabled
-              ? cloneElement(control, standsIn ? ({ 'aria-hidden': true } as object) : {})
-              : undefined
-          }
+          {isDisabled
+            ? cloneElement(control, standsIn ? ({ 'aria-hidden': true } as object) : {})
+            : undefined}
         </BaseTooltip.Trigger>
         <TooltipPopup
           content={content}

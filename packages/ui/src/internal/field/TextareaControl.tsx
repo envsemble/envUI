@@ -23,6 +23,12 @@ export interface TextareaControlProps extends TextareaHTMLAttributes<HTMLTextAre
   rows?: number;
 }
 
+export interface TextareaControlOwnProps {
+  ref?: Ref<HTMLTextAreaElement>;
+  /** A text area without the text field's look and resize edge; the owner's class styles it. */
+  bare?: boolean;
+}
+
 /**
  * The one native text area of envUI: a text field's, with its resize edge, for Textarea and
  * MarkdownEditor, or a bare one that its owner styles and sizes, as Composer's.
@@ -35,11 +41,7 @@ export function TextareaControl({
   style,
   bare = false,
   ...props
-}: TextareaControlProps & {
-  ref?: Ref<HTMLTextAreaElement>;
-  /** A text area without the text field's look and resize edge; the owner's class styles it. */
-  bare?: boolean;
-}) {
+}: TextareaControlProps & TextareaControlOwnProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const attachInput = useCallback(
     (input: HTMLTextAreaElement | null) => {
@@ -52,12 +54,10 @@ export function TextareaControl({
     return (
       <textarea {...props} ref={attachInput} rows={rows} style={style} className={className} />
     );
-  // Native content sizing ignores rows, and the shared 7.5 rem minimum would outgrow a few, so
-  // rows are the minimum line count in CSS. Without rows a field starts at the shared 7.5 rem.
-  const sizingStyle =
-    sizing === 'content' || rows !== undefined
-      ? { '--env-textarea-rows': rows ?? 2, ...style }
-      : style;
+  const rowsAreMinimumLinesInCss = sizing === 'content' || rows !== undefined;
+  const sizingStyle = rowsAreMinimumLinesInCss
+    ? { '--_textarea-rows': rows ?? 2, ...style }
+    : style;
   return (
     <>
       <textarea

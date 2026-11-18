@@ -1,10 +1,25 @@
 import type { ReactNode } from 'react';
 import { flag } from '../../internal/flag.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
 import type { TreeItem } from '../Tree.js';
 import type { TreeMotion } from './treeModel.js';
 import '../../styles/Base.css';
 import '../../styles/Tree.css';
+
+export interface TreeRowProps {
+  item: TreeItem;
+  id: string;
+  /** The row's position among its siblings, and their count. */
+  position: number | undefined;
+  setSize: number | undefined;
+  selected: boolean;
+  highlighted: boolean;
+  /** The row arrives with new items and fades in from its starting style. */
+  arriving: boolean;
+  top: number;
+  leaving: boolean;
+}
 
 /**
  * A tree's row, placed top pixels down its parent. A leaving row, in a group that collapses, is only
@@ -20,19 +35,7 @@ export function TreeRow({
   arriving,
   top,
   leaving,
-}: {
-  item: TreeItem;
-  id: string;
-  /** The row's position among its siblings, and their count. */
-  position: number | undefined;
-  setSize: number | undefined;
-  selected: boolean;
-  highlighted: boolean;
-  /** The row arrives with new items and fades in from its starting style. */
-  arriving: boolean;
-  top: number;
-  leaving: boolean;
-}) {
+}: TreeRowProps) {
   return (
     <div
       id={leaving ? undefined : id}
@@ -49,7 +52,7 @@ export function TreeRow({
       data-highlighted={flag(!leaving && highlighted)}
       data-starting-style={flag(arriving)}
       style={{
-        '--env-tree-depth': item.depth,
+        '--_tree-depth': item.depth,
         transform: `translateY(${top}px)`,
       }}
     >
@@ -72,9 +75,26 @@ export function TreeRow({
           <span className="env-tree-description">{item.description}</span>
         </>
       )}
-      {item.end != null && <span className="env-tree-end">{item.end}</span>}
+      {item.end != null && (
+        <Slot className="env-tree-end" element="span" layout="row" shrink="never">
+          {item.end}
+        </Slot>
+      )}
     </div>
   );
+}
+
+export interface PlaceRowsOptions<Item extends TreeItem> {
+  items: readonly Item[];
+  /** The indexes of the rows in the document, in order. */
+  indexes: readonly number[];
+  motion: TreeMotion<Item> | null;
+  /** Whether the motion moves the rows to where they go, after a render where they were. */
+  moving: boolean;
+  rowHeight: number;
+  inView: (index: number) => boolean;
+  /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
+  row: (item: Item, index: number, top: number, leaving?: boolean) => ReactNode;
 }
 
 /**
@@ -90,18 +110,7 @@ export function placeRows<Item extends TreeItem>({
   rowHeight,
   inView,
   row,
-}: {
-  items: readonly Item[];
-  /** The indexes of the rows in the document, in order. */
-  indexes: readonly number[];
-  motion: TreeMotion<Item> | null;
-  /** Whether the motion moves the rows to where they go, after a render where they were. */
-  moving: boolean;
-  rowHeight: number;
-  inView: (index: number) => boolean;
-  /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
-  row: (item: Item, index: number, top: number, leaving?: boolean) => ReactNode;
-}): { rows: ReactNode; shift: number } {
+}: PlaceRowsOptions<Item>): { rows: ReactNode; shift: number } {
   const placed = (index: number) => row(items[index], index, index * rowHeight);
   if (!motion) return { rows: indexes.map(placed), shift: 0 };
   const { kind, start, rows: groupRows } = motion;
@@ -119,7 +128,7 @@ export function placeRows<Item extends TreeItem>({
         data-ending-style={flag(kind === 'close' && moving)}
         style={{
           transform: `translateY(${start * rowHeight}px)`,
-          blockSize: `calc(${kind === 'open' ? size * rowHeight : 0}px + var(--env-tree-shift))`,
+          blockSize: `calc(${kind === 'open' ? size * rowHeight : 0}px + var(--_tree-shift))`,
         }}
       >
         {groupRows.map((item, offset) =>

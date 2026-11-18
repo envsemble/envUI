@@ -6,11 +6,6 @@ import { MotionStage } from '../../figures/MotionStage';
 const more = '.env-navigation-bar-more';
 const inbox = '.env-navigation-bar-item[aria-label="Inbox, 4 new"]';
 
-/*
- * Inbox is current. The pointer presses More: its menu opens with the other three destinations,
- * and the pointer picks Archive. More now holds the current page and takes the current fill.
- * Then the pointer presses Inbox, and the fill goes back to it.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: more, x: 0.5, y: 0.5 },
@@ -32,7 +27,6 @@ const script: PointerStep[] = [
 function Picking() {
   usePointer(script);
   return (
-    // Its menu opens above the bar, as at the bottom of a phone's screen.
     <div
       style={{ display: 'grid', alignContent: 'end', inlineSize: '100%', minBlockSize: '14rem' }}
     >
@@ -43,7 +37,6 @@ function Picking() {
   );
 }
 
-/** More, opened by a pointer no one sees, which picks a destination from it. */
 export default function MoreDestinationsMotion() {
   return (
     <MotionStage label="More opening and taking the current fill" stage="shaded">

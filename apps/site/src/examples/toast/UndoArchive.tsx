@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, List, Text, ToastProvider, useToast } from '@envsemble/envui';
+import { IconButton, List, Text, ToastProvider, useToast } from '@envsemble/envui';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
 
 const initialProjects = ['Website refresh', 'Onboarding emails', 'Billing migration'];
 
@@ -16,7 +17,6 @@ function Projects() {
           setProjects((current) =>
             initialProjects.filter((project) => project === name || current.includes(project)),
           );
-          // The action doesn't close the notification by itself.
           toast.dismiss(id);
         },
       },
@@ -30,13 +30,12 @@ function Projects() {
           key={project}
           label={project}
           end={
-            <Button
-              variant="secondary"
+            <IconButton
+              variant="text"
+              icon={<IconArchive />}
               aria-label={`Archive ${project}`}
               onClick={() => archive(project)}
-            >
-              Archive
-            </Button>
+            />
           }
         />
       ))}

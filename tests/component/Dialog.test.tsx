@@ -9,7 +9,6 @@ import { mount } from './support/Mount.tsx';
 const isShown = (locator: Locator) => expect.poll(() => shown(locator)).toBe(true);
 const isHidden = (locator: Locator) => expect.poll(() => shown(locator)).toBe(false);
 const noDialogs = () => expect.poll(() => page.getByRole('dialog').elements().length).toBe(0);
-/** The theme of the nearest themed ancestor of an element. */
 const themeOf = (locator: Locator) =>
   locator.element().closest('[data-env-theme]')?.getAttribute('data-env-theme');
 
@@ -19,7 +18,6 @@ test('popovers size to their content, from 12 rem up to their width, and stay in
   await scope.getByRole('button', { name: 'Details light' }).click();
   const details = page.getByRole('dialog', { name: 'Document details' });
   await isShown(details);
-  // A title and a short line: narrower than md's 20 rem, never under 12 rem.
   const short = box(details).width;
   expect(short).toBeGreaterThanOrEqual(192);
   expect(short).toBeLessThan(320);
@@ -54,7 +52,6 @@ test('dialogs open wide for heavy content and near the top for search-like tasks
   await expect.poll(() => box(top).width).toBeCloseTo(28 * 16, 0);
 });
 
-/** Opens a dialog from its trigger and waits for it to show. */
 async function open(trigger: string, title: string) {
   await page.getByRole('button', { name: trigger }).click();
   const panel = page.getByRole('dialog', { name: title });
@@ -77,20 +74,17 @@ test('right panels keep their width beside the page and fill a narrow window', a
     await page.viewport(viewport, 800);
     const panel = await open('Open panel', 'Report details');
     await expect.poll(() => box(panel).width).toBeCloseTo(standard, 0);
-    // Once it has slid in, the panel ends at the window's edge.
     await expect.poll(() => box(panel).x + box(panel).width).toBeCloseTo(viewport, 0);
     await close();
     const widePanel = await open('Open wide panel', 'Wide report details');
     await expect.poll(() => box(widePanel).width).toBeCloseTo(wide, 0);
     await close();
   }
-  // Across the whole width, the panel needs no border at its start.
   const phonePanel = await open('Open panel', 'Report details');
   expect(css(phonePanel, 'border-left-width')).toBe('0px');
 });
 
 test('a panel across the whole width keeps clear of the safe areas on both sides', async (context) => {
-  // Only one engine emulates safe-area insets.
   if (server.browser !== 'chromium') context.skip();
   mount(dialogs);
   const session = cdp();
@@ -148,7 +142,6 @@ test(
     await expect.poll(() => page.getByTestId('dialog-status').element().textContent).toBe('closed');
     await expect.element(trigger).toHaveFocus();
 
-    // Its dismissal action and a controlled action close it and return focus.
     for (const action of ['Cancel', 'Save dialog']) {
       await trigger.click();
       await page.getByRole('dialog').getByRole('button', { name: action, exact: true }).click();
@@ -163,7 +156,6 @@ test('a pending Dialog cannot be dismissed until the work finishes', async () =>
   await page.getByRole('button', { name: 'Open pending dialog' }).click();
   const dialog = page.getByRole('dialog', { name: 'Save project' });
   await dialog.getByRole('button', { name: 'Toggle pending' }).click();
-  // The built-in close button and a DialogClose turn off, and the last action shows the work.
   await expect.element(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
   await expect.element(dialog.getByRole('button', { name: 'Discard' })).toBeDisabled();
   await expect
@@ -171,7 +163,6 @@ test('a pending Dialog cannot be dismissed until the work finishes', async () =>
     .toHaveAttribute('aria-busy', 'true');
   await keyboard.press('Escape');
   await mouse.click(5, 5);
-  // Past the frames a dismissal would take: one would have started the dialog's ending style.
   await nextFrames();
   expect(shown(dialog)).toBe(true);
   expect(dialog.element().hasAttribute('data-ending-style')).toBe(false);

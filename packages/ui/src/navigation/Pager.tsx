@@ -45,14 +45,12 @@ function PagerLink({
   ...props
 }: LinkProps & { direction: 'previous' | 'next' }) {
   const LinkComponent = useLinkComponent();
-  // The one caption a link shows, read without merging the namespace, so a part alone stays small.
-  const caption =
+  const captionWithoutMergingNamespace =
     (useEnvUI().messages.pager?.[direction] as string | undefined) ?? pager[direction];
   const isPrevious = direction === 'previous';
   const symbol = icon != null ? <DecorativeIcon>{icon}</DecorativeIcon> : null;
 
   return (
-    // The link component comes from LinkProvider and keeps its identity between renders.
     // eslint-disable-next-line react-hooks/static-components
     <LinkComponent
       {...props}
@@ -61,7 +59,7 @@ function PagerLink({
     >
       {isPrevious && symbol}
       <span className="env-pager-link-copy">
-        <span className="env-pager-link-label">{caption}</span>
+        <span className="env-pager-link-label">{captionWithoutMergingNamespace}</span>
         <span className="env-pager-link-title">{children}</span>
       </span>
       {!isPrevious && symbol}
@@ -69,20 +67,10 @@ function PagerLink({
   );
 }
 
-/**
- * The destination before this one: a native link with rel="prev", its title under the label
- * Previous (EnvUIProvider's messages.pager.previous), and an optional icon before them. It also
- * stands alone, outside Pager.Root.
- */
 function Previous(props: PreviousProps) {
   return <PagerLink {...props} direction="previous" />;
 }
 
-/**
- * The destination after this one: a native link with rel="next", its title under the label Up
- * next (EnvUIProvider's messages.pager.next), and an optional icon after them. It also stands
- * alone, outside Pager.Root.
- */
 function Next(props: NextProps) {
   return <PagerLink {...props} direction="next" />;
 }
@@ -100,10 +88,6 @@ export interface RootProps extends ComponentPropsWithRef<'nav'> {
   'aria-label'?: string;
 }
 
-/**
- * A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous
- * and Pager.Next children; either one can be left out, and without any it renders nothing.
- */
 function Root({ children, className, 'aria-label': ariaLabel, ...props }: RootProps) {
   const messages = useMessages('pager', pager);
   if (Children.toArray(children).length === 0) return null;
@@ -127,9 +111,21 @@ function Root({ children, className, 'aria-label': ariaLabel, ...props }: RootPr
   );
 }
 
-// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
-// application leaves unused.
+/**
+ * A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous
+ * and Pager.Next children; either one can be left out, and without any it renders nothing.
+ */
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Pager.Root');
+/**
+ * The destination before this one: a native link with rel="prev", its title under the label
+ * Previous (EnvUIProvider's messages.pager.previous), and an optional icon before them. It also
+ * stands alone, outside Pager.Root.
+ */
 const PreviousPart = /* @__PURE__ */ withDisplayName(Previous, 'Pager.Previous');
+/**
+ * The destination after this one: a native link with rel="next", its title under the label Up
+ * next (EnvUIProvider's messages.pager.next), and an optional icon after them. It also stands
+ * alone, outside Pager.Root.
+ */
 const NextPart = /* @__PURE__ */ withDisplayName(Next, 'Pager.Next');
 export { RootPart as Root, PreviousPart as Previous, NextPart as Next };

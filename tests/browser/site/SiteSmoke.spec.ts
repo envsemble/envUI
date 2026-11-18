@@ -4,18 +4,10 @@ import { chooseScheme } from '../support/CatalogueThemes';
 import { collectErrors } from '../support/PageErrors';
 import { openSite } from '../support/SiteSpecHelpers';
 
-/**
- * One journey through a page of each kind the build pre-renders, as a reader takes it: the page
- * opens and hydrates, the reader does one thing on it, and nothing goes wrong on the way, no
- * error or warning in the console and nothing fetched from elsewhere. What every page renders is
- * the unit tests' (tests/site/SitePrerender.test.ts), and how each kind hydrates
- * SitePrerender.spec.ts's.
- */
 const journeys: { kind: string; path: string; act: (page: Page) => Promise<void> }[] = [
   {
     kind: 'the home page',
     path: '/',
-    // Search finds a page and opens it.
     act: async (page) => {
       await page
         .locator('.site-page-search')
@@ -34,7 +26,6 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
   {
     kind: "a component's page",
     path: '/components/checkbox',
-    // A live example keeps its state when the reader changes the theme, and takes the theme.
     act: async (page) => {
       const example = page.getByRole('group', { name: 'Checkbox example', exact: true });
       const archived = example.getByRole('checkbox', { name: 'Include archived projects' });
@@ -45,9 +36,8 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
     },
   },
   {
-    kind: "a pattern's page",
-    path: '/patterns/forms',
-    // The pager leads to the next page.
+    kind: "another component's page",
+    path: '/components/text-field',
     act: async (page) => {
       const next = page
         .getByRole('navigation', { name: 'Previous and next content' })
@@ -64,7 +54,6 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
   {
     kind: "a foundation's page",
     path: '/foundations/colors',
-    // The first page leaves focus at the start of the document; a page the drawer opens takes it.
     act: async (page) => {
       const main = page.getByRole('main');
       await expect(main).not.toBeFocused();
@@ -79,11 +68,9 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
   {
     kind: 'a gallery',
     path: '/components',
-    // A card is one link, its live picture included.
     act: async (page) => {
       const card = page.locator('.catalogue-gallery-tile').nth(1);
       const href = (await card.locator('.catalogue-gallery-link').getAttribute('href'))!;
-      // A press in the middle of the picture, the card wholly in view.
       await card.evaluate((element) => element.scrollIntoView({ block: 'center' }));
       const box = (await card.boundingBox())!;
       await page.mouse.click(box.x + box.width / 2, box.y + box.height * 0.4);
@@ -93,7 +80,6 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
   {
     kind: "a component's page in the Docs",
     path: '/docs/components/button',
-    // The Design | Code switch leads to the component's page in the catalogue.
     act: async (page) => {
       await page
         .getByRole('navigation', { name: 'Design or code' })
@@ -106,7 +92,6 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
   {
     kind: 'a guide in the Docs',
     path: '/docs/customizing',
-    // A link of its Markdown to a component opens the component's page in the catalogue.
     act: async (page) => {
       await page
         .locator('.site-article')
@@ -120,7 +105,6 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
   {
     kind: 'the token reference',
     path: '/docs/tokens',
-    // A link of the contents leads to its section and marks it.
     act: async (page) => {
       const contents = page.getByRole('navigation', { name: 'On this page' });
       const link = contents.getByRole('link').nth(1);
@@ -133,7 +117,6 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
   {
     kind: 'the changelog',
     path: '/docs/changelog',
-    // A link of a release's highlights leads to the section it names.
     act: async (page) => {
       const link = page.locator('.docs-releases a').first();
       const href = (await link.getAttribute('href'))!;
@@ -149,7 +132,6 @@ for (const { kind, path, act } of journeys)
     page,
     context,
   }) => {
-    // Nothing loads from elsewhere: every request but the site's own is refused.
     const elsewhere: string[] = [];
     await context.route(
       (url) => !url.href.startsWith(siteBuildUrl),
@@ -165,3 +147,31 @@ for (const { kind, path, act } of journeys)
     expect(errors).toEqual([]);
     expect(elsewhere).toEqual([]);
   });
+
+test("an open example's popup comes to rest where the screen draws at a fraction of a pixel", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 1536, height: 730 },
+    deviceScaleFactor: 1.75,
+  });
+  const page = await context.newPage();
+  await openSite(page, `${siteBuildUrl}/components/select`);
+  const room = page.locator('[data-open-example="ProjectVisibility"]');
+  await room.getByRole('listbox').waitFor();
+  const tops = await room.evaluate(
+    (element) =>
+      new Promise<number[]>((done) => {
+        const seen: number[] = [];
+        const frame = () => {
+          seen.push(element.querySelector('[role="listbox"]')!.getBoundingClientRect().top);
+          if (seen.length < 90) requestAnimationFrame(frame);
+          else done(seen);
+        };
+        frame();
+      }),
+  );
+  expect(new Set(tops.slice(45)).size).toBe(1);
+  expect(tops.filter((top, index) => index > 0 && top !== tops[index - 1]).length).toBeLessThan(6);
+  await context.close();
+});

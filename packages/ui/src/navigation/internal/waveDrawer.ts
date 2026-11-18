@@ -15,31 +15,31 @@ import {
 import '../../styles/Base.css';
 import '../../styles/TableOfContents.css';
 
-/**
- * How far the reader's place may move between two frames, in entries, and still be followed as it
- * is, as the scroll moves it; a larger step, such as a jump to a chosen section, glides there.
- */
-const followStep = 0.2;
+const largestStepFollowedWithoutGlideInEntries = 0.2;
 
-/**
- * Where the entries sit beside the shape, in layout pixels from the top of the list's box, which
- * holds the shape and is the links' offset parent, so a transform or zoom around it changes nothing.
- */
 function measureWave(body: HTMLElement, shape: SVGSVGElement): WaveLayout | null {
   const links = body.querySelectorAll<HTMLElement>('.env-table-of-contents-link');
   if (links.length === 0) return null;
   const anchors = Array.from(links, (link) => link.offsetTop + link.offsetHeight / 2);
   const first = links[0];
   const last = links[links.length - 1];
-  // The shape runs past the first and last entries into the room the box leaves around them, where
-  // the bulge tapers whole when the reader is at either end.
-  const room = getComputedStyle(body);
+  const roomAroundEntries = getComputedStyle(body);
   return {
     anchors,
-    top: first.offsetTop - (parseFloat(room.paddingTop) || 0),
-    bottom: last.offsetTop + last.offsetHeight + (parseFloat(room.paddingBottom) || 0),
+    top: first.offsetTop - (parseFloat(roomAroundEntries.paddingTop) || 0),
+    bottom: last.offsetTop + last.offsetHeight + (parseFloat(roomAroundEntries.paddingBottom) || 0),
     full: parseFloat(getComputedStyle(shape).width) || 0,
   };
+}
+
+export interface WaveDrawer {
+  /** Moves the reader's place to a position among the entries, or takes it away with null. */
+  wave(position: number | null): void;
+  /** Measures the entries again, as their sizes changed. */
+  remeasure(): void;
+  onPointerOver(event: PointerEvent): void;
+  onPointerLeave(): void;
+  stop(): void;
 }
 
 /**
@@ -52,30 +52,30 @@ function measureWave(body: HTMLElement, shape: SVGSVGElement): WaveLayout | null
  * preferred or the motion tokens are 0s.
  */
 export function createWaveDrawer(
-  /** The list's box, which holds the shape and the links. */
-  body: () => HTMLElement | null,
+  listBox: () => HTMLElement | null,
   shape: () => SVGSVGElement | null,
   reducedMotion: MediaQueryList | null,
-) {
+): WaveDrawer {
   let layout: WaveLayout | null = null;
   let target: number | null = null;
   const place: Glide = glideAt(0);
   let placed = false;
-  // How far each entry's swell under the pointer has grown, and the entry under it.
-  let hovers: Glide[] = [];
-  let hovered = -1;
+  let swellsUnderPointer: Glide[] = [];
+  let entryUnderPointer = -1;
   let drawFrame = 0;
 
   const draw = (now: number) => {
     drawFrame = 0;
-    const box = body();
+    const box = listBox();
     const svg = shape();
     const path = svg?.querySelector('path');
     if (!box || !svg || !path) return;
     if (!layout) {
       layout = measureWave(box, svg);
       if (!layout) return;
-      hovers = layout.anchors.map((_, index) => glideAt(index === hovered ? 1 : 0));
+      swellsUnderPointer = layout.anchors.map((_, index) =>
+        glideAt(index === entryUnderPointer ? 1 : 0),
+      );
     }
     const instant = reducedMotion?.matches ?? false;
     const travel = instant ? 0 : motionDuration(box, 'medium');
@@ -84,15 +84,14 @@ export function createWaveDrawer(
     const ease = easingFunction(motionEasing(box, 'ease'));
     let moving = false;
     if (target === null || !placed) {
-      // The first place, or none: drawn where it is, at rest.
       placed = target !== null;
       Object.assign(place, glideAt(target ?? 0));
     } else {
-      glideTo(place, target, now, followStep);
+      glideTo(place, target, now, largestStepFollowedWithoutGlideInEntries);
       moving = glideStep(place, now, travel, arrive);
     }
-    hovers.forEach((glide, index) => {
-      glideTo(glide, index === hovered ? 1 : 0, now);
+    swellsUnderPointer.forEach((glide, index) => {
+      glideTo(glide, index === entryUnderPointer ? 1 : 0, now);
       if (glideStep(glide, now, swell, ease)) moving = true;
     });
     path.setAttribute(
@@ -100,7 +99,7 @@ export function createWaveDrawer(
       wavePath(
         layout,
         placed ? place.value : null,
-        hovers.map((glide) => glide.value),
+        swellsUnderPointer.map((glide) => glide.value),
       ),
     );
     if (moving) drawFrame = requestAnimationFrame(draw);
@@ -108,21 +107,18 @@ export function createWaveDrawer(
   const redraw = () => {
     if (drawFrame === 0) drawFrame = requestAnimationFrame(draw);
   };
-  // The entry under a mouse swells the shape a little, as a brush pressed there.
   const hover = (index: number) => {
-    if (hovered === index) return;
-    hovered = index;
+    if (entryUnderPointer === index) return;
+    entryUnderPointer = index;
     redraw();
   };
 
   return {
-    /** Moves the reader's place to a position among the entries, or takes it away with null. */
     wave(position: number | null) {
       target = position === null ? null : wavePlace(position);
       cancelAnimationFrame(drawFrame);
       draw(performance.now());
     },
-    /** Measures the entries again, as their sizes changed. */
     remeasure() {
       layout = null;
       redraw();
@@ -130,7 +126,7 @@ export function createWaveDrawer(
     onPointerOver(event: PointerEvent) {
       if (event.pointerType !== 'mouse') return;
       const link = event.target instanceof Element ? event.target.closest('a') : null;
-      const links = body()?.querySelectorAll('.env-table-of-contents-link');
+      const links = listBox()?.querySelectorAll('.env-table-of-contents-link');
       hover(link && links ? Array.prototype.indexOf.call(links, link) : -1);
     },
     onPointerLeave() {

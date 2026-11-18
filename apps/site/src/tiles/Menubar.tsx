@@ -8,7 +8,6 @@ import { narrowGallery } from './Tiles';
 
 const menu = (label: string) => `.env-menubar-trigger:nth-child(${label} of .env-menubar-trigger)`;
 
-/** With Edit open, the pointer moves onto File, which opens in its place, and back to Edit. */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: menu('1') },
@@ -21,13 +20,6 @@ const script: PointerStep[] = [
 
 type Open = 'file' | 'edit' | null;
 
-/**
- * An application's menu bar of two menus with two items each, so a gallery's low tile shows the bar
- * and an open menu whole at the popups' scale, inside the inset from the stage's edges. It rests
- * with its last menu open, the one that reaches furthest along the bar, framed on the bar and that
- * menu, so the other menu opens within that frame while it plays, and nothing in its tile moves. In
- * a gallery of two tiles to a row, its items have no shortcuts.
- */
 export default function MenubarTile() {
   const narrow = useMedia(narrowGallery);
   const [open, setOpen] = useState<Open>('edit');

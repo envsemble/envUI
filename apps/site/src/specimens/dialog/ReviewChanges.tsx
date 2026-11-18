@@ -3,10 +3,8 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage, roomFor } from '../../figures/MotionStage';
 
-/*
- * The pointer presses Review changes: the large dialog opens over the stage with its table of
- * changed documents. The pointer reads down the table a moment, then presses Mark as reviewed.
- */
+const roomForWrappedDialogWhenNarrow = roomFor(0, 27.5, 30);
+
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
@@ -27,14 +25,18 @@ const script: PointerStep[] = [
 function Reviewing() {
   usePointer(script);
   return (
-    // On a narrow stage, where the table's rows wrap, room for the whole dialog.
-    <div style={{ display: 'grid', placeItems: 'center', minBlockSize: roomFor(0, 27.5, 30) }}>
+    <div
+      style={{
+        display: 'grid',
+        placeItems: 'center',
+        minBlockSize: roomForWrappedDialogWhenNarrow,
+      }}
+    >
       <ReviewChanges />
     </div>
   );
 }
 
-/** The large dialog, with its table, opened and closed by a pointer no one sees. */
 export default function ReviewChangesMotion() {
   return (
     <MotionStage label="the large dialog opening and closing" height="26rem">

@@ -8,7 +8,6 @@ const justifications = [
   { justify: 'between', title: 'Spread to the edges' },
 ] as const;
 
-/** A row of two actions at each value of justify, on a muted fill that shows the row's width. */
 export default function Justify() {
   return (
     <SpecimenFrame size="collection">

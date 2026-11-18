@@ -8,8 +8,7 @@ export type MotionEasing = 'ease' | 'ease-enter' | 'ease-exit';
 
 /**
  * A CSS time, such as `0.24s` or `240ms`, in milliseconds; 0 for anything else.
- *
- * @internal Exported for tests/library/source/MotionTokens.test.ts.
+ * @internal
  */
 export function parseTime(value: string): number {
   const time = value.trim();
@@ -65,13 +64,12 @@ export function easingFunction(easing: string): (progress: number) => number {
     points?.length === 4 && points.every(Number.isFinite)
       ? points
       : (keywords[value] ?? keywords.ease);
-  return (progress) => bezier(clamp(progress), x1, y1, x2, y2);
+  return (progress) => bezierYAtX(clamp(progress), x1, y1, x2, y2);
 }
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 
-/** The curve's y where its x is `x`, found by halving: x grows with t on every CSS curve. */
-function bezier(x: number, x1: number, y1: number, x2: number, y2: number) {
+function bezierYAtX(x: number, x1: number, y1: number, x2: number, y2: number) {
   if (x <= 0 || x >= 1) return x;
   const at = (t: number, a: number, b: number) =>
     3 * a * t * (1 - t) * (1 - t) + 3 * b * t * t * (1 - t) + t * t * t;

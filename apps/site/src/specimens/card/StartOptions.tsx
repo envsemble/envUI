@@ -5,10 +5,6 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const card = (index: number) => `.env-card:nth-child(${index} of .env-card)`;
 
-/*
- * The pointer moves across the three button cards, each taking the hover as a whole, and passes
- * by the disabled Copy a project, which takes none.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: card(1), x: 0.6, y: 0.7 },
@@ -23,7 +19,6 @@ const script: PointerStep[] = [
 
 function Hovering() {
   usePointer(script);
-  // As wide as the stage, as the example is in its static figure.
   return (
     <div style={{ inlineSize: '100%' }}>
       <StartOptions />
@@ -31,7 +26,6 @@ function Hovering() {
   );
 }
 
-/** Button cards, each taking the hover as a whole under a pointer no one sees. */
 export default function StartOptionsMotion() {
   return (
     <MotionStage label="each button card taking the hover as a whole">

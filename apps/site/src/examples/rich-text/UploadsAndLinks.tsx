@@ -1,7 +1,6 @@
 import { RichTextEditor, type RichTextAttachment } from '@envsemble/envui/rich-text';
 
-/** Stands in for an upload: after a moment the file has a URL. */
-function upload(file: File, { signal }: { signal: AbortSignal }) {
+function simulatedUpload(file: File, { signal }: { signal: AbortSignal }) {
   return new Promise<RichTextAttachment | null>((resolve) => {
     const timer = setTimeout(
       () =>
@@ -20,8 +19,7 @@ function upload(file: File, { signal }: { signal: AbortSignal }) {
   });
 }
 
-/** Stands in for the application's own page picker, where someone chose the launch plan. */
-async function pickPage({ selectedText }: { selectedText: string }) {
+async function simulatedPagePicker({ selectedText }: { selectedText: string }) {
   return { label: selectedText || 'Launch plan', href: '/docs/launch-plan' };
 }
 
@@ -31,8 +29,8 @@ export default function UploadsAndLinks() {
       label="Project brief"
       defaultValue="The budget and the **launch plan** are attached below."
       accept="image/*,.pdf,.txt"
-      onUpload={upload}
-      pickLink={pickPage}
+      onUpload={simulatedUpload}
+      pickLink={simulatedPagePicker}
     />
   );
 }

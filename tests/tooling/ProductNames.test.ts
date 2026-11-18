@@ -5,63 +5,38 @@ import { test } from 'node:test';
 import { codeText, listFiles } from '../support/SourceText.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-// envUI names no application that uses it: its first versions gathered what those applications
-// needed, and naming them would make its components read as built for one of them. Other products,
-// such as the design systems it follows, may be named. Names match as whole words. Distinctive names
-// match in any case; names that are also English words or code match only as written, so
-// `console.log`, `navigator.platform` or "forms" do not count.
-
-/** The applications built on envUI. Extend the list as applications adopt it. */
+const distinctiveNames = ['Atlas', 'Coord'];
+const namesThatAreAlsoWordsOrCode = ['Console', 'Forms', 'Platform'];
 const productNames = [
-  // In any case: `atlas` or `COORD` name the application as surely as the capitalized name.
-  ...['Atlas', 'Coord'].map((name) => ({ name, flags: 'gi' })),
-  // Only as written: lowercase, they are English words or code.
-  ...['Console', 'Forms', 'Platform'].map((name) => ({ name, flags: 'g' })),
+  ...distinctiveNames.map((name) => ({ name, flags: 'gi' })),
+  ...namesThatAreAlsoWordsOrCode.map((name) => ({ name, flags: 'g' })),
 ];
 
-/**
- * Uses of a listed word that do not name a product envUI is for. A hit passes when one of its
- * name's patterns matches on the same line and covers it.
- */
-const allowed = {
-  // The English word: the name of the family of form components, and a list of what to preserve.
+const allowedEnglishUses = {
   Forms: [/Forms & selection/g, /^#{2,} Forms$/g, /^- Forms, validation/g],
 };
 
-/** Uses allowed in one file only, by path and name. */
 const allowedIn = {
-  // The maintainers' guide, which does not ship, may say which application asked for a change.
   'CONTRIBUTING.md': {},
 };
 
-/**
- * Text that ships with the package or documents it, and the maintainers' guide: Markdown whole,
- * code by comments and strings.
- */
 const sources = [
   { path: 'README.md', read: 'whole' },
   { path: 'CONTRIBUTING.md', read: 'whole' },
   { path: 'AGENTS.md', read: 'whole' },
-  { path: 'packages/ui/AGENTS.md', read: 'whole' },
-  { path: 'apps/site/AGENTS.md', read: 'whole' },
   { directory: 'contributing', extensions: ['.md'], read: 'whole' },
   { path: 'packages/ui/CHANGELOG.md', read: 'whole' },
   { directory: '.changeset', extensions: ['.md'], read: 'whole' },
   { directory: 'docs', extensions: ['.md'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.css'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.ts', '.tsx'], read: 'code' },
-  // The catalogue's sample data, copy and styles, and the hosted site's Worker and headers.
   { directory: 'apps/site/src', extensions: ['.ts', '.tsx'], read: 'code' },
   { directory: 'apps/site/src', extensions: ['.css'], read: 'whole' },
   { directory: 'apps/site/hosting', extensions: ['.mjs'], read: 'code' },
   { path: 'apps/site/hosting/_headers', read: 'whole' },
-  // The setup skill the hosted site serves to coding agents.
   { path: 'apps/site/hosting/SKILL.md', read: 'whole' },
-  // The test fixtures' sample data and copy.
   { directory: 'tests/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
   { directory: 'tests/fixture', extensions: ['.css', '.html'], read: 'whole' },
-  // The lint packages: their READMEs, the rules with their messages, the data they ship, and the
-  // code their tests lint.
   { path: 'packages/eslint-plugin/README.md', read: 'whole' },
   { path: 'packages/eslint-plugin/index.d.ts', read: 'code' },
   { directory: 'packages/eslint-plugin/src', extensions: ['.js'], read: 'code' },
@@ -74,7 +49,6 @@ const sources = [
   { directory: 'packages/stylelint-config/test', extensions: ['.mjs'], read: 'code' },
 ];
 
-/** Generated from pinned inputs: Material Symbols names its own icons, such as ChromeMaximize. */
 const generated = [
   'packages/ui/src/icons/',
   'apps/site/src/brand/EnvUILogo.tsx',
@@ -122,7 +96,6 @@ async function sourceFiles() {
     for (const path of await listFiles(source.directory)) {
       if (!source.extensions.some((extension) => path.endsWith(extension))) continue;
       if (generated.some((prefix) => path.startsWith(prefix))) continue;
-      // Installed packages and builds.
       if (/(?:^|\/)(?:node_modules|dist)\//.test(path)) continue;
       files.push({ path, read: source.read });
     }
@@ -130,14 +103,13 @@ async function sourceFiles() {
   return files;
 }
 
-/** Each listed name in a segment, as `path:line: Name in "excerpt"`, unless an allowed use covers it. */
 function productMentions(path, fileText, segment) {
   const mentions = [];
   const firstLine = fileText.slice(0, segment.start).split('\n').length;
   segment.text.split('\n').forEach((line, index) => {
     for (const { name, flags } of productNames) {
       for (const hit of line.matchAll(new RegExp(`\\b${name}\\b`, flags))) {
-        const patterns = [...(allowed[name] ?? []), ...(allowedIn[path]?.[name] ?? [])];
+        const patterns = [...(allowedEnglishUses[name] ?? []), ...(allowedIn[path]?.[name] ?? [])];
         const covered = patterns.some((pattern) =>
           [...line.matchAll(pattern)].some(
             (use) => use.index <= hit.index && hit.index < use.index + use[0].length,

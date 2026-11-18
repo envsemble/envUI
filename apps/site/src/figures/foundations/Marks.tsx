@@ -1,18 +1,6 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { remeasure } from '../../shared/Remeasure';
 
-/**
- * A real envUI example with numbered marks measured from its live layout, as an anatomy figure's
- * callouts are: the space between the children of an element marked `data-catalogue-space="n"` is
- * filled and numbered n, an element marked `data-catalogue-mark="n"` is outlined and numbered n, and an
- * element marked `data-catalogue-guides` gets a guide along its children's top and bottom edges. The marks follow
- * the example as it resizes and as the theme changes. The example is a picture: it neither takes
- * focus nor changes under the pointer.
- *
- * With `named`, the marked elements are named instead, in one tidy column at the subject's end
- * (`measureColumn`): no outlines and no numbers, a dot on each part and a leader to its name.
- */
-
 interface Rect {
   x: number;
   y: number;
@@ -22,28 +10,23 @@ interface Rect {
 
 interface Mark {
   number: number;
-  /** The space or the element marked. */
   rect: Rect;
   kind: 'space' | 'part';
-  /** The side of the subject its badge sits on. */
   side: 'start' | 'end';
   badge: { x: number; y: number };
   anchor: { x: number; y: number };
 }
 
-/** How far outside the subject a badge sits, and the least distance between two badges. */
-const reach = 28;
-const spacing = 28;
+const badgeReachPx = 28;
+const badgeSpacingPx = 28;
 
-/** Spreads positions so badges never overlap, keeping their order. */
 function spread(positions: number[]) {
   const result = [...positions];
   for (let index = 1; index < result.length; index++)
-    result[index] = Math.max(result[index]!, result[index - 1]! + spacing);
+    result[index] = Math.max(result[index]!, result[index - 1]! + badgeSpacingPx);
   return result;
 }
 
-/** An element's or a range's box, from the stage's corner. */
 const boxIn =
   (origin: DOMRect) =>
   (element: Element | DOMRect): Rect => {
@@ -65,30 +48,29 @@ function measure(stage: HTMLElement, subject: HTMLElement) {
   for (const element of subject.querySelectorAll<HTMLElement>('[data-catalogue-space]')) {
     const number = Number(element.dataset.catalogueSpace);
     const children = [...element.children].filter((child) => child.getClientRects().length);
-    // The space runs across the element's content, inside its padding.
     const style = getComputedStyle(element);
     const padded = box(element);
-    const outer = {
+    const contentBox = {
       x: padded.x + parseFloat(style.paddingLeft),
       y: padded.y + parseFloat(style.paddingTop),
       width: padded.width - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
       height: padded.height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom),
     };
-    const row = style.flexDirection.startsWith('row');
+    const isRow = style.flexDirection.startsWith('row');
     children.slice(1).forEach((child, index) => {
       const before = box(children[index]!);
       const after = box(child);
-      const rect = row
+      const rect = isRow
         ? {
             x: before.x + before.width,
-            y: outer.y,
+            y: contentBox.y,
             width: after.x - before.x - before.width,
-            height: outer.height,
+            height: contentBox.height,
           }
         : {
-            x: outer.x,
+            x: contentBox.x,
             y: before.y + before.height,
-            width: outer.width,
+            width: contentBox.width,
             height: after.y - before.y - before.height,
           };
       if (rect.width > 0 && rect.height > 0)
@@ -101,7 +83,6 @@ function measure(stage: HTMLElement, subject: HTMLElement) {
         });
     });
   }
-  // A part's badge sits on the side of the subject nearer the part, so no line crosses it.
   const centre = bounds.x + bounds.width / 2;
   for (const element of subject.querySelectorAll<HTMLElement>('[data-catalogue-mark]')) {
     const rect = box(element);
@@ -118,14 +99,15 @@ function measure(stage: HTMLElement, subject: HTMLElement) {
     });
   }
   for (const element of subject.querySelectorAll<HTMLElement>('[data-catalogue-guides]')) {
-    // The first line of the row: a row that wraps is guided along its first line.
     const all = [...element.children].map(box);
     if (!all.length) continue;
-    const middle = all[0]!.y + all[0]!.height / 2;
-    const children = all.filter((child) => Math.abs(child.y + child.height / 2 - middle) < 4);
+    const firstLineMiddle = all[0]!.y + all[0]!.height / 2;
+    const firstLine = all.filter(
+      (child) => Math.abs(child.y + child.height / 2 - firstLineMiddle) < 4,
+    );
     guides.push(
-      Math.min(...children.map((child) => child.y)),
-      Math.max(...children.map((child) => child.y + child.height)),
+      Math.min(...firstLine.map((child) => child.y)),
+      Math.max(...firstLine.map((child) => child.y + child.height)),
     );
   }
   const marks: Mark[] = [];
@@ -134,24 +116,18 @@ function measure(stage: HTMLElement, subject: HTMLElement) {
       .filter((mark) => mark.side === side)
       .sort((a, b) => a.anchor.y - b.anchor.y);
     const placed = spread(onSide.map((mark) => mark.anchor.y));
-    const x = side === 'start' ? bounds.x - reach : bounds.x + bounds.width + reach;
+    const x = side === 'start' ? bounds.x - badgeReachPx : bounds.x + bounds.width + badgeReachPx;
     onSide.forEach((mark, index) => marks.push({ ...mark, badge: { x, y: placed[index]! } }));
   }
   return { marks, guides };
 }
 
-/** A named part's callout: the dot on the part, its leader's points and its name's place. */
 interface Callout {
   number: number;
   points: readonly { x: number; y: number }[];
   name: { x: number; y: number };
 }
 
-/**
- * Where a part's dot may sit: on a part that holds others, such as a surface, anywhere down the
- * band between its end edge and its content, clear of its corners, so the dot sits on its own
- * color; on text, just after the end of its last line, give or take a hair.
- */
 interface Anchor {
   number: number;
   x: number;
@@ -159,10 +135,8 @@ interface Anchor {
   bottom: number;
 }
 
-/** The gap between two names in the column, the least and the most, and between two dots. */
-const nameSpacing = { least: 34, most: 50, dots: 12 };
+const nameSpacingPx = { least: 34, most: 50, dots: 12 };
 
-/** The orders of a list, every one. */
 function orders<T>(items: readonly T[]): T[][] {
   if (items.length <= 1) return [[...items]];
   return items.flatMap((item, index) =>
@@ -170,13 +144,6 @@ function orders<T>(items: readonly T[]): T[][] {
   );
 }
 
-/**
- * The column of names: evenly spaced, in the order of their parts from the top, so no two leaders
- * cross. Each leader runs level from its dot past the subject's end, then straight to its name;
- * a dot free to move takes its name's height, so most leaders are one level line. Of the orders
- * and spacings that keep the dots in order and the names beside the subject, the one with the
- * least bending wins, the parts' own order breaking a tie.
- */
 function measureColumn(stage: HTMLElement, subject: HTMLElement, column: HTMLElement | null) {
   const origin = stage.getBoundingClientRect();
   const box = boxIn(origin);
@@ -218,12 +185,11 @@ function measureColumn(stage: HTMLElement, subject: HTMLElement, column: HTMLEle
   const first = bounds.y + 10;
   const last = bounds.y + bounds.height - 10;
   const count = anchors.length;
-  // Names that wrap, as on a phone, are spaced by the tallest, so none touches the next.
-  const tallest = Math.max(
+  const tallestName = Math.max(
     0,
     ...[...(column?.children ?? [])].map((name) => name.getBoundingClientRect().height),
   );
-  const least = Math.max(nameSpacing.least, Math.ceil(tallest) + 8);
+  const least = Math.max(nameSpacingPx.least, Math.ceil(tallestName) + 8);
   let best: { score: number; callouts: Callout[] } | undefined;
   for (const order of orders(anchors)) {
     const inversions = order.reduce(
@@ -231,7 +197,7 @@ function measureColumn(stage: HTMLElement, subject: HTMLElement, column: HTMLEle
         sum + order.slice(index + 1).filter((later) => later.number < anchor.number).length,
       0,
     );
-    for (let spacing = least; spacing <= Math.max(least, nameSpacing.most); spacing++) {
+    for (let spacing = least; spacing <= Math.max(least, nameSpacingPx.most); spacing++) {
       const starts = order.flatMap((anchor, index) => [
         anchor.top - spacing * index,
         anchor.bottom - spacing * index,
@@ -244,7 +210,7 @@ function measureColumn(stage: HTMLElement, subject: HTMLElement, column: HTMLEle
         for (const [index, anchor] of order.entries()) {
           const y = start + spacing * index;
           const at = Math.min(Math.max(y, anchor.top), anchor.bottom);
-          if (at < previous + nameSpacing.dots) {
+          if (at < previous + nameSpacingPx.dots) {
             score = Infinity;
             break;
           }
@@ -268,11 +234,6 @@ function measureColumn(stage: HTMLElement, subject: HTMLElement, column: HTMLEle
   return best?.callouts ?? [];
 }
 
-/**
- * `named` names the marked parts instead of numbering them, the name of the part marked n at n - 1,
- * such as a swatch of its color and its name: they stand in one column at the subject's end, in
- * the stage's flow so it is as wide as they need.
- */
 export function MarkedSubject({
   children,
   named,

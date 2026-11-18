@@ -34,7 +34,7 @@ import '../../styles/RichText.css';
 
 const emptySources: NonNullable<RichTextEditorProps['references']> = [];
 const emptyExtensions: NonNullable<RichTextEditorProps['extensions']> = [];
-const noCommands: readonly RichTextCommand[] = [];
+const offUntilTheDocumentReportsThem: readonly RichTextCommand[] = [];
 
 /**
  * A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a
@@ -127,8 +127,6 @@ export function RichTextEditor({
     useLinksAndUploads({ editor, value, disabled, readOnly, pickLink, onUpload });
   const input = useRef<HTMLInputElement>(null);
   const unavailable = !editor || disabled || readOnly || busy;
-  // The document sits in the field's control box, which draws its border, fill and states by the
-  // field variant; the box takes the document's invalid and disabled states.
   const renderControlBox = (box: FieldControlBoxProps) => (
     <div
       {...box}
@@ -146,7 +144,7 @@ export function RichTextEditor({
         minRows === undefined
           ? style
           : {
-              '--env-rich-text-min-block-size': `calc(${Math.max(1, Math.round(minRows))} * 1lh + 2 * var(--env-space-4))`,
+              '--_rich-text-min-block-size': `calc(${Math.max(1, Math.round(minRows))} * 1lh + 2 * var(--env-space-4))`,
               ...style,
             }
       }
@@ -169,8 +167,7 @@ export function RichTextEditor({
           <EditorToolbar
             label={messages.toolbar}
             commands={toolbar}
-            // Its formatting toggles from the start, off until the document reports them on.
-            active={state?.active ?? noCommands}
+            active={state?.active ?? offUntilTheDocumentReportsThem}
             disabled={unavailable}
             canUndo={Boolean(state?.undo)}
             canRedo={Boolean(state?.redo)}
@@ -193,7 +190,7 @@ export function RichTextEditor({
         )}
         <FieldFrame
           id={metadata.id}
-          floatingLabel
+          controlBox
           multiline
           variant={variant}
           renderControlBox={renderControlBox}

@@ -15,8 +15,7 @@ const topics: RichTextReference[] = [
   { id: 'topic:support', label: 'Support', kind: 'topic', href: '/topics/support' },
 ];
 
-/** Stands in for a search on a server: it answers after a moment, unless the query changes. */
-function search(collection: RichTextReference[]): RichTextReferenceSource['search'] {
+function simulatedServerSearch(collection: RichTextReference[]): RichTextReferenceSource['search'] {
   return ({ query, signal }) =>
     new Promise((resolve) => {
       const timer = setTimeout(
@@ -30,10 +29,9 @@ function search(collection: RichTextReference[]): RichTextReferenceSource['searc
     });
 }
 
-// At module scope, so the sources stay the same between renders.
 const references: RichTextReferenceSource[] = [
-  { trigger: '@', label: 'People', search: search(people) },
-  { trigger: '#', label: 'Topics', search: search(topics) },
+  { trigger: '@', label: 'People', search: simulatedServerSearch(people) },
+  { trigger: '#', label: 'Topics', search: simulatedServerSearch(topics) },
 ];
 
 export default function References() {

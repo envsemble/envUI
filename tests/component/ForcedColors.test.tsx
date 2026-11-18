@@ -6,26 +6,10 @@ import { keyboard, nextFrames } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 import { closePopup, openPopup, popupKinds, popupShown } from './support/Popups.ts';
 
-/**
- * Under forced colors the system replaces envUI's colors, drops shadows and paints no fills, so a
- * state shown by a fill alone would vanish. Each stateful component sets system colors for its
- * states instead (tests/fixture/ForcedColors.fixture.tsx shows them side by side). These tests
- * compare what is painted for a state and for its rest, from computed styles: the colors, borders,
- * outlines, opacity and decoration of the element, its descendants and their ::before and ::after,
- * with a background in the canvas color counting as none, as it paints nothing on the canvas.
- *
- * Chromium and Firefox apply forced colors when emulated; WebKit only matches the media query and
- * keeps the page's colors, where the states differ too.
- */
-
 afterEach(() => {
   vi.useRealTimers();
 });
 
-/**
- * The element `selector` matches whose text holds `text`, ignoring case as Playwright's :has-text
- * does, the `index`th of them; `inner` then finds an element inside it.
- */
 function find(selector: string, { text, index = 0, inner, innerIndex = 0 }: Find = {}) {
   const matches = [...document.querySelectorAll(selector)].filter(
     (element) =>
@@ -43,7 +27,6 @@ interface Find {
 }
 type Target = [selector: string, find?: Find];
 
-/** Each state, with the rest it must differ from. */
 const states: Record<string, [state: Target, rest: Target]> = {
   'a disabled button': [['[data-testid=button-disabled]'], ['[data-testid=button]']],
   'a focused button': [['[data-testid=button-focus]'], ['[data-testid=button]']],
@@ -56,7 +39,6 @@ const states: Record<string, [state: Target, rest: Target]> = {
     ['.env-segmented-control-item'],
     ['.env-segmented-control-item', { index: 1 }],
   ],
-  'the selected tab': [['[role=tab]'], ['[role=tab]', { index: 1 }]],
   'the selected navigation item': [
     ['.env-navigation-drawer-item[data-current]'],
     ['.env-navigation-drawer-item:not([data-current])'],
@@ -77,17 +59,13 @@ const states: Record<string, [state: Target, rest: Target]> = {
     ['fieldset', { text: 'Plan', inner: '.env-radio' }],
     ['fieldset', { text: 'Plan', inner: '.env-radio', innerIndex: 1 }],
   ],
-  'a chosen radio row': [
-    ['.env-radio[data-orientation=vertical]'],
-    ['.env-radio[data-orientation=vertical]', { index: 1 }],
-  ],
   'an invalid field': [
-    ['.env-text-field-control', { text: 'Invalid', inner: ':scope > .env-text-field-border' }],
-    ['.env-text-field-control', { text: 'Valid', inner: '.env-text-field-border' }],
+    ['.env-text-field', { text: 'Invalid', inner: '.env-text-field-control' }],
+    ['.env-text-field', { text: 'Valid', inner: '.env-text-field-control' }],
   ],
   'a disabled field': [
-    ['.env-text-field-control', { text: 'Disabled' }],
-    ['.env-text-field-control', { text: 'Valid' }],
+    ['.env-text-field', { text: 'Disabled', inner: '.env-text-field-control' }],
+    ['.env-text-field', { text: 'Valid', inner: '.env-text-field-control' }],
   ],
   'a selected table row': [['[data-testid=row-selected]'], ['[data-testid=row]']],
   'the current list row': [['[data-testid=list-selected]'], ['[data-testid=list-item]']],
@@ -130,7 +108,6 @@ const states: Record<string, [state: Target, rest: Target]> = {
 
 const element = ([selector, options]: Target) => find(selector, options);
 
-/** What an element and its subtree paint, from computed styles, as text. */
 function painted(element: Element) {
   const canvas = getComputedStyle(document.body).backgroundColor;
   const channels = (value: string) => value.match(/[\d.]+/g)?.map(Number) ?? [];
@@ -161,7 +138,6 @@ function painted(element: Element) {
     if (style.textDecorationLine !== 'none') parts.push(`decoration ${style.textDecorationLine}`);
     if (style.opacity !== '1') parts.push(`opacity ${style.opacity}`);
     if (node instanceof SVGElement) parts.push(`fill ${color(style.fill)}`);
-    // A native radio draws its own state in system colors.
     if (node instanceof HTMLInputElement && style.appearance !== 'none' && node.checked)
       parts.push('checked');
     return parts.join('; ');
@@ -180,17 +156,12 @@ function painted(element: Element) {
 }
 
 async function open() {
-  // The fixture's calendar shows October 2026 with the 14th chosen and compares with the 20th, so
-  // today is a day of that month that is neither.
   vi.useFakeTimers({ toFake: ['Date'], now: new Date('2026-10-16T12:00:00') });
   await commands.emulateMedia({ forcedColors: 'active' });
   mount(fixture);
   expect(matchMedia('(forced-colors: active)').matches).toBe(true);
-  // The menus held open move focus into their popup once they have opened; let them, or they take
-  // it from the button below.
   await expect.poll(() => page.getByRole('menu').elements().length).toBe(2);
   await expect.poll(() => document.activeElement?.getAttribute('role')).toBe('menu');
-  // Keyboard focus on the button whose ring the states compare.
   const focus = page.getByTestId('button-focus');
   (focus.element() as HTMLElement).focus();
   await keyboard.press('Shift+Tab');
@@ -225,7 +196,6 @@ ${stateLook}`);
   },
 );
 
-/** The system colors a forced-colors rule may use, resolved in the page. */
 function systemColors() {
   const probe = document.createElement('span');
   document.body.append(probe);
@@ -258,16 +228,11 @@ test(
       ['.env-switch', { text: 'On', inner: '.env-switch-input' }],
     ] satisfies Target[])
       expect(background(target), target[0]).toBe(Highlight);
-    // Where the system forces colors, an unselected item paints no fill of its own.
     if (server.browser !== 'webkit')
       expect(background(['.env-navigation-drawer-item:not([data-current])'])).not.toBe(Highlight);
 
-    // States that a fill or a shadow carries, which only the forced-colors rules keep visible,
-    // each with what those rules paint: the selection color, an outline or a dashed border. Font
-    // weight, opacity and structure don't count, so removing the rules fails this check.
     const fillStates: Record<string, 'highlight' | 'outline' | 'dashed'> = {
       'the chosen segment': 'highlight',
-      'the selected tab': 'highlight',
       'the selected navigation item': 'highlight',
       'the current rail destination': 'highlight',
       'a switch that is on': 'highlight',
@@ -306,10 +271,6 @@ test(
   },
 );
 
-/**
- * WCAG contrast of two `rgb()` or `rgba()` colors; a translucent one is composited over
- * `under`, the canvas, first.
- */
 function contrast(a: string, b: string, under = 'rgb(255, 255, 255)') {
   const channels = (value: string) => (value.match(/[\d.]+/g) ?? []).map(Number);
   const [ur, ug, ub] = channels(under);
@@ -329,11 +290,6 @@ function contrast(a: string, b: string, under = 'rgb(255, 255, 255)') {
   return (light! + 0.05) / (dark! + 0.05);
 }
 
-/**
- * Focused items that sit in a selection or carry a forced-colors mark of their own, each with the
- * element that draws the ring, what that ring is drawn on (its own fill when inset, the canvas when
- * outside), what to focus and how to reach the state first.
- */
 interface FocusCase {
   name: string;
   ring: Target;
@@ -343,34 +299,23 @@ interface FocusCase {
 }
 
 const focusCases: FocusCase[] = [
-  // A text tab has no fill: its ring is drawn on the canvas.
-  { name: 'the selected tab', ring: ['[role=tab][aria-selected=true]'], over: 'canvas' },
   {
     name: 'the selected navigation item',
     ring: ['.env-navigation-drawer-item[data-current]'],
     over: 'fill',
   },
-  // The ring is drawn inside the segment, on its fill, as the control clips what reaches past it.
   {
     name: 'the chosen segment',
     ring: ['.env-segmented-control-item[data-checked]'],
     over: 'fill',
   },
   {
-    // The ring goes around the tab's item, close button included.
     name: 'the active document tab',
     ring: ['.env-document-tabs-item[data-active]'],
     over: 'fill',
     focus: ['.env-document-tabs-item[data-active] [role=tab]'],
   },
   {
-    name: 'a chosen radio row',
-    ring: ['.env-radio[data-orientation=vertical]'],
-    over: 'canvas',
-    focus: ['fieldset', { text: 'Role', inner: 'input' }],
-  },
-  {
-    // A calendar opens with focus on today, whose own outline must give way to the ring.
     name: "today's calendar day",
     ring: ['.env-calendar-day[aria-current=date] > .env-calendar-day-mark'],
     over: 'canvas',
@@ -384,7 +329,6 @@ const focusCases: FocusCase[] = [
   },
   { name: 'a highlighted menu item', ring: ['[role=menuitemcheckbox]'], over: 'fill' },
   {
-    // The trigger of a menu that is open, which Base UI marks, and has focus.
     name: 'the trigger of an open menubar menu',
     ring: ['.env-menubar-trigger[data-popup-open]'],
     over: 'fill',
@@ -415,11 +359,9 @@ test(
       await prepare?.();
       const ringElement = element(ring);
       const target = (focus ? element(focus) : ringElement) as HTMLElement;
-      // The ring is measured against the item at rest, before it takes focus.
       const rest = target === document.activeElement ? undefined : painted(ringElement);
       target.focus();
       expect(target.matches(':focus-visible'), name).toBe(true);
-      // The fill may still be fading in, from the frame after focus; measure it settled.
       await nextFrames();
       await Promise.all(ringElement.getAnimations().map((animation) => animation.finished));
       if (rest !== undefined)
@@ -433,7 +375,6 @@ test(
       ).toBeGreaterThanOrEqual(2);
       expect(Object.values(system), `${name}: the ring is a system color`).toContain(outline);
       const behind = over === 'fill' ? computed.backgroundColor : system.Canvas!;
-      // At least 3:1, or as much as the system's own selection pair has, where the ring is in it.
       const least = Math.min(3, contrast(system.HighlightText!, system.Highlight!));
       expect(contrast(outline, behind), `${name}: the ring on ${behind}`).toBeGreaterThanOrEqual(
         least,
@@ -442,13 +383,11 @@ test(
   },
 );
 
-/** The element that draws a popup's surface: its fill and edge. */
 const popupSurfaces =
   '.env-popup, .env-menu, .env-popover, .env-tooltip, .env-hover-card, .env-dialog-surface, .env-command-palette, .env-toast';
 
 test(
   'every popup keeps a visible edge under forced colors, where its fill is gone',
-  // It opens and closes all fifteen kinds of popup.
   { tags: ['engines'], timeout: 60_000 },
   async () => {
     await commands.emulateMedia({ contrast: 'no-preference', forcedColors: 'active' });
@@ -458,7 +397,6 @@ test(
       await expect.poll(() => popupShown(popup), { message: `${kind} opens` }).toBe(true);
       const surface = popup()!.closest(popupSurfaces)!;
       const style = getComputedStyle(surface);
-      // A panel at the edge of the window draws only the edge that faces the page.
       const side =
         ['top', 'left', 'right', 'bottom'].find(
           (each) => parseFloat(style.getPropertyValue(`border-${each}-width`)) >= 1,

@@ -1,16 +1,8 @@
-// The repository's static checks, each written once: `npm run <check>` runs it through this file,
-// and `npm run check` (Check.ts) and `npm run verify` (Verify.ts) run its tasks beside others.
-//
-//   node scripts/test/Checks.ts <check> [arguments]
-//
-// lint, lint:css and format:check pass their arguments on to their tool, such as
-// `npm run lint:css -- --suppress`; docs:check takes `--base <ref>` for its contract checks.
 import { baseOption } from '../docs/ContractHistory.ts';
 import { bin, series, task, type Task } from './TestTasks.ts';
 
 const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
 
-/** The projects tsc checks, by the name of each one's build-info file in .cache/tsc. */
 const typecheckProjects = {
   ui: 'packages/ui',
   site: 'apps/site',
@@ -23,19 +15,13 @@ const typecheckProjects = {
   'stylelint-config': 'packages/stylelint-config',
 };
 
-/** The style sheets Stylelint checks when it checks them all. */
-export const styleSheets = ['packages/ui/src/**/*.css', 'apps/site/src/**/*.css'];
+export const styleSheets = ['packages/ui/src/**/*.css', 'apps/site/src/**/*.css', 'tests/**/*.css'];
 
-/**
- * The catalogue's data and the site's documentation module, which are generated rather than
- * committed: the site's types and everything that renders the catalogue read them.
- */
 export const generateDocumentation = task(
   'generate documentation',
   node('scripts/docs/GenerateDocumentation.ts'),
 );
 
-/** Each check's tasks; given files, a check of files checks only those. */
 export const checks = {
   typecheck: (): Task[] =>
     Object.entries(typecheckProjects).map(([name, folder]) =>
@@ -105,6 +91,7 @@ export const checks = {
       task('docs:check props', node('scripts/docs/ExtractProps.ts', '--check')),
       task('docs:check parts', node('scripts/docs/GenerateParts.ts', '--check', ...against)),
       task('docs:check exports', node('scripts/docs/GenerateExports.ts', '--check', ...against)),
+      task('docs:check guides', node('scripts/docs/GenerateGuideTables.ts', '--check')),
       task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
       task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
     ];
@@ -119,11 +106,12 @@ type Check = keyof typeof checks;
 if (import.meta.main) {
   const [name, ...rest] = process.argv.slice(2);
   if (!name || !(name in checks)) {
-    console.error(`Name a check: ${Object.keys(checks).join(', ')}.`);
+    console.error(
+      `Usage: node scripts/test/Checks.ts <check> [arguments], the check one of ${Object.keys(checks).join(', ')}. lint, lint:css and format:check pass their arguments on to their tool; docs:check takes --base <ref>.`,
+    );
     process.exit(2);
   }
   const check = name as Check;
-  // The site's types read the generated documentation module.
   const tasks =
     check === 'typecheck'
       ? [generateDocumentation, ...checks.typecheck()]

@@ -13,7 +13,6 @@ export default function StartOptions() {
     <Column gap={3}>
       <Grid columns={{ min: '12rem' }} gap={4} style={{ inlineSize: '100%' }}>
         {options.map(({ id, title, detail }) => (
-          // A button card holds phrasing content only, so its text is spans.
           <Card key={id} onClick={() => setStarted(title)}>
             <Text render={<span />} variant="title">
               {title}

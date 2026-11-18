@@ -1,12 +1,7 @@
-// The virtual pointer's plan of a script's time (apps/site/src/motion/pointer/PointerPlan.ts): a
-// wait lasts the ms it says, the first is cut short, moves and typing play a little brisker than
-// written, a click holds its button a moment, and the pointer steps aside after a press. The tiles
-// and figures are timed against these.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/ImportSource.ts';
 
-/** What a test reads of a planned happening (PointerPlan.ts types it in full). */
 type Happening = { time: number; kind: string; text?: string };
 
 const { planOf, aimsOf, headingAt, presentAt, firstWait } = await importSource(
@@ -24,10 +19,8 @@ test('a script plans its moves and presses at the times its waits say', () => {
     { leave: true },
     { wait: 300 },
   ]);
-  // The first wait is cut so the animation starts at once; a move takes 0.8 of what it says.
   const aim = { selector: '.button', text: undefined, x: 0.5, y: 0.5 };
   assert.deepEqual(plan.moves[0], { start: firstWait, end: firstWait + 400, from: null, to: aim });
-  // The click holds its button 90 ms; during the wait after it, the pointer steps aside.
   const pressed = firstWait + 400 + 200;
   assert.deepEqual(
     plan.happenings.map(({ time, kind }: Happening) => [time, kind]),
@@ -44,7 +37,6 @@ test('a script plans its moves and presses at the times its waits say', () => {
     to: { ...aim, aside: true },
   });
   assert.equal(plan.length, pressed + 90 + 600 + 300);
-  // Over the stage from its first move until it leaves, heading where it moved last.
   assert.ok(!presentAt(plan, 0));
   assert.equal(headingAt(plan, pressed)?.selector, '.button');
   assert.equal(headingAt(plan, plan.length), null);

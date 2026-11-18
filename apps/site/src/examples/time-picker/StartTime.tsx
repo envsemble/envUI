@@ -8,7 +8,6 @@ export default function StartTime() {
       <TimePicker
         label="Starts at"
         description="When the workshop begins."
-        // On a 12-hour clock, as people write it in the United States.
         locale="en-US"
         value={start}
         onValueChange={setStart}

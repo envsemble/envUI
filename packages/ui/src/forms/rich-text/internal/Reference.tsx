@@ -7,7 +7,6 @@ import { ActionElement } from '../../../internal/control/ActionElement.js';
 import { referenceFromAttributes, safeRichTextUrl } from './referenceAttributes.js';
 import type { RichTextReference, RichTextRenderOptions } from '../types.js';
 import '../../../styles/Base.css';
-// Rich text's rules refine the prose typography, so Prose.css comes first.
 import '../../../styles/Prose.css';
 import '../../../styles/RichText.css';
 
@@ -40,7 +39,6 @@ export function ReferenceContent({
     );
   if (reference.href && safeRichTextUrl(reference.href))
     return (
-      // A native link, through the LinkProvider's link component, in the reference's own look.
       <ActionElement
         className={className}
         href={reference.href}
@@ -75,10 +73,6 @@ export function ReferenceContent({
   );
 }
 
-/**
- * The editor's view of a reference, which renders it with React; Tiptap calls it in the browser
- * only, from the extension that createReferenceExtension builds.
- */
 export function createReferenceNodeView(options: RichTextRenderOptions) {
   function ReferenceView({ node, selected, editor }: NodeViewProps) {
     const context = useContext(RichTextRenderingContext);

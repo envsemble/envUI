@@ -7,10 +7,8 @@ const input = '.env-combobox-input';
 const clear = '.env-combobox-clear';
 const option = '.env-combobox-item';
 
-/*
- * The pointer types "ale": the list says it is searching until the results arrive, and it picks
- * Alex Morgan. Then it clears the field, where it began.
- */
+const fieldWithOpenListHeight = '9rem';
+
 const script: PointerStep[] = [
   { wait: 240 },
   { to: input, x: 0.2 },
@@ -33,17 +31,20 @@ const script: PointerStep[] = [
 
 function Searching() {
   usePointer(script);
-  // The field at the top of a box as tall as it and its open list, so the list fits in the stage.
   return (
     <div
-      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', minBlockSize: '9rem' }}
+      style={{
+        display: 'grid',
+        justifyItems: 'center',
+        inlineSize: '100%',
+        minBlockSize: fieldWithOpenListHeight,
+      }}
     >
       <ServerSearch />
     </div>
   );
 }
 
-/** The contact field, searching as a pointer no one sees types a name, and a result chosen. */
 export default function ServerSearchMotion() {
   return (
     <MotionStage label="the search running as a name is typed">

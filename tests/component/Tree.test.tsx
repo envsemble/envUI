@@ -20,7 +20,6 @@ import { mount } from './support/Mount.tsx';
 
 const treeOf = (theme = 'light') => page.getByRole('tree', { name: `Files ${theme}` });
 
-/** The id of the row the tree's aria-activedescendant points at. */
 const activeRowId =
   (theme = 'light') =>
   () =>
@@ -60,8 +59,6 @@ describe('Tree', () => {
     await expect
       .element(tree.getByRole('treeitem', { name: 'Deep.md' }))
       .toHaveAttribute('aria-level', '3');
-    // A disabled row neither previews nor opens. The rows below Nested slide down as it opens: wait
-    // for them to hold still, so the press lands on the disabled row.
     await Promise.all(
       tree
         .element()
@@ -78,8 +75,6 @@ describe('Tree', () => {
     const active = activeRowId();
     (tree.element() as HTMLElement).focus();
     await expect.poll(active).toBe('folder-1');
-    // The application hears each key with Alt, Ctrl or ⌘ unhandled, and takes it so the browser
-    // does not go back.
     const applicationKeys: boolean[] = [];
     const onKey = (event: KeyboardEvent) => {
       if (!event.key.startsWith('Arrow')) return;
@@ -97,8 +92,6 @@ describe('Tree', () => {
       .toHaveAttribute('aria-expanded', 'true');
     expect(active()).toBe('folder-1');
 
-    // Without them, the tree takes its keys again. The active row shows a focus ring only with
-    // keyboard focus.
     const ring = () => css(tree.element().querySelector('[data-highlighted]')!, 'outline-style');
     await keyboard.press('ArrowDown');
     await expect.poll(active).toBe('folder-1/nested');
@@ -136,15 +129,13 @@ describe('Tree', () => {
     await keyboard.press('ArrowLeft');
     await expect.poll(lastLog()).toBe('collapse folder-1');
 
-    // Type-ahead moves to the next row starting with the typed text; a repeated letter cycles.
-    // The tree times the keys by performance.now(), which moves here only as the test moves it.
     stopTimers('performance');
     await keyboard.press('f');
     await expect.poll(active).toBe('folder-2');
     await keyboard.press('f');
     await expect.poll(active).toBe('folder-3');
-    // Past the type-ahead's pause, the next letters start a new search.
-    await passTime(800);
+    const pastTypeAheadPause = 800;
+    await passTime(pastTypeAheadPause);
     await keyboard.type('doc 1');
     await expect.poll(active).toBe('folder-2/doc-1.md');
     vi.useRealTimers();
@@ -189,7 +180,6 @@ describe('Tree', () => {
     mount(fixture);
     const tree = treeOf().element() as HTMLElement;
     await expect.poll(() => tree.querySelector('[role="treeitem"]')).not.toBeNull();
-    // Scaled down, as inside a dialog that scales in; a resize makes the tree measure again.
     tree.parentElement!.style.transform = 'scale(0.5)';
     tree.style.blockSize = `${tree.clientHeight - 20}px`;
     await nextFrames();
@@ -244,13 +234,12 @@ test('a tree renders a tall pane of rows before it measures, and fills its viewp
       h(Tree, { 'aria-label': 'Files', items, onAction: () => {}, onExpandedChange: () => {} }),
     ),
   );
-  // The markup a server sends, in the page before any script runs.
   const container = document.createElement('div');
   container.innerHTML = renderToString(element);
   document.body.append(container);
   const rows = () => container.querySelectorAll('.env-tree-item').length;
-  // 24 rows and the overscan of 8 below them, before any script runs.
-  expect(rows()).toBe(33);
+  const serverRenderedRowsWithOverscan = 33;
+  expect(rows()).toBe(serverRenderedRowsWithOverscan);
   const errors: string[] = [];
   const root = hydrateRoot(container, element, {
     onRecoverableError: (error) => errors.push(String(error)),
@@ -259,8 +248,39 @@ test('a tree renders a tall pane of rows before it measures, and fills its viewp
     root.unmount();
     container.remove();
   });
-  // Measured, a 20 rem viewport needs fewer rows than that: the rows in view and the overscan.
-  await expect.poll(rows).toBeLessThan(33);
+  await expect.poll(rows).toBeLessThan(serverRenderedRowsWithOverscan);
   expect(errors).toEqual([]);
   expect(shown(page.elementLocator(container.querySelector('.env-tree-item')!))).toBe(true);
+});
+
+test('a row keeps its label whole before its end: an end that does not fit beside it leaves the row', async () => {
+  mount(fixture);
+  const ends = page.getByRole('tree', { name: 'Ends light' });
+  const rowOf = (id: string) => ends.element().querySelector<HTMLElement>(`[data-id="${id}"]`)!;
+  await expect.poll(() => rowOf('long') !== null).toBe(true);
+  const visible = (part: Element, within: HTMLElement) => {
+    const inner = part.getBoundingClientRect();
+    const outer = within.getBoundingClientRect();
+    return inner.top >= outer.top - 0.5 && inner.bottom <= outer.bottom + 0.5;
+  };
+
+  const long = rowOf('long');
+  const longLabel = long.querySelector('.env-tree-label')!;
+  const longEnd = long.querySelector('.env-tree-end')!;
+  expect(visible(longEnd, long)).toBe(false);
+  expect(visible(longLabel, long)).toBe(true);
+  const icon = long.querySelector('.env-tree-icon')!.getBoundingClientRect();
+  const content =
+    long.getBoundingClientRect().right - Number.parseFloat(css(long, 'padding-right'));
+  expect(longLabel.getBoundingClientRect().right).toBeCloseTo(content, 0);
+  expect(longLabel.getBoundingClientRect().left).toBeGreaterThan(icon.right);
+
+  const short = rowOf('short');
+  const shortEnd = short.querySelector('.env-tree-end')!;
+  expect(visible(shortEnd, short)).toBe(true);
+  expect(shortEnd.getBoundingClientRect().right).toBeCloseTo(
+    short.getBoundingClientRect().right - Number.parseFloat(css(short, 'padding-right')),
+    0,
+  );
+  expect(short.querySelector('.env-badge')!.getBoundingClientRect().width).toBeGreaterThan(30);
 });

@@ -1,14 +1,13 @@
 'use client';
 
 import { useCallback, useMemo, useState, type MouseEvent } from 'react';
-import type { ResizeHandleProps } from './ResizeHandle.js';
+import type { ResizeOptions } from './useResize.js';
 import { useFormatters } from '../provider/useFormatters.js';
 import { remPixels, roundToHundredth } from '../dom/lengths.js';
 import type { ResizeDetails } from './resizeDetails.js';
 import { useLatest } from '../useLatest.js';
 
-/** A number that is finite, else undefined. */
-const finite = (value: number | undefined) =>
+const finiteOrUndefined = (value: number | undefined) =>
   value !== undefined && Number.isFinite(value) ? value : undefined;
 
 /** An element's width in rem, to a hundredth, as widths are kept. */
@@ -25,7 +24,7 @@ export function containerWidth(element: Element) {
   return widthInRem(element.ownerDocument.documentElement);
 }
 
-interface Options {
+export interface ResizableWidthOptions {
   /** The width the application controls, in rem, or undefined where the component keeps it. */
   width: number | undefined;
   defaultWidth: number;
@@ -69,7 +68,7 @@ export function useResizableWidth({
   room,
   reverse,
   widthText,
-}: Options) {
+}: ResizableWidthOptions) {
   const formatters = useFormatters();
   const min = Math.max(0, minWidth);
   const max = Math.max(min, maxWidth);
@@ -77,16 +76,14 @@ export function useResizableWidth({
     (value: number) => roundToHundredth(Math.min(max, Math.max(min, value))),
     [min, max],
   );
-  // The width people chose, or 'default' once a double click forgot it, which a kept width no
-  // longer overrides.
   const [chosen, setChosen] = useState<number | 'default'>();
-  // A width that is no number, such as NaN from a stored value that didn't parse, is ignored: the
-  // component keeps the width as if it weren't given, and a default that is none is the least.
-  const controlled = finite(controlledWidth);
-  const defaultWidth = finite(givenDefault) ?? min;
+  const controlled = finiteOrUndefined(controlledWidth);
+  const defaultWidth = finiteOrUndefined(givenDefault) ?? min;
   const width = clamp(
     controlled ??
-      (chosen === 'default' ? defaultWidth : (chosen ?? finite(keptWidth) ?? defaultWidth)),
+      (chosen === 'default'
+        ? defaultWidth
+        : (chosen ?? finiteOrUndefined(keptWidth) ?? defaultWidth)),
   );
 
   const latest = useLatest({
@@ -119,7 +116,6 @@ export function useResizableWidth({
     current.onWidthChange?.(current.clamp(current.defaultWidth), { committed: true });
   }, [latest]);
 
-  // The same props while the width and its bounds stay, so a context that passes them on does too.
   const handleProps = useMemo(
     () =>
       ({
@@ -138,12 +134,14 @@ export function useResizableWidth({
             formatters.number({ maximumFractionDigits: 1 }).format(roundToHundredth(value)),
           ),
         onDoubleClick: (event: MouseEvent<HTMLDivElement>) => {
-          if (!event.defaultPrevented) reset();
+          const disabled = event.currentTarget.getAttribute('aria-disabled') === 'true';
+          if (!event.defaultPrevented && !disabled) reset();
         },
-      }) satisfies Omit<ResizeHandleProps, 'label'>,
+      }) satisfies ResizeOptions & {
+        onDoubleClick: (event: MouseEvent<HTMLDivElement>) => void;
+      },
     [reverse, width, min, max, room, change, reset, latest, formatters],
   );
-  /** Takes a width read back from where it was kept as the one people chose. */
   const restore = useCallback((kept: number) => setChosen(kept), []);
   return { width, handleProps, restore };
 }

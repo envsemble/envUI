@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import { IconButton, Link, List, Column, Menu, Text } from '@envsemble/envui';
+import { Badge, IconButton, Link, List, Column, Menu, Text } from '@envsemble/envui';
 import { IconMoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 const plans = [
-  { id: 'roadmap', name: 'Roadmap', updated: 'Updated today by Sam Lee' },
-  { id: 'pricing', name: 'Pricing research', updated: 'Updated yesterday by Priya Shah' },
+  { id: 'roadmap', name: 'Roadmap', updated: 'Updated today by Sam Lee', state: 'In review' },
+  {
+    id: 'pricing',
+    name: 'Pricing research',
+    updated: 'Updated yesterday by Priya Shah',
+    state: 'Draft',
+  },
 ];
 
 export default function OpenFromRow() {
@@ -12,13 +17,11 @@ export default function OpenFromRow() {
   return (
     <Column gap={3}>
       <List.Root aria-label="Recent plans">
-        {plans.map(({ id, name, updated }) => (
+        {plans.map(({ id, name, updated, state }) => (
           <List.Item
             key={id}
             interactive
             label={
-              // data-row-target stretches the link over the row; draggable={false} keeps a press
-              // that moves a little from dragging the link instead of opening it.
               <Link
                 href={`/plans/${id}`}
                 underline={false}
@@ -38,8 +41,6 @@ export default function OpenFromRow() {
                     variant="text"
                     icon={<IconMoreHoriz />}
                     aria-label={`More actions for ${name}`}
-                    // The row's other controls stay above the link that covers the row.
-                    style={{ position: 'relative' }}
                   />
                 }
               >
@@ -48,7 +49,9 @@ export default function OpenFromRow() {
                 <Menu.Item onClick={() => setResult(`Archived ${name}`)}>Archive</Menu.Item>
               </Menu.Root>
             }
-          />
+          >
+            <Badge>{state}</Badge>
+          </List.Item>
         ))}
       </List.Root>
       <Text variant="caption" emphasis="muted" role="status">

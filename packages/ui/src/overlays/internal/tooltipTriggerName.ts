@@ -3,7 +3,6 @@
 import { useLayoutEffect, useState, type ReactNode, type RefObject } from 'react';
 import { accessibleName } from './accessibleName.js';
 
-/** The props a control's own name can come from. */
 interface NamingProps {
   'aria-label'?: string;
   label?: ReactNode;
@@ -19,35 +18,32 @@ export function ownName(props: NamingProps): string | undefined {
   return undefined;
 }
 
-/** The attributes that change a control's name or a stand-in's role and states. */
-const nameAttributes = ['aria-label', 'aria-labelledby', 'alt', 'hidden', 'aria-hidden', 'role'];
+const attributesThatChangeNameOrStandIn = [
+  'aria-label',
+  'aria-labelledby',
+  'alt',
+  'hidden',
+  'aria-hidden',
+  'role',
+];
 
-const standInRoles = ['button', 'link', 'tab', 'menuitem'] as const;
-type StandInRole = (typeof standInRoles)[number];
+const rolesThatNeedNoState = ['button', 'link', 'tab', 'menuitem'] as const;
+type StandInRole = (typeof rolesThatNeedNoState)[number];
 const buttonTypes = ['button', 'submit', 'reset', 'image'];
 
-/**
- * The role the wrapper of a disabled control takes in its place, or none. Only roles that require
- * no state stand in: a checkbox, radio, switch, slider or combobox needs its checked, value or
- * expanded state, which a stand-in would have to copy and keep in step. Those get no stand-in: the
- * wrapper is no tab stop, and the control itself stays exposed, disabled, with its own state.
- */
 function standInRole(element: Element | null | undefined): StandInRole | undefined {
   if (!element) return undefined;
   const tag = element.tagName.toLowerCase();
-  // An input's type; undefined on any other element.
-  const type = (element as HTMLInputElement).type;
+  const inputType = (element as HTMLInputElement).type;
   let role = element.getAttribute('role')?.split(/\s+/)[0];
-  if (!role && (tag === 'button' || (tag === 'input' && buttonTypes.includes(type))))
+  if (!role && (tag === 'button' || (tag === 'input' && buttonTypes.includes(inputType))))
     role = 'button';
   if (!role && (tag === 'a' || tag === 'area') && element.hasAttribute('href')) role = 'link';
-  return standInRoles.find((each) => each === role);
+  return rolesThatNeedNoState.find((each) => each === role);
 }
 
-/** The states a button or tab stand-in copies from its control: a toggle's, a menu trigger's. */
 const copiedStates = ['aria-pressed', 'aria-expanded', 'aria-haspopup', 'aria-selected'] as const;
 
-/** What a disabled control's wrapper takes from it: its name, role and states. */
 interface StandIn {
   name?: string;
   role?: StandInRole;
@@ -92,7 +88,7 @@ export function useTriggerName(
     const observer = new MutationObserver(read);
     observer.observe(control, {
       attributes: true,
-      attributeFilter: nameAttributes,
+      attributeFilter: attributesThatChangeNameOrStandIn,
       childList: true,
       characterData: true,
       subtree: true,
@@ -124,7 +120,7 @@ export function useStandIn(
     const observer = new MutationObserver(read);
     observer.observe(element, {
       attributes: true,
-      attributeFilter: [...copiedStates, ...nameAttributes],
+      attributeFilter: [...copiedStates, ...attributesThatChangeNameOrStandIn],
       childList: true,
       characterData: true,
       subtree: true,

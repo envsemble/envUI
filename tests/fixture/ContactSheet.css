@@ -1,4 +1,3 @@
-/* The contact sheets' frame: plain captions and rows, so the components are what the eye meets. */
 body:has(> #root > .env-theme > .cs-root),
 body:has(.cs-root) {
   margin: 0;

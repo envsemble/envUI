@@ -5,11 +5,6 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const dismiss = '.env-toast[data-tone="danger"] .env-toast-dismiss';
 
-/*
- * The pointer presses Send reminder four times: the reminders arrive at the top, the oldest
- * waiting behind a count past two, and the reminder that couldn't be sent shows anyway. The
- * pointer dismisses it, a waiting one comes back, and they close by themselves.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: '.env-button', x: 0.5, y: 1.8 },
@@ -28,14 +23,12 @@ const script: PointerStep[] = [
   { click: true },
   { wait: 180 },
   { leave: true },
-  // The reminders' time runs on, and the last has closed well before the loop ends.
   { wait: 8700 },
 ];
 
 function Reminding() {
   usePointer(script);
   return (
-    // The button low on the stage, below the notifications that arrive at its top.
     <div
       style={{ display: 'grid', justifyItems: 'center', alignContent: 'end', blockSize: '16rem' }}
     >
@@ -44,7 +37,6 @@ function Reminding() {
   );
 }
 
-/** Send reminder, pressed four times by a pointer no one sees, and its notifications. */
 export default function TopCenterMotion() {
   return (
     <MotionStage label="notifications waiting behind a count" height="20rem">

@@ -28,12 +28,13 @@ function reduce(
   event: LoadingBarEvent,
 ): { phase: Phase; run: number } {
   switch (event) {
-    case 'start':
+    case 'start': {
       if (state.phase === 'running' || state.phase === 'waiting') return state;
-      // Work that resumes while the bar is finishing restarts it at once, without another delay.
-      return state.phase === 'finishing'
+      const resumedWhileFinishingRestartsWithoutDelay = state.phase === 'finishing';
+      return resumedWhileFinishingRestartsWithoutDelay
         ? { phase: 'running', run: state.run + 1 }
         : { ...state, phase: 'waiting' };
+    }
     case 'show':
       return state.phase === 'waiting' ? { phase: 'running', run: state.run + 1 } : state;
     case 'stop':
@@ -67,27 +68,28 @@ export function LoadingBar({
     return () => clearTimeout(timer);
   }, [state.phase, delay]);
 
-  // Finishing, the bar completes and fades out, and is removed once its fade has ended: at once
-  // where the motion tokens are 0s. A timer at the transitions' length stands in for an end event
-  // that never comes, such as in a hidden container, where nothing transitions.
-  useEffect(() => {
-    const element = indicator.current;
-    if (state.phase !== 'finishing' || !element) return;
-    const time = motionTime(element, 'transition');
-    if (time === 0) {
-      dispatch('hide');
-      return;
-    }
-    const end = (event: TransitionEvent) => {
-      if (event.target === element && event.propertyName === 'opacity') dispatch('hide');
-    };
-    element.addEventListener('transitionend', end);
-    const timer = setTimeout(() => dispatch('hide'), time + 100);
-    return () => {
-      element.removeEventListener('transitionend', end);
-      clearTimeout(timer);
-    };
-  }, [state.phase, state.run]);
+  useEffect(
+    function removeOnceFadedOut() {
+      const element = indicator.current;
+      if (state.phase !== 'finishing' || !element) return;
+      const time = motionTime(element, 'transition');
+      const motionTokensAreZero = time === 0;
+      if (motionTokensAreZero) {
+        dispatch('hide');
+        return;
+      }
+      const end = (event: TransitionEvent) => {
+        if (event.target === element && event.propertyName === 'opacity') dispatch('hide');
+      };
+      element.addEventListener('transitionend', end);
+      const inCaseNoTransitionEndComes = setTimeout(() => dispatch('hide'), time + 100);
+      return () => {
+        element.removeEventListener('transitionend', end);
+        clearTimeout(inCaseNoTransitionEndComes);
+      };
+    },
+    [state.phase, state.run],
+  );
 
   if (state.phase === 'idle' || state.phase === 'waiting') return null;
   return (

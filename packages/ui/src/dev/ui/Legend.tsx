@@ -1,13 +1,9 @@
-// The 3D view's legend, floating in its bottom corner with no pane: what the planes' colors mean,
-// by kind of node or by window class.
-
 import type { ReactNode } from 'react';
 import { Row } from '../../layout/Layout.js';
 import { Text } from '../../foundations/Text.js';
 import { roundToHundredth } from '../../internal/dom/lengths.js';
 import { windowClasses } from '../units.js';
 
-/** One entry of a legend: a swatch drawn as a plane is, and its name. */
 function Swatch({
   plane,
   title,

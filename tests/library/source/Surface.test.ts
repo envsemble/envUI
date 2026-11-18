@@ -1,6 +1,3 @@
-// Surface's backgrounds are the background roles: each value of `background` takes its role's
-// color, `--env-color-bg-<value>`, and the role's hover and pressed tokens for what is interactive on
-// it, such as a Card, and each of those is a token of the themes.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -31,14 +28,19 @@ test('every Surface background takes its role and the role’s states', () => {
           )?.[1];
     assert.ok(rule, `Surface.css has no rule for background="${background}"`);
     for (const [property, suffix] of [
-      ['--env-surface-container-default', ''],
-      ['--env-surface-hover', '-hover'],
-      ['--env-surface-pressed', '-pressed'],
+      ['--_surface-container-default', ''],
+      ['--_surface-hover', '-hover'],
+      ['--_surface-pressed', '-pressed'],
     ]) {
       const token = `--env-color-bg-${background}${suffix}`;
+      const own = String.raw`var\(${token}\)`;
+      const value =
+        background === 'raised'
+          ? String.raw`light-dark\(\s*var\(--env-color-bg-default${suffix}\),\s*${own}\s*\)`
+          : own;
       assert.match(
         rule,
-        new RegExp(String.raw`${property}: var\(${token}\);`),
+        new RegExp(String.raw`${property}: ${value};`),
         `${background}: ${property}`,
       );
       assert.match(tokens, new RegExp(String.raw`${token}:`), `${token} is a token`);

@@ -1,6 +1,3 @@
-/* The Docs' Changelog page. */
-
-/* The release notes: entries apart by space alone, the version and date as quiet labels. */
 .docs-release-label {
   display: flex;
   flex-wrap: wrap;

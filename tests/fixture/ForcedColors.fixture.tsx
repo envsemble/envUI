@@ -1,5 +1,3 @@
-// The forced-colors test's fixture: one component of each kind in its states, side by side, each
-// part named by a test id, so the test can compare a state with its rest under forced colors.
 import {
   Button,
   Calendar,
@@ -20,7 +18,6 @@ import {
   Switch,
   Table,
   TableOfContents,
-  Tabs,
   TextField,
   Theme,
   Tree,
@@ -31,7 +28,6 @@ import {
 import { IconClose } from '@envsemble/envui/icons/Close';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
-// Internal: the lists of times and months the pickers open, shown here without their popups.
 import { TimeList } from '../../packages/ui/src/forms/internal/TimeList.js';
 import { MonthGrid } from '../../packages/ui/src/forms/internal/MonthGrid.js';
 
@@ -39,10 +35,6 @@ export const mount = 'root';
 
 const noop = () => {};
 
-/**
- * Every designed pair of variant and tone, each of which must keep a visible edge under forced
- * colors.
- */
 const variants = [
   ['primary', { variant: 'primary' }],
   ['primary-accent', { variant: 'primary', tone: 'accent' }],
@@ -70,7 +62,6 @@ export default function ForcedColorsFixture() {
         {variants.map(([name, emphasis]) => (
           <Button
             key={name}
-            // Each pair in variants is one Button takes, which a union of them doesn't show.
             {...({ ...emphasis, children: name } as ButtonProps)}
             data-testid={`variant-${name}`}
           />
@@ -90,14 +81,6 @@ export default function ForcedColorsFixture() {
         items={[
           { value: 'board', label: 'Board' },
           { value: 'list', label: 'List' },
-        ]}
-      />
-      <Tabs
-        aria-label="Sections"
-        defaultValue="one"
-        items={[
-          { value: 'one', button: <Button>One</Button>, content: 'First' },
-          { value: 'two', button: <Button>Two</Button>, content: 'Second' },
         ]}
       />
       <NavigationDrawer
@@ -202,7 +185,6 @@ export default function ForcedColorsFixture() {
         ]}
       />
       <Rating value={3} />
-      {/* The first section, at the top of the page, is the current one. */}
       <TableOfContents
         aria-label="Sections"
         items={[
@@ -213,7 +195,6 @@ export default function ForcedColorsFixture() {
       <p id="forced-first">First section</p>
       <p id="forced-second">Second section</p>
       <Menubar.Root aria-label="Application menu">
-        {/* Held open, so its trigger shows the open state Base UI gives it. */}
         <Menubar.Menu label="File" open>
           <Menu.Item>New document</Menu.Item>
         </Menubar.Menu>

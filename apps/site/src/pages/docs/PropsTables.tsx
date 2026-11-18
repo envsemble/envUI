@@ -4,30 +4,23 @@ import { PlainCode } from './SimpleTable';
 import type { ExportEntry, PropEntry } from '../../documentation/DocumentationTypes';
 import { nativePropsSentence, propDescription } from '../../documentation/PropWording';
 import type { DocumentationEntry } from '../../documentation/DocumentationTypes';
-// The ids search leads to, as the search index writes them.
 import { exportSection, propSection } from '../../documentation/SearchAnchors';
 import { useSectionOutline } from '../../markdown/SectionOutline';
 
-/**
- * A type's top-level alternatives, such as 'sm' | 'md' | 'lg', split at the bars outside brackets,
- * quotes and parentheses; a function, object or generic type stays whole, and an arrow's > closes
- * no bracket.
- */
 function alternatives(type: string): string[] {
   const parts: string[] = [];
   let depth = 0;
   let quote = '';
   let part = '';
-  // After a function's arrow outside brackets, the rest is its return type, which stays whole.
-  let returnType = false;
+  let inReturnType = false;
   for (const character of type) {
     if (quote) {
       if (character === quote) quote = '';
     } else if (character === "'" || character === '"' || character === '`') quote = character;
-    else if (character === '>' && part.endsWith('=')) returnType ||= depth === 0;
+    else if (character === '>' && part.endsWith('=')) inReturnType ||= depth === 0;
     else if ('([{<'.includes(character)) depth += 1;
     else if (')]}>'.includes(character)) depth -= 1;
-    else if (character === '|' && depth === 0 && !returnType) {
+    else if (character === '|' && depth === 0 && !inReturnType) {
       parts.push(part.trim());
       part = '';
       continue;
@@ -38,21 +31,12 @@ function alternatives(type: string): string[] {
   return parts.filter(Boolean);
 }
 
-/**
- * A type's text with a break opportunity after each dot, comma, opening bracket, colon and bar, so
- * a type longer than its column wraps between its parts, such as after React., rather than inside
- * a name.
- */
 function breakable(type: string): ReactNode[] {
   return type
     .split(/(?<=[.,:;|&([{<])/)
     .flatMap((part, index) => (index === 0 ? [part] : [<wbr key={index} />, part]));
 }
 
-/**
- * A prop's type: each alternative of a union as its own small tag, so they wrap whole; a type or
- * tag longer than the column wraps inside it.
- */
 function PropType({ type }: { type: string }) {
   const options = alternatives(type);
   if (options.length < 2) return <PlainCode>{breakable(type)}</PlainCode>;
@@ -67,7 +51,6 @@ function PropType({ type }: { type: string }) {
   );
 }
 
-/** A prop's default, under its name, or nothing when it has none. */
 function PropDefault({ prop }: { prop: PropEntry }) {
   if (prop.default === undefined && !prop.defaultBuiltIn) return null;
   return (
@@ -78,11 +61,8 @@ function PropDefault({ prop }: { prop: PropEntry }) {
 }
 
 function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
-  // Waiting its turn to show, an export's props are its heading alone (SectionOutline).
   const outline = useSectionOutline();
   if (entry.kind === 'namespace') return null;
-  // The export's name in the heading style of the page's other h3s, not as code, so the long Props
-  // section has landmarks.
   const heading = (
     <Text render={<h3 />} variant="title" id={exportSection(name)}>
       {name}
@@ -114,7 +94,6 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
           </Table.Head>
           <Table.Body>
             {entry.props.map((prop) => (
-              // Search leads to a prop's row: props-Button-variant.
               <Table.Row key={prop.name} id={propSection(name, prop.name)}>
                 <Table.Cell>
                   <span className="docs-prop-name">
@@ -145,7 +124,6 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
   );
 }
 
-/** The Props view: every component and part the page documents, generated from their types. */
 export function PropsTables({ document }: { document: DocumentationEntry }) {
   return (
     <Column gap={7}>

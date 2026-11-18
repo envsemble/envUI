@@ -5,7 +5,6 @@ const hour = 60 * 60_000;
 const day = 24 * hour;
 
 export default function PastAndComing() {
-  // Moments around the time the page opened; the texts keep up with the clock from there.
   const [now] = useState(() => Date.now());
   const events = [
     { label: 'Quarterly report updated', at: now - 3 * hour },

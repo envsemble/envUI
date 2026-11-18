@@ -1,10 +1,10 @@
 'use client';
 
-import type { CSSProperties, InputHTMLAttributes, Ref } from 'react';
+import { useRef, type CSSProperties, type InputHTMLAttributes, type Ref } from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import {
   FieldFrame,
-  isLabelShown,
+  FieldLabelContent,
   type FieldProps,
   type FieldSizeProps,
   type TextFieldAffixProps,
@@ -17,11 +17,11 @@ export type { FieldVariant as TextFieldVariant } from '../internal/field/FieldFr
 import '../styles/Base.css';
 import '../styles/TextField.css';
 
-// The prefix prop replaces the native RDFa attribute of the same name, and size the native width in
-// characters: a field's width comes from its layout.
+type NativeAttributesTheFieldRedefines = 'prefix' | 'size';
+
 export interface TextFieldProps
   extends
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'>,
+    Omit<InputHTMLAttributes<HTMLInputElement>, NativeAttributesTheFieldRedefines>,
     FieldProps,
     TextFieldAppearanceProps,
     TextFieldDecorationProps,
@@ -35,10 +35,23 @@ export interface TextFieldProps
   style?: CSSProperties;
   /** Receives the value as people type, after the native onChange. */
   onValueChange?: (value: string) => void;
+  /**
+   * Receives the value once people finish editing it: on Enter, and when the field loses focus
+   * with a value that changed since. With it, Esc puts back the value last committed. Return false
+   * to reject the value, such as a port out of range: it stays in the field for people to correct,
+   * and Esc still puts back the last value accepted. Use it for a setting that applies at once,
+   * such as a port, rather than on every key.
+   */
+  onValueCommitted?: (value: string) => boolean | void;
+}
+
+function typeValue(input: HTMLInputElement, value: string) {
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set?.call(input, value);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 /**
- * A labelled single-line text input: a native input with a floating label, a description and an
+ * A labelled single-line text input: a native input with its label above it, a description and an
  * error, at the control height in an outline or ghost look, with an optional start icon, end
  * action, prefix and suffix.
  */
@@ -57,16 +70,30 @@ export function TextField({
   id: suppliedId,
   className,
   style,
-  placeholder,
   onChange,
   onValueChange,
+  onValueCommitted,
+  onFocus,
+  onBlur,
+  onKeyDown,
   'aria-describedby': describedBy,
   'aria-invalid': invalid,
   ...props
 }: TextFieldProps) {
   const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
+  const committed = useRef<string | null>(null);
+  const rejected = useRef<string | null>(null);
+  const commit = (input: HTMLInputElement) => {
+    if (!onValueCommitted || input.value === committed.current) return;
+    const value = input.value;
+    if (onValueCommitted(value) === false) {
+      rejected.current = value;
+      return;
+    }
+    committed.current = value;
+    rejected.current = null;
+  };
   const { id } = metadata;
-  // The prefix and suffix are read with the field, before its description and error.
   const describedByIds =
     [
       prefix != null && `${id}-prefix`,
@@ -75,22 +102,19 @@ export function TextField({
     ]
       .filter(Boolean)
       .join(' ') || undefined;
-  // A floating label needs a blank placeholder to detect the empty state; hidden labels leave it.
-  const fieldPlaceholder =
-    label != null && isLabelShown({ visibleLabel }) ? placeholder || ' ' : placeholder;
   return (
     <FieldFrame
       id={id}
       label={
         label != null ? (
           <label htmlFor={id} className="env-text-field-label">
-            {label}
+            <FieldLabelContent>{label}</FieldLabelContent>
           </label>
         ) : null
       }
       description={description}
       error={error}
-      floatingLabel
+      controlBox
       variant={variant}
       startIcon={startIcon}
       endAction={endAction}
@@ -106,11 +130,35 @@ export function TextField({
         ref={ref}
         {...metadata}
         aria-describedby={describedByIds}
-        placeholder={fieldPlaceholder}
         className="env-text-field-input"
         onChange={(event) => {
           onChange?.(event);
           onValueChange?.(event.currentTarget.value);
+        }}
+        onFocus={(event) => {
+          onFocus?.(event);
+          if (event.currentTarget.value !== rejected.current) {
+            committed.current = event.currentTarget.value;
+          }
+        }}
+        onBlur={(event) => {
+          onBlur?.(event);
+          commit(event.currentTarget);
+        }}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+          if (!onValueCommitted || event.defaultPrevented || event.nativeEvent.isComposing) return;
+          const input = event.currentTarget;
+          if (event.key === 'Enter') commit(input);
+          if (
+            event.key === 'Escape' &&
+            committed.current !== null &&
+            input.value !== committed.current
+          ) {
+            event.preventDefault();
+            event.stopPropagation();
+            typeValue(input, committed.current);
+          }
         }}
       />
     </FieldFrame>

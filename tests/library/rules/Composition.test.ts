@@ -10,23 +10,11 @@ import {
   rulesFile,
 } from './composition/Analysis.ts';
 
-/**
- * Composition rules for packages/ui/src, described by tests/library/rules/composition/Rules.json:
- * 1. imports go down the layers (internal, foundations, base, composites, shell) or stay in their
- *    layer (a family's internal/ folder stays its own through ESLint, eslint.config.mjs);
- * 2. raw interactive HTML appears only in the leaf controls and internals that render it;
- * 3. a module uses only its own component's classes, and a stylesheet selects only its own
- *    components' classes, besides shared helpers and documented container rules.
- * Today's violations are counted in tests/library/rules/composition/Exceptions.json. A test fails on a new
- * violation, and on a listed one that has gone or shrunk, so the list only shrinks.
- */
-
 const { problems, layers, findings } = analyze();
 const exceptions = JSON.parse(readFileSync(exceptionsFile, 'utf8'));
 const source = (path, sites) => `packages/ui/src/${path}:${sites.join(', ')}`;
 const times = (count) => (count === 1 ? 'once' : `${count} times`);
 
-/** What has to change for the findings of a section to match its exceptions. */
 function changes(section, { describe, fix, label }) {
   const result: string[] = [];
   const listed = new Map();
@@ -89,7 +77,7 @@ test('raw interactive HTML stays in leaf controls and internals', () => {
   );
 });
 
-test('a role set by a condition counts with each branch, and one the source hides needs its roles listed', () => {
+test('a role set by a condition counts with each branch, and one the source hides needs its roles listed, for its expression only', () => {
   const ts = createRequire(import.meta.url)('typescript');
   const tag = (source) => {
     const file = ts.createSourceFile(
@@ -126,7 +114,6 @@ test('a role set by a condition counts with each branch, and one the source hide
     ),
     ['role="link"'],
   );
-  // A listing covers its expression only, not another role={…} in the same module.
   assert.deepEqual(
     interactiveElements(
       tag('<span role={other} />'),

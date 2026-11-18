@@ -1,6 +1,5 @@
 import type { ScrollView, SectionPosition } from './contentsOutline.js';
 
-/** The element whose scrolling moves a section, or null for the document. */
 function scrollerOf(element: Element): HTMLElement | null {
   const document = element.ownerDocument;
   for (

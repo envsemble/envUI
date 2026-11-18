@@ -1,4 +1,3 @@
-import { isRightToLeft } from '../../internal/dom/direction.js';
 import '../../styles/Base.css';
 import '../../styles/DocumentTabs.css';
 
@@ -18,20 +17,6 @@ export function focusedTabId(strip: HTMLElement | null) {
     active.closest('.env-document-tabs-item')?.querySelector<HTMLElement>('[role="tab"]')?.dataset
       .tabId ?? null
   );
-}
-
-/**
- * Whether the strip has tabs past its left and right edges to scroll to. In right-to-left text
- * scrollLeft runs from 0 down to -max. Less than 1.5 px doesn't count: subpixel rounding can leave a
- * pixel of scroll range, past even the start, that hides nothing.
- */
-export function scrollBeyond(strip: HTMLElement) {
-  const max = strip.scrollWidth - strip.clientWidth;
-  const scrolled = strip.scrollLeft;
-  const rtl = isRightToLeft(strip);
-  const leftOver = rtl ? max + scrolled : scrolled;
-  const rightOver = rtl ? -scrolled : max - scrolled;
-  return { left: max > 1.5 && leftOver > 1.5, right: max > 1.5 && rightOver > 1.5 };
 }
 
 /** The tabs' values in order, with one tab moved to an index among the others. */

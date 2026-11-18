@@ -5,10 +5,6 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const trigger = '[tabindex="0"]';
 
-/*
- * The pointer rests on the dotted "28 h 9 min", and its card opens with the week's breakdown;
- * then the pointer leaves, and the card closes.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: trigger, x: 0.5, y: 2.5 },
@@ -22,14 +18,12 @@ const script: PointerStep[] = [
 function Hovering() {
   usePointer(script);
   return (
-    // The line keeps to the top of the stage, so the card has room to open below it.
     <div style={{ display: 'grid', alignContent: 'start', minBlockSize: '9rem' }}>
       <TextDetails />
     </div>
   );
 }
 
-/** Text with more details, its card opened by a resting pointer no one sees. */
 export default function TextDetailsMotion() {
   return (
     <MotionStage label="the card opening from text">

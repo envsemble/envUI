@@ -3,7 +3,6 @@ import { Checkbox, Column, DialogClose, Sheet } from '@envsemble/envui';
 export default function SheetAnatomy() {
   return (
     <Sheet
-      // Shown open in the docs; give it a trigger instead of defaultOpen, as an application would.
       defaultOpen
       title="Filters"
       description="Projects in Northwind."

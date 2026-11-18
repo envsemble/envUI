@@ -3,19 +3,11 @@ import type { ThemeContrast } from '@envsemble/envui';
 import type { LegendEntry } from './FoundationFrame';
 import { remeasure } from '../../shared/Remeasure';
 
-// What the figures of the Colors & themes foundation (Colors.tsx) share.
-
-/** A figure's words, from the page's Markdown. */
 export interface FigureWords {
   legend: readonly LegendEntry[];
 }
 
-/**
- * Whether the figure is narrower than a width in rem, by the width of its element: measured before
- * the figure is first painted, so it never shows its wide layout on a phone for a moment, which
- * its stage would keep the height of.
- */
-export function useNarrow(width: number) {
+export function useNarrow(widthRem: number) {
   const ref = useRef<HTMLDivElement>(null);
   const [narrow, setNarrow] = useState(false);
   useLayoutEffect(() => {
@@ -23,25 +15,21 @@ export function useNarrow(width: number) {
     if (!element) return;
     const measure = () => {
       const rem = parseFloat(getComputedStyle(element).fontSize) || 16;
-      setNarrow(element.getBoundingClientRect().width < width * rem);
+      setNarrow(element.getBoundingClientRect().width < widthRem * rem);
     };
     return remeasure(measure, { first: 'now', resize: [element] }).stop;
-  }, [width]);
+  }, [widthRem]);
   return [ref, narrow] as const;
 }
 
-/**
- * Whether a Theme of this contrast shows the high-contrast colors: `high`, or `system` while the
- * system asks for more contrast, followed as it changes.
- */
 export function useHighContrast(contrast: ThemeContrast) {
-  const [system, setSystem] = useState(false);
+  const [systemWantsMoreContrast, setSystemWantsMoreContrast] = useState(false);
   useEffect(() => {
     const query = matchMedia('(prefers-contrast: more)');
-    const change = () => setSystem(query.matches);
+    const change = () => setSystemWantsMoreContrast(query.matches);
     change();
     query.addEventListener('change', change);
     return () => query.removeEventListener('change', change);
   }, []);
-  return contrast === 'high' || (contrast === 'system' && system);
+  return contrast === 'high' || (contrast === 'system' && systemWantsMoreContrast);
 }

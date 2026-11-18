@@ -11,7 +11,6 @@ export default function VersionLabels() {
     { id: 'v2', savedAt: now - day },
     { id: 'v1', savedAt: now - 9 * day },
   ];
-  // Option labels are strings, so they take the text from formatRelativeTime.
   const options = versions.map((version, index) => ({
     value: version.id,
     label: `Version ${versions.length - index} · saved ${formatRelativeTime(version.savedAt)}`,

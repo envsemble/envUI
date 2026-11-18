@@ -24,10 +24,8 @@ import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationBar.css';
 
-/** The most destinations the bar shows; past it, the last place opens the rest in a menu. */
-const barLimit = 5;
+const mostDestinationsShownBeforeMore = 5;
 
-/** The part classes of the bar's destinations. */
 const barClasses: DestinationClasses = {
   item: 'env-navigation-bar-item',
   indicator: 'env-navigation-bar-indicator',
@@ -45,10 +43,10 @@ export interface NavigationBarProps
    */
   destinations: readonly Destination[];
   /**
-   * The bar's background, named as Surface's and Card's: default, the navigation's background,
-   * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
-   * page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as
-   * a NavigationBar with page under a TopBar with its background.
+   * The bar's background, named as Surface's and Card's: default, the default surface color, the
+   * app frame's own fill that stands apart from the page; page, the page's background, the same as
+   * the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such
+   * as a Sheet, both take the surface's color.
    * @default 'default'
    */
   background?: NavigationBackground;
@@ -74,11 +72,11 @@ export function NavigationBar({
   ...props
 }: NavigationBarProps) {
   const messages = useNavigationMessages();
-  const overflow = destinations.length > barLimit;
-  const shown = overflow ? destinations.slice(0, barLimit - 1) : destinations;
-  const rest = overflow ? destinations.slice(barLimit - 1) : [];
-  // The More item counts what its menu holds, and shows the current fill when it holds the current
-  // destination.
+  const overflow = destinations.length > mostDestinationsShownBeforeMore;
+  const shown = overflow
+    ? destinations.slice(0, mostDestinationsShownBeforeMore - 1)
+    : destinations;
+  const rest = overflow ? destinations.slice(mostDestinationsShownBeforeMore - 1) : [];
   const restCount = rest.reduce(
     (sum, { count }) => (shownCount(count) === undefined ? sum : sum + (count ?? 0)),
     0,
@@ -88,7 +86,6 @@ export function NavigationBar({
     (destination) => destination.current === true || holdsCurrent(destination.children),
   );
   const restName = countedName(messages.more, restCount, messages) ?? messages.more;
-  // As on the destinations, the current state is an attribute of the item, and its name says it.
   const moreState = {
     'data-current': flag(restCurrent),
     'aria-label': restCurrent ? messages.moreCurrent({ name: restName }) : restName,
@@ -123,7 +120,6 @@ export function NavigationBar({
                     align="center"
                     gap={1}
                   >
-                    {/* The label, then the count, as the name reads them. */}
                     <span className="env-navigation-bar-label">{messages.more}</span>
                     {restShown !== undefined && ' '}
                     <span className="env-navigation-bar-indicator">
@@ -142,7 +138,6 @@ export function NavigationBar({
                 {rest.map((destination) => {
                   const count = shownCount(destination.count);
                   const inside = !destination.current && holdsCurrent(destination.children);
-                  // Named as the other destinations are, such as Inbox, 3 new, with the badge hidden.
                   const shared = {
                     icon: destination.icon,
                     'aria-current': destination.current

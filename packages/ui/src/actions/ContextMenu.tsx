@@ -25,7 +25,6 @@ import {
 import { isRightToLeft } from '../internal/dom/direction.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 
-/** The Base UI parts of a context menu's popup. */
 const contextMenuParts = {
   Portal: BaseContextMenu.Portal,
   Positioner: BaseContextMenu.Positioner,
@@ -73,33 +72,21 @@ export interface ContextMenuProps {
   style?: CSSProperties;
 }
 
-/**
- * How long after the keyboard opens the menu a contextmenu event counts as the browser's own
- * follow-up to the key, in milliseconds, rather than a press of its own.
- */
-const keyboardFollowUp = 500;
+const browserFollowUpToContextMenuKeyWithin = 500;
 
-/** A browser context-menu key event: the ContextMenu key or Shift+F10. */
 function isContextMenuKey(event: KeyboardEvent) {
   return event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10');
 }
 
-/**
- * Whether the content offers a menu on an element: content that renders nothing, such as null,
- * undefined, false or '', offers none, and a content function returning it for an element offers
- * none there.
- */
 function offersMenu(content: ContextMenuProps['content'], element: Element | null) {
   const node = contentFor(content, element);
   return node != null && node !== false && node !== '';
 }
 
-/** The menu's content for the element it opens on. */
 function contentFor(content: ContextMenuProps['content'], element: Element | null) {
   return typeof content === 'function' ? content(element) : content;
 }
 
-/** The element a context-menu key opens the menu on: the focused one, or its active descendant. */
 function keyboardTarget(event: KeyboardEvent<Element>) {
   const focused = event.target instanceof Element ? event.target : event.currentTarget;
   const descendantId = focused.getAttribute('aria-activedescendant');
@@ -113,11 +100,7 @@ function pointAnchor(point: ContextMenuPoint) {
   };
 }
 
-/**
- * A point on an element, which moves with it: the menu opened there stays at the same place of the
- * element as a page or a box around it scrolls, rather than at the same place of the window.
- */
-function pointOnElement(point: ContextMenuPoint, element: Element) {
+function pointMovingWithElement(point: ContextMenuPoint, element: Element) {
   const start = element.getBoundingClientRect();
   const [dx, dy] = [point.x - start.left, point.y - start.top];
   return {
@@ -129,8 +112,21 @@ function pointOnElement(point: ContextMenuPoint, element: Element) {
   };
 }
 
-/** The keyboard opens the menu below the start of the target, which stays the anchor while it moves. */
-function elementAnchor(element: Element) {
+const belowAnchorStart = { side: 'bottom', align: 'start', sideOffset: 4 } as const;
+const firstRowUnderPointer = { sideOffset: -5, alignOffset: 2 } as const;
+
+function leaveToBrowserContextMenu(
+  event: MouseEvent<Element> & { preventBaseUIHandler?: () => void },
+) {
+  event.preventBaseUIHandler?.();
+  stopBaseUiCancellingContextMenu(event);
+}
+
+function stopBaseUiCancellingContextMenu(event: MouseEvent<Element>) {
+  event.stopPropagation();
+}
+
+function anchorBelowStartOf(element: Element) {
   return {
     getBoundingClientRect: () => {
       const rect = element.getBoundingClientRect();
@@ -158,7 +154,6 @@ export function ContextMenu(props: ContextMenuProps) {
   return contained ? <ContainedContextMenu {...props} /> : <WindowContextMenu {...props} />;
 }
 
-/** A context menu over the window: modal, as Base UI's is. */
 function WindowContextMenu({
   'aria-label': label,
   content,
@@ -178,11 +173,9 @@ function WindowContextMenu({
   });
   const portal = usePortalContainer();
   const [target, setTarget] = useState<Element | null>(null);
-  const [keyboardAnchor, setKeyboardAnchor] = useState<ReturnType<typeof elementAnchor> | null>(
-    null,
-  );
-  // Browsers may follow a context-menu key with their own contextmenu event; it must not reopen
-  // the menu at the pointer.
+  const [keyboardAnchor, setKeyboardAnchor] = useState<ReturnType<
+    typeof anchorBelowStartOf
+  > | null>(null);
   const keyboardOpenedAt = useRef(Number.NEGATIVE_INFINITY);
   const region = useRef<HTMLDivElement>(null);
 
@@ -193,36 +186,31 @@ function WindowContextMenu({
 
   function openAtPointer(event: MouseEvent<Element> & { preventBaseUIHandler?: () => void }) {
     if (disabled) return;
-    if (performance.now() - keyboardOpenedAt.current < keyboardFollowUp) {
+    const browserFollowUpToContextMenuKey =
+      performance.now() - keyboardOpenedAt.current < browserFollowUpToContextMenuKeyWithin;
+    if (browserFollowUpToContextMenuKey) {
       event.preventDefault();
       event.preventBaseUIHandler?.();
       return;
     }
     const element = event.target instanceof Element ? event.target : null;
     if (!offersMenu(content, element)) {
-      // Where no menu is offered, the browser keeps its own. Base UI's trigger also cancels every
-      // contextmenu event inside the region from a listener on the document, so the event stops
-      // here, before it leaves React's root. Listeners of the application's own on the document
-      // don't see it either. Base UI's -webkit-touch-callout: none still applies to the whole
-      // region, so a long press there shows no callout on iOS.
-      event.preventBaseUIHandler?.();
-      event.stopPropagation();
+      leaveToBrowserContextMenu(event);
       return;
     }
     setTarget(element);
     setKeyboardAnchor(null);
   }
 
-  // A long press where no menu is offered starts no timer to open one.
-  function checkTouch(event: TouchEvent<Element> & { preventBaseUIHandler?: () => void }) {
+  function skipLongPressTimerWhereNoMenu(
+    event: TouchEvent<Element> & { preventBaseUIHandler?: () => void },
+  ) {
     if (disabled) return;
     if (!offersMenu(content, event.target instanceof Element ? event.target : null))
       event.preventBaseUIHandler?.();
   }
 
-  // A touch long press can open the menu through Base UI without a contextmenu event, so the
-  // pressed element is taken as the press starts.
-  function notePress(event: PointerEvent<Element>) {
+  function takeTargetAsTouchPressStarts(event: PointerEvent<Element>) {
     if (disabled || event.pointerType === 'mouse') return;
     setTarget(event.target instanceof Element ? event.target : null);
     setKeyboardAnchor(null);
@@ -235,7 +223,7 @@ function WindowContextMenu({
     event.preventDefault();
     keyboardOpenedAt.current = performance.now();
     setTarget(element);
-    setKeyboardAnchor(elementAnchor(element));
+    setKeyboardAnchor(anchorBelowStartOf(element));
     setOpen(true);
   }
 
@@ -253,19 +241,15 @@ function WindowContextMenu({
         ref={region}
         render={children}
         onContextMenu={openAtPointer}
-        onPointerDown={notePress}
-        onTouchStart={checkTouch}
+        onPointerDown={takeTargetAsTouchPressStarts}
+        onTouchStart={skipLongPressTimerWhereNoMenu}
         onKeyDown={openFromKeyboard}
       />
       <MenuPopup
         parts={contextMenuParts}
         label={label}
         trigger={region}
-        // At a point or an element the menu opens below its start; at the pointer, Base UI's own
-        // placement puts its first row under the pointer.
-        {...(anchor
-          ? { anchor, side: 'bottom', align: 'start', sideOffset: 4 }
-          : { sideOffset: -5, alignOffset: 2 })}
+        {...(anchor ? { anchor, ...belowAnchorStart } : firstRowUnderPointer)}
         className={className}
         popupRef={ref}
         popupProps={{ style }}
@@ -276,11 +260,6 @@ function WindowContextMenu({
   );
 }
 
-/**
- * A context menu in a contained PortalContainer. Base UI's context menu is always modal, which
- * would hide the page and lock its scroll for a menu in a preview; this one is a menu that isn't
- * modal, opened at the pointer or below the focused element as the context menu is.
- */
 function ContainedContextMenu({
   'aria-label': label,
   content,
@@ -301,7 +280,7 @@ function ContainedContextMenu({
   });
   const [target, setTarget] = useState<Element | null>(null);
   const [anchor, setAnchor] = useState<{
-    at: ReturnType<typeof pointOnElement> | ReturnType<typeof elementAnchor>;
+    at: ReturnType<typeof pointMovingWithElement> | ReturnType<typeof anchorBelowStartOf>;
     pointer: boolean;
   } | null>(null);
   const region = useRef<HTMLElement>(null);
@@ -313,14 +292,14 @@ function ContainedContextMenu({
   function openAtPointer(event: MouseEvent<Element>) {
     if (disabled) return;
     const element = event.target instanceof Element ? event.target : null;
-    // Where no menu is offered, the browser keeps its own.
     if (!offersMenu(content, element)) return;
     event.preventDefault();
     setTarget(element);
-    // The page around a contained menu goes on scrolling, so the point is the element's, not the
-    // window's.
     setAnchor({
-      at: pointOnElement({ x: event.clientX, y: event.clientY }, element ?? event.currentTarget),
+      at: pointMovingWithElement(
+        { x: event.clientX, y: event.clientY },
+        element ?? event.currentTarget,
+      ),
       pointer: true,
     });
     setOpen(true);
@@ -332,7 +311,7 @@ function ContainedContextMenu({
     if (!offersMenu(content, element)) return;
     event.preventDefault();
     setTarget(element);
-    setAnchor({ at: elementAnchor(element), pointer: false });
+    setAnchor({ at: anchorBelowStartOf(element), pointer: false });
     setOpen(true);
   }
 
@@ -342,22 +321,18 @@ function ContainedContextMenu({
     props: { onContextMenu: openAtPointer, onKeyDown: openFromKeyboard },
   });
   const controlledAnchor = controlledOpen !== undefined && anchorPoint !== undefined;
-  // A point given while controlled is the region's from the moment it is given, so it too moves
-  // with the region as the page scrolls.
   const { x, y } = anchorPoint ?? { x: 0, y: 0 };
   const givenAnchor = useMemo(
     () =>
       controlledAnchor
         ? region.current
-          ? pointOnElement({ x, y }, region.current)
+          ? pointMovingWithElement({ x, y }, region.current)
           : pointAnchor({ x, y })
         : null,
     [controlledAnchor, x, y],
   );
   const at = givenAnchor ?? anchor?.at;
-  // At the pointer its first row is under the pointer, as Base UI places a context menu; at a
-  // point or an element it opens below its start.
-  const pointer = !controlledAnchor && anchor?.pointer;
+  const openedAtPointer = !controlledAnchor && anchor?.pointer;
   return (
     <BaseMenu.Root
       open={open && !disabled}
@@ -372,10 +347,10 @@ function ContainedContextMenu({
         label={label}
         trigger={region}
         anchor={at}
-        side="bottom"
-        align="start"
-        sideOffset={pointer ? -5 : 4}
-        alignOffset={pointer ? 2 : 0}
+        side={belowAnchorStart.side}
+        align={belowAnchorStart.align}
+        sideOffset={openedAtPointer ? firstRowUnderPointer.sideOffset : belowAnchorStart.sideOffset}
+        alignOffset={openedAtPointer ? firstRowUnderPointer.alignOffset : 0}
         className={className}
         popupRef={ref}
         popupProps={{ style }}

@@ -23,8 +23,7 @@ const initialEntries: Entry[] = [
   { id: 'readme', parent: null, name: 'Readme.md' },
 ];
 
-/** Whether an entry lies inside the folder with the given id, at any depth. */
-function inside(entries: Entry[], entry: Entry, folder: string) {
+function isInsideFolder(entries: Entry[], entry: Entry, folder: string) {
   for (let parent = entry.parent; parent !== null;) {
     if (parent === folder) return true;
     const id: string = parent;
@@ -72,7 +71,7 @@ export default function ContextMenuActions() {
     });
   const remove = (id: string) => {
     setEntries((current) =>
-      current.filter((entry) => entry.id !== id && !inside(current, entry, id)),
+      current.filter((entry) => entry.id !== id && !isInsideFolder(current, entry, id)),
     );
     if (id === selected) setSelected(null);
   };
@@ -86,7 +85,6 @@ export default function ContextMenuActions() {
 
   return (
     <Column gap={2} style={{ inlineSize: 'min(100%, 20rem)' }}>
-      {/* The menu's actions are buttons too, for people who cannot right-click. */}
       <Row gap={1}>
         <IconButton
           variant="ghost"
@@ -102,7 +100,6 @@ export default function ContextMenuActions() {
           onClick={() => selected && remove(selected)}
         />
       </Row>
-      {/* The tree fills its parent's height and scrolls itself. */}
       <div style={{ blockSize: '17rem' }}>
         <Tree
           aria-label="Project files"

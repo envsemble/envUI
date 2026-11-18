@@ -6,7 +6,6 @@ import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 export default function PhoneDestinations() {
-  // The router knows the current page; here a press stands in for it.
   const [current, setCurrent] = useState('/inbox');
   const destination = (href: string) => ({
     href,
@@ -20,7 +19,6 @@ export default function PhoneDestinations() {
     { label: 'Settings', icon: <IconSettings />, ...destination('/settings') },
   ];
   return (
-    // As wide as a phone; in an app, Scaffold places the bar at the bottom of the window.
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
       <NavigationBar destinations={destinations} />
     </div>

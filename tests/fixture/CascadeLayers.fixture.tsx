@@ -1,5 +1,3 @@
-// The cascade-layer test's fixture: envUI's style sheet, then an application's own CSS outside
-// cascade layers (CascadeLayers.css), which must win over every rule of envUI's without !important.
 import { Button, Checkbox, Link, Text } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './CascadeLayers.css';

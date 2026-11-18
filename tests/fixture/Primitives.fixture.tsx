@@ -8,6 +8,7 @@ import {
   CopyButton,
   Field,
   IconButton,
+  Kbd,
   Popover,
   Column,
   Row,
@@ -21,16 +22,14 @@ import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
 import { IconHelp } from '@envsemble/envui/icons/Help';
 import { IconUndo } from '@envsemble/envui/icons/Undo';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
-// Internal primitives, which only envUI's own components use: the fixture mounts them directly.
 import { PopupSurface } from '../../packages/ui/src/internal/popup/PopupSurface.js';
 import { ListRow } from '../../packages/ui/src/internal/list/ListRow.js';
-import { ResizeHandle } from '../../packages/ui/src/internal/resize/ResizeHandle.js';
+import { ResizeHandle } from '../../packages/ui/src/layout/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/forms/internal/useRovingFocus.js';
 import { useCopy } from '../../packages/ui/src/internal/useCopy.js';
 
 export const mount = 'standalone';
 
-/** Toolbar: roving focus, tooltips, a pressed toggle, a disabled button and a link. */
 function ToolbarSample() {
   const [bold, setBold] = useState(false);
   const [pressed, setPressed] = useState<string[]>([]);
@@ -68,7 +67,6 @@ function ToolbarSample() {
         <Toolbar.Button icon={<IconFormatBold />} label="Highlight" shortcut="Ctrl+Shift+B" />
         <Toolbar.Link href="#shortcuts" icon={<IconHelp />} label="Shortcuts" />
       </Toolbar.Root>
-      {/* Disabled while busy, as an editor's toolbar is while it saves. */}
       <Toolbar.Root aria-label="Partly disabled" disabled={busy}>
         <Toolbar.Button icon={<IconUndo />} label="Redo" shortcut="Ctrl+K Ctrl+Z" />
         <Toolbar.Button icon={<IconFormatBold />} label="Strong emphasis" shortcut="⌘B" />
@@ -93,16 +91,9 @@ function ToolbarSample() {
   );
 }
 
-/**
- * Emphasis: buttons with a tone in a toolbar, whose ghost default they take where it has their
- * tone; ConfirmButton and CopyButton, which follow it too; and a pair no variant is designed in,
- * which only code past the types can ask for.
- */
 function EmphasisSample() {
-  // Past the types on purpose: the undesigned pair the runtime check must catch.
   const undesigned = { variant: 'secondary', tone: 'danger' };
   const LooseButton = Button as unknown as ComponentType<Record<string, unknown>>;
-  // Mounted on request, so its deliberate console error reaches only the test that asks for it.
   const [showUndesigned, setShowUndesigned] = useState(false);
   return (
     <Column gap={2} data-testid="emphasis">
@@ -117,7 +108,6 @@ function EmphasisSample() {
           Remove
         </ConfirmButton>
         <CopyButton value="text" aria-label="Copy text" data-testid="toolbar-copy" />
-        {/* A portal leaves the toolbar: the popover's buttons take their own defaults. */}
         <Popover
           title="Share"
           trigger={<Button data-testid="toolbar-popover-trigger">Share</Button>}
@@ -154,7 +144,6 @@ function EmphasisSample() {
   );
 }
 
-/** Field: label, control, description and error wired through Base UI's Field. */
 function FieldSample() {
   const [invalid, setInvalid] = useState(false);
   return (
@@ -176,7 +165,6 @@ function FieldSample() {
   );
 }
 
-/** An Alert's dismiss button, a small IconButton with a cross, for its touch-size hit area. */
 function CloseButtonSample() {
   return (
     <div data-testid="close-buttons">
@@ -187,7 +175,6 @@ function CloseButtonSample() {
   );
 }
 
-/** ResizeHandle: keys, pointer and the text direction. */
 function ResizeSample({ dir }: { dir: 'ltr' | 'rtl' }) {
   const [width, setWidth] = useState(200);
   const [committed, setCommitted] = useState(200);
@@ -218,7 +205,6 @@ const days = Array.from({ length: 14 }, (_, index) => ({
   disabled: index === 4,
 }));
 
-/** useRovingFocus in a seven-column grid, with one disabled cell. */
 function RovingGridSample({ dir }: { dir: 'ltr' | 'rtl' }) {
   const [active, setActive] = useState<string | null>(null);
   const roving = useRovingFocus({
@@ -254,7 +240,6 @@ function RovingGridSample({ dir }: { dir: 'ltr' | 'rtl' }) {
   );
 }
 
-/** useRovingFocus in a vertical list with typeahead. */
 function RovingListSample() {
   const people = ['Alex Morgan', 'Priya Shah', 'Sam Lee', 'Samir Haddad'];
   const [active, setActive] = useState<string | null>(null);
@@ -287,7 +272,6 @@ function RovingListSample() {
   );
 }
 
-/** PopupSurface: Popover parts, the theme carried into the portal and the trigger's direction. */
 function DirectedPopup({ dir }: { dir: 'ltr' | 'rtl' }) {
   const trigger = useRef<HTMLButtonElement>(null);
   return (
@@ -324,7 +308,6 @@ function PopupSample() {
   );
 }
 
-/** ListRow on Base UI Menu items. */
 function ListRowSample() {
   return (
     <BaseMenu.Root>
@@ -338,7 +321,7 @@ function ListRowSample() {
           icon={<IconSettings />}
           label="Settings"
           description="Account and workspace"
-          shortcut="Ctrl+,"
+          end={<Kbd keys={['Ctrl', ',']} />}
         />
         <ListRow render={<BaseMenu.Item disabled />} label="Archive" />
       </PopupSurface>
@@ -346,7 +329,6 @@ function ListRowSample() {
   );
 }
 
-/** useCopy with a custom writer. */
 function CopySample() {
   const [written, setWritten] = useState('');
   const { copy, status } = useCopy({
@@ -365,7 +347,6 @@ function CopySample() {
   );
 }
 
-/** The primitives batch A adds. */
 export default function PrimitivesFixture() {
   return (
     <Column gap={6}>

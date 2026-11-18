@@ -3,7 +3,6 @@ import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/e
 
 export const mount = 'standalone';
 
-/** A guide's pages, some nested under others, two levels deep; a section without href is a heading. */
 interface Page {
   label: string;
   href?: string;
@@ -46,7 +45,6 @@ const guide: Page[] = [
   },
 ];
 
-/** The pages as destinations, the one at current marked, each choosing itself as a router would. */
 function destinationsOf(pages: Page[], current: string, choose: (href: string) => void) {
   return pages.map((page): NavigationDrawerDestination => {
     const children = page.children && destinationsOf(page.children, current, choose);
@@ -64,11 +62,6 @@ function destinationsOf(pages: Page[], current: string, choose: (href: string) =
   });
 }
 
-/**
- * Drawers with nested sections: one that keeps its own open sections, its current page in a
- * section, with a button that moves the current page into a closed one; one whose open sections the
- * application keeps.
- */
 export default function NavigationDrawerNestedFixture() {
   const [current, setCurrent] = useState('#passkeys');
   const [controlledCurrent, setControlledCurrent] = useState('#overview');

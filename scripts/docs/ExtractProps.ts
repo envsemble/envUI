@@ -1,18 +1,3 @@
-// Extracts the props of every public component from the library's TypeScript source into
-// docs/generated/props.json, which the documentation build turns into the Props section of each
-// page, in the catalogue and in the packaged Markdown.
-//
-//   node scripts/docs/ExtractProps.ts           rewrite docs/generated/props.json
-//   node scripts/docs/ExtractProps.ts --check   fail when it differs from the source
-//
-// For each export of the public entry points (not the icons) it records the kind (component,
-// namespace of parts, or function) and its TSDoc. For a component it lists the props declared by
-// envUI itself, with a readable type, the default (a TSDoc @default, or the default of the
-// component's destructured parameter), whether it is required, the TSDoc and @deprecated. Props
-// that come from React's DOM types are summarised by element, such as "<button> or <a>", instead
-// of listing some 280 attributes; props declared by Base UI are listed with their source. Props
-// types that are unions of forms, such as Button's icon-only form, are merged: a prop required in
-// only some forms names the prop that selects them, such as `iconOnly` being `true`.
 import { readFileSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
 import { Node, Project, ts } from 'ts-morph';
@@ -22,10 +7,8 @@ import { libraryDirectory, librarySourceDirectory, repositoryRoot } from '../Rep
 
 export const propsFile = resolve(repositoryRoot, 'docs/generated/props.json');
 
-/** The entry point no Props section reads: it holds the built-in strings, and no component. */
 const undocumentedEntryPoints = new Set(['@envsemble/envui/messages']);
 
-/** React's per-element attribute interfaces, by the element they describe. */
 const attributeElements: Record<string, string> = {
   AnchorHTMLAttributes: 'a',
   ButtonHTMLAttributes: 'button',
@@ -49,7 +32,6 @@ const attributeElements: Record<string, string> = {
   FieldsetHTMLAttributes: 'fieldset',
   SVGAttributes: 'svg',
 };
-/** DOM element interfaces, by tag, for props types that only use the generic HTMLAttributes. */
 const domElements: Record<string, string> = {
   HTMLAnchorElement: 'a',
   HTMLButtonElement: 'button',
@@ -82,19 +64,16 @@ const domElements: Record<string, string> = {
 
 const posix = (path: string) => path.split(sep).join('/');
 const collapse = (text: string) => text.replace(/\s+/g, ' ').trim();
-/** Type text on one line, without import() qualifiers or the trailing commas of wrapped lists. */
 const tidyType = (text: string) =>
   collapse(text)
     .replace(/import\(['"][^'"]+['"]\)\./g, '')
     .replace(/,\s*([)>\]])/g, '$1')
     .replace(/([(<[])\s+/g, '$1')
     .replace(/\s+([)>\]])/g, '$1');
-/** One member of a union, in parentheses when it is a function type. */
 const unionMember = (text: string) =>
   /=>/.test(text) && !text.startsWith('((') ? `(${text})` : text;
 const code = (text: string) => '`' + text + '`';
 
-/** Where a declaration comes from: envUI's source, Base UI, or React's DOM types. */
 type Origin = 'envui' | 'base-ui' | 'native';
 
 function originOf(declaration: ts.Node): Origin {
@@ -104,11 +83,9 @@ function originOf(declaration: ts.Node): Origin {
   return 'native';
 }
 
-/** Whether a declaration is envUI's own, rather than the platform's or a dependency's. */
 const isLibrary = (declaration: ts.Node) =>
   !relative(librarySourceDirectory, declaration.getSourceFile().fileName).startsWith('..');
 
-/** The TSDoc of a declaration: its text, @default and @deprecated. */
 function documentation(declaration: ts.Node) {
   const docs = ts.getJSDocCommentsAndTags(declaration).filter(ts.isJSDoc);
   const text = (comment: ts.JSDoc['comment']) => collapse(ts.getTextOfJSDocComment(comment) ?? '');
@@ -139,24 +116,19 @@ const keywordTypes = new Set([
   ts.SyntaxKind.UndefinedKeyword,
 ]);
 
-/** The longest default, as text, that a props table shows in place of a private name. */
 const longestDefault = 200;
 
-/** A function that implements a component. */
 type Implementation = ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction;
 
-/** A property of one form of a props type, with what componentProps needs of it. */
 interface FormProperty {
   name: string;
   declarations: ts.Declaration[];
   type: ts.Type;
   optional: boolean;
-  /** Typed undefined or never: the form has no such prop. */
   absent: boolean;
   origin: Origin;
 }
 
-/** A prop's record in props.json. */
 interface PropRecord {
   name: string;
   type: string | undefined;
@@ -169,7 +141,6 @@ interface PropRecord {
   source?: 'base-ui';
 }
 
-/** An export's record in props.json, without the entry points it comes from. */
 type ExportRecord =
   | { kind: 'namespace'; source: string; description: string; parts: string[] }
   | {
@@ -181,13 +152,8 @@ type ExportRecord =
     }
   | { kind: 'function'; source: string; description: string; signature: string };
 
-/**
- * Reads the exports of the entry points with the type checker: their kinds, TSDoc and props, each
- * export with the entry points it comes from.
- */
 class ExportReader {
   readonly checker: ts.TypeChecker;
-  /** Every name the entry points export, which a default may name as it is. */
   readonly publicNames: Set<string>;
   readonly exportsByName = new Map<string, ExportRecord & { entries: string[] }>();
 
@@ -195,8 +161,6 @@ class ExportReader {
     this.checker = checker;
     this.publicNames = publicNames;
   }
-
-  // Types ------------------------------------------------------------------------------------
 
   literalText(type: ts.Type) {
     return type.isStringLiteral()
@@ -206,7 +170,6 @@ class ExportReader {
         : this.checker.typeToString(type);
   }
 
-  /** The text of a resolved type, such as an instantiated type parameter, without undefined. */
   resolvedText(type: ts.Type) {
     const texts = withoutUndefined(type).map((member) => this.literalText(member));
     if (texts.includes('true') && texts.includes('false')) {
@@ -216,7 +179,6 @@ class ExportReader {
     return texts.join(' | ');
   }
 
-  /** Whether a type node names a type parameter, such as State in CheckedProps<State>. */
   isTypeParameter(node: ts.TypeNode) {
     return (
       ts.isTypeReferenceNode(node) &&
@@ -226,7 +188,6 @@ class ExportReader {
     );
   }
 
-  /** The symbol a name refers to, through an import. */
   target(node: ts.Node) {
     const symbol = this.checker.getSymbolAtLocation(node);
     return symbol && symbol.flags & ts.SymbolFlags.Alias
@@ -234,10 +195,6 @@ class ExportReader {
       : symbol;
   }
 
-  /**
-   * The readable text of a type node: as written, with envUI's own aliases of literal unions, such
-   * as ButtonVariant, spelled out as their values, since agents and readers need the values.
-   */
   typeText(node: ts.TypeNode): string {
     if (ts.isUnionTypeNode(node)) return node.types.map((type) => this.typeText(type)).join(' | ');
     if (ts.isParenthesizedTypeNode(node)) return `(${this.typeText(node.type)})`;
@@ -255,9 +212,6 @@ class ExportReader {
     return tidyType(node.getText());
   }
 
-  // Defaults ---------------------------------------------------------------------------------
-
-  /** The function that implements a component, for its destructured defaults. */
   implementationOf(
     node: ts.Node | undefined,
     seen = new Set<ts.Node>(),
@@ -273,7 +227,6 @@ class ExportReader {
       ts.isSatisfiesExpression(node)
     )
       return this.implementationOf(node.expression, seen);
-    // forwardRef(…), memo(…) and withDisplayName(…) wrap the implementation as their first argument.
     if (ts.isCallExpression(node)) return this.implementationOf(node.arguments[0], seen);
     if (ts.isIdentifier(node)) {
       const target = this.target(node);
@@ -282,10 +235,6 @@ class ExportReader {
     return undefined;
   }
 
-  /**
-   * The text of an expression with each private name in it replaced by what it holds, or
-   * undefined when one of them cannot be shown that way.
-   */
   inlined(expression: ts.Expression, seen: Set<ts.Declaration>): string | undefined {
     const replacements: { start: number; end: number; text: string }[] = [];
     let unresolved = false;
@@ -306,7 +255,6 @@ class ExportReader {
           !declaration ||
           inside ||
           ts.isParameter(declaration) ||
-          // Another prop, as in step = Math.max(1, (max - min) / 10).
           (ts.isBindingElement(declaration) &&
             ts.isParameter(ts.walkUpBindingElementsAndPatterns(declaration))) ||
           !isLibrary(declaration) ||
@@ -333,11 +281,6 @@ class ExportReader {
       .replace(/,\s*([\])])/g, '$1');
   }
 
-  /**
-   * What a private const or one-expression function holds, as text a reader can use. `seen` holds
-   * the declarations being resolved around this one, so that a name that refers back to one of them
-   * is left unresolved; a helper used twice side by side resolves both times.
-   */
   privateValue(declaration: ts.Declaration, seen: Set<ts.Declaration>) {
     if (seen.has(declaration)) return undefined;
     seen.add(declaration);
@@ -366,19 +309,11 @@ class ExportReader {
     return undefined;
   }
 
-  /**
-   * A default as a reader can use it. A name that envUI does not export reads as the value it holds:
-   * 'env-theme' for defaultThemeStorageKey, or an arrow function for a label function, with the
-   * private names inside resolved too. A default that cannot be shown that way within
-   * longestDefault characters is undefined: the table says the prop has a built-in default rather
-   * than name something no reader can import.
-   */
   defaultText(initializer: ts.Expression) {
     const text = this.inlined(initializer, new Set());
     return text !== undefined && text.length <= longestDefault ? text : undefined;
   }
 
-  /** Defaults of the implementation's destructured props, such as variant = 'primary'. */
   destructuredDefaults(implementation: Implementation | undefined) {
     const defaults = new Map<string, string | undefined>();
     const pattern = implementation?.parameters[0]?.name;
@@ -387,15 +322,11 @@ class ExportReader {
       if (!element.initializer || element.dotDotDotToken) continue;
       const key = element.propertyName ?? element.name;
       const name = ts.isIdentifier(key) || ts.isStringLiteral(key) ? key.text : key.getText();
-      // A default that cannot be shown, such as a toolbar built from private parts, is built in.
       defaults.set(name, this.defaultText(element.initializer));
     }
     return defaults;
   }
 
-  // Elements ---------------------------------------------------------------------------------
-
-  /** The element whose native props a form of the props accepts, such as button. */
   nativeElement(properties: FormProperty[]) {
     const elements = new Set<string>();
     for (const { declarations } of properties)
@@ -407,8 +338,6 @@ class ExportReader {
         }
       }
     if (elements.size) return [...elements];
-    // Only the generic attributes: the element type of the ref or of an event handler names it. A
-    // ref to any HTMLElement, as Surface's, which render can make any element, names none.
     const text = ['ref', 'onClick']
       .map((probe) => properties.find(({ name }) => name === probe))
       .map((probe) => (probe ? this.checker.typeToString(probe.type) : ''))
@@ -420,9 +349,6 @@ class ExportReader {
     return properties.some(({ origin }) => origin === 'native') ? ['element'] : [];
   }
 
-  // Props ------------------------------------------------------------------------------------
-
-  /** Props of one component: its own and Base UI's listed, React's DOM props summarised. */
   componentProps(propsType: ts.Type, implementation: Implementation | undefined) {
     const forms = propsType.isUnion() ? propsType.types : [propsType];
     const byName = new Map<string, FormProperty[]>();
@@ -446,8 +372,6 @@ class ExportReader {
       }),
     );
     const defaults = this.destructuredDefaults(implementation);
-    // The element the implementation spreads its other props on, such as <thead>, where it is a
-    // plain element; otherwise the elements the props type names.
     const spread = spreadElements(implementation);
     const native = spread.length
       ? spread
@@ -456,7 +380,6 @@ class ExportReader {
     for (const [name, occurrences] of byName) {
       const present = occurrences.filter((occurrence) => !occurrence.absent);
       if (!present.length) continue;
-      // envUI's own declaration wins over the DOM attribute it narrows, such as aria-label.
       const listed =
         present.find((occurrence) =>
           occurrence.declarations.some((d) => originOf(d) === 'envui'),
@@ -465,8 +388,6 @@ class ExportReader {
           occurrence.declarations.some((d) => originOf(d) === 'base-ui'),
         );
       if (!listed) continue;
-      // The documented declaration of any form, such as iconOnly: true, rather than an
-      // undocumented one, such as iconOnly?: false.
       const declarations = present.flatMap((occurrence) =>
         occurrence.declarations.filter((d) => originOf(d) !== 'native'),
       );
@@ -482,19 +403,15 @@ class ExportReader {
             const own = o.declarations.find(
               (d) => originOf(d) !== 'native',
             ) as ts.PropertySignature;
-            // A type parameter reads as the type it is instantiated with, such as boolean | 'mixed'.
             if (!own.type || this.isTypeParameter(own.type)) return this.resolvedText(o.type);
             return this.typeText(own.type);
           }),
       );
-      // Forms that each allow one boolean value, such as iconOnly?: false and iconOnly: true.
       if (texts.has('boolean') || (texts.has('true') && texts.has('false'))) {
         texts.delete('true');
         texts.delete('false');
         texts.add('boolean');
       }
-      // Forms that share members, such as tone?: ButtonTone and tone?: 'neutral' | 'danger', list
-      // each member once; a member with brackets of its own, such as a function, stays whole.
       const members = [
         ...new Set(
           [...texts].flatMap((text) => (/[(<{[]/.test(text) ? [text] : text.split(' | '))),
@@ -519,7 +436,6 @@ class ExportReader {
     return { props, native };
   }
 
-  /** The literal members of a prop's type, such as true or 'primary'. */
   literalsOf(property: FormProperty | undefined) {
     return property
       ? withoutUndefined(property.type).filter(
@@ -528,12 +444,6 @@ class ExportReader {
       : [];
   }
 
-  /**
-   * Whether a prop is required. In a union of forms, a prop required in only some of them names
-   * what selects those forms: another prop's literal there, such as iconOnly being true; nothing,
-   * when the prop selects them itself, such as href; another prop that is set exactly there, such
-   * as icon; or the prop that is required in the other forms instead, such as aria-labelledby.
-   */
   requirement(
     name: string,
     formProperties: FormProperty[][],
@@ -567,7 +477,6 @@ class ExportReader {
       if (outside.every((property) => !literalTexts(property).includes(value)))
         return { required: false, requiredWhen: `${code(candidate)} is ${code(value)}` };
     }
-    // The prop selects its forms itself: elsewhere it is absent, or has none of its values there.
     const own = formProperties.map((properties) => find(properties, name));
     const insideValues = [...requiredIn].map((index) => literalTexts(own[index]));
     const literal = [...requiredIn].every(
@@ -604,15 +513,12 @@ class ExportReader {
     return { required: false, requiredWhen: 'in some forms' };
   }
 
-  // Exports ----------------------------------------------------------------------------------
-
   record(name: string, entry: string, value: ExportRecord) {
     const existing = this.exportsByName.get(name);
     if (existing) existing.entries.push(entry);
     else this.exportsByName.set(name, { ...value, entries: [entry] });
   }
 
-  /** Records an export: a namespace with its parts, a component with its props, or a function. */
   describe(name: string, declaration: Node, entry: string) {
     if (Node.isSourceFile(declaration)) {
       const parts: string[] = [];
@@ -662,7 +568,6 @@ class ExportReader {
   }
 }
 
-/** Intrinsic elements that receive the implementation's rest props, such as <thead {...props}>. */
 function spreadElements(implementation: Implementation | undefined) {
   const pattern = implementation?.parameters[0]?.name;
   const rest =
@@ -683,11 +588,9 @@ function spreadElements(implementation: Implementation | undefined) {
     ts.forEachChild(node, visit);
   };
   visit(implementation!.body);
-  // Props that reach another component, such as Button, keep the elements of the props type.
   return component ? [] : [...elements];
 }
 
-/** Whether an exported declaration is a value at run time: a module, a function or a variable. */
 function isRuntime(declaration: Node) {
   return (
     Node.isSourceFile(declaration) ||

@@ -10,11 +10,6 @@ import {
   DevModeWholePicture,
 } from './DevModePictures';
 
-/**
- * The dev mode guide's figures, which docs/dev-mode.md places by name (```tsx figure=Name```).
- * Only Try dev mode loads `@envsemble/envui/dev`, once it is pressed: scripts/site/SiteDevMode.ts
- * checks the hosted build for it.
- */
 export const devModeFigures: Record<string, FoundationFigureEntry> = {
   TryDevMode: { render: TryDevMode },
   DevModeButtonPicture: { render: DevModeButtonPicture },

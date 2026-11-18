@@ -9,11 +9,8 @@ const option = '.env-combobox-item';
 const submit = 'button[type="submit"]';
 const reset = 'button[type="reset"]';
 
-/*
- * The pointer removes the topic and presses File request: the field shows its error. It types
- * "se", picks Security and presses File request again: the error goes, and the request is filed.
- * Reset puts the form back as it began.
- */
+const formWithErrorAndNoteHeight = '10rem';
+
 const script: PointerStep[] = [
   { wait: 240 },
   { to: remove },
@@ -46,17 +43,20 @@ const script: PointerStep[] = [
 
 function Filing() {
   usePointer(script);
-  // As tall as the form with its error and its note from the start, which come as it plays.
   return (
     <div
-      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', minBlockSize: '10rem' }}
+      style={{
+        display: 'grid',
+        justifyItems: 'center',
+        inlineSize: '100%',
+        minBlockSize: formWithErrorAndNoteHeight,
+      }}
     >
       <RequiredInForm />
     </div>
   );
 }
 
-/** The request form, sent without a topic and then with one by a pointer no one sees. */
 export default function RequiredInFormMotion() {
   return (
     <MotionStage label="the error showing and going">

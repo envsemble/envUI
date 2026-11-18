@@ -112,22 +112,22 @@ export interface CommandPaletteProps extends Omit<
    */
   loadingLabel?: ReactNode;
   /**
-   * The empty state's title, the start of the one muted line shown in place of the list when there
-   * are no options, and announced.
+   * The title of the EmptyState shown in place of the list when there are no options, and
+   * announced.
    * @default 'Type to search' while the search field is empty and 'No results' when its text
    * finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty
    */
   emptyLabel?: ReactNode;
   /**
-   * Text after the empty state's title on its line, such as what the palette searches; null or
+   * The empty state's description below its title, such as what the palette searches; null or
    * false shows none.
    * @default None while the search field is empty; when its text finds nothing, 'Nothing matches
    * “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint
    */
   emptyDescription?: ReactNode;
   /**
-   * A decorative icon at the start of the empty state's line, in an option's icon place, such as
-   * an error icon when the search failed; none by default.
+   * A decorative icon above the empty state's title, such as an error icon when the search
+   * failed; none by default.
    */
   emptyIcon?: ReactNode;
   /**
@@ -141,9 +141,9 @@ export interface CommandPaletteProps extends Omit<
 
 /**
  * A quick-open dialog near the top of the window: a search field over a list of options the
- * application filters and ranks, built on Base UI's Autocomplete inside a dialog. The arrow keys
- * move the highlight while typing continues, and the number of results is announced as it
- * changes. className, style, ref and data attributes go to the dialog's surface.
+ * application filters and ranks. The arrow keys move the highlight while typing continues, and the
+ * number of results is announced as it changes. className, style, ref and data attributes go to
+ * the dialog's surface.
  */
 export function CommandPalette({
   open,
@@ -174,8 +174,8 @@ export function CommandPalette({
   const searchId = useId();
   const list = useRef<HTMLDivElement>(null);
   const query = inputValue.trim();
-  // Until people type, the default items, where there are any, show in place of the results.
-  const items = query === '' && suggestedItems ? suggestedItems : results;
+  const showSuggestions = query === '' && suggestedItems !== undefined;
+  const items = showSuggestions ? suggestedItems : results;
   const sections = sectionsOf(items);
   const grouped = sections.some((section) => section.label !== undefined);
   const empty = items.length === 0;
@@ -219,21 +219,18 @@ export function CommandPalette({
                   itemToStringValue={(item: CommandPaletteItem) => textOf(item)}
                   value={inputValue}
                   onValueChange={(next, details) => {
-                    // Choosing an option acts on it; the search text stays what people typed.
-                    if (details.reason === 'item-press') return;
+                    const optionChosen = details.reason === 'item-press';
+                    if (optionChosen) return;
                     onInputValueChange(next);
                   }}
                   onItemHighlighted={(item: CommandPaletteItem | undefined, details) =>
                     keys.onHighlight(item, details.index)
                   }
                 >
-                  {/* The search is a ghost TextField's frame around Autocomplete's input, kept
-                    solid on the frosted palette (CommandPalette.css). Under a coarse pointer, where
-                    there is no Esc, a close button follows it; elsewhere it doesn't show. */}
                   <Row align="center" gap={2} className="env-command-palette-header">
                     <FieldFrame
                       id={searchId}
-                      floatingLabel
+                      controlBox
                       variant="ghost"
                       size="lg"
                       startIcon={<IconSearch />}

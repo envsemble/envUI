@@ -7,14 +7,8 @@ import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
-// The namespaces' parts are pure, so a bundler that sees which parts an application renders keeps
-// only those: Rolldown does through the entry point, and esbuild does when it bundles the
-// namespace's own module (through the entry point it keeps the whole namespace; docs/setup.md
-// gives the sizes). This test bundles each namespace module with esbuild, part by part.
-
 const dist = join(repositoryRoot, 'packages/ui/dist');
 
-/** The bytes esbuild keeps of a dist module, by its path from dist, for an application using `use`. */
 async function bundledSize(module: string, use: string) {
   const result = await build({
     stdin: {
@@ -27,7 +21,6 @@ async function bundledSize(module: string, use: string) {
     write: false,
     format: 'esm',
     logLevel: 'silent',
-    // envUI's own code only: React, Base UI and the other dependencies are the application's.
     plugins: [
       {
         name: 'external',
@@ -39,7 +32,7 @@ async function bundledSize(module: string, use: string) {
   return result.outputFiles[0].contents.length;
 }
 
-test('a bundler keeps only the namespace parts an application uses', async () => {
+test("a bundler keeps only the namespace parts an application uses, bundling the namespace's own module", async () => {
   assert.ok(existsSync(join(dist, 'index.js')), 'Build the library first: npm run build:library.');
   const index = await readFile(join(dist, 'index.js'), 'utf8');
   const namespaces = [...index.matchAll(/import \* as (\w+) from "(\.\/[^"]+)";/g)];
@@ -55,4 +48,34 @@ test('a bundler keeps only the namespace parts an application uses', async () =>
       `${namespace}: one part keeps ${smallest} of the namespace's ${whole} bytes`,
     );
   }
+});
+
+async function bundledModules(module: string) {
+  const result = await build({
+    stdin: {
+      contents: `export * from ${JSON.stringify(module)};\n`,
+      resolveDir: dist,
+      loader: 'js',
+    },
+    bundle: true,
+    write: false,
+    metafile: true,
+    format: 'esm',
+    logLevel: 'silent',
+    plugins: [
+      {
+        name: 'external',
+        setup: (builder) =>
+          builder.onResolve({ filter: /^[^./]/ }, (args) => ({ path: args.path, external: true })),
+      },
+    ],
+  });
+  return Object.keys(result.metafile.inputs);
+}
+
+test('the main entry point reaches no syntax highlighter, so CodeBlock costs none; HighlightedCodeBlock’s entry point does', async () => {
+  const reachesHighlighter = (modules: string[]) =>
+    modules.some((module) => module.endsWith('/codeHighlighting.js'));
+  assert.equal(reachesHighlighter(await bundledModules('./index.js')), false);
+  assert.equal(reachesHighlighter(await bundledModules('./code.js')), true);
 });

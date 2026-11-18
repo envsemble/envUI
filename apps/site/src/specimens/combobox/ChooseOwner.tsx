@@ -8,11 +8,8 @@ const clear = '.env-combobox-clear';
 const trigger = '.env-combobox-trigger';
 const option = (index: number) => `.env-combobox-item:nth-child(${index} of .env-combobox-item)`;
 
-/*
- * The pointer clears Alex Morgan and types "sha": the list narrows to Priya Shah as the letters
- * come, and it picks her. Then it opens the whole list from the trigger and picks Alex Morgan
- * again, where it began.
- */
+const fieldWithOpenListHeight = '20rem';
+
 const script: PointerStep[] = [
   { wait: 240 },
   { to: clear },
@@ -40,18 +37,20 @@ const script: PointerStep[] = [
 
 function Choosing() {
   usePointer(script);
-  // The field at the top of a box as tall as it and its whole open list, so the list fits in the
-  // stage from the start.
   return (
     <div
-      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', minBlockSize: '20rem' }}
+      style={{
+        display: 'grid',
+        justifyItems: 'center',
+        inlineSize: '100%',
+        minBlockSize: fieldWithOpenListHeight,
+      }}
     >
       <ChooseOwner />
     </div>
   );
 }
 
-/** The owner field, filtered as a pointer no one sees types a name, and the match chosen. */
 export default function ChooseOwnerMotion() {
   return (
     <MotionStage label="the list narrowing as a name is typed">

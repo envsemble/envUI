@@ -13,49 +13,24 @@ import { usePlayback } from './Playback';
 import { remPixels } from '../shared/Lengths';
 import { useLatest } from '../shared/useLatest';
 
-/*
- * An "Adapting to width" figure that plays: the example in one frame whose width sweeps between the
- * widths the page gives, holding a moment at each, while the example reflows for real, because its
- * container queries see the frame. A faint ruler above the frame shows its width, and its window
- * class where the page asks for it.
- *
- * The figure keeps one height throughout: the tallest the example gets along the way. The frame is
- * centred and drawn at one scale, chosen once for the stage, so a wide frame is never clipped or
- * drawn in tiny text. Where the widest width doesn't fit even at the least scale, the frame sweeps
- * only as wide as the stage can show; or, with `crop`, it keeps its width and is cut off at the
- * stage's end, shown from its start. What the example opens, such as a sheet or a menu, opens
- * inside the frame, as it would in a window of that width, rather than over the whole stage.
- */
-
-/** The least scale a frame is drawn at. On a stage narrower than that, the sweep is narrower. */
-const leastScale = 0.8;
-/**
- * With `fit`, the least scale of a frame that fits its widest width: for an example that changes
- * only at a width wider than the column, such as a diff side by side.
- */
+const leastLegibleScale = 0.8;
 const leastFitScale = 0.6;
-/** How long the frame holds at each width, in ms. */
-const holdTime = 1100;
-/** How long it holds at its first width when it starts playing: an animation starts at once. */
-const firstHold = 400;
-/**
- * How long the frame takes to move from one width to another: a little longer for a longer move.
- */
-const travelTime = (from: number, to: number) => 700 + 70 * Math.abs(to - from);
-/** Eases a move in and out gently, like a window's edge dragged by hand. */
+const holdTimeMs = 1100;
+const firstHoldMs = 400;
+const travelBaseMs = 700;
+const travelMsPerRem = 70;
+const travelTime = (from: number, to: number) =>
+  travelBaseMs + travelMsPerRem * Math.abs(to - from);
 const ease = (t: number) => (1 - Math.cos(Math.PI * t)) / 2;
-/** How finely the example's height is sampled along the sweep, in rem. */
-const sampleStep = 0.25;
+const sampleStepRem = 0.25;
 
-/** Each window class's name, in plain words. */
-const classNames: Record<WindowClass, string> = {
+const windowClassNames: Record<WindowClass, string> = {
   compact: 'Compact',
   medium: 'Medium',
   expanded: 'Expanded',
   large: 'Large',
 };
 
-/** The window class of a width in rem. */
 function classOf(width: number) {
   let found: WindowClass = 'compact';
   for (const [name, from] of Object.entries(windowClasses) as [WindowClass, string][])
@@ -63,10 +38,6 @@ function classOf(width: number) {
   return found;
 }
 
-/**
- * The order in which the frame visits its widths, by index: through them and back, so 22, 40 and 64
- * go 22, 40, 64, 40 and back to 22.
- */
 const orderOf = (count: number) =>
   count < 2
     ? [0]
@@ -75,7 +46,6 @@ const orderOf = (count: number) =>
         ...Array.from({ length: count - 2 }, (_, index) => count - 2 - index),
       ];
 
-/** The frame's width at a given time in its loop, which holds at each width and then moves on. */
 function widthAt(time: number, stops: readonly number[], hold: number) {
   const order = orderOf(stops.length);
   const legs = order.map((index, leg) => {
@@ -94,62 +64,43 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
   return stops[0];
 }
 
-/** How a sweep fits its stage: its scale, the widths it sweeps between, and its room. */
 interface SweepLayout {
-  /** The scale the frame is drawn at. */
   scale: number;
-  /** The widths it sweeps between on this stage, in rem. */
   stops: readonly number[];
-  /** The room it shows in, in px, inside its outline. */
   room: number;
-  /** Whether it is cut off at the stage's end (`crop`). */
   cropped: boolean;
 }
 
-/**
- * The scale that shows the widest width in `space` px, or the least scale with a narrower sweep,
- * and the widths the sweep reaches at that scale. With `crop`, a frame that doesn't fit is cut off
- * instead.
- */
 function fitSweep(
   stops: readonly number[],
   space: number,
   rem: number,
   { fit, crop }: { fit: boolean; crop: boolean },
 ): SweepLayout {
-  const least = fit ? leastFitScale : leastScale;
+  const least = fit ? leastFitScale : leastLegibleScale;
   let scale = Math.min(1, space / (Math.max(...stops) * rem));
   let limit = Infinity;
   const cropped = crop && scale < least;
   if (cropped) {
-    // Cut off, at the scale that keeps its text legible, rather than at a fit's least scale.
-    scale = leastScale;
+    scale = leastLegibleScale;
   } else if (scale < least) {
     scale = least;
-    // In whole rem, so the ruler shows the narrower width the way it shows the others.
     limit = Math.floor(space / (least * rem));
   }
   return { scale, stops: stops.map((width) => Math.min(width, limit)), room: space, cropped };
 }
 
-/** The tallest the example in `box` gets at any width from `narrowest` to `most` rem. */
 function tallestAlong(box: HTMLElement, narrowest: number, most: number) {
   let tallest = 0;
-  for (let width = narrowest; width < most + sampleStep; width += sampleStep) {
+  for (let width = narrowest; width < most + sampleStepRem; width += sampleStepRem) {
     box.style.inlineSize = `${Math.min(width, most)}rem`;
     tallest = Math.max(tallest, box.offsetHeight);
   }
   return tallest;
 }
 
-/**
- * How near the view, in viewports above and below it, a sweep samples its height at once. One
- * further off samples it in the page's idle moments, so the sampling, a layout for each width, never
- * holds up the page as it loads, and has finished before the reader gets there.
- */
 const nearViews = 1;
 
-/** Whether `element` is near the view of the box it scrolls in (nearViews). */
 function nearView(element: HTMLElement, scroller: Element | null) {
   const box = element.getBoundingClientRect();
   const view = scroller ? scroller.getBoundingClientRect() : { top: 0, bottom: innerHeight };
@@ -157,11 +108,6 @@ function nearView(element: HTMLElement, scroller: Element | null) {
   return box.bottom > view.top - margin && box.top < view.bottom + margin;
 }
 
-/**
- * Samples tallestAlong in the page's idle moments, as many widths as each moment has time for, and
- * calls `done` with the tallest. Between moments the frame is at its own width again, so the reader
- * never sees a sample. Returns the cancel.
- */
 function tallestWhenIdle(
   box: HTMLElement,
   narrowest: number,
@@ -172,27 +118,22 @@ function tallestWhenIdle(
   let tallest = 0;
   let cancel = onIdle(function sample(time) {
     const own = box.style.inlineSize;
-    // At least one width, each moment: a moment that came only as the wait ran out has no time.
     do {
       box.style.inlineSize = `${Math.min(width, most)}rem`;
       tallest = Math.max(tallest, box.offsetHeight);
-      width += sampleStep;
-    } while (width < most + sampleStep && time.timeRemaining() > idleSampleTime);
+      width += sampleStepRem;
+    } while (width < most + sampleStepRem && time.timeRemaining() > idleSampleTimeMs);
     box.style.inlineSize = own;
-    if (width < most + sampleStep) cancel = onIdle(sample);
+    if (width < most + sampleStepRem) cancel = onIdle(sample);
     else done(tallest);
   });
   return () => cancel();
 }
 
-/** The time an idle moment must still have for another sample, in ms: a sample takes a layout. */
-const idleSampleTime = 10;
+const idleSampleTimeMs = 10;
 
-/**
- * The ruler's text for a width. At a width the page gives, the exact value; during a move, and at a
- * width the stage narrowed, whole rem, which change calmly. `classes` shows the window class beside
- * it, or instead of it with `'only'`.
- */
+const stopToleranceRem = 0.01;
+
 function rulerWords(
   width: number,
   {
@@ -201,29 +142,23 @@ function rulerWords(
     classes,
   }: { stops: readonly number[]; widths: readonly number[]; classes: boolean | 'only' },
 ) {
-  const exact = stops.find((stop) => Math.abs(stop - width) < 0.01 && widths.includes(stop));
+  const exact = stops.find(
+    (stop) => Math.abs(stop - width) < stopToleranceRem && widths.includes(stop),
+  );
   const words = `${exact ?? Math.round(width)} rem`;
-  const name = classNames[classOf(width)];
+  const name = windowClassNames[classOf(width)];
   return classes === 'only' ? name : classes ? `${words} · ${name}` : words;
 }
 
-/** The parts of a sweep that its effects draw into, and the state they share. */
 interface SweepParts {
   areaRef: RefObject<HTMLDivElement | null>;
   placeRef: RefObject<HTMLDivElement | null>;
   frameRef: RefObject<HTMLDivElement | null>;
   layoutRef: RefObject<SweepLayout>;
-  /** The width the frame shows now, in rem. */
   shownRef: RefObject<number>;
-  /** Draws the frame at a width: WidthSweep's latest drawing function. */
   drawRef: RefObject<(width: number) => void>;
 }
 
-/**
- * Chooses the scale and the height once for the stage, and again only when the stage or the example
- * changes: the scale that shows the widest width, or the least scale with a narrower sweep, and the
- * tallest the example gets anywhere along it.
- */
 function useSweepLayout(
   { areaRef, placeRef, frameRef, layoutRef, shownRef, drawRef }: SweepParts,
   key: string,
@@ -235,17 +170,14 @@ function useSweepLayout(
     const spot = placeRef.current;
     if (!room || !box || !spot) return;
     const stops = key.split(' ').map(Number);
-    /** The tallest the example gets along a sweep, by the root's font size and the sweep's ends. */
     const tallestOf = new Map<string, number>();
-    /** The sampling of a sweep far from the view, while it runs in the page's idle moments. */
     let sampling: { range: string; cancel: () => void } | null = null;
     const stopSampling = () => {
       sampling?.cancel();
       sampling = null;
     };
     const scroller = scrollerOf(room);
-    /** The stage's width as last measured, which a resize must change to measure again. */
-    let width = 0;
+    let measuredStageWidth = 0;
     const measure = () => {
       const rem = remPixels();
       const outline = getComputedStyle(box);
@@ -255,9 +187,6 @@ function useSweepLayout(
       const { scale, cropped } = fitted;
       const narrowest = Math.min(...fitted.stops);
       const most = Math.max(...fitted.stops);
-      // The frame's height follows its own width alone, not the stage's, so a sweep already
-      // sampled keeps its tallest as the stage resizes, such as while the drawer beside the page
-      // is dragged: a layout for each sample, every frame, made that drag lag.
       const range = `${rem} ${narrowest} ${most}`;
       let tallest = tallestOf.get(range);
       if (tallest === undefined && nearView(room, scroller)) {
@@ -282,27 +211,27 @@ function useSweepLayout(
         delete spot.dataset.cut;
         box.style.removeProperty('translate');
       }
-      // Cropped, the place is the stage's width, and the frame runs out past it.
       spot.style.setProperty(
         '--catalogue-sweep-widest',
         `${cropped ? space / rem : most * scale}rem`,
       );
-      // Until a far sweep is sampled, the frame keeps its own height (Figures.css).
       if (tallest !== undefined)
         spot.style.setProperty('--catalogue-sweep-height', `${tallest * scale}px`);
       spot.style.setProperty('--catalogue-sweep-scale', String(scale));
       drawRef.current(Math.min(Math.max(shownRef.current, narrowest), most));
     };
-    // Measured again in the next frame where the stage's width changes, or the example's content,
-    // such as once it has loaded, and once the fonts have, which sample its height afresh.
     const sweep = remeasure(
       (changed) => {
         if (changed.has('mutation') || changed.has('fonts')) {
           tallestOf.clear();
           stopSampling();
-        } else if (changed.size === 1 && changed.has('resize') && room.clientWidth === width)
+        } else if (
+          changed.size === 1 &&
+          changed.has('resize') &&
+          room.clientWidth === measuredStageWidth
+        )
           return;
-        width = room.clientWidth;
+        measuredStageWidth = room.clientWidth;
         measure();
       },
       {
@@ -312,7 +241,6 @@ function useSweepLayout(
         fonts: true,
       },
     );
-    // A sweep still sampling as it nears the view finishes at once (measure).
     const approach = new IntersectionObserver(
       (entries) => {
         if (sampling && entries.some((entry) => entry.isIntersecting)) sweep.update();
@@ -328,19 +256,12 @@ function useSweepLayout(
   }, [areaRef, placeRef, frameRef, layoutRef, shownRef, drawRef, key, fit, crop]);
 }
 
-/**
- * Plays the sweep on its own clock, which runs only while its stage plays; or, given `at`, moves it
- * to that width whenever `at` changes. When the stage stops, a stage that rests at its start goes
- * back to its first width, and a paused one holds where it is.
- */
 function useSweepPlayback(
   { layoutRef, shownRef, drawRef }: SweepParts,
   { at, hold }: { at: number | undefined; hold: number },
 ) {
   const { playing, rest } = usePlayback();
-  /** Where the sweep is in its loop, in ms of play; below 0 before it first plays. */
   const clock = useRef(-1);
-  /** A move to the width `at` names, in progress. */
   const move = useRef<{ from: number; to: number; elapsed: number; duration: number } | null>(null);
 
   useEffect(() => {
@@ -370,7 +291,7 @@ function useSweepPlayback(
       const passed = now - last;
       last = now;
       if (at === undefined) {
-        if (clock.current < 0) clock.current = hold - firstHold;
+        if (clock.current < 0) clock.current = hold - firstHoldMs;
         clock.current += passed;
         drawRef.current(widthAt(clock.current, layoutRef.current.stops, hold));
       } else if (move.current) {
@@ -387,30 +308,10 @@ function useSweepPlayback(
   }, [layoutRef, shownRef, drawRef, playing, rest, at, hold]);
 }
 
-/**
- * The example in a frame whose width sweeps between `widths`, in rem; the first width is its still.
- * It goes through them and back again, holding `hold` ms at each, while its stage plays (Playback),
- * and holds where it is when paused. Place it in a MotionStage.
- *
- * Props:
- * - `at` stops the sweep moving on its own: the frame moves to the width at that index whenever
- *   `at` changes, for a figure that does more at a width, such as opening a sheet at the narrow
- *   end, driven by a useTimeline step or a cue.
- * - `classes` shows the window class beside the width, for an example that changes at a class, or
- *   instead of it with `'only'`, on a page that shows no lengths, such as a foundation's.
- * - `fit` draws the frame smaller where it must, down to 0.6, to reach its widest width on the
- *   stage.
- * - `crop`, where the widest width doesn't fit even so, draws the frame at 0.8 and cuts it off at
- *   the stage's end instead, shown from its start, where its content begins, and never panned. So a
- *   wide layout that needs more room than a phone's stage has still shows, legibly.
- * - `ruler={false}` leaves out the ruler, for a figure whose point isn't the width in numbers.
- * - `outline={false}` also leaves out the frame's dashed edge, for a figure that only needs a width
- *   of its own, drawn smaller on a narrower stage, such as a dock with room for two panels.
- */
 export function WidthSweep({
   widths,
   at,
-  hold = holdTime,
+  hold = holdTimeMs,
   classes = false,
   fit = false,
   crop = false,
@@ -433,15 +334,10 @@ export function WidthSweep({
   const frame = useRef<HTMLDivElement>(null);
   const ruler = useRef<HTMLDivElement>(null);
   const reading = useRef<HTMLSpanElement>(null);
-  /** The layer in the frame that the example's overlays render into. */
   const [overlays, setOverlays] = useState<HTMLDivElement | null>(null);
   const layout = useRef<SweepLayout>({ scale: 1, stops: widths, room: 0, cropped: false });
   const shown = useRef(widths[at ?? 0] ?? 0);
 
-  /**
-   * Draws the frame at a width: its size, the ruler's size and the ruler's text; when cropped, also
-   * whether its end is cut off.
-   */
   const draw = (width: number) => {
     shown.current = width;
     const { scale, stops, room, cropped } = layout.current;
@@ -449,19 +345,15 @@ export function WidthSweep({
     let rulerWidth = width * scale;
     if (cropped && place.current) {
       const rem = remPixels();
-      // How far the centred frame extends past the room: moved by half of that, it shows from its
-      // start.
-      const over = Math.max(0, width * scale * rem - room);
-      frame.current?.style.setProperty('translate', `${over / 2}px 0`);
-      const cut = over > pixelTolerance ? 'end' : '';
+      const overflowPx = Math.max(0, width * scale * rem - room);
+      frame.current?.style.setProperty('translate', `${overflowPx / 2}px 0`);
+      const cut = overflowPx > pixelTolerance ? 'end' : '';
       if (place.current.dataset.cut !== cut) place.current.dataset.cut = cut;
       rulerWidth = Math.min(rulerWidth, room / rem);
     }
     ruler.current?.style.setProperty('--catalogue-sweep-width', `${rulerWidth}rem`);
     if (reading.current) {
       const text = rulerWords(width, { stops, widths, classes });
-      // Unchanged text is left alone: setting it replaces the text node, and the page's :has()
-      // rules then restyle much of the page, on every frame while the stage resizes.
       if (reading.current.textContent !== text) reading.current.textContent = text;
     }
   };
@@ -491,9 +383,6 @@ export function WidthSweep({
             className="catalogue-width-sweep-frame"
             data-outline={outline ? undefined : 'none'}
           >
-            {/* The frame stands in for the window, so its overlays belong to it. Its transform
-                makes it the containing block of its fixed overlays, so a sheet opens across the
-                frame's width and its backdrop covers the frame, not the stage. */}
             <PortalContainer container={overlays} contained>
               {children}
             </PortalContainer>

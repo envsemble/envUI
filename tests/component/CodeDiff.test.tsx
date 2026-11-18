@@ -3,10 +3,8 @@ import { page } from 'vitest/browser';
 import * as fixture from '../fixture/CodeDiff.fixture.tsx';
 import { mount } from './support/Mount.tsx';
 
-/** The element Diffs renders into, whose shadow root holds the lines. */
 const host = (diff: Element) => [...diff.querySelectorAll('*')].find((each) => each.shadowRoot);
 
-/** The color of the first token in a diff whose text is `text`. */
 function tokenColor(diff: Element, text: string) {
   const token = [...(host(diff)?.shadowRoot?.querySelectorAll('span') ?? [])].find(
     (span) => span.children.length === 0 && span.textContent?.trim() === text,
@@ -22,7 +20,6 @@ test('a code diff keeps its expanded lines and shows no spinner as the theme swi
   const lines = () => host(diff)?.shadowRoot?.querySelectorAll('[data-line]').length ?? 0;
   await expect.poll(lines).toBeGreaterThan(0);
   const folded = lines();
-  // Expand the folded lines, keep the element Diffs renders into and watch for a spinner.
   const rendersInto = host(diff)!;
   let spinner = false;
   const observer = new MutationObserver(() => {

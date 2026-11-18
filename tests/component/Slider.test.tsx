@@ -26,8 +26,6 @@ test('a slider is a labelled range with a visible value linked to it', async () 
   expect(output.textContent).toBe('40%');
   expect(output.getAttribute('for')).toBe(opacity.element().id);
   expect(output.getAttribute('aria-live')).toBe('off');
-  // The label is inside the slider, which takes the press: pressing it focuses the slider and
-  // chooses the value there, as pressing anywhere in the field does.
   await scope().getByText('Opacity', { exact: true }).click({ force: true });
   await expect.element(opacity).toHaveFocus();
   await expect.element(opacity).not.toHaveAttribute('aria-valuenow', '40');
@@ -60,10 +58,8 @@ test('the keyboard moves the value by steps, large steps and to the ends', async
   await keyboard.press('Home');
   await expect.poll(state).toBe('0');
   await expect.poll(text('commits-light')).toContain('0');
-  // Keyboard focus rings the whole field.
   await expect.poll(() => css(part(0, '.env-slider-control'), 'outline-style')).toBe('solid');
 
-  // Steps follow step and the range; the large step is a tenth of the range.
   const scale = input(2);
   scale.focus();
   await keyboard.press('ArrowRight');
@@ -83,7 +79,6 @@ test(
     await expect.poll(() => opacity.getAttribute('aria-valuenow')).toBe('25');
     await expect.poll(text('commits-light')).toBe('25');
     const thumb = part(0, '.env-slider-thumb');
-    // The thumb glides to the value pressed, then is centered on it along the track.
     await animationsDone(thumb);
     const thumbBox = box(thumb);
     expect(thumbBox.x + thumbBox.width / 2).toBeCloseTo(track.x + track.width * 0.25, 0);
@@ -95,8 +90,6 @@ test(
     await expect.poll(() => opacity.getAttribute('aria-valuenow')).toBe('75');
     await expect.poll(text('opacity-light')).toBe('75');
     await expect.poll(text('commits-light')).toBe('25 75');
-    // The fill reaches the value, gliding the last of the way when the value lands after the
-    // release, as it can under load.
     const indicator = part(0, '.env-slider-indicator');
     await expect.poll(() => box(indicator).width / track.width).toBeCloseTo(0.75, 2);
   },
@@ -109,7 +102,6 @@ test(
     const submitted = text('sliders-submitted-light');
     const submit = scope().getByRole('button', { name: 'Submit sliders' });
     await submit.click();
-    // A disabled slider is left out, like other disabled controls.
     await expect.poll(submitted).toBe('volume=30 scale=100');
     const volume = input(1);
     volume.focus();
@@ -125,8 +117,6 @@ test(
 
     await expect.element(scope().getByRole('slider', { name: 'Balance' })).toBeDisabled();
     expect(css(part(3, '.env-slider-control'), 'opacity')).toBe('0.48');
-    // The group the label names is disabled too, so its faded label and value are an inactive
-    // control's, which WCAG exempts from contrast; an enabled one says nothing.
     expect(slider(3).getAttribute('aria-disabled')).toBe('true');
     expect(slider(0).hasAttribute('aria-disabled')).toBe(false);
   },
@@ -141,7 +131,6 @@ test('sliders fit a narrow viewport', async () => {
   await keyboard.press('End');
   await expect.poll(() => input(0).getAttribute('aria-valuenow')).toBe('100');
   const thumb = box(part(0, '.env-slider-thumb'));
-  // At the end of the range the thumb stays inside the control.
   expect(thumb.x + thumb.width).toBeLessThanOrEqual(control.x + control.width + 0.5);
 });
 
@@ -157,7 +146,6 @@ test('coarse pointers get the touch height, the whole field taking the finger', 
   }
 });
 
-/** The parts of the first slider whose look changes with its state, read from computed styles. */
 function stateOf() {
   const control = part(0, '.env-slider-control');
   return {
@@ -166,15 +154,13 @@ function stateOf() {
     input: input(0),
     thumb: part(0, '.env-slider-thumb'),
     ticks: () => css(part(0, '.env-slider-track'), 'opacity', '::after'),
-    // The fade at the fill's end: a gradient over its last stretch, out of sight at 0.
     fillEnd: () => css(part(0, '.env-slider-indicator'), 'opacity', '::after'),
-    veil: () => css(control, '--env-slider-veil'),
+    veil: () => css(control, '--_slider-veil'),
   };
 }
 
 const has = (element: Element, attribute: string) => () => element.hasAttribute(attribute);
 
-/** Expects the slider at rest: its text and fill only, with no handle, ticks or fade. */
 async function expectRest(state: ReturnType<typeof stateOf>) {
   await expect.poll(has(state.control, 'data-handle')).toBe(false);
   await expect.poll(has(state.control, 'data-ruler')).toBe(false);
@@ -205,37 +191,31 @@ test(
     await mouse.move(field.x + field.width * 0.5, y);
     await mouse.down();
     await expect.poll(has(state.control, 'data-dragging')).toBe(true);
-    // Dragged under the label, the handle and the fill's end fade there, as on hover.
     await mouse.move(field.x + 2, y, { steps: 4 });
     await expect.poll(() => state.input.getAttribute('aria-valuenow')).toBe('0');
     await expect.poll(() => css(state.thumb, 'opacity')).toBe('0.25');
-    await expect.poll(state.ticks).toBe('0.35');
+    await expect.poll(state.ticks).toBe('0.5');
     await expect.poll(state.fillEnd).toBe('1');
     await mouse.move(field.x + field.width * 0.6, y, { steps: 4 });
     await expect.poll(() => css(state.thumb, 'opacity')).toBe('1');
-    // Released with the pointer still over the slider: back at rest, and moving over it keeps it so.
     await mouse.up();
     await expect.poll(has(state.control, 'data-dragging')).toBe(false);
     await expectRest(state);
     await mouse.move(field.x + field.width * 0.3, y, { steps: 3 });
     await expectRest(state);
-    // The slider keeps focus after the release, which a pointer gave it, so no handle.
     expect(document.activeElement).toBe(state.input);
-    // Left and hovered again, they show again.
     await mouse.move(field.x + field.width * 0.3, field.y - 40);
     await mouse.move(field.x + field.width * 0.3, y);
     await expect.poll(has(state.control, 'data-handle')).toBe(true);
     await expect.poll(() => css(state.thumb, 'opacity')).toBe('1');
-    await expect.poll(state.ticks).toBe('0.35');
-    // Released outside the slider, it is at rest, and coming back over it shows them again.
+    await expect.poll(state.ticks).toBe('0.5');
     await mouse.down();
     await mouse.move(field.x + field.width * 0.9, field.y + field.height * 4, { steps: 3 });
-    await expect.poll(state.ticks).toBe('0.35');
+    await expect.poll(state.ticks).toBe('0.5');
     await mouse.up();
     await expectRest(state);
     await mouse.move(field.x + field.width * 0.5, y, { steps: 3 });
     await expect.poll(has(state.control, 'data-ruler')).toBe(true);
-    // A cancelled pointer and a lost capture end the press as a release does.
     for (const end of ['pointercancel', 'lostpointercapture']) {
       await mouse.move(field.x + field.width * 0.5, field.y - 40);
       await mouse.move(field.x + field.width * 0.5, y);
@@ -249,12 +229,66 @@ test(
   },
 );
 
+async function pixelsOf(element: HTMLElement) {
+  const shot = await page.screenshot({ element, base64: true, save: false });
+  const image = new Image();
+  image.src = `data:image/png;base64,${shot}`;
+  await image.decode();
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const context = canvas.getContext('2d')!;
+  context.drawImage(image, 0, 0);
+  const scale = image.width / element.getBoundingClientRect().width;
+  return (x: number, y: number) => [
+    ...context.getImageData(Math.floor(x * scale), Math.floor(y * scale), 1, 1).data,
+  ];
+}
+
+test(
+  'the ticks keep their color as the fill passes under them while dragging',
+  { tags: ['engines'] },
+  async () => {
+    const state = stateOf();
+    const track = part(0, '.env-slider-track');
+    const field = box(state.control);
+    const y = field.y + field.height / 2;
+    const ticks = Number(css(slider(0), '--_slider-ticks'));
+    const step = box(track).width / ticks;
+    const clear = (name: string) => Number.parseFloat(css(state.control, name));
+    const ticksAt = async () => {
+      await expect.poll(state.ticks).toBe('0.5');
+      await animationsDone(state.control, true);
+      const pixel = await pixelsOf(track);
+      const middle = box(track).height / 2;
+      const [from, to] = [clear('--_slider-clear-start'), clear('--_slider-clear-end')];
+      return Array.from({ length: ticks - 1 }, (_, index) => (index + 1) * step - 0.5)
+        .filter((x) => x > from + step / 2 && x < to - step / 2)
+        .map((x) => pixel(x, middle));
+    };
+    await mouse.move(field.x + field.width * 0.03, y);
+    await mouse.down();
+    await mouse.move(field.x + field.width * 0.03 + 2, y);
+    const overTrack = await ticksAt();
+    await mouse.move(field.x + field.width * 0.97, y, { steps: 6 });
+    await expect.poll(() => Number(state.input.getAttribute('aria-valuenow'))).toBeGreaterThan(90);
+    const overFill = await ticksAt();
+    await mouse.up();
+    expect(overTrack.length).toBeGreaterThan(2);
+    expect(overFill).toHaveLength(overTrack.length);
+    overFill.forEach((color, index) =>
+      color.forEach((channel, at) =>
+        expect(Math.abs(channel - overTrack[index]![at]!)).toBeLessThanOrEqual(2),
+      ),
+    );
+  },
+);
+
 test(
   'keyboard focus shows the handle with the focus ring, faded behind text, and no ticks',
   { tags: ['engines'] },
   async () => {
     const state = stateOf();
-    // Focused as Tab would, which WebKit, like Safari, keeps from range inputs by default.
     state.input.focus();
     await expect.poll(() => css(state.control, 'outline-style')).toBe('solid');
     await expect.poll(has(state.control, 'data-handle')).toBe(true);
@@ -265,7 +299,6 @@ test(
     await expect.poll(() => css(state.thumb, 'opacity')).toBe('0.25');
     await expect.poll(state.fillEnd).toBe('1');
     expect(state.ticks()).toBe('0');
-    // Leaving the slider puts it back at rest.
     state.input.blur();
     await expectRest(state);
   },
@@ -274,7 +307,6 @@ test(
 test('the fill is empty at the minimum, the whole field at the maximum and in proportion between, in either direction', async () => {
   for (const direction of ['ltr', 'rtl'] as const) {
     scope().element().setAttribute('dir', direction);
-    // Scale, from 50 to 200 by tens: its minimum isn't 0, so the fill follows the range, not the number.
     const scale = input(2);
     const control = part(2, '.env-slider-control');
     const fill = part(2, '.env-slider-indicator');
@@ -289,9 +321,7 @@ test('the fill is empty at the minimum, the whole field at the maximum and in pr
     await expect.poll(value).toBe('50');
     await expect.poll(has(control, 'data-handle')).toBe(true);
     await expect.poll(() => box(fill).width).toBeLessThanOrEqual(0.5);
-    // Nothing paints the fill beyond its box, such as under the rounded start.
     expect(getComputedStyle(fill, '::before').content).toBe('none');
-    // The handle keeps clear of the rounded end, inside the field.
     let handle = box(thumb);
     expect(start(handle.x, handle.width) + handle.width / 2).toBeCloseTo(inset, 0);
     await keyboard.press('End');
@@ -304,8 +334,6 @@ test('the fill is empty at the minimum, the whole field at the maximum and in pr
       .toBeLessThanOrEqual(0.5);
     handle = box(thumb);
     expect(start(handle.x, handle.width) + handle.width / 2).toBeCloseTo(field.width - inset, 0);
-    // 80 is a fifth of the way from 50 to 200: a fifth of the field, from the start, with the handle
-    // at the fill's end.
     await keyboard.press('Home');
     await keyboard.press('ArrowUp');
     await keyboard.press('ArrowUp');
@@ -335,7 +363,6 @@ test('a slider selects no text when dragged or double-clicked, and its label sti
   const value = box(part(0, '.env-slider-value'));
   await mouse.dblclick(value.x + value.width / 2, value.y + value.height / 2);
   expect(selected()).toBe('');
-  // A drag along it selects none of its text either.
   const field = box(part(0, '.env-slider-control'));
   await mouse.move(field.x + 2, field.y + field.height / 2);
   await mouse.down();
@@ -345,10 +372,6 @@ test('a slider selects no text when dragged or double-clicked, and its label sti
   expect(input(0).getAttribute('aria-valuetext')).toMatch(/%$/);
 });
 
-/**
- * Where a slider's field and its text are on screen, and how much they show scaled: their width and
- * height on screen over those they are laid out at.
- */
 function boxesOf(root: HTMLElement) {
   const measure = (selector: string) => {
     const element = root.querySelector(selector)!;
@@ -371,8 +394,6 @@ test(
     const root = slider(0);
     const range = input(0);
     const control = part(0, '.env-slider-control');
-    // Room beside the slider for the pointer to pass its ends, inside the page, where every engine
-    // follows it.
     root.style.marginInline = '320px';
     for (const [direction, end] of [
       ['ltr', 'right'],
@@ -382,20 +403,16 @@ test(
       scope().element().setAttribute('dir', direction);
       const rest = boxesOf(root);
       const { field } = rest;
-      // The end the pointer passes, and the value there: the maximum at the end of the reading
-      // direction, the minimum at its start.
       const edge = end === 'right' ? field.right : field.left;
       const away = (distance: number) => (end === 'right' ? edge + distance : edge - distance);
       const atEnd = (end === 'right') === (direction === 'ltr') ? '100' : '0';
       const y = rest.field.height / 2 + box(control).y;
-      // A stretch is the length the field gains on the pointer's side, its other end staying put.
       const stretch = () => {
         const now = boxesOf(root).field;
         if (end === 'right') expect(now.left).toBeCloseTo(field.left, 1);
         else expect(now.right).toBeCloseTo(field.right, 1);
         return now.width - field.width;
       };
-      // Its most: 6% of the length, or half the height where that is less.
       const most = Math.min(field.width * 0.06, field.height / 2);
       const value = () => range.getAttribute('aria-valuenow');
 
@@ -405,19 +422,15 @@ test(
       await expect.poll(value).toBe(atEnd);
       await expect.poll(stretch).toBeGreaterThan(2);
       const near = stretch();
-      // It gives less than the pointer travels.
       expect(near).toBeLessThan(30);
       await mouse.move(away(280), y, { steps: 8 });
-      // It eases toward its most, which a busy machine reaches a few frames later.
       await expect.poll(stretch).toBeGreaterThan(most * 0.8);
       const far = stretch();
       expect(far).toBeLessThanOrEqual(most);
       expect(value()).toBe(atEnd);
-      // It thins a little across, by at most 3%.
       const now = boxesOf(root);
       expect(now.field.height).toBeLessThan(field.height);
       expect(now.field.height).toBeGreaterThanOrEqual(field.height * 0.97 - 0.01);
-      // The label and the value keep their size, and the text at the end travels with it.
       expect(now.field.scaleX).toBeGreaterThan(1.01);
       for (const text of ['label', 'value'] as const) {
         expect(now[text].scaleX).toBeCloseTo(1, 3);
@@ -427,12 +440,11 @@ test(
       const atTheEnd = (end === 'right') === (direction === 'ltr') ? 'value' : 'label';
       expect(Math.abs(outer(now[atTheEnd]) - outer(rest[atTheEnd]))).toBeGreaterThan(far * 0.8);
 
-      // Let go, it springs back to its length, eased rather than at once.
       await mouse.up();
       const springs = control
         .getAnimations()
         .some(
-          (animation) => (animation as CSSTransition).transitionProperty === '--env-slider-stretch',
+          (animation) => (animation as CSSTransition).transitionProperty === '--_slider-stretch',
         );
       expect(springs).toBe(true);
       await animationsDone(control);
@@ -460,7 +472,6 @@ test(
       await nextFrames();
       expect(width()).toBeCloseTo(field.width, 1);
     }
-    // A disabled slider neither moves nor stretches.
     const balance = slider(3);
     const rest = boxesOf(balance).field;
     const at = box(part(3, '.env-slider-control'));

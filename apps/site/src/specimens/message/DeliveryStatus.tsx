@@ -5,14 +5,10 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
-/*
- * The reply shows as Sending, and fails: Not sent, with Try again. The pointer presses Try again,
- * the reply shows as Sending again, and goes, leaving only its time. The conversation is drawn anew
- * as it began, with a short fade (Renew), since nothing in it unsends a message.
- */
+const firstActSoTheWaitAfterIsWhole: PointerStep = { cue: 'shown' };
+
 const script: PointerStep[] = [
-  // A first act, so the wait after it is whole: the reply shows as Sending a moment.
-  { cue: 'shown' },
+  firstActSoTheWaitAfterIsWhole,
   { wait: 840 },
   { cue: 'failed' },
   { wait: 420 },
@@ -42,8 +38,6 @@ function Delivering() {
     },
   });
   return (
-    // As tall as the reply with its status and Try again, from the start, the messages at its top,
-    // so nothing moves as the status changes.
     <Column style={{ inlineSize: 'min(100%, 26rem)', minBlockSize: '15rem' }}>
       <Renew round={round}>
         <MessageList aria-label="Conversation with Sam Lee" style={{ inlineSize: '100%' }}>
@@ -70,7 +64,6 @@ function Delivering() {
   );
 }
 
-/** A reply that fails, is tried again by a pointer no one sees, and is sent. */
 export default function DeliveryStatusMotion() {
   return (
     <MotionStage label="the reply sending, failing and sent">

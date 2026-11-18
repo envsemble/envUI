@@ -31,22 +31,17 @@ import '../styles/Base.css';
 import '../styles/Menubar.css';
 
 interface MenubarContextValue {
-  /** Access keys are on, so triggers name theirs in aria-keyshortcuts. */
   accessKeys: boolean;
-  /** The element that had focus before the menubar or one of its menus took it. */
   previousFocus: () => Element | null;
-  /** Registers a function that closes a menu, so leaving the menubar closes an open one. */
   registerClose: (close: () => void) => () => void;
 }
 
 const MenubarContext = createContext<MenubarContextValue | null>(null);
 
-/** Whether an element belongs to the menubar or an open menu, which never count as earlier focus. */
-function isMenuPart(menubar: Element, element: Element) {
+function belongsToMenubarOrOpenMenu(menubar: Element, element: Element) {
   return menubar.contains(element) || element.closest('[role="menu"]') !== null;
 }
 
-/** An access key as one lowercase character, such as f for File. */
 function normalizeAccessKey(accessKey: string | undefined) {
   const character = Array.from(accessKey?.trim() ?? '')[0];
   return character?.toLowerCase();
@@ -86,24 +81,20 @@ function Root({
   ...props
 }: RootProps) {
   const root = useRef<HTMLDivElement>(null);
-  // The arrow keys between the menus, and the side submenus open on, follow the text direction,
-  // which Base UI only knows from its own provider.
-  const [direction, readDirection] = useDirection(root);
-  // The last element outside the menubar and its menus that had focus, such as a text field.
-  const lastFocus = useRef<Element | null>(null);
+  const [textDirectionForBaseUI, readTextDirection] = useDirection(root);
+  const lastFocusOutsideMenubar = useRef<Element | null>(null);
   const closers = useRef(new Set<() => void>());
 
-  // Leaves the menubar: an open menu closes and focus returns to where it was.
-  const leave = useCallback(() => {
+  const leaveMenubar = useCallback(() => {
     for (const close of closers.current) close();
-    const target = lastFocus.current;
+    const target = lastFocusOutsideMenubar.current;
     if (target instanceof HTMLElement && target.isConnected) target.focus();
     else (root.current?.ownerDocument.activeElement as HTMLElement | null)?.blur();
   }, []);
   const { shown: accessKeysShown, endActivation } = useMenubarAccessKeys({
     root,
     enabled: accessKeys,
-    leave,
+    leave: leaveMenubar,
   });
 
   useEffect(() => {
@@ -111,27 +102,26 @@ function Root({
     if (!menubar) return;
     const document = menubar.ownerDocument;
     const active = document.activeElement;
-    if (active && active !== document.body && !isMenuPart(menubar, active))
-      lastFocus.current = active;
-    // As in a desktop application, the last field stays the target of commands such as Copy, even
-    // after a click elsewhere on the page.
-    const noteFocus = (event: FocusEvent) => {
-      if (!(event.target instanceof Element) || isMenuPart(menubar, event.target)) return;
-      lastFocus.current = event.target;
+    if (active && active !== document.body && !belongsToMenubarOrOpenMenu(menubar, active))
+      lastFocusOutsideMenubar.current = active;
+    const keepLastFieldAsCommandTarget = (event: FocusEvent) => {
+      if (!(event.target instanceof Element) || belongsToMenubarOrOpenMenu(menubar, event.target))
+        return;
+      lastFocusOutsideMenubar.current = event.target;
       endActivation();
     };
-    document.addEventListener('focusin', noteFocus, true);
-    return () => document.removeEventListener('focusin', noteFocus, true);
+    document.addEventListener('focusin', keepLastFieldAsCommandTarget, true);
+    return () => document.removeEventListener('focusin', keepLastFieldAsCommandTarget, true);
   }, [endActivation]);
 
   const previousFocus = useCallback(() => {
     const menubar = root.current;
     const document = menubar?.ownerDocument;
     const active = document?.activeElement;
-    // A pointer opens a menu before focus moves, so the focused element is still the earlier one.
-    if (menubar && active && active !== document.body && !isMenuPart(menubar, active))
-      return active;
-    const remembered = lastFocus.current;
+    const pointerOpenedMenuBeforeFocusMoved =
+      menubar && active && active !== document.body && !belongsToMenubarOrOpenMenu(menubar, active);
+    if (pointerOpenedMenuBeforeFocusMoved) return active;
+    const remembered = lastFocusOutsideMenubar.current;
     return remembered?.isConnected ? remembered : null;
   }, []);
 
@@ -155,17 +145,16 @@ function Root({
   );
   return (
     <MenubarContext value={context}>
-      <DirectionProvider direction={direction}>
+      <DirectionProvider direction={textDirectionForBaseUI}>
         <BaseMenubar
           render={<Row align="center" />}
           {...props}
           ref={setRoot}
           onFocus={(event) => {
-            readDirection();
+            readTextDirection();
             onFocus?.(event);
           }}
           aria-label={label}
-          // Opening a menu leaves the page scrollable and the layout in place.
           modal={false}
           disabled={disabled}
           className={classNames('env-menubar', className)}
@@ -223,10 +212,6 @@ export interface MenuProps {
   style?: CSSProperties;
 }
 
-/**
- * The label with its access key wrapped, so holding Alt can underline it. One inline element holds
- * the label, so the letter stays part of the word for assistive technology.
- */
 function AccessKeyLabel({ label, accessKey }: { label: ReactNode; accessKey: string | undefined }) {
   const index =
     typeof label === 'string' && accessKey !== undefined
@@ -243,8 +228,7 @@ function AccessKeyLabel({ label, accessKey }: { label: ReactNode; accessKey: str
   );
 }
 
-/** Ways of closing in which another menu of the menubar takes focus. */
-const switchingReasons = new Set(['sibling-open', 'list-navigation']);
+const reasonsAnotherMenuTakesFocus = new Set(['sibling-open', 'list-navigation']);
 
 /**
  * One menu of a Menubar.Root: a small text trigger and the menu that opens below it. After a command,
@@ -276,9 +260,7 @@ function Menu({
   const textLabel = typeof label === 'string' ? label : undefined;
   useEffect(() => registerClose(() => actions.current?.close()), [registerClose]);
 
-  // Whether focus has left the closing menu for something else: a field the pointer pressed, a
-  // dialog a command opened or another menu that is open.
-  function focusMovedOn() {
+  function focusMovedOnFromClosingMenu() {
     const document = trigger.current?.ownerDocument;
     const active = document?.activeElement;
     if (!active || active === document.body || active === trigger.current) return false;
@@ -286,8 +268,7 @@ function Menu({
     return menu === null || (menu !== popup.current && menu.hasAttribute('data-open'));
   }
 
-  // Whether focus is in an open submenu of this menu, which belongs to the menu.
-  function focusInSubmenu() {
+  function focusInOpenSubmenuOfThisMenu() {
     const active = trigger.current?.ownerDocument.activeElement;
     const menu = active?.closest('[role="menu"]');
     return (
@@ -298,19 +279,21 @@ function Menu({
     );
   }
 
-  // Runs as the menu closes. Escape leaves focus on the trigger, in the menubar. Otherwise, such
-  // as after a command, focus returns to where it was before the menubar took it, as in a desktop
-  // application. Focus that has moved on, or into another menu of the menubar, stays where it is.
-  function finalFocus() {
+  function blurTriggerSoKeysDoNotReopenMenu() {
+    if (trigger.current?.ownerDocument.activeElement === trigger.current) trigger.current?.blur();
+  }
+
+  function focusAfterClosing() {
     const reason = closeReason.current ?? '';
-    if (focusMovedOn() || switchingReasons.has(reason)) return false;
+    const focusStaysWhereItIs =
+      focusMovedOnFromClosingMenu() || reasonsAnotherMenuTakesFocus.has(reason);
+    if (focusStaysWhereItIs) return false;
     const earlier = previousFocus.current;
-    if (reason !== 'escape-key' && earlier instanceof HTMLElement && earlier.isConnected)
-      return earlier;
-    // With nothing to return to, a click elsewhere lets focus go: left on the trigger, Space or a
-    // menu's letter would open a menu again.
+    const returnToEarlierFocusLikeDesktopApps =
+      reason !== 'escape-key' && earlier instanceof HTMLElement && earlier.isConnected;
+    if (returnToEarlierFocusLikeDesktopApps) return earlier;
     if (reason === 'outside-press') {
-      if (trigger.current?.ownerDocument.activeElement === trigger.current) trigger.current?.blur();
+      blurTriggerSoKeysDoNotReopenMenu();
       return false;
     }
     return trigger.current ?? true;
@@ -323,9 +306,9 @@ function Menu({
       disabled={disabled}
       actionsRef={actions}
       onOpenChange={containedOpenChange(portal, trigger, (next, details) => {
-        // Base UI checks where focus went a moment after it leaves the trigger. When that check runs
-        // late, focus may already be in one of the menu's own submenus, so the menu stays open.
-        if (!next && details.reason === 'trigger-focus' && focusInSubmenu()) {
+        const lateBaseUIFocusCheckFindsOwnSubmenu =
+          !next && details.reason === 'trigger-focus' && focusInOpenSubmenuOfThisMenu();
+        if (lateBaseUIFocusCheckFindsOwnSubmenu) {
           details.cancel();
           return;
         }
@@ -351,7 +334,7 @@ function Menu({
         align="start"
         sideOffset={4}
         trigger={trigger}
-        finalFocus={finalFocus}
+        finalFocus={focusAfterClosing}
         className={className}
         popupRef={(node: HTMLDivElement | null) => {
           popup.current = node;
@@ -365,8 +348,6 @@ function Menu({
   );
 }
 
-// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
-// application leaves unused.
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Menubar.Root');
 const MenuPart = /* @__PURE__ */ withDisplayName(Menu, 'Menubar.Menu');
 export { RootPart as Root, MenuPart as Menu };

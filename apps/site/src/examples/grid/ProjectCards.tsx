@@ -13,7 +13,6 @@ const projects = [
 
 export default function ProjectCards() {
   return (
-    // As many columns as fit, each at least 14 rem wide; one column in a narrow container.
     <Grid columns={{ min: '14rem' }} gap={4}>
       {projects.map((project) => (
         <Card

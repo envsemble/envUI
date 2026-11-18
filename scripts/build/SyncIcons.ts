@@ -3,7 +3,6 @@ import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { libraryDirectory } from '../RepositoryPaths.ts';
 
-// Maintainer-only command. Consumer installation and ordinary builds never fetch icons.
 const manifestPath = resolve(libraryDirectory, 'icon-manifest.json');
 const initialRevision = 'bd8cb85bd4bad964fe6918f79665bb40c3a8efef';
 const args = process.argv.slice(2);
@@ -13,7 +12,6 @@ if (
 ) {
   throw new Error('Usage: node scripts/build/SyncIcons.ts [--revision <full upstream commit SHA>]');
 }
-/** An icon of the manifest: its name and its two variants, by fill, with their files' hashes. */
 interface ManifestIcon {
   name: string;
   upstreamTreeSha?: string;
@@ -51,7 +49,6 @@ async function download(url: string): Promise<Buffer> {
   }
   throw new Error(`Could not download ${url}`);
 }
-/** An entry of a GitHub tree: a file or a folder. */
 interface TreeEntry {
   path: string;
   type: 'blob' | 'tree';
@@ -73,7 +70,6 @@ if (!web) throw new Error('Official symbols/web directory is missing');
 const catalogue = (await tree(web.sha))
   .filter((entry) => entry.type === 'tree')
   .sort((a, b) => (a.path < b.path ? -1 : 1));
-// The upstream SVGs, kept unchanged in the package's vendor/ folder, outside its source.
 const vendorFolder = 'vendor/material-symbols-rounded';
 const vendored = resolve(libraryDirectory, vendorFolder);
 await mkdir(vendored, { recursive: true });

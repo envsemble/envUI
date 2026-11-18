@@ -3,12 +3,10 @@ import { Checkbox, Column } from '@envsemble/envui';
 
 const projects = ['Northwind launch', 'Pricing research', 'Support handbook'];
 
-/** The children line up with the label of the parent: a box and its gap in. */
-const children = { paddingInlineStart: '1.875rem' };
+const alignedWithParentLabel = { paddingInlineStart: '1.875rem' };
 
 export default function SelectAll() {
   const [selected, setSelected] = useState([true, false, false]);
-  // The parent's state follows its children: all, none, or mixed.
   const all = selected.every(Boolean) ? true : selected.some(Boolean) ? 'mixed' : false;
   return (
     <Column gap={3} role="group" aria-label="Projects to export">
@@ -17,7 +15,7 @@ export default function SelectAll() {
         checked={all}
         onCheckedChange={(checked) => setSelected((current) => current.map(() => checked))}
       />
-      <Column gap={3} style={children}>
+      <Column gap={3} style={alignedWithParentLabel}>
         {projects.map((name, index) => (
           <Checkbox
             key={name}

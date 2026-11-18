@@ -5,11 +5,7 @@ export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 const minutesPerDay = 24 * 60;
 
-/**
- * Days count from 1970-01-01 in UTC and times as minutes after midnight, so arithmetic and
- * formatting never meet daylight saving: a value is a wall-clock date and time, without a zone.
- */
-function utcDay(year: number, month: number, date: number) {
+function wallClockDayInUtc(year: number, month: number, date: number) {
   const time = new Date(0);
   time.setUTCFullYear(year, month, date);
   return Math.floor(time.getTime() / dayMilliseconds);
@@ -21,7 +17,6 @@ export function dayParts(day: number) {
     year: date.getUTCFullYear(),
     month: date.getUTCMonth(),
     date: date.getUTCDate(),
-    // getUTCDay gives 0 to 6.
     weekday: date.getUTCDay() as Weekday,
   };
 }
@@ -31,7 +26,7 @@ export function parseDay(value: string | null | undefined) {
   const match = value ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(value) : null;
   if (!match) return undefined;
   const [year, month, date] = [Number(match[1]), Number(match[2]) - 1, Number(match[3])];
-  const day = utcDay(year, month, date);
+  const day = wallClockDayInUtc(year, month, date);
   const parts = dayParts(day);
   return parts.year === year && parts.month === month && parts.date === date ? day : undefined;
 }
@@ -75,7 +70,6 @@ export function momentOf(day: number, minutes: number) {
 
 export function fromMoment(moment: number) {
   const day = Math.floor(moment / minutesPerDay);
-  // Moments before 1970 are negative: the minutes count on from the day's start all the same.
   return { day, minutes: moment - day * minutesPerDay };
 }
 
@@ -83,13 +77,13 @@ export function fromMoment(moment: number) {
 export function now() {
   const time = new Date();
   return {
-    day: utcDay(time.getFullYear(), time.getMonth(), time.getDate()),
+    day: wallClockDayInUtc(time.getFullYear(), time.getMonth(), time.getDate()),
     minutes: time.getHours() * 60 + time.getMinutes(),
   };
 }
 
 function daysInMonth(year: number, month: number) {
-  return dayParts(utcDay(year, month + 1, 0)).date;
+  return dayParts(wallClockDayInUtc(year, month + 1, 0)).date;
 }
 
 /** The same date months later or earlier, on the month's last day where the month is shorter. */
@@ -98,12 +92,16 @@ export function addMonths(day: number, months: number) {
   const target = new Date(0);
   target.setUTCFullYear(year, month + months, 1);
   const [targetYear, targetMonth] = [target.getUTCFullYear(), target.getUTCMonth()];
-  return utcDay(targetYear, targetMonth, Math.min(date, daysInMonth(targetYear, targetMonth)));
+  return wallClockDayInUtc(
+    targetYear,
+    targetMonth,
+    Math.min(date, daysInMonth(targetYear, targetMonth)),
+  );
 }
 
 export function monthStart(day: number) {
   const { year, month } = dayParts(day);
-  return utcDay(year, month, 1);
+  return wallClockDayInUtc(year, month, 1);
 }
 
 export function clampDay(day: number, min: number | undefined, max: number | undefined) {
@@ -173,7 +171,7 @@ export function monthOfDay(day: number) {
 /** The first day of a month counted as parseMonth counts. */
 export function monthFirstDay(month: number) {
   const year = Math.floor(month / 12);
-  return utcDay(year, month - year * 12, 1);
+  return wallClockDayInUtc(year, month - year * 12, 1);
 }
 
 export function clampMonth(month: number, min: number | undefined, max: number | undefined) {
@@ -211,13 +209,14 @@ type LocaleWithWeekInfo = Intl.Locale & {
 export function localeWeekStart(locale: string | undefined): Weekday {
   try {
     const resolved = new Intl.DateTimeFormat(locale).resolvedOptions().locale;
-    // TypeScript's Intl types don't have the week's information yet.
     const info = new Intl.Locale(resolved) as LocaleWithWeekInfo;
-    // Week info numbers Monday 1 through Sunday 7.
-    const firstDay = (info.getWeekInfo?.() ?? info.weekInfo)?.firstDay;
-    if (firstDay !== undefined && firstDay >= 1 && firstDay <= 7) return (firstDay % 7) as Weekday;
+    const isoFirstDay = (info.getWeekInfo?.() ?? info.weekInfo)?.firstDay;
+    if (isoFirstDay !== undefined && isoFirstDay >= 1 && isoFirstDay <= 7)
+      return (isoFirstDay % 7) as Weekday;
   } catch {
-    // An unknown locale falls back to Monday, like a browser without week info.
+    return monday;
   }
-  return 1;
+  return monday;
 }
+
+const monday: Weekday = 1;

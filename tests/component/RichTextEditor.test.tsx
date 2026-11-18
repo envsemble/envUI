@@ -5,7 +5,6 @@ import { RichTextEditingFixture } from '../fixture/RichTextEditor.fixture.tsx';
 import { addStyle, box, collectErrors, css, keyboard, mouse, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** The editing fixture, with only the sections asked for, as `?section=` gives them. */
 const open = (...sections: string[]) =>
   mount(
     { default: RichTextEditingFixture },
@@ -20,10 +19,8 @@ const focus = (target: Locator | Element) =>
   (target instanceof Element ? (target as HTMLElement) : (target.element() as HTMLElement)).focus();
 const isShown = (locator: Locator) => expect.poll(() => shown(locator)).toBe(true);
 const isGone = (locator: Locator) => expect.poll(() => locator.query()).toBeNull();
-/** The editor's text, as Playwright's toHaveText reads it, its whitespace collapsed. */
 const editorText = (editor: Locator) => () =>
   editor.element().textContent?.replace(/\s+/g, ' ').trim();
-/** An editable editor once its document has loaded. */
 async function editorIn(scope: Locator, name?: string) {
   const editor = scope.getByRole('textbox', name ? { name, exact: true } : undefined);
   await expect.poll(() => editor.query()?.getAttribute('contenteditable')).not.toBeUndefined();
@@ -38,7 +35,6 @@ async function replace(editor: Locator, value: string) {
   if (value) await keyboard.type(value);
 }
 
-/** The index of the last request for a query, or -1. */
 function lastIndexOf(requests: readonly { query: string }[], query: string) {
   for (let index = requests.length - 1; index >= 0; index--)
     if (requests[index]!.query === query) return index;
@@ -61,7 +57,6 @@ async function uploadIndex(file: string) {
   return find();
 }
 
-/** Picks a file in an editor's file input, as a person choosing it in the file picker. */
 const upload = (scope: Locator, name: string, type: string) =>
   page
     .elementLocator(scope.element().querySelector('input[type=file]')!)
@@ -90,18 +85,14 @@ test('the formatting toolbar uses named SVG icon buttons, wraps its groups at na
     'Attach files',
   ];
   await isShown(toolbar);
-  // The toolbar's buttons that Tab stops at.
   const tabStops = () =>
     toolbar
       .getByRole('button')
       .elements()
       .filter((each) => (each as HTMLElement).tabIndex === 0)
       .map((each) => each.getAttribute('aria-label'));
-  // Text styles, lists, blocks, links and tables, history and the editor's own, a line between
-  // each.
   expect(toolbar.getByRole('group').elements()).toHaveLength(6);
   expect(toolbar.getByRole('separator').elements()).toHaveLength(5);
-  // Marks are toggle buttons.
   await expect.element(button('Bold')).toHaveAttribute('aria-pressed', 'false');
   await expect.poll(tabStops).toEqual(['Heading']);
   focus(button('Heading'));
@@ -110,14 +101,12 @@ test('the formatting toolbar uses named SVG icon buttons, wraps its groups at na
     ['ArrowRight', 'Italic'],
     ['ArrowRight', 'Strikethrough'],
     ['ArrowRight', 'Inline code'],
-    // Across the line into the next group.
     ['ArrowRight', 'Bulleted list'],
     ['ArrowLeft', 'Inline code'],
     ['ArrowLeft', 'Strikethrough'],
     ['ArrowLeft', 'Italic'],
     ['ArrowLeft', 'Bold'],
     ['ArrowLeft', 'Heading'],
-    // The keys go round from the first to the last, passing over Undo and Redo, unavailable.
     ['ArrowLeft', 'Attach files'],
     ['ArrowRight', 'Heading'],
     ['ArrowLeft', 'Attach files'],
@@ -126,7 +115,6 @@ test('the formatting toolbar uses named SVG icon buttons, wraps its groups at na
     await keyboard.press(key);
     await expect.element(button(name)).toHaveFocus();
   }
-  // The button last focused is the one tab stop; Tab leaves the toolbar for the document.
   await expect.poll(tabStops).toEqual(['Insert table']);
   await keyboard.press('Tab');
   await expect.element(scope.getByRole('textbox')).toHaveFocus();
@@ -139,7 +127,6 @@ test('the formatting toolbar uses named SVG icon buttons, wraps its groups at na
     expect(toolbar.getByRole('button').elements()).toHaveLength(labels.length);
     for (const label of labels) {
       const each = button(label).element();
-      // A tooltip shows the name, which is no native title.
       expect(each.hasAttribute('title')).toBe(false);
       expect(each.querySelectorAll('svg[aria-hidden="true"] path').length).toBeGreaterThan(0);
     }
@@ -151,7 +138,6 @@ test('the formatting toolbar uses named SVG icon buttons, wraps its groups at na
       text: each.textContent,
       bounds: each.getBoundingClientRect(),
     }));
-    // The visible box: the toolbar's, inside its room for focus rings, where it clips.
     const visible = root.parentElement!.getBoundingClientRect();
     const separators = [...root.querySelectorAll('[role="separator"]')].map((separator) =>
       separator.getBoundingClientRect(),
@@ -161,14 +147,11 @@ test('the formatting toolbar uses named SVG icon buttons, wraps its groups at na
       expect(each.text).toBe('');
       expect(each.bounds.width).toBeGreaterThanOrEqual(32);
       expect(each.bounds.height).toBeLessThanOrEqual(48);
-      // Every button stays in view: the groups wrap rather than scroll.
       expect(each.bounds.left).toBeGreaterThanOrEqual(visible.left);
       expect(each.bounds.right).toBeLessThanOrEqual(visible.right);
     }
     if (width === 1200) expect(rows.size).toBe(1);
     else expect(rows.size).toBeGreaterThan(1);
-    // A separator shows only between two groups of a row: one a wrapped row starts with lies
-    // outside the visible box, and no row ends with one.
     for (const separator of separators) {
       const inView = separator.right > visible.left && separator.left < visible.right;
       const row = buttons.filter((each) => Math.abs(each.bounds.top - separator.top) < 12);
@@ -230,7 +213,6 @@ test(
       .poll(() => editor.element().querySelector('pre')?.textContent)
       .toBe('const answer = 42;');
     expect(css(editor.element().querySelector('pre')!, 'white-space')).toBe('pre');
-    // The base styles are envUI's, in its cascade layer: Tiptap adds no style element of its own.
     expect(document.querySelectorAll('style[data-tiptap-style]')).toHaveLength(0);
     expect(css(editor, 'position')).toBe('relative');
   },
@@ -240,12 +222,10 @@ test(
   "ProseMirror's separator stays inline under an unlayered img reset, adding no line",
   { tags: ['engines'] },
   async () => {
-    // ProseMirror adds the separator in Chromium and WebKit.
-    if (server.browser === 'firefox') return;
+    const proseMirrorAddsSeparator = server.browser !== 'firefox';
+    if (!proseMirrorAddsSeparator) return;
     open('form');
     const editor = await editorIn(page.getByTestId('rich-text-form'), 'Rich source');
-    // A reference, which isn't editable, that ends the paragraph makes ProseMirror add its
-    // separator.
     await replace(editor, '@river');
     await page.getByRole('option', { name: referenceLabel, exact: true }).click();
     const paragraph = () => editor.element().querySelector('p')!;
@@ -255,8 +235,8 @@ test(
       .toBeGreaterThan(0);
     const separator = [...paragraph().querySelectorAll('img.ProseMirror-separator')].at(-1)!;
     const before = paragraph().getBoundingClientRect().height;
-    // An application reset outside any cascade layer, as Tailwind's preflight has.
-    addStyle('img { display: block; height: auto; margin: 1rem; }');
+    const unlayeredApplicationReset = 'img { display: block; height: auto; margin: 1rem; }';
+    addStyle(unlayeredApplicationReset);
     expect(css(separator, 'display')).toBe('inline');
     expect(css(separator, 'margin-top')).toBe('0px');
     expect(paragraph().getBoundingClientRect().height).toBe(before);
@@ -382,7 +362,6 @@ test('slash commands execute standard Tiptap blocks and application actions', as
   await page.getByRole('option', { name: 'Host greeting', exact: true }).click();
   await expect.poll(editorText(editor)).toBe('Hello from host');
   await isGone(page.getByRole('listbox'));
-  // Up from the first block wraps to the last command, and the list scrolls to keep it in view.
   await replace(editor, '/');
   const list = () => document.querySelector('.env-rich-text-suggestions')!;
   await expect.poll(() => list()?.querySelectorAll('[role="option"]').length).toBe(8);
@@ -401,7 +380,6 @@ test('slash commands execute standard Tiptap blocks and application actions', as
 });
 
 test('async sources handle loading, stale resolutions, empty results, failures and cancellation', async () => {
-  // Records the text each suggestions status has as it mounts.
   const mounted: string[] = [];
   const observer = new MutationObserver((records) => {
     for (const record of records)
@@ -418,7 +396,6 @@ test('async sources handle loading, stale resolutions, empty results, failures a
     await replace(editor, '@old');
     const old = await requestIndex('old');
     const menu = page.getByRole('listbox', { name: 'Remote references' });
-    // The status beside the list says why it has no options; only options sit in the list.
     const status = () =>
       document.querySelector('.env-rich-text-suggestions [role="status"]')?.textContent ?? null;
     const options = () =>
@@ -434,7 +411,6 @@ test('async sources handle loading, stale resolutions, empty results, failures a
     };
     await expect.element(menu).toHaveAttribute('aria-busy', 'true');
     await expect.poll(status).toContain('Loading suggestions');
-    // The status mounted empty and took its message afterwards, so the message is announced.
     expect(mounted).toEqual(['']);
     await replace(editor, '@new');
     const latest = await requestIndex('new');
@@ -590,17 +566,14 @@ test(
     await keyboard.type('@');
     const people = page.getByRole('listbox', { name: 'People', exact: true });
     await isShown(people);
-    // The list is inside the dialog, and on top where it shows.
     expect(dialog.element().contains(people.element())).toBe(true);
     const option = people.getByRole('option', { name: 'Second person' });
     const at = box(option);
     const top = document.elementFromPoint(at.x + at.width / 2, at.y + at.height / 2);
     expect(Boolean(top && option.element().contains(top))).toBe(true);
-    // Picking an option keeps the dialog open.
     await option.click();
     await expect.element(dialog).toBeVisible();
     await expect.poll(editorText(editor)).toContain('@Second person');
-    // Tab leaves the editor and closes the list.
     await keyboard.type(' @');
     await isShown(people);
     await keyboard.press('Tab');
@@ -624,14 +597,12 @@ test('a controlled editor replaces documents with references and tasks without a
     await expect
       .poll(() => editor.element().querySelector('[data-reference-id="person-2"]'))
       .not.toBeNull();
-    // Tasks are envUI checkboxes, named by their text.
     const task = (name: string) => editor.getByRole('checkbox', { name });
     await expect
       .poll(() => task('Check the totals').query()?.classList.contains('env-checkbox-input'))
       .toBe(true);
     await scope.getByRole('button', { name: 'Replace controlled notes' }).click();
     await expect.element(task('Send it')).toBeChecked();
-    // Pressing a task's checkbox checks it in the document.
     const at = box(task('Check the totals'));
     await mouse.click(at.x + at.width / 2, at.y + at.height / 2);
     await expect.element(task('Check the totals')).toBeChecked();

@@ -7,11 +7,8 @@ import { Renew } from '../../motion/Renew';
 
 const field = '.env-field-control';
 
-/*
- * The pointer types "Northwind Team" and tabs away: the check runs as the field loses focus, and
- * its error shows. It selects the text and types "northwind-team" over it, then tabs away again,
- * and the error goes. Then the example starts anew.
- */
+const fieldWithErrorHeight = '8.4375rem';
+
 const script: PointerStep[] = [
   { wait: 300 },
   { to: field, x: 0.3, y: 0.55 },
@@ -40,13 +37,12 @@ function Checking() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the field with its error, so it stays put as the error shows.
     <div
       style={{
         display: 'grid',
         alignContent: 'start',
         inlineSize: '100%',
-        minBlockSize: '8.4375rem',
+        minBlockSize: fieldWithErrorHeight,
       }}
     >
       <Renew round={round}>
@@ -58,7 +54,6 @@ function Checking() {
   );
 }
 
-/** A value checked as the field loses focus, typed and corrected by a pointer no one sees. */
 export default function ValidateOnBlurMotion() {
   return (
     <MotionStage label="the value checked as the field loses focus">

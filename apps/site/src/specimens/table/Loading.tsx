@@ -16,15 +16,10 @@ const files: File[] = [
   { id: 'notes', name: 'Interview notes.docx', owner: 'Sam Lee', modified: 'Jan 27, 2026' },
 ];
 
-/*
- * The table is its own skeleton while its rows load, over stand-in rows, and the rows arrive in
- * their place; then it loads again.
- */
 function Arriving() {
   const step = useTimeline([1560, 2040]);
   const loading = step === 0;
   return (
-    // One width, loading or loaded, so the rows arrive in the skeleton's place.
     <div style={{ inlineSize: '26rem', maxInlineSize: '100%' }}>
       <Table.Root aria-label="Files" skeleton={loading} style={{ inlineSize: '100%' }}>
         <Table.Head>
@@ -48,7 +43,6 @@ function Arriving() {
   );
 }
 
-/** Table loading: its own skeleton, and its rows arriving in its place. */
 export default function Loading() {
   return (
     <SpecimenFrame size="content">

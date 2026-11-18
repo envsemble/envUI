@@ -1,8 +1,8 @@
-import { Column, Surface, Text } from '@envsemble/envui';
+import { Column, Text } from '@envsemble/envui';
 
 export default function Hierarchy() {
   return (
-    <Surface background="default" padding={6} radius="xl" render={<Column gap={5} />}>
+    <Column gap={5}>
       <Column gap={2}>
         <Text render={<h3 />} variant="headline">
           Billing
@@ -19,6 +19,6 @@ export default function Hierarchy() {
         </Text>
         <Text variant="body-sm">The card we charge each month</Text>
       </Column>
-    </Surface>
+    </Column>
   );
 }

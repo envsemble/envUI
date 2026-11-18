@@ -10,7 +10,6 @@ test('icon-only buttons keep their square size where their container is squeezed
     const row = page.getByTestId(`layout-${theme}`).getByTestId('shrink-row');
     const button = row.getByRole('button', { name: `Squeezed next ${theme}` });
     expect(shown(button)).toBe(true);
-    // The slot around the button is squeezed below the button's size; the button is not.
     expect(box(row.element().querySelector('.fixture-shrink-slot')!).width).toBeLessThan(40);
     const { width, height } = box(button);
     expect(width).toBeCloseTo(40, 0);

@@ -64,10 +64,6 @@ test('a tag that does not match the package version is rejected', () => {
   );
 });
 
-/**
- * A GitHub and a registry that answer as the arguments say, recording each command: the release is
- * `released`, a `draft` or `missing`, and `published` lists the packages the registry has.
- */
 function world({ release, published = [] }) {
   const calls = [];
   const run = (command, args, shown = false) => {
@@ -120,7 +116,6 @@ test('a missing release is drafted, its packages published under the dist-tag, t
     'gh release edit',
   ]);
   assert.match(state.calls[1], /--draft --target abc123 .* --prerelease$/);
-  // npm writes straight to the job's log, so its error stays whole there.
   assert.match(state.calls[3], /--tag rc --loglevel warn \(shown\)$/);
 });
 

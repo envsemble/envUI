@@ -1,5 +1,3 @@
-// Toolbar's markup, rendered on the server: shortcuts in ARIA's key names, and a disabled toolbar's
-// buttons and links.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -10,7 +8,6 @@ import { elementsOf, firstElement } from '../../support/Markup.ts';
 const { Toolbar } = await importSource('Toolbar', 'packages/ui/src/index.ts');
 
 const icon = h('svg');
-/** The controls of a toolbar, by their names. */
 function controls(props: Record<string, unknown>, ...children: ReactNode[]) {
   const toolbar = firstElement(renderToStaticMarkup(h(Toolbar.Root, props, ...children)));
   return Object.fromEntries(
@@ -26,9 +23,7 @@ test('a toolbar announces shortcuts in ARIA key names and shows no tooltip while
     h(Toolbar.Button, { icon, label: 'Redo', shortcut: 'Ctrl+K Ctrl+Z' }),
     h(Toolbar.Button, { icon, label: 'Strong', shortcut: '⌘B' }),
   );
-  // A sequence shows its keys in the tooltip, without the attribute.
   assert.equal(Redo.attributes['aria-keyshortcuts'], undefined);
-  // Modifier symbols written without +, as on a Mac, are keys of their own.
   assert.equal(Strong.attributes['aria-keyshortcuts'], 'Meta+B');
   const { Highlight } = controls(
     { 'aria-label': 'Disabled toolbar', disabled: true },
@@ -36,7 +31,6 @@ test('a toolbar announces shortcuts in ARIA key names and shows no tooltip while
   );
   assert.equal(Highlight.attributes['aria-keyshortcuts'], 'Control+Shift+B');
   assert.equal(Highlight.attributes.disabled, '');
-  // A disabled button is no tooltip's trigger.
   assert.equal(Highlight.attributes['data-base-ui-tooltip-trigger'], undefined);
   assert.equal(Strong.attributes['data-base-ui-tooltip-trigger'], '');
 });

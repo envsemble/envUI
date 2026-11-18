@@ -1,9 +1,5 @@
 'use client';
 
-// The 3D view's camera: how the scene is turned, zoomed and panned. It moves the scene's
-// transform directly, without a render, so dragging, the wheel and the glide to an angle stay
-// smooth whatever the page's size.
-
 import {
   useCallback,
   useLayoutEffect,
@@ -14,18 +10,15 @@ import {
 import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
 
 export interface Camera {
-  /** The turn about the horizontal and the vertical axis, in degrees. */
   rx: number;
   ry: number;
   zoom: number;
-  /** The pan, in screen px. */
   px: number;
   py: number;
 }
 
 export type Angle = 'tilted' | 'front' | 'top' | 'left' | 'right';
 
-/** The angles the view turns to, by the side of the page they look from. */
 export const angles: Record<Angle, { label: string; rx: number; ry: number }> = {
   tilted: { label: 'Tilted', rx: 38, ry: -22 },
   front: { label: 'Front', rx: 0, ry: 0 },
@@ -34,17 +27,17 @@ export const angles: Record<Angle, { label: string; rx: number; ry: number }> = 
   right: { label: 'Right', rx: 0, ry: -70 },
 };
 
-/** The zoom the camera keeps between. */
-const zoomRange = { least: 0.05, most: 6 };
-const clampZoom = (zoom: number) => Math.max(zoomRange.least, Math.min(zoomRange.most, zoom));
+const zoomLimits = { least: 0.05, most: 6 };
+const clampZoom = (zoom: number) => Math.max(zoomLimits.least, Math.min(zoomLimits.most, zoom));
+
+const defaultGlideMs = 240;
+const wheelZoomGlideMs = 120;
+const pageShareOfFittedView = 0.7;
+const dragThresholdPx = 4;
+const degreesPerDraggedPx = 0.3;
 
 const mix = (from: number, to: number, amount: number) => from + (to - from) * amount;
 
-/**
- * The camera of a scene, which it moves by writing its transform: put the `scene` ref on the
- * scene's element. `lift` is how high the planes reach, which the scene is centred on. The view
- * renders as rarely as it can: the camera is a ref, and its moves never render.
- */
 export function useCamera(lift: number) {
   const scene = useRef<HTMLDivElement>(null);
   const camera = useRef<Camera>({ ...angles.tilted, zoom: 0.6, px: 0, py: 0 });
@@ -52,41 +45,32 @@ export function useCamera(lift: number) {
   const liftRef = useRef(lift);
   liftRef.current = lift;
 
-  /** Writes the camera into the scene's transform. */
-  const apply = useCallback(() => {
+  const writeCameraToSceneTransform = useCallback(() => {
     const element = scene.current;
     if (!element) return;
     const { rx, ry, zoom, px, py } = camera.current;
     element.style.transform = `translate(-50%, -50%) translate(${px}px, ${py}px) scale(${zoom}) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${-liftRef.current / 2}px)`;
-    // The frame's handles and label keep their size on screen at any zoom.
-    element.style.setProperty('--env-dev-zoom', String(zoom));
+    element.style.setProperty('--_dev-zoom', String(zoom));
   }, []);
-  // The planes' height changes with the levels shown and their spacing.
-  useLayoutEffect(apply, [apply, lift]);
+  useLayoutEffect(writeCameraToSceneTransform, [writeCameraToSceneTransform, lift]);
 
-  /** Ends a glide where it is, so a drag or the wheel takes the camera from there. */
   const stop = useCallback(() => {
     if (!glide.current) return;
     cancelAnimationFrame(glide.current.frame);
     glide.current = null;
   }, []);
 
-  /** Puts the camera somewhere at once. */
   const set = useCallback(
     (next: Camera) => {
       stop();
       camera.current = next;
-      apply();
+      writeCameraToSceneTransform();
     },
-    [apply, stop],
+    [writeCameraToSceneTransform, stop],
   );
 
-  /**
-   * Moves the camera somewhere over `duration` ms, easing out; at once with a reduced-motion
-   * preference. A glide that comes while one runs starts from where the camera is.
-   */
   const glideTo = useCallback(
-    (to: Camera, duration = 240) => {
+    (to: Camera, duration = defaultGlideMs) => {
       if (prefersReducedMotion()) return set(to);
       stop();
       const from = camera.current;
@@ -104,28 +88,26 @@ export function useCamera(lift: number) {
                 px: mix(from.px, to.px, eased),
                 py: mix(from.py, to.py, eased),
               };
-        apply();
+        writeCameraToSceneTransform();
         if (progress < 1 && glide.current) glide.current.frame = requestAnimationFrame(step);
         else glide.current = null;
       };
       glide.current = { to, frame: requestAnimationFrame(step) };
     },
-    [apply, set, stop],
+    [writeCameraToSceneTransform, set, stop],
   );
 
-  /** Where the camera is going: the end of its glide, else where it is. */
   const destination = useCallback(() => glide.current?.to ?? camera.current, []);
 
-  /**
-   * Zooms by a factor toward a point of the view, in px from its centre, gliding: wheel turns that
-   * come quickly add up.
-   */
   const zoomToward = useCallback(
     (factor: number, x: number, y: number) => {
       const from = destination();
       const zoom = clampZoom(from.zoom * factor);
-      const k = zoom / from.zoom;
-      glideTo({ ...from, zoom, px: x - (x - from.px) * k, py: y - (y - from.py) * k }, 120);
+      const zoomRatio = zoom / from.zoom;
+      glideTo(
+        { ...from, zoom, px: x - (x - from.px) * zoomRatio, py: y - (y - from.py) * zoomRatio },
+        wheelZoomGlideMs,
+      );
     },
     [destination, glideTo],
   );
@@ -136,20 +118,17 @@ export function useCamera(lift: number) {
   );
 }
 
-/** The camera that fits a page of a size into a view of a size, at an angle, centred. */
 export function fitted(
   angle: { rx: number; ry: number },
   page: { w: number; h: number },
   view: { width: number; height: number },
 ): Camera {
-  const zoom = Math.min(view.width / Math.max(page.w, 1), view.height / Math.max(page.h, 1)) * 0.7;
+  const zoom =
+    Math.min(view.width / Math.max(page.w, 1), view.height / Math.max(page.h, 1)) *
+    pageShareOfFittedView;
   return { rx: angle.rx, ry: angle.ry, zoom: clampZoom(zoom), px: 0, py: 0 };
 }
 
-/**
- * Turning and panning by dragging the view, and a click that selects: a drag starts once the
- * pointer moves 4 px, and Shift or the middle button pans.
- */
 export function useOrbit(
   camera: ReturnType<typeof useCamera>,
   {
@@ -157,9 +136,7 @@ export function useOrbit(
     onTurn,
     onClick,
   }: {
-    /** Called as a drag starts and ends. */
     onDragChange: (dragging: boolean) => void;
-    /** Called as a drag starts turning the view, which leaves the angle it was at. */
     onTurn: () => void;
     onClick: () => void;
   },
@@ -172,21 +149,20 @@ export function useOrbit(
     moved: boolean;
   } | null>(null);
   return {
-    /** Whether a drag is moving the camera, rather than a click on its way. */
     moving: () => drag.current?.moved ?? false,
     down(event: ReactPointerEvent<HTMLDivElement>) {
-      if (event.button !== 0 && event.button !== 1) return;
-      if (event.button === 1) event.preventDefault();
+      const middleButton = event.button === 1;
+      if (event.button !== 0 && !middleButton) return;
+      if (middleButton) event.preventDefault();
       camera.stop();
-      // A selection left across the view, such as after Ctrl+A, goes: pressed on, the browser would
-      // drag it rather than let the view turn.
-      const selection = window.getSelection();
-      if (selection && !selection.isCollapsed) selection.removeAllRanges();
+      const selectionTheBrowserWouldDragInstead = window.getSelection();
+      if (selectionTheBrowserWouldDragInstead && !selectionTheBrowserWouldDragInstead.isCollapsed)
+        selectionTheBrowserWouldDragInstead.removeAllRanges();
       drag.current = {
         x: event.clientX,
         y: event.clientY,
         start: camera.camera.current,
-        pan: event.shiftKey || event.button === 1,
+        pan: event.shiftKey || middleButton,
         moved: false,
       };
       event.currentTarget.setPointerCapture(event.pointerId);
@@ -196,7 +172,7 @@ export function useOrbit(
       if (!current) return;
       const dx = event.clientX - current.x;
       const dy = event.clientY - current.y;
-      if (!current.moved && Math.hypot(dx, dy) < 4) return;
+      if (!current.moved && Math.hypot(dx, dy) < dragThresholdPx) return;
       if (!current.moved) {
         onDragChange(true);
         if (!current.pan) onTurn();
@@ -208,8 +184,8 @@ export function useOrbit(
           ? { ...start, px: start.px + dx, py: start.py + dy }
           : {
               ...start,
-              ry: start.ry + dx * 0.3,
-              rx: Math.max(-90, Math.min(90, start.rx - dy * 0.3)),
+              ry: start.ry + dx * degreesPerDraggedPx,
+              rx: Math.max(-90, Math.min(90, start.rx - dy * degreesPerDraggedPx)),
             },
       );
     },

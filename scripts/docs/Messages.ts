@@ -1,7 +1,3 @@
-// envUI's built-in strings, read from packages/ui/src/foundations/messages: each namespace's keys,
-// their English defaults and what each names, and the components that show them, from the
-// sentence that opens each module ("The English defaults of the `alert` messages: Alert."). The
-// generated documentation gives each component's page its Strings, so no page writes them.
 import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import ts from 'typescript';
@@ -9,23 +5,19 @@ import { librarySourceDirectory } from '../RepositoryPaths.ts';
 
 const messagesDirectory = resolve(librarySourceDirectory, 'foundations/messages');
 
-/** One string of a namespace: its key, its English default and what it names. */
 interface MessageString {
   namespace: string;
   key: string;
-  /** The default as written, or for a function of values, the values it names. */
   value: string;
   description: string;
 }
 
-/** A namespace of messages and the exports that show its strings. */
 export interface MessageNamespace {
   namespace: string;
   components: string[];
   strings: MessageString[];
 }
 
-/** A node's TSDoc comment as one line of text. */
 const docText = (node: ts.Node) =>
   ts
     .getJSDocCommentsAndTags(node)
@@ -36,7 +28,6 @@ const docText = (node: ts.Node) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-/** The value of a message as the docs show it: the string, or the values a function takes. */
 function valueOf(node: ts.Expression, source: ts.SourceFile): string {
   if (ts.isStringLiteralLike(node)) return JSON.stringify(node.text);
   if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
@@ -48,7 +39,6 @@ function valueOf(node: ts.Expression, source: ts.SourceFile): string {
   return node.getText(source);
 }
 
-/** Every namespace of envUI's messages, in file order, with the exports that show it. */
 export function readMessages(directory = messagesDirectory): MessageNamespace[] {
   const namespaces: MessageNamespace[] = [];
   for (const file of readdirSync(directory)
@@ -92,17 +82,12 @@ export function readMessages(directory = messagesDirectory): MessageNamespace[] 
   return namespaces;
 }
 
-/** The strings the exports a page documents show, by namespace. */
 export function stringsOf(components: readonly string[], namespaces = readMessages()) {
   return namespaces.filter((entry) => entry.components.some((name) => components.includes(name)));
 }
 
 const cell = (text: string) => text.replaceAll('|', '\\|').replace(/\s+/g, ' ');
 
-/**
- * The generated Strings section of a page, as Markdown: each key under EnvUIProvider's `messages`,
- * its English default and what it names.
- */
 export function renderStrings(components: readonly string[], namespaces = readMessages()) {
   const found = stringsOf(components, namespaces);
   if (!found.length) return '';

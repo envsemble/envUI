@@ -3,8 +3,7 @@
 import { useCallback, useState, type Ref } from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { flushSync } from 'react-dom';
-import { Button } from '../actions/Button.js';
-import { Tabs } from '../navigation/Tabs.js';
+import { SegmentedControl } from '../forms/SegmentedControl.js';
 import { markdownEditor as markdownEditorMessages } from '../foundations/messages/markdownEditor.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
@@ -34,7 +33,6 @@ export interface MarkdownLinkRequest {
   /** The text selected at the time, which the link will wrap; empty without a selection. */
   selectedText: string;
 }
-/** The commands of MarkdownEditor's toolbar, in order: every one it offers. */
 const defaultMarkdownCommands: readonly MarkdownCommand[] = [
   'heading',
   'bold',
@@ -61,7 +59,10 @@ export interface MarkdownEditorProps extends Omit<
   onValueChange?: (value: string) => void;
   /** Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar. */
   toolbar?: readonly MarkdownCommand[] | false;
-  /** Show Write/Preview tabs. Preview uses the same public Markdown renderer. */
+  /**
+   * Show the Write and Preview switch above the source. Preview uses the same public Markdown
+   * renderer.
+   */
   preview?: boolean;
   /** Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable. */
   previewProps?: Pick<
@@ -72,18 +73,15 @@ export interface MarkdownEditorProps extends Omit<
   pickLink?: (request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>;
 }
 
-/**
- * What a key with Ctrl or ⌘ does in the source: Z undoes and, with Shift, redoes, Y redoes, and B,
- * I and K format as the toolbar's bold, italic and link do. Keys with Alt are the application's.
- */
-function markdownShortcut(event: {
+function ctrlOrCommandShortcut(event: {
   key: string;
   altKey: boolean;
   ctrlKey: boolean;
   metaKey: boolean;
   shiftKey: boolean;
 }): 'undo' | 'redo' | 'bold' | 'italic' | 'link' | null {
-  if (event.altKey || (!event.metaKey && !event.ctrlKey)) return null;
+  const altLeftToApplication = event.altKey;
+  if (altLeftToApplication || (!event.metaKey && !event.ctrlKey)) return null;
   const key = event.key.toLowerCase();
   if (key === 'z') return event.shiftKey ? 'redo' : 'undo';
   if (key === 'y') return 'redo';
@@ -132,16 +130,16 @@ export function MarkdownEditor({
     onValueChange,
     form,
   });
-  // Whether an input method is composing, which formatting waits for.
-  const composingRef = editing.composing;
+  const inputMethodComposingRef = editing.composing;
   const [mode, setMode] = useState('write');
+  const showSource = () => setMode('write');
   const [status, setStatus] = useState('');
   const { linkSelection, linkPending, requestLink, insertDialogLink, closeDialog } =
     useMarkdownLink({
       inputRef: editing.inputRef,
       apply: editing.apply,
       pickLink,
-      showSource: () => setMode('write'),
+      showSource,
       setStatus,
       messages,
     });
@@ -155,7 +153,7 @@ export function MarkdownEditor({
   );
 
   function runCommand(command: MarkdownCommand) {
-    if (disabled || readOnly || linkPending || composingRef.current) return;
+    if (disabled || readOnly || linkPending || inputMethodComposingRef.current) return;
     const selection = editing.captureSelection();
     if (!selection) return;
     setStatus('');
@@ -178,7 +176,7 @@ export function MarkdownEditor({
           onRedo={() => editing.moveHistory(1)}
         />
       )}
-      <FieldFrame id={metadata.id} floatingLabel multiline variant={variant}>
+      <FieldFrame id={metadata.id} controlBox multiline variant={variant}>
         <TextareaControl
           {...nativeProps}
           {...metadata}
@@ -196,23 +194,23 @@ export function MarkdownEditor({
             editing.handleChange(event);
           }}
           onCompositionStart={(event) => {
-            composingRef.current = true;
+            inputMethodComposingRef.current = true;
             onCompositionStart?.(event);
           }}
           onCompositionEnd={(event) => {
-            composingRef.current = false;
+            inputMethodComposingRef.current = false;
             onCompositionEnd?.(event);
           }}
           onInvalid={(event) => {
             onInvalid?.(event);
-            // Reveal the native field before the browser focuses an invalid control.
-            if (!event.defaultPrevented && mode !== 'write') flushSync(() => setMode('write'));
+            const revealFieldBeforeBrowserFocusesIt = !event.defaultPrevented && mode !== 'write';
+            if (revealFieldBeforeBrowserFocusesIt) flushSync(showSource);
           }}
           onKeyDown={(event) => {
             onKeyDown?.(event);
             if (event.defaultPrevented || event.nativeEvent.isComposing || disabled || readOnly)
               return;
-            const shortcut = markdownShortcut(event);
+            const shortcut = ctrlOrCommandShortcut(event);
             if (shortcut === 'undo' || shortcut === 'redo') {
               event.preventDefault();
               editing.moveHistory(shortcut === 'redo' ? 1 : -1);
@@ -246,29 +244,29 @@ export function MarkdownEditor({
           error={error}
         >
           {preview ? (
-            <Tabs
-              aria-label={messages.views}
-              value={mode}
-              keepMounted
-              onValueChange={(next) => {
-                if (next) setMode(next);
-              }}
-              items={[
-                { value: 'write', button: <Button>{messages.write}</Button>, content: source },
-                {
-                  value: 'preview',
-                  button: <Button>{messages.preview}</Button>,
-                  content: (
-                    <MarkdownPreview
-                      {...previewProps}
-                      active={mode === 'preview'}
-                      source={editing.content}
-                      empty={messages.empty}
-                    />
-                  ),
-                },
-              ]}
-            />
+            <Grid gap={2} className="env-markdown-editor-views">
+              <SegmentedControl
+                aria-label={messages.views}
+                size="sm"
+                value={mode}
+                onValueChange={setMode}
+                items={[
+                  { value: 'write', label: messages.write },
+                  { value: 'preview', label: messages.preview },
+                ]}
+              />
+              <div className="env-markdown-editor-view" hidden={mode !== 'write'}>
+                {source}
+              </div>
+              <div className="env-markdown-editor-view" hidden={mode !== 'preview'}>
+                <MarkdownPreview
+                  {...previewProps}
+                  active={mode === 'preview'}
+                  source={editing.content}
+                  empty={messages.empty}
+                />
+              </div>
+            </Grid>
           ) : (
             source
           )}

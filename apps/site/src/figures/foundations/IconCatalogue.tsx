@@ -1,15 +1,11 @@
 import { useId, useMemo, useRef, useState } from 'react';
 import { Button, SearchField, Column, Row, Switch, Text, Sheet } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/code';
-// This browser of every icon loads the full set, from the library's generated list of them, which
-// the package doesn't export: applications import each icon by its own path. The site's Vite
-// config and tsconfig point envui-icon-list at packages/ui/src/icons/index.ts.
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 import * as symbols from 'envui-icon-list';
 import { SpecimenFrame } from '../SpecimenFrame';
 import { iconPageSize as pageSize } from './Icons';
 
 const normalizeName = (name: string) => name.toLowerCase().replace(/[\s_-]/g, '');
-/** An icon's module, its name without the prefix: IconAdd is icons/Add, Icon10k icons/10k. */
 const moduleName = (name: string) => name.replace(/^Icon/, '');
 const displayName = (name: string) =>
   moduleName(name)
@@ -67,12 +63,11 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
         </div>
       </Column>
       <Text variant="caption">Inherits the surrounding text color.</Text>
-      {/* The code to use it, as under every example. */}
-      <CodeBlock language="tsx" label="React import" copyable>
+      <HighlightedCodeBlock language="tsx" label="React import" copyable>
         {`import { ${name} } from '@envsemble/envui/icons/${moduleName(name)}';
 
 <${name}${filled ? ' filled' : ''} />`}
-      </CodeBlock>
+      </HighlightedCodeBlock>
     </Column>
   );
 }

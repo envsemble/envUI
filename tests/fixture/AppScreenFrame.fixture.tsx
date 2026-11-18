@@ -35,7 +35,6 @@ const organizations = [
   { id: 'fabrikam', label: 'Fabrikam Research', role: 'Viewer' },
 ];
 
-/** The switcher at the top of the drawer: a button that names the active organization. */
 function OrganizationSwitcher({
   current,
   onChange,
@@ -76,7 +75,6 @@ function OrganizationSwitcher({
   );
 }
 
-/** The account menu, with the organizations as a submenu for the forms that have no drawer. */
 function AccountMenu({ current, onChange }: { current: string; onChange: (id: string) => void }) {
   return (
     <Menu.Root
@@ -85,7 +83,6 @@ function AccountMenu({ current, onChange }: { current: string; onChange: (id: st
       trigger={<AvatarButton name={user.name} description={user.email} />}
     >
       <Menu.Header>
-        {/* Layout glue: Column has no text alignment, so the centred header sets its own. */}
         <Column align="center" gap={1} padding={2} style={{ textAlign: 'center' }}>
           <Avatar name={user.name} size="lg" />
           <Text>{user.name}</Text>
@@ -119,10 +116,6 @@ function AccountMenu({ current, onChange }: { current: string; onChange: (id: st
   );
 }
 
-/**
- * The application's frame: a top bar with the name, search, help, notifications and the account
- * menu, and the same destinations as a bar, a rail or a drawer by the frame's width.
- */
 export function AppFrame({
   destinations,
   onSearch,
@@ -139,7 +132,7 @@ export function AppFrame({
       topBar={
         <TopBar
           title="Northwind"
-          actions={
+          end={
             <>
               <Tooltip content="Search" side="bottom">
                 <IconButton
@@ -153,8 +146,6 @@ export function AppFrame({
                 <IconButton variant="ghost" icon={<IconHelp />} aria-label="Help" />
               </Tooltip>
               <Tooltip content="Notifications, 3 new" side="bottom">
-                {/* Finding: IconButton takes no count, so the unread count can't sit on the bell
-                    the way a destination's count sits on its icon. */}
                 <IconButton
                   variant="ghost"
                   icon={<IconNotifications />}
@@ -190,6 +181,5 @@ export function AppFrame({
   );
 }
 
-/** A time some minutes before now, as an ISO date, so the sample reads as recent. */
 export const minutesAgo = (minutes: number) =>
   new Date(Date.now() - minutes * 60_000).toISOString();

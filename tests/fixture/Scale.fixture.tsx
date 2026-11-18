@@ -16,14 +16,11 @@ import {
   NavigationRail,
   type Destination,
   Pagination,
-  PanelDock,
   SearchField,
   SegmentedControl,
   Select,
   Switch,
   Table,
-  Tabs,
-  Text,
   Theme,
   Tree,
   type ControlSize,
@@ -52,12 +49,6 @@ import {
 } from './ScaleSections.fixture.js';
 
 export const mount = 'standalone';
-
-/*
- * The same content in the comfortable and the compact scale, one above the other. The visual
- * baseline captures each section in both themes, and the browser tests measure the sizes section;
- * open one with ?fixture=scale&section=<name>&theme=<light|dark>.
- */
 
 const plans = [
   { value: 'starter', label: 'Starter' },
@@ -97,7 +88,6 @@ function Row({
   );
 }
 
-/** Every control that takes a size, at one size: they must all be as tall. */
 function SizeRow({ size }: { size: ControlSize }) {
   const [filter, setFilter] = useState('all');
   const [page, setPage] = useState(1);
@@ -145,23 +135,10 @@ function SizeRow({ size }: { size: ControlSize }) {
           Right
         </Button>
       </ButtonGroup>
-      <Tabs
-        aria-label="Views"
-        size={size}
-        items={['Overview', 'Activity'].map((name) => ({
-          value: name.toLowerCase(),
-          button: <Button variant="secondary">{name}</Button>,
-          content: null,
-        }))}
-      />
     </Row>
   );
 }
 
-/**
- * Fields with their labels shown, outline and ghost, beside a button of their size: at md and lg
- * every one is as tall as the button; at sm a labelled field takes the md height, room for its label.
- */
 function LabelledRow({ size }: { size: ControlSize }) {
   return (
     <Row label={`size="${size}", labels shown`} data-labelled-row={size}>
@@ -421,29 +398,6 @@ function TableSection() {
   );
 }
 
-function tabItems(kind: 'button' | 'ghost') {
-  return ['Overview', 'Activity', 'Settings'].map((name) => ({
-    value: name.toLowerCase(),
-    button: <Button variant={kind === 'button' ? 'secondary' : 'ghost'}>{name}</Button>,
-    content: <Text>{name} panel</Text>,
-  }));
-}
-
-function TabsSection() {
-  return (
-    <div className="density-columns">
-      <Column title='Tabs (default size="lg")'>
-        <Tabs aria-label="Tabs, Button" items={tabItems('button')} />
-        <Tabs aria-label="Tabs, ghost Button" items={tabItems('ghost')} />
-      </Column>
-      <Column title='Tabs size="sm"'>
-        <Tabs aria-label="Small tabs, Button" size="sm" items={tabItems('button')} />
-        <Tabs aria-label="Small tabs, ghost Button" size="sm" items={tabItems('ghost')} />
-      </Column>
-    </div>
-  );
-}
-
 const destinations: Destination[] = [
   { label: 'Home', icon: <IconHome />, href: '#home', current: true },
   { label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 3 },
@@ -480,7 +434,6 @@ function NavigationSection() {
   );
 }
 
-/** A desktop view with every component at its default size and density. */
 function DesktopSection() {
   const [filter, setFilter] = useState('all');
   return (
@@ -523,7 +476,6 @@ function DesktopSection() {
               Publish
             </Button>
           </div>
-          <Tabs aria-label="Views" items={tabItems('button')} />
           <ReportTable />
           <div className="density-row">
             <TextField label="Title" defaultValue="Quarterly report" />
@@ -535,8 +487,6 @@ function DesktopSection() {
   );
 }
 
-/** Small buttons 4 px apart in a layout of the application's own: a press must reach the button it
- * lands on under a coarse pointer, whatever the layout. */
 function TightButtons({ label }: { label: string }) {
   return ['Cut', 'Copy', 'Paste', 'Undo'].map((name) => (
     <Button key={name} size="sm" variant="secondary" aria-label={`${name}, ${label}`}>
@@ -552,32 +502,6 @@ const tightLayouts = [
   { name: 'reverse', title: 'A reversed row' },
 ] as const;
 
-/** A panel with its header's actions beside the window controls, as a docked panel shows them. */
-function DockedPanel() {
-  return (
-    <div className="density-dock-frame">
-      <PanelDock.Root
-        panels={[{ id: 'report', title: 'Quarterly report', mode: 'open', active: true }]}
-        onModeChange={() => {}}
-        onClose={() => {}}
-      >
-        {(panel) => (
-          <PanelDock.Header
-            title={panel.title}
-            actions={
-              <>
-                <IconButton icon={<IconEdit />} aria-label="Edit the report" />
-                <IconButton icon={<IconMoreVert />} aria-label="More actions" />
-              </>
-            }
-          />
-        )}
-      </PanelDock.Root>
-    </div>
-  );
-}
-
-/** Tight layouts of small buttons, and a docked panel's header, for the touch hit areas. */
 function LayoutsSection() {
   return (
     <div className="density-columns" data-columns="4">
@@ -604,9 +528,6 @@ function LayoutsSection() {
           </div>
         </Column>
       ))}
-      <Column title="A docked panel's header">
-        <DockedPanel />
-      </Column>
     </div>
   );
 }
@@ -618,16 +539,14 @@ const densitySections: Record<DensitySection, () => ReactNode> = {
   menu: MenuSection,
   tree: TreeSection,
   table: TableSection,
-  tabs: TabsSection,
   navigation: NavigationSection,
   desktop: DesktopSection,
   layouts: LayoutsSection,
 };
 
-/** One section in each scale, one above the other. */
 function ScaledSection({ name, theme }: { name: string; theme: ColorScheme }) {
   const Section = (densitySectionNames as readonly string[]).includes(name)
-    ? densitySections[name as DensitySection] // includes() doesn't narrow name.
+    ? densitySections[name as DensitySection]
     : undefined;
   return (
     <div className="density-section" data-density-section={name} data-density-theme={theme}>
@@ -651,11 +570,10 @@ export default function ScaleFixture() {
   const query = new URLSearchParams(location.search);
   const section = query.get('section');
   const theme = query.get('theme');
-  // Open menus lock page scrolling, so they render only on their own.
+  const scrollLockingSection = 'menu';
   const sections: string[] = section
     ? [section]
-    : densitySectionNames.filter((name) => name !== 'menu');
-  // The tests ask only for light or dark.
+    : densitySectionNames.filter((name) => name !== scrollLockingSection);
   const themes: ColorScheme[] = theme ? [theme as ColorScheme] : ['light', 'dark'];
   return (
     <div className="density-fixture">

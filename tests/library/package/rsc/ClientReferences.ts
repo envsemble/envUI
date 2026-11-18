@@ -1,11 +1,6 @@
-// A Node module hook that does what a React Server Components bundler does with 'use client'
-// modules in the server's module graph: it never runs them, and gives each of their exports as a
-// client reference instead. Load it with `--import` and run with `--conditions=react-server`, so
-// React is its server build, which has no state, effect or context hooks.
 import { registerHooks } from 'node:module';
 import ts from 'typescript';
 
-/** The names a module exports, read from its source without running it. */
 function exportNames(source, url) {
   const file = ts.createSourceFile(url, source, ts.ScriptTarget.Latest, false, ts.ScriptKind.JS);
   const names: string[] = [];

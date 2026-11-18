@@ -1,13 +1,8 @@
 import { useSharedTimeline } from '../../motion/Timeline';
 import { useRounds } from './Rounds';
 
-/**
- * The batch of three files uploading, in step for the do and the don't: the do's one bar counts
- * the files done, climbing steadily; the don't's bars, one a file, fill unevenly. They finish,
- * fade, and start again from nothing.
- */
-const files = [2, 2.5, 3, 3, 0, 0.5, 1, 1.5];
-const shares = [
+const filesDone = [2, 2.5, 3, 3, 0, 0.5, 1, 1.5];
+const fileSharesPercent = [
   [100, 100, 30],
   [100, 100, 65],
   [100, 100, 100],
@@ -17,11 +12,11 @@ const shares = [
   [90, 30, 5],
   [100, 65, 15],
 ];
-const steps = [540, 540, 900, 210, 420, 480, 480, 480];
+const stepDurationsMs = [540, 540, 900, 210, 420, 480, 480, 480];
+const restartStep = 4;
 
-/** The step of the batch's upload: the files done, each file's share, and the bars' round. */
 export function useBatch() {
-  const step = useSharedTimeline('progress-batch', steps);
-  const { round, style } = useRounds(step, 4);
-  return { done: files[step], shares: shares[step], round, style };
+  const step = useSharedTimeline('progress-batch', stepDurationsMs);
+  const { round, style } = useRounds(step, restartStep);
+  return { done: filesDone[step], shares: fileSharesPercent[step], round, style };
 }

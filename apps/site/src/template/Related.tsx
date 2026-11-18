@@ -10,15 +10,7 @@ import { useNear } from '../figures/useNear';
 import { alternativesOf, type Alternative } from './RelatedPages';
 import type { TileFrame, TilePicture } from '../tiles/TilePictures';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
-import { flag } from '../shared/Attributes';
 
-/**
- * One alternative's tile, whose picture plays while the pointer or the keyboard is on it, and where
- * the reader can't hover, while it is the tile in the middle of the viewport, as a gallery's does.
- * It is a gallery's cell (Gallery.tsx, Gallery.css): on a stage of one shape, a component at its
- * own size and a pattern's scene at a legible scale, and under it its name and when to pick it,
- * which slide into view with the picture as the pointer comes on.
- */
 function RelatedTile({
   picture,
   near,
@@ -49,25 +41,14 @@ function RelatedTile({
   );
 }
 
-/** The alternatives as tiles of one size: a picture on its stage, the name and its situations. */
 function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: string }) {
   const list = useRef<HTMLUListElement>(null);
   const near = useNear(list);
   const id = useId();
   return (
-    <ul
-      ref={list}
-      className="catalogue-related-tiles"
-      data-count={alternatives.length}
-      // A scene's tile takes a larger stage, as in its gallery: so does every tile beside it.
-      data-scenes={flag(alternatives.some(({ frame }) => frame === 'legible'))}
-    >
+    <ul ref={list} className="catalogue-related-tiles" data-count={alternatives.length}>
       {alternatives.map(({ key, name, href, picture, line, frame }, index) => (
         <RelatedTile key={key} picture={picture} near={near} frame={frame}>
-          {/* The name is the tile's one link, described by when to pick it; it stretches over the
-              whole tile, picture, name and why, so the tile is one target and one box
-              (Gallery.css). Its words slide, not the link, which would otherwise hold the stretch
-              to the row it slides in. */}
           <Row align="center" justify="between" gap={2}>
             <Text render={<span />} className="catalogue-related-name">
               {href ? (
@@ -88,7 +69,6 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
               aria-hidden="true"
             />
           </Row>
-          {/* Words alone, its links as text: the tile holds one link, its name's. */}
           <div className="catalogue-related-line catalogue-gallery-slide" id={`${id}-${index}`}>
             <PageMarkdown markdown={line} path={path} linkless />
           </div>
@@ -98,17 +78,11 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
   );
 }
 
-/** Related's heading: its id and its words. */
 export const relatedId = 'related';
 export const relatedTitle = 'Related';
 
-/**
- * Related, the last section of a component or pattern page: a tile for each component or page its
- * frontmatter names, with when to pick it instead. It ends the page (TemplateContent.tsx).
- */
 export function Related({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
   const alternatives = alternativesOf(metadata);
-  // Waiting its turn to show, it renders its heading alone (SectionOutline).
   const outline = useSectionOutline();
   if (!alternatives.length) return null;
   return (
