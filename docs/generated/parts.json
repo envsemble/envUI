@@ -2901,6 +2901,14 @@
           "description": "The text area that shows the Markdown source as text."
         },
         {
+          "class": "env-markdown-editor-view",
+          "description": "The source or the preview, the one the view switch shows."
+        },
+        {
+          "class": "env-markdown-editor-views",
+          "description": "The view switch, with the source and the preview under it."
+        },
+        {
           "class": "env-markdown-editor-write",
           "description": "The text area for writing."
         }
@@ -2913,7 +2921,7 @@
         "Field",
         "Icon",
         "Markdown",
-        "Tabs",
+        "SegmentedControl",
         "Text",
         "TextField",
         "Textarea",
@@ -5573,119 +5581,6 @@
           "property": "--env-table-of-contents-room",
           "use": "read",
           "description": "The room the contents leave above the first link and below the last, which the reader's place runs on into: an application reads it to line the first label up with what is beside it."
-        }
-      ]
-    },
-    "Tabs": {
-      "root": "env-tabs",
-      "source": "packages/ui/src/navigation/Tabs.tsx",
-      "parts": [
-        {
-          "class": "env-tabs",
-          "description": "The tabs."
-        },
-        {
-          "class": "env-tabs-indicator",
-          "description": "The indicator that moves to the selected tab, hidden until it has measured it."
-        },
-        {
-          "class": "env-tabs-list",
-          "description": "The list of tabs."
-        },
-        {
-          "class": "env-tabs-panel",
-          "description": "One panel."
-        },
-        {
-          "class": "env-tabs-panels",
-          "description": "The panels."
-        },
-        {
-          "class": "env-tabs-tab",
-          "description": "One tab: a text tab, the selected one with an indicator under it."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-active",
-          "values": [],
-          "parts": [
-            "env-tabs-tab"
-          ]
-        },
-        {
-          "attribute": "data-ending-style",
-          "values": [],
-          "parts": [
-            "env-tabs-panel"
-          ]
-        },
-        {
-          "attribute": "data-fill",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-tabs"
-          ]
-        },
-        {
-          "attribute": "data-placed",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-tabs-indicator"
-          ]
-        },
-        {
-          "attribute": "data-size",
-          "values": [
-            "lg",
-            "md",
-            "sm"
-          ],
-          "parts": [
-            "env-tabs-list"
-          ]
-        },
-        {
-          "attribute": "data-starting-style",
-          "values": [],
-          "parts": [
-            "env-tabs-panel"
-          ]
-        },
-        {
-          "attribute": "data-variant",
-          "values": [
-            "text"
-          ],
-          "parts": [
-            "env-tabs-tab"
-          ]
-        }
-      ],
-      "uses": [
-        "Button",
-        "Surface"
-      ],
-      "colors": [
-        {
-          "property": "--env-tabs-container",
-          "description": "The rail behind the tabs, transparent by default."
-        },
-        {
-          "property": "--env-tabs-content",
-          "description": "The labels of the tabs not selected, and the color of their state layers."
-        },
-        {
-          "property": "--env-tabs-selected-content",
-          "description": "The selected tab's label."
-        },
-        {
-          "property": "--env-tabs-indicator",
-          "description": "The indicator under the selected tab."
         }
       ]
     },

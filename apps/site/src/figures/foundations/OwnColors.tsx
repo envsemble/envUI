@@ -11,7 +11,6 @@ import {
   SegmentedControl,
   Surface,
   Switch,
-  Tabs,
   TextField,
   Theme,
   useTheme,
@@ -174,14 +173,14 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
             </Row>
           </Column>
         </Tile>
-        <Tile name="tabs">
-          <Tabs
+        <Tile name="views">
+          <SegmentedControl
             aria-label="Trip"
             defaultValue="photos"
             items={[
-              { value: 'days', button: <Button>Days</Button>, content: null },
-              { value: 'photos', button: <Button>Photos</Button>, content: null },
-              { value: 'budget', button: <Button>Budget</Button>, content: null },
+              { value: 'days', label: 'Days' },
+              { value: 'photos', label: 'Photos' },
+              { value: 'budget', label: 'Budget' },
             ]}
           />
         </Tile>

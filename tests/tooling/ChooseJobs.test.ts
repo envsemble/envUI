@@ -119,7 +119,7 @@ test('the choice prints a line for each job, whose job CI skips only when it say
   try {
     const changed = join(folder, 'changed');
     const kept = join(folder, 'kept');
-    writeFileSync(changed, 'tests/component/Menu.test.tsx\ntests/component/Tabs.test.tsx\n');
+    writeFileSync(changed, 'tests/component/Menu.test.tsx\ntests/component/Tree.test.tsx\n');
     writeFileSync(kept, 'tests/component/Menu.test.tsx\n');
     assert.deepEqual(choose('--paths', changed, '--kept', kept), {
       library: 'true',

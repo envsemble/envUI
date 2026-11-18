@@ -4,8 +4,7 @@ import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as primitives from '../fixture/Primitives.fixture.tsx';
 import * as fixture from '../fixture/Scale.fixture.tsx';
 import { controlSizes, densityScales } from '../fixture/ScaleSections.fixture.ts';
-import * as tabsCompact from '../fixture/TabsCompact.fixture.tsx';
-import { box, css } from './support/Browser.ts';
+import { css } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
 const heights = {
@@ -54,10 +53,10 @@ const scaleRoot = (scale: string) =>
 function controlBoxes(row: Element) {
   return [
     ...row.querySelectorAll<HTMLElement>(
-      '.env-button, .env-text-field-control, .env-segmented-control, .env-tabs-list',
+      '.env-button, .env-text-field-control, .env-segmented-control',
     ),
   ]
-    .filter((control) => !control.parentElement?.closest('.env-text-field-control, .env-tabs-list'))
+    .filter((control) => !control.parentElement?.closest('.env-text-field-control'))
     .map((control) => ({
       name:
         control.getAttribute('aria-label') ||
@@ -70,36 +69,16 @@ function controlBoxes(row: Element) {
 const sizeRow = (scale: string, size: string) =>
   document.querySelector(`[data-density-scale="${scale}"] [data-size-row="${size}"]`)!;
 
-test('every control of a size has its height in each scale, a tab counter centred on its line', async () => {
+test('every control of a size has its height in each scale', async () => {
   await openSection('sizes');
   for (const scale of densityScales)
     for (const size of controlSizes) {
       const boxes = controlBoxes(sizeRow(scale, size));
-      expect(boxes.length).toBeGreaterThanOrEqual(14);
+      expect(boxes.length).toBeGreaterThanOrEqual(13);
       expect(boxes, `${scale} ${size}`).toEqual(
         boxes.map(({ name }) => ({ name, height: heights[scale][size] })),
       );
     }
-  mount(tabsCompact);
-  for (const theme of ['light', 'dark']) {
-    const scope = page.getByTestId(`compact-tabs-${theme}`);
-    const control = box(scope.getByTestId(`compact-control-${theme}`));
-    expect(Math.abs(box(scope.getByRole('tablist')).height - control.height), theme).toBeLessThan(
-      1,
-    );
-    const tab = scope.getByRole('tab', { name: /Submissions/ }).element();
-    const counter = box(tab.querySelector('.env-badge[data-count]')!);
-    const tabBox = box(tab);
-    expect(counter.y).toBeGreaterThanOrEqual(tabBox.y);
-    expect(counter.y + counter.height).toBeLessThanOrEqual(tabBox.y + tabBox.height);
-    const range = document.createRange();
-    range.selectNodeContents(tab.firstChild!);
-    const label = range.getBoundingClientRect();
-    expect(
-      Math.abs(counter.y + counter.height / 2 - (label.y + label.height / 2)),
-      theme,
-    ).toBeLessThan(1.5);
-  }
 });
 
 test('labelled outline and ghost fields share one height per size in each scale', async () => {
@@ -225,7 +204,7 @@ function crowdedTargets(root: Element) {
 }
 
 test('every target is at least 24 px, or has 24 px of room, in every section and scale', async () => {
-  for (const section of ['sizes', 'toolbar', 'tabs', 'navigation', 'tree', 'table', 'desktop']) {
+  for (const section of ['sizes', 'toolbar', 'navigation', 'tree', 'table', 'desktop']) {
     await openSection(section);
     for (const scale of densityScales)
       expect(crowdedTargets(scaleRoot(scale)), `${scale} ${section}`).toEqual([]);
@@ -254,7 +233,7 @@ test('on a coarse pointer every control of a row is as tall, and at least the to
       for (const size of controlSizes) {
         const row = sizeRow(scale, size);
         const boxes = controlBoxes(row);
-        expect(boxes.length).toBeGreaterThanOrEqual(14);
+        expect(boxes.length).toBeGreaterThanOrEqual(13);
         expect(boxes, `${scale} ${size}`).toEqual(
           boxes.map(({ name }) => ({ name, height: touchHeights[scale][size] })),
         );
@@ -336,7 +315,7 @@ const pressable =
 
 test('on a coarse pointer every hit area is the touch height, and as wide unless inside a field', async () => {
   await onTouch(async () => {
-    for (const section of ['sizes', 'toolbar', 'tabs', 'tree', 'table', 'desktop', 'layouts']) {
+    for (const section of ['sizes', 'toolbar', 'tree', 'table', 'desktop', 'layouts']) {
       await openSection(section);
       const areas = await measureHitAreas(document.body, pressable);
       expect(areas.length, section).toBeGreaterThan(0);
@@ -355,7 +334,7 @@ test('on a coarse pointer every hit area is the touch height, and as wide unless
 
 test('on a coarse pointer nothing that holds controls scrolls where it has room', async () => {
   await onTouch(async () => {
-    for (const section of ['sizes', 'toolbar', 'tabs', 'table', 'desktop', 'layouts']) {
+    for (const section of ['sizes', 'toolbar', 'table', 'desktop', 'layouts']) {
       await openSection(section);
       const scrolls = (value: string) => value === 'auto' || value === 'scroll';
       const scrolling = [...document.querySelectorAll<HTMLElement>('.density-page *')]

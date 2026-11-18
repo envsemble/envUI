@@ -60,7 +60,7 @@ examples:
 ```
 
 1. **Editor** (`env-markdown-editor`)
-2. **Tabs** (`env-tabs-list`, `preview`)
+2. **View switch** (`env-markdown-editor-views > env-segmented-control`, `preview`)
 3. **Toolbar** (`env-editor-toolbar`, `toolbar`)
 4. **Source** (`env-markdown-editor-input`)
 5. **Description** (`env-field-description`, `description`)

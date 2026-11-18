@@ -109,7 +109,6 @@
       "navigation/DocumentTabs.tsx": "composites",
       "navigation/NavigationBar.tsx": "composites",
       "navigation/Pagination.tsx": "composites",
-      "navigation/Tabs.tsx": "composites",
       "navigation/Tree.tsx": "composites",
       "navigation/internal/TreeRow.tsx": "composites",
       "navigation/internal/treeModel.ts": "composites",
@@ -483,7 +482,6 @@
           "navigation/internal/useTreeViewport.ts"
         ]
       },
-      "Tabs": {},
       "RichText": {
         "modules": [
           "forms/rich-text/RichTextEditor.tsx",

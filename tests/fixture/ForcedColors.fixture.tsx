@@ -18,7 +18,6 @@ import {
   Switch,
   Table,
   TableOfContents,
-  Tabs,
   TextField,
   Theme,
   Tree,
@@ -82,14 +81,6 @@ export default function ForcedColorsFixture() {
         items={[
           { value: 'board', label: 'Board' },
           { value: 'list', label: 'List' },
-        ]}
-      />
-      <Tabs
-        aria-label="Sections"
-        defaultValue="one"
-        items={[
-          { value: 'one', button: <Button>One</Button>, content: 'First' },
-          { value: 'two', button: <Button>Two</Button>, content: 'Second' },
         ]}
       />
       <NavigationDrawer

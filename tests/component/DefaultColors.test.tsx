@@ -30,7 +30,6 @@ const targets = [
   `${section} .env-navigation-drawer-item`,
   `${section} .env-navigation-rail-item`,
   `${section} .env-navigation-bar-item`,
-  `${section} .env-tabs-tab`,
   `${section} .env-segmented-control-item`,
   `${section} .env-text-field-control`,
   `${section} .env-checkbox-input`,

@@ -48,7 +48,7 @@ useWhen:
   - Three to five destinations along the bottom of a phone (NavigationBar)
 avoidWhen:
   - text: Views of one subject that fill a region, such as a summary and activity.
-    use: Tabs
+    use: SegmentedControl
   - text: A deep hierarchy that people expand and collapse, such as folders and files.
     use: Tree
   - text: The path from the top of a hierarchy down to the current page.

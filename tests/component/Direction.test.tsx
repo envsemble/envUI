@@ -45,10 +45,6 @@ test('in a right-to-left region the arrow keys follow the direction from the att
     focus(view.getByRole('radio', { name: 'List' }).element());
     await keyboard.press('ArrowLeft');
     await expect.element(view.getByRole('radio', { name: 'Board' })).toHaveFocus();
-    const tabs = region.getByRole('tablist', { name: 'Sections' });
-    focus(tabs.getByRole('tab', { name: 'Overview' }).element());
-    await keyboard.press('ArrowLeft');
-    await expect.element(tabs.getByRole('tab', { name: 'Activity' })).toHaveFocus();
     const menubar = region.getByRole('menubar', { name: 'Application' });
     focus(menubar.getByRole('menuitem', { name: 'File' }).element());
     await keyboard.press('ArrowLeft');

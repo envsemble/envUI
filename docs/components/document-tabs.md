@@ -19,7 +19,7 @@ useWhen:
   - Tabs that open and close as people work, one perhaps a preview until kept
 avoidWhen:
   - text: A fixed set of views of the same content, such as Overview and Settings.
-    use: Tabs
+    use: SegmentedControl
   - text: Items people keep open beside the page, such as drafts.
     use: PanelDock
   - text: Many documents in folders, browsed as a hierarchy.

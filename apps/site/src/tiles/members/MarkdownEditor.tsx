@@ -4,7 +4,8 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import type { TileWindow } from '../Tiles';
 
-const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
+const tab = (index: number) =>
+  `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
 
 const script: PointerStep[] = [
   { wait: 180 },

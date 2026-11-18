@@ -18,7 +18,7 @@ const typicalAppComponents = [
   'Tooltip',
   'Card',
   'Table',
-  'Tabs',
+  'SegmentedControl',
   'ToastProvider',
   'Badge',
   'Alert',

@@ -5,7 +5,6 @@ export const densitySectionNames = [
   'menu',
   'tree',
   'table',
-  'tabs',
   'navigation',
   'desktop',
   'layouts',

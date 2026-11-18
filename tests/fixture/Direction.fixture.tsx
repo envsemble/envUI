@@ -1,15 +1,6 @@
 import { useState } from 'react';
 import { useDirection as useBaseDirection } from '@base-ui/react/direction-provider';
-import {
-  Button,
-  EnvUIProvider,
-  Menu,
-  Menubar,
-  SegmentedControl,
-  Tabs,
-  Text,
-  Toolbar,
-} from '@envsemble/envui';
+import { EnvUIProvider, Menu, Menubar, SegmentedControl, Toolbar } from '@envsemble/envui';
 import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
 import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
 import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
@@ -63,14 +54,6 @@ function DirectedControls() {
           { value: 'board', label: 'Board' },
           { value: 'calendar', label: 'Calendar' },
         ]}
-      />
-      <Tabs
-        aria-label="Sections"
-        items={['Overview', 'Activity', 'Settings'].map((name) => ({
-          value: name,
-          button: <Button>{name}</Button>,
-          content: <Text>{name}</Text>,
-        }))}
       />
       <Menubar.Root aria-label="Application">
         {['File', 'Edit', 'View'].map((name) => (

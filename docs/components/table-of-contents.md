@@ -20,7 +20,7 @@ useWhen:
   - Seeing where you are on the page, and jumping to another of its sections
 avoidWhen:
   - text: Switching between views of one subject, of which one shows at a time.
-    use: Tabs
+    use: SegmentedControl
   - text: The application's pages, rather than the sections of one.
     use: NavigationDrawer
   - text: The previous and next pages of a guide.

@@ -271,7 +271,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### MarkdownEditor
 
-- Parts: `env-markdown-editor`, `env-markdown-editor-input`, `env-markdown-editor-write`
+- Parts: `env-markdown-editor`, `env-markdown-editor-input`, `env-markdown-editor-view`, `env-markdown-editor-views`, `env-markdown-editor-write`
 
 ### Menu
 
@@ -399,7 +399,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### SegmentedControl
 
 - Parts: `env-segmented-control`, `env-segmented-control-item`, `env-segmented-control-item-count`, `env-segmented-control-item-icon` (slot), `env-segmented-control-item-label`, `env-segmented-control-thumb`
-- States: `data-checked` on `env-segmented-control-item`; `data-disabled` on `env-segmented-control-item`; `data-full-width`; `data-placed` on `env-segmented-control-thumb`; `data-size` (`lg`, `md`, `sm`)
+- States: `data-checked` on `env-segmented-control-item`; `data-disabled` on `env-segmented-control-item`; `data-full-width`; `data-placed` on `env-segmented-control-thumb`; `data-size` (`lg`, `md`, `sm`); `data-traveling` on `env-segmented-control-thumb`
 - Color properties: `--env-segmented-control-container`, `--env-segmented-control-outline`, `--env-segmented-control-content`, `--env-segmented-control-selected`, `--env-segmented-control-selected-content`
 
 ### Select
@@ -447,12 +447,6 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 - States: `data-passed` on `env-table-of-contents-link`
 - `--env-table-of-contents-depth`, to read: An item's level below the top, from 1, which the component sets on each nested item and its indent reads.
 - `--env-table-of-contents-room`, to read: The room the contents leave above the first link and below the last, which the reader's place runs on into: an application reads it to line the first label up with what is beside it.
-
-### Tabs
-
-- Parts: `env-tabs`, `env-tabs-indicator`, `env-tabs-list`, `env-tabs-panel`, `env-tabs-panels`, `env-tabs-tab`
-- States: `data-active` on `env-tabs-tab`; `data-ending-style` on `env-tabs-panel`; `data-fill`; `data-placed` on `env-tabs-indicator`; `data-size` (`lg`, `md`, `sm`) on `env-tabs-list`; `data-starting-style` on `env-tabs-panel`; `data-variant` (`text`) on `env-tabs-tab`
-- Color properties: `--env-tabs-container`, `--env-tabs-content`, `--env-tabs-selected-content`, `--env-tabs-indicator`
 
 ### Text
 

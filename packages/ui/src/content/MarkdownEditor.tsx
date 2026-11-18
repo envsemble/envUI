@@ -3,8 +3,7 @@
 import { useCallback, useState, type Ref } from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { flushSync } from 'react-dom';
-import { Button } from '../actions/Button.js';
-import { Tabs } from '../navigation/Tabs.js';
+import { SegmentedControl } from '../forms/SegmentedControl.js';
 import { markdownEditor as markdownEditorMessages } from '../foundations/messages/markdownEditor.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
@@ -242,29 +241,29 @@ export function MarkdownEditor({
           error={error}
         >
           {preview ? (
-            <Tabs
-              aria-label={messages.views}
-              value={mode}
-              keepMounted
-              onValueChange={(next) => {
-                if (next) setMode(next);
-              }}
-              items={[
-                { value: 'write', button: <Button>{messages.write}</Button>, content: source },
-                {
-                  value: 'preview',
-                  button: <Button>{messages.preview}</Button>,
-                  content: (
-                    <MarkdownPreview
-                      {...previewProps}
-                      active={mode === 'preview'}
-                      source={editing.content}
-                      empty={messages.empty}
-                    />
-                  ),
-                },
-              ]}
-            />
+            <Grid gap={2} className="env-markdown-editor-views">
+              <SegmentedControl
+                aria-label={messages.views}
+                size="sm"
+                value={mode}
+                onValueChange={setMode}
+                items={[
+                  { value: 'write', label: messages.write },
+                  { value: 'preview', label: messages.preview },
+                ]}
+              />
+              <div className="env-markdown-editor-view" hidden={mode !== 'write'}>
+                {source}
+              </div>
+              <div className="env-markdown-editor-view" hidden={mode !== 'preview'}>
+                <MarkdownPreview
+                  {...previewProps}
+                  active={mode === 'preview'}
+                  source={editing.content}
+                  empty={messages.empty}
+                />
+              </div>
+            </Grid>
           ) : (
             source
           )}

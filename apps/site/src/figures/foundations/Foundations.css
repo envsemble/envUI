@@ -386,7 +386,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 0.75fr);
   grid-template-areas:
-    'form tabs switch'
+    'form views switch'
     'form choice nav'
     'search progress nav';
   gap: var(--env-space-3);
@@ -397,7 +397,7 @@
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     'form'
-    'tabs'
+    'views'
     'choice'
     'progress'
     'switch'
@@ -411,8 +411,8 @@
   grid-area: form;
   place-items: center stretch;
 }
-.catalogue-scheme-tile[data-tile='tabs'] {
-  grid-area: tabs;
+.catalogue-scheme-tile[data-tile='views'] {
+  grid-area: views;
 }
 .catalogue-scheme-tile[data-tile='switch'] {
   grid-area: switch;

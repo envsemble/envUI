@@ -57,7 +57,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 ## Navigation
 
 - [NavigationDrawer](components/navigation-drawer.md)
-- [Tabs](components/tabs.md)
 - [Breadcrumbs](components/breadcrumbs.md)
 - [TableOfContents](components/table-of-contents.md)
 - [Pager](components/pager.md)

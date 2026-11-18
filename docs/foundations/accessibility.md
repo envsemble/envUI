@@ -17,7 +17,7 @@ avoidWhen:
   - text: One choice of many, moved through with the keyboard.
     use: Select
   - text: Views moved between with the arrow keys.
-    use: Tabs
+    use: SegmentedControl
   - text: A task that holds focus until people finish it.
     use: Dialog
   - text: A message announced without moving focus.

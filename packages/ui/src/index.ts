@@ -52,7 +52,6 @@ export * from './navigation/NavigationDrawer.js';
 export type { Destination, NavigationDrawerDestination } from './navigation/destinations.js';
 export type { NavigationBackground } from './navigation/navigationBackground.js';
 export * as Pager from './navigation/Pager.js';
-export * from './navigation/Tabs.js';
 export {
   LinkProvider,
   type LinkProviderProps,

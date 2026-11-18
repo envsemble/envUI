@@ -7,7 +7,6 @@ import {
   Surface,
   Card,
   List,
-  Tabs,
   Link,
   Pager,
   TextField,
@@ -86,41 +85,6 @@ function ColorControls({ theme }: { theme: ColorScheme }) {
             <List.Item label="Contrast row" />
           </List.Root>
         </Surface>
-        <Tabs
-          aria-label={`${theme} color isolation tabs`}
-          data-testid={`${theme}-color-tabs`}
-          items={[
-            {
-              value: 'ghost',
-              button: (
-                <Button variant="ghost" startIcon={<IconHome />}>
-                  Third tab
-                </Button>
-              ),
-              content: 'Third panel',
-            },
-            {
-              value: 'primary',
-              button: <Button data-testid={`${theme}-tab-primary`}>First tab</Button>,
-              content: 'First panel',
-            },
-            {
-              value: 'secondary',
-              button: (
-                <Button variant="secondary" data-testid={`${theme}-tab-secondary`}>
-                  Second tab
-                </Button>
-              ),
-              content: 'Second panel',
-            },
-            {
-              value: 'unavailable',
-              button: <Button data-testid={`${theme}-tab-disabled`}>Unavailable tab</Button>,
-              content: 'Unavailable panel',
-              disabled: true,
-            },
-          ]}
-        />
         <Link href="#" data-testid={`${theme}-color-link`}>
           Inline link
         </Link>

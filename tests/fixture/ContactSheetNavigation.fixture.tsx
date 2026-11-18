@@ -10,7 +10,6 @@ import {
   Pager,
   Pagination,
   TableOfContents,
-  Tabs,
   Text,
   Tree,
   type Destination,
@@ -413,59 +412,6 @@ function Contents() {
   );
 }
 
-function TabStrips() {
-  const items = (disabled = false) => [
-    { value: 'summary', label: 'Summary', content: <Text>Plans and owners for the launch.</Text> },
-    { value: 'files', label: 'Files', content: <Text>Twelve files.</Text> },
-    { value: 'activity', label: 'Activity', content: <Text>Nothing yet.</Text>, disabled },
-  ];
-  return (
-    <Section name="Tabs">
-      <Strip label="States of Files">
-        {interactionStates.map(({ caption, force }) => (
-          <Cell key={caption} caption={caption} force={force} target="[role=tab]:nth-of-type(2)">
-            <Tabs aria-label="Project views" items={items()} />
-          </Cell>
-        ))}
-        <Cell
-          caption="Selected: focus-visible"
-          force="focus"
-          target="[role=tab][aria-selected=true]"
-        >
-          <Tabs aria-label="Project views" items={items()} />
-        </Cell>
-        <Cell caption="Activity disabled">
-          <Tabs aria-label="Project views" items={items(true)} />
-        </Cell>
-      </Strip>
-      <Strip label="Sizes, forms">
-        {sizes.map((size) => (
-          <Cell key={size} caption={size}>
-            <Tabs aria-label="Project views" size={size} items={items()} />
-          </Cell>
-        ))}
-        <Cell caption="Fill" width="28rem">
-          <Tabs aria-label="Project views" fill items={items()} />
-        </Cell>
-        <Cell caption="Icons">
-          <Tabs
-            aria-label="Mailboxes"
-            items={[
-              { value: 'inbox', label: 'Inbox', icon: <IconInbox />, content: <Text>4 new.</Text> },
-              {
-                value: 'starred',
-                label: 'Starred',
-                icon: <IconStar />,
-                content: <Text>None.</Text>,
-              },
-            ]}
-          />
-        </Cell>
-      </Strip>
-    </Section>
-  );
-}
-
 const treeRows: TreeItem[] = [
   {
     value: 'design',
@@ -577,7 +523,6 @@ export function NavigationSheet() {
       <Pagers />
       <Paginations />
       <Contents />
-      <TabStrips />
       <Trees />
     </>
   );

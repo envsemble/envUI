@@ -13,8 +13,6 @@ avoidWhen:
     use: IconButton
   - text: Navigation that fills the icon of the place that is selected.
     use: NavigationDrawer
-  - text: Views whose selected tab fills its icon.
-    use: Tabs
   - text: Names and announcements for everything people can use.
     see: accessibility
 examples:
@@ -27,7 +25,7 @@ examples:
 
 ## Options
 
-Thousands of Material Symbols, each outlined or filled. Navigation and tabs fill the icon of the selected place.
+Thousands of Material Symbols, each outlined or filled. Navigation fills the icon of the selected place.
 
 ```tsx figure=OutlinedAndFilled
 

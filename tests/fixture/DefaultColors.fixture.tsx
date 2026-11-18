@@ -24,7 +24,6 @@ import {
   Slider,
   Surface,
   Switch,
-  Tabs,
   TextField,
   Textarea,
   Theme,
@@ -131,17 +130,6 @@ export default function DefaultColorsFixture() {
         <NavigationDrawer aria-label="Drawer destinations" destinations={destinations} />
         <NavigationRail aria-label="Rail destinations" destinations={destinations} />
         <NavigationBar aria-label="Bar destinations" destinations={destinations} />
-        <Tabs
-          aria-label="Tabs"
-          items={[
-            { value: 'one', button: <Button>First</Button>, content: 'First panel' },
-            {
-              value: 'two',
-              button: <Button variant="secondary">Second</Button>,
-              content: 'Second panel',
-            },
-          ]}
-        />
         <SegmentedControl
           aria-label="Status"
           value="open"

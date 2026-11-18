@@ -74,11 +74,13 @@
     min-block-size: 0;
     padding-inline-end: var(--env-space-2);
   }
-  :where(.env-dev-tabs) {
+  :where(.env-dev-inspector-body) {
     flex: 1 1 auto;
     min-block-size: 0;
   }
-  :where(.env-dev-tab-panel) {
+  :where(.env-dev-inspector-view) {
+    flex: 1 1 auto;
+    min-block-size: 0;
     overflow: auto;
     overscroll-behavior: contain;
     padding: 0 var(--env-space-3) var(--env-space-3) var(--env-space-4);

@@ -72,7 +72,6 @@
     "tests/component/Table.test.tsx": 4,
     "tests/component/TableOfContents.test.tsx": 3.9,
     "tests/component/TableResizeLoading.test.tsx": 0.5,
-    "tests/component/Tabs.test.tsx": 0.5,
     "tests/component/TextField.test.tsx": 1.4,
     "tests/component/Textarea.test.tsx": 0.6,
     "tests/component/ThemeContrast.test.tsx": 10.2,

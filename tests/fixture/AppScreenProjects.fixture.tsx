@@ -27,7 +27,6 @@ import {
   Surface,
   Switch,
   Table,
-  Tabs,
   Text,
   TextField,
   Toolbar,
@@ -656,7 +655,7 @@ export function ProjectsScreen() {
   const [details, setDetails] = useState<boolean | null>(null);
   const [searching, setSearching] = useState(false);
   const [query, setQuery] = useState('');
-  const [tab, setTab] = useState<string | null>('all');
+  const [tab, setTab] = useState('all');
   const destinations: Destination[] = places.map((place) => ({
     ...place,
     current: place.href === current,
@@ -694,18 +693,20 @@ export function ProjectsScreen() {
               />
             }
           >
-            <Tabs
-              aria-label="Project views"
-              size="md"
-              value={tab}
-              onValueChange={setTab}
-              items={[
-                { value: 'all', label: 'All projects', content: table },
-                { value: 'mine', label: 'Mine', content: table },
-                { value: 'starred', label: 'Starred', content: table },
-                { value: 'archived', label: 'Archived', content: table },
-              ]}
-            />
+            <Column gap={4}>
+              <SegmentedControl
+                aria-label="Project views"
+                value={tab}
+                onValueChange={setTab}
+                items={[
+                  { value: 'all', label: 'All projects' },
+                  { value: 'mine', label: 'Mine' },
+                  { value: 'starred', label: 'Starred' },
+                  { value: 'archived', label: 'Archived' },
+                ]}
+              />
+              {table}
+            </Column>
           </Page>
         </Panes.Main>
         <Panes.Supporting label="Project details">

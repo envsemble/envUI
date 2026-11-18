@@ -15,7 +15,7 @@ import { ResizeHandle } from '../../internal/resize/ResizeHandle.js';
 import { useResizableWidth } from '../../internal/resize/useResizableWidth.js';
 import { remPixels } from '../../internal/dom/lengths.js';
 import * as Menu from '../../actions/menu/Menu.js';
-import { Tabs } from '../../navigation/Tabs.js';
+import { SegmentedControl } from '../../forms/SegmentedControl.js';
 import { Tree, type TreeItem } from '../../navigation/Tree.js';
 import type { NodeData } from '../model.js';
 import { knownParts } from '../parts.js';
@@ -213,7 +213,7 @@ export const Inspector = memo(function Inspector({
   onWidthCommit,
   onHide,
 }: InspectorProps) {
-  const [tab, setTab] = useState<string | null>('details');
+  const [view, setView] = useState('details');
   const current =
     full && selected !== null
       ? full.snapshot.nodes.find((node) => node.key === selected)
@@ -225,55 +225,51 @@ export const Inspector = memo(function Inspector({
       defaultWidth={defaultWidth}
       onWidthCommit={onWidthCommit}
     >
-      <Tabs
-        aria-label="Inspector"
-        size="sm"
-        fill
-        value={tab}
-        onValueChange={setTab}
-        className="env-dev-tabs"
-        panelClassName="env-dev-tab-panel"
-        renderList={(list) => (
-          <Row gap={2} align="center" justify="between" className="env-dev-sidebar-head">
-            {list}
-            <SidebarToggle side="inspector" shown onClick={onHide} />
-          </Row>
-        )}
-        items={[
-          {
-            value: 'details',
-            button: <Button>Details</Button>,
-            content:
-              current && full ? (
-                <Details key={current.key} full={full} node={current} />
-              ) : (
-                <Text variant="body-sm">Select a node in the tree or click its plane.</Text>
-              ),
-          },
-          {
-            value: 'readout',
-            button: <Button>Readout</Button>,
-            content: full ? (
-              <Column gap={3}>
-                <Text variant="body-sm">
-                  What <code className="env-dev-code">envui.layout.describe()</code> returns. Try{' '}
-                  <code className="env-dev-code">
-                    envui.layout.at([&apos;22rem&apos;, &apos;40rem&apos;, &apos;60rem&apos;,
-                    &apos;80rem&apos;])
-                  </code>{' '}
-                  in the console.
-                </Text>
-                <Row>
-                  <CopyButton value={full.reading.text} variant="outline" size="sm">
-                    Copy the readout
-                  </CopyButton>
-                </Row>
-                <WrappedReadout text={full.reading.text} />
-              </Column>
-            ) : null,
-          },
-        ]}
-      />
+      <Column className="env-dev-inspector-body">
+        <Row gap={2} align="center" justify="between" className="env-dev-sidebar-head">
+          <SegmentedControl
+            aria-label="Inspector"
+            size="sm"
+            value={view}
+            onValueChange={setView}
+            items={[
+              { value: 'details', label: 'Details' },
+              { value: 'readout', label: 'Readout' },
+            ]}
+          />
+          <SidebarToggle side="inspector" shown onClick={onHide} />
+        </Row>
+        <div
+          role="region"
+          aria-label={view === 'details' ? 'Details' : 'Readout'}
+          className="env-dev-inspector-view"
+        >
+          {view === 'details' ? (
+            current && full ? (
+              <Details key={current.key} full={full} node={current} />
+            ) : (
+              <Text variant="body-sm">Select a node in the tree or click its plane.</Text>
+            )
+          ) : full ? (
+            <Column gap={3}>
+              <Text variant="body-sm">
+                What <code className="env-dev-code">envui.layout.describe()</code> returns. Try{' '}
+                <code className="env-dev-code">
+                  envui.layout.at([&apos;22rem&apos;, &apos;40rem&apos;, &apos;60rem&apos;,
+                  &apos;80rem&apos;])
+                </code>{' '}
+                in the console.
+              </Text>
+              <Row>
+                <CopyButton value={full.reading.text} variant="outline" size="sm">
+                  Copy the readout
+                </CopyButton>
+              </Row>
+              <WrappedReadout text={full.reading.text} />
+            </Column>
+          ) : null}
+        </div>
+      </Column>
     </Sidebar>
   );
 });

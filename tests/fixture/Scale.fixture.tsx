@@ -22,8 +22,6 @@ import {
   Select,
   Switch,
   Table,
-  Tabs,
-  Text,
   Theme,
   Tree,
   type ControlSize,
@@ -138,15 +136,6 @@ function SizeRow({ size }: { size: ControlSize }) {
           Right
         </Button>
       </ButtonGroup>
-      <Tabs
-        aria-label="Views"
-        size={size}
-        items={['Overview', 'Activity'].map((name) => ({
-          value: name.toLowerCase(),
-          button: <Button variant="secondary">{name}</Button>,
-          content: null,
-        }))}
-      />
     </Row>
   );
 }
@@ -410,29 +399,6 @@ function TableSection() {
   );
 }
 
-function tabItems(kind: 'button' | 'ghost') {
-  return ['Overview', 'Activity', 'Settings'].map((name) => ({
-    value: name.toLowerCase(),
-    button: <Button variant={kind === 'button' ? 'secondary' : 'ghost'}>{name}</Button>,
-    content: <Text>{name} panel</Text>,
-  }));
-}
-
-function TabsSection() {
-  return (
-    <div className="density-columns">
-      <Column title='Tabs (default size="lg")'>
-        <Tabs aria-label="Tabs, Button" items={tabItems('button')} />
-        <Tabs aria-label="Tabs, ghost Button" items={tabItems('ghost')} />
-      </Column>
-      <Column title='Tabs size="sm"'>
-        <Tabs aria-label="Small tabs, Button" size="sm" items={tabItems('button')} />
-        <Tabs aria-label="Small tabs, ghost Button" size="sm" items={tabItems('ghost')} />
-      </Column>
-    </div>
-  );
-}
-
 const destinations: Destination[] = [
   { label: 'Home', icon: <IconHome />, href: '#home', current: true },
   { label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 3 },
@@ -511,7 +477,6 @@ function DesktopSection() {
               Publish
             </Button>
           </div>
-          <Tabs aria-label="Views" items={tabItems('button')} />
           <ReportTable />
           <div className="density-row">
             <TextField label="Title" defaultValue="Quarterly report" />
@@ -602,7 +567,6 @@ const densitySections: Record<DensitySection, () => ReactNode> = {
   menu: MenuSection,
   tree: TreeSection,
   table: TableSection,
-  tabs: TabsSection,
   navigation: NavigationSection,
   desktop: DesktopSection,
   layouts: LayoutsSection,

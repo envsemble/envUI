@@ -21,7 +21,7 @@ avoidWhen:
   - text: A list of questions or sections whose answers people open one at a time.
     use: Accordion
   - text: Switching between views of the same content.
-    use: Tabs
+    use: SegmentedControl
   - text: Details beside a control that close when people move on.
     use: Popover
 components:

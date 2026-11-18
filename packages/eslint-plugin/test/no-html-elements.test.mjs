@@ -66,7 +66,7 @@ ruleTester.run('no-html-elements', rule, {
     ...named('A widget role on the component it names', [
       '<Tree role="tree" aria-label="Files" items={items} />',
       '<Dialog role="alertdialog" title="Delete?" />',
-      '<Tabs role="tablist" items={items} />',
+      '<DocumentTabs role="tablist" aria-label="Open files" items={items} />',
     ]),
     ...named('An envUI component that renders the role itself; a role on it refines its own', [
       'import { Popover, Spinner } from \'@envsemble/envui\'; <><Popover role="dialog" /><Spinner role="progressbar" /></>;',
@@ -430,7 +430,15 @@ import { Button } from '@envsemble/envui';
             }),
           ],
         },
-        { code: '<div role="tablist" />', errors: [uses('Tabs', '<div role="tablist">')] },
+        {
+          code: '<div role="tablist" />',
+          errors: [
+            uses('SegmentedControl', '<div role="tablist">', {
+              alternatives: ', or DocumentTabs for documents people open and close',
+              imports: 'SegmentedControl, DocumentTabs',
+            }),
+          ],
+        },
         { code: '<div role="tree" />', errors: [uses('Tree', '<div role="tree">')] },
         { code: '<div role="tooltip" />', errors: [uses('Tooltip', '<div role="tooltip">')] },
         {

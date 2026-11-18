@@ -18,7 +18,6 @@ Layout, navigation and overlays place what applications give them without stylin
 Breaking changes:
 
 - TopBar's `actions` is renamed `end`: write `<TopBar end={…} />`. The parts `env-top-bar-actions` is gone; the end is `env-top-bar-end`, and the bar adds `env-top-bar-lead`, `env-top-bar-middle`, `env-top-bar-center` and `env-top-bar-title-text`, with `data-centered` on the bar. An `img` or `svg` in TopBar's or PageHeader's `start` is no longer sized for it: use a Graphic.
-- Tabs' `orientation` is gone, with `orientation="vertical"` and the rail's `data-orientation` state, whose `vertical` value styled a column: a side list of sections is a NavigationDrawer.
 - NavigationDrawer's part `env-navigation-drawer-branch-row` is renamed `env-navigation-drawer-row`, which also holds a destination with an `end`. A drawer is no longer as wide as its longest destination between 15 and 20 rem: it is the drawer width, 17.5 rem, within its container.
 - Panes' `open` and `defaultOpen` default to `null` rather than `false`; an application that keeps `open` as `false` until people open the pane now has the pane closed side by side too: start it at `null`. Panes.Supporting shows its close button side by side unless `closeButton={false}`. Each pane's content is in `env-panes-body`, which scrolls in place of the pane, under `env-panes-header`.
 - Breadcrumbs' item `label` is a string.

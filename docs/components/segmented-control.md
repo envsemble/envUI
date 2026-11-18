@@ -23,8 +23,6 @@ avoidWhen:
     use: Select
   - text: Options that each need a sentence to explain them.
     use: RadioGroup
-  - text: Each option shows a panel of its own, such as a project's summary and activity.
-    use: Tabs
 components:
   - SegmentedControl
 examples:

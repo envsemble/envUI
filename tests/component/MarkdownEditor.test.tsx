@@ -8,7 +8,7 @@ beforeEach(() => {
   mount(fixture);
 });
 
-const tab = (scope: Locator, name: string) => scope.getByRole('tab', { name, exact: true });
+const tab = (scope: Locator, name: string) => scope.getByRole('radio', { name, exact: true });
 const button = (scope: Locator, name: string) => scope.getByRole('button', { name, exact: true });
 const textarea = (locator: Locator) => locator.element() as HTMLTextAreaElement;
 const isShown = (locator: Locator) => expect.poll(() => shown(locator)).toBe(true);
@@ -95,12 +95,10 @@ test('submitting an empty preview reveals and focuses the required native source
   await isShown(form.getByText('Nothing to preview.'));
   const write = form
     .element()
-    .querySelector<HTMLElement>(
-      `[role="tabpanel"][aria-labelledby="${tab(form, 'Write').element().id}"]`,
-    )!;
+    .querySelector<HTMLElement>('.env-markdown-editor-view:has(textarea)')!;
   await expect.poll(() => shown(page.elementLocator(write))).toBe(false);
   await form.getByRole('button', { name: 'Submit required Markdown' }).click();
-  await expect.element(tab(form, 'Write')).toHaveAttribute('aria-selected', 'true');
+  await expect.element(tab(form, 'Write')).toHaveAttribute('aria-checked', 'true');
   await expect.element(form.getByRole('textbox', { name: 'Required source' })).toHaveFocus();
   expect(form.getByTestId('required-markdown-submissions').element().textContent).toBe('0');
 });

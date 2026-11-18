@@ -1,11 +1,8 @@
-import { useState } from 'react';
 import {
   AnimatedNumber,
   Badge,
   Button,
   DiffStat,
-  Tabs,
-  Text,
   Theme,
   type ColorScheme,
   Row,
@@ -24,56 +21,8 @@ const emphasis = {
 const variants = ['primary', 'secondary', 'outlined', 'text', 'important'] as const;
 
 export default function ButtonCountsFixture({ theme }: { theme: ColorScheme }) {
-  const [tab, setTab] = useState('submissions');
-  const [view, setView] = useState('editor');
   return (
     <Theme theme={theme} data-testid={`button-counts-${theme}`} className="fixture-section">
-      <Tabs
-        aria-label={`Form views ${theme}`}
-        value={tab}
-        onValueChange={(next) => setTab(next ?? 'submissions')}
-        items={[
-          {
-            value: 'submissions',
-            button: (
-              <Button>
-                Submissions <Badge count={24} tone="primary" variant="solid" />
-              </Button>
-            ),
-            content: <Text>Submissions</Text>,
-          },
-          {
-            value: 'drafts',
-            button: (
-              <Button>
-                Drafts <Badge count={3} />
-              </Button>
-            ),
-            content: <Text>Drafts</Text>,
-          },
-        ]}
-      />
-      <Tabs
-        aria-label={`Editor views ${theme}`}
-        value={view}
-        onValueChange={(next) => setView(next ?? 'editor')}
-        items={[
-          {
-            value: 'editor',
-            button: <Button variant="secondary">Editor</Button>,
-            content: <Text>Editor</Text>,
-          },
-          {
-            value: 'diffs',
-            button: (
-              <Button variant="secondary">
-                Diffs <DiffStat additions={124} deletions={37} />
-              </Button>
-            ),
-            content: <Text>Diffs</Text>,
-          },
-        ]}
-      />
       <Row wrap align="center" gap={4}>
         {variants.map((variant) => (
           <Button key={variant} {...emphasis[variant]}>

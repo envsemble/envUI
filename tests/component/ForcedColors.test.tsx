@@ -39,7 +39,6 @@ const states: Record<string, [state: Target, rest: Target]> = {
     ['.env-segmented-control-item'],
     ['.env-segmented-control-item', { index: 1 }],
   ],
-  'the selected tab': [['[role=tab]'], ['[role=tab]', { index: 1 }]],
   'the selected navigation item': [
     ['.env-navigation-drawer-item[data-current]'],
     ['.env-navigation-drawer-item:not([data-current])'],
@@ -234,7 +233,6 @@ test(
 
     const fillStates: Record<string, 'highlight' | 'outline' | 'dashed'> = {
       'the chosen segment': 'highlight',
-      'the selected tab': 'highlight',
       'the selected navigation item': 'highlight',
       'the current rail destination': 'highlight',
       'a switch that is on': 'highlight',
@@ -301,7 +299,6 @@ interface FocusCase {
 }
 
 const focusCases: FocusCase[] = [
-  { name: 'the selected tab', ring: ['[role=tab][aria-selected=true]'], over: 'canvas' },
   {
     name: 'the selected navigation item',
     ring: ['.env-navigation-drawer-item[data-current]'],

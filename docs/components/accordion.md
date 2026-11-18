@@ -18,7 +18,7 @@ avoidWhen:
   - text: One optional detail next to other content.
     use: Disclosure
   - text: Switching between views of the same content.
-    use: Tabs
+    use: SegmentedControl
 components:
   - Accordion
 examples:

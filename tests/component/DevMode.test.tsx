@@ -221,11 +221,11 @@ test('opened over the page, it covers it until Escape, and shows the nodes and t
     .getByRole('complementary', { name: 'Dev mode inspector' })
     .getByRole('region', { name: 'Details of row "painted"' });
   await expect.poll(() => details.query()?.textContent).toContain('Layout never paints');
-  await panel().getByRole('tab', { name: 'Readout' }).click();
+  await panel().getByRole('radio', { name: 'Readout' }).click();
   await expect
     .poll(
       () =>
-        panel().getByRole('tabpanel', { name: 'Readout' }).element().querySelector('pre')
+        panel().getByRole('region', { name: 'Readout', exact: true }).element().querySelector('pre')
           ?.textContent,
     )
     .toContain('scaffold "app"');
@@ -405,11 +405,11 @@ test(
     expect(right.element().getAttribute('aria-valuetext')).toMatch(/^iPhone SE · 375×667px/);
     expect([innerWidth, innerHeight]).toEqual([1280, 720]);
     expect(box(view())).toEqual(viewBox);
-    await scope.getByRole('tab', { name: 'Readout' }).click();
+    await scope.getByRole('radio', { name: 'Readout' }).click();
     await expect
       .poll(
         () =>
-          scope.getByRole('tabpanel', { name: 'Readout' }).element().querySelector('pre')
+          scope.getByRole('region', { name: 'Readout', exact: true }).element().querySelector('pre')
             ?.textContent,
       )
       .toContain('scaffold "app" · 23.44×');
@@ -582,9 +582,9 @@ test('each sidebar hides from its header, comes back from its corner, resizes by
   await mouse.up();
   await expect.poll(() => width(inspector())).toBeGreaterThan(720);
   await inspectorHandle.dblClick();
-  await panel().getByRole('tab', { name: 'Readout' }).click();
+  await panel().getByRole('radio', { name: 'Readout' }).click();
   const readout = () =>
-    panel().getByRole('tabpanel', { name: 'Readout' }).element().querySelector('pre')!;
+    panel().getByRole('region', { name: 'Readout', exact: true }).element().querySelector('pre')!;
   await expect.poll(() => readout().textContent).toContain('scaffold "app"');
   expect({
     overflow: readout().scrollWidth - readout().clientWidth,
@@ -607,7 +607,7 @@ test(
   'in a short window the wheel scrolls the tree to its last node, the inspector and the device menu, and the page once dev mode closes',
   { tags: ['engines'] },
   async () => {
-    await page.viewport(1280, 300);
+    await page.viewport(1280, 240);
     await open();
     const scrollY = () => document.scrollingElement!.scrollTop;
     await openOver();
@@ -617,7 +617,7 @@ test(
     ];
     const wheelOver = async (target: Locator) => {
       const { x, y, width, height } = box(target);
-      await mouse.move(x + width / 2, (y + Math.min(y + height, 300)) / 2);
+      await mouse.move(x + width / 2, (y + Math.min(y + height, 240)) / 2);
       for (let turn = 0; turn < 12; turn += 1) await mouse.wheel(0, 200);
     };
     const atEnd = (target: Locator) =>
@@ -633,12 +633,12 @@ test(
     await atEnd(tree);
     await expect.element(tree.getByRole('treeitem', { name: /box "hidden"/ })).toBeInViewport();
     await tree.getByRole('treeitem', { name: /row "painted"/ }).click();
-    const details = panel().getByRole('tabpanel', { name: 'Details' });
+    const details = panel().getByRole('region', { name: 'Details', exact: true });
     await isShown(details.getByRole('region', { name: 'Details of row "painted"' }));
     await wheelOver(details);
     await atEnd(details);
-    await panel().getByRole('tab', { name: 'Readout' }).click();
-    const readout = panel().getByRole('tabpanel', { name: 'Readout' });
+    await panel().getByRole('radio', { name: 'Readout' }).click();
+    const readout = panel().getByRole('region', { name: 'Readout', exact: true });
     await expect
       .poll(() => readout.element().querySelector('pre')?.textContent)
       .toContain('problems (2):');

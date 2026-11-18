@@ -13,7 +13,9 @@ const content = [
   'env-color-picker-thumb',
   'env-color-swatch-sample',
   'env-select-trigger',
-  'env-tabs-indicator',
+  'env-segmented-control',
+  'env-segmented-control-item',
+  'env-segmented-control-thumb',
 ];
 
 test('fields and editors take the background of what they sit on, or a fill from their container property', async () => {
