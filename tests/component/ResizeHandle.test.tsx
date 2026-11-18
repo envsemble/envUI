@@ -69,12 +69,12 @@ test(
     expect(css(element, 'content', '::after')).not.toBe('none');
     const { x, y, width, height } = box(handle);
     await mouse.move(x + width / 2, y + height / 2);
-    await expect.poll(line).toBe(colorOf('--env-color-border-muted'));
+    await expect.poll(line).toBe(colorOf('--env-color-border-default'));
     expect(css(element, 'width', '::before')).toBe('1px');
     await mouse.down();
     await mouse.move(x + width / 2 + 20, y + height / 2, { steps: 3 });
     await mouse.move(0, 0, { steps: 3 });
-    await expect.poll(line).toBe(colorOf('--env-color-border-muted'));
+    await expect.poll(line).toBe(colorOf('--env-color-border-default'));
     await mouse.up();
     await expect.poll(line).toBe('rgba(0, 0, 0, 0)');
     element.blur();

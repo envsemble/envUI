@@ -10,10 +10,10 @@
             "$value": "{palette.gray.75}"
           },
           "hover": {
-            "$value": "{palette.gray.80}"
+            "$value": "{palette.neutral.70}"
           },
           "pressed": {
-            "$value": "{palette.gray.82}"
+            "$value": "{palette.neutral.70}"
           },
           "accent": {
             "$root": {

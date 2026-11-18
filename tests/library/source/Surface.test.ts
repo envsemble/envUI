@@ -33,9 +33,14 @@ test('every Surface background takes its role and the role’s states', () => {
       ['--_surface-pressed', '-pressed'],
     ]) {
       const token = `--env-color-bg-${background}${suffix}`;
+      const own = String.raw`var\(${token}\)`;
+      const value =
+        background === 'raised'
+          ? String.raw`light-dark\(\s*var\(--env-color-bg-default${suffix}\),\s*${own}\s*\)`
+          : own;
       assert.match(
         rule,
-        new RegExp(String.raw`${property}: var\(${token}\);`),
+        new RegExp(String.raw`${property}: ${value};`),
         `${background}: ${property}`,
       );
       assert.match(tokens, new RegExp(String.raw`${token}:`), `${token} is a token`);

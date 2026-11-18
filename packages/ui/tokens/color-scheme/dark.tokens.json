@@ -6,7 +6,7 @@
     "bg": {
       "page": {
         "$root": {
-          "$value": "{palette.neutral.92}"
+          "$value": "{palette.neutral.94}"
         },
         "hover": {
           "$value": "{palette.neutral.86}"
@@ -17,7 +17,7 @@
       },
       "recessed": {
         "$root": {
-          "$value": "{palette.neutral.94}"
+          "$value": "{palette.neutral.98}"
         },
         "hover": {
           "$value": "{palette.neutral.88}"
@@ -39,18 +39,18 @@
       },
       "muted": {
         "$root": {
-          "$value": "{palette.neutral.84}"
+          "$value": "{palette.neutral.82}"
         },
         "hover": {
           "$value": "{palette.neutral.75}"
         },
         "pressed": {
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.neutral.80}"
         }
       },
       "raised": {
         "$root": {
-          "$value": "{palette.neutral.84}"
+          "$value": "{palette.neutral.82}"
         },
         "hover": {
           "$value": "{palette.neutral.75}"
@@ -71,7 +71,7 @@
         }
       },
       "field": {
-        "$value": "{palette.neutral.92}"
+        "$value": "{palette.neutral.94}"
       },
       "backdrop": {
         "$root": {
@@ -95,13 +95,13 @@
       },
       "selected": {
         "$root": {
-          "$value": "{palette.gray.75}"
+          "$value": "{palette.gray.70}"
         },
         "hover": {
-          "$value": "{palette.gray.80}"
+          "$value": "{palette.gray.75}"
         },
         "pressed": {
-          "$value": "{palette.gray.84}"
+          "$value": "{palette.gray.75}"
         },
         "accent": {
           "$root": {
@@ -124,10 +124,10 @@
           }
         },
         "hover": {
-          "$value": "{palette.neutral.75}"
+          "$value": "{palette.neutral.80}"
         },
         "pressed": {
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.neutral.75}"
         }
       },
       "neutral": {
@@ -222,7 +222,7 @@
             "$value": "{palette.blue.50}"
           },
           "pressed": {
-            "$value": "{palette.blue.60}"
+            "$value": "{palette.blue.65}"
           }
         },
         "subtle": {
@@ -370,7 +370,7 @@
             "$value": "{palette.red.50}"
           },
           "pressed": {
-            "$value": "{palette.red.60}"
+            "$value": "{palette.red.65}"
           }
         },
         "muted": {
@@ -541,7 +541,7 @@
             "components": {
               "$ref": "#/palette/neutral/6/$value/components"
             },
-            "alpha": 0.18
+            "alpha": 0.07
           }
         },
         "pressed": {
@@ -550,7 +550,7 @@
             "components": {
               "$ref": "#/palette/neutral/6/$value/components"
             },
-            "alpha": 0.2
+            "alpha": 0.11
           }
         }
       },
@@ -744,10 +744,10 @@
           "$value": "{palette.neutral.40}"
         },
         "hover": {
-          "$value": "{palette.neutral.35}"
+          "$value": "{palette.neutral.25}"
         },
         "pressed": {
-          "$value": "{palette.neutral.30}"
+          "$value": "{palette.neutral.20}"
         }
       },
       "muted": {

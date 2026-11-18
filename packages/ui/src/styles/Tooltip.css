@@ -1,4 +1,15 @@
 @layer env.components {
+  .env-theme {
+    --_tooltip-lifted-fill: initial;
+  }
+  .env-theme[data-env-theme='dark']:not([data-env-contrast='high']) {
+    --_tooltip-lifted-fill: var(--env-color-bg-neutral-strong-hover);
+  }
+  @media (prefers-contrast: more) {
+    .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
+      --_tooltip-lifted-fill: initial;
+    }
+  }
   .env-tooltip-positioner {
     --_popup-layer: var(--env-z-tooltip);
     z-index: var(--env-z-tooltip);
@@ -30,9 +41,10 @@
       var(--available-width, var(--_tooltip-window-room))
     );
     padding: calc(0.15 * var(--_popup-row-height)) calc(0.25 * var(--_popup-row-height));
-    border: 1px solid var(--env-tooltip-outline, var(--_tooltip-edge, transparent));
+    border: 1px solid
+      var(--env-tooltip-outline, var(--_tooltip-edge, var(--_popup-frosted-edge, transparent)));
     border-radius: calc(0.3 * var(--_popup-row-height));
-    background: var(--env-tooltip-container, var(--_tooltip-fill));
+    background: var(--env-tooltip-container, var(--_tooltip-lifted-fill, var(--_tooltip-fill)));
     color: var(--env-tooltip-content, var(--env-color-fg-on-strong));
     box-shadow: var(--env-tooltip-shadow);
     -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);

@@ -86,7 +86,11 @@
     --_segmented-control-shadow: var(
       --_segmented-control-high-contrast-edge,
       0 1px 2px oklch(from var(--env-color-bg-page) calc(l * 0.25) c h / calc(0.62 - l * 0.48)),
-      0 0 0 0.5px oklch(from var(--env-color-fg-default) l c h / 0.08)
+      0 0 0 0.5px
+        light-dark(
+          oklch(from var(--env-color-fg-default) l c h / 0.08),
+          oklch(from var(--env-color-fg-default) l c h / 0.3)
+        )
     );
     position: relative;
     isolation: isolate;
@@ -180,11 +184,22 @@
     background: var(--_segmented-control-custom-fill, transparent);
   }
   .env-segmented-control-item:hover:not([data-checked]):not([data-disabled]) {
-    background: var(--_segmented-control-custom-fill, transparent);
+    /* contrast: segmented-control-hover */
+    --_segmented-control-hover-layer: rgb(
+      from var(--env-color-bg-neutral-subtle-hover) r g b / calc(alpha * 0.5)
+    );
+    background: var(--_segmented-control-custom-fill, var(--_segmented-control-hover-layer));
     color: var(--_segmented-control-option-hover-color, var(--env-color-fg-default));
   }
   .env-segmented-control-item:active:not([data-checked]):not([data-disabled]) {
-    background: var(--_segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+    /* contrast: segmented-control-pressed-layer */
+    --_segmented-control-pressed-standard: var(--env-color-bg-neutral-subtle-hover);
+    --_segmented-control-pressed-high: var(--_theme-high-contrast)
+      var(--env-color-bg-neutral-subtle-pressed);
+    background: var(
+      --_segmented-control-custom-fill,
+      var(--_segmented-control-pressed-high, var(--_segmented-control-pressed-standard))
+    );
     color: var(--_segmented-control-option-pressed-color, var(--env-color-fg-muted-pressed));
   }
   .env-segmented-control-item[data-checked] {
@@ -246,6 +261,10 @@
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
   }
+  .env-segmented-control-item[data-disabled][data-checked] {
+    opacity: 1;
+    color: var(--env-color-fg-disabled);
+  }
   .env-segmented-control-item-count {
     font-size: 0.8125em;
     font-variant-numeric: tabular-nums;
@@ -291,7 +310,8 @@
     .env-segmented-control-item[data-checked] :where(*) {
       color: inherit;
     }
-    .env-segmented-control-item[data-disabled] {
+    .env-segmented-control-item[data-disabled],
+    .env-segmented-control-item[data-disabled][data-checked] {
       color: GrayText;
     }
     .env-segmented-control-item[data-checked]:focus-visible {

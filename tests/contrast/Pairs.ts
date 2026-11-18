@@ -73,6 +73,33 @@ const treeRowPressed = '--env-color-bg-row-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
 const frosted = 'popup-frosted';
+const rowHighlight = 'popup-row-highlight';
+const sliderFill = 'slider-fill';
+const segmentHoverLayer = 'segmented-control-hover';
+const segmentPressedLayer = 'segmented-control-pressed-layer';
+const segmentPressedStandard = {
+  contrast: 'standard',
+  rationale:
+    'At high contrast a pressed segment takes the pressed state layer (SegmentedControl.css), measured there under the same pairs.',
+} as const;
+const segmentPressedAtHigh = {
+  contrast: 'high',
+  rationale:
+    'A pressed segment at high contrast (SegmentedControl.css); segmented-control-pressed-layer is measured at standard contrast.',
+} as const;
+const sliderFillStandard = {
+  contrast: 'standard',
+  rationale:
+    'At high contrast the slider fills with the pressed state layer (Slider.css), measured there under the same pairs.',
+} as const;
+const sliderFillAtHigh = {
+  contrast: 'high',
+  rationale:
+    'The slider fill at high contrast (Slider.css); slider-fill is measured at standard contrast.',
+} as const;
+const menubarPressed = 'menubar-trigger-pressed';
+const readOnlyFill = 'text-field-read-only';
+const ghostFieldHover = 'text-field-ghost-hover';
 const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
 const tooltipFrosted = 'tooltip-frosted';
@@ -90,6 +117,10 @@ const segmentThumbAtHigh = {
     'The thumb at high contrast (SegmentedControl.css); segmented-control-thumb is measured at standard contrast.',
 } as const;
 const segmentTracks = [page, surface, muted, raised].map((below) => [fill, below] as const);
+const meterTrack = 'meter-track';
+const avatarGroupOverflow = 'avatar-group-overflow';
+const badgeNeutralSoft = 'badge-neutral-soft';
+const badgeNeutralSoftText = 'badge-neutral-soft-text';
 const tooltipKey = 'tooltip-key';
 const tooltipWorstBackdrop = 'tooltip-worst-backdrop';
 const frostedOverWorst = [
@@ -163,6 +194,17 @@ const tonal = {
   contrast: 'standard',
   rationale:
     'The tone’s stronger tint fills an alert and a soft badge only at standard contrast; at high contrast they take its softer tint, measured there.',
+} as const;
+
+const neutralBadgeStandard = {
+  contrast: 'standard',
+  rationale:
+    'At high contrast a soft neutral badge takes the neutral fill (Badge.css), measured there under the same text.',
+} as const;
+const neutralBadgeAtHigh = {
+  contrast: 'high',
+  rationale:
+    'A soft neutral badge at high contrast (Badge.css); badge-neutral-soft is measured at standard contrast.',
 } as const;
 
 function merged(list: readonly ContrastPair[]): ContrastPair[] {
@@ -322,6 +364,37 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...text(
     '--env-color-fg-muted',
+    [page, surface, muted, raised].map((ground) => [fill, ground]),
+    'The placeholder and icons of a ghost field at rest',
+  ),
+  ...text(
+    textFieldAffix,
+    [page, surface, muted, raised].map((ground) => [fill, ground]),
+    'A prefix or a suffix in a ghost field at rest',
+  ),
+  ...text(
+    '--env-color-fg-muted-hover',
+    [page, surface, muted, raised].map((ground) => [ghostFieldHover, ground]),
+    'The placeholder, prefix, suffix and icons of a ghost field under the pointer',
+  ),
+  ...(
+    [
+      [
+        '--env-color-fg-default',
+        'The value of an outlined or ghost read-only field on its faint fill',
+      ],
+      ['--env-color-fg-muted', 'The placeholder and icons of an outlined or ghost read-only field'],
+      [textFieldAffix, 'A prefix or a suffix in an outlined or ghost read-only field'],
+    ] as const
+  ).flatMap(([fg, note]) =>
+    text(
+      fg,
+      [page, surface, muted, raised].map((ground) => [readOnlyFill, ground]),
+      note,
+    ),
+  ),
+  ...text(
+    '--env-color-fg-muted',
     [page, surface, raised].flatMap((ground) => [ground, [layerHover, ground]]),
     'The icon of a pager link, at rest and hovered',
   ),
@@ -397,7 +470,15 @@ const registry: readonly ContrastPair[] = merged([
       [layerPressed, surface],
       [layerHover, fill, page],
     ],
-    'Quiet buttons and menubar triggers on hover and press, and hovered segments',
+    'Quiet buttons on hover and press, and menubar triggers on hover',
+  ),
+  ...text(
+    '--env-color-fg-default',
+    [
+      [menubarPressed, page],
+      [menubarPressed, surface],
+    ],
+    'A menubar trigger pressed or with its menu open, on the hover layer doubled',
   ),
   ...text(
     '--env-color-fg-danger',
@@ -460,6 +541,11 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...text('--env-color-fg-default', ['document-tabs-strip'], 'Text on the document tab strip'),
   ...text(
+    '--env-color-fg-default',
+    [['--env-color-bg-neutral-subtle-pressed', 'document-tabs-strip']],
+    'A pressed inactive document tab, on its layer over the strip; under the pointer it takes a fill halfway from the strip to the panel, where the text on the strip measures it',
+  ),
+  ...text(
     '--env-color-fg-danger',
     [muted],
     'The message of an invalid field on a muted surface; the tone pairs below measure the others',
@@ -488,6 +574,11 @@ const registry: readonly ContrastPair[] = merged([
     '--env-color-border-default',
     [field, page, surface, muted, raised, popup],
     'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
+  ),
+  ...nonText(
+    'composer-hover-edge',
+    [page, surface, muted, raised, popup],
+    'The only boundary of the composer under the pointer, 40% of the way from its rest edge to the default text color',
   ),
   ...nonText(
     '--env-color-border-danger-emphasis',
@@ -569,44 +660,52 @@ const registry: readonly ContrastPair[] = merged([
     'Check marks in a menu, on a frosted popup over the worst behind it',
   ),
   ...[page, surface, muted].flatMap((behind) => [
-    ...text('--env-color-fg-default', [[fill, frosted, behind]], 'A highlighted row, a key chip'),
+    ...text(
+      '--env-color-fg-default',
+      [[rowHighlight, frosted, behind]],
+      'A highlighted row, a key chip',
+    ),
     ...text(
       '--env-color-fg-muted',
-      [[fill, frosted, behind]],
+      [[rowHighlight, frosted, behind]],
       'A highlighted row’s description and icon, and keys as chips at rest',
     ),
     ...text(
       '--env-color-fg-danger',
-      [[fill, frosted, behind]],
+      [[rowHighlight, frosted, behind]],
       'A destructive menu item’s label and icon on its highlighted row',
     ),
     ...text(
       '--env-color-fg-default',
-      [[fill, fill, frosted, behind]],
+      [[fill, rowHighlight, frosted, behind]],
       'Key chips on a highlighted row',
     ),
     ...text('--env-color-fg-default', [['--env-color-bg-neutral-muted-pressed', frosted, behind]]),
-    ...different(fill, [[frosted, behind]], 'A highlighted option or menu item on a frosted popup'),
+    ...different(
+      rowHighlight,
+      [[frosted, behind]],
+      'A highlighted option or menu item on a frosted popup',
+    ),
     ...distinct(
       selectedAccent,
-      [[fill, frosted, behind]],
+      [[rowHighlight, frosted, behind]],
       'The chosen option of the accent selection against a highlighted one on a frosted popup',
     ),
     ...focus(
       '--env-color-border-focus',
-      [[fill, frosted, behind]],
+      [[rowHighlight, frosted, behind]],
       'The inset ring of a highlighted row on a frosted popup',
     ),
   ]),
   ...text(
     '--env-color-fg-on-strong',
     [[tooltipFrosted, tooltipWorstBackdrop]],
-    'Text on a frosted tooltip, over the worst behind it',
+    'Text on a tooltip, frosted in light and at high contrast and a solid chip in dark, over the worst behind it',
   ),
   ...text(
     '--env-color-fg-on-strong',
     [[tooltipKey, tooltipFrosted, tooltipWorstBackdrop]],
-    'A key chip in a frosted tooltip, over the worst behind it',
+    'A key chip in a tooltip, frosted in light and at high contrast and a solid chip in dark, over the worst behind it',
   ),
   ...text(
     '--env-color-fg-muted',
@@ -652,21 +751,12 @@ const registry: readonly ContrastPair[] = merged([
     'Details of selected tree rows and captions in selected table rows',
   ),
   ...text(
-    '--env-color-fg-muted',
+    '--env-color-fg-default',
     [
-      [layerHover, fill, page],
-      [layerPressed, fill, page],
+      [layerHover, fill, raised],
+      [layerPressed, fill, raised],
     ],
-    'Unselected tabs on hover and press',
-  ),
-  ...text(
-    '--env-color-fg-control',
-    [
-      [fill, fill, page],
-      ['--env-color-bg-neutral-muted-hover', fill, page],
-      [fill, fill, surface],
-    ],
-    'The active tab of a secondary tab rail',
+    'A sortable header cell of a framed table under the pointer and pressed, on its band',
   ),
   ...[
     [segmentThumb, segmentThumbStandard] as const,
@@ -695,14 +785,23 @@ const registry: readonly ContrastPair[] = merged([
     ),
   ]),
   ...text(
-    '--env-color-fg-default',
-    segmentTracks,
-    'The label of a segment not chosen under the pointer, on the track with no layer',
+    '--env-color-fg-muted-hover',
+    segmentTracks.map((track) => [segmentHoverLayer, ...track]),
+    'The label of a segment not chosen under the pointer, on half the faint state layer',
   ),
-  ...text(
+  ...on(
+    'text',
+    '--env-color-fg-muted-pressed',
+    segmentTracks.map((track) => [segmentPressedLayer, ...track]),
+    'The label of a segment not chosen while pressed, on the faint state layer',
+    segmentPressedStandard,
+  ),
+  ...on(
+    'text',
     '--env-color-fg-muted-pressed',
     segmentTracks.map((track) => [layerPressed, ...track]),
-    'The label of a segment not chosen, on its state layer while pressed',
+    'The label of a segment not chosen while pressed, on the pressed state layer',
+    segmentPressedAtHigh,
   ),
   ...text(
     '--env-color-fg-control',
@@ -776,6 +875,13 @@ const registry: readonly ContrastPair[] = merged([
     'An item of the accent selection under the pointer against an unselected one under the pointer: navigation items, Select options, tree and table rows',
   ),
   ...different(selectedHover, [selected], 'A selected item under the pointer'),
+  ...[selectedHover, selectedPressed].flatMap((state) =>
+    distinct(
+      state,
+      [popup, surface, page, raised, recessed],
+      'A selected item under the pointer and pressed against the surfaces it lies on, the recessed well of a preview included',
+    ),
+  ),
   ...different(selectedAccentHover, [selectedAccent], 'An accent-selected item under the pointer'),
   ...different(popupHover, [popup], 'A highlighted option or menu item'),
   ...different(
@@ -789,6 +895,20 @@ const registry: readonly ContrastPair[] = merged([
     'A control without a fill under the pointer, such as a ghost button',
   ),
   ...different(treeRowHover, [surface, page, raised], 'A tree or table row under the pointer'),
+  ...text(
+    '--env-color-fg-default',
+    [treeRowHover, treeRowPressed].flatMap((layer) =>
+      [page, surface, raised].map((ground) => [layer, ground]),
+    ),
+    'A tree row under the pointer and pressed, and a table row under the pointer',
+  ),
+  ...text(
+    '--env-color-fg-muted',
+    [treeRowHover, treeRowPressed].flatMap((layer) =>
+      [page, surface, raised].map((ground) => [layer, ground]),
+    ),
+    'Details of a tree row and captions of a table row, under the pointer and pressed',
+  ),
   ...distinct(
     '--env-color-fg-on-selected-accent',
     ['--env-color-fg-control', '--env-color-fg-default'],
@@ -1019,41 +1139,65 @@ const registry: readonly ContrastPair[] = merged([
   ...text('--env-color-fg-muted', ['--env-color-bg-raised-hover'], 'Pager link captions on hover'),
   ...nonText(
     '--env-color-bg-primary-emphasis',
-    [page, surface, muted, raised, [fill, page], [fill, surface]],
+    [page, surface, muted, raised, [meterTrack, page], [meterTrack, surface]],
     'Spinners, and meter indicators on their track',
   ),
-  ...text(
+  ...on(
+    'text',
     '--env-color-fg-default',
-    [
-      ['--env-color-bg-neutral-subtle-pressed', fill, page],
-      ['--env-color-bg-neutral-subtle-pressed', fill, surface],
-      ['--env-color-bg-neutral-subtle-pressed', fill, muted],
-      ['--env-color-bg-neutral-subtle-pressed', fill, raised],
-      ['--env-color-bg-neutral-subtle-pressed', fill, popup],
-    ],
+    [page, surface, muted, raised, popup].map((ground) => [sliderFill, fill, ground]),
     'The label, the value and the handle of a slider on its fill',
+    sliderFillStandard,
   ),
-  ...different(
-    '--env-color-bg-neutral-subtle-pressed',
-    [
-      [fill, page],
-      [fill, surface],
-      [fill, muted],
-      [fill, raised],
-      [fill, popup],
-    ],
+  ...on(
+    'text',
+    '--env-color-fg-default',
+    [page, surface, muted, popup].map((ground) => [layerPressed, fill, ground]),
+    'The label, the value and the handle of a slider on its fill; over a raised surface, the sortable header cell’s pair measures it in both contrasts',
+    sliderFillAtHigh,
+  ),
+  ...nonText(
+    '--env-color-border-danger-emphasis',
+    [page, surface, muted, raised, popup].map((ground) => [fill, ground]),
+    'The inset edge of an invalid slider, on its track',
+  ),
+  ...on(
+    'difference',
+    sliderFill,
+    [page, surface, muted, raised, popup].map((ground) => [fill, ground]),
     'The fill of a slider against its track',
+    sliderFillStandard,
+  ),
+  ...on(
+    'difference',
+    layerPressed,
+    [page, surface, muted, raised, popup].map((ground) => [fill, ground]),
+    'The fill of a slider against its track',
+    sliderFillAtHigh,
   ),
   ...nonText(
     '--env-color-bg-primary-emphasis',
-    [
-      [fill, page],
-      [fill, surface],
-      [fill, muted],
-      [fill, raised],
-      [fill, popup],
-    ],
-    'The indicators of Meter and Progress on their track, the neutral fill with no outline, on every surface',
+    [page, surface, muted, raised, popup].map((ground) => [meterTrack, ground]),
+    'The indicators of Meter and Progress on their track, the neutral fill’s hover grade with no outline, on every surface',
+  ),
+  ...text(
+    '--env-color-fg-default',
+    [page, surface, row, muted, raised, popup].map((ground) => [avatarGroupOverflow, ground]),
+    'The count of an AvatarGroup’s overflow chip on its neutral fill',
+  ),
+  ...on(
+    'text',
+    badgeNeutralSoftText,
+    [page, surface, row, muted, raised, popup].map((ground) => [badgeNeutralSoft, ground]),
+    'A soft neutral badge on the page, a pane, a row, a muted or raised surface or a popup',
+    neutralBadgeStandard,
+  ),
+  ...on(
+    'text',
+    badgeNeutralSoftText,
+    [page, surface, row, muted, raised, popup].map((ground) => [fill, ground]),
+    'A soft neutral badge at high contrast, on the page, a pane, a row, a muted or raised surface or a popup',
+    neutralBadgeAtHigh,
   ),
   ...distinct(
     'heatmap-accent-lowest',
@@ -1201,10 +1345,12 @@ const derived: Readonly<Record<string, string>> = {
     'color-mix(in srgb, var(--env-color-fg-primary) 30%, var(--env-color-bg-page))',
   'popup-frosted': 'color-mix(in srgb, var(--_popup-fill) var(--env-popup-opacity), transparent)',
   'popup-fill': 'var(--_popup-fill)',
+  'popup-row-highlight': 'var(--_popup-row-highlight)',
   'popup-worst-backdrop': 'light-dark(#000, #fff)',
-  'tooltip-frosted': tooltipFill,
+  'tooltip-frosted': `var(--_tooltip-lifted-fill, ${tooltipFill})`,
   'tooltip-key': ofLabel(tooltipKeyFill, '--env-color-fg-on-strong'),
   'tooltip-worst-backdrop': '#fff',
+  'composer-hover-edge': markedColor('packages/ui/src/styles/Composer.css', 'composer-hover-edge'),
   'text-field-affix': markedColor('packages/ui/src/styles/TextField.css', 'text-field-affix'),
   'segmented-control-thumb': markedColor(
     'packages/ui/src/styles/SegmentedControl.css',
@@ -1213,6 +1359,37 @@ const derived: Readonly<Record<string, string>> = {
   'segmented-control-thumb-high': markedColor(
     'packages/ui/src/styles/SegmentedControl.css',
     'segmented-control-thumb-high',
+  ),
+  'segmented-control-hover': markedColor(
+    'packages/ui/src/styles/SegmentedControl.css',
+    'segmented-control-hover',
+  ),
+  'segmented-control-pressed-layer': markedColor(
+    'packages/ui/src/styles/SegmentedControl.css',
+    'segmented-control-pressed-layer',
+  ),
+  'slider-fill': markedColor('packages/ui/src/styles/Slider.css', 'slider-fill'),
+  'meter-track': markedColor('packages/ui/src/styles/Meter.css', 'meter-track'),
+  'avatar-group-overflow': markedColor(
+    'packages/ui/src/styles/AvatarGroup.css',
+    'avatar-group-overflow',
+  ),
+  'badge-neutral-soft': markedColor('packages/ui/src/styles/Badge.css', 'badge-neutral-soft'),
+  'badge-neutral-soft-text': markedColor(
+    'packages/ui/src/styles/Badge.css',
+    'badge-neutral-soft-text',
+  ),
+  'menubar-trigger-pressed': markedColor(
+    'packages/ui/src/styles/Menubar.css',
+    'menubar-trigger-pressed',
+  ),
+  'text-field-read-only': markedColor(
+    'packages/ui/src/styles/TextField.css',
+    'text-field-read-only',
+  ),
+  'text-field-ghost-hover': markedColor(
+    'packages/ui/src/styles/TextField.css',
+    'text-field-ghost-hover',
   ),
 };
 

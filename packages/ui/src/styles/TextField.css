@@ -63,6 +63,7 @@
   }
 
   .env-text-field-control {
+    --_text-field-hint: initial;
     --_text-field-border-base: var(--_text-field-edge, var(--env-color-border-default));
     --_text-field-interaction-color: var(
       --_text-field-accent,
@@ -75,6 +76,12 @@
     );
     --_text-field-border-color: var(--_text-field-border-base);
     --_text-field-frame-color: var(--_text-field-border-color);
+    /* contrast: text-field-read-only */
+    --_text-field-read-only-fill: color-mix(
+      in srgb,
+      var(--env-color-bg-neutral-muted) 45%,
+      transparent
+    );
     --env-icon-size: var(--env-control-icon-size);
     position: relative;
     min-width: 0;
@@ -133,30 +140,47 @@
     caret-color: var(--_text-field-accent, var(--env-color-border-primary-emphasis));
   }
   .env-text-field-input::placeholder {
-    color: var(--env-color-fg-muted);
+    color: var(--_text-field-hint, var(--env-color-fg-muted));
     opacity: 1;
   }
   .env-text-field-control[data-variant='ghost'] {
-    background: var(
-      --_text-field-ghost-solid,
-      color-mix(in srgb, var(--env-color-bg-neutral-muted) 25%, transparent)
+    /* contrast: text-field-ghost-hover */
+    --_text-field-ghost-hover: color-mix(
+      in srgb,
+      var(--env-color-bg-neutral-muted-hover) 67%,
+      var(--env-color-bg-neutral-muted)
     );
+    background: var(--_text-field-ghost-solid, var(--env-color-bg-neutral-muted));
   }
-  .env-text-field-control[data-variant='ghost']:not(
-      :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),
+  .env-text-field-control[data-variant='ghost']:is(
+      :has(> .env-text-field-input:disabled),
       [data-disabled]
     ) {
     background: var(
       --_text-field-ghost-solid,
-      color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent)
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 70%, transparent)
     );
+  }
+  .env-text-field-control[data-variant='ghost']:has(
+      > .env-text-field-input:is([readonly], [aria-readonly='true'])
+    ):not(:has(> .env-text-field-input:disabled), [data-disabled]) {
+    background: var(--_text-field-ghost-solid, var(--_text-field-read-only-fill));
   }
   @media (hover: hover) {
     .env-text-field-control[data-variant='ghost']:hover:not(
         :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),
         [data-disabled]
       ) {
-      background: var(--_text-field-ghost-solid, var(--env-color-bg-neutral-muted));
+      --_text-field-hint: var(--env-color-fg-muted-hover);
+      background: var(--_text-field-ghost-solid, var(--_text-field-ghost-hover));
+      color: var(--env-color-fg-muted-hover);
+    }
+    .env-text-field-control[data-variant='ghost']:hover:not(
+        :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),
+        [data-disabled]
+      )
+      > :is(.env-text-field-prefix, .env-text-field-suffix) {
+      color: var(--env-color-fg-muted-hover);
     }
   }
   .env-text-field-control[data-variant='ghost']:not(
@@ -174,6 +198,13 @@
       --_text-field-ghost-edge,
       var(--_text-field-ghost-focus-edge, var(--_text-field-border-color))
     );
+  }
+  .env-text-field-control[data-variant='outline']:has(
+      > .env-text-field-input:is([readonly], [aria-readonly='true'])
+    ):not(:has(> .env-text-field-input:disabled), [data-disabled]) {
+    background:
+      linear-gradient(var(--_text-field-read-only-fill), var(--_text-field-read-only-fill)),
+      var(--_text-field-well, transparent);
   }
   .env-text-field-control:has(> .env-text-field-input:is([readonly], [aria-readonly='true'])) {
     --_text-field-interaction-hover: var(--_text-field-border-base);
@@ -332,7 +363,7 @@
     min-inline-size: 0;
     overflow: hidden;
     /* contrast: text-field-affix */
-    color: color-mix(in srgb, var(--env-color-fg-muted) 85%, transparent);
+    color: var(--env-color-fg-muted);
     font: var(--env-type-body);
     font-size: var(--env-control-font-size);
     white-space: nowrap;

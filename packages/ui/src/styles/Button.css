@@ -462,6 +462,13 @@
     ) {
     background: color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent);
   }
+  .env-button[aria-pressed='true']:is(:disabled, [aria-disabled='true']):not([data-pending]) {
+    background: color-mix(
+      in srgb,
+      var(--_button-selected-base, var(--env-color-bg-selected)) 50%,
+      transparent
+    );
+  }
 
   .env-button:where([data-full-width]):not(.env-icon-button) {
     inline-size: 100%;
@@ -570,6 +577,10 @@
       forced-color-adjust: none;
       background: Highlight;
       color: HighlightText;
+    }
+    .env-button[aria-pressed='true']:is(:disabled, [aria-disabled='true']):not([data-pending]) {
+      background: GrayText;
+      color: Canvas;
     }
   }
 

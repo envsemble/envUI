@@ -2,7 +2,7 @@
 title: EmptyState
 summary: What a region shows when it has nothing to show, with a way to fill it.
 status: beta
-since: 1.1.0
+since: 2.0.0
 category: Feedback
 aliases:
   - empty

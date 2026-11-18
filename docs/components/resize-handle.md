@@ -2,7 +2,7 @@
 title: ResizeHandle
 summary: A handle people drag, or move with the keys, to resize what is beside it.
 status: beta
-since: 1.1.0
+since: 2.0.0
 category: App frame & layout
 aliases:
   - splitter

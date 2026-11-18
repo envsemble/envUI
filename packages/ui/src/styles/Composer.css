@@ -84,11 +84,16 @@
   }
   @media (hover: hover) {
     .env-composer:not([data-disabled]) .env-composer-surface:hover {
-      --_composer-border: var(--env-color-border-default-hover);
+      /* contrast: composer-hover-edge */
+      --_composer-border: color-mix(
+        in srgb,
+        var(--env-color-border-default-hover),
+        var(--env-color-fg-default) 40%
+      );
     }
   }
   .env-composer-surface:has(> .env-composer-input:focus) {
-    --_composer-border: var(--env-color-fg-muted);
+    --_composer-border: var(--env-color-border-focus);
   }
   .env-composer[data-disabled] .env-composer-surface {
     cursor: default;

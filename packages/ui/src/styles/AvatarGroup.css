@@ -220,7 +220,12 @@
     block-size: var(--_avatar-group-size);
     padding-inline: calc(var(--_avatar-group-size) / 6);
     border-radius: calc(var(--_avatar-group-size) / 2);
-    background: var(--env-color-bg-neutral-muted);
+    /* contrast: avatar-group-overflow */
+    --_avatar-group-overflow-fill: light-dark(
+      var(--env-color-bg-neutral-muted-hover),
+      color-mix(in srgb, var(--env-color-bg-neutral-muted-hover) 80%, transparent)
+    );
+    background: var(--_avatar-group-overflow-fill);
     color: var(--env-color-fg-default);
     font: var(--env-font-weight-semibold) calc(var(--_avatar-group-size) * 0.38) / 1
       var(--env-font-family);

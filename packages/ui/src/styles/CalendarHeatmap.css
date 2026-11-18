@@ -1,4 +1,15 @@
 @layer env.components {
+  .env-theme {
+    --_calendar-heatmap-lift: 0;
+  }
+  .env-theme[data-env-theme='dark']:not([data-env-contrast='high']) {
+    --_calendar-heatmap-lift: 0.12;
+  }
+  @media (prefers-contrast: more) {
+    .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
+      --_calendar-heatmap-lift: 0;
+    }
+  }
   .env-calendar-heatmap {
     --_calendar-heatmap-tone: var(--env-color-fg-primary);
     --_calendar-heatmap-cell: 0.75rem;
@@ -80,7 +91,11 @@
   .env-calendar-heatmap-swatch:not([data-level='0']) {
     background: color-mix(
       in srgb,
-      var(--_calendar-heatmap-tone) var(--_calendar-heatmap-mix),
+      var(--_calendar-heatmap-tone)
+        calc(
+          var(--_calendar-heatmap-mix) + (100% - var(--_calendar-heatmap-mix)) *
+            var(--_calendar-heatmap-lift, 0)
+        ),
       var(--env-color-bg-page)
     );
   }

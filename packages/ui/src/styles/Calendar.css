@@ -91,7 +91,7 @@
   .env-calendar-day[aria-disabled='true'] {
     cursor: default;
   }
-  .env-calendar-day[aria-disabled='true'] > .env-calendar-day-mark {
+  .env-calendar-day[aria-disabled='true'][aria-current='date'] > .env-calendar-day-mark {
     opacity: var(--env-state-disabled-opacity);
   }
   .env-calendar-day[aria-disabled='true']:not([aria-current='date']) > .env-calendar-day-mark {

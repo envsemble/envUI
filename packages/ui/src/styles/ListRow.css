@@ -31,7 +31,7 @@
   }
   .env-list-row:is([data-highlighted], [data-popup-open]) {
     --_kbd-fg: var(--env-color-fg-default);
-    background: var(--env-color-bg-neutral-muted);
+    background: var(--_popup-row-highlight);
   }
   .env-list-row[data-selected] {
     background: var(--env-color-bg-selected);

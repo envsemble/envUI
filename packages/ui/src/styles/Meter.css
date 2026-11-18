@@ -16,10 +16,15 @@
   .env-meter-track,
   .env-progress-track {
     --_meter-track-height: 0.625rem;
+    /* contrast: meter-track */
+    --_meter-track: light-dark(
+      var(--env-color-bg-neutral-muted-hover),
+      color-mix(in srgb, var(--env-color-bg-neutral-muted-hover) 80%, transparent)
+    );
     block-size: var(--_meter-track-height);
     overflow: hidden;
     border-radius: var(--env-radius-full);
-    background: var(--env-color-bg-neutral-muted);
+    background: var(--_meter-track);
   }
   .env-meter-indicator,
   .env-progress-indicator {
@@ -61,7 +66,7 @@
     flex: 1 1 0;
     overflow: hidden;
     border-radius: var(--env-radius-full);
-    background: var(--env-color-bg-neutral-muted);
+    background: var(--_meter-track);
   }
   .env-progress-segment::before {
     content: '';
@@ -79,7 +84,7 @@
     .env-progress[data-indeterminate] .env-progress-indicator {
       --_progress-indeterminate-stripe: color-mix(
         in srgb,
-        var(--env-color-bg-primary-emphasis) 35%,
+        var(--env-color-bg-primary-emphasis) 55%,
         transparent
       );
       inline-size: 100%;

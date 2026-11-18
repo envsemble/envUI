@@ -21,48 +21,48 @@
       "recessed": {
         "$root": {
           "$description": "A recessed surface: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background=\"recessed\". The deepest surface in every theme: below the default surface and the page. Everything measured on the page keeps its minimum on it.",
-          "$value": "{palette.gray.6}"
+          "$value": "{palette.gray.11}"
         },
         "hover": {
           "$description": "An interactive recessed surface under the pointer.",
-          "$value": "{palette.gray.10}"
+          "$value": "{palette.gray.14}"
         },
         "pressed": {
           "$description": "An interactive recessed surface while pressed.",
-          "$value": "{palette.gray.13}"
+          "$value": "{palette.gray.20}"
         }
       },
       "default": {
         "$root": {
           "$description": "The default surface: Surface, panes, navigation and sheets. A step apart from the page in every theme: lighter in dark, a faint tint of the white page in light.",
-          "$value": "{palette.gray.2}"
+          "$value": "{palette.gray.3}"
         },
         "hover": {
           "$description": "An interactive default surface, such as a card or a list row, under the pointer.",
-          "$value": "{palette.gray.6}"
+          "$value": "{palette.gray.7}"
         },
         "pressed": {
           "$description": "An interactive default surface while pressed. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.gray.9}"
+          "$value": "{palette.gray.10}"
         }
       },
       "muted": {
         "$root": {
           "$description": "The filled surface: Surface background=\"muted\", cards and list rows. A step apart from the default surface in every theme, so cards stand apart from a pane: lighter in dark, where the raised surface takes the same fill; in light a light gray, so cards and filled rows stand apart from the white page too.",
-          "$value": "{palette.gray.4}"
+          "$value": "{palette.gray.6}"
         },
         "hover": {
           "$description": "An interactive muted surface under the pointer.",
-          "$value": "{palette.gray.8}"
+          "$value": "{palette.gray.10}"
         },
         "pressed": {
           "$description": "An interactive muted surface while pressed.",
-          "$value": "{palette.gray.11}"
+          "$value": "{palette.gray.12}"
         }
       },
       "raised": {
         "$root": {
-          "$description": "A raised surface: Surface background=\"raised\", tables, docked panels and the pager. In dark a step above the default surface, with the filled surface’s fill; in light white, as the page is, so a table or the pager parts from the page by its frame and lifts off the panes and cards.",
+          "$description": "A raised surface: tables, docked panels, the pager and, in dark, Surface background=\"raised\". In dark a step above the default surface, with the filled surface’s fill; in light white, as the page is, so a table or the pager parts from the page by its frame and lifts off the panes and cards. In light Surface background=\"raised\" takes the default surface instead, so a raised panel reads as its own background on the page as it does in dark.",
           "$value": "{palette.neutral.0}"
         },
         "hover": {
@@ -89,8 +89,8 @@
         }
       },
       "field": {
-        "$description": "A well that keeps a fill of its own, such as the color picker's value button and code and references in rich text: in light the recessed gray, so it stands out on the page, a pane and a card. Text fields have none: they take the background of what they sit on.",
-        "$value": "{palette.gray.6}"
+        "$description": "A well that keeps a fill of its own, such as the color picker’s value button and code and references in rich text: in light a grade deeper than the muted surface, so it stands out on the page, a pane and a card. Text fields have none: they take the background of what they sit on.",
+        "$value": "{palette.gray.8}"
       },
       "backdrop": {
         "$root": {
@@ -117,15 +117,15 @@
       "selected": {
         "$root": {
           "$description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A neutral gray deeper than the surfaces in every theme, distinct from them at rest: ΔEOK 0.03 or more, 0.04 at high contrast. The item’s second cue, a bar, a check or its weight, tells it from a hovered item. Under Theme selection=\"accent\" it takes bg.selected.accent.",
-          "$value": "{palette.gray.11}"
+          "$value": "{palette.gray.15}"
         },
         "hover": {
-          "$description": "A selected item under the pointer: a step toward the surface from the selection.",
-          "$value": "{palette.gray.8}"
+          "$description": "A selected item under the pointer: in light a grade deeper than the selection, in dark a grade toward the surface and in dark high contrast a grade lighter, so in every theme it stays apart from the selection and from every surface it lies on.",
+          "$value": "{palette.gray.20}"
         },
         "pressed": {
-          "$description": "A selected item while pressed: another step toward the surface. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.gray.7}"
+          "$description": "A selected item while pressed: the hover’s grade, as no third grade lies between the surfaces and the one where muted text, the indicator and an inset focus ring would lose their minimums.",
+          "$value": "{palette.gray.20}"
         },
         "accent": {
           "$root": {
@@ -152,12 +152,24 @@
           }
         },
         "hover": {
-          "$description": "A navigation item that isn’t selected, under the pointer: a cool gray in every theme, a step quieter than the selection, so the hovered item never reads as the current one.",
-          "$value": "{palette.neutral.9}"
+          "$description": "A navigation item that isn’t selected, under the pointer: in light a translucent neutral layer, so it shows on every surface it lies on, in dark a cool gray; in every theme a step quieter than the selection, so the hovered item never reads as the current one.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/gray/92/$value/components"
+            },
+            "alpha": 0.08
+          }
         },
         "pressed": {
-          "$description": "A navigation item that isn’t selected, while pressed: two grades deeper than the hover in light. Its label and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.neutral.11}"
+          "$description": "A navigation item that isn’t selected, while pressed: in light a stronger translucent layer than the hover, in dark a grade from it. Its label and an inset focus ring keep their minimums on it.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/gray/92/$value/components"
+            },
+            "alpha": 0.13
+          }
         }
       },
       "neutral": {
@@ -246,15 +258,15 @@
         "emphasis": {
           "$root": {
             "$description": "The primary fill of chosen radios, checked checkboxes, switches that are on, the chosen calendar day, check marks, meters and spinners; paired with fg.on-emphasis. A saturated blue with white marks in light; in dark a lighter blue with dark marks, which keeps 3:1 against every surface, a selected row's too. Primary actions take color.bg.primary.strong.",
-            "$value": "{palette.blue.50}"
+            "$value": "{palette.blue.60}"
           },
           "hover": {
             "$description": "A checked control under the pointer: a grade further from its marks, darker in light and lighter in dark.",
-            "$value": "{palette.blue.60}"
+            "$value": "{palette.blue.70}"
           },
           "pressed": {
             "$description": "A checked control while pressed: in light a grade past its hover; in dark a step deeper than rest, still clear of its dark marks, so it reads as pressed rather than highlighted.",
-            "$value": "{palette.blue.70}"
+            "$value": "{palette.blue.80}"
           }
         },
         "strong": {
@@ -665,7 +677,7 @@
             "components": {
               "$ref": "#/palette/gray/92/$value/components"
             },
-            "alpha": 0.07
+            "alpha": 0.09
           },
           "$extensions": {
             "com.envsemble.envui": {
@@ -680,7 +692,7 @@
             "components": {
               "$ref": "#/palette/gray/92/$value/components"
             },
-            "alpha": 0.11
+            "alpha": 0.13
           },
           "$extensions": {
             "com.envsemble.envui": {
@@ -816,11 +828,11 @@
       },
       "primary": {
         "$description": "Primary text and icons: the primary tone, outlined button labels, the selected tab, a field's focused label, the icon of a pager link.",
-        "$value": "{palette.blue.65}"
+        "$value": "{palette.blue.70}"
       },
       "accent": {
         "$description": "Accent text and icons: the purple of an accent badge.",
-        "$value": "{palette.purple.65}"
+        "$value": "{palette.purple.70}"
       },
       "on-selected": {
         "$root": {
@@ -834,7 +846,7 @@
       },
       "success": {
         "$description": "Success text and icons.",
-        "$value": "{palette.green.65}"
+        "$value": "{palette.green.70}"
       },
       "warning": {
         "$description": "Warning text and icons.",
@@ -843,7 +855,7 @@
       "danger": {
         "$root": {
           "$description": "Danger text and icons, and field errors.",
-          "$value": "{palette.red.65}"
+          "$value": "{palette.red.70}"
         },
         "hover": {
           "$description": "A danger text button under the pointer: a grade darker in light and in dark, as a link is.",
@@ -856,7 +868,7 @@
       },
       "done": {
         "$description": "Done text and icons.",
-        "$value": "{palette.slate.65}"
+        "$value": "{palette.slate.70}"
       },
       "on-emphasis": {
         "$description": "Text and icons on the emphasis fills: white in light, dark in dark.",
@@ -881,7 +893,7 @@
       "link-on-muted": {
         "$root": {
           "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.primary.muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is a grade lighter than fg.link, so it keeps 4.5:1 on a hovered or pressed row, and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
-          "$value": "{palette.blue.65}"
+          "$value": "{palette.blue.70}"
         },
         "hover": {
           "$description": "A link on a tint under the pointer.",
@@ -1074,15 +1086,15 @@
       "default": {
         "$root": {
           "$description": "The boundary of a control that has no other edge: outlined fields and buttons, the track of a switch that is off. At least 3:1 on every surface.",
-          "$value": "{palette.gray.45}"
+          "$value": "{palette.gray.50}"
         },
         "hover": {
           "$description": "A control boundary under the pointer.",
-          "$value": "{palette.gray.50}"
+          "$value": "{palette.gray.65}"
         },
         "pressed": {
           "$description": "A control boundary while pressed.",
-          "$value": "{palette.gray.55}"
+          "$value": "{palette.gray.70}"
         }
       },
       "muted": {
@@ -1251,7 +1263,7 @@
       },
       "focus": {
         "$description": "Focus rings: at least 3:1 against what they are drawn on.",
-        "$value": "{palette.blue.55}"
+        "$value": "{palette.blue.60}"
       },
       "info": {
         "strong": {

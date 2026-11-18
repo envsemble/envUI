@@ -50,14 +50,20 @@
   }
   .env-card[data-interactive]:hover:not(:disabled):not([aria-disabled='true']) {
     --_card-layer: calc(var(--env-state-hover-opacity) * 100%);
-    background: var(--_card-custom-fill, var(--_surface-hover));
+    background: var(
+      --_card-custom-fill,
+      color-mix(in srgb, var(--_surface-hover), var(--env-color-fg-default) 3%)
+    );
   }
   .env-card[data-interactive]:focus-visible:not(:disabled):not([aria-disabled='true']) {
     --_card-layer: calc(var(--env-state-focus-opacity) * 100%);
   }
   .env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
     --_card-layer: calc(var(--env-state-pressed-opacity) * 100%);
-    background: var(--_card-custom-fill, var(--_surface-pressed));
+    background: var(
+      --_card-custom-fill,
+      color-mix(in srgb, var(--_surface-pressed), var(--env-color-fg-default) 5%)
+    );
   }
 
   .env-card[data-interactive]:focus-visible {
@@ -67,6 +73,10 @@
   .env-card[data-interactive]:is(:disabled, [aria-disabled='true']) {
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
+  }
+  .env-card[data-interactive]:is(:disabled, [aria-disabled='true'])
+    :where(.env-card-description, .env-text[data-emphasis='muted']) {
+    color: color-mix(in srgb, var(--env-color-fg-muted), var(--env-color-fg-default) 45%);
   }
   @media (prefers-reduced-motion: reduce) {
     .env-card[data-interactive] {

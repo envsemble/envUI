@@ -24,8 +24,11 @@
   .env-menubar-trigger:hover:not([data-disabled]) {
     background: var(--env-color-bg-neutral-subtle-hover);
   }
-  .env-menubar-trigger[data-popup-open] {
-    background: var(--env-color-bg-neutral-subtle-pressed);
+  .env-menubar-trigger:is(:active, [data-popup-open]):not([data-disabled]) {
+    /* contrast: menubar-trigger-pressed */
+    background: rgb(
+      from var(--env-color-bg-neutral-subtle-hover) r g b / calc(alpha * (2 - alpha))
+    );
   }
   .env-menubar-trigger:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
@@ -49,7 +52,7 @@
   }
 
   @media (forced-colors: active) {
-    .env-menubar-trigger[data-popup-open] {
+    .env-menubar-trigger[data-popup-open]:not([data-disabled]) {
       forced-color-adjust: none;
       background-color: Highlight;
       color: HighlightText;

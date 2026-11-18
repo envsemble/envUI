@@ -49,11 +49,17 @@
   @media (hover: hover) {
     .env-drop-zone-target:hover:not(:disabled, [aria-disabled='true']) {
       --_drop-zone-border: var(--env-color-border-primary-emphasis-hover);
-      background: var(--env-color-bg-neutral-subtle-hover);
+      background: light-dark(
+        var(--env-color-bg-neutral-subtle-hover),
+        var(--env-color-bg-neutral-subtle-pressed)
+      );
     }
   }
   .env-drop-zone-target:active:not(:disabled, [aria-disabled='true']) {
-    background: var(--env-color-bg-neutral-subtle-pressed);
+    background: light-dark(
+      var(--env-color-bg-neutral-subtle-pressed),
+      var(--env-color-bg-neutral-muted-hover)
+    );
   }
   .env-drop-zone-target:focus-visible {
     outline: 2px solid var(--env-color-border-focus);

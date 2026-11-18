@@ -259,7 +259,7 @@ test('selected rows report aria-selected and take the selection colors in both t
     expect(attribute(other, 'aria-selected')()).toBe('false');
     const selection = resolved(
       selected.element(),
-      'color-mix(in oklab, var(--env-color-bg-selected) 75%, var(--env-color-bg-raised))',
+      `color-mix(in oklab, var(--env-color-bg-selected) ${theme === 'dark' ? 100 : 75}%, var(--env-color-bg-raised))`,
       'background-color',
     );
     await expect.poll(() => css(selected, 'background-color')).toBe(selection);

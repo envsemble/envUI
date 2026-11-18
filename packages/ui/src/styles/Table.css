@@ -3,6 +3,7 @@
     --_table-band: var(--env-color-bg-neutral-muted);
     --_table-divider: var(--env-color-border-muted);
     --_table-selected-weight: 75%;
+    --_table-row-hover: var(--env-color-bg-row-hover);
   }
   .env-theme[data-env-contrast='high'] {
     --_table-selected-weight: 100%;
@@ -16,14 +17,17 @@
     --_table-band: oklch(from var(--env-color-bg-neutral-muted) l c h / calc(alpha * 0.65));
     --_table-divider: color-mix(
       in srgb,
-      var(--env-color-border-muted) 60%,
+      var(--env-color-border-muted) 80%,
       var(--env-color-bg-raised)
     );
+    --_table-selected-weight: 100%;
+    --_table-row-hover: oklch(from var(--env-color-bg-row-hover) l c h / calc(alpha * 0.85));
   }
   @media (prefers-contrast: more) {
     .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
       --_table-band: var(--env-color-bg-neutral-muted);
       --_table-divider: var(--env-color-border-muted);
+      --_table-row-hover: var(--env-color-bg-row-hover);
     }
   }
   .env-table-region {
@@ -191,8 +195,8 @@
     position: relative;
   }
   .env-table-row[data-interactive]:is(:hover, :has(:focus-visible)) {
-    --_avatar-group-ring-tint: var(--env-color-bg-row-hover);
-    background: var(--env-color-bg-row-hover);
+    --_avatar-group-ring-tint: var(--_table-row-hover);
+    background: var(--_table-row-hover);
   }
   .env-table-row[data-interactive]:not([aria-selected='true']):is(:hover, :has(:focus-visible)) {
     --env-color-fg-link: var(--env-color-fg-link-on-muted);
@@ -206,6 +210,7 @@
     --env-color-fg-danger-hover: var(--env-color-fg-danger);
     --env-color-fg-danger-pressed: var(--env-color-fg-danger);
     --_table-selection-bar: var(--env-color-fg-on-selected);
+    --_badge-ground: var(--_table-surface);
     --_table-selected: color-mix(
       in oklab,
       var(--env-color-bg-selected) var(--_table-selected-weight, 100%),
@@ -301,6 +306,22 @@
       .env-icon,
     .env-table-header-cell > .env-table-sort-button:focus-visible .env-icon {
       opacity: 1;
+    }
+    :where(.env-table-header-cell[data-sortable]):has(> .env-table-sort-button:hover) {
+      background-image:
+        linear-gradient(
+          var(--env-color-bg-neutral-subtle-hover),
+          var(--env-color-bg-neutral-subtle-hover)
+        ),
+        var(--_table-band-image, none);
+    }
+    :where(.env-table-header-cell[data-sortable]):has(> .env-table-sort-button:active) {
+      background-image:
+        linear-gradient(
+          var(--env-color-bg-neutral-subtle-pressed),
+          var(--env-color-bg-neutral-subtle-pressed)
+        ),
+        var(--_table-band-image, none);
     }
   }
   @media (prefers-reduced-motion: reduce) {

@@ -131,6 +131,7 @@
           "attribute": "data-env-skeleton",
           "values": [],
           "parts": [
+            "env-alert",
             "env-alert-message",
             "env-alert-title"
           ]
@@ -908,6 +909,15 @@
           ],
           "parts": [
             "env-card"
+          ]
+        },
+        {
+          "attribute": "data-emphasis",
+          "values": [
+            "muted"
+          ],
+          "parts": [
+            "env-card-description"
           ]
         },
         {

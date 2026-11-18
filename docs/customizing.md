@@ -63,7 +63,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Alert
 
 - Parts: `env-alert`, `env-alert-action` (slot), `env-alert-content`, `env-alert-dismiss`, `env-alert-icon`, `env-alert-message` (slot), `env-alert-title`
-- States: `data-env-skeleton` on `env-alert-message`, `env-alert-title`; `data-tone` (`danger`, `info`, `success`, `warning`)
+- States: `data-env-skeleton` on `env-alert`, `env-alert-message`, `env-alert-title`; `data-tone` (`danger`, `info`, `success`, `warning`)
 - Color properties: `--env-alert-container`, `--env-alert-content`, `--env-alert-outline`, `--env-alert-icon`
 
 ### AnimatedNumber
@@ -122,7 +122,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Card
 
 - Parts: `env-card`, `env-card-actions` (slot), `env-card-body`, `env-card-description`, `env-card-footer`, `env-card-header`, `env-card-meta`, `env-card-title`
-- States: `data-actions`; `data-background` (`page`); `data-env-skeleton` on `env-card`, `env-card-description`, `env-card-header`, `env-card-meta`, `env-card-title`; `data-interactive`
+- States: `data-actions`; `data-background` (`page`); `data-emphasis` (`muted`) on `env-card-description`; `data-env-skeleton` on `env-card`, `env-card-description`, `env-card-header`, `env-card-meta`, `env-card-title`; `data-interactive`
 - Color properties: `--env-card-container`, `--env-card-content`, `--env-card-outline`
 
 ### Checkbox

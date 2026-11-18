@@ -43,8 +43,12 @@
   .env-checkbox:has(input:disabled) {
     cursor: default;
   }
-  .env-checkbox:has(input:disabled) > :where(.env-checkbox-box, .env-checkbox-label) {
+  .env-checkbox:has(input:disabled) > :where(.env-checkbox-box),
+  .env-checkbox:has(input:disabled) :where(.env-checkbox-description) {
     opacity: var(--env-state-disabled-opacity);
+  }
+  .env-checkbox:has(input:disabled) > :where(.env-checkbox-label) {
+    color: var(--env-color-fg-disabled);
   }
   .env-checkbox:has(input:disabled:is(:checked, :indeterminate)) > .env-checkbox-box {
     opacity: 1;
@@ -221,6 +225,9 @@
   }
 
   @media (forced-colors: active) {
+    .env-checkbox:has(input:disabled) > :where(.env-checkbox-label) {
+      color: GrayText;
+    }
     .env-checkbox-input:is(:checked, :indeterminate) {
       border-color: Highlight;
       background-color: Highlight;
