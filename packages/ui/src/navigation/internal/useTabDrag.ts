@@ -82,7 +82,7 @@ export function useTabDrag({
       const dropped = moved;
       stop();
       if (!dropped) {
-        tab?.focus();
+        tab?.focus({ focusVisible: false });
         return;
       }
       const swallowClickThatEndsDrag = (click: MouseEvent) => click.stopPropagation();
