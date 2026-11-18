@@ -32,7 +32,7 @@ export interface CalendarHeatmapModel {
   months: { column: number; span: number; label: string }[];
 }
 
-const weakestStepTonePercent = 40;
+const weakestStepTonePercent = 50;
 
 function levelTonePercent(level: number, levelCount: number) {
   const onlyOneStepAboveEmpty = levelCount <= 2;

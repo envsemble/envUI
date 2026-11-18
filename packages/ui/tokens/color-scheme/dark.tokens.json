@@ -39,7 +39,7 @@
       },
       "muted": {
         "$root": {
-          "$value": "{palette.neutral.84}"
+          "$value": "{palette.neutral.82}"
         },
         "hover": {
           "$value": "{palette.neutral.80}"

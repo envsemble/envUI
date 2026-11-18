@@ -57,8 +57,8 @@
   --env-color-bg-muted-hover: #dddddf;
   --env-color-bg-muted-pressed: #d7d7d9;
   --env-color-bg-navigation: transparent;
-  --env-color-bg-navigation-hover: #dbdde1;
-  --env-color-bg-navigation-pressed: #d8dade;
+  --env-color-bg-navigation-hover: rgb(31 31 34 / 0.08);
+  --env-color-bg-navigation-pressed: rgb(31 31 34 / 0.13);
   --env-color-bg-neutral-emphasis: #616164;
   --env-color-bg-neutral-muted: rgb(31 31 34 / 0.1);
   --env-color-bg-neutral-muted-hover: rgb(31 31 34 / 0.18);
@@ -358,7 +358,7 @@
   --env-color-bg-done-muted: rgb(170 193 221 / 0.17);
   --env-color-bg-field: #191a1b;
   --env-color-bg-inset: rgb(30 31 33 / 0.5);
-  --env-color-bg-muted: #303234;
+  --env-color-bg-muted: #343638;
   --env-color-bg-muted-hover: #383a3d;
   --env-color-bg-muted-pressed: #424447;
   --env-color-bg-navigation-hover: #383a3d;

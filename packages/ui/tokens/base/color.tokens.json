@@ -153,11 +153,23 @@
         },
         "hover": {
           "$description": "A navigation item that isn’t selected, under the pointer: a cool gray in every theme, a step quieter than the selection, so the hovered item never reads as the current one.",
-          "$value": "{palette.neutral.10}"
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/gray/92/$value/components"
+            },
+            "alpha": 0.08
+          }
         },
         "pressed": {
           "$description": "A navigation item that isn’t selected, while pressed: two grades deeper than the hover in light. Its label and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.neutral.11}"
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/gray/92/$value/components"
+            },
+            "alpha": 0.13
+          }
         }
       },
       "neutral": {
