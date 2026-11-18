@@ -374,7 +374,6 @@ test('children go in the panel the active tab controls, which the active tab joi
   );
   expect(getComputedStyle(panel.element()).borderStartStartRadius).toBe('0px');
   expect(getComputedStyle(panel.element()).borderStartEndRadius).toBe('0px');
-  const panelElement = panel.element();
   render('a');
   await expect.poll(() => tab.closest('[data-first-active]')).not.toBeNull();
   root.unmount();

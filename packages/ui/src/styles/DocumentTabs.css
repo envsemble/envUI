@@ -16,6 +16,7 @@
     inline-size: 100%;
     max-inline-size: 100%;
     contain: inline-size;
+    overflow: clip;
     background-color: var(--_document-tabs-strip);
   }
   .env-document-tabs-strip {

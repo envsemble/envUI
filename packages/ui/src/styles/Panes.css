@@ -1,6 +1,7 @@
 @layer env.components {
   .env-panes {
-    --_panes-gap: var(--env-space-4);
+    --_panes-gap: var(--env-control-border-width);
+    --_panes-divider-reach: var(--env-space-3);
     --_panes-page-beside-side-sheet: 3.5rem;
     container: env-panes / inline-size;
     box-sizing: border-box;
@@ -10,6 +11,7 @@
     block-size: 100%;
     min-block-size: 0;
     min-inline-size: 0;
+    overflow: hidden;
   }
   .env-panes[data-behavior='supporting'] {
     grid-template-columns: minmax(0, 1fr) auto auto;
@@ -47,16 +49,23 @@
   }
   .env-panes-divider {
     --_resize-handle-size: var(--_panes-gap);
+    z-index: calc(var(--env-z-supporting-pane) + 1);
     display: none;
     grid-column: 2;
     grid-row: 1;
   }
+  .env-panes-divider::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline: calc((var(--_panes-gap) - var(--_panes-divider-reach)) / 2);
+  }
+  .env-panes-divider::after {
+    background: var(--env-color-border-muted);
+  }
   @media (pointer: coarse) {
-    .env-panes-divider::before {
-      content: '';
-      position: absolute;
-      inset-block: 0;
-      inset-inline: calc((var(--_panes-gap) - var(--env-control-height-touch)) / 2);
+    .env-panes {
+      --_panes-divider-reach: var(--env-control-height-touch);
     }
   }
   .env-panes[data-behavior='supporting']:not(:has(> .env-panes-divider)) > .env-panes-supporting {

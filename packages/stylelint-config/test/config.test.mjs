@@ -352,3 +352,15 @@ test('keywords, data URLs, backdrop filters and stroke widths pass', async () =>
     { rule: 'declaration-property-value-allowed-list', text: '2' },
   ]);
 });
+
+test('an application rounds, spaces and gaps a region component through its own class with tokens', async () => {
+  await passes(
+    '.app-inbox.env-panes { border-radius: var(--env-radius-lg); margin: var(--env-space-4); }',
+  );
+  await passes(
+    '.app-drafts .env-panel-dock-panel { border-start-start-radius: var(--env-radius-md); }',
+  );
+  await passes(
+    '.app-editor { border-radius: var(--env-radius-surface); gap: var(--env-space-2); }',
+  );
+});

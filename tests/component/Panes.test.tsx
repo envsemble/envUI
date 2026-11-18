@@ -1,3 +1,5 @@
+import { createRoot } from 'react-dom/client';
+import { Panes, Theme } from '@envsemble/envui';
 import { describe, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/Panes.fixture.tsx';
@@ -26,11 +28,11 @@ describe('Panes, supporting', () => {
       const side = box(supporting);
       expect(side.width).toBeCloseTo(22.5 * 16, 0);
       expect(side.x).toBeGreaterThan(box(main).x);
-      expect(side.x - (box(main).x + box(main).width)).toBeCloseTo(16, 0);
+      expect(side.x - (box(main).x + box(main).width)).toBeCloseTo(1, 0);
       const listDetail = page.getByTestId('list-detail');
       const list = box(listDetail.getByRole('region', { name: 'Projects' }));
       const detail = box(listDetail.getByRole('region', { name: 'No project' }));
-      expect(detail.x - (list.x + list.width)).toBeCloseTo(16, 0);
+      expect(detail.x - (list.x + list.width)).toBeCloseTo(1, 0);
       if (search.includes('none')) continue;
       expect(shown(root.getByRole('separator', { name: 'Resize details' }))).toBe(true);
       expect(css(supporting, 'background-color')).toBe('rgba(0, 0, 0, 0)');
@@ -368,3 +370,46 @@ describe('Panes, list-detail', () => {
     await isFocused(root.getByRole('button', { name: 'Annual report' }));
   });
 });
+
+test(
+  'an application rounds Panes with a class, and the panes inside follow the corners',
+  { tags: ['engines'] },
+  async () => {
+    const style = document.createElement('style');
+    style.textContent =
+      '.app-rounded-panes { border-radius: var(--env-radius-lg); block-size: 16rem; inline-size: 48rem; } .app-pane-fill { block-size: 100%; background: var(--env-color-bg-default); }';
+    document.head.append(style);
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    root.render(
+      <Theme theme="light">
+        <Panes.Root behavior="list-detail" className="app-rounded-panes" backLabel="Back">
+          <Panes.List label="Rounded list">
+            <div className="app-pane-fill" data-testid="rounded-list-fill" />
+          </Panes.List>
+          <Panes.Detail label="Rounded detail">
+            <div className="app-pane-fill" data-testid="rounded-detail-fill" />
+          </Panes.Detail>
+        </Panes.Root>
+      </Theme>,
+    );
+    await expect.element(page.getByTestId('rounded-list-fill')).toBeVisible();
+    const panes = host.querySelector<HTMLElement>('.app-rounded-panes')!;
+    const edge = box(panes);
+    const fill = page.getByTestId('rounded-list-fill').element();
+    expect(getComputedStyle(panes).borderTopLeftRadius).not.toBe('0px');
+    expect(getComputedStyle(panes).overflow).toBe('hidden');
+    const webkitHitsThroughRoundedClips =
+      /AppleWebKit/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    if (!webkitHitsThroughRoundedClips) {
+      const corner = document.elementFromPoint(edge.x + 1, edge.y + 1);
+      expect(fill.contains(corner)).toBe(false);
+    }
+    const inside = document.elementFromPoint(edge.x + 1, edge.y + edge.height / 2);
+    expect(fill.contains(inside)).toBe(true);
+    root.unmount();
+    host.remove();
+    style.remove();
+  },
+);

@@ -59,8 +59,6 @@
     block-size: var(--_panel-dock-panel-height, var(--_panel-dock-panel-default-height));
     border: 1px solid var(--env-elevation-2-border);
     border-block-end: 0;
-    border-start-start-radius: var(--env-radius-surface);
-    border-start-end-radius: var(--env-radius-surface);
     background: var(--_panel-dock-panel-color);
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
@@ -108,8 +106,7 @@
     scroll-padding-block-start: calc(
       var(--_panel-dock-header-size, var(--_panel-dock-no-header)) + var(--env-space-2)
     );
-    border-start-start-radius: inherit;
-    border-start-end-radius: inherit;
+    border-radius: inherit;
     outline: none;
   }
   .env-panel-dock-panel[data-placement='row'] > .env-panel-dock-content {
@@ -120,7 +117,7 @@
     --_panel-dock-resize-band: 0.75rem;
     position: absolute;
     inset-block-start: calc(var(--_panel-dock-resize-band) / -2);
-    inset-inline: var(--env-radius-surface);
+    inset-inline: 0;
     z-index: calc(var(--env-z-raised) + 1);
     block-size: var(--_panel-dock-resize-band);
     cursor: ns-resize;
