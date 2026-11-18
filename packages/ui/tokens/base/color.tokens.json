@@ -120,7 +120,7 @@
           "$value": "{palette.gray.15}"
         },
         "hover": {
-          "$description": "A selected item under the pointer: in light a grade deeper than the selection, in dark a grade toward the surface, so in every theme it stays apart from the selection and from every surface it lies on.",
+          "$description": "A selected item under the pointer: in light a grade deeper than the selection, in dark a grade toward the surface and in dark high contrast a grade lighter, so in every theme it stays apart from the selection and from every surface it lies on.",
           "$value": "{palette.gray.20}"
         },
         "pressed": {
