@@ -164,7 +164,9 @@ test('a disabled handle neither moves nor resets on a double click, and keeps th
     panes('width=60rem&persist=fixture-disabled&disabled');
     await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
     await expect.element(handle()).toHaveAttribute('aria-disabled', 'true');
-    handle().element().dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+    handle()
+      .element()
+      .dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
     await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
     expect(document.cookie).toContain('fixture-disabled=20.5');
   } finally {

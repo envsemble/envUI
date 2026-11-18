@@ -36,12 +36,20 @@
   }
   .env-resize-handle[data-axis='inline']::before {
     inset-block: 0;
-    inset-inline-start: calc(var(--_resize-handle-at) - var(--_resize-handle-line) / 2);
+    inset-inline-start: clamp(
+      0%,
+      var(--_resize-handle-at) - var(--_resize-handle-line) / 2,
+      100% - var(--_resize-handle-line)
+    );
     inline-size: var(--_resize-handle-line);
   }
   .env-resize-handle[data-axis='block']::before {
     inset-inline: 0;
-    inset-block-start: calc(var(--_resize-handle-at) - var(--_resize-handle-line) / 2);
+    inset-block-start: clamp(
+      0%,
+      var(--_resize-handle-at) - var(--_resize-handle-line) / 2,
+      100% - var(--_resize-handle-line)
+    );
     block-size: var(--_resize-handle-line);
   }
   .env-resize-handle[data-grip]::after {
@@ -53,7 +61,11 @@
   }
   .env-resize-handle[data-axis='inline'][data-grip]::after {
     inset-block-start: calc(50% - var(--_resize-handle-grip-length) / 2);
-    inset-inline-start: calc(var(--_resize-handle-at) - var(--_resize-handle-grip-dot) / 2);
+    inset-inline-start: clamp(
+      0%,
+      var(--_resize-handle-at) - var(--_resize-handle-grip-dot) / 2,
+      100% - var(--_resize-handle-grip-dot)
+    );
     inline-size: var(--_resize-handle-grip-dot);
     block-size: var(--_resize-handle-grip-length);
     background:
@@ -66,7 +78,11 @@
   }
   .env-resize-handle[data-axis='block'][data-grip]::after {
     inset-inline-start: calc(50% - var(--_resize-handle-grip-length) / 2);
-    inset-block-start: calc(var(--_resize-handle-at) - var(--_resize-handle-grip-dot) / 2);
+    inset-block-start: clamp(
+      0%,
+      var(--_resize-handle-at) - var(--_resize-handle-grip-dot) / 2,
+      100% - var(--_resize-handle-grip-dot)
+    );
     inline-size: var(--_resize-handle-grip-length);
     block-size: var(--_resize-handle-grip-dot);
     background:
