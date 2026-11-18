@@ -7,11 +7,8 @@ import { useLatest } from './useLatest.js';
 export type CopyValue = string | (() => string | Promise<string>);
 
 interface WriteOptions {
-  /** Runs when the text is a promise, before it settles, such as to show a pending state. */
   onWait?: () => void;
-  /** The class of the hidden field the selection fallback copies from. */
   fieldClassName?: string;
-  /** Writes the text instead of the Clipboard API, such as an app's own clipboard bridge. */
   write?: (text: string) => Promise<void>;
 }
 
@@ -67,7 +64,6 @@ export function useCopy({ write, resetAfter = 2000, onCopied, fieldClassName }: 
         copied = false;
       }
       setPhase('idle');
-      // Each copy shows its result again, also the same result twice in a row.
       setResult((current) => ({
         status: copied ? 'copied' : 'failed',
         round: (current?.round ?? 0) + 1,
@@ -80,7 +76,6 @@ export function useCopy({ write, resetAfter = 2000, onCopied, fieldClassName }: 
   const reset = useCallback(() => setResult(undefined), []);
   return {
     copy,
-    // The status, copied or failed, as copy sets it.
     status: (result?.status ?? 'idle') as CopyStatus,
     round: result?.round ?? 0,
     copying: phase !== 'idle',
@@ -89,7 +84,6 @@ export function useCopy({ write, resetAfter = 2000, onCopied, fieldClassName }: 
   };
 }
 
-/** Writes the text with the asynchronous Clipboard API, or by copying a selection where it fails. */
 async function writeToClipboard(
   value: CopyValue,
   anchor: HTMLElement | null,
@@ -103,23 +97,26 @@ async function writeToClipboard(
   onWait?.();
   const clipboard = typeof navigator === 'undefined' ? undefined : navigator.clipboard;
   if (!write && typeof ClipboardItem !== 'undefined' && clipboard?.write) {
-    // Some browsers allow writing only while handling the press: hand over an item at once and
-    // let its text follow.
-    try {
-      const blob = resolved.then((text) => new Blob([text], { type: 'text/plain' }));
-      // A clipboard that refuses at once leaves the item behind; a text that then fails is
-      // reported once, below, not again as an unhandled rejection of the item's blob.
-      blob.catch(() => undefined);
-      await clipboard.write([new ClipboardItem({ 'text/plain': blob })]);
-      return await resolved;
-    } catch {
-      // Write the text itself once it is ready.
-    }
+    const handedOver = await handOverItemWhileHandlingPress(clipboard, resolved);
+    if (handedOver) return await resolved;
   }
   const text = await resolved;
   await writeText(text, anchor, fieldClassName, write);
   return text;
 }
+
+async function handOverItemWhileHandlingPress(clipboard: Clipboard, text: Promise<string>) {
+  try {
+    const blob = text.then((value) => new Blob([value], { type: 'text/plain' }));
+    blob.catch(leaveRejectionToCaller);
+    await clipboard.write([new ClipboardItem({ 'text/plain': blob })]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const leaveRejectionToCaller = () => undefined;
 
 async function writeText(
   text: string,
@@ -139,7 +136,16 @@ async function writeText(
   }
 }
 
-/** The fallback for pages without clipboard access: select the text in a hidden field and copy it. */
+const outOfSightAndOutOfTheWay = {
+  position: 'fixed',
+  insetBlockStart: '0',
+  insetInlineStart: '0',
+  inlineSize: '1px',
+  blockSize: '1px',
+  opacity: '0',
+  pointerEvents: 'none',
+};
+
 function copyWithSelection(text: string, anchor: HTMLElement, fieldClassName?: string) {
   const document = anchor.ownerDocument;
   const field = document.createElement('textarea');
@@ -147,20 +153,10 @@ function copyWithSelection(text: string, anchor: HTMLElement, fieldClassName?: s
   field.readOnly = true;
   field.tabIndex = -1;
   field.setAttribute('aria-hidden', 'true');
-  // Out of sight and out of the way: the caller's class, or the same rules inline.
   if (fieldClassName) field.className = fieldClassName;
-  else
-    Object.assign(field.style, {
-      position: 'fixed',
-      insetBlockStart: '0',
-      insetInlineStart: '0',
-      inlineSize: '1px',
-      blockSize: '1px',
-      opacity: '0',
-      pointerEvents: 'none',
-    });
-  // Beside the button, so a dialog that keeps focus inside itself lets the field take it.
-  (anchor.parentElement ?? document.body).append(field);
+  else Object.assign(field.style, outOfSightAndOutOfTheWay);
+  const besideAnchorInsideAnyFocusTrap = anchor.parentElement ?? document.body;
+  besideAnchorInsideAnyFocusTrap.append(field);
   const focused = document.activeElement;
   const selection = document.getSelection();
   const ranges = selection
@@ -175,7 +171,6 @@ function copyWithSelection(text: string, anchor: HTMLElement, fieldClassName?: s
     copied = false;
   }
   field.remove();
-  // The element that had focus, which is an HTML or SVG element.
   (focused as HTMLElement | null)?.focus({ preventScroll: true });
   if (selection) {
     selection.removeAllRanges();

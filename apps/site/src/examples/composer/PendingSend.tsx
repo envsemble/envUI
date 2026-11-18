@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Composer, Column, Text } from '@envsemble/envui';
 
+const simulatedSendMs = 1500;
+
 export default function PendingSend() {
   const [sending, setSending] = useState(false);
   const [log, setLog] = useState<string[]>([]);
@@ -9,15 +11,13 @@ export default function PendingSend() {
 
   const send = (text: string) => {
     setSending(true);
-    // Stands in for a request; the field stays editable for the next message meanwhile.
     timer.current = window.setTimeout(() => {
       setLog((current) => [...current, text]);
       setSending(false);
-    }, 1500);
+    }, simulatedSendMs);
   };
 
   return (
-    // As wide as a conversation column.
     <Column gap={3} style={{ inlineSize: 'min(100%, 32rem)' }}>
       <Composer
         aria-label="Reply to Priya Shah"

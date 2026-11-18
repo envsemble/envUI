@@ -11,8 +11,8 @@ import {
 import {
   MenuPopup,
   menuParts,
-  menuPopupInlineInset,
-  menuPopupInset,
+  menuPopupBlockStartInset,
+  menuPopupInlineEndInset,
 } from '../internal/MenuPopup.js';
 import type { OpenChangeDetails } from '../internal/menuOpenChange.js';
 import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
@@ -51,10 +51,8 @@ export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'short
   style?: CSSProperties;
 }
 
-/** Gap between a submenu and the edge of the menu it opens from, in pixels. */
-const submenuGap = 2;
-/** Ways of closing only the submenu, after which focus returns to the row that opened it. */
-const submenuReturnReasons = new Set(['escape-key', 'list-navigation']);
+const gapFromParentMenuEdge = 2;
+const reasonsClosingOnlyTheSubmenu = new Set(['escape-key', 'list-navigation']);
 
 /**
  * A row that opens a nested menu beside it, on hover or with the keyboard. The submenu opens in the
@@ -80,6 +78,21 @@ export function Submenu({
   const { content, accessibility } = useMenuItemContent({ icon, children: label, description });
   const textLabel = typeof label === 'string' ? label : undefined;
   const portal = usePortalContainer();
+  const clearParentMenuEdge = () =>
+    menuPopupInlineEndInset(trigger.current?.closest('.env-menu')) + gapFromParentMenuEdge;
+  const alignFirstRowWithOpeningRow = () => -menuPopupBlockStartInset(popup.current);
+  const returnFocusToOpeningRowIfStillThere = () => {
+    const row = trigger.current;
+    const active = row?.ownerDocument.activeElement;
+    const focusFellToBodyAsSubmenuWent = active === row?.ownerDocument.body;
+    const focusStillOnRowOrSubmenu =
+      active == null ||
+      active === row ||
+      focusFellToBodyAsSubmenuWent ||
+      popup.current?.contains(active) === true;
+    const closedOnlyTheSubmenu = reasonsClosingOnlyTheSubmenu.has(closeReason.current ?? '');
+    return closedOnlyTheSubmenu && focusStillOnRowOrSubmenu ? (row ?? false) : false;
+  };
   return (
     <BaseMenu.SubmenuRoot
       open={open}
@@ -106,28 +119,10 @@ export function Submenu({
         label={ariaLabel ?? textLabel}
         side="inline-end"
         align="start"
-        // The submenu clears the edge of its menu by a small gap, and its first row lines up with
-        // the row that opened it. Collisions flip it to the other side.
-        sideOffset={() => menuPopupInlineInset(trigger.current?.closest('.env-menu')) + submenuGap}
-        alignOffset={() => -menuPopupInset(popup.current)}
+        sideOffset={clearParentMenuEdge}
+        alignOffset={alignFirstRowWithOpeningRow}
         trigger={trigger}
-        // Escape and ← close only the submenu and return to its row, while focus is still in the
-        // submenu or on the row: it runs as the submenu starts to close and again once it has gone,
-        // when focus may have moved on in the menu. Otherwise focus has moved on, or an item closed
-        // the whole menu, whose own trigger takes focus.
-        finalFocus={() => {
-          const row = trigger.current;
-          const active = row?.ownerDocument.activeElement;
-          // Focus in a submenu that has gone falls to the body.
-          const focusHere =
-            active == null ||
-            active === row ||
-            active === row?.ownerDocument.body ||
-            popup.current?.contains(active) === true;
-          return submenuReturnReasons.has(closeReason.current ?? '') && focusHere
-            ? (row ?? false)
-            : false;
-        }}
+        finalFocus={returnFocusToOpeningRowIfStillThere}
         className={className}
         popupRef={(node: HTMLDivElement | null) => {
           popup.current = node;

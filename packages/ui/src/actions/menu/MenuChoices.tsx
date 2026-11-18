@@ -80,7 +80,6 @@ export function RadioGroup({
   );
 }
 
-/** The check mark of a checked radio or checkbox item; the slot keeps labels aligned. */
 function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   const Indicator = kind === 'radio' ? BaseMenu.RadioItemIndicator : BaseMenu.CheckboxItemIndicator;
   return (

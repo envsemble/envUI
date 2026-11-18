@@ -1,7 +1,6 @@
 import { Avatar, Row } from '@envsemble/envui';
 
-/** Stands in for the URL of a profile picture from the application's account data. */
-const picture =
+const profilePictureUrl =
   'data:image/svg+xml,' +
   encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">' +
@@ -9,14 +8,13 @@ const picture =
       '<circle cx="32" cy="26" r="12" fill="#f2d3b8"/>' +
       '<path d="M10 64c2-14 11-21 22-21s20 7 22 21z" fill="#f2d3b8"/></svg>',
   );
+const brokenPictureUrl = 'data:image/png;base64,missing';
 
 export default function Fallbacks() {
   return (
     <Row wrap align="center" gap={4}>
-      <Avatar name="Priya Shah" src={picture} size="lg" named />
-      {/* A picture that fails to load shows the initials, without an error. */}
-      <Avatar name="Jordan Ellis" src="data:image/png;base64,missing" size="lg" named />
-      {/* The default person picture, such as for a guest without a name of their own. */}
+      <Avatar name="Priya Shah" src={profilePictureUrl} size="lg" named />
+      <Avatar name="Jordan Ellis" src={brokenPictureUrl} size="lg" named />
       <Avatar name="Guest" fallback="person" size="lg" named />
     </Row>
   );

@@ -56,10 +56,6 @@ export function useControlDefaults(): ControlDefaultsValue {
   return useContext(ControlDefaultsContext);
 }
 
-/**
- * The tones each variant is designed in, which Button's ButtonEmphasisProps types as its pairs and
- * a development build's report lists.
- */
 const designedTones: Readonly<Record<ControlVariant, readonly ControlTone[]>> = {
   primary: ['neutral', 'accent', 'danger'],
   secondary: ['neutral'],
@@ -68,8 +64,7 @@ const designedTones: Readonly<Record<ControlVariant, readonly ControlTone[]>> = 
   text: ['neutral', 'danger'],
 };
 
-/** Whether `variant` is designed in `tone`. */
-function takesTone(variant: ControlVariant, tone: ControlTone) {
+function designedInTone(variant: ControlVariant, tone: ControlTone) {
   return designedTones[variant].includes(tone);
 }
 
@@ -93,8 +88,10 @@ export function resolveEmphasis(
 ): { variant: ControlVariant; tone: ControlTone } {
   const resolved =
     variant ??
-    (containerVariant && takesTone(containerVariant, tone) ? containerVariant : fallbackVariant);
-  if (takesTone(resolved, tone)) return { variant: resolved, tone };
+    (containerVariant && designedInTone(containerVariant, tone)
+      ? containerVariant
+      : fallbackVariant);
+  if (designedInTone(resolved, tone)) return { variant: resolved, tone };
   reportInDevelopment(
     () =>
       process.env.NODE_ENV !== 'production' &&

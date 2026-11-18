@@ -66,7 +66,6 @@ test('changed files come from the merge-base, uncommitted edits and untracked fi
     writeFileSync(join(folder, 'committed.md'), 'two\n');
     git('add', '.');
     git('commit', '-q', '-m', 'work');
-    // The base moves on after the branch left it; its change is not the branch's.
     git('checkout', '-q', 'base');
     writeFileSync(join(folder, 'later.ts'), 'base only\n');
     git('add', '.');
@@ -89,27 +88,21 @@ test('changed files come from the merge-base, uncommitted edits and untracked fi
 test('a component runs the spec of its name, or of the name its alias gives', () => {
   assert.deepEqual(specs('packages/ui/src/forms/Checkbox.tsx'), ['Checkbox']);
   assert.deepEqual(specs('packages/ui/src/styles/Table.css'), ['Table']);
-  // A file in a component's folder is about that component.
-  assert.ok(specs('packages/ui/src/layout/panel-dock/panelDockTypes.ts').includes('PanelDock'));
+  assert.ok(specs('packages/ui/src/layout/panesSize.ts').includes('Panes'));
   assert.deepEqual(specs('packages/ui/src/foundations/Theme.tsx'), [
     'ThemeContrast',
     'ThemePreference',
     'WindowClasses',
   ]);
-  // Names match as written, whatever the file system: messages/table.ts is not about Table.
   assert.deepEqual(specs('packages/ui/src/foundations/messages/table.ts'), ['Messages']);
 });
 
 test('a file runs the specs whose fixtures use it, and a fixture the specs that open it', () => {
-  // A component without a spec of its own runs the specs whose fixtures show it.
   assert.ok(specs('packages/ui/src/feedback/Progress.tsx').includes('Messages'));
-  assert.ok(specs('packages/ui/src/layout/Page.tsx').includes('Panes'));
-  // Through the module that imports it: Calendar is in the date picker's popup.
+  assert.ok(specs('packages/ui/src/layout/Page.tsx').includes('Scaffold'));
   assert.ok(specs('packages/ui/src/forms/Calendar.tsx').includes('DatePicker'));
-  // A fixture runs the specs that open it, also through the fixtures that import it.
   assert.deepEqual(specs('tests/fixture/Combobox.fixture.tsx'), ['Combobox', 'Field']);
   assert.ok(specs('tests/fixture/CommandPalette.fixture.tsx').includes('CommandPalette'));
-  // An icon's name names a symbol: icons/Palette.tsx is not about CommandPalette.
   assert.ok(!specs('packages/ui/src/icons/Palette.tsx').includes('CommandPalette'));
 });
 
@@ -117,7 +110,6 @@ test('a file many fixtures use runs the most specific few, and says how many use
   const { specs: some, widelyUsed } = specsFor(['packages/ui/src/internal/classNames.ts']);
   assert.equal(some.size, 6);
   assert.ok(widelyUsed.get('packages/ui/src/internal/classNames.ts') > 6);
-  // A file of a spec's name runs that spec alone.
   assert.deepEqual(specs('packages/ui/src/actions/Button.tsx'), ['Button']);
 });
 
@@ -127,7 +119,6 @@ test('the affected tier runs every spec a file or helper concerns', () => {
   const affected = specsFor([path], { affected: true });
   assert.equal(affected.widelyUsed.size, 0);
   assert.equal(affected.specs.size, fast.widelyUsed.get(path));
-  // Nearly every spec imports Servers.ts, and the affected tier runs each that does.
   const helper = specsFor(['tests/browser/support/Servers.ts'], { affected: true });
   assert.equal(helper.specs.size, helper.helpers.get('tests/browser/support/Servers.ts').length);
   assert.ok(helper.specs.size > globSync('tests/browser/{library,site}/*.spec.ts').length / 2);
@@ -172,7 +163,6 @@ test("a fixture's specs follow what its imports mean, however they are written",
     }
     return root;
   };
-  // Each file a list of lines.
   const common = {
     'packages/ui/src/actions/Button.tsx': [
       "import '../styles/Button.css';",
@@ -248,7 +238,6 @@ test('every alias names a file and specs that exist, and adds what the imports m
       .replace(/\.(?:tsx?|css|m?js|html)$/, '');
     return [name, name.replace(/e?s$/, ''), name.replace(/s$/, '')];
   };
-  // What the fixtures' imports find for a file, as the fast tier runs it: the most specific few.
   const found = fixtureUse(repositoryRoot);
   const redundant: string[] = [];
   for (const [name, targets] of Object.entries(aliases)) {
@@ -312,7 +301,6 @@ test('static checks cover the changed files, and configuration the whole of its 
 });
 
 test('servers follow the specs that need them', () => {
-  // A library spec that opens the fixture page, in a checkout of its own.
   const root = mkdtempSync(join(tmpdir(), 'envui-servers-'));
   try {
     mkdirSync(join(root, 'tests/browser/library'), { recursive: true });
@@ -324,7 +312,6 @@ test('servers follow the specs that need them', () => {
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
-  // A component test needs none.
   assert.deepEqual(serversFor(['Tree']), []);
   assert.deepEqual(serversFor(['SiteSmoke']), ['site-build']);
   assert.deepEqual(serversFor(['SiteFailures']), ['site']);

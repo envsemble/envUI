@@ -16,7 +16,8 @@ import { IconButton } from '../actions/Button.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../layout/Layout.js';
+import { Grid } from '../layout/Layout.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
@@ -76,7 +77,6 @@ interface ComposerOptions {
   description?: ReactNode;
 }
 
-/** The field needs a name: aria-label without a visible label, or aria-labelledby. */
 type ComposerName =
   | {
       /** Names the field, which has no visible label, such as "Message"; this or aria-labelledby. */
@@ -93,14 +93,20 @@ export type ComposerProps = ComposerOptions &
     keyof ComposerOptions | 'children' | 'rows' | 'cols' | 'aria-label' | 'aria-labelledby'
   >;
 
-/** Grows the field with its text where native content sizing is unavailable. */
-function useContentHeight(inputRef: RefObject<HTMLTextAreaElement | null>, text: string) {
+const imeProcessKeyCode = 229;
+
+const supportsFieldSizing = (input: HTMLTextAreaElement) =>
+  input.ownerDocument.defaultView?.CSS?.supports('field-sizing', 'content');
+
+function useContentHeightWithoutFieldSizing(
+  inputRef: RefObject<HTMLTextAreaElement | null>,
+  text: string,
+) {
   const fit = useRef<() => void>(() => undefined);
   useLayoutEffect(() => {
     const input = inputRef.current;
-    if (!input || input.ownerDocument.defaultView?.CSS?.supports('field-sizing', 'content')) return;
+    if (!input || supportsFieldSizing(input)) return;
     fit.current = () => {
-      // The style sheet keeps the height between the minimum and maximum rows.
       input.style.blockSize = 'auto';
       input.style.blockSize = `${input.scrollHeight}px`;
     };
@@ -108,27 +114,20 @@ function useContentHeight(inputRef: RefObject<HTMLTextAreaElement | null>, text:
   }, [inputRef, text]);
   useEffect(() => {
     const input = inputRef.current;
-    // Only where the style sheet can't size the field to its text.
-    if (
-      !input ||
-      typeof ResizeObserver === 'undefined' ||
-      input.ownerDocument.defaultView?.CSS?.supports('field-sizing', 'content')
-    )
-      return;
+    if (!input || typeof ResizeObserver === 'undefined' || supportsFieldSizing(input)) return;
     let width = input.clientWidth;
-    // A new width rewraps the text, and so does the web font once it has loaded.
-    const observer = new ResizeObserver(() => {
+    const refitWhenWidthRewrapsText = new ResizeObserver(() => {
       if (input.clientWidth === width) return;
       width = input.clientWidth;
       fit.current();
     });
-    observer.observe(input);
+    refitWhenWidthRewrapsText.observe(input);
     const fonts = input.ownerDocument.fonts;
-    const refit = () => fit.current();
-    fonts?.addEventListener('loadingdone', refit);
+    const refitWhenWebFontRewrapsText = () => fit.current();
+    fonts?.addEventListener('loadingdone', refitWhenWebFontRewrapsText);
     return () => {
-      observer.disconnect();
-      fonts?.removeEventListener('loadingdone', refit);
+      refitWhenWidthRewrapsText.disconnect();
+      fonts?.removeEventListener('loadingdone', refitWhenWebFontRewrapsText);
     };
   }, [inputRef]);
 }
@@ -178,54 +177,46 @@ export function Composer({
   const blank = text.trim() === '';
   const rows = Math.max(1, Math.round(minRows));
   const maximumRows = Math.max(rows, Math.round(maxRows));
-  useContentHeight(inputRef, text);
-  // A form action in progress holds the next send, when the composer renders inside its form;
-  // only an enclosing form reports its status.
-  const { pending: formPending } = useFormStatus();
-  const busy = pending || formPending;
-  // Whether the field belongs to a form, known once it is in the document. Read after every render:
-  // the owning form is found in the document, not in props.
-  const [inForm, setInForm] = useState(form !== undefined);
+  useContentHeightWithoutFieldSizing(inputRef, text);
+  const { pending: enclosingFormPending } = useFormStatus();
+  const busy = pending || enclosingFormPending;
+  const [ownedByFormInDocument, setOwnedByFormInDocument] = useState(form !== undefined);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
-    setInForm(Boolean(inputRef.current?.form));
+    setOwnedByFormInDocument(Boolean(inputRef.current?.form));
   });
-  const canSend = onSend !== undefined || inForm;
+  const canSend = onSend !== undefined || ownedByFormInDocument;
 
-  // The browser resets the native field; an uncontrolled composer follows with its own text.
   useFormReset(inputRef, () => keepOwn(defaultValue), form);
 
-  /** Sends the text, and reports whether it went. */
-  function submit() {
+  function trySend() {
     if (disabled || running || blank || busy) return false;
     if (onSend) {
       onSend(text);
       if (value === undefined) change('');
       return true;
     }
-    // The form sends the field under its name; the text stays until the form resets, as a form
-    // action does once it succeeds.
-    const owner = inputRef.current?.form;
-    if (!owner) return false;
-    // An invalid field keeps the form from submitting: the browser reports it and focuses it.
-    if (!owner.noValidate && !owner.reportValidity()) return false;
-    owner.requestSubmit();
+    const owningForm = inputRef.current?.form;
+    if (!owningForm) return false;
+    const invalidFieldReported = !owningForm.noValidate && !owningForm.reportValidity();
+    if (invalidFieldReported) return false;
+    owningForm.requestSubmit();
     return true;
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     onKeyDown?.(event);
     if (event.defaultPrevented || event.key !== 'Enter' || event.shiftKey || !canSend) return;
-    // Enter that confirms an input method's composition belongs to the composition.
-    if (event.nativeEvent.isComposing || event.keyCode === 229) return;
+    const confirmsComposition =
+      event.nativeEvent.isComposing || event.keyCode === imeProcessKeyCode;
+    if (confirmsComposition) return;
     event.preventDefault();
-    // A held Enter key repeats; only its first press sends.
-    if (!event.repeat) submit();
+    const repeatOfHeldKey = event.repeat;
+    if (!repeatOfHeldKey) trySend();
   }
 
-  // The action stays focusable while unavailable, so focus is never lost when it changes between
-  // send and stop. A disabled composer disables sending; stopping stays available while running.
-  const unavailable = running ? !onStop : blank || busy || !canSend;
+  const unavailableButFocusable = running ? !onStop : blank || busy || !canSend;
+  const touchKeyboardEnterLabel = canSend ? 'send' : undefined;
   const actionLabel = running ? (stopLabel ?? messages.stop) : (sendLabel ?? messages.send);
 
   return (
@@ -233,8 +224,8 @@ export function Composer({
       gap={2}
       className={classNames('env-composer', className)}
       style={{
-        '--env-composer-min-rows': rows,
-        '--env-composer-max-rows': maximumRows,
+        '--_composer-min-rows': rows,
+        '--_composer-max-rows': maximumRows,
         ...style,
       }}
       data-running={flag(running)}
@@ -243,8 +234,7 @@ export function Composer({
     >
       <div
         className="env-composer-surface"
-        onMouseDown={(event) => {
-          // A press on the surface around the field places the caret in the field.
+        onMouseDown={function placeCaretInFieldOnSurfacePress(event) {
           if (event.target !== event.currentTarget || disabled) return;
           event.preventDefault();
           inputRef.current?.focus();
@@ -262,8 +252,7 @@ export function Composer({
           rows={rows}
           value={text}
           disabled={disabled}
-          // Touch keyboards label Enter Send only where it sends.
-          enterKeyHint={enterKeyHint ?? (canSend ? 'send' : undefined)}
+          enterKeyHint={enterKeyHint ?? touchKeyboardEnterLabel}
           aria-describedby={
             [describedBy, description != null ? descriptionId : undefined]
               .filter(Boolean)
@@ -277,32 +266,31 @@ export function Composer({
           onKeyDown={handleKeyDown}
         />
         {start != null && (
-          <Row wrap align="center" gap={2} className="env-composer-start">
+          <Slot className="env-composer-start" layout="row">
             {start}
-          </Row>
+          </Slot>
         )}
         <IconButton
           variant="primary"
           className="env-composer-action"
           icon={running ? <IconStop filled /> : <IconArrowUpward />}
           aria-label={actionLabel}
-          // While a send is in progress, the send button shows the shared pending spinner.
           pending={!running && busy}
           disabled={!running && disabled}
-          aria-disabled={unavailable || undefined}
+          aria-disabled={unavailableButFocusable || undefined}
           onClick={() => {
-            if (unavailable) return;
+            if (unavailableButFocusable) return;
             if (running) {
               onStop?.();
               return;
             }
-            if (submit()) inputRef.current?.focus();
+            if (trySend()) inputRef.current?.focus();
           }}
         />
       </div>
       {description != null && (
         <div className="env-composer-footer" id={descriptionId}>
-          {description}
+          <Slot className="env-composer-description">{description}</Slot>
         </div>
       )}
     </Grid>

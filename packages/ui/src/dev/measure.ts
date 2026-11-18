@@ -1,7 +1,3 @@
-// Measures the page in one pass of reads: the layout nodes (elements with data-env-layout) and
-// the open overlays, with what the readout and the 3D view need of each. It writes nothing to the
-// page, so it never forces a layout of its own beyond the first read.
-
 import type { Box, ChildData, LayoutKind, NodeData, Snapshot } from './model.js';
 import { layoutKinds } from './model.js';
 import { partClassOf } from './parts.js';
@@ -9,35 +5,36 @@ import { pageContainerQueries } from './queries.js';
 import {
   describeElement,
   isDevElement,
-  labelFor,
+  nodeLabelFor,
   layoutAttribute,
   nearestNodeOf,
 } from './elements.js';
 import { measureInner, scrollOf, stickyOf, transformReach } from './inner.js';
 import { pixelsOf, remPixels } from '../internal/dom/lengths.js';
 import { paintsOf } from '../internal/dom/paints.js';
-import { isOpenOverlay, outermost, overlayKind, overlaySelector } from './overlays.js';
+import {
+  isOpenOverlay,
+  outermostOverlays,
+  overlayKind,
+  overlayCandidateSelector,
+} from './overlays.js';
 
 export interface MeasureOptions {
-  /** Also read what sticks, scrolls or holds squeezed text inside the nodes; the readout does. */
   inner?: boolean;
-  /** The fewest characters a line of text may hold before it counts as squeezed. */
   minTextCharacters?: number;
 }
 
-const ids = new WeakMap<Element, number>();
+const keysThatOutliveMeasurements = new WeakMap<Element, number>();
 let nextId = 1;
-/** A number for an element that stays its own across measurements. */
 export function keyOf(element: Element): number {
-  let id = ids.get(element);
+  let id = keysThatOutliveMeasurements.get(element);
   if (id === undefined) {
     id = nextId++;
-    ids.set(element, id);
+    keysThatOutliveMeasurements.set(element, id);
   }
   return id;
 }
 
-/** A DOM rectangle as a Box. */
 export const toBox = (rect: DOMRect): Box => ({
   x: rect.left,
   y: rect.top,
@@ -55,7 +52,6 @@ function intersect(a: Box, b: Box): Box {
   };
 }
 
-/** The element children of an element, looking through `display: contents`. */
 export function layoutChildrenOf(element: Element): HTMLElement[] {
   const out: HTMLElement[] = [];
   for (const child of Array.from(element.children)) {
@@ -69,26 +65,21 @@ export function layoutChildrenOf(element: Element): HTMLElement[] {
   return out;
 }
 
-/**
- * The element dev mode measures when none is given: the outermost theme boundary that is the
- * `env-window` container, else the first theme boundary, else the body. Dev mode's own UI and the
- * boundaries popups carry don't count.
- */
 function defaultRoot(): HTMLElement {
+  const isPopupBoundaryWithoutBox = (element: HTMLElement) =>
+    getComputedStyle(element).display === 'contents';
   const boundaries = Array.from(document.querySelectorAll<HTMLElement>('.env-theme')).filter(
     (element) =>
       element !== document.documentElement &&
-      // The boundaries around popups take no box of their own.
-      getComputedStyle(element).display !== 'contents' &&
+      !isPopupBoundaryWithoutBox(element) &&
       !isDevElement(element),
   );
-  const window = boundaries.find((element) =>
+  const windowContainer = boundaries.find((element) =>
     getComputedStyle(element).containerName.split(/\s+/).includes('env-window'),
   );
-  return window ?? boundaries[0] ?? document.body;
+  return windowContainer ?? boundaries[0] ?? document.body;
 }
 
-/** Resolves a root given as an element or a selector. */
 export function resolveRoot(root?: Element | string | null): HTMLElement {
   if (!root) return defaultRoot();
   const element = typeof root === 'string' ? document.querySelector(root) : root;
@@ -97,26 +88,19 @@ export function resolveRoot(root?: Element | string | null): HTMLElement {
   return element;
 }
 
-/** The elements measure reads, with the open overlays among them and each element's index. */
 interface Collected {
   elements: HTMLElement[];
   indexOf: Map<Element, number>;
-  /** The open overlays, outermost or not. */
   overlaySet: Set<Element>;
-  /** The open overlays that no other one holds. */
   outerOverlays: HTMLElement[];
 }
 
-/**
- * The layout nodes in document order, so that parents come before their children: the root's, then
- * each outermost open overlay with the nodes in it.
- */
-function collectElements(root: HTMLElement): Collected {
-  const overlays = Array.from(document.querySelectorAll(overlaySelector)).filter(
+function collectElementsParentsFirst(root: HTMLElement): Collected {
+  const overlays = Array.from(document.querySelectorAll(overlayCandidateSelector)).filter(
     (element): element is HTMLElement =>
       element instanceof HTMLElement && !isDevElement(element) && isOpenOverlay(element),
   );
-  const outerOverlays = outermost(overlays);
+  const outerOverlays = outermostOverlays(overlays);
   const inOverlay = (element: Element) =>
     outerOverlays.some((overlay) => overlay !== element && overlay.contains(element));
   const elements: HTMLElement[] = [];
@@ -139,18 +123,13 @@ function collectElements(root: HTMLElement): Collected {
   return { elements, indexOf, overlaySet: new Set<Element>(overlays), outerOverlays };
 }
 
-/**
- * The visible part of each element on the way up, inside every ancestor that clips, up to the
- * root: what is around the root, and the window, cut nothing off, as a window of the root's size
- * would show it all. The responsive frame lays the root out wider or taller than what holds it, or
- * than the window, and its planes are whole.
- */
-function clipper(root: HTMLElement, windowBox: Box) {
+function clipperUpToTheRoot(root: HTMLElement, windowBox: Box) {
   const clips = new Map<Element, Box>();
   const unclipped: Box = { x: -1e7, y: -1e7, w: 2e7, h: 2e7 };
   const clipOf = (element: Element | null): Box => {
     if (!element || element === document.documentElement) return windowBox;
-    if (element !== root && element.contains(root)) return unclipped;
+    const aroundTheRoot = element !== root && element.contains(root);
+    if (aroundTheRoot) return unclipped;
     const known = clips.get(element);
     if (known) return known;
     const style = getComputedStyle(element);
@@ -163,7 +142,6 @@ function clipper(root: HTMLElement, windowBox: Box) {
   return clipOf;
 }
 
-/** A node as its own box and style give it, before what depends on it being shown. */
 function readNode(
   element: HTMLElement,
   style: CSSStyleDeclaration,
@@ -233,7 +211,6 @@ function readNode(
   };
 }
 
-/** A grid's tracks in px, and its areas with their rows split by slashes. */
 function gridOf(style: CSSStyleDeclaration): NodeData['grid'] {
   const tracks = (list: string) =>
     list
@@ -250,16 +227,16 @@ function gridOf(style: CSSStyleDeclaration): NodeData['grid'] {
   };
 }
 
-/** A shown node's children in the layout, nodes or not, with how far each reaches past its box. */
 function kidsOf(element: HTMLElement, collected: Collected, nodes: NodeData[]): ChildData[] {
   return layoutChildrenOf(element).map((child): ChildData => {
     const childIndex = collected.indexOf.get(child);
     const childStyle = getComputedStyle(child);
     const rect = child.getBoundingClientRect();
-    const turned = transformReach(child, childStyle, rect);
+    const reachOfTransform = transformReach(child, childStyle, rect);
     const outset = (margin: string, reach: number) => Math.max(0, -pixelsOf(margin)) + reach;
     return {
-      label: childIndex === undefined ? describeElement(child) : labelFor(nodes, childIndex, child),
+      label:
+        childIndex === undefined ? describeElement(child) : nodeLabelFor(nodes, childIndex, child),
       box: toBox(rect),
       node: childIndex !== undefined,
       detached:
@@ -268,16 +245,15 @@ function kidsOf(element: HTMLElement, collected: Collected, nodes: NodeData[]): 
         collected.overlaySet.has(child) ||
         child.matches('dialog, [popover]'),
       outset: {
-        left: outset(childStyle.marginLeft, turned.x),
-        right: outset(childStyle.marginRight, turned.x),
-        top: outset(childStyle.marginTop, turned.y),
-        bottom: outset(childStyle.marginBottom, turned.y),
+        left: outset(childStyle.marginLeft, reachOfTransform.x),
+        right: outset(childStyle.marginRight, reachOfTransform.x),
+        top: outset(childStyle.marginTop, reachOfTransform.y),
+        bottom: outset(childStyle.marginBottom, reachOfTransform.y),
       },
     };
   });
 }
 
-/** Reads what a shown node lays out: its grid, container, scrolling, sticking, paint and children. */
 function readLayout(
   node: NodeData,
   element: HTMLElement,
@@ -303,28 +279,28 @@ function readLayout(
   node.kids = kidsOf(element, collected, nodes);
 }
 
-/** Whether the element shows, as far as the engine can tell. */
 function isShown(element: HTMLElement) {
   return typeof element.checkVisibility === 'function'
     ? element.checkVisibility({ checkVisibilityCSS: true })
     : element.getClientRects().length > 0;
 }
 
-/** Measures the page under a root, with the open overlays anywhere in the document. */
+const stickyOrFloatingLift = 0.5;
+const overlayLiftAbovePage = 2;
+
 export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapshot {
   const rootPx = remPixels(root);
   const minTextCharacters = options.minTextCharacters ?? 8;
   const queries = pageContainerQueries(rootPx);
   const windowBox: Box = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
   const rootBox = toBox(root.getBoundingClientRect());
-  const collected = collectElements(root);
+  const collected = collectElementsParentsFirst(root);
   const { elements, indexOf, overlaySet } = collected;
-  const clipOf = clipper(root, windowBox);
+  const clipOf = clipperUpToTheRoot(root, windowBox);
 
   const nodes: NodeData[] = [];
   const hiddenUnder = new Set<number>();
-  /** The overlay each node is in, by index, for the nodes that are in one. */
-  const overlayOf = new Map<number, number>();
+  const overlayContaining = new Map<number, number>();
   elements.forEach((element, index) => {
     const parent = nearestNodeOf(element, indexOf);
     const overlay = overlaySet.has(element);
@@ -332,11 +308,12 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
     const node = readNode(element, style, index, parent, overlay, nodes, windowBox);
     nodes.push(node);
     if (parent !== null) nodes[parent].children.push(index);
-    const parentOverlay = parent === null ? undefined : overlayOf.get(parent);
-    if (overlay) overlayOf.set(index, index);
-    else if (parentOverlay !== undefined) overlayOf.set(index, parentOverlay);
-    // A node inside a hidden one is counted there and measured no further.
-    if (parent !== null && (hiddenUnder.has(parent) || nodes[parent].hidden !== null)) {
+    const parentOverlay = parent === null ? undefined : overlayContaining.get(parent);
+    if (overlay) overlayContaining.set(index, index);
+    else if (parentOverlay !== undefined) overlayContaining.set(index, parentOverlay);
+    const insideHiddenNode =
+      parent !== null && (hiddenUnder.has(parent) || nodes[parent].hidden !== null);
+    if (insideHiddenNode) {
       hiddenUnder.add(index);
       node.hidden = 'hidden';
       let top = parent;
@@ -348,24 +325,24 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
       node.hidden = hiddenReason(element, style, root, indexOf, nodes);
       return;
     }
-    // An overlay, or what is fixed, is clipped by the window alone; the rest by what is around it.
+    const clippedByTheWindowAlone = overlay || style.position === 'fixed';
     node.clip = intersect(
-      overlay || style.position === 'fixed' ? windowBox : clipOf(element.parentElement),
+      clippedByTheWindowAlone ? windowBox : clipOf(element.parentElement),
       node.box,
     );
-    if (!overlayOf.has(index)) node.clip = intersect(node.clip, rootBox);
+    if (!overlayContaining.has(index)) node.clip = intersect(node.clip, rootBox);
     readLayout(node, element, style, collected, nodes, options.inner ?? false);
-    // One level per step of nesting, and half a level more for what sticks or floats.
-    const lifted = !overlay && ['sticky', 'absolute', 'fixed'].includes(style.position) ? 0.5 : 0;
-    node.level = (parent === null ? 0 : nodes[parent].level + 1) + lifted;
+    const sticksOrFloats = !overlay && ['sticky', 'absolute', 'fixed'].includes(style.position);
+    const nestingLevel = parent === null ? 0 : nodes[parent].level + 1;
+    node.level = nestingLevel + (sticksOrFloats ? stickyOrFloatingLift : 0);
   });
 
-  // Overlays, and what is in them, float two levels above the whole page.
-  const top = Math.max(
+  const pageTopLevel = Math.max(
     0,
-    ...nodes.filter((node) => !overlayOf.has(node.index)).map((node) => node.level),
+    ...nodes.filter((node) => !overlayContaining.has(node.index)).map((node) => node.level),
   );
-  for (const index of overlayOf.keys()) nodes[index].level += Math.ceil(top) + 2;
+  for (const index of overlayContaining.keys())
+    nodes[index].level += Math.ceil(pageTopLevel) + overlayLiftAbovePage;
 
   if (options.inner)
     measureInner(root, collected.outerOverlays, nodes, indexOf, minTextCharacters, rootPx);
@@ -394,7 +371,7 @@ function hiddenReason(
   for (let at = element.parentElement; at && at !== root.parentElement; at = at.parentElement) {
     if (getComputedStyle(at).display !== 'none') continue;
     const index = indexOf.get(at);
-    return `hidden: inside ${index === undefined ? describeElement(at) : labelFor(nodes, index, at)}, which is display: none`;
+    return `hidden: inside ${index === undefined ? describeElement(at) : nodeLabelFor(nodes, index, at)}, which is display: none`;
   }
   return 'hidden';
 }

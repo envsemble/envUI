@@ -5,7 +5,6 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const summary = '.env-disclosure > summary';
 
-/** Presses its summary, which hides the details; pressing it again brings them back. */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: '.env-disclosure-panel', x: 0.7, y: 0.5 },
@@ -20,13 +19,6 @@ const script: PointerStep[] = [
   { wait: 360 },
 ];
 
-/**
- * A disclosure under the title of what it tells more about, open on its details, so even closed it
- * reads as part of a page rather than a lone line. The column it stands in keeps its height as the
- * details hide, as a page's would, so the title and the summary stay where they are. When the tile
- * stops, the disclosure opens again rather than being drawn again, which would fade its details in
- * again.
- */
 export default function DisclosureTile() {
   const [open, setOpen] = useState(true);
   usePointer(script, { onRest: () => setOpen(true) });

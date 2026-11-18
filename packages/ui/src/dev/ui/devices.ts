@@ -1,7 +1,3 @@
-// The devices dev mode's responsive frame offers, as browsers' responsive modes do: common phones,
-// tablets, laptops and screens, each at its CSS viewport size in portrait, or landscape for the
-// laptops and screens.
-
 export interface Device {
   name: string;
   width: number;

@@ -26,7 +26,6 @@ interface BadgeAppearanceProps extends Omit<ComponentPropsWithRef<'span'>, 'chil
   variant?: BadgeVariant;
 }
 
-/** A badge with a label. */
 interface LabelBadgeProps extends BadgeAppearanceProps {
   /**
    * A decorative icon before the label, such as a check mark; hidden from assistive technology. A
@@ -34,14 +33,13 @@ interface LabelBadgeProps extends BadgeAppearanceProps {
    */
   icon?: ReactNode;
   /**
-   * The label: a state, a name or a category in a word or two. It stays on one line and ends with
-   * an ellipsis where the badge is wider than its container.
+   * The label: a state, a name or a category in a word or two, as text. It stays on one line and
+   * ends with an ellipsis where the badge is wider than its container.
    */
-  children: ReactNode;
+  children: string;
   count?: undefined;
 }
 
-/** A badge with a count. */
 interface CountBadgeProps extends BadgeAppearanceProps {
   /**
    * A count, such as 12, or short text such as 99+, in place of a label: a compact round pill, in

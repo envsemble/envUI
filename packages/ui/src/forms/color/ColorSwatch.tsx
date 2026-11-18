@@ -6,8 +6,8 @@ import { classNames } from '../../internal/classNames.js';
 import { ColorLocale, displayColor } from './internal/ColorLocale.js';
 import { toColor, type ColorFormat, type ColorValue } from './internal/colorValue.js';
 import { flag } from '../../internal/flag.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import '../../styles/Base.css';
-// A swatch restyles the icon button that holds it, so Button's style sheet comes first.
 import '../../styles/Button.css';
 import '../../styles/ColorSwatch.css';
 
@@ -46,7 +46,7 @@ function Swatch({
   const color = toColor(value, true);
   const { colorSwatchProps } = useColorSwatch({ color });
   const sampleStyle: CSSProperties = {
-    '--env-color-swatch-color': color.toString('css'),
+    '--_color-swatch-color': color.toString('css'),
   };
   const translucent = color.getChannelValue('alpha') < 1 || undefined;
   if (label == null && format === undefined)
@@ -68,7 +68,11 @@ function Swatch({
         data-translucent={flag(translucent)}
         style={sampleStyle}
       />
-      {label != null && <span className="env-color-swatch-label">{label}</span>}
+      {label != null && (
+        <Slot className="env-color-swatch-label" element="span">
+          {label}
+        </Slot>
+      )}
       {format !== undefined && (
         <span className="env-color-swatch-value">{displayColor(color, format)}</span>
       )}

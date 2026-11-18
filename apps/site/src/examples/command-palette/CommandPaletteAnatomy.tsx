@@ -17,7 +17,6 @@ const items: CommandPaletteItem[] = [
 ];
 
 export default function CommandPaletteAnatomy() {
-  // Shown open in the docs; start closed, useState(false), and open it from a search trigger.
   const [open, setOpen] = useState(true);
   const [query, setQuery] = useState('');
   return (

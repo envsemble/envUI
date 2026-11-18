@@ -1,7 +1,6 @@
 import { Button } from '@envsemble/envui';
 import { SpecimenFrame, MatrixScroll } from '../../figures/SpecimenFrame';
 
-/** Each variant in its neutral tone, with the label its row shows it with. */
 const variants = [
   { variant: 'primary', name: 'Primary', label: 'Continue' },
   { variant: 'secondary', name: 'Secondary', label: 'Cancel' },
@@ -10,7 +9,6 @@ const variants = [
   { variant: 'text', name: 'Text', label: 'Learn more' },
 ] as const;
 
-/** The states a control is forced into, each by its class (InteractionStates.css). */
 const states = [
   { title: 'Default', className: 'catalogue-force-default', disabled: false },
   { title: 'Hover', className: 'catalogue-force-hover', disabled: false },
@@ -19,7 +17,6 @@ const states = [
   { title: 'Disabled', className: 'catalogue-force-disabled', disabled: true },
 ];
 
-/** Each variant forced into its hover, pressed, focus and disabled looks. */
 export default function InteractionStates() {
   return (
     <SpecimenFrame size="wide" still>

@@ -1,20 +1,14 @@
 @layer env.components {
-  /* How far the rows below an expanding or collapsing row are from where they go, which Tree sets
-     and eases to 0; a length, so the rows glide and the group's end moves with them. */
-  @property --env-tree-shift {
+  @property --_tree-shift {
     syntax: '<length>';
     inherits: true;
     initial-value: 0;
   }
-  /* A virtualized tree: the tree scrolls itself and positions its rendered rows by index. Rows follow
-     navigation colors: transparent at rest, the row state layer on hover, and the navigation
-     selection, which always reads stronger than the hover. */
   .env-tree {
-    /* The density sets the rows' block padding around their content line. */
-    --env-tree-item-padding: var(--env-tree-row-padding-block-sm);
-    --env-tree-item-height: calc(var(--env-row-content-height) + 2 * var(--env-tree-item-padding));
-    --env-tree-indent: 0.75rem;
-    --env-tree-icon-size: var(--env-control-icon-size);
+    --_tree-item-padding: var(--env-tree-row-padding-block-sm);
+    --_tree-item-height: calc(var(--env-row-content-height) + 2 * var(--_tree-item-padding));
+    --_tree-indent: 0.75rem;
+    --_tree-icon-size: var(--env-control-icon-size);
     box-sizing: border-box;
     position: relative;
     block-size: 100%;
@@ -29,23 +23,18 @@
     outline: none;
   }
   .env-tree[data-density='xs'] {
-    /* Half the sm padding: 24 px rows in either scale. */
-    --env-tree-item-padding: calc(var(--env-tree-row-padding-block-sm) / 2);
+    --_tree-item-padding: calc(var(--env-tree-row-padding-block-sm) / 2);
   }
   .env-tree[data-density='md'] {
-    --env-tree-item-padding: var(--env-tree-row-padding-block-md);
+    --_tree-item-padding: var(--env-tree-row-padding-block-md);
   }
   .env-tree[data-density='lg'] {
-    --env-tree-item-padding: var(--env-tree-row-padding-block-lg);
+    --_tree-item-padding: var(--env-tree-row-padding-block-lg);
   }
   .env-tree-rows {
     position: relative;
     min-inline-size: 0;
   }
-  /* The rows an expanding row reveals grow from its end to their height and fade in, and the rows a
-     collapsing row hides shrink and fade out, as an accordion's panel does, on the entering curve, so
-     the press shows from its first frame: the group stays until it has closed, and the rows below
-     follow its end. */
   .env-tree-group {
     position: absolute;
     inset-block-start: 0;
@@ -56,19 +45,23 @@
     opacity: 0;
   }
   .env-tree-group ~ .env-tree-item {
-    translate: 0 var(--env-tree-shift);
+    translate: 0 var(--_tree-shift);
   }
   .env-tree-item {
     box-sizing: border-box;
     position: absolute;
     inset-block-start: 0;
     inset-inline: 0;
-    block-size: var(--env-tree-item-height);
+    block-size: var(--_tree-item-height);
+    --_tree-room-before-label: calc(var(--_tree-icon-size) + var(--env-space-1));
     display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
     align-items: center;
     gap: var(--env-space-1);
-    padding-inline: calc(var(--env-space-1) + var(--env-tree-depth, 0) * var(--env-tree-indent))
+    padding-inline: calc(var(--env-space-1) + var(--_tree-depth, 0) * var(--_tree-indent))
       var(--env-space-2);
+    overflow: clip;
     border-radius: var(--env-radius-sm);
     cursor: pointer;
     user-select: none;
@@ -77,14 +70,9 @@
       background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
       opacity var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-  /* The rows an expanded row reveals fade in where they arrive, from their starting style; the rows
-     scrolled into view don't. */
   .env-tree-item[data-starting-style] {
     opacity: 0;
   }
-  /* A tree marks its selection with a light tint, so its rows' layers stay below it: hover at three
-     quarters of the row hover layer and a press at the full one, a step quieter than a table's
-     rows, so a passing pointer never outweighs the selected row. */
   .env-tree-item:hover {
     background: color-mix(in srgb, var(--env-color-bg-row-hover) 75%, transparent);
   }
@@ -101,7 +89,6 @@
   .env-tree-item[aria-selected='true']:active {
     background: var(--env-color-bg-selected-pressed);
   }
-  /* The active row shows the focus ring only while the tree has keyboard focus. */
   .env-tree[data-focus-visible]:focus .env-tree-item[data-highlighted] {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
@@ -114,8 +101,8 @@
     background: transparent;
   }
   .env-tree-chevron {
-    inline-size: var(--env-tree-icon-size);
-    block-size: var(--env-tree-icon-size);
+    inline-size: var(--_tree-icon-size);
+    block-size: 100%;
     flex: 0 0 auto;
     display: grid;
     place-items: center;
@@ -123,7 +110,7 @@
   }
   .env-tree-chevron .env-icon {
     inline-size: 100%;
-    block-size: 100%;
+    block-size: var(--_tree-icon-size);
     transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-tree-chevron:dir(rtl) .env-icon {
@@ -136,24 +123,31 @@
     transform: scaleX(-1) rotate(90deg);
   }
   .env-tree .env-tree-icon {
-    inline-size: var(--env-tree-icon-size);
-    block-size: var(--env-tree-icon-size);
+    flex: 0 0 auto;
+    inline-size: var(--_tree-icon-size);
+    block-size: var(--_tree-icon-size);
     color: var(--env-color-fg-muted);
+  }
+  .env-tree-item:has(> .env-tree-icon) {
+    --_tree-room-before-label: calc(2 * (var(--_tree-icon-size) + var(--env-space-1)));
   }
   .env-tree-item[aria-selected='true'] :is(.env-tree-icon, .env-tree-chevron) {
     color: inherit;
   }
   .env-tree-label {
     min-inline-size: 0;
+    max-inline-size: calc(100% - var(--_tree-room-before-label));
     flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  /* The detail gives way to the label when space runs out. It keeps more room from the label than
-     the row's other parts, so it never reads as part of the name. */
+  .env-tree-item[aria-selected='true'] .env-tree-label {
+    font-weight: var(--env-font-weight-medium);
+  }
   .env-tree-description {
     min-inline-size: 0;
-    flex: 0 1000 auto;
+    max-inline-size: max-content;
+    flex: 1 1 0;
     margin-inline-start: var(--env-space-2);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -161,36 +155,29 @@
     font: var(--env-type-body-sm);
   }
   .env-tree-end {
-    flex: 0 0 auto;
     margin-inline-start: auto;
-    display: inline-flex;
-    align-items: center;
     gap: var(--env-space-1);
     padding-inline-start: var(--env-space-2);
   }
   @media (pointer: coarse) {
     .env-tree {
-      --env-tree-item-height: max(
+      --_tree-item-height: max(
         var(--env-control-height-touch),
-        calc(var(--env-row-content-height) + 2 * var(--env-tree-item-padding))
+        calc(var(--env-row-content-height) + 2 * var(--_tree-item-padding))
       );
     }
   }
   @media (prefers-reduced-motion: no-preference) {
     .env-tree-rows {
-      transition: --env-tree-shift var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+      transition: --_tree-shift var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
     .env-tree-group {
       transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
-    /* Closing, the rows fade as long as the rows below take to close the gap, so no empty band is
-       left. */
     .env-tree-group[data-ending-style] {
       transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
   }
-  /* Under a reduced-motion preference fills change, the chevron turns and revealed rows show at
-     once, as an accordion's panel does. */
   @media (prefers-reduced-motion: reduce) {
     .env-tree-item,
     .env-tree-chevron .env-icon {
@@ -198,8 +185,6 @@
     }
   }
 
-  /* Forced colors: the system paints no fills or shadows, so the selected row takes the system’s
-     selection colors. */
   @media (forced-colors: active) {
     .env-tree-item[aria-selected='true'] {
       forced-color-adjust: none;

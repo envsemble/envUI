@@ -9,4 +9,6 @@ export const message = {
   failed: 'Not sent',
   /** Beside the spinner of a MessageList while a reply is on its way. */
   working: 'Working',
+  /** The button of a MessageList that follows, shown once newer messages arrive out of view. */
+  jumpToLatest: 'Jump to latest',
 };

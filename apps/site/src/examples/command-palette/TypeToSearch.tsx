@@ -4,11 +4,9 @@ import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const documents = ['Roadmap.md', 'Pricing research.md', 'Launch checklist.md', 'Budget.md'];
-// Nothing opened yet in this workspace, so there are no recent documents to show.
 const recent: CommandPaletteItem[] = [];
 
 export default function TypeToSearch() {
-  // Shown open in the docs; start closed, useState(false), to open it from the button.
   const [open, setOpen] = useState(true);
   const [query, setQuery] = useState('');
   const items = documents
@@ -32,7 +30,6 @@ export default function TypeToSearch() {
         items={items}
         suggestedItems={recent}
         onAction={() => {}}
-        // Before people type, the invitation says what the palette finds.
         emptyDescription={query.trim() ? undefined : 'Find a document by its name or folder.'}
       />
     </>

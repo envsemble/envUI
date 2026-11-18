@@ -5,8 +5,6 @@ import { IconZoomOut } from '@envsemble/envui/icons/ZoomOut';
 
 export default function ViewControls() {
   return (
-    // A pill surface floats the toolbar over a diagram; its buttons take the small size, and
-    // their names show at once, for people who scan the icons by pointing at them.
     <Surface
       padding={1}
       radius="full"

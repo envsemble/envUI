@@ -5,7 +5,6 @@ export default function SessionTimeout() {
   const [saved, setSaved] = useState('');
   return (
     <form
-      // As wide as a form column.
       style={{ inlineSize: 'min(100%, 24rem)' }}
       onSubmit={(event) => {
         event.preventDefault();
@@ -17,7 +16,6 @@ export default function SessionTimeout() {
       onReset={() => setSaved('')}
     >
       <Column gap={5}>
-        {/* The slider is as tall as the field above it, with the same corners. */}
         <TextField label="Workspace" name="workspace" defaultValue="Northwind" />
         <Slider
           label="Sign out after"

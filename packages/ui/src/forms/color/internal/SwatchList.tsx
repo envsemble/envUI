@@ -14,30 +14,22 @@ export type ColorPickerSwatch = ColorValue | { color: ColorValue; label: string 
 
 export interface SwatchListProps {
   swatches: readonly ColorPickerSwatch[];
-  /** The picker's color, which selects the swatch of the same color. */
   value: Color;
-  /** Receives a swatch's color as it is chosen. */
   onChange: (color: Color) => void;
-  /** Whether the swatches keep their alpha. */
   alpha: boolean;
   disabled: boolean;
-  /** Names the list. */
   label: string;
 }
 
-/**
- * Preset colors as a listbox of swatches: the arrow keys move between them, and a press, Enter or
- * Space chooses one. Each is named by its label, or else by the color's description.
- */
 export function SwatchList({ swatches, value, onChange, alpha, disabled, label }: SwatchListProps) {
   const { locale } = useLocale();
   const items = swatches.map((swatch, index) => {
-    const own = typeof swatch === 'object' && 'label' in swatch;
-    const color = toColor(own ? swatch.color : swatch, alpha);
+    const hasOwnLabel = typeof swatch === 'object' && 'label' in swatch;
+    const color = toColor(hasOwnLabel ? swatch.color : swatch, alpha);
     return {
       key: String(index),
       color,
-      name: own ? swatch.label : color.getColorName(locale),
+      name: hasOwnLabel ? swatch.label : color.getColorName(locale),
     };
   });
   const selected = items.find((item) => sameColor(item.color, value));
@@ -74,7 +66,7 @@ export function SwatchList({ swatches, value, onChange, alpha, disabled, label }
             className="env-color-picker-swatch"
             data-selected={flag(item === selected)}
             data-translucent={flag(item.color.getChannelValue('alpha') < 1)}
-            style={{ '--env-color-swatch-color': item.color.toString('css') }}
+            style={{ '--_color-swatch-color': item.color.toString('css') }}
             {...roving.getItemProps(item)}
             onClick={choose}
             onKeyDown={(event) => {

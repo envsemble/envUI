@@ -13,7 +13,6 @@ import {
 } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** Whether an element's box lies inside the preview region's. */
 function insidePreview(selector: string, preview = 'preview') {
   const region = page.getByTestId(preview).element().getBoundingClientRect();
   const found = document.querySelector(selector)!.getBoundingClientRect();
@@ -33,26 +32,29 @@ const toasts = (layer: Locator, text?: string) =>
     (toast) => text === undefined || toast.textContent?.includes(text),
   );
 
+const pastContainedOpeningFocusWindow = 600;
+
 describe('PortalContainer, contained', () => {
-  // First in the file: the frame loads the notices' module once, and the next test would find it
-  // loaded.
-  test('a contained notice shown before its code has loaded arrives once it has', async () => {
-    // The region loads the picture's notices as it renders: hold them back, as a slow network would.
-    await commands.holdModule('PictureNotice');
-    try {
-      mount(fixture);
-      const layer = page.getByTestId('layer');
-      await commands.moduleRequested('PictureNotice');
-      await isShown(layer.getByRole('menu', { name: 'Actions' }));
-      expect(toasts(layer)).toHaveLength(0);
-      await commands.releaseModule('PictureNotice');
-      await isShown(layer.getByText('Changes saved.'));
-      await page.getByRole('button', { name: 'Notify' }).click();
-      await expect.poll(() => toasts(layer, 'Invitation sent.')).toHaveLength(1);
-    } finally {
-      await commands.unrouteModule('PictureNotice');
-    }
-  });
+  test(
+    'first in the file, as the module loads once: a contained notice shown before its code has loaded arrives once it has',
+    { tags: ['once'] },
+    async () => {
+      await commands.holdModule('PictureNotice');
+      try {
+        mount(fixture);
+        const layer = page.getByTestId('layer');
+        await commands.moduleRequested('PictureNotice');
+        await isShown(layer.getByRole('menu', { name: 'Actions' }));
+        expect(toasts(layer)).toHaveLength(0);
+        await commands.releaseModule('PictureNotice');
+        await isShown(layer.getByText('Changes saved.'));
+        await page.getByRole('button', { name: 'Notify' }).click();
+        await expect.poll(() => toasts(layer, 'Invitation sent.')).toHaveLength(1);
+      } finally {
+        await commands.unrouteModule('PictureNotice');
+      }
+    },
+  );
 
   test(
     'overlays open in the container, without locking the page or taking focus',
@@ -71,12 +73,8 @@ describe('PortalContainer, contained', () => {
       for (const selector of ['.env-menu', '.env-tooltip', '.env-toast'])
         expect(insidePreview(selector), selector).toBe(true);
       expect(insidePreview('.env-dialog', 'dialog-preview')).toBe(true);
-      // No focus moved in, and the page neither hides behind a modal layer nor stops scrolling.
-      // Base UI focuses a menu as it opens; waiting past the 500 ms in which a contained popup sends
-      // that focus back (openingFocusWindow in PopupSurface.tsx) shows that it stays out.
-      await waitOnRealTime(600);
+      await waitOnRealTime(pastContainedOpeningFocusWindow);
       expect(document.activeElement).toBe(document.body);
-      // After that window, focus moved in from outside the container stays.
       const firstItem = layer.getByRole('menuitem').elements()[0] as HTMLElement;
       firstItem.focus();
       await expect.element(page.elementLocator(firstItem)).toHaveFocus();
@@ -104,14 +102,11 @@ describe('PortalContainer, contained', () => {
       await isShown(layer.getByRole('tooltip'));
       const dialogLayer = page.getByTestId('dialog-layer');
       await isShown(dialogLayer.getByRole('dialog', { name: 'Rename project' }));
-      // The dialog's own Cancel closes it, as anywhere; a press in another preview leaves the menu.
       await dialogLayer.getByRole('button', { name: 'Cancel' }).click();
       await isGone(dialogLayer.getByRole('dialog'));
       expect(shown(menu)).toBe(true);
-      // The menu's trigger, outside its container, closes it.
       await page.getByRole('button', { name: 'Actions' }).click();
       await isGone(menu);
-      // The tooltip closes as the pointer leaves its control.
       await page.getByRole('button', { name: 'Refresh members' }).hover();
       await mouse.move(1, 1);
       await isGone(layer.getByRole('tooltip'));
@@ -128,8 +123,6 @@ describe('PortalContainer, contained', () => {
       (page.getByRole('combobox', { name: 'Owner' }).element() as HTMLElement).focus();
       await keyboard.press('Escape');
       await isGone(list);
-      // Focus goes into the picker's popup as it opens, and back to the field, which Esc then
-      // closes the popup from.
       const field = page.getByRole('combobox', { name: 'Due' });
       await field.click();
       const popup = page.getByTestId('picker-layer').getByRole('dialog');
@@ -157,22 +150,18 @@ describe('PortalContainer, contained', () => {
       expect(insidePreview('[data-testid="context-layer"] .env-menu', 'context-preview')).toBe(
         true,
       );
-      // Its first row is under the pointer, as a context menu's is anywhere.
       const opened = box(menu);
       expect(Math.abs(opened.x - (regionBox.x + 60))).toBeLessThan(12);
       expect(Math.abs(opened.y - (regionBox.y + 30))).toBeLessThan(12);
-      // The page stays in reach and keeps its scroll.
       await expect.element(page.getByTestId('outside')).not.toHaveAttribute('aria-hidden');
       expect(getComputedStyle(document.documentElement).overflow).not.toBe('hidden');
       expect(getComputedStyle(document.body).overflow).not.toBe('hidden');
-      // As the page scrolls, the menu stays where it opened on the region, not on the window.
       const before = scrollY;
       scrollBy(0, 80);
       await nextFrames();
       expect(scrollY - before).toBeGreaterThan(40);
       const moved = box(region);
       await expect.poll(() => box(menu).y - moved.y).toBeCloseTo(opened.y - regionBox.y, 0);
-      // A press outside the container leaves it open; Esc on the menu closes it.
       await page.getByTestId('outside').click();
       expect(shown(menu)).toBe(true);
       menu
@@ -187,19 +176,15 @@ describe('PortalContainer, contained', () => {
   test('a contained notice arrives and leaves with its motion, and stays under the pointer', async () => {
     mount(fixture);
     const layer = page.getByTestId('layer');
-    // The notice's time passes only as the test moves the clock; its motion runs as it does.
     stopTimers('Date');
     await page.getByRole('button', { name: 'Notify' }).click();
     await expect.poll(() => toasts(layer, 'Invitation sent.')).toHaveLength(1);
     const notice = page.elementLocator(toasts(layer, 'Invitation sent.')[0]!);
-    // It came in from its starting style, which it no longer holds.
     await expect.element(notice).not.toHaveAttribute('data-starting-style');
     await expect.poll(() => getComputedStyle(notice.element()).opacity).toBe('1');
-    // Under the pointer its time stops: past its 1.2 s it is still there.
     await notice.hover();
     await passTime(1800);
     expect(notice.element().isConnected).toBe(true);
-    // Once the pointer leaves, it goes, taking its ending style before it is removed.
     let ended = false;
     const observer = new MutationObserver((records) => {
       if (records.some((record) => (record.target as Element).hasAttribute('data-ending-style')))
@@ -225,9 +210,6 @@ describe('PortalContainer, contained', () => {
     const layer = page.getByTestId('layer');
     await isShown(layer.getByText('Changes saved.'));
     (page.getByTestId('outside').element() as HTMLElement).focus();
-    // F6 stays the browser's: envUI neither takes the key nor moves focus to the toasts. What the
-    // browser then does with it differs: Firefox moves focus out of the page's content, while
-    // headless Chromium and WebKit leave it where it was.
     let prevented: boolean | undefined;
     window.addEventListener(
       'keydown',
@@ -245,27 +227,8 @@ describe('PortalContainer, contained', () => {
     const bar = page.getByRole('menubar', { name: 'Application menu' });
     await bar.getByRole('menuitem', { name: 'File' }).click();
     await isShown(layer.getByRole('menu', { name: 'File' }));
-    // Another menu opening in its place closes it, though the press came from outside the layer.
     await bar.getByRole('menuitem', { name: 'Edit' }).hover();
     await isShown(layer.getByRole('menu', { name: 'Edit' }));
     await isGone(layer.getByRole('menu', { name: 'File' }));
-  });
-
-  test('Panes open as a sheet in it leave the page in use', async () => {
-    mount(fixture);
-    const sheet = page.getByTestId('panes-preview').getByRole('dialog', { name: 'Details' });
-    await isShown(sheet);
-    // Not modal: nothing on the page turns inert, focus stays out and Tab leaves the sheet.
-    await expect.element(sheet).not.toHaveAttribute('aria-modal');
-    expect(document.querySelectorAll('[inert]')).toHaveLength(0);
-    expect(document.activeElement).toBe(document.body);
-    const outside = page.getByTestId('outside');
-    (outside.element() as HTMLElement).focus();
-    await expect.element(outside).toHaveFocus();
-    const edit = sheet.getByRole('button', { name: 'Edit details' });
-    (edit.element() as HTMLElement).focus();
-    await keyboard.press('Tab');
-    await expect.element(edit).not.toHaveFocus();
-    expect(shown(sheet)).toBe(true);
   });
 });

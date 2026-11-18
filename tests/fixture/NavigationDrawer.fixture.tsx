@@ -1,5 +1,11 @@
 import { useState, type ReactNode } from 'react';
-import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/envui';
+import {
+  Badge,
+  IconButton,
+  NavigationDrawer,
+  type NavigationDrawerDestination,
+} from '@envsemble/envui';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
 
 export const mount = 'standalone';
 
@@ -9,7 +15,6 @@ const destinations: NavigationDrawerDestination[] = [
   { label: 'Archive', href: '#archive' },
 ];
 
-/** Destinations whose label and heading are cut short once the drawer is narrowed. */
 const longDestinations: NavigationDrawerDestination[] = [
   { label: 'Inbox', href: '#inbox', group: 'Shared across the organization', current: true },
   {
@@ -19,7 +24,23 @@ const longDestinations: NavigationDrawerDestination[] = [
   },
 ];
 
-/** A drawer beside some content in a container of a given width, as in a Scaffold. */
+const sections: NavigationDrawerDestination[] = [
+  { label: 'Profile', href: '#profile', current: true },
+  { label: 'Notifications and e-mail', href: '#notifications', badge: <Badge>New</Badge> },
+  {
+    label: 'Saved search',
+    href: '#saved',
+    end: (
+      <IconButton
+        icon={<IconDelete />}
+        aria-label="Delete Saved search"
+        size="sm"
+        variant="ghost"
+      />
+    ),
+  },
+];
+
 function Frame({ width, dir, children }: { width: string; dir?: 'rtl'; children: ReactNode }) {
   return (
     <div
@@ -38,11 +59,6 @@ function Frame({ width, dir, children }: { width: string; dir?: 'rtl'; children:
   );
 }
 
-/**
- * Resizable drawers: one that keeps its own width, one the application controls in a narrower
- * container, which halves its room, one in right-to-left text, one that isn't resizable, one whose
- * long label and heading it cuts short as it narrows.
- */
 export default function NavigationDrawerFixture() {
   const [width, setWidth] = useState(20);
   const [committed, setCommitted] = useState<number>();
@@ -81,6 +97,13 @@ export default function NavigationDrawerFixture() {
           minWidth={10}
         />
       </Frame>
+      <div
+        data-testid="narrow-column"
+        style={{ display: 'grid', gridTemplateColumns: '12rem 1fr', blockSize: '12rem' }}
+      >
+        <NavigationDrawer aria-label="Sections" destinations={sections} />
+        <div>Content</div>
+      </div>
     </div>
   );
 }

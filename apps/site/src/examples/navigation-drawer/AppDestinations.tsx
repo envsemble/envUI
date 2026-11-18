@@ -17,7 +17,6 @@ import { IconLabel } from '@envsemble/envui/icons/Label';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { IconStar } from '@envsemble/envui/icons/Star';
 
-/** The inbox's messages, which its page lists. */
 const messages = [
   { label: 'Priya Shah', description: 'Launch plan for the spring release' },
   { label: 'Sam Lee', description: 'Re: Quarterly report figures' },
@@ -30,7 +29,6 @@ const messages = [
 ];
 
 export default function AppDestinations() {
-  // The router knows the current page; here a press stands in for it.
   const [current, setCurrent] = useState('/inbox');
   const destination = (href: string) => ({
     href,
@@ -48,8 +46,6 @@ export default function AppDestinations() {
   ];
   const title = destinations.find((item) => item.current)?.label ?? 'Inbox';
   return (
-    // The drawer is the Scaffold's navigation, beside the page of the destination it marks.
-    // On a phone the same destinations stand in a rail, so the page keeps its width.
     <Scaffold
       scroll="body"
       landmarks={false}

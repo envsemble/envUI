@@ -3,14 +3,6 @@ import { Button, ConfirmDialog, Menu, Column, Text, TextField } from '@envsemble
 
 export const mount = 'standalone';
 
-/**
- * Confirm dialogs: a neutral one that confirms at once, a
- * danger one whose action takes a moment and can fail, one whose action resolves at once, one
- * opened from a menu item that returns focus to the menu's button, a controlled one that stays
- * open after its action, and one with a typed name, inside a form of the page's own, whose action
- * waits for the spec and fails the first time, one whose confirm button waits on a typed name, and
- * one that holds a form of its own.
- */
 export default function ConfirmDialogFixture() {
   const [log, setLog] = useState<string[]>([]);
   const [fail, setFail] = useState(true);
@@ -19,7 +11,6 @@ export default function ConfirmDialogFixture() {
   const [saving, setSaving] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const record = (entry: string) => setLog((entries) => [...entries, entry]);
-  // The action waits until the spec lets it finish, so the pending state can be checked.
   const settle = useRef<(() => void) | null>(null);
   const [typedFail, setTypedFail] = useState(true);
   const [typedError, setTypedError] = useState('');
@@ -97,14 +88,12 @@ export default function ConfirmDialogFixture() {
         trigger={<Button variant="secondary">Save draft</Button>}
         open={saving}
         onOpenChange={(open, { reason }) => {
-          // Kept open after the action, so the draft can be saved again.
           if (reason !== 'imperative-action') setSaving(open);
         }}
         title="Save the draft?"
         confirmLabel="Save draft"
         onConfirm={() => record('saved')}
       />
-      {/* A form around it: the dialog's own submit must not reach it. */}
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -136,7 +125,6 @@ export default function ConfirmDialogFixture() {
           Finish the workspace action
         </Button>
       </form>
-      {/* Its confirm button waits on the typed name. */}
       <ConfirmDialog
         trigger={<Button variant="secondary">Delete repository</Button>}
         tone="danger"
@@ -152,7 +140,6 @@ export default function ConfirmDialogFixture() {
           onValueChange={setRepository}
         />
       </ConfirmDialog>
-      {/* A form of its own in the content, which nests in the dialog's: reported while developing. */}
       <ConfirmDialog
         trigger={<Button variant="secondary">Rename project</Button>}
         title="Rename Northwind launch?"

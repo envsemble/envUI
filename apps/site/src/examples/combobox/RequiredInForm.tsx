@@ -15,7 +15,6 @@ export default function RequiredInForm() {
   const [sent, setSent] = useState('');
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // A multiple combobox submits one entry for each chosen value.
     const chosen = new FormData(event.currentTarget).getAll('topics');
     setError(chosen.length ? undefined : 'Choose at least one topic.');
     setSent(chosen.length ? `Filed under ${chosen.join(', ')}.` : '');

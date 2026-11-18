@@ -18,7 +18,7 @@ exports[`app-screen has no new accessibility violations 1`] = `
     "button.env-avatar-button": 1,
   },
   "landmark-unique": {
-    "div.env-panes-main": 1,
+    "div.env-panes-pane": 1,
   },
 }
 `;
@@ -112,11 +112,15 @@ exports[`disclosure has no new accessibility violations 1`] = `{}`;
 
 exports[`document-tabs has no new accessibility violations 1`] = `{}`;
 
+exports[`document-tabs-reorder has no new accessibility violations 1`] = `{}`;
+
 exports[`document-tabs-rerender has no new accessibility violations 1`] = `{}`;
 
 exports[`document-tabs-rtl has no new accessibility violations 1`] = `{}`;
 
 exports[`drop-zone has no new accessibility violations 1`] = `{}`;
+
+exports[`empty-state has no new accessibility violations 1`] = `{}`;
 
 exports[`field has no new accessibility violations 1`] = `{}`;
 
@@ -138,8 +142,6 @@ exports[`layout has no new accessibility violations 1`] = `{}`;
 
 exports[`layout-check has no new accessibility violations 1`] = `{}`;
 
-exports[`line-art has no new accessibility violations 1`] = `{}`;
-
 exports[`list has no new accessibility violations 1`] = `{}`;
 
 exports[`markdown has no new accessibility violations 1`] = `{}`;
@@ -150,6 +152,8 @@ exports[`menu has no new accessibility violations 1`] = `{}`;
 
 exports[`menubar has no new accessibility violations 1`] = `{}`;
 
+exports[`message-list has no new accessibility violations 1`] = `{}`;
+
 exports[`messages has no new accessibility violations 1`] = `
 {
   "empty-table-header": {
@@ -158,7 +162,6 @@ exports[`messages has no new accessibility violations 1`] = `
   "label-content-name-mismatch": {
     "button.env-button": 1,
     "button.env-color-picker-button": 1,
-    "button.env-panel-dock-tab-restore": 1,
   },
 }
 `;
@@ -184,33 +187,11 @@ exports[`navigation-drawer-nested has no new accessibility violations 1`] = `{}`
 
 exports[`page-header has no new accessibility violations 1`] = `{}`;
 
+exports[`page-navigation has no new accessibility violations 1`] = `{}`;
+
 exports[`pagination has no new accessibility violations 1`] = `{}`;
 
-exports[`panel-dock has no new accessibility violations 1`] = `
-{
-  "landmark-main-is-top-level": {
-    "div.env-theme main": 2,
-  },
-  "landmark-no-duplicate-main": {
-    "div.env-theme main": 1,
-  },
-  "landmark-unique": {
-    "div.env-theme main": 1,
-    "section.env-panel-dock-panel": 6,
-  },
-  "scrollable-region-focusable": {
-    "div.env-panel-dock-content ol": 4,
-  },
-}
-`;
-
-exports[`panes has no new accessibility violations 1`] = `
-{
-  "target-size": {
-    "div.env-panes-list button": 3,
-  },
-}
-`;
+exports[`panes has no new accessibility violations 1`] = `{}`;
 
 exports[`popover has no new accessibility violations 1`] = `{}`;
 
@@ -229,12 +210,14 @@ exports[`primitives has no new accessibility violations 1`] = `
 
 exports[`relative-time has no new accessibility violations 1`] = `{}`;
 
+exports[`row-controls has no new accessibility violations 1`] = `{}`;
+
 exports[`scaffold has no new accessibility violations 1`] = `{}`;
 
 exports[`scaffold-panes has no new accessibility violations 1`] = `
 {
   "target-size": {
-    "div.env-panes-main button": 60,
+    "div.env-panes-body button": 60,
   },
 }
 `;
@@ -260,7 +243,6 @@ exports[`scale has no new accessibility violations 1`] = `
     "nav.env-navigation-drawer": 2,
     "nav.env-navigation-rail": 1,
     "nav.env-pagination": 1,
-    "section.env-panel-dock-panel": 1,
   },
 }
 `;
@@ -288,6 +270,8 @@ exports[`slider has no new accessibility violations 1`] = `{}`;
 
 exports[`stacking has no new accessibility violations 1`] = `{}`;
 
+exports[`surfaces has no new accessibility violations 1`] = `{}`;
+
 exports[`table has no new accessibility violations 1`] = `{}`;
 
 exports[`table-of-contents has no new accessibility violations 1`] = `
@@ -304,13 +288,7 @@ exports[`table-of-contents has no new accessibility violations 1`] = `
 }
 `;
 
-exports[`tabs has no new accessibility violations 1`] = `{}`;
-
-exports[`tabs-compact has no new accessibility violations 1`] = `{}`;
-
-exports[`tabs-rtl has no new accessibility violations 1`] = `{}`;
-
-exports[`tabs-scrolling has no new accessibility violations 1`] = `{}`;
+exports[`text has no new accessibility violations 1`] = `{}`;
 
 exports[`theme-contrast has no new accessibility violations 1`] = `{}`;
 
@@ -328,4 +306,10 @@ exports[`toast has no new accessibility violations 1`] = `{}`;
 
 exports[`tooltip has no new accessibility violations 1`] = `{}`;
 
+exports[`top-bar has no new accessibility violations 1`] = `{}`;
+
 exports[`tree has no new accessibility violations 1`] = `{}`;
+
+exports[`value-commit has no new accessibility violations 1`] = `{}`;
+
+exports[`visually-hidden has no new accessibility violations 1`] = `{}`;

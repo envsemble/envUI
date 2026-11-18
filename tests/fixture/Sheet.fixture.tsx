@@ -13,11 +13,6 @@ import {
 
 export const mount = 'standalone';
 
-/**
- * Side sheets at both edges, named by a title or by aria-label, one holding a NavigationDrawer, one whose
- * first element is a field,
- * one in right-to-left text, a bottom sheet, and two taller than the window.
- */
 export default function SheetFixture() {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<DialogOpenChangeReason | ''>('');
@@ -82,7 +77,6 @@ export default function SheetFixture() {
         <Text>Choose how to share.</Text>
       </Sheet>
       <Row wrap gap={3}>
-        {/* Taller than a short window: their bodies scroll, between the heading and the actions. */}
         {(['end', 'bottom'] as const).map((side) => (
           <Sheet
             key={side}
@@ -122,12 +116,10 @@ export default function SheetFixture() {
           }}
           trigger={<Button variant="secondary">Open kept width</Button>}
         >
-          {/* Taller than the window, so the sheet scrolls. */}
           <div style={{ blockSize: '150vh' }}>
             <Text>A long list.</Text>
           </div>
         </Sheet>
-        {/* A CSS length, which a resizable sheet ignores and warns of while developing. */}
         <Sheet
           title="Resizable css width"
           resizable

@@ -1,7 +1,3 @@
-// Comments name the files they lean on, such as "(Tokens.css)" or scripts/test/TestScope.ts, so a
-// reader can follow them. Each name has to match a file of the repository: one written with its
-// folders has to end a file's path, a bare name to be some file's name. A file that moves takes its
-// comments with it, or this fails.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
@@ -10,13 +6,10 @@ import { test } from 'node:test';
 import { codeText, cssComments, listFiles } from '../support/SourceText.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-/** The folders whose comments are checked. */
 const checked = ['packages/ui/src', 'apps/site/src', 'scripts', 'tests'];
 
-/** Generated from pinned inputs, and the fixtures' sample code: no comments of the repository's. */
 const skipped = ['packages/ui/src/icons/', 'apps/site/src/generated/', 'tests/visual/snapshots/'];
 
-/** Names that are no file of the repository on purpose, by name, each with its reason. */
 const exceptions = new Map([
   ['Foo.css', "a made-up style sheet, the input of the token tests' examples"],
   ['styles.css', "the package's whole style sheet, which the build makes of styles/index.css"],
@@ -28,10 +21,6 @@ const exceptions = new Map([
 
 const extensions = /\.(?:tsx|ts|css|mjs)$/;
 
-/**
- * The file names in a comment: a name with one of the checked extensions, with the folders written
- * before it. A name after `#` or `@` is an import alias; one with `<` or `*` a pattern.
- */
 const fileName =
   /(?<![\w$.\-/#@<>*])((?:\.{1,2}\/)*(?:[\w.-]+\/)*[\w.-]*\w\.(?:tsx|ts|css|mjs))(?![\w-])/g;
 
@@ -44,16 +33,13 @@ const repositoryFiles = execFileSync(
   .filter(Boolean);
 const fileNames = new Set(repositoryFiles.map((path) => path.slice(path.lastIndexOf('/') + 1)));
 
-/** Whether `name`, as a comment writes it, matches a file of the repository. */
 function exists(name: string) {
   const path = name.replace(/^(?:\.{1,2}\/)+/, '');
-  // Build output and installed packages, which the repository doesn't hold.
   if (/^(?:dist|node_modules|\.cache)\/|\/(?:dist|node_modules)\//.test(path)) return true;
   if (!path.includes('/')) return fileNames.has(path);
   return repositoryFiles.some((file) => file === path || file.endsWith(`/${path}`));
 }
 
-/** The names in `file`'s comments that match no file, as `path:line: name`. */
 function danglingNames(path: string, text: string) {
   const comments = path.endsWith('.css') ? cssComments(text) : codeText(path, text);
   const found: string[] = [];

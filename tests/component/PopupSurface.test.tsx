@@ -9,7 +9,6 @@ beforeEach(() => {
 });
 
 test('carries the theme into the portal and the direction at its trigger, mounted once', async () => {
-  // A popup remounted after opening returns focus to where it was, and a menu closes as it opens.
   let removed = 0;
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations)
@@ -37,7 +36,6 @@ test('carries the theme into the portal and the direction at its trigger, mounte
 });
 
 test('takes the direction at its trigger while focus is elsewhere', async () => {
-  // Focus stays in a left-to-right region while code opens the right-to-left popup.
   (page.getByRole('button', { name: 'Open ltr' }).element() as HTMLElement).focus();
   page
     .getByRole('button', { name: 'Open rtl' })
@@ -49,7 +47,6 @@ test('takes the direction at its trigger while focus is elsewhere', async () => 
 });
 
 test('draws no tap highlight on a control or in a popup', async () => {
-  // Firefox has no tap highlight to turn off.
   if (!CSS.supports('-webkit-tap-highlight-color', 'transparent')) return;
   const trigger = page.getByRole('button', { name: 'Open ltr' });
   await trigger.click();

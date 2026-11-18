@@ -3,9 +3,6 @@ import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Forms.fixture.tsx';
 import { mount } from './support/Mount.tsx';
 
-// envUI's controls in a native form, tests/fixture/Forms.fixture.tsx: what a form submits, and
-// what its reset restores.
-
 beforeEach(() => {
   mount(fixture);
 });
@@ -56,7 +53,6 @@ test(
     await button('Reset form').click();
     await expect.element(textbox('Project name')).toHaveValue('Initial project');
     await expect.element(textbox('Notes')).toHaveValue('Initial notes');
-    // SearchField renders its query itself, and follows the reset to its default query.
     await expect.element(search()).toHaveValue('initial query');
     expect(button('Clear search').elements()).toHaveLength(1);
     await search().fill('');

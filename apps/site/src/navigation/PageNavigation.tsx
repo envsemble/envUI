@@ -6,10 +6,8 @@ import { pagesOf, type RoutePage } from '../routes/SiteRoutes';
 import { routeHref } from '../routes/Address';
 import { preloadPageContent } from '../pages/PageLoading';
 
-/**
- * Starts loading what the previous and next pages need once the page has loaded and the browser is
- * idle, so following either shows it at once: two small files, in the order people read.
- */
+const idleFallbackDelayMs = 500;
+
 function usePreloadNeighbours(previous: RoutePage | undefined, next: RoutePage | undefined) {
   useEffect(() => {
     let idle = 0;
@@ -17,10 +15,11 @@ function usePreloadNeighbours(previous: RoutePage | undefined, next: RoutePage |
       void preloadPageContent(previous);
       void preloadPageContent(next);
     };
-    // Safari has no requestIdleCallback; there, a moment after the load.
     const idleSupported = typeof window.requestIdleCallback === 'function';
     const preload = () => {
-      idle = idleSupported ? requestIdleCallback(load) : window.setTimeout(load, 500);
+      idle = idleSupported
+        ? requestIdleCallback(load)
+        : window.setTimeout(load, idleFallbackDelayMs);
     };
     if (document.readyState === 'complete') preload();
     else addEventListener('load', preload, { once: true });
@@ -32,10 +31,6 @@ function usePreloadNeighbours(previous: RoutePage | undefined, next: RoutePage |
   }, [previous, next]);
 }
 
-/**
- * The previous and next pages of the page's part, the catalogue or the Docs, in reading order,
- * which load once the page is idle. The catalogue's home shows none: its Explore cards lead on.
- */
 export function PageNavigation({ page }: { page: RoutePage }) {
   const pages = pagesOf(page.area);
   const index = pages.indexOf(page);

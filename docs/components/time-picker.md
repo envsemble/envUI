@@ -19,8 +19,6 @@ avoidWhen:
     use: DatePicker
   - text: A length of time, such as 45 minutes.
     use: TextField
-  - text: A choice among a few named times of day, such as Morning or Evening.
-    use: SegmentedControl
   - text: A few fixed times, such as on the hour.
     use: Select
 components:
@@ -66,37 +64,21 @@ examples:
 
 ### The locale's clock
 
-The same value on a 12-hour and a 24-hour clock, as people there write it, and on the 24-hour clock in New York too, where the field sets its own clock. The value itself stays on the 24-hour clock.
-
 ```tsx figure=ClockConventions
 
 ```
 
 ### Steps
 
-The minutes wheel offers a time on each step the field sets, here every quarter hour, every 5 minutes and every minute. A wheel with fewer values than it shows rows, such as every 15 minutes, stops at its ends rather than going round.
-
 ```tsx figure=MinuteSteps
 
 ```
 
-## Rules
-
-Offer only the times people can choose.
-
 ### Within office hours
-
-Offer the times that can be booked: between an earliest and a latest time, on steps such as every half hour.
-
-- A value between the steps still shows, in its place.
 
 ```tsx figure=OfficeHours motion
 
 ```
-
-### A time that can't change
-
-Show it read-only, not disabled.
 
 ## Accessibility
 
@@ -107,54 +89,4 @@ Show it read-only, not disabled.
 | <kbd>Enter</kbd>, <kbd>Space</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd> on the field | Opens the popup at the chosen value.                 |
 | <kbd>↑</kbd>, <kbd>↓</kbd> on a wheel                                       | Chooses its previous or next value, wrapping around. |
 | <kbd>←</kbd>, <kbd>→</kbd>                                                  | Moves to the next wheel.                             |
-| <kbd>Esc</kbd>                                                              | Closes the popup and returns focus to the field.     |
 | <kbd>Backspace</kbd>, <kbd>Delete</kbd> on the field                        | Clears a clearable field.                            |
-
-### envUI provides
-
-- The field as a `combobox` button named by its label, with its description and error.
-- Each wheel a `spinbutton` named Hours, Minutes or AM/PM, with the time as the locale writes it.
-
-### You provide
-
-- A `label`, or `aria-label` on a field without one.
-- Validation and its `error`.
-- The labels in the application's language.
-
-## Compose
-
-### Usage
-
-```tsx
-<TimePicker label="Starts at" value={start} onValueChange={setStart} clearable />
-```
-
-The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, unless `hourCycle` sets one: `h23` for 18:00 with no AM/PM wheel, `h12` for 6:00 PM. `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time. The popup stays open as its wheels turn.
-
-#### Available times
-
-`min` and `max`, as `HH:mm`, are the earliest and latest times. `minuteStep` is the minutes between the times the list offers, from 1 to 60, 15 by default.
-
-#### In a form
-
-```tsx
-<form onSubmit={submit}>
-  <TimePicker label="From" name="from" defaultValue="09:00" required />
-  <TimePicker label="To" name="to" defaultValue="17:00" required error={error} />
-  <Button type="submit">Save shift</Button>
-</form>
-```
-
-`name` submits the time as `HH:mm`, without a date or a zone, so two times compare as text; a form reset restores `defaultValue`, and `required` keeps an empty field's form from submitting and focuses it. Use `readOnly`, not `disabled`, to show a time people can't change. For one moment, a day and a time, use a single DatePicker with `granularity="minute"`.
-
-#### Sizes
-
-`size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `visibleLabel={false}` hides the label, with a `placeholder` while the field is empty.
-
-### Composition
-
-TimePicker shares DatePicker's field and its picker card, `env-picker-popup` with `env-date-picker-popup` and `env-time-picker-popup`: the wheels in its body, `env-picker-popup-body`, and Now and Clear in its footer, `env-picker-popup-footer` with `env-date-picker-actions`. The wheels are for hours, minutes and, on a 12-hour clock, the day period, each row an `env-time-list-row`, the chosen one with `data-centered`. `className` and `style` reach the root, and `ref` the field's button.
-
-### Customize
-
-Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.

@@ -2,7 +2,6 @@ import { Column, Text } from '@envsemble/envui';
 
 export default function Measure() {
   return (
-    // Text fills its container, so the column stops its lines at a readable length.
     <Column gap={2} style={{ maxInlineSize: '53ch' }}>
       <Text render={<h3 />} variant="title">
         Hollow Wood

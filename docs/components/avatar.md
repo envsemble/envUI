@@ -21,7 +21,7 @@ aliases:
 useWhen:
   - A person or an organization beside their name, such as in a list of members
   - The signed-in account's menu in the application's chrome (AvatarButton)
-  - A few people in a row where space is short, such as a project's members (AvatarGroup)
+  - A few people in a row where space is short (AvatarGroup)
 avoidWhen:
   - text: An icon for a thing or an action, not a person.
     use: Icon
@@ -46,12 +46,6 @@ examples:
   ProjectMembers: example
   ChooseReviewers: example
   PressableAvatars: example
-  NamesBeside:
-    role: do
-    caption: The name beside the avatar, wherever there is room.
-  AvatarsAlone:
-    role: caution
-    caption: 'Avatars alone, where room is short: people hover each one to learn who it is.'
 ---
 
 # Avatar
@@ -67,31 +61,13 @@ examples:
 3. **Large**
 4. **Extra large**
 
-| Size        | Use for                                               |
-| ----------- | ----------------------------------------------------- |
-| Small       | Compact text, such as a combobox option.              |
-| Medium      | Lists, comments and toolbars. The default.            |
-| Large       | A name with a second line, such as an account header. |
-| Extra large | A profile page. Not for AvatarButton.                 |
-
 ### Pictures and fallbacks
-
-Without a picture, or while it loads or after it fails, an avatar shows the initials of its name, or the default person picture, such as for a guest.
 
 ```tsx figure=Fallbacks
 
 ```
 
 ### Colors from the name
-
-The name chooses one of eight pastel colors, the same on every page.
-
-- An organization can take another of them as its own.
-- Each is a soft fill with the initials or the figure in a deep shade of the same hue. In dark it turns over: a deep fill with light initials, so avatars stay quieter than the screen's text.
-- In a dense place, a table's cell or a small group, the fills are quieter, so a column of avatars doesn't outweigh the data beside it.
-- In a group, no two neighbours take colors that look alike.
-- Initials stay large enough to read; an avatar smaller than the small size, such as one sized to a dense row, shows its color alone.
-- The colors only tell people apart.
 
 <!-- specimen: Hues -->
 
@@ -111,22 +87,11 @@ The name chooses one of eight pastel colors, the same on every page.
 
 ### A group as a pile
 
-AvatarGroup rests as a compact pile, like stacked cards, with the count of the rest in a circle.
-
-- Hovering, tapping or focusing it spreads the avatars along a gentle arch, so each one shows.
-- It keeps the room its spread takes, so nothing around it moves.
-- A ring in the color of the surface below parts each avatar from the one it lies on, and the last from the count, which lies flat at the bottom.
-
 ```tsx figure=ProjectMembers motion
 
 ```
 
 ### Chosen
-
-An avatar can show as chosen, such as in a list of people to pick from.
-
-- A ring and a check, in the accent of a checked box, so the choice never rests on color alone.
-- It is a look only: the control around it, such as a checkbox, says it is chosen.
 
 ```tsx figure=ChooseReviewers
 
@@ -134,122 +99,6 @@ An avatar can show as chosen, such as in a list of people to pick from.
 
 ### Pressable avatars
 
-Each avatar in a group can open something, such as the person's profile.
-
-- While piled, the whole pile is one target that spreads it, so a press never lands on someone hidden under another.
-- Spread, each avatar is a target of its own, as large as a finger needs on a touch screen.
-
 ```tsx figure=PressableAvatars motion
 
 ```
-
-## Rules
-
-Beside a visible name an avatar is decorative; on its own it can be a picture named after the person.
-
-```tsx figure=NamesBeside
-
-```
-
-```tsx figure=AvatarsAlone
-
-```
-
-### Names
-
-Give each person their full name, the same everywhere: it names the picture and chooses the initials and the color.
-
-### Groups and buttons
-
-Show only as many people in a group as fit without wrapping, and use AvatarButton rather than an avatar inside a button of your own.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                             | Action                                                                                      |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to an AvatarButton, each pressable avatar and the count; focus in a group spreads it. |
-| <kbd>Enter</kbd>, <kbd>Space</kbd>              | Presses an AvatarButton or a pressable avatar.                                              |
-| <kbd>Esc</kbd>                                  | Closes a tooltip.                                                                           |
-
-### envUI provides
-
-- A decorative avatar hidden, or with `named` an image named by `name`.
-- A group named with its count and every name, such as 4 people: Alex Morgan, Sam Lee…
-- Pressable avatars as native buttons and links, named after each person.
-- A piled group as one pointer target, which spreads; its avatars take presses only once spread, apart and whole, so no target lies under another (WCAG 2.5.8).
-- The count as a tab stop, so the hidden names can be reached.
-
-### You provide
-
-- The name beside a decorative avatar, or `named`.
-- An `aria-label` on an AvatarButton that says what it opens.
-
-## Compose
-
-### Usage
-
-Avatar takes the person's or organization's `name`, a picture in `src`, and `fallback="person"` for the default person picture instead of the initials, which an empty name shows too. Beside a visible name it is decorative; `named` makes it an image named by `name`. `size` is `sm`, `md`, the default, `lg` or `xl`: 1.5, 2, 3 or 5.5 rem.
-
-```tsx
-<Avatar name="Alex Morgan" src={alex.picture} />
-<Avatar name="Northwind Labs" size="lg" named />
-```
-
-#### Chosen
-
-`selected` draws the ring and the check at its bottom end, `env-avatar-check`. It says nothing to assistive technology: the checkbox or option around it does, as in the ChooseReviewers example. An AvatarGroup person takes `selected` too, and comes in front of its neighbours so its check shows.
-
-```tsx
-<Checkbox
-  checked={chosen}
-  onCheckedChange={setChosen}
-  label={
-    <Row align="center" gap={3}>
-      <Avatar name="Sam Lee" selected={chosen} />
-      <Text render={<span />}>Sam Lee</Text>
-    </Row>
-  }
-/>
-```
-
-#### Colors
-
-`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, and in the dark theme a deep fill with the initials and the figure in a light shade. In a table's cell and in a small AvatarGroup the fill takes half its chroma at the same lightness, so the initials keep their contrast; `--env-avatar-dense: 1` on a container of your own, such as a dense list, does the same for the avatars and groups in it. In an AvatarGroup, an avatar whose color looks like its neighbour's before it, the two blues, greens, pinks or warm hues, takes the next of the eight that doesn't.
-
-#### Groups
-
-AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`, `id` and `selected`. `max` sets how many show, and the count chip counts the rest; `total` counts people beyond a preview list.
-
-- At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile. A group of initials piles looser, so two letters stay whole under the next avatar, and rests upright and in line, as does a small group.
-- A small group, or any group in a table's cell, is dense: pictures overlap by 0.3 of the avatar, and initials only by the ring that parts them, so the letters stay clear.
-- The group always keeps the room its spread takes, so spreading never moves what is around it; `align="end"` piles a group at the end of that room, for a group that ends a row, such as a list row's action.
-- With reduced motion it spreads at once.
-- `formatMore` and `formatLabel` set its words.
-
-```tsx
-<AvatarGroup people={members} max={3} total={12} align="end" />
-```
-
-#### Pressable groups
-
-`onPersonClick` makes every avatar a button, which receives the person pressed; a person with `href` is a link, through the application's router link from `LinkProvider`.
-
-- While the group is piled its avatars and count take no pointer events, and a cover over the group, its `::before`, takes the pointer, so no avatar can be pressed or hovered then.
-- The cover stays for the medium motion duration after the group starts to spread, until the avatars are in place.
-- A hovering pointer spreads the group with `:hover`, and keyboard focus inside with `:focus-visible`; a click's focus, without a focus ring, doesn't hold it spread.
-- Where no pointer hovers, a tap on the pile sets `data-spread` on the group, until a tap outside it or five seconds without a tap in it.
-- Spread, each pressable avatar is a whole target, 2.75 rem on touch screens.
-
-```tsx source=PressableAvatars
-
-```
-
-### Composition
-
-The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-avatar-group-item` button or link around each pressable one, and the count chip, `env-avatar-group-overflow`, whose tooltip lists the people it hides. A picture is `env-avatar-image`, the default person picture `env-avatar-person`, and AvatarButton `env-avatar-button`.
-
-### Customize
-
-Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. A lone avatar casts a faint shadow, 1 px down and 2 px soft, which the ring replaces in a group; a small avatar and one in a table cast none; under forced colors there is none, and `box-shadow: none` on `.env-avatar` removes it.

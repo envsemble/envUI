@@ -41,8 +41,8 @@ export function Progress({
 }: ProgressProps) {
   const locale = useLocale();
   const messages = useMessages('common', common);
-  // An indeterminate bar has no value to read, so it says that the work is loading.
-  const spoken = ariaValueText ?? (value === null ? messages.loading : undefined);
+  const indeterminateSaysLoading = value === null ? messages.loading : undefined;
+  const spoken = ariaValueText ?? indeterminateSaysLoading;
   const steps = segments !== undefined && segments > 1 ? Math.floor(segments) : undefined;
   const done =
     value === null || max <= min ? 0 : (Math.min(Math.max(value, min), max) - min) / (max - min);
@@ -71,7 +71,7 @@ export function Progress({
               key={step}
               className="env-progress-segment"
               style={{
-                '--env-progress-segment-fill': Math.min(Math.max(done * steps - step, 0), 1),
+                '--_progress-segment-fill': Math.min(Math.max(done * steps - step, 0), 1),
               }}
             />
           ))

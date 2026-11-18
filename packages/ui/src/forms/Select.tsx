@@ -14,6 +14,7 @@ import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
 import {
   FieldFrame,
+  FieldLabelContent,
   type FieldProps,
   type FieldSizeProps,
   type TextFieldDecorationProps,
@@ -30,7 +31,6 @@ import { ListRow } from '../internal/list/ListRow.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { classNames } from '../internal/classNames.js';
-import { flag } from '../internal/flag.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import '../styles/Base.css';
 import '../styles/Select.css';
@@ -124,18 +124,16 @@ export interface SelectProps
   autoComplete?: string;
 }
 
-/** Select's positioner, which opens the list below the trigger rather than over it. */
-function SelectPositioner(props: ComponentProps<typeof BaseSelect.Positioner>) {
+function PositionerBelowTrigger(props: ComponentProps<typeof BaseSelect.Positioner>) {
   return <BaseSelect.Positioner {...props} alignItemWithTrigger={false} />;
 }
 
 const popupParts = {
   Portal: BaseSelect.Portal,
-  Positioner: SelectPositioner,
+  Positioner: PositionerBelowTrigger,
   Popup: BaseSelect.Popup,
 };
 
-/** An option row: a check mark slot, the label and its description. */
 function SelectOption({ item }: { item: SelectItem }) {
   const descriptionId = useId();
   return (
@@ -149,7 +147,6 @@ function SelectOption({ item }: { item: SelectItem }) {
         />
       }
       className="env-select-item"
-      // A check mark shows the selected option; the slot keeps the labels aligned.
       indicator={
         <BaseSelect.ItemIndicator className="env-icon env-select-item-indicator">
           <IconCheck />
@@ -158,13 +155,40 @@ function SelectOption({ item }: { item: SelectItem }) {
       label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}
       description={
         item.description ? (
-          // Announced through aria-describedby rather than as part of the option's name.
           <span id={descriptionId} aria-hidden="true">
             {item.description}
           </span>
         ) : undefined
       }
     />
+  );
+}
+
+function cameFromKeyboard(event: Event | undefined) {
+  const clickFromKeyOnButton = event?.type === 'click' && (event as MouseEvent).detail === 0;
+  return event?.type.startsWith('key') === true || clickFromKeyOnButton;
+}
+
+function restoreOptionFocusBaseUiLostOnBusyPage(
+  trigger: HTMLElement | null,
+  list: HTMLElement | null,
+) {
+  const focusLeftOnTrigger = trigger !== null && trigger.ownerDocument.activeElement === trigger;
+  if (!focusLeftOnTrigger) return;
+  const options = list?.querySelectorAll<HTMLElement>('[role="option"]') ?? [];
+  const option =
+    Array.from(options).find((each) => each.hasAttribute('data-highlighted')) ??
+    Array.from(options).find((each) => each.getAttribute('aria-selected') === 'true');
+  option?.focus({ preventScroll: true });
+}
+
+function WidthOfLongestOption({ items }: { items: readonly SelectItem[] }) {
+  return (
+    <span className="env-select-sizer" aria-hidden="true">
+      {items.map((item) => (
+        <span key={item.value} data-label={item.label} />
+      ))}
+    </span>
   );
 }
 
@@ -207,7 +231,6 @@ export function Select({
   const controlRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  /** Whether the list last opened from the keyboard, where Base UI moves focus into it. */
   const openedByKeyboard = useRef(false);
   const portal = usePortalContainer();
   const [selectedValue, changeValue, keepOwnValue] = useControllableState({
@@ -220,8 +243,6 @@ export function Select({
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
-  // The label floats into the outline while the field holds a value or its list is open.
-  const labelFloats = selectedValue != null || open;
   useFormReset(
     inputRef,
     function applyReset() {
@@ -240,27 +261,11 @@ export function Select({
       readOnly={readOnly}
       onOpenChange={containedOpenChange(portal, triggerRef, (next, details) => {
         setOpen(next, { reason: details.reason });
-        // A key, or the click a key gives a button (detail 0), rather than the pointer, which
-        // opens the list on mousedown.
-        const event = details.event;
-        if (next)
-          openedByKeyboard.current =
-            event?.type.startsWith('key') === true ||
-            (event?.type === 'click' && (event as MouseEvent).detail === 0);
+        if (next) openedByKeyboard.current = cameFromKeyboard(details.event);
       })}
       onOpenChangeComplete={(open) => {
-        // Base UI moves focus to the highlighted option a frame after the list opens from the
-        // keyboard. On a busy page that queued focus is now and then lost, leaving focus on the
-        // trigger with the list open and an option highlighted; once the list has opened, focus
-        // goes where Base UI meant. A pointer open is left as Base UI leaves it.
-        const trigger = triggerRef.current;
-        if (!open || !openedByKeyboard.current) return;
-        if (!trigger || trigger.ownerDocument.activeElement !== trigger) return;
-        const options = listRef.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [];
-        const option =
-          Array.from(options).find((each) => each.hasAttribute('data-highlighted')) ??
-          Array.from(options).find((each) => each.getAttribute('aria-selected') === 'true');
-        option?.focus({ preventScroll: true });
+        if (open && openedByKeyboard.current)
+          restoreOptionFocusBaseUiLostOnBusyPage(triggerRef.current, listRef.current);
       }}
       modal={containedModal(portal, true)}
       name={name}
@@ -276,13 +281,13 @@ export function Select({
         label={
           label != null ? (
             <BaseSelect.Label render={<label />} className="env-select-label">
-              {label}
+              <FieldLabelContent>{label}</FieldLabelContent>
             </BaseSelect.Label>
           ) : null
         }
         description={description}
         error={error}
-        floatingLabel
+        controlBox
         size={size}
         visibleLabel={visibleLabel}
         className={classNames('env-select', className)}
@@ -292,7 +297,6 @@ export function Select({
             {...box}
             ref={controlRef}
             className={classNames(box.className, 'env-select-control')}
-            data-label-floating={flag(labelFloats)}
           />
         )}
       >
@@ -309,13 +313,7 @@ export function Select({
             className="env-select-value"
             placeholder={<span className="env-select-placeholder">{placeholder ?? ' '}</span>}
           />
-          {/* The labels of every option, hidden, as generated content, which the trigger's text
-              leaves out: without a visible label, the field is as wide as its longest option. */}
-          <span className="env-select-sizer" aria-hidden="true">
-            {items.map((item) => (
-              <span key={item.value} data-label={item.label} />
-            ))}
-          </span>
+          <WidthOfLongestOption items={items} />
         </BaseSelect.Trigger>
         <span className="env-text-field-end env-select-end" aria-hidden="true">
           <span className="env-icon env-select-icon">

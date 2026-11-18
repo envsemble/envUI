@@ -1,6 +1,3 @@
-// Theme on the server: the attributes it writes, ThemePreferenceProvider's boundary, and Theme's
-// development warning about a theme that is neither light nor dark, as JavaScript that passes 0.x's
-// useTheme() to it would.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
@@ -17,7 +14,6 @@ const themeModule = join(repositoryRoot, 'packages/ui/dist/foundations/Theme.js'
 const warning = 'takes a theme of';
 const require = createRequire(import.meta.url);
 
-/** Renders on the server and returns the markup and what was reported through console.error. */
 function render(element) {
   const errors = [];
   const original = console.error;
@@ -50,7 +46,6 @@ test('Theme shows any theme in its warning, and lets an error from console.error
   assert.match(errors[0], /not \{"theme":"dark","self":"\[Circular\]"\}/);
   assert.match(errors[1], /not \{"size":"1n"\}/);
 
-  // Only a value that contains itself is circular: one that appears twice is shown twice.
   const shared = { scheme: 'dark' };
   const deep = { inner: {} };
   deep.inner.outer = deep;
@@ -60,11 +55,8 @@ test('Theme shows any theme in its warning, and lets an error from console.error
     /not \{"a":\{"scheme":"dark"\},"b":\[\{"scheme":"dark"\},\{"scheme":"dark"\}\]\}\./,
   );
   assert.match(shown(deep)[0], /not \{"inner":\{"outer":"\[Circular\]"\}\}\./);
-  // A toJSON that returns nothing still leaves a description.
   assert.match(shown({ toJSON: () => undefined })[0], /not an object\./);
 
-  // A console.error that throws, as some test setups make it, fails the render rather than going
-  // unnoticed, and the theme is reported again on the next one.
   const original = console.error;
   console.error = () => {
     throw new Error('console.error was called');
@@ -99,7 +91,6 @@ test('a Theme writes its scale, which nested Themes inherit, and a data-env-scal
   function Inner() {
     return h('output', null, useTheme().scale);
   }
-  // Outside any Theme the scale is system: the stylesheet takes compact under a fine pointer.
   const plain = render(h(Theme, { theme: 'light' }, h(Inner))).markup;
   assert.match(plain, /data-env-scale="system"/);
   assert.match(plain, /<output>system<\/output>/);
@@ -126,25 +117,51 @@ test('a Theme writes its scale, which nested Themes inherit, and a data-env-scal
   assert.match(prop, /data-env-scale="comfortable"/);
 });
 
+test('a Theme writes its selection and corners, which nested Themes and useTheme take', () => {
+  function Inner() {
+    const { selection, corners } = useTheme();
+    return h('output', null, `${selection} ${corners}`);
+  }
+  const plain = render(h(Theme, { theme: 'light' }, h(Inner))).markup;
+  assert.match(plain, /data-env-selection="neutral" data-env-corners="rounded"/);
+  assert.doesNotMatch(plain, /data-env-surface/);
+  const nested = render(
+    h(
+      Theme,
+      { theme: 'light', selection: 'accent', corners: 'sharp' },
+      h(Theme, { theme: 'dark', corners: 'round' }, h(Inner)),
+    ),
+  ).markup;
+  assert.equal(nested.match(/data-env-selection="accent"/g)?.length, 2);
+  assert.match(nested, /<output>accent round<\/output>/);
+});
+
 test('ThemePreferenceProvider renders its default on the server and leaves the look to the root', () => {
   function Inner() {
     return h('output', null, useTheme().theme);
   }
-  // Applying to the document, its boundary has none of a theme boundary's class and attributes, so
-  // until the page hydrates it takes the theme the bootstrap script gave the root.
   const root = render(
-    h(ThemePreferenceProvider, { className: 'app', defaultPreference: 'system' }, h(Inner)),
+    h(
+      ThemePreferenceProvider,
+      { className: 'app', theme: { defaultPreference: 'system' } },
+      h(Inner),
+    ),
   ).markup;
   assert.match(root, /^<div data-env-ssr-root="" class="app"><output>light<\/output><\/div>$/);
-  // One that doesn't apply to the document themes its own boundary, with the default preference.
   const own = render(
-    h(ThemePreferenceProvider, { applyToDocument: false, defaultPreference: 'dark' }, h(Inner)),
+    h(
+      ThemePreferenceProvider,
+      { applyToDocument: false, theme: { defaultPreference: 'dark' } },
+      h(Inner),
+    ),
   ).markup;
-  assert.match(own, /^<div class="env-theme" data-env-theme="dark" data-env-scale="system">/);
+  assert.match(
+    own,
+    /^<div class="env-theme" data-env-theme="dark" data-env-scale="system" data-env-selection="neutral" data-env-corners="rounded">/,
+  );
   assert.match(own, /<output>dark<\/output>/);
 });
 
-/** Runs `run` where nothing defines process, as in a browser. */
 function withoutProcess(run) {
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'process');
   delete globalThis.process;
@@ -156,10 +173,6 @@ function withoutProcess(run) {
   }
 }
 
-/**
- * Bundles Theme as an application's build would, with React left as an import, and returns its
- * exports. `stdin` replaces the module with code already transformed, such as by Vite's dev server.
- */
 async function bundleTheme({ define = {}, stdin, plugins = [] }) {
   const built = await esbuild({
     ...(stdin ? { stdin: { contents: stdin, loader: 'js' } } : { entryPoints: [themeModule] }),
@@ -185,13 +198,10 @@ async function bundleTheme({ define = {}, stdin, plugins = [] }) {
 test('Theme renders where nothing defines process, as in a browser without a bundler', () => {
   const result = withoutProcess(() => render(h(Theme, { theme: { theme: 'dark' } }, 'a')));
   assert.match(result.markup, /class="env-theme"/);
-  // Without a development build to report in, the warning stays silent.
   assert.equal(result.errors.length, 0);
 });
 
 test('a development bundle warns in a browser, where nothing defines process', async () => {
-  // Bundlers replace process.env.NODE_ENV in an application's development build, but leave
-  // `process` itself undefined in the browser.
   const { Theme: Bundled } = await bundleTheme({
     define: { 'process.env.NODE_ENV': '"development"' },
   });
@@ -201,7 +211,6 @@ test('a development bundle warns in a browser, where nothing defines process', a
 });
 
 test("Vite's development server keeps the warning for the browser", async () => {
-  // Starting a server sets NODE_ENV for the process; the production build below must not see it.
   const nodeEnvironment = process.env.NODE_ENV;
   const server = await createServer({
     configFile: false,
@@ -220,7 +229,6 @@ test("Vite's development server keeps the warning for the browser", async () => 
     else process.env.NODE_ENV = nodeEnvironment;
   }
   assert.doesNotMatch(code, /process\.env\.NODE_ENV/, 'Vite replaced process.env.NODE_ENV');
-  // The served module imports by URL: React stays an import, the rest is the package's own file.
   const servedImports = {
     name: 'served-imports',
     setup(build) {
@@ -256,7 +264,6 @@ test('a production bundle leaves the development warning out', async () => {
   });
   assert.doesNotMatch(built.outputFiles[0].text, new RegExp(warning), 'esbuild keeps the warning');
 
-  // Vite replaces process.env.NODE_ENV itself in a production build, as it does for applications.
   const output = await vite({
     configFile: false,
     logLevel: 'silent',

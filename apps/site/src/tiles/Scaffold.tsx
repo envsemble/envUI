@@ -18,7 +18,6 @@ import type { TileWindow } from './Tiles';
 const item = (index: number) =>
   `.env-navigation-bar-list > li:nth-child(${index}) .env-navigation-bar-item`;
 
-/** Chooses Inbox in the bar, then Home again: the top bar's title follows, and the frame stays. */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: item(2) },
@@ -38,17 +37,8 @@ const places = [
   { label: 'Inbox', icon: <IconInbox />, line: '2 unread.' },
 ];
 
-/**
- * The tiles' window (TileStage.css), as a piece of an application's frame: it fills its card in a
- * browser's window (`app`).
- */
 export const tileWindow: TileWindow = { app: {} };
 
-/**
- * An application's frame filling its card (TileStage.tsx): the top bar, titled with the place,
- * above its page, and the navigation bar, the form a compact window's navigation takes, with its
- * places side by side at the bottom.
- */
 export default function ScaffoldTile() {
   const [current, setCurrent] = useState('Home');
   usePointer(script);
@@ -64,10 +54,7 @@ export default function ScaffoldTile() {
       landmarks={false}
       navigationForms={{ compact: 'bar', medium: 'bar', expanded: 'bar', large: 'bar' }}
       topBar={
-        <TopBar
-          title={current}
-          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
-        />
+        <TopBar title={current} end={<IconButton icon={<IconSearch />} aria-label="Search" />} />
       }
       navigation={{ bar: <NavigationBar destinations={destinations} /> }}
     >

@@ -9,7 +9,10 @@ import type {
 import type { FieldProps, FieldVariant } from '../../internal/field/FieldFrame.js';
 import type { MarkdownLink, MarkdownLinkRequest } from '../../content/MarkdownEditor.js';
 
-/** Application-owned identity and display data; envUI assigns no meaning to kind or id. */
+/**
+ * A reference in the document to something of the application's, such as a person or a file;
+ * envUI gives its kind and id no meaning.
+ */
 export interface RichTextReference {
   /** The stable identity the application resolves, such as a record's ID; saved in the Markdown. */
   id: string;
@@ -50,7 +53,7 @@ export interface RichTextReferenceSource {
     signal: AbortSignal;
   }) => readonly RichTextReference[] | Promise<readonly RichTextReference[]>;
 }
-/** Tiptap supplies native click events in the editor; the static React view supplies React events. */
+/** The click on a link: a native MouseEvent in RichTextEditor, a React mouse event in RichText. */
 export type RichTextLinkEvent = MouseEvent<HTMLAnchorElement> | globalThis.MouseEvent;
 export interface RichTextRenderOptions {
   /**
@@ -110,13 +113,13 @@ export interface RichTextAttachment {
   url: string;
   /** The image's alternative text, or the file reference's text, such as the file name. */
   label: string;
-  /** An image uses a standard Markdown image. Files use a stable reference atom. */
+  /** image, saved as a Markdown image, or file, saved as a reference to the file. */
   kind: 'image' | 'file';
   /** The file reference's stable identity; the URL by default. */
   id?: string;
 }
 export interface RichTextEditorHandle {
-  /** Tiptap commands/chains are the public action API, including external agent updates. */
+  /** The Tiptap editor, for its commands and chains; null until it mounts. */
   editor: Editor | null;
 }
 export interface RichTextEditorProps

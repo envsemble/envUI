@@ -1,8 +1,6 @@
 import { Column, IconButton, Surface, Text, useTheme } from '@envsemble/envui';
 import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import { FoundationFrame } from '../foundations/FoundationFrame';
-// Pictures of the real dev mode at work on the demo application, captured by
-// scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image) in each theme.
 import wholeLight from './dev-mode-whole-light.webp';
 import wholeDark from './dev-mode-whole-dark.webp';
 import toolbarLight from './dev-mode-toolbar-light.webp';
@@ -16,12 +14,8 @@ import problemsDark from './dev-mode-problems-dark.webp';
 import frameLight from './dev-mode-frame-light.webp';
 import frameDark from './dev-mode-frame-dark.webp';
 
-/**
- * The pictures the dev mode guide places beside its words, each a figure of its own
- * (DevModeFigures.ts). None of them loads `@envsemble/envui/dev`.
- */
+const pxPerRem = 16;
 
-/** A picture of dev mode in each theme, with its size in CSS pixels: the files hold twice as many. */
 interface Shot {
   light: string;
   dark: string;
@@ -95,7 +89,6 @@ const shots = {
   },
 } satisfies Record<string, Shot>;
 
-/** One picture of dev mode at work, in the reader's theme, on the recessed canvas. */
 function ShotFigure({ shot }: { shot: Shot }) {
   const { theme } = useTheme();
   return (
@@ -103,8 +96,7 @@ function ShotFigure({ shot }: { shot: Shot }) {
       <img
         className="docs-dev-mode-shot"
         src={theme === 'dark' ? shot.dark : shot.light}
-        // The file holds twice the CSS size: the picture shows at its own size, or narrower.
-        style={{ '--docs-shot-width': `${shot.width / 16}rem` }}
+        style={{ '--docs-shot-width': `${shot.width / pxPerRem}rem` }}
         alt={shot.alt}
         width={shot.width}
         height={shot.height}
@@ -121,10 +113,6 @@ export const DevModeSpacingPicture = () => <ShotFigure shot={shots.spacing} />;
 export const DevModeProblemsPicture = () => <ShotFigure shot={shots.problems} />;
 export const DevModeFramePicture = () => <ShotFigure shot={shots.frame} />;
 
-/**
- * The dev mode button as an application shows it while it is being built: round, in the bottom
- * corner of the page. A picture, so it takes no focus.
- */
 export function DevModeButtonPicture() {
   return (
     <FoundationFrame

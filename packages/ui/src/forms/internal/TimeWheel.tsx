@@ -8,9 +8,9 @@ import { flag } from '../../internal/flag.js';
 import { useTimeWheelGestures, type TimeWheelDrag } from './useTimeWheelGestures.js';
 import { useTimeWheelTurn } from './useTimeWheelTurn.js';
 import {
-  copiesOf,
+  copiesToScrollOnInBothDirections,
   nearestAvailable,
-  shownRows,
+  shownRowsAsTimeListCssSetsThem,
   wrap,
   type Entry,
   type Part,
@@ -18,9 +18,6 @@ import {
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 
-// One column of a TimeList: a wheel of hours, minutes or day periods.
-
-/** Page Up and Page Down step this many entries. */
 const pageRows = 5;
 
 interface TimeWheelProps {
@@ -28,22 +25,11 @@ interface TimeWheelProps {
   part: Part;
   label: string;
   entries: Entry[];
-  /** The entry in the middle: the chosen one, or the time the list starts at without a value. */
   current: number;
   onChoose: (value: number) => void;
-  /** Moves focus to the column before (-1) or after (1). */
   onSideways: (direction: -1 | 1) => void;
 }
 
-/**
- * One column of a time list: a spinbutton drawn as a wheel whose middle row is its value. Hours and
- * minutes loop endlessly, their entries repeated with the scroll position moved back to the middle
- * copy near either end; the day periods don't, nor minutes with fewer values than the wheel shows
- * rows, such as every 15 minutes, which would show a value twice. The keys still wrap around them.
- * The row that settles in the middle as scrolling ends is chosen, and an unavailable one gives way
- * to the nearest available. A mouse wheel turns it a row a notch, easing into place, rather than as
- * far as a page would scroll, and a mouse drags it as a finger does.
- */
 export function TimeWheel({
   ref,
   part,
@@ -57,10 +43,10 @@ export function TimeWheel({
   const dragRef = useRef<TimeWheelDrag | null>(null);
   const typed = useRef({ text: '', at: 0 });
   const count = entries.length;
-  // Hours and minutes wrap around under the keys; they loop on the wheel where they fill it.
-  const wraps = part !== 'dayPeriod';
-  const loop = wraps && count >= shownRows;
-  const copies = loop ? copiesOf(count) : 1;
+  const keysWrapAround = part !== 'dayPeriod';
+  const entriesFillTheWheel = count >= shownRowsAsTimeListCssSetsThem;
+  const loop = keysWrapAround && entriesFillTheWheel;
+  const copies = loop ? copiesToScrollOnInBothDirections(count) : 1;
   const currentIndex = Math.max(
     0,
     entries.findIndex((entry) => entry.value === current),
@@ -85,9 +71,8 @@ export function TimeWheel({
   const { centred, scrollToRow } = turning;
 
   function step(index: number, direction: 1 | -1) {
-    const next = wraps ? wrap(index, count) : Math.min(Math.max(index, 0), count - 1);
-    const available = nearestAvailable(entries, next, wraps, direction);
-    // An index nearestAvailable found, so an entry.
+    const next = keysWrapAround ? wrap(index, count) : Math.min(Math.max(index, 0), count - 1);
+    const available = nearestAvailable(entries, next, keysWrapAround, direction);
     if (available !== -1 && available !== currentIndex) onChoose(entries[available].value);
   }
 
@@ -107,13 +92,12 @@ export function TimeWheel({
       const text = at - typed.current.at < typeaheadTimeout ? typed.current.text + key : key;
       let index = matchTyped(text, entries);
       let kept = text;
-      // Keys that name nothing start over from the last one.
-      if (index === -1 && text.length > 1) {
+      const keysNameNothing = index === -1 && text.length > 1;
+      if (keysNameNothing) {
         index = matchTyped(key, entries);
         kept = key;
       }
       typed.current = { text: kept, at };
-      // An index matchTyped found, so an entry.
       if (index !== -1 && index !== currentIndex) onChoose(entries[index].value);
       return;
     }
@@ -131,7 +115,6 @@ export function TimeWheel({
     const move = moves[event.key];
     if (!move) return;
     event.preventDefault();
-    // Hours and minutes wrap around; Page keys stop at the ends of the day periods.
     step(move[0], move[1]);
   }
 
@@ -165,7 +148,6 @@ export function TimeWheel({
           return (
             <div
               key={rowIndex}
-              // The spinbutton names its value; the rows only draw it.
               aria-hidden="true"
               className="env-time-list-row"
               data-value={item.value}

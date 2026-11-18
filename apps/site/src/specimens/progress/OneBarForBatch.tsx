@@ -23,7 +23,6 @@ function Uploading() {
   );
 }
 
-/** One bar for the batch, climbing steadily, in step with the don't beside it. */
 export default function OneBarForBatchMotion() {
   return (
     <MotionStage label="one bar climbing for the batch">

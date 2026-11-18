@@ -58,22 +58,12 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
   children?: ReactNode;
 }
 
-/**
- * Whether the root or a group around a button disables it, which Base UI's parts know but its
- * tooltip doesn't: a disabled button has no tooltip.
- */
-const DisabledContext = createContext(false);
+const DisabledByToolbarOrGroupContext = createContext(false);
 
-/** How long the pointer rests on a button or link before its tooltip opens, from the root. */
 const TooltipDelayContext = createContext<number | undefined>(undefined);
 
-/** The toolbar's direction, which its groups follow. */
 const OrientationContext = createContext<'horizontal' | 'vertical'>('horizontal');
 
-/**
- * A toolbar's or a group's line of controls: a Row, or a Column for a vertical toolbar, rendered as
- * the element the application gives, if any.
- */
 function lineOf(orientation: 'horizontal' | 'vertical', render: ReactElement | undefined) {
   return orientation === 'vertical' ? (
     <Column align="center" gap={1} render={render} />
@@ -98,7 +88,6 @@ function Root({
   children,
   ...props
 }: RootProps) {
-  // A horizontal toolbar's arrow keys follow the text direction: the root reads it.
   return (
     <DirectedToolbarRoot
       {...props}
@@ -107,17 +96,16 @@ function Root({
       disabled={disabled}
       loopFocus={loopFocus}
       className={classNames('env-toolbar', className)}
-      // Base UI sets it too; written here, it is part of the toolbar's documented states.
       data-orientation={orientation}
       data-size={size}
     >
       <OrientationContext value={orientation}>
         <TooltipDelayContext value={tooltipDelay}>
-          <DisabledContext value={Boolean(disabled)}>
+          <DisabledByToolbarOrGroupContext value={Boolean(disabled)}>
             <ControlDefaults variant="ghost" size={size}>
               {children}
             </ControlDefaults>
-          </DisabledContext>
+          </DisabledByToolbarOrGroupContext>
         </TooltipDelayContext>
       </OrientationContext>
     </DirectedToolbarRoot>
@@ -138,7 +126,7 @@ export interface GroupProps extends ComponentPropsWithRef<'div'> {
 
 /** Controls of a toolbar that belong together, such as the text styles. */
 function Group({ className, disabled, render, children, ...props }: GroupProps) {
-  const inherited = useContext(DisabledContext);
+  const inherited = useContext(DisabledByToolbarOrGroupContext);
   const orientation = useContext(OrientationContext);
   return (
     <BaseToolbar.Group
@@ -148,7 +136,9 @@ function Group({ className, disabled, render, children, ...props }: GroupProps) 
       className={classNames('env-toolbar-group', className)}
       data-orientation={orientation}
     >
-      <DisabledContext value={inherited || Boolean(disabled)}>{children}</DisabledContext>
+      <DisabledByToolbarOrGroupContext value={inherited || Boolean(disabled)}>
+        {children}
+      </DisabledByToolbarOrGroupContext>
     </BaseToolbar.Group>
   );
 }
@@ -162,7 +152,6 @@ function Separator({ className, ...props }: SeparatorProps) {
   );
 }
 
-/** What a toolbar button's tooltip shows: its label, and its shortcut as keys, chord by chord. */
 function tooltipContent(label: string, chords: string[][]) {
   if (chords.length === 0) return label;
   return (
@@ -227,7 +216,7 @@ function ToolbarButton({
   className,
   ...props
 }: ButtonProps) {
-  const off = useContext(DisabledContext) || Boolean(disabled);
+  const disabledHasNoTooltip = useContext(DisabledByToolbarOrGroupContext) || Boolean(disabled);
   const delay = useContext(TooltipDelayContext);
   const chords = shortcut ? shortcutChords(shortcut) : [];
   const button = (
@@ -236,7 +225,6 @@ function ToolbarButton({
       focusableWhenDisabled={false}
       render={
         <IconButton
-          // IconButtonProps is a union of a button's and a link's; this is the button's.
           {...({
             ...props,
             variant,
@@ -252,7 +240,7 @@ function ToolbarButton({
       }
     />
   );
-  return off ? (
+  return disabledHasNoTooltip ? (
     button
   ) : (
     <Tooltip content={tooltipContent(label, chords)} delay={delay}>
@@ -276,9 +264,9 @@ export type LinkProps = Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-labe
  * tooltip, as a disabled button does.
  */
 function Link({ icon, label, className, ...props }: LinkProps) {
-  const off = useContext(DisabledContext);
+  const disabledByToolbarOrGroup = useContext(DisabledByToolbarOrGroupContext);
   const delay = useContext(TooltipDelayContext);
-  if (off)
+  if (disabledByToolbarOrGroup)
     return (
       <IconButton
         {...props}
@@ -304,8 +292,6 @@ function Link({ icon, label, className, ...props }: LinkProps) {
   );
 }
 
-// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
-// application leaves unused.
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Toolbar.Root');
 const GroupPart = /* @__PURE__ */ withDisplayName(Group, 'Toolbar.Group');
 const SeparatorPart = /* @__PURE__ */ withDisplayName(Separator, 'Toolbar.Separator');

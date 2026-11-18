@@ -22,8 +22,6 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
       <ContextMenu
         aria-label="Document actions"
         content={(target) => {
-          // A field keeps the browser's menu: content that renders nothing, false from a condition
-          // or an empty string, offers none.
           const field = target?.closest('[data-no-menu]');
           if (field) {
             const editable = field.getAttribute('data-no-menu') === 'editable';
@@ -152,19 +150,16 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
           Open to the side
         </Menu.Item>
       </Menu.Root>
-      {/* Named by its trigger, with choices the menu keeps itself. */}
       <Menu.Root trigger={<button type="button">Density</button>}>
         <Menu.RadioGroup label="Rows" defaultValue="cozy">
           <Menu.RadioItem value="cozy">Cozy</Menu.RadioItem>
           <Menu.RadioItem value="tight">Tight</Menu.RadioItem>
         </Menu.RadioGroup>
         <Menu.Separator data-testid={`density-separator-${theme}`} />
-        {/* A check mark and an icon, beside rows with a check mark alone. */}
         <Menu.CheckboxItem defaultChecked icon={<IconHistory />}>
           Show icons
         </Menu.CheckboxItem>
       </Menu.Root>
-      {/* A compact region: its context menu and submenus open at the compact scale. */}
       <Theme theme={theme} scale="compact" data-testid={`compact-region-${theme}`}>
         <ContextMenu
           aria-label="Programmatic actions"

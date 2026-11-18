@@ -20,10 +20,6 @@ export interface CodeTokenStyle {
   color?: string;
   fontStyle?: number;
 }
-/**
- * A token with its style in each code theme: standard, and `High` for high contrast, which a token
- * may lack; it then keeps its standard color.
- */
 export interface CodeToken {
   content: string;
   light: CodeTokenStyle;
@@ -32,24 +28,22 @@ export interface CodeToken {
   darkHigh?: CodeTokenStyle;
 }
 
-/** The code themes tokens carry, by the key of their style: standard, and high contrast on request. */
 const themes = {
   standard: { light: () => codeTheme('light'), dark: () => codeTheme('dark') },
   high: { lightHigh: () => codeTheme('light', 'high'), darkHigh: () => codeTheme('dark', 'high') },
 };
 
-/** How long a task of tokenizing may run before it gives the browser its turn, in ms. */
-const tokenizeTask = 8;
+const tokenizeTaskBudgetMs = 8;
+const maxCachedSources = 40;
+const maxCachedCharacters = 500_000;
+
+const yieldToBrowser = () => new Promise((resolve) => setTimeout(resolve));
 
 let highlighter: Promise<HighlighterCore> | undefined;
 let highContrastLoaded: Promise<void> | undefined;
 const cache = new Map<string, CodeToken[][]>();
 let cachedCharacters = 0;
 
-/**
- * One runtime and a bounded cache for the explicitly bundled languages. Tokens carry their
- * high-contrast styles only when `highContrast` asks for them: the high-contrast themes load then.
- */
 export async function highlightCode(
   source: string,
   language: string,
@@ -99,28 +93,23 @@ export async function highlightCode(
       darkHigh: codeThemeName('dark', 'high'),
     }),
   };
-  // The source is tokenized a line at a time, carrying the grammar's state from each line to the
-  // next as one pass over it does, and gives the browser its turn between tasks of a few
-  // milliseconds: the first lines a language meets build most of its matchers, a long pause on a
-  // phone if done in one task, and a page of many code blocks answers input between them.
   const lines = source.split(/\r?\n/);
   const tokens: CodeToken[][] = [];
-  let grammarState: GrammarState | undefined;
+  let grammarStateFromPreviousLine: GrammarState | undefined;
   let taskStart = -Infinity;
   for (const line of lines) {
-    if (performance.now() - taskStart > tokenizeTask) {
-      await new Promise((resolve) => setTimeout(resolve));
-      // Another consumer may have filled the cache meanwhile.
-      const done = cache.get(key);
-      if (done) return done;
+    if (performance.now() - taskStart > tokenizeTaskBudgetMs) {
+      await yieldToBrowser();
+      const tokenizedMeanwhile = cache.get(key);
+      if (tokenizedMeanwhile) return tokenizedMeanwhile;
       taskStart = performance.now();
     }
     const lineTokens = runtime.codeToTokensWithThemes(line, {
       lang: language,
       themes: names,
-      grammarState,
+      grammarState: grammarStateFromPreviousLine,
     });
-    grammarState = runtime.getLastGrammarState(lineTokens);
+    grammarStateFromPreviousLine = runtime.getLastGrammarState(lineTokens);
     tokens.push(
       lineTokens[0].map((token) => ({
         content: token.content,
@@ -133,7 +122,7 @@ export async function highlightCode(
   }
   cache.set(key, tokens);
   cachedCharacters += key.length;
-  while (cache.size > 40 || cachedCharacters > 500_000) {
+  while (cache.size > maxCachedSources || cachedCharacters > maxCachedCharacters) {
     const oldest = cache.keys().next().value;
     if (oldest === undefined) break;
     cachedCharacters -= oldest.length;

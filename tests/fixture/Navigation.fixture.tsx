@@ -25,12 +25,10 @@ import { IconStar } from '@envsemble/envui/icons/Star';
 
 export const themes = true;
 
-/** A router's link: it marks the anchors it renders, so a test sees that destinations use it. */
 function RouterLink(props: ComponentPropsWithRef<'a'> & { href: string }) {
   return <a {...props} data-router-link="" />;
 }
 
-/** Destinations whose current one follows a press, as an application's router would set it. */
 function useDestinations(start: string) {
   const [current, setCurrent] = useState(start);
   const select = (label: string) => ({
@@ -40,10 +38,6 @@ function useDestinations(start: string) {
   return { current, select };
 }
 
-/**
- * NavigationBar, NavigationRail and NavigationDrawer over the same destinations, in both themes:
- * icon fill, counts, groups, the NavigationBar's More menu, landmark names and routing.
- */
 export default function NavigationFixture({ theme }: { theme: ColorScheme }) {
   const icons = useDestinations('Home');
   const mail = useDestinations('Inbox');
@@ -52,7 +46,6 @@ export default function NavigationFixture({ theme }: { theme: ColorScheme }) {
     { label: 'Home', icon: <IconHome />, ...icons.select('Home') },
     {
       label: 'Settings',
-      // A Material Symbol inside the application's own wrapper fills too.
       icon: (
         <span>
           <IconSettings />
@@ -111,8 +104,6 @@ export default function NavigationFixture({ theme }: { theme: ColorScheme }) {
           <NavigationBar destinations={linked} />
         </div>
       </div>
-      {/* The backgrounds: each form and the top bar on the navigation's background by default,
-          the page's on its own, and on a surface the surface's color. */}
       <div className="fixture-navigation-backgrounds" data-testid="backgrounds">
         <TopBar title="Filled" data-testid="top-bar-default" />
         <TopBar title="On the page" background="page" data-testid="top-bar-none" />

@@ -11,7 +11,6 @@ import { IconExtension } from '@envsemble/envui/icons/Extension';
 import { IconDataObject } from '@envsemble/envui/icons/DataObject';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
 import { IconCategory } from '@envsemble/envui/icons/Category';
-import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconArticle } from '@envsemble/envui/icons/Article';
 import { IconError } from '@envsemble/envui/icons/Error';
 import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
@@ -30,18 +29,12 @@ import {
   type SuggestedRoute,
 } from './SearchResults';
 
-/** The search index's module, by its path in the site app, as module-files.json names it. */
 const indexModule = 'src/search/SearchIndex.ts';
 type IndexModule = typeof import('./SearchIndex');
 
 let loadIndexModule: () => Promise<IndexModule> = () => import('./SearchIndex');
 let indexLoad: Promise<IndexModule> | undefined;
 
-/**
- * Loads the index once, on its own file in the hosted site, when search first opens or before
- * (preloadSearch). After a failure, the next load asks for it again, under a new address in
- * development.
- */
 function loadIndex() {
   indexLoad ??= loadIndexModule().catch((error: unknown) => {
     indexLoad = undefined;
@@ -52,23 +45,19 @@ function loadIndex() {
   return indexLoad;
 }
 
-/**
- * Loads the index ahead of search opening, so its results are there as people type: once the page
- * is idle, and as a pointer or focus reaches the search button (SearchButton.tsx). The index is
- * parsed as it loads, which takes a moment, so not on a key of the shortcut, where it would hold up
- * the palette opening.
- */
 export function preloadSearch() {
   void loadIndex().catch(() => {});
 }
 
-/** Loads the index once the page has been idle a while after it started. */
+const idlePreloadTimeoutMs = 4000;
+const preloadDelayWithoutIdleCallbackMs = 2000;
+
 function preloadWhenIdle() {
   if (typeof window === 'undefined') return;
   const start = () =>
     typeof requestIdleCallback === 'function'
-      ? requestIdleCallback(preloadSearch, { timeout: 4000 })
-      : window.setTimeout(preloadSearch, 2000);
+      ? requestIdleCallback(preloadSearch, { timeout: idlePreloadTimeoutMs })
+      : window.setTimeout(preloadSearch, preloadDelayWithoutIdleCallbackMs);
   if (document.readyState === 'complete') start();
   else addEventListener('load', start, { once: true });
 }
@@ -78,7 +67,6 @@ const icons: Record<ResultRow['kind'], ReactNode> = {
   component: <IconWidgets />,
   export: <IconExtension />,
   foundation: <IconCategory />,
-  pattern: <IconPattern />,
   guide: <IconArticle />,
   page: <IconArticle />,
   prop: <IconDataObject />,
@@ -88,7 +76,6 @@ const icons: Record<ResultRow['kind'], ReactNode> = {
 const suggestionIcons: Record<SuggestedRoute, ReactNode> = {
   [docsRoute]: <IconArticle />,
   components: <IconWidgets />,
-  patterns: <IconPattern />,
   'docs/tokens': <IconPalette />,
 };
 
@@ -99,11 +86,6 @@ type IndexState =
   | { status: 'ready'; search: IndexModule['searchDocumentation'] }
   | { status: 'failed' };
 
-/**
- * Searches the catalogue and the Docs in envUI's CommandPalette: components by their names and aliases,
- * their props, the tokens and the foundations, patterns and guides, each page once. A result opens
- * its page, in the part the reader is in where both show it, and the prop or token on it; with Ctrl or ⌘ held, in a new tab. Before people type, it suggests a few pages, the current page's counterpart first.
- */
 export function SiteSearch({
   open,
   onOpenChange,
@@ -111,12 +93,10 @@ export function SiteSearch({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** The page the reader is on, whose counterpart search suggests. */
   page: RoutePage | undefined;
 }) {
   const modifier = useModifierKey();
   const [query, setQuery] = useState('');
-  // The short groups shown whole, for the query they were expanded for.
   const [expanded, setExpanded] = useState({ query: '', groups: noGroups });
   const expandedGroups = expanded.query === query ? expanded.groups : noGroups;
   const [index, setIndex] = useState<IndexState>({ status: 'loading' });
@@ -151,8 +131,6 @@ export function SiteSearch({
       icon: suggested ? suggestionIcons[suggested] : OtherPart && <OtherPart />,
     }));
   }, [page]);
-  // Before people type, the suggestions show. While the index loads, the palette says so; after it
-  // fails, why, with the way on; and when a query finds nothing, what search finds.
   let empty: Pick<CommandPaletteProps, 'emptyIcon' | 'emptyLabel' | 'emptyDescription'>;
   if (index.status === 'loading') empty = {};
   else if (index.status === 'failed')
@@ -177,7 +155,7 @@ export function SiteSearch({
     };
   else
     empty = {
-      emptyDescription: `Nothing matches “${query.trim()}”. Search finds components by name or alias, their props, tokens, foundations, patterns and guides.`,
+      emptyDescription: `Nothing matches “${query.trim()}”. Search finds components by name or alias, their props, tokens, foundations and guides.`,
     };
   return (
     <CommandPalette
@@ -198,8 +176,6 @@ export function SiteSearch({
         { keys: [modifier.label, 'Enter'], label: 'Open in a new tab' },
         { keys: ['Esc'], label: 'Close' },
       ]}
-      // A result closes the palette as it opens; the row that shows the rest of a group keeps it
-      // open.
       closeOnAction={false}
       onAction={(item, { modifier }) => {
         const more = grouped.find(({ name }) => item.id === moreId(name));
@@ -208,18 +184,16 @@ export function SiteSearch({
           return;
         }
         const result = results.find(({ id }) => id === item.id);
-        // A suggestion's id is its route.
+        const suggestedRoute = suggestions.find(({ id }) => id === item.id)?.id;
         const route = result
           ? inReadersPart(
               routeOfDocument(result.page, { view: result.view, section: result.section }),
               page,
             )
-          : suggestions.find(({ id }) => id === item.id)?.id;
+          : suggestedRoute;
         if (!route) return;
         onOpenChange(false);
         if (modifier) window.open(new URL(routeHref(route), location.href).href, '_blank');
-        // A route the address names already shows its place again and focuses it, as a fresh
-        // navigation does; the palette, which then no longer holds focus, leaves it there.
         else navigate(route);
       }}
     />

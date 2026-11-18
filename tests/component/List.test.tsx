@@ -2,10 +2,11 @@ import { describe, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as dataDisplay from '../fixture/DataDisplay.fixture.tsx';
 import * as fixture from '../fixture/List.fixture.tsx';
+import * as rowControls from '../fixture/RowControls.fixture.tsx';
+import * as surfaces from '../fixture/Surfaces.fixture.tsx';
 import { box, collectErrors, css, keyboard, mouse, nextFrames } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** The live regions a reorderable list announces through, one at a time: the nth list's. */
 const announcer = (index = 0) => document.querySelectorAll('.env-list-announcer')[index]!;
 const announced =
   (index = 0) =>
@@ -28,20 +29,15 @@ function centre(locator: Locator) {
   return { x: x + width / 2, y: y + height / 2 };
 }
 
-// First in the file: the frame keeps a module once it has loaded it, so the module must not have
-// loaded before this test holds it back.
 test(
-  'a drag, keys and moves used before the reorder code has loaded still move the row, once each',
-  { tags: ['engines'] },
+  'first in the file, so nothing has loaded the reorder code: a drag, keys and moves used before it loads still move the row, once each',
+  { tags: ['engines', 'once'] },
   async () => {
-    // The list loads the code that moves its rows as it renders: hold it back, as a slow network
-    // would, while people already drag and press. Each list takes one of the ways.
     await commands.holdModule('reorderController');
     try {
       const errors = collectErrors();
       mount(fixture, { search: 'bare-rows' });
       await commands.moduleRequested('reorderController');
-      // A drag on the slides.
       const from = centre(handle(slides(), 'Roadmap'));
       const target = centre(rows().nth(3));
       await mouse.move(from.x, from.y);
@@ -49,16 +45,12 @@ test(
       await mouse.move(from.x, from.y + (target.y + 4 - from.y) / 2, { steps: 4 });
       await mouse.move(from.x, target.y + 4, { steps: 4 });
       await mouse.up();
-      // Space lifts, ↓ moves and Space drops, on the handle of a row component that passes its
-      // props on: the handle's own press of Space doesn't follow.
       const wrapped = page.getByTestId('wrapped-slides');
       const wrappedIntro = handle(wrapped, 'Intro');
       focus(wrappedIntro);
       await keyboard.press('Space');
       await keyboard.press('ArrowDown');
       await keyboard.press('Space');
-      // Two moves on a row target of a component that drops List.Root's props, so its rows have
-      // no handles, and Alt+↓ names the row by its text.
       const bare = page.getByTestId('bare-slides');
       expect(bare.getByRole('button').elements()).toHaveLength(0);
       focus(bare.getByRole('link', { name: 'Intro' }));
@@ -75,13 +67,10 @@ test(
       await expect.poll(order('wrapped-slides')).toBe('Roadmap,Intro,Budget,Questions');
       await expect.poll(announced(2)).toBe('Intro dropped at position 2 of 4.');
       await pressed(wrappedIntro, 'false');
-      // The second move came before the rows had moved, so it would read the old order: it is
-      // dropped.
       await expect.poll(order('bare-slides')).toBe('Roadmap,Intro,Budget,Questions');
       await expect.poll(announced(3)).toBe('Intro moved to position 2 of 4.');
       await keyboard.press('Alt+ArrowDown');
       await expect.poll(order('bare-slides')).toBe('Roadmap,Budget,Intro,Questions');
-      // Development reports the rows without handles once.
       expect(errors.filter((text) => text.includes('no drag handle'))).toEqual([
         expect.stringMatching(
           /^envUI: 4 rows of a List\.Root with onReorder have no drag handle\./,
@@ -98,14 +87,12 @@ describe('List', () => {
     mount(fixture);
     const intro = handle(slides(), 'Intro');
     await expect.element(intro).toHaveAttribute('aria-pressed', 'false');
-    // Space lifts the row; ↓ moves it, and the others make room; Space drops it.
     focus(intro);
     await keyboard.press('Space');
     await expect.poll(announced()).toMatch(/^Intro picked up, position 1 of 4\./);
     expect(announcer().querySelectorAll('[role="status"]')).toHaveLength(2);
     await expect.element(rows().nth(0)).toHaveAttribute('data-moving', 'keyboard');
     await pressed(intro, 'true');
-    // The start of the list stops it, and says so each time.
     const regions = announcer().querySelectorAll('[role="status"]');
     const atStart = 'Intro is at the start of the list, position 1 of 4.';
     await keyboard.press('ArrowUp');
@@ -113,24 +100,20 @@ describe('List', () => {
     const first = regions[0]!.textContent;
     await keyboard.press('ArrowUp');
     await expect.poll(announced()).toBe(atStart);
-    // The repeat goes to the other region, so it is announced again.
     await expect.poll(() => regions[0]!.textContent).not.toBe(first);
     await keyboard.press('ArrowDown');
     await expect.poll(announced()).toBe('Intro moved to position 2 of 4.');
     await keyboard.press('ArrowDown');
     await expect.poll(announced()).toBe('Intro moved to position 3 of 4.');
-    // Nothing moves until the drop.
     expect(order('slides')()).toBe('Intro,Roadmap,Budget,Questions');
     await keyboard.press('Space');
     await expect.poll(order('slides')).toBe('Roadmap,Budget,Intro,Questions');
     await expect.poll(announced()).toBe('Intro dropped at position 3 of 4.');
-    // Focus stays on the handle of the row that moved, and the rows are at rest.
     await isFocused(intro);
     await pressed(intro, 'false');
     await nothingMoving();
     await expect.poll(() => css(rows().nth(2), 'translate')).toBe('none');
 
-    // Escape puts a lifted row back where it was.
     await keyboard.press('Enter');
     await keyboard.press('ArrowUp');
     await keyboard.press('ArrowUp');
@@ -151,7 +134,6 @@ describe('List', () => {
     await isFocused(link);
     await keyboard.press('Alt+ArrowUp');
     await keyboard.press('Alt+ArrowUp');
-    // The first place is as far as it goes, and the list says so.
     await expect.poll(order('slides')).toBe('Budget,Intro,Roadmap,Questions');
     await expect.poll(announced()).toBe('Budget is at the start of the list, position 1 of 4.');
     await keyboard.press('Alt+ArrowDown');
@@ -164,27 +146,22 @@ describe('List', () => {
     const target = centre(rows().nth(3));
     await mouse.move(from.x, from.y);
     await mouse.down();
-    // A press that doesn't move is no drag.
     await expect.element(rows().nth(1)).not.toHaveAttribute('data-moving');
-    // Once it drags, the announcement says how to move it with the pointer.
     await mouse.move(from.x, from.y + 6);
     await expect.poll(announced()).toMatch(/^Roadmap picked up, position 2 of 4\. Drag it/);
     const steps = 8;
     for (let step = 1; step <= steps; step++)
       await mouse.move(from.x, from.y + ((target.y + 4 - from.y) * step) / steps);
     await expect.element(rows().nth(1)).toHaveAttribute('data-moving', 'pointer');
-    // The row follows the pointer, the rows it passed make room, and the move is announced.
     await expect.poll(announced()).toBe('Roadmap moved to position 4 of 4.');
     const roadmap = box(rows().nth(1));
     expect(Math.abs(roadmap.y + roadmap.height / 2 - (target.y + 4))).toBeLessThan(2);
     await mouse.up();
     await expect.poll(order('slides')).toBe('Intro,Budget,Questions,Roadmap');
     await expect.poll(announced()).toBe('Roadmap dropped at position 4 of 4.');
-    // The click that ends the drag doesn't lift the row again.
     await nothingMoving();
     await pressed(handle(slides(), 'Roadmap'), 'false');
 
-    // A press on the handle without dragging lifts the row for the arrow keys; another drops it.
     const intro = handle(slides(), 'Intro');
     await intro.click();
     await pressed(intro, 'true');
@@ -204,8 +181,6 @@ describe('List', () => {
       const intro = handle(slides(), 'Intro');
       await intro.click();
       await pressed(intro, 'true');
-      // Pressed again, dragged off and released elsewhere: no click reaches the handle, and
-      // WebKit has taken focus from it as it was pressed.
       const from = centre(intro);
       await mouse.move(from.x, from.y);
       await mouse.down();
@@ -216,7 +191,6 @@ describe('List', () => {
       await pressed(intro, 'false');
       await nothingMoving();
 
-      // Should a row stay lifted as another handle takes its keys, that handle moves its own row.
       await intro.click();
       const budget = handle(slides(), 'Budget').element();
       const key = (name: string) =>
@@ -233,7 +207,6 @@ describe('List', () => {
   test('a press lifts and drops a row without a pointer drag, as voice control does', async () => {
     mount(fixture);
     const budget = handle(slides(), 'Budget');
-    // A click with no pointer events before it, as assistive technology sends one.
     const click = () => budget.element().dispatchEvent(new MouseEvent('click', { bubbles: true }));
     click();
     await pressed(budget, 'true');
@@ -257,10 +230,6 @@ describe('List', () => {
   });
 });
 
-/**
- * Waits two frames, so a state change has started its transitions, and then until the element's
- * own transitions have finished: what it shows then is where it settles.
- */
 async function settled(element: Locator) {
   await nextFrames();
   await expect
@@ -275,7 +244,6 @@ async function settled(element: Locator) {
 }
 
 test('interactive rows react to hover, presses and focus, and open from anywhere', async () => {
-  // With motion, as pressed controls shrink: a press on the row still follows its link.
   mount(dataDisplay);
   for (const theme of ['light', 'dark']) {
     const list = page.getByRole('list', { name: `Rows ${theme}` });
@@ -293,7 +261,6 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     await mouse.move(plainCentre.x, plainCentre.y);
     await settled(plain);
     expect(fill(plain)()).toBe(rest);
-    // The row reacts to the pointer anywhere on it, and to keyboard focus inside it.
     const frame = box(open);
     await mouse.move(frame.x + 8, frame.y + 8);
     await expect.poll(fill(open)).not.toBe(rest);
@@ -301,14 +268,12 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     const hovered = fill(open)();
     await mouse.move(0, 0);
     await expect.poll(fill(open)).toBe(rest);
-    // Keyboard focus inside the row highlights it (the action: WebKit's Tab skips links).
     focus(link);
     await keyboard.press('Tab');
     await isFocused(action);
     await expect.poll(fill(open)).toBe(hovered);
     (action.element() as HTMLElement).blur();
     await expect.poll(fill(open)).toBe(rest);
-    // A press beside the title follows the link that covers the row, and the row shows it.
     await mouse.move(frame.x + frame.width / 2, frame.y + frame.height - 6);
     await mouse.down();
     await settled(open);
@@ -316,8 +281,6 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     expect(down).not.toBe(hovered);
     await mouse.up();
     await expect.poll(result).toBe('open roadmap');
-    // The action keeps its own press: the row does not darken, and stays plain once the pointer
-    // leaves, though a click may leave focus on the action.
     const actionCentre = centre(action);
     await mouse.move(actionCentre.x, actionCentre.y);
     await mouse.down();
@@ -327,11 +290,90 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     await expect.poll(result).toBe('more actions');
     await mouse.move(0, 0);
     await expect.poll(fill(open)).toBe(rest);
-    // The covering link is not dragged as a link where the engine supports it.
     const drag = (
       getComputedStyle(link.element()) as CSSStyleDeclaration & { webkitUserDrag?: string }
     ).webkitUserDrag;
     if (drag !== undefined) expect(drag).toBe('none');
     await expect.element(link).toHaveAttribute('draggable', 'false');
   }
+});
+
+test('rows are filled tiles joined by small gaps with the outer corners, and a row target reads in the row text color', async () => {
+  mount(fixture);
+  const [tile, nextTile] = page
+    .getByRole('list', { name: 'People', exact: true })
+    .getByRole('listitem')
+    .elements();
+  expect(css(tile!, 'background-color')).not.toBe('rgba(0, 0, 0, 0)');
+  expect(css(tile!, 'padding-left')).not.toBe('0px');
+  expect(css(tile!, 'border-top-left-radius')).not.toBe(css(tile!, 'border-bottom-left-radius'));
+  expect(css(nextTile!, 'border-top-width')).toBe('0px');
+  expect(box(nextTile!).y).toBeGreaterThan(box(tile!).y + box(tile!).height);
+
+  const plans = page.getByRole('list', { name: 'Plans', exact: true });
+  const target = plans.getByRole('button', { name: 'Hiring plan 2027' });
+  const row = plans.getByRole('listitem').element();
+  await mouse.move(centre(target).x, centre(target).y);
+  await expect.poll(() => css(row, 'background-color')).not.toBe('rgba(0, 0, 0, 0)');
+  expect(css(target, 'color')).toBe(css(row, 'color'));
+  expect(css(target, 'text-decoration-line')).toBe('none');
+});
+
+test('a titled list is named by its heading, and a control in a row is named and described by the row, once', async () => {
+  mount(surfaces);
+  const list = page.getByRole('list', { name: 'Remote access', exact: true });
+  await expect
+    .element(list)
+    .toHaveAccessibleDescription('Let your other devices reach this computer.');
+  await expect
+    .element(page.getByRole('heading', { level: 2, name: 'Remote access', exact: true }))
+    .toBeVisible();
+  const allow = list.getByRole('switch');
+  await expect.element(allow).toHaveAccessibleName('Allow paired devices');
+  await expect
+    .element(allow)
+    .toHaveAccessibleDescription('They can see and steer the agents on this computer.');
+  await expect
+    .element(list.getByRole('checkbox'))
+    .toHaveAccessibleName('Wake this computer for them');
+  const [switchRow] = list.getByRole('listitem').elements();
+  expect(box(allow.element()).x).toBeGreaterThan(
+    box(switchRow!.querySelector('.env-list-item-label')!).x,
+  );
+});
+
+test(
+  "a row's start icon takes the start's icon size and sits centred on the row",
+  { tags: ['engines'] },
+  async () => {
+    mount(surfaces);
+    const row = page
+      .getByRole('list', { name: 'Paired devices', exact: true })
+      .getByRole('listitem')
+      .first()
+      .element();
+    const icon = row.querySelector('.env-list-item-start svg')!;
+    const probe = document.createElement('div');
+    probe.style.inlineSize = 'var(--env-icon-size-lg)';
+    row.append(probe);
+    const size = box(probe).width;
+    probe.remove();
+    expect(box(icon).width).toBe(size);
+    expect(box(icon).height).toBe(size);
+    const rowBox = box(row);
+    const content = box(row.querySelector('.env-list-item-content')!);
+    expect(
+      Math.abs(box(icon).y + box(icon).height / 2 - (content.y + content.height / 2)),
+    ).toBeLessThan(1);
+    expect(box(icon).y).toBeGreaterThan(rowBox.y);
+  },
+);
+
+test("a Switch or Checkbox without a label of its own takes the row's name, and one with a label keeps it", async () => {
+  mount(rowControls);
+  const list = page.getByRole('list', { name: 'Row controls', exact: true });
+  const checkbox = list.getByRole('checkbox');
+  await expect.element(checkbox).toHaveAccessibleName('Sync');
+  await expect.element(checkbox).toHaveAccessibleDescription('Keep this computer in step.');
+  await expect.element(list.getByRole('switch')).toHaveAccessibleName('Mute alerts');
 });

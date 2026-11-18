@@ -6,10 +6,8 @@ import { dragThreshold } from '../../internal/dom/lengths.js';
 import { useLatest } from '../../internal/useLatest.js';
 import { moveValue, tabElement } from './tabStrip.js';
 
-/** Within this many pixels of the strip's edge, a drag scrolls the strip. */
-const edgeZone = 24;
-/** How far a drag near an edge scrolls the strip on each move, in pixels. */
-const edgeScroll = 8;
+const edgeScrollZonePx = 24;
+const edgeScrollStepPx = 8;
 
 /** A tab being dragged: its value, the gap it would drop into, and where the pointer is. */
 export interface TabDrag {
@@ -23,6 +21,8 @@ export interface TabDrag {
 /**
  * A tab dragged with a mouse or pen follows the pointer as a floating copy, and a line in the strip
  * marks where it will land; the tabs take their new order when it is let go, and Escape cancels.
+ * Pressing a tab doesn't focus it, so a drag never selects it: a press let go without moving focuses
+ * the tab, which selects it, as a click does.
  * Touch scrolls the strip instead, and its long press opens the context menu with Move left and
  * Move right.
  */
@@ -42,6 +42,8 @@ export function useTabDrag({
     const strip = list.current;
     if (!onReorder || !strip || event.button !== 0 || event.pointerType === 'touch') return;
     if ((event.target as Element).closest('.env-document-tabs-close')) return;
+    const tab = tabElement(strip, id);
+    if (tab && !tab.contains(strip.ownerDocument.activeElement)) event.preventDefault();
     const startX = event.clientX;
     const startIndex = items.findIndex((item) => item.value === id);
     let moved = false;
@@ -53,10 +55,9 @@ export function useTabDrag({
         moved = true;
       }
       move.preventDefault();
-      // Near an edge the strip scrolls, so a tab reaches places out of view.
       const box = strip.getBoundingClientRect();
-      if (move.clientX < box.left + edgeZone) strip.scrollLeft -= edgeScroll;
-      else if (move.clientX > box.right - edgeZone) strip.scrollLeft += edgeScroll;
+      if (move.clientX < box.left + edgeScrollZonePx) strip.scrollLeft -= edgeScrollStepPx;
+      else if (move.clientX > box.right - edgeScrollZonePx) strip.scrollLeft += edgeScrollStepPx;
       gap = nearestGap(strip, latest.current.items, move.clientX) ?? gap;
       setDrag({ id, gap, x: move.clientX, y: move.clientY });
     };
@@ -80,16 +81,20 @@ export function useTabDrag({
     const onUp = () => {
       const dropped = moved;
       stop();
-      if (!dropped) return;
-      // The click that ends a drag does nothing more. It arrives with the release, if at all, so
-      // the guard goes after it, and a release with no click leaves the next click alone.
-      const swallow = (click: MouseEvent) => click.stopPropagation();
-      view.addEventListener('click', swallow, { capture: true, once: true });
-      view.setTimeout(() => view.removeEventListener('click', swallow, { capture: true }), 0);
+      if (!dropped) {
+        tab?.focus({ focusVisible: false });
+        return;
+      }
+      const swallowClickThatEndsDrag = (click: MouseEvent) => click.stopPropagation();
+      view.addEventListener('click', swallowClickThatEndsDrag, { capture: true, once: true });
+      view.setTimeout(
+        () => view.removeEventListener('click', swallowClickThatEndsDrag, { capture: true }),
+        0,
+      );
       const { items: current, onReorder: reorder } = latest.current;
-      // A gap beside the tab itself leaves it where it is.
       const index = gap > startIndex ? gap - 1 : gap;
-      if (index === startIndex) return;
+      const droppedBesideItself = index === startIndex;
+      if (droppedBesideItself) return;
       reorder?.(
         moveValue(
           current.map((item) => item.value),
@@ -107,11 +112,6 @@ export function useTabDrag({
   return { drag, onItemPointerDown };
 }
 
-/**
- * The gap nearest the pointer: before the tab under it in that tab's starting half, after it in the
- * other, also beside the dragged tab itself; past the ends, the nearest tab counts. Undefined while
- * no tab is in the strip.
- */
 function nearestGap(strip: HTMLElement, items: readonly { value: string }[], x: number) {
   const rtl = isRightToLeft(strip);
   let distance = Infinity;

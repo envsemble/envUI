@@ -9,7 +9,7 @@
       "$value": { "value": 0.25, "unit": "rem" }
     },
     "sm": {
-      "$description": "Small corners: buttons in a group, chips, menu rows, list rows inside a surface.",
+      "$description": "Small corners: chips, menu rows, list rows inside a surface.",
       "$value": { "value": 0.5, "unit": "rem" }
     },
     "md": {
@@ -17,7 +17,7 @@
       "$value": { "value": 0.75, "unit": "rem" }
     },
     "lg": {
-      "$description": "Medium corners: fields, tables, alerts and other blocks.",
+      "$description": "Medium corners: tables, alerts and other blocks.",
       "$value": { "value": 1, "unit": "rem" }
     },
     "xl": {
@@ -27,6 +27,10 @@
     "surface": {
       "$description": "The rounded corners of surfaces, dialogs and popups.",
       "$value": "{radius.xl}"
+    },
+    "control": {
+      "$description": "The corners of every control: buttons in each variant, text fields, the triggers of Select, Combobox and the pickers, a slider, and a segmented control's track. One shape, which follows the theme's corners.",
+      "$value": "{radius.md}"
     },
     "row-outer": {
       "$description": "The outer corners of connected rows, the first row's top and the last row's bottom: a surface's.",

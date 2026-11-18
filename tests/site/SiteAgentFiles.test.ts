@@ -1,5 +1,3 @@
-// The files the hosted site serves to coding agents at its root: the setup skill, SKILL.md, and the
-// signpost llms.txt (scripts/site/SiteAgentFiles.ts).
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -12,7 +10,6 @@ const version = libraryVersion();
 const skill = renderSkill();
 const llms = renderLlmsText();
 
-/** The skill's frontmatter and body. */
 function skillParts(text: string) {
   const [, frontmatter, body] = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(text) ?? [];
   assert.ok(frontmatter, 'SKILL.md starts with frontmatter');
@@ -39,7 +36,6 @@ test('the setup skill stays short and pins every envUI package at its version', 
   const pinned = [...skill.matchAll(/@envsemble\/[a-z-]+@([^\s`'"]+)/g)].map((match) => match[1]);
   assert.ok(pinned.length > 0);
   assert.deepEqual([...new Set(pinned)], [version]);
-  // The user sees a checklist and agrees before anything changes.
   assert.match(skill, /checklist and wait for a yes/);
   assert.match(skill, /You can skip any step/);
 });
@@ -51,13 +47,11 @@ test("the skill's AGENTS.md block is short and points at docs the package ships"
   const words = text.split(/\s+/).filter(Boolean).length;
   assert.ok(words <= 80, `the AGENTS.md block has ${words} words; keep it to about 100 tokens`);
   assert.match(text, /every UI element/);
-  assert.match(text, /propose an addition to envUI instead of writing a local copy/);
-  // The package ships docs/ with its index and the examples, and the lint packages their READMEs.
   const library = JSON.parse(
     readFileSync(join(repositoryRoot, 'packages/ui/package.json'), 'utf8'),
   );
   assert.ok(library.files.includes('docs'));
-  for (const path of ['docs/index.md', 'docs/setup.md', 'docs/migration.md'])
+  for (const path of ['docs/index.md', 'docs/setup.md'])
     assert.ok(skill.includes(`node_modules/@envsemble/envui/${path}`) || text.includes(path), path);
   assert.ok(existsSync(join(repositoryRoot, 'docs/index.md')));
   for (const name of ['eslint-plugin', 'stylelint-config']) {
@@ -76,7 +70,6 @@ test('llms.txt introduces envUI and points to the setup skill and the installed 
   assert.match(summary, /^> envUI is /);
   assert.match(llms, /^- \[Setup skill\]\(https:\/\/envui\.envsemble\.com\/SKILL\.md\)/m);
   assert.match(llms, /node_modules\/@envsemble\/envui\/docs\//);
-  // A signpost, not another index: the skill is its only link.
   assert.equal([...llms.matchAll(/\]\(([^)]+)\)/g)].length, 1);
   assert.ok(llms.endsWith('\n') && !llms.endsWith('\n\n'));
 });

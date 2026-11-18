@@ -2,30 +2,25 @@
 
 import { useSyncExternalStore } from 'react';
 
-/** The browser's EyeDropper, where it has one: Chromium-based browsers on the desktop. */
-interface EyeDropperConstructor {
+interface ChromiumOnlyEyeDropper {
   new (): { open(options?: { signal?: AbortSignal }): Promise<{ sRGBHex: string }> };
 }
 
-// The EyeDropper API is in Chromium only, so TypeScript's DOM types leave it out.
-const eyeDropper = () => (globalThis as { EyeDropper?: EyeDropperConstructor }).EyeDropper ?? null;
+const browserEyeDropper = () =>
+  (globalThis as { EyeDropper?: ChromiumOnlyEyeDropper }).EyeDropper ?? null;
 
-const subscribe = () => () => {};
+const supportNeverChanges = () => () => {};
+const unsupportedWhileHydrating = () => false;
 
-/**
- * Opens the browser's eyedropper and resolves to the color picked as #rrggbb, or null when people
- * press Escape. The function is null where the browser has no eyedropper, and on the server and
- * the first render in the browser, so their markup is equal.
- */
 export function useEyeDropper(): (() => Promise<string | null>) | null {
   const supported = useSyncExternalStore(
-    subscribe,
-    () => eyeDropper() !== null,
-    () => false,
+    supportNeverChanges,
+    () => browserEyeDropper() !== null,
+    unsupportedWhileHydrating,
   );
   if (!supported) return null;
   return async () => {
-    const EyeDropper = eyeDropper();
+    const EyeDropper = browserEyeDropper();
     if (!EyeDropper) return null;
     try {
       return (await new EyeDropper().open()).sRGBHex;

@@ -16,8 +16,7 @@ import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconMenu } from '@envsemble/envui/icons/Menu';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
-/** Stands in for the window: a Scaffold fills its container, the window's height by default. */
-const preview: CSSProperties = { blockSize: '18rem' };
+const previewWindow: CSSProperties = { blockSize: '18rem' };
 
 const destinations: NavigationDrawerDestination[] = [
   { label: 'General', icon: <IconHome />, href: '#general', current: true },
@@ -30,13 +29,11 @@ export default function ChooseForms() {
   const size = useContainerSize(frame);
   const compact = size !== undefined && windowClassOf(size.inlineSize) === 'compact';
   return (
-    // An application with a drawer only: it shows from medium, and a compact width shows none,
-    // where a menu button in the top bar opens the same drawer in a sheet.
     <Scaffold
       ref={frame}
       scroll="body"
       landmarks={false}
-      style={preview}
+      style={previewWindow}
       navigationForms={{ compact: 'none' }}
       topBar={
         <TopBar

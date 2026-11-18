@@ -92,17 +92,13 @@ export interface ScrollView {
   range: number;
 }
 
-/** How far down the view the reading line sits: a quarter. */
-const readingLine = 0.25;
+const readingLineShareDownView = 0.25;
 
-/**
- * How far the area must have scrolled for each section to reach the reading line, a quarter of the
- * way down the view. Sections too near the end of the page to reach it, such as short last ones,
- * share the scrolling left after the last one that does, evenly, so each is reached in turn and the
- * last one at the very end.
- */
-function reachedAt(sections: readonly SectionPosition[], view: ScrollView): number[] {
-  const line = view.height * readingLine;
+function scrollAtWhichEachSectionReachesLine(
+  sections: readonly SectionPosition[],
+  view: ScrollView,
+): number[] {
+  const line = view.height * readingLineShareDownView;
   const range = Math.max(0, view.range);
   const reached = sections.map((section) => view.scrolled + section.top - line);
   const late = reached.filter((at) => at > range).length;
@@ -119,6 +115,8 @@ function reachedAt(sections: readonly SectionPosition[], view: ScrollView): numb
   return reached;
 }
 
+const slackForLinkScrollShortByFraction = 1;
+
 /**
  * The section the reader is in: the last one whose start has passed the reading line; at the top
  * of the page, before any has, the first.
@@ -128,11 +126,10 @@ export function currentSection(
   view: ScrollView,
 ): string | undefined {
   if (sections.length === 0) return undefined;
-  const reached = reachedAt(sections, view);
+  const reached = scrollAtWhichEachSectionReachesLine(sections, view);
   let current = sections[0].id;
-  // A pixel of slack, for a section a link has just scrolled to a fraction short of its place.
   reached.forEach((at, index) => {
-    if (at <= view.scrolled + 1) current = sections[index].id;
+    if (at <= view.scrolled + slackForLinkScrollShortByFraction) current = sections[index].id;
   });
   return current;
 }
@@ -144,7 +141,7 @@ export function currentSection(
  */
 export function readingPosition(sections: readonly SectionPosition[], view: ScrollView): number {
   if (sections.length === 0) return 0;
-  const reached = reachedAt(sections, view);
+  const reached = scrollAtWhichEachSectionReachesLine(sections, view);
   let index = 0;
   reached.forEach((at, each) => {
     if (at <= view.scrolled + 1) index = each;

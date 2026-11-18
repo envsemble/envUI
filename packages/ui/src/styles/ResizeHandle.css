@@ -1,12 +1,11 @@
 @layer env.components {
-  /* ResizeHandle: a window splitter's handle. The owner places it on the edge it moves. By default a
-     line shows on hover, after a moment, at once on keyboard focus and while dragging, as between a
-     table's columns. With data-grip, for a handle between two surfaces or on a surface's edge, as in
-     Panes, a side Sheet and the Drawer, it is never a line: three small dots at its middle are the
-     grip that says it moves, which darken under the pointer and take the focus color with keyboard
-     focus or while dragging, and focus rings the handle. Hook, set on the owner's element:
-     --env-resize-handle-size, its thickness, also under a coarse pointer. */
   .env-resize-handle {
+    --_resize-handle-at: 50%;
+    --_resize-handle-line: var(--env-control-border-width);
+    --_resize-handle-line-color: transparent;
+    --_resize-handle-grip-dot: 0.1875rem;
+    --_resize-handle-grip-length: calc(5 * var(--_resize-handle-grip-dot));
+    --_resize-handle-grip-color: var(--env-color-border-default);
     position: relative;
     flex: 0 0 auto;
     touch-action: none;
@@ -15,102 +14,116 @@
     outline: none;
   }
   .env-resize-handle[data-axis='inline'] {
-    inline-size: var(--env-resize-handle-size, var(--env-space-2));
+    inline-size: var(--_resize-handle-size, var(--env-space-3));
     cursor: col-resize;
   }
   .env-resize-handle[data-axis='block'] {
-    block-size: var(--env-resize-handle-size, var(--env-space-2));
+    block-size: var(--_resize-handle-size, var(--env-space-3));
     cursor: row-resize;
   }
   .env-resize-handle[aria-disabled='true'] {
     cursor: default;
   }
-  .env-resize-handle::after {
+  .env-resize-handle::before,
+  .env-resize-handle[data-grip]::after {
     content: '';
-    display: block;
     position: absolute;
-    background: transparent;
+    pointer-events: none;
+  }
+  .env-resize-handle::before {
+    background: var(--_resize-handle-line-color);
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
-  .env-resize-handle[data-axis='inline']::after {
+  .env-resize-handle[data-axis='inline']::before {
     inset-block: 0;
-    inset-inline-start: calc(50% - var(--env-control-border-width));
-    inline-size: calc(2 * var(--env-control-border-width));
+    inset-inline-start: clamp(
+      0%,
+      var(--_resize-handle-at) - var(--_resize-handle-line) / 2,
+      100% - var(--_resize-handle-line)
+    );
+    inline-size: var(--_resize-handle-line);
   }
-  .env-resize-handle[data-axis='block']::after {
+  .env-resize-handle[data-axis='block']::before {
     inset-inline: 0;
-    inset-block-start: calc(50% - var(--env-control-border-width));
-    block-size: calc(2 * var(--env-control-border-width));
-  }
-  .env-resize-handle:not([data-grip], [aria-disabled='true']):hover::after {
-    background: var(--env-color-border-muted-hover);
-    transition-delay: var(--env-motion-duration-medium);
-  }
-  .env-resize-handle:not([data-grip]):focus-visible::after,
-  .env-resize-handle:not([data-grip])[data-resizing]::after {
-    background: var(--env-color-border-focus);
-    transition-delay: 0s;
-  }
-  /* data-grip: the grip, three dots in a column at the handle's middle, on its ::after in place of the
-     line. The grip is a box as tall as its dots, centered across the handle's length, so an owner
-     whose handle is taller than the room it shows in, such as a sheet's that scrolls with its
-     content, can keep it in view with position: sticky on it. */
-  .env-resize-handle[data-grip] {
-    --env-resize-handle-grip-dot: 0.1875rem;
-    --env-resize-handle-grip-length: calc(5 * var(--env-resize-handle-grip-dot));
-    --env-resize-handle-grip-color: var(--env-color-border-default);
-    border-radius: var(--env-radius-full);
+    inset-block-start: clamp(
+      0%,
+      var(--_resize-handle-at) - var(--_resize-handle-line) / 2,
+      100% - var(--_resize-handle-line)
+    );
+    block-size: var(--_resize-handle-line);
   }
   .env-resize-handle[data-grip]::after {
-    display: block;
-    /* Both edges, so that a sticky grip keeps to the middle of the room it shows in; an absolute
-       one is as tall as its dots and keeps the start. */
-    inset-block: calc(50% - var(--env-resize-handle-grip-length) / 2);
-    inset-inline: 0;
-    inline-size: auto;
-    block-size: var(--env-resize-handle-grip-length);
+    --_resize-handle-dot: radial-gradient(
+      closest-side,
+      var(--_resize-handle-grip-color) 80%,
+      transparent
+    );
+  }
+  .env-resize-handle[data-axis='inline'][data-grip]::after {
+    inset-block-start: calc(50% - var(--_resize-handle-grip-length) / 2);
+    inset-inline-start: clamp(
+      0%,
+      var(--_resize-handle-at) - var(--_resize-handle-grip-dot) / 2,
+      100% - var(--_resize-handle-grip-dot)
+    );
+    inline-size: var(--_resize-handle-grip-dot);
+    block-size: var(--_resize-handle-grip-length);
     background:
-      radial-gradient(closest-side, var(--env-resize-handle-grip-color) 80%, transparent) 50% 0 /
-        var(--env-resize-handle-grip-dot) var(--env-resize-handle-grip-dot) no-repeat,
-      radial-gradient(closest-side, var(--env-resize-handle-grip-color) 80%, transparent) 50% 50% /
-        var(--env-resize-handle-grip-dot) var(--env-resize-handle-grip-dot) no-repeat,
-      radial-gradient(closest-side, var(--env-resize-handle-grip-color) 80%, transparent) 50% 100% /
-        var(--env-resize-handle-grip-dot) var(--env-resize-handle-grip-dot) no-repeat;
-    transition: none;
+      var(--_resize-handle-dot) 50% 0 / var(--_resize-handle-grip-dot)
+        var(--_resize-handle-grip-dot) no-repeat,
+      var(--_resize-handle-dot) 50% 50% / var(--_resize-handle-grip-dot)
+        var(--_resize-handle-grip-dot) no-repeat,
+      var(--_resize-handle-dot) 50% 100% / var(--_resize-handle-grip-dot)
+        var(--_resize-handle-grip-dot) no-repeat;
   }
-  .env-resize-handle[data-grip]:not([aria-disabled='true']):hover {
-    --env-resize-handle-grip-color: var(--env-color-fg-muted);
+  .env-resize-handle[data-axis='block'][data-grip]::after {
+    inset-inline-start: calc(50% - var(--_resize-handle-grip-length) / 2);
+    inset-block-start: clamp(
+      0%,
+      var(--_resize-handle-at) - var(--_resize-handle-grip-dot) / 2,
+      100% - var(--_resize-handle-grip-dot)
+    );
+    inline-size: var(--_resize-handle-grip-length);
+    block-size: var(--_resize-handle-grip-dot);
+    background:
+      var(--_resize-handle-dot) 0 50% / var(--_resize-handle-grip-dot)
+        var(--_resize-handle-grip-dot) no-repeat,
+      var(--_resize-handle-dot) 50% 50% / var(--_resize-handle-grip-dot)
+        var(--_resize-handle-grip-dot) no-repeat,
+      var(--_resize-handle-dot) 100% 50% / var(--_resize-handle-grip-dot)
+        var(--_resize-handle-grip-dot) no-repeat;
   }
-  .env-resize-handle[data-grip]:focus-visible,
-  .env-resize-handle[data-grip][data-resizing] {
-    --env-resize-handle-grip-color: var(--env-color-border-focus);
+  .env-resize-handle:not([aria-disabled='true']):hover,
+  .env-resize-handle[data-resizing] {
+    --_resize-handle-line-color: var(--env-color-border-muted);
+    --_resize-handle-grip-color: var(--env-color-fg-muted);
   }
-  .env-resize-handle[data-grip]:focus-visible {
-    outline: 2px solid var(--env-color-border-focus);
-    outline-offset: -2px;
+  .env-resize-handle:focus-visible {
+    --_resize-handle-line: calc(2 * var(--env-control-border-width));
+    --_resize-handle-line-color: var(--env-color-border-focus);
+    --_resize-handle-grip-color: var(--env-color-fg-muted);
   }
-  /* Under a coarse pointer the handle's hit area reaches the touch size across its line. */
   @media (pointer: coarse) {
     .env-resize-handle[data-axis='inline'] {
-      inline-size: var(--env-resize-handle-size, var(--env-control-height-touch));
+      inline-size: var(--_resize-handle-size, var(--env-control-height-touch));
     }
     .env-resize-handle[data-axis='block'] {
-      block-size: var(--env-resize-handle-size, var(--env-control-height-touch));
+      block-size: var(--_resize-handle-size, var(--env-control-height-touch));
     }
   }
-  /* Forced colors: the line and the grip take the system's colors. */
   @media (forced-colors: active) {
-    .env-resize-handle:not([data-grip]):focus-visible::after,
-    .env-resize-handle:not([data-grip])[data-resizing]::after {
-      background: Highlight;
-    }
-    .env-resize-handle[data-grip] {
-      --env-resize-handle-grip-color: CanvasText;
+    .env-resize-handle {
+      --_resize-handle-grip-color: CanvasText;
       forced-color-adjust: none;
     }
-    .env-resize-handle[data-grip]:focus-visible,
-    .env-resize-handle[data-grip][data-resizing] {
-      --env-resize-handle-grip-color: Highlight;
+    .env-resize-handle:not([aria-disabled='true']):hover,
+    .env-resize-handle[data-resizing] {
+      --_resize-handle-line-color: CanvasText;
+      --_resize-handle-grip-color: CanvasText;
+    }
+    .env-resize-handle:focus-visible {
+      --_resize-handle-line-color: Highlight;
+      --_resize-handle-grip-color: CanvasText;
     }
   }
 }

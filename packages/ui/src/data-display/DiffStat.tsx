@@ -37,7 +37,6 @@ export function DiffStat({
   className,
   ...props
 }: DiffStatProps) {
-  // formatLabel wins over the provider's messages, which win over the English default.
   const messages = useMessages('diffStat', diffStatMessages);
   const number = useFormatters().number();
   const label = formatLabel
@@ -48,16 +47,17 @@ export function DiffStat({
         additionsText: number.format(additions),
         deletionsText: number.format(deletions),
       });
-  // A side that is zero is left out, such as +40 alone; with nothing either side, both show.
-  const both = additions === 0 && deletions === 0;
+  const noChange = additions === 0 && deletions === 0;
+  const showAdditions = additions !== 0 || noChange;
+  const showDeletions = deletions !== 0 || noChange;
   return (
     <span {...props} className={classNames('env-diff-stat', className)}>
-      {(additions !== 0 || both) && (
+      {showAdditions && (
         <span className="env-diff-stat-additions" aria-hidden="true">
           +{number.format(additions)}
         </span>
       )}
-      {(deletions !== 0 || both) && (
+      {showDeletions && (
         <span className="env-diff-stat-deletions" aria-hidden="true">
           −{number.format(deletions)}
         </span>

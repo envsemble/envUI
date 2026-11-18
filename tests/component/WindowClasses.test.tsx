@@ -8,12 +8,6 @@ import * as toasts from '../fixture/Toast.fixture.tsx';
 import { addStyle, box, css, mouse, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-// The env-window container: the outermost theme boundary takes the width its context gives it,
-// so it never collapses where its parent sizes to content, nested boundaries are no containers,
-// a region opts in with a primitive's container prop, and popups measure their portal's boundary.
-// The fixture's own root is a Theme; the boundaries outside it are added to the body.
-
-/** Markup added to the body, outside the fixture's own Theme, which each test takes out again. */
 const added: Element[] = [];
 function append(html: string) {
   const holder = document.createElement('div');
@@ -46,13 +40,9 @@ test('the outermost boundary is the window and never collapses, nested ones size
        <span>Beside it</span>
      </div>`,
   );
-  // A Theme that is the application's root, in a parent that centres it: as wide as the parent.
   expect(width('#centered-theme')).toBeCloseTo(640, 0);
   expect(containerType('#centered-theme')).toBe('inline-size');
-  // An outermost Theme in a row shares the row instead of collapsing.
   expect(width('#outer-island')).toBeGreaterThan(100);
-  // One that renders an inline element is a block as wide as its parent, and one with padding
-  // holds it inside that width rather than overflow.
   append(
     `<div id="plain-root" style="inline-size: 40rem">
        <span class="env-theme" data-env-theme="light" id="inline-theme">Inline</span>
@@ -64,8 +54,6 @@ test('the outermost boundary is the window and never collapses, nested ones size
   expect(width('#inline-theme')).toBeCloseTo(640, 0);
   expect(containerType('#inline-theme')).toBe('inline-size');
   expect(width('#padded-theme')).toBeCloseTo(640, 0);
-  // The fixture's own root Theme is the window; a Theme inside it, such as a dark island in a Row,
-  // sizes to its content and is no container.
   expect(css(element('#root > .env-theme'), 'container-name')).toBe('env-window');
   const row = document.createElement('div');
   row.dataset.envLayout = 'row';
@@ -89,13 +77,12 @@ test('a primitive with container="env-window" is the window of what it holds', (
     .element()
     .insertAdjacentHTML(
       'beforeend',
-      `<div data-env-layout="box" data-env-container style="--env-layout-container: env-window; inline-size: 30rem">
+      `<div data-env-layout="box" data-env-container style="--_layout-container: env-window; inline-size: 30rem">
          <span class="window-probe" id="narrow-probe">Narrow</span>
        </div>
        <span class="window-probe" id="page-probe">Page</span>`,
     );
   const probe = (id: string) => css(element(id), '--window-probe');
-  // A 30 rem region is compact, though the page around it is not.
   expect(probe('#narrow-probe')).toBe('');
   expect(probe('#page-probe')).toBe('medium');
 });
@@ -110,7 +97,6 @@ test('a date picker stacks its time under the calendar in a compact window', asy
     await page.getByRole('combobox', { name: 'Meeting light', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Meeting light' });
     await expect.poll(() => shown(dialog)).toBe(true);
-    // The popup's portal boundary is the window, as wide as the document's body.
     expect(css(dialog.element().closest('.env-popup-theme')!, 'container-name')).toBe('env-window');
     await expect
       .poll(
@@ -127,11 +113,6 @@ test('a date picker stacks its time under the calendar in a compact window', asy
   }
 });
 
-/**
- * Makes every container the containing block of its fixed and absolute descendants, as an engine
- * whose container-type also contains layout would: `contain: layout` on each, as it is added.
- * Returns what stops it.
- */
 function containLayout() {
   const contain = (node: Node) => {
     if (!(node instanceof HTMLElement)) return;
@@ -145,13 +126,7 @@ function containLayout() {
   return () => observer.disconnect();
 }
 
-// With a document root that isn't themed, as in the fixture, each portal's boundary is outermost.
-// Fixed overlays still cover the viewport and stack over the page, popups follow their trigger, and
-// what a dialog holds lays out at the window's class. Each check runs as browsers do today, and
-// again as an engine whose container-type also contains layout would, which makes a container the
-// containing block of its fixed and absolute descendants.
 describe('portals with an unthemed document root, also where a container contains layout', () => {
-  /** Mounts a fixture, scrolled, so a box placed against anything but the viewport shows. */
   async function open(
     module: Parameters<typeof mount>[0],
     containsLayout: boolean,
@@ -189,13 +164,11 @@ describe('portals with an unthemed document root, also where a container contain
               width: 1024,
               height: 700,
             });
-          // The backdrop is what shows at a corner, over the page, and the dialog over the backdrop.
           const corner = document.elementFromPoint(4, 4);
           const { x, y, width, height } = box(dialog);
           const middle = document.elementFromPoint(x + width / 2, y + height / 2);
           expect(corner?.closest('.env-dialog-backdrop'), name).not.toBeNull();
           expect(middle?.closest('[role="dialog"]'), name).not.toBeNull();
-          // A press on the backdrop reaches it through the overlay's layer, and closes the dialog.
           await mouse.click(4, 4);
           await expect.poll(() => shown(dialog), { message: name }).toBe(false);
         } finally {
@@ -256,7 +229,6 @@ describe('portals with an unthemed document root, also where a container contain
               () => {
                 const button = box(trigger);
                 const popup = box(menu);
-                // Below the trigger, a few pixels apart, or above it where there is no room below.
                 const gap =
                   popup.y >= button.y
                     ? popup.y - (button.y + button.height)
@@ -271,8 +243,6 @@ describe('portals with an unthemed document root, also where a container contain
               { message: name },
             )
             .toBe(true);
-          // The portal's boundary is the window, at the window's width, and out of flow, so it
-          // takes no cell of the grid body.
           const theme = menu.element().closest('.env-popup-theme')!;
           expect(css(theme, 'position'), name).toBe('absolute');
           expect(css(theme, 'container-name'), name).toBe('env-window');

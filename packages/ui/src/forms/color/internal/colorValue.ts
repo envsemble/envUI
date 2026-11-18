@@ -6,14 +6,9 @@ export type ColorFormat = 'hex' | 'rgb' | 'hsl';
 /** A color as a CSS color string, such as #6750a4, or React Aria's Color. */
 export type ColorValue = string | Color;
 
-/** Black, parsed the first time a value is no color rather than as the module loads. */
-let black: Color | undefined;
+let blackParsedOnFirstUse: Color | undefined;
 
-/**
- * CSS's space-separated rgb() and hsl(), such as rgb(103 80 164 / 50%), in the comma-separated
- * form React Aria parses: rgba(103, 80, 164, 0.5).
- */
-function commaSeparated(value: string) {
+function spaceSeparatedToCommaSeparated(value: string) {
   const match = /^(rgb|hsl)a?\(\s*([^,()]+?)\s*\)$/i.exec(value.trim());
   if (!match) return value;
   const [channels, alpha] = match[2].split('/').map((part) => part.trim());
@@ -25,29 +20,25 @@ function commaSeparated(value: string) {
   return `${space}a(${parts.join(', ')}, ${opacity})`;
 }
 
-/**
- * A color from a string, such as #6750a4 or 6750a4, rgb(), rgba(), hsl(), hsla() or hsb(), comma
- * or space separated, or a Color; undefined for a string that is no color.
- */
 function parseColorValue(value: ColorValue): Color | undefined {
   if (typeof value !== 'string') return value;
-  // Hexadecimal digits without their #, as earlier ColorPickers took them.
-  const text = /^[0-9a-f]{3,8}$/i.test(value.trim()) ? `#${value.trim()}` : value.trim();
+  const hexWithoutHash = /^[0-9a-f]{3,8}$/i.test(value.trim());
+  const text = hexWithoutHash ? `#${value.trim()}` : value.trim();
   try {
     return parseColor(text);
   } catch {
     try {
-      return parseColor(commaSeparated(value));
+      return parseColor(spaceSeparatedToCommaSeparated(value));
     } catch {
       return undefined;
     }
   }
 }
 
-/** A color from a string or a Color, black for one that is no color, opaque without alpha. */
 export function toColor(value: ColorValue | undefined, alpha: boolean): Color {
   const color =
-    (value === undefined ? undefined : parseColorValue(value)) ?? (black ??= parseColor('#000000'));
+    (value === undefined ? undefined : parseColorValue(value)) ??
+    (blackParsedOnFirstUse ??= parseColor('#000000'));
   return alpha || color.getChannelValue('alpha') === 1 ? color : color.withChannelValue('alpha', 1);
 }
 
@@ -56,10 +47,6 @@ const round = (value: number, digits = 0) => {
   return Math.round(value * factor) / factor;
 };
 
-/**
- * A color as a CSS color string in a format: #rrggbb in lowercase, rgb(r, g, b) or
- * hsl(h, s%, l%), with its alpha (#rrggbbaa, rgba() or hsla()) while it is translucent.
- */
 export function formatColor(color: Color, format: ColorFormat): string {
   const alpha = round(color.getChannelValue('alpha'), 2);
   const translucent = alpha < 1;
@@ -80,7 +67,6 @@ export function formatColor(color: Color, format: ColorFormat): string {
   return translucent ? `hsla(${channels.join(', ')}, ${alpha})` : `hsl(${channels.join(', ')})`;
 }
 
-/** Whether two colors are the same once written as #rrggbbaa. */
 export function sameColor(a: Color, b: Color) {
   return a.toString('hexa') === b.toString('hexa');
 }

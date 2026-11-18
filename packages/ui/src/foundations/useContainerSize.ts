@@ -20,8 +20,10 @@ export interface ContainerSizeOptions {
   box?: 'content-box' | 'border-box';
 }
 
-/** The element's size now, as a ResizeObserver would report it. */
-function measure(element: Element, box: 'content-box' | 'border-box'): ContainerSize {
+function measureAsResizeObserverWould(
+  element: Element,
+  box: 'content-box' | 'border-box',
+): ContainerSize {
   const style = getComputedStyle(element);
   let width: number;
   let height: number;
@@ -44,8 +46,7 @@ function measure(element: Element, box: 'content-box' | 'border-box'): Container
     : { inlineSize: Math.max(0, width), blockSize: Math.max(0, height) };
 }
 
-/** Whether an element is rendered: one with display: none, or inside one, has no box to measure. */
-const rendered = (element: Element) => element.getClientRects().length > 0;
+const hasBox = (element: Element) => element.getClientRects().length > 0;
 
 /**
  * The size of an element, kept up to date as it changes: its inline and block size in CSS pixels,
@@ -76,17 +77,16 @@ export function useContainerSize<T extends Element>(
           ? previous
           : next,
       );
-    // Measured at once, so the first paint already has the size.
-    if (rendered(element)) update(measure(element, box));
+    if (hasBox(element)) update(measureAsResizeObserverWould(element, box));
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(([entry]) => {
-      if (!entry || !rendered(element)) return;
+      if (!entry || !hasBox(element)) return;
       const sizes = box === 'border-box' ? entry.borderBoxSize : entry.contentBoxSize;
       const first = sizes?.[0];
       update(
         first
           ? { inlineSize: first.inlineSize, blockSize: first.blockSize }
-          : measure(element, box),
+          : measureAsResizeObserverWould(element, box),
       );
     });
     observer.observe(element, { box });

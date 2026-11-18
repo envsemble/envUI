@@ -27,27 +27,21 @@ test('props carry readable types, defaults from destructuring and their TSDoc', 
 
 test('a default that names a private value shows the value, or nothing', () => {
   const publicNames = new Set(Object.keys(exports));
-  // A private const reads as what it holds.
-  assert.equal(props('ThemePreferenceProvider').storageKey.default, "'env-theme'");
-  // A TSDoc @default says it in words instead, as for a label function the messages now hold.
+  assert.equal(props('TableOfContents').levels.default, '[2, 3]');
   assert.equal(props('AvatarGroup').formatMore.default, "'{count} more'");
   assert.equal(
     props('DocumentTabs').closeLabel.default,
     "'Close {label}', or EnvUIProvider's messages.documentTabs.close",
   );
   assert.equal(props('Rating').formatLabel.default, "'{value} out of {max} stars'");
-  // A private list reads as the list it holds.
   assert.equal(
     props('MarkdownEditor').toolbar.default,
     "['heading', 'bold', 'italic', 'inline-code', 'bullet-list', 'numbered-list', 'quote', 'code-block', 'link']",
   );
-  // A default that follows the locale says so in words too.
   assert.equal(
     props('CalendarHeatmap').formatValue.default,
     "the number format of EnvUIProvider's locale, or else the browser's",
   );
-  // No default names something a reader cannot import, other than another of its props, such as
-  // Slider's defaultValue, which starts at min.
   for (const [name, entry] of Object.entries(exports))
     for (const prop of entry.props ?? [])
       if (

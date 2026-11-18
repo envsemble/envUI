@@ -34,12 +34,6 @@ const people = [
 ];
 const commands = [{ id: 'rename', label: 'Rename' }];
 
-/**
- * One popup of each kind, named after the boundary it opens from: menus (standard, compact, context
- * and menubar), Select lists (standard and compact), a Combobox list, the date picker, a popover, a
- * hover card, a tooltip, dialogs (centered and at the edge), the command palette and a toast. Toasts
- * take the theme of their provider, so each boundary has one.
- */
 export function Popups({ name }: { name: string }) {
   return (
     <ToastProvider>
@@ -77,7 +71,6 @@ function PopupTriggers({ name }: { name: string }) {
       <Select label={`Sort ${name}`} items={statusOptions} defaultValue="open" />
       <Combobox label={`Person ${name}`} items={people} />
       <DatePicker label={`Due ${name}`} defaultValue="2026-10-20" locale="en-GB" />
-      {/* No hover delay: these boundaries test colors, and HoverCard.test.tsx tests the delay. */}
       <HoverCard delay={0} trigger={<Link href="#card">Card {name}</Link>}>
         <Text>Card {name} details.</Text>
       </HoverCard>
@@ -141,10 +134,6 @@ function Boundary({
   );
 }
 
-/**
- * Theme boundaries of each contrast, at the top of the page with no Theme around them, so the
- * boundaries without a contrast take the default.
- */
 export default function ThemeContrastFixture() {
   return (
     <>

@@ -9,7 +9,6 @@ export default function MenuAnatomy() {
     <Menu.Root
       aria-label="Report actions"
       align="start"
-      // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
       trigger={<IconButton icon={<IconMoreVert />} aria-label="More actions" />}
     >

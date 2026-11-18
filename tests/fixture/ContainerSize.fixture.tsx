@@ -3,7 +3,6 @@ import { Button, Column, useContainerSize } from '@envsemble/envui';
 
 export const mount = 'standalone';
 
-/** A box whose width the test changes, with its content and border sizes, and one in vertical text. */
 export default function ContainerSizeFixture() {
   const [width, setWidth] = useState(300);
   const box = useRef<HTMLDivElement>(null);
@@ -20,7 +19,6 @@ export default function ContainerSizeFixture() {
       </Button>
       <div
         ref={box}
-        // envUI's reset sizes boxes by their border box: 300 by 100 with the padding and border.
         style={{
           inlineSize: `${width}px`,
           blockSize: '100px',

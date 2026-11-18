@@ -75,6 +75,24 @@ export function countedName(
 /** The navigation messages, with the application's overrides. */
 export const useNavigationMessages = () => useMessages('navigation', navigation);
 
+export interface DestinationItemProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+  classes: DestinationClasses;
+  destination: NavigationDrawerDestination;
+  /**
+   * The form shows only the top level, as NavigationRail and NavigationBar do: a destination whose
+   * nested destinations hold the current one takes the current fill, and reports aria-current="true".
+   */
+  topLevel?: boolean;
+  /** The destination's badge in its slot, after the label: NavigationDrawer's. */
+  badge?: ReactNode;
+  /** The component's own content at the end of a row, after the count: a section's chevron. */
+  end?: ReactNode;
+  /** The label's element, such as to tell whether it is cut short. */
+  labelRef?: Ref<HTMLSpanElement>;
+  /** The control's element, for a tooltip that renders it as its trigger. */
+  ref?: Ref<HTMLElement>;
+}
+
 /**
  * One destination's control: a link with href, through the LinkProvider's link component, or a
  * button that runs onClick, or that only opens and closes the destinations under it. The current one reports aria-current="page" and fills its icon; one
@@ -87,23 +105,10 @@ export function DestinationItem({
   labelRef,
   ref,
   topLevel = false,
+  badge,
   end,
-  ...props
-}: Omit<HTMLAttributes<HTMLElement>, 'children'> & {
-  classes: DestinationClasses;
-  destination: NavigationDrawerDestination;
-  /**
-   * The form shows only the top level, as NavigationRail and NavigationBar do: a destination whose nested destinations
-   * hold the current one takes the current fill, and reports aria-current="true".
-   */
-  topLevel?: boolean;
-  /** Content at the end of a row, after the count, such as a section's chevron. */
-  end?: ReactNode;
-  /** The label's element, such as to tell whether it is cut short. */
-  labelRef?: Ref<HTMLSpanElement>;
-  /** The control's element, for a tooltip that renders it as its trigger. */
-  ref?: Ref<HTMLElement>;
-}) {
+  ...tooltipTriggerProps
+}: DestinationItemProps) {
   const messages = useNavigationMessages();
   const { label, icon, count, current = false, href, onClick } = destination;
   const inside = topLevel && !current && holdsCurrent(destination.children);
@@ -115,13 +120,11 @@ export function DestinationItem({
         <DecorativeIcon>{icon}</DecorativeIcon>
       </SymbolIconFill>
     );
-  // The count is part of the item's name, so the badge that shows it is hidden.
-  const badge = shown !== undefined && (
+  const countBadge = shown !== undefined && (
     <span className={classes.count} aria-hidden="true">
       {shown}
     </span>
   );
-  // A section's heading has no onClick, and takes the click of the trigger that renders it.
   const control =
     href !== undefined ? (
       <ActionElement href={href} onClick={onClick} />
@@ -131,8 +134,7 @@ export function DestinationItem({
       <ActionElement />
     );
   const shared = {
-    // A tooltip's trigger props, such as its pointer and focus handlers.
-    ...props,
+    ...tooltipTriggerProps,
     ref,
     render: control,
     className: classes.item,
@@ -140,28 +142,25 @@ export function DestinationItem({
     'aria-current': current ? ('page' as const) : inside ? ('true' as const) : undefined,
     'aria-label': countedName(label, count, messages),
   };
-  // The item's text is its label, then its count, apart, in the order its name gives them, such as
-  // Inbox 3 for Inbox, 3 new; NavigationBar and NavigationRail draw the indicator above the label with CSS order.
-  const apart = badge && ' ';
+  const spaceBetweenLabelAndCount = countBadge && ' ';
   return classes.indicator === undefined ? (
     <Row {...shared} align="center" gap={3}>
       {icons}
       <span className={classes.label} ref={labelRef}>
         {label}
       </span>
-      {/* Drawer's own badge, such as New, after the label: part of the item's name. */}
-      {destination.badge}
-      {apart}
       {badge}
+      {spaceBetweenLabelAndCount}
+      {countBadge}
       {end}
     </Row>
   ) : (
     <Column {...shared} align="center" gap={1}>
       <span className={classes.label}>{label}</span>
-      {apart}
+      {spaceBetweenLabelAndCount}
       <span className={classes.indicator}>
         {icons}
-        {badge}
+        {countBadge}
       </span>
     </Column>
   );

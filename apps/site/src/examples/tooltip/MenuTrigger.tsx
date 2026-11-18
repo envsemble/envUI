@@ -9,7 +9,6 @@ export default function MenuTrigger() {
       aria-label="Invoice actions"
       align="start"
       trigger={
-        // The Tooltip passes the menu button's props and ref on to the IconButton.
         <Tooltip content="More actions">
           <IconButton icon={<IconMoreVert />} aria-label="More actions" />
         </Tooltip>

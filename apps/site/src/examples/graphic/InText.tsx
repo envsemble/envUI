@@ -1,6 +1,5 @@
 import { Column, Graphic, Text } from '@envsemble/envui';
 
-/** The company's one-color mark as an SVG component of the application's own. */
 function NorthwindMark() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="8 9 32 30">

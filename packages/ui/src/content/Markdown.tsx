@@ -1,6 +1,5 @@
 'use client';
-// @client-module react-markdown imports useEffect and useState, which React's server build lacks,
-// so Markdown cannot be a server component even without its own useMemo.
+// @client-module
 
 import {
   createContext,
@@ -22,7 +21,7 @@ import {
 import { Checkbox } from '../forms/Checkbox.js';
 import { Link } from '../actions/Link.js';
 import { Code } from './Code.js';
-import { CodeBlock } from './CodeBlock.js';
+import { HighlightedCodeBlock } from './HighlightedCodeBlock.js';
 import { Kbd } from './Kbd.js';
 import {
   collectingMarkdown,
@@ -68,21 +67,14 @@ interface HastNode {
 const textOf = (node: HastNode): string =>
   node.type === 'text' ? (node.value ?? '') : (node.children ?? []).map(textOf).join('');
 
-/** The text of a table's first header cell, which names its first column. */
-function firstHeader(table: HastNode): string {
+function firstColumnHeader(table: HastNode): string {
   const find = (node: HastNode): HastNode | undefined =>
     node.tagName === 'th' ? node : node.children?.map(find).find(Boolean);
   const header = find(table);
   return header ? textOf(header).trim() : '';
 }
 
-/**
- * Names each table's scrolling region after the table: its caption, or the heading it follows, as
- * "Keyboard table" (messages.tableNamed), else its first column's header, as "Variant table", else
- * "Table" (messages.table), numbered where several take one name. Regions need names of their
- * own, which one shared name such as "Table" is not, also across the Markdown of one page.
- */
-function rehypeTableNames(messages: MarkdownMessages) {
+function rehypeNameTableRegions(messages: MarkdownMessages) {
   return () => (tree: HastNode) => {
     let heading = '';
     const counts = new Map<string, number>();
@@ -93,18 +85,16 @@ function rehypeTableNames(messages: MarkdownMessages) {
       }
       if (node.type === 'element' && node.tagName === 'table') {
         const caption = node.children?.find((child) => child.tagName === 'caption');
-        const column = heading ? '' : firstHeader(node);
-        const base = caption
+        const column = heading ? '' : firstColumnHeader(node);
+        const sharedName = caption
           ? textOf(caption).trim()
           : heading || column
             ? messages.tableNamed({ name: heading || column })
             : messages.table;
-        const count = (counts.get(base) ?? 0) + 1;
-        counts.set(base, count);
-        node.properties = {
-          ...node.properties,
-          dataEnvTableName: count > 1 ? `${base} ${count}` : base,
-        };
+        const count = (counts.get(sharedName) ?? 0) + 1;
+        counts.set(sharedName, count);
+        const ownName = count > 1 ? `${sharedName} ${count}` : sharedName;
+        node.properties = { ...node.properties, dataEnvTableName: ownName };
         return;
       }
       node.children?.forEach(visit);
@@ -123,8 +113,7 @@ interface MarkdownNode {
 const keyOpen = /^<kbd>$/i;
 const keyClose = /^<\/kbd>$/i;
 
-/** <kbd>Ctrl</kbd> becomes a key: the one raw HTML element kept, around plain text only. */
-function keepKeys(children: MarkdownNode[]) {
+function keepKbdAroundPlainText(children: MarkdownNode[]) {
   const kept: MarkdownNode[] = [];
   for (let index = 0; index < children.length; index++) {
     const [open, text, close] = children.slice(index, index + 3);
@@ -142,31 +131,26 @@ function keepKeys(children: MarkdownNode[]) {
   return kept;
 }
 
-/**
- * Raw HTML leaves the Markdown tree before it becomes HTML, after every remark plugin, so no
- * rehype plugin (rehype-raw, say) can render it; skipHtml alone acts after the rehype plugins.
- * Keys written as <kbd>Ctrl</kbd> stay, and render as Kbd.
- */
-function remarkDropHtml() {
+function remarkDropRawHtmlBeforeAnyRehypePlugin() {
   const drop = (node: MarkdownNode) => {
     if (!node.children) return;
-    node.children = keepKeys(node.children).filter((child) => child.type !== 'html');
+    node.children = keepKbdAroundPlainText(node.children).filter((child) => child.type !== 'html');
     node.children.forEach(drop);
   };
   return drop;
 }
 
 const markdownPlugins = [remarkGfm];
+const emptySourceThePreParsedTreeReplaces = '';
 
-/** A rehype plugin, last, that notes the tree `source` renders, while they are collected. */
-const noteTree = (source: string) => () => (tree: MarkdownTree) => noteMarkdownTree(source, tree);
+const rehypeNoteRenderedTree = (source: string) => () => (tree: MarkdownTree) =>
+  noteMarkdownTree(source, tree);
 
 type TableProps = ComponentPropsWithoutRef<'table'> & {
   node?: unknown;
   'data-env-table-name'?: unknown;
 };
 
-/** What the elements of one Markdown render take from its props. */
 interface MarkdownOptions {
   headingOffset: number;
   renderLink: MarkdownProps['renderLink'];
@@ -182,11 +166,6 @@ function useMarkdownOptions(): MarkdownOptions {
   return options;
 }
 
-/**
- * envUI's elements for Markdown, each one component for good: they read the props they depend on,
- * such as `renderLink`, from the Markdown around them, so a new `renderLink` on every render, as an
- * inline function is, renders the same elements again rather than building every one anew.
- */
 function heading(level: 1 | 2 | 3 | 4 | 5 | 6): NonNullable<Components['h1']> {
   return function MarkdownHeading({ node: _node, ...headingProps }) {
     const { headingOffset } = useMarkdownOptions();
@@ -194,7 +173,7 @@ function heading(level: 1 | 2 | 3 | 4 | 5 | 6): NonNullable<Components['h1']> {
   };
 }
 
-const elements: Components = {
+const stableElementsReadingPropsFromContext: Components = {
   h1: heading(1),
   h2: heading(2),
   h3: heading(3),
@@ -219,9 +198,9 @@ const elements: Components = {
       .join('');
     const language = String(code.properties.className ?? '').match(/language-([^,\s]+)/)?.[1];
     return (
-      <CodeBlock language={language} copyable={codeCopyable}>
+      <HighlightedCodeBlock language={language} copyable={codeCopyable}>
         {source}
-      </CodeBlock>
+      </HighlightedCodeBlock>
     );
   },
   table: function MarkdownTable({
@@ -276,26 +255,30 @@ export function Markdown({
     [headingOffset, renderLink, codeCopyable, messages],
   );
   const mergedComponents = useMemo(
-    () => (componentOverrides ? { ...elements, ...componentOverrides } : elements),
+    () =>
+      componentOverrides
+        ? { ...stableElementsReadingPropsFromContext, ...componentOverrides }
+        : stableElementsReadingPropsFromContext,
     [componentOverrides],
   );
-  // A tree given for the source, such as by the page this renders in pre-rendered with it, renders
-  // as it is: the empty source parses to nothing, which the tree replaces (givenMarkdownTrees.ts).
-  const given = givenMarkdownTree(children);
+  const preParsedTree = givenMarkdownTree(children);
   const mergedRehypePlugins = useMemo(
     () =>
-      given
-        ? [() => () => given]
+      preParsedTree
+        ? [() => () => preParsedTree]
         : [
-            rehypeTableNames(messages),
+            rehypeNameTableRegions(messages),
             ...(rehypePlugins ?? []),
-            ...(collectingMarkdown() ? [noteTree(children)] : []),
+            ...(collectingMarkdown() ? [rehypeNoteRenderedTree(children)] : []),
           ],
-    [given, rehypePlugins, messages, children],
+    [preParsedTree, rehypePlugins, messages, children],
   );
   const mergedRemarkPlugins = useMemo(
-    () => (given ? [] : [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropHtml]),
-    [given, remarkPlugins],
+    () =>
+      preParsedTree
+        ? []
+        : [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropRawHtmlBeforeAnyRehypePlugin],
+    [preParsedTree, remarkPlugins],
   );
   return (
     <div {...props} className={classNames('env-markdown', 'env-prose', className)}>
@@ -306,7 +289,7 @@ export function Markdown({
           components={mergedComponents}
           skipHtml
         >
-          {given ? '' : children}
+          {preParsedTree ? emptySourceThePreParsedTreeReplaces : children}
         </ReactMarkdown>
       </MarkdownOptionsContext.Provider>
     </div>

@@ -6,10 +6,6 @@ import { MotionStage } from '../../figures/MotionStage';
 const swatch = (index: number) =>
   `.env-color-picker-swatch:nth-child(${index} of .env-color-picker-swatch)`;
 
-/*
- * The pointer presses Blue, then Red: the thumb, the hue and the hex jump to each. It presses
- * Violet, the color it began with.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: swatch(1) },
@@ -33,7 +29,6 @@ function Choosing() {
   return <PresetSwatches />;
 }
 
-/** The project's colors, chosen in turn from the presets by a pointer no one sees. */
 export default function PresetSwatchesMotion() {
   return (
     <MotionStage label="the presets chosen in turn">

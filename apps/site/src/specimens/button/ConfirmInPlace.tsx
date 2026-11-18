@@ -6,10 +6,8 @@ import { MotionStage } from '../../figures/MotionStage';
 const remove = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-confirm-button`;
 
-/*
- * The pointer presses Remove beside Sam Lee: it arms in place as Remove Sam. The pointer goes, and
- * 4 s later, unconfirmed, the button disarms by itself.
- */
+const pastTheDisarmDelayMs = 4320;
+
 const script: PointerStep[] = [
   { wait: 300 },
   { to: remove(2), x: 0.5, y: 0.6 },
@@ -17,7 +15,7 @@ const script: PointerStep[] = [
   { click: true },
   { wait: 660 },
   { leave: true },
-  { wait: 4320 },
+  { wait: pastTheDisarmDelayMs },
 ];
 
 function Removing() {
@@ -25,7 +23,6 @@ function Removing() {
   return <ConfirmInPlace />;
 }
 
-/** The members with access, one Remove armed by a pointer no one sees and left to disarm. */
 export default function ConfirmInPlaceMotion() {
   return (
     <MotionStage label="the remove button arming and disarming">

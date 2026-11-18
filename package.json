@@ -53,6 +53,7 @@
     "docs:props": "node scripts/docs/ExtractProps.ts",
     "docs:parts": "node scripts/docs/GenerateParts.ts",
     "docs:exports": "node scripts/docs/GenerateExports.ts",
+    "docs:guides": "node scripts/docs/GenerateGuideTables.ts",
     "docs:check": "node scripts/test/Checks.ts docs:check",
     "docs:snippets": "node scripts/docs/CheckSnippets.ts",
     "changeset": "changeset",

@@ -1,7 +1,3 @@
-// The site selects the library's parts by their classes, in its scripts, its fitting and its style
-// sheets, such as `.env-button` in a tile's script: nothing else fails when a class it names is
-// renamed, as the tile just stops moving, so every class it names is one the library documents
-// (docs/generated/parts.json).
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';

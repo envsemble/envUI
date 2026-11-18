@@ -1,10 +1,6 @@
-// What a part contract lost against the one on the integration branch, and whether a major
-// changeset names each removal: part classes, state attributes and color properties are public, so
-// one that goes is a breaking change.
-import { isMajor, names } from '../ContractHistory.ts';
+import { recordsBreakingChange, names } from '../ContractHistory.ts';
 import type { PartsContract } from './Contract.ts';
 
-/** A name of a contract: a part, a color property, a state attribute, or one of its values. */
 interface ContractItem {
   name: string;
   part?: string;
@@ -14,11 +10,6 @@ interface ContractItem {
   value?: string;
 }
 
-/**
- * Every part class, state attribute value and color property of a contract, as `Group: name`
- * labels, with the class, attribute or property each names, the value of a state value, and the
- * parts that carry a state.
- */
 function contractNames(parts: PartsContract | undefined) {
   const names = new Map<string, ContractItem>();
   for (const kind of ['components', 'shared'] as const)
@@ -37,13 +28,8 @@ function contractNames(parts: PartsContract | undefined) {
   return names;
 }
 
-/**
- * Each class of a contract, the values each class's state attributes take (null: any) and its color
- * properties.
- */
 function contractClasses(parts: PartsContract | undefined) {
   const classes = new Set<string>();
-  /** Each part's state attribute and the values it takes, null for any. */
   const states = new Map<string, Set<string> | null>();
   const colors = new Set<string>();
   for (const kind of ['components', 'shared'] as const)
@@ -66,13 +52,6 @@ function contractClasses(parts: PartsContract | undefined) {
   return { classes, states, colors };
 }
 
-/**
- * What a contract lost against an older one: each part, state attribute or value, or color property
- * that is gone, with whether a major changeset of @envsemble/envui names it: the class; the
- * attribute; the property; or, for a value, the attribute and the value. A part that moved to another group, or a state value whose
- * attribute now takes any value, is not gone. Pure, for the tests; `changesets` is the text of each
- * pending changeset.
- */
 export function removedParts(
   before: PartsContract | undefined,
   after: PartsContract,
@@ -80,8 +59,9 @@ export function removedParts(
 ) {
   const now = contractNames(after);
   const kept = contractClasses(after);
-  const major = (Array.isArray(changesets) ? changesets : [changesets]).filter(isMajor);
-  /** Whether a part, attribute or value is still there, in this group or another. */
+  const major = (Array.isArray(changesets) ? changesets : [changesets]).filter(
+    recordsBreakingChange,
+  );
   const stays = (item: ContractItem) => {
     if (item.part) return kept.classes.has(item.part);
     if (item.color) return kept.colors.has(item.color);
@@ -100,7 +80,6 @@ export function removedParts(
         recorded: major.some(
           (text) =>
             names(text, item.name) &&
-            // A value takes its attribute and the value; "" is the attribute set without one.
             (item.value === undefined || item.value === '' || names(text, item.value)),
         ),
       });

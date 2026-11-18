@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Composer, Column, Text } from '@envsemble/envui';
 
+const simulatedReplyMs = 4000;
+
 export default function AskAnything() {
   const [draft, setDraft] = useState('');
   const [sent, setSent] = useState('');
@@ -12,8 +14,7 @@ export default function AskAnything() {
     setSent(text);
     setDraft('');
     setRunning(true);
-    // Stands in for a reply that streams for a few seconds.
-    timer.current = window.setTimeout(() => setRunning(false), 4000);
+    timer.current = window.setTimeout(() => setRunning(false), simulatedReplyMs);
   };
   const stop = () => {
     window.clearTimeout(timer.current);
@@ -21,7 +22,6 @@ export default function AskAnything() {
   };
 
   return (
-    // As wide as a conversation column.
     <Column gap={3} style={{ inlineSize: 'min(100%, 32rem)' }}>
       <Composer
         aria-label="Message"

@@ -20,10 +20,6 @@ const trail = [
   { label: 'Northwind launch' },
 ];
 
-/**
- * Page headers for the layout checks: one in a container the test narrows, one at heading level 2
- * with small controls, and a sticky one on a page in a Scaffold's body, with a field far below.
- */
 export default function PageHeaderFixture() {
   const [width, setWidth] = useState('48rem');
   return (

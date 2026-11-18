@@ -9,8 +9,6 @@ test('public components hydrate server output without recoverable errors', async
   await expect(page.getByRole('textbox', { name: 'Hydrated input' })).toHaveValue('Server value');
   await page.getByRole('textbox', { name: 'Hydrated input' }).fill('Client value');
   await expect(page.locator('output:not(.env-slider-value)')).toHaveText('Client value');
-  // The newer components come before the notice below, which leaves after five seconds.
-  // The server wrote this time in English; once hydrated, the browser's German replaces it.
   const relative = page.getByTestId('hydrated-relative-time');
   await expect(relative).toHaveText('in 2 Tagen');
   await expect(relative).toHaveAttribute('datetime', '2026-10-16T12:00:00.000Z');
@@ -18,7 +16,6 @@ test('public components hydrate server output without recoverable errors', async
   const people = page.getByRole('group', {
     name: '5 people: Alex Morgan, Sam Lee, Priya Shah, 2 more',
   });
-  // The pointer reaches the group first, which spreads it, and then the avatar in its new place.
   await people.hover();
   await people.getByRole('button', { name: 'Sam Lee' }).click();
   await expect(page.getByTestId('hydrated-person')).toHaveText('Sam Lee');
@@ -86,12 +83,10 @@ test('public components hydrate server output without recoverable errors', async
   await expect(conversation.getByRole('article')).toHaveCount(2);
   await expect(conversation.getByRole('article').last()).toHaveText('Hydrated message');
   await expect(composer).toHaveValue('');
-  // A width the server read from a cookie stays as the page hydrates: nothing moves.
   await expect(page.getByRole('separator', { name: 'Hydrated kept split' })).toHaveAttribute(
     'aria-valuetext',
     '30 rem',
   );
-  // The server renders the panes side by side; the divider moves the supporting pane's edge.
   const split = page.getByRole('separator', { name: 'Hydrated split' });
   await expect(split).toHaveAttribute('aria-valuetext', '22.5 rem');
   await expect(split).toHaveAttribute(
@@ -99,28 +94,10 @@ test('public components hydrate server output without recoverable errors', async
     (await page.getByRole('region', { name: 'Hydrated supporting' }).getAttribute('id'))!,
   );
   await split.focus();
-  // The supporting pane is at the end, so it grows as the divider moves toward the start.
   await page.keyboard.press('ArrowLeft');
   await expect(split).toHaveAttribute('aria-valuetext', '23.5 rem');
-  // The server renders the dock's panels and chips; the client then measures and resizes them.
-  const docked = page.getByRole('region', { name: 'Hydrated notes' });
-  await expect(docked.getByRole('heading', { level: 3, name: 'Hydrated notes' })).toBeVisible();
-  const chips = page.getByRole('list', { name: 'Hydrated chips' });
-  await expect(
-    chips.getByRole('button', { name: 'Open Hydrated budget' }),
-  ).toHaveAccessibleDescription('Hydrated changes');
-  await expect(chips.getByRole('button', { name: 'Discard Hydrated budget' })).toBeVisible();
-  const dockHandle = docked.getByRole('separator', { name: 'Height of Hydrated notes' });
-  await expect(dockHandle).toHaveAttribute('aria-valuenow', /\d+/);
-  const dockDraft = docked.getByRole('textbox', { name: 'Hydrated notes draft' });
-  await dockDraft.fill('Hydrated draft');
-  await docked.getByRole('button', { name: 'Minimize' }).click();
-  await chips.getByRole('button', { name: 'Open Hydrated notes' }).click();
-  await expect(dockDraft).toHaveValue('Hydrated draft');
   const activity = page.getByRole('grid', { name: 'Hydrated activity' });
   await expect(activity.getByRole('gridcell')).toHaveCount(31);
-  // Without a locale, the server writes the days in en-GB and the browser, once hydrated, in its
-  // own: the names are built with the heatmap's Intl options in the browser's locale.
   const [peakName, nextName] = await page.evaluate(() => {
     const date = new Intl.DateTimeFormat(undefined, {
       weekday: 'short',
@@ -226,11 +203,10 @@ test.describe('in another language and time zone than the server', () => {
   }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
-    // Noon in UTC is the next morning in Kiritimati, a day ahead of most servers.
-    await page.clock.setFixedTime(new Date('2031-05-19T12:00:00Z'));
+    const noonUtcIsNextMorningInKiritimati = new Date('2031-05-19T12:00:00Z');
+    await page.clock.setFixedTime(noonUtcIsNextMorningInKiritimati);
     await page.goto(pathToFileURL(resolve('.cache/Hydration.html')).href);
     await expect(page.getByRole('textbox', { name: 'Hydrated input' })).toHaveValue('Server value');
-    // The server wrote British English; once hydrated, the browser's German replaces it.
     const date = page.getByRole('combobox', { name: 'Hydrated local date', exact: true });
     await expect(date).toHaveText('17.03.2026');
     const calendar = page.getByRole('group', { name: 'Hydrated local calendar' });
@@ -244,12 +220,10 @@ test.describe('in another language and time zone than the server', () => {
       'aria-selected',
       'true',
     );
-    // Without a value the calendar shows the reader's month, with the reader's today.
     const today = page.getByRole('group', { name: 'Hydrated today' });
     await expect(today.getByRole('grid', { name: 'Mai 2031' })).toBeVisible();
     await expect(today.locator('[aria-current="date"]')).toHaveAttribute('data-date', '2031-05-20');
     await expect(today.locator('td[tabindex="0"]')).toHaveAttribute('data-date', '2031-05-20');
-    // Its month buttons stop at min and max from the reader's month, not the server's.
     const bounded = page.getByRole('group', { name: 'Hydrated bounded today' });
     await expect(bounded.getByRole('grid', { name: 'Mai 2031' })).toBeVisible();
     await expect(bounded.getByRole('button', { name: 'Next month' })).toHaveAttribute(

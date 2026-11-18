@@ -7,8 +7,5 @@ const draft =
   'Add the customer quotes we liked, too.';
 
 export default function GrowingDraft() {
-  return (
-    // The field grows with its text up to four lines, then scrolls.
-    <Composer aria-label="Message" maxRows={4} defaultValue={draft} onSend={send} />
-  );
+  return <Composer aria-label="Message" maxRows={4} defaultValue={draft} onSend={send} />;
 }

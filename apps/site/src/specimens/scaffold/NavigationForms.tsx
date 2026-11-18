@@ -3,12 +3,6 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
-/*
- * The pointer turns the wheel over the body: the list scrolls under the top bar and beside the
- * navigation, which stay where they are, and back to its start. The pointer rests on the body
- * itself, not on a row, so it stays over the list as the rows move under it, and turns the wheel a
- * few rows' worth: the list is not much longer than the screen.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-scaffold-body', x: 0.6, y: 0.45 },
@@ -23,7 +17,6 @@ const script: PointerStep[] = [
 
 function Scrolling() {
   usePointer(script);
-  // The Scaffold fills the stage's width, as it fills a window.
   return (
     <div style={{ justifySelf: 'stretch' }}>
       <NavigationForms />
@@ -31,7 +24,6 @@ function Scrolling() {
   );
 }
 
-/** The overview's Scaffold, its body scrolled by a pointer no one sees under bars that stay. */
 export default function NavigationFormsMotion() {
   return (
     <MotionStage label="the body scrolling under the bars" stage="shaded">

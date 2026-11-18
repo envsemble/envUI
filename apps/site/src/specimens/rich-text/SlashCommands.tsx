@@ -5,13 +5,9 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
 const document = '.ProseMirror';
+const blocksAboveTheAgenda = 7;
+const editorWithOpenMenuHeight = '25.5rem';
 
-/*
- * The pointer presses in the empty notes and types "/": the menu of blocks opens. The arrow keys
- * go down to Meeting agenda, the application's own command, and Enter inserts the agenda. Undo
- * takes it back to the "/", and again to nothing, and the notes are empty again, as they began. The
- * editor is drawn anew then, its history with it, unseen, as it looks the same.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: `${document} p`, x: 0.2, y: 0.5 },
@@ -20,8 +16,7 @@ const script: PointerStep[] = [
   { wait: 180 },
   { type: '/', into: document },
   { wait: 540 },
-  // Down past the seven blocks to the agenda, the last.
-  ...Array.from({ length: 7 }, (): PointerStep[] => [
+  ...Array.from({ length: blocksAboveTheAgenda }, (): PointerStep[] => [
     { key: 'ArrowDown', on: document },
     { wait: 198 },
   ]).flat(),
@@ -45,13 +40,12 @@ function Inserting() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the editor and its open menu, so the menu fits in the stage from the start.
     <div
       style={{
         display: 'grid',
         justifyItems: 'center',
         inlineSize: '100%',
-        minBlockSize: '25.5rem',
+        minBlockSize: editorWithOpenMenuHeight,
       }}
     >
       <div style={{ inlineSize: 'min(100%, 28rem)' }}>
@@ -61,7 +55,6 @@ function Inserting() {
   );
 }
 
-/** The slash menu opened by typing /, and the meeting agenda inserted from it. */
 export default function SlashCommandsMotion() {
   return (
     <MotionStage label="a block inserted from the slash menu">

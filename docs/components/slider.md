@@ -22,8 +22,6 @@ avoidWhen:
     use: SegmentedControl
   - text: Showing a measurement people don't change, such as storage used.
     use: Meter
-  - text: Showing how far a task has got.
-    use: Progress
 components:
   - Slider
 examples:
@@ -56,41 +54,19 @@ examples:
 
 ## Behaviour
 
-### At rest
-
-Slider is a field, as tall as the fields and with their corners, so it sits in a form among them.
-
 ### Under the pointer
-
-When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps.
-
-- Pressing anywhere moves the value there, and dragging carries it along.
-- On a touch screen they show only while the finger is down.
 
 <!-- specimen: UnderThePointer -->
 
 ### Past the ends
 
-Dragged past either end, the value stays at the minimum or maximum, and the slider stretches a little toward the pointer.
-
-- The further the pointer goes, the less it gives, up to a small limit.
-- The label and the value keep their shape and size.
-- Once let go, it eases back.
-- A press, the keyboard and a disabled slider don't stretch it, nor does it stretch where reduced motion is preferred.
-
 <!-- specimen: PastTheEnds -->
 
 ### With the keyboard
 
-Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded where it passes under the text.
-
-- The arrow keys move the value; the ticks stay hidden.
-
 <!-- specimen: WithTheKeyboard -->
 
 ### Saving
-
-The value follows the pointer as it moves, and is reported once more when the pointer lets go or after a key. Save it then.
 
 ```tsx figure=SaveOnRelease motion
 
@@ -98,43 +74,15 @@ The value follows the pointer as it moves, and is reported once more when the po
 
 ### Steps
 
-A slider has a lowest and a highest value and a step between values.
-
 ```tsx figure=SessionTimeout
 
 ```
 
-### Disabled
-
-A disabled slider is dimmed: it can't be focused or moved, and forms leave it out.
-
-- Its description says who sets the value.
-
 ### Adapting to width
-
-A slider fills its container.
-
-- Where it is narrow, a long label is cut short with an ellipsis, and the value keeps its room.
 
 ```tsx figure=NarrowSlider widths="30 10" sweep
 
 ```
-
-## Rules
-
-Match the range and the step to the precision people need.
-
-### Range and step
-
-Offer only the values people need, such as 5 to 120 minutes in steps of 5. Single minutes over a whole day leave no value easy to reach.
-
-### Show the effect
-
-Show the effect where people can see it as the value changes.
-
-### Labels
-
-Show the value with its unit, such as 30 minutes; the same text is announced.
 
 ## Accessibility
 
@@ -142,68 +90,6 @@ Show the value with its unit, such as 30 minutes; the same text is announced.
 
 | Key                                                                         | Action                                    |
 | --------------------------------------------------------------------------- | ----------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                             | Moves to and from the slider.             |
 | <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>                      | Moves a step, in the reading direction.   |
 | <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, or <kbd>Shift</kbd> with an arrow | Moves a large step, a tenth of the range. |
 | <kbd>Home</kbd>, <kbd>End</kbd>                                             | Moves to the minimum or maximum.          |
-
-### envUI provides
-
-- A native range input in Base UI's slider, named by its label.
-- The formatted value as `aria-valuetext`, such as 40%.
-- The description linked to the input, a focus ring around the whole field, and the touch height on touch screens, where the whole field takes the finger.
-
-### You provide
-
-- A `label`, or `aria-label` on a slider without one.
-- A `formatValue` with the unit, in the application's language.
-- The effect of the value, and saving it.
-
-## Compose
-
-### Usage
-
-```tsx
-<Slider
-  label="Opacity"
-  defaultValue={80}
-  formatValue={(value) => `${value}%`}
-  onValueCommitted={save}
-/>
-```
-
-Leave it uncontrolled, with `defaultValue`, the minimum by default, or control it with `value` and `onValueChange`, which receives the value as often as the handle moves. `formatValue` formats the value with its unit, as it shows at the end and is announced; without it, the number shows in the `locale`, EnvUIProvider's by default. `description` goes under it, and `error` says how to correct the value.
-
-#### Saving
-
-`onValueCommitted` reports the value once a change is complete: when the pointer is released or the track pressed, and after each key. Save from it.
-
-#### Steps in a form
-
-`min` and `max`, 0 and 100 by default, set the range, and `step`, 1 by default, the distance between values, counted from `min`. `largeStep`, a tenth of the range in whole steps by default, is the change of <kbd>Page Up</kbd>, <kbd>Page Down</kbd> and an arrow with <kbd>Shift</kbd>. `name` submits the value with a form, `form` names a form the slider sits outside of, and a reset returns to `defaultValue`.
-
-#### Disabled
-
-```tsx
-<Slider
-  label="Storage per member"
-  description="Sam Lee, your administrator, sets this limit for everyone at Northwind."
-  min={5}
-  max={100}
-  step={5}
-  defaultValue={20}
-  formatValue={(value) => `${value} GB`}
-  disabled
-/>
-```
-
-### Composition
-
-`ref` reaches the native range input, which holds the value and takes focus, as a field's does, so a form library can register it; `className`, `style` and the other native props go to the root. The row of the label and the value is `env-slider-header`, its numbers of one width. The field, `env-slider-control`, is the track's quiet tint, which takes the pointer. The span the value moves along, `env-slider-track`, runs across the whole field, so the fill is empty at the minimum and full at the maximum, and draws the faint ticks at the steps, or at the large steps where the steps are many.
-
-The field marks what it shows besides its text and fill:
-
-- `data-handle` while the handle shows, under a hovering or pressing pointer and with keyboard focus.
-- `data-ruler` while the ticks do, under a hovering or pressing pointer.
-- `data-dragging` while the pointer presses it and drags the value.
-- A release clears them until the pointer leaves and comes back.

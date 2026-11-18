@@ -7,11 +7,18 @@ import type { ToastController } from './useToastController.js';
 import '../../../styles/Base.css';
 import '../../../styles/Toast.css';
 
-/**
- * A notice of a contained region's picture: it arrives and leaves with a live notice's motion, from
- * the toast's starting and ending styles, and its time stops while the pointer rests on it. Once it
- * has left, `onGone` takes it out of the picture.
- */
+function enterFromStartingStyleAsBaseUINoticesDo(item: HTMLElement) {
+  const flushStartingStyle = () => void getComputedStyle(item).opacity;
+  flushStartingStyle();
+  item.removeAttribute('data-starting-style');
+}
+
+function longestTransitionSeconds(item: HTMLElement | null) {
+  return item
+    ? Math.max(...getComputedStyle(item).transitionDuration.split(',').map(Number.parseFloat))
+    : 0;
+}
+
 export function PictureNotice({
   id,
   tone,
@@ -30,27 +37,18 @@ export function PictureNotice({
   children: ReactNode;
 }) {
   const element = useRef<HTMLDivElement>(null);
-  // A notice closed before it was ever shown, such as one an effect shows and takes back at once,
-  // never arrives.
-  const [arrives] = useState(!ending);
-  // It comes in from its starting style, which its first style holds, as Base UI's notices do.
+  const [closedBeforeEverShown] = useState(ending);
   useLayoutEffect(() => {
     const item = element.current;
-    if (!item) return;
-    void getComputedStyle(item).opacity;
-    item.removeAttribute('data-starting-style');
+    if (item) enterFromStartingStyleAsBaseUINoticesDo(item);
   }, []);
-  // Leaving, it fades to its ending style, and is gone once that ends; at once without motion.
   useEffect(() => {
     if (!ending) return;
-    const item = element.current;
-    const seconds = item
-      ? Math.max(...getComputedStyle(item).transitionDuration.split(',').map(Number.parseFloat))
-      : 0;
-    const timer = setTimeout(() => onGone(id), (seconds || 0) * 1000);
+    const endingStyleSeconds = longestTransitionSeconds(element.current);
+    const timer = setTimeout(() => onGone(id), (endingStyleSeconds || 0) * 1000);
     return () => clearTimeout(timer);
   }, [ending, id, onGone]);
-  if (!arrives) return null;
+  if (closedBeforeEverShown) return null;
   return (
     <div
       ref={element}

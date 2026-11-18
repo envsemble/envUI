@@ -3,10 +3,6 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
-/*
- * The pointer turns the wheel over the table: its rows scroll down through the months, under the
- * header, which stays, and back up to January.
- */
 const script: PointerStep[] = [
   { wait: 360 },
   { to: '.env-table-region', x: 0.45, y: 0.6 },
@@ -26,7 +22,6 @@ function Scrolling() {
   return <StickyHeader />;
 }
 
-/** The sales by month, scrolled by a pointer no one sees under a header that stays. */
 export default function StickyHeaderMotion() {
   return (
     <MotionStage label="the rows scrolling under the header">

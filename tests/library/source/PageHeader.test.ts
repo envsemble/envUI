@@ -1,5 +1,3 @@
-// PageHeader's markup: its title at its heading level, the trail before it and the description
-// after, and no landmark of its own. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -14,7 +12,7 @@ const { PageHeader, Breadcrumbs } = await importSource('PageHeader', [
 
 const render = (element: ReactElement) => elementsOf(firstElement(renderToString(element)));
 
-test('renders its title at its heading level, with the trail above it', () => {
+test('renders its title at its heading level, the trail before it and the description after, and no landmark of its own', () => {
   const elements = render(
     h(PageHeader, {
       title: 'Northwind launch',
@@ -26,7 +24,6 @@ test('renders its title at its heading level, with the trail above it', () => {
   );
   const heading = elements.findIndex((element) => element.tag === 'h1');
   assert.equal(textOf(elements[heading]), 'Northwind launch');
-  // The trail comes first in the markup, the description after the title.
   const trail = elements.findIndex(
     (element) => element.tag === 'nav' && element.attributes['aria-label'] === 'Breadcrumb',
   );
@@ -35,7 +32,6 @@ test('renders its title at its heading level, with the trail above it', () => {
     textOf(element).startsWith('Everything the launch needs'),
   );
   assert.ok(description > heading);
-  // It is no landmark, so a page never gets a second banner.
   assert.ok(
     !elements.some(
       (element) =>

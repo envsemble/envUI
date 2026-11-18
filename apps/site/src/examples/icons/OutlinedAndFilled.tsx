@@ -14,7 +14,6 @@ const places = [
   { label: 'Settings', icon: <IconSettings /> },
 ];
 
-// Pass the outlined icons: the bar fills the icon of the place that is selected.
 export default function OutlinedAndFilled() {
   const [current, setCurrent] = useState('Home');
   const destinations: Destination[] = places.map((place) => ({

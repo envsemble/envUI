@@ -8,10 +8,6 @@ import { Renew } from '../../motion/Renew';
 const toggle = (section: string) =>
   `.env-navigation-drawer-toggle[aria-label="${section} contents"]`;
 
-/*
- * Projects is open, as it holds the current page. The pointer opens Reports by its chevron, and
- * its pages show under it; then it closes Projects by its own. Then the example starts anew.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: toggle('Reports'), x: 0.5, y: 0.5 },
@@ -31,7 +27,6 @@ function Browsing() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the guide with both sections open, so its top stays put as they open and close.
     <div
       style={{
         display: 'grid',
@@ -47,7 +42,6 @@ function Browsing() {
   );
 }
 
-/** Sections opened and closed by their chevrons, by a pointer no one sees. */
 export default function NestedSectionsMotion() {
   return (
     <MotionStage label="sections opening and closing" stage="shaded">

@@ -2,6 +2,7 @@
 
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { Column } from '../layout/Layout.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { classNames } from '../internal/classNames.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import {
@@ -15,7 +16,6 @@ import { backgroundAttribute, type NavigationBackground } from './navigationBack
 import '../styles/Base.css';
 import '../styles/NavigationRail.css';
 
-/** The part classes of the rail's destinations. */
 const railClasses: DestinationClasses = {
   item: 'env-navigation-rail-item',
   indicator: 'env-navigation-rail-indicator',
@@ -40,11 +40,10 @@ export interface NavigationRailProps
   /** Content at the bottom of the rail, such as the account's AvatarButton. */
   footer?: ReactNode;
   /**
-   * The rail's background, named as Surface's and Card's: default, the navigation's background,
-   * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
-   * page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the
-   * navigation's background, so it keeps its color in a narrow window. Set it on its own, such as
-   * a NavigationRail with its background beside a TopBar with page.
+   * The rail's background, named as Surface's and Card's: default, the default surface color, the
+   * app frame's own fill that stands apart from the page; page, the page's background, the same as
+   * the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such
+   * as a Sheet, both take the surface's color.
    * @default 'default'
    */
   background?: NavigationBackground;
@@ -87,11 +86,7 @@ export function NavigationRail({
       {inSkeleton(
         skeleton,
         <>
-          {header != null && (
-            <Column className="env-navigation-rail-header" align="center" gap={2}>
-              {header}
-            </Column>
-          )}
+          {header != null && <Slot className="env-navigation-rail-header">{header}</Slot>}
           <Column render={<ul />} className="env-navigation-rail-list" align="stretch" gap={1}>
             {destinations.map((destination) => (
               <li key={destinationKey(destination)}>
@@ -99,11 +94,7 @@ export function NavigationRail({
               </li>
             ))}
           </Column>
-          {footer != null && (
-            <Column className="env-navigation-rail-footer" align="center" gap={2}>
-              {footer}
-            </Column>
-          )}
+          {footer != null && <Slot className="env-navigation-rail-footer">{footer}</Slot>}
         </>,
       )}
     </Column>

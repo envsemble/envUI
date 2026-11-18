@@ -1,13 +1,25 @@
 'use client';
 
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import type { TreeItem } from '../Tree.js';
 import { treeMotion, type TreeMotion } from './treeModel.js';
 import '../../styles/Base.css';
 import '../../styles/Tree.css';
 
-/** No rows arriving. */
-const noValues: ReadonlySet<string> = new Set();
+const noRowsArriving: ReadonlySet<string> = new Set();
+
+export interface TreeTransitions<Item extends TreeItem> {
+  rowsElement: RefObject<HTMLDivElement | null>;
+  /** The values of the rows arriving with these items. */
+  arriving: ReadonlySet<string>;
+  /** The expansion or collapse playing, if any. */
+  motion: TreeMotion<Item> | null;
+  /** Whether the motion moves the rows to where they go, after a render where they were. */
+  moving: boolean;
+}
+
+const commitStartingPositionsBeforeTheyChange = (element: Element) =>
+  void getComputedStyle(element).getPropertyValue('--_tree-shift');
 
 /**
  * The rows that arrive with new items fade in from their starting style; the first rows, and rows
@@ -16,11 +28,13 @@ const noValues: ReadonlySet<string> = new Set();
  * rows passed again, as a new list, keep the change that is playing. Give `rowsElement` to the
  * element that holds the rows.
  */
-export function useTreeTransitions<Item extends TreeItem>(items: readonly Item[]) {
+export function useTreeTransitions<Item extends TreeItem>(
+  items: readonly Item[],
+): TreeTransitions<Item> {
   const rowsElement = useRef<HTMLDivElement>(null);
   const shownItems = useRef<readonly Item[] | null>(null);
   const lastChange = useRef<{ arriving: ReadonlySet<string>; motion: TreeMotion<Item> | null }>({
-    arriving: noValues,
+    arriving: noRowsArriving,
     motion: null,
   });
   const { arriving, motion } = useMemo(() => {
@@ -31,7 +45,7 @@ export function useTreeTransitions<Item extends TreeItem>(items: readonly Item[]
       before.every((item, index) => item.value === items[index].value);
     if (same) return lastChange.current;
     const motion = treeMotion(before, items);
-    if (motion) return { arriving: noValues, motion };
+    if (motion) return { arriving: noRowsArriving, motion };
     const values = new Set(before.map((item) => item.value));
     return {
       arriving: new Set(items.filter((item) => !values.has(item.value)).map((item) => item.value)),
@@ -51,40 +65,32 @@ export function useTreeTransitions<Item extends TreeItem>(items: readonly Item[]
     for (const row of rows) row.removeAttribute('data-starting-style');
   });
 
-  // A motion renders first from where the rows were, then moves to where they go, and ends once its
-  // transitions have finished: at once under a reduced-motion preference.
   const [movingMotion, setMovingMotion] = useState<TreeMotion<Item> | null>(null);
   const [settledMotion, setSettledMotion] = useState<TreeMotion<Item> | null>(null);
   const activeMotion = motion && motion !== settledMotion ? motion : null;
   const moving = activeMotion !== null && activeMotion === movingMotion;
-  useLayoutEffect(() => {
-    const element = rowsElement.current;
-    if (!activeMotion || !element) return;
-    // Reading the style makes the browser take the starting positions before they change.
-    void getComputedStyle(element).getPropertyValue('--env-tree-shift');
-    if (!moving) {
-      setMovingMotion(activeMotion);
-      return;
-    }
-    const group = element.querySelector('.env-tree-group');
-    const transitions = [...element.getAnimations(), ...(group?.getAnimations() ?? [])];
-    let current = true;
-    const settle = () => {
-      if (current) setSettledMotion(activeMotion);
-    };
-    void Promise.all(transitions.map((transition) => transition.finished)).then(settle, settle);
-    return () => {
-      current = false;
-    };
-  }, [activeMotion, moving]);
+  useLayoutEffect(
+    function moveFromWhereRowsWereThenSettle() {
+      const element = rowsElement.current;
+      if (!activeMotion || !element) return;
+      commitStartingPositionsBeforeTheyChange(element);
+      if (!moving) {
+        setMovingMotion(activeMotion);
+        return;
+      }
+      const group = element.querySelector('.env-tree-group');
+      const transitions = [...element.getAnimations(), ...(group?.getAnimations() ?? [])];
+      let current = true;
+      const settle = () => {
+        if (current) setSettledMotion(activeMotion);
+      };
+      void Promise.all(transitions.map((transition) => transition.finished)).then(settle, settle);
+      return () => {
+        current = false;
+      };
+    },
+    [activeMotion, moving],
+  );
 
-  return {
-    rowsElement,
-    /** The values of the rows arriving with these items. */
-    arriving,
-    /** The expansion or collapse playing, if any. */
-    motion: activeMotion,
-    /** Whether the motion moves the rows to where they go, after a render where they were. */
-    moving,
-  };
+  return { rowsElement, arriving, motion: activeMotion, moving };
 }

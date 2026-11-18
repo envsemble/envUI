@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, ConfirmButton, List, Column } from '@envsemble/envui';
-import { IconDelete } from '@envsemble/envui/icons/Delete';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
 
 export default function ConfirmInPlace() {
   const [members, setMembers] = useState(people);
-  const [draftDeleted, setDraftDeleted] = useState(false);
   const list = useRef<HTMLUListElement>(null);
   const restoreMembers = useRef<HTMLButtonElement>(null);
-  const draft = useRef<HTMLUListElement>(null);
-  // A confirmed button goes away with what it removed, so focus moves on to what is there now.
   const focusNext = useRef<(() => void) | null>(null);
   useEffect(() => {
     focusNext.current?.();
@@ -28,10 +24,6 @@ export default function ConfirmInPlace() {
   const restore = () => {
     focusNext.current = () => list.current?.querySelector('button')?.focus();
     setMembers(people);
-  };
-  const setDraft = (deleted: boolean) => {
-    focusNext.current = () => draft.current?.querySelector('button')?.focus();
-    setDraftDeleted(deleted);
   };
 
   return (
@@ -61,25 +53,6 @@ export default function ConfirmInPlace() {
           Restore members
         </Button>
       )}
-      <List.Root ref={draft} aria-label="Drafts" style={{ inlineSize: 'min(100%, 24rem)' }}>
-        <List.Item
-          label={draftDeleted ? 'Q3 notes draft deleted' : 'Q3 notes draft'}
-          end={
-            draftDeleted ? (
-              <Button variant="text" onClick={() => setDraft(false)}>
-                Restore
-              </Button>
-            ) : (
-              <ConfirmButton
-                icon={<IconDelete />}
-                aria-label="Delete draft"
-                confirmLabel="Delete draft"
-                onConfirm={() => setDraft(true)}
-              />
-            )
-          }
-        />
-      </List.Root>
     </Column>
   );
 }

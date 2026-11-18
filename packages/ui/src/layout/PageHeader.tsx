@@ -4,6 +4,8 @@ import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/control/ControlDefaults.js';
 import { StickyHeaderSize } from './internal/StickyHeaderSize.js';
+import { PageTitleFocus } from './internal/PageTitleFocus.js';
+import { Slot } from '../internal/layout/Slot.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
@@ -18,7 +20,10 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
    * @default 1
    */
   headingLevel?: HeadingLevel;
-  /** A sentence under the title, in the smaller muted text, such as what the page is for. */
+  /**
+   * Under the title, such as a sentence on what the page is for, or a status line. Text takes the
+   * smaller muted text; any content, block content too, keeps its own look.
+   */
   description?: ReactNode;
   /** The trail to the page, usually Breadcrumbs with wrap={false}, above the title. */
   breadcrumbs?: ReactNode;
@@ -50,6 +55,15 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
    * @default 'md'
    */
   controlSize?: 'sm' | 'md';
+  /**
+   * In a Scaffold, moves focus to the title of a level 1 header when the page changes: as a new
+   * page's header mounts after the Scaffold first showed, not as a title changes. People using a screen
+   * reader then hear the new page, and the next Tab starts from it. Focus moved there shows no
+   * ring, and focus in a field or an open overlay stays where it is. False leaves focus to the
+   * application.
+   * @default true
+   */
+  focusOnNavigation?: boolean;
 }
 
 /**
@@ -68,12 +82,14 @@ export function PageHeader({
   toolbar,
   sticky = false,
   controlSize = 'md',
+  focusOnNavigation = true,
   className,
   ...props
 }: PageHeaderProps) {
   const Heading = `h${headingLevel}` as const;
+  const isPagesOwnHeading = headingLevel === 1;
+  const titleTakesFocus = isPagesOwnHeading && focusOnNavigation;
   return (
-    // A div, not a header: outside main, article or section a header would be a second banner.
     <Column
       gap={3}
       {...props}
@@ -81,40 +97,47 @@ export function PageHeader({
       data-sticky={flag(sticky)}
     >
       {sticky && <StickyHeaderSize />}
-      {breadcrumbs != null && <div className="env-page-header-breadcrumbs">{breadcrumbs}</div>}
+      {breadcrumbs != null && <Slot className="env-page-header-breadcrumbs">{breadcrumbs}</Slot>}
       <Row wrap gap={4} align="start" className="env-page-header-row">
         {start != null && (
-          <Row align="center" className="env-page-header-start">
+          <Slot className="env-page-header-start" layout="row" shrink="never">
             {start}
-          </Row>
+          </Slot>
         )}
         <Column gap={1} className="env-page-header-heading">
           <Row wrap align="center" className="env-page-header-title-line">
-            <Text variant="headline" render={<Heading className="env-page-header-title" />}>
+            <Text
+              variant="headline"
+              render={
+                <Heading
+                  className="env-page-header-title"
+                  tabIndex={titleTakesFocus ? -1 : undefined}
+                />
+              }
+            >
               {title}
             </Text>
+            {isPagesOwnHeading && <PageTitleFocus enabled={focusOnNavigation} />}
             {meta != null && (
-              <Row wrap align="center" gap={2} className="env-page-header-meta">
+              <Slot className="env-page-header-meta" layout="row">
                 {meta}
-              </Row>
+              </Slot>
             )}
           </Row>
           {description != null && (
-            <Text variant="body-sm" className="env-page-header-description">
-              {description}
-            </Text>
+            <Slot className="env-page-header-description">{description}</Slot>
           )}
         </Column>
         {actions != null && (
-          <Row wrap align="center" gap={2} className="env-page-header-actions">
+          <Slot className="env-page-header-actions" layout="row">
             <ControlDefaults size={controlSize}>{actions}</ControlDefaults>
-          </Row>
+          </Slot>
         )}
       </Row>
       {toolbar != null && (
-        <div className="env-page-header-toolbar">
+        <Slot className="env-page-header-toolbar">
           <ControlDefaults size={controlSize}>{toolbar}</ControlDefaults>
-        </div>
+        </Slot>
       )}
     </Column>
   );

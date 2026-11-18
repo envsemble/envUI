@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 import { cdp, commands, page, server } from 'vitest/browser';
-import { Button } from '@envsemble/envui';
+import { createRoot } from 'react-dom/client';
+import { Button, Link, Theme } from '@envsemble/envui';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as buttonCounts from '../fixture/ButtonCounts.fixture.tsx';
 import * as colors from '../fixture/Colors.fixture.tsx';
@@ -26,30 +27,41 @@ test('LinkProvider routes destinations and leaves disabled links native', async 
   expect(errors).toEqual([]);
 });
 
-test("a number within a label's words stays in their line, and a badge keeps the button's gap", async () => {
+test("a number within a label's words stays in their line, and a badge or diff stat keeps its own colors", async () => {
   mount(buttonCounts);
   const button = page.getByTestId('show-tasks-light');
   await expect.element(button).toHaveTextContent('Show 33 tasks');
   const element = button.element();
   const number = element.querySelector('.env-animated-number')!.getBoundingClientRect();
   const words = document.createRange();
-  const run = element.querySelector('.env-button-text')!.firstChild!;
+  const run = element.querySelector('.env-button-label')!.firstChild!;
   words.setStart(run, 0);
   words.setEnd(run, run.textContent!.trimEnd().length);
-  // The space between "Show" and the number: a word space, narrower than the button's gap.
   const space = number.left - words.getBoundingClientRect().right;
   expect(space).toBeGreaterThan(0);
   expect(space).toBeLessThan(Number.parseFloat(css(element, 'column-gap')));
-  // A badge is an item of its own, the gap from the words before it: only the number's button
-  // holds a run of text.
-  expect(
-    page
-      .getByTestId('button-counts-light')
-      .element()
-      .querySelectorAll('.env-button .env-button-text'),
-  ).toHaveLength(1);
-  // A text button alone in a box as wide as its content keeps its words in a line: its margins
-  // give its padding back, which its largest width allows for.
+  const section = page.getByTestId('button-counts-light').element();
+  const primary = [...section.querySelectorAll('.env-button')].find((each) =>
+    each.textContent!.startsWith('primary'),
+  )!;
+  const standaloneOf = (testId: string) => page.getByTestId(testId).element();
+  for (const [selector, standalone] of [
+    ['.env-badge', standaloneOf('badge-light')],
+    ['.env-diff-stat', standaloneOf('diff-stat-light')],
+    [
+      '.env-diff-stat-additions',
+      standaloneOf('diff-stat-light').querySelector('.env-diff-stat-additions'),
+    ],
+    [
+      '.env-diff-stat-deletions',
+      standaloneOf('diff-stat-light').querySelector('.env-diff-stat-deletions'),
+    ],
+  ] as const)
+    for (const property of ['background-color', 'color', 'border-color'])
+      if (selector !== '.env-diff-stat' || property === 'background-color')
+        expect(css(primary.querySelector(selector)!, property), `${selector} ${property}`).toBe(
+          css(standalone!, property),
+        );
   const alone = page.getByTestId('text-alone-light');
   await expect.element(alone).toHaveTextContent('Alex Morgan');
   const lines = document.createRange();
@@ -64,8 +76,6 @@ test('a pending button keeps its label and name, reports busy and ignores presse
   const element = button.element();
   const spinner = element.querySelector<HTMLElement>('.env-spinner')!;
   await expect.element(page.elementLocator(spinner)).toBeVisible();
-  // The label stays in place, transparent, and the spinner turns in the label's color centred over
-  // the button, as an arc alone rather than a labelled status line.
   const content = element.querySelector('.env-button-content')!;
   expect(content.textContent).toBe('Save changes');
   expect(css(content, 'color')).toBe('rgba(0, 0, 0, 0)');
@@ -74,7 +84,6 @@ test('a pending button keeps its label and name, reports busy and ignores presse
   const [frame, arc] = [box(element), box(spinner)];
   expect(arc.x + arc.width / 2).toBeCloseTo(frame.x + frame.width / 2, 0);
   expect(arc.y + arc.height / 2).toBeCloseTo(frame.y + frame.height / 2, 0);
-  // The button is as wide as the same button at rest, so the buttons beside it stay put.
   const rest = element.cloneNode(true) as HTMLElement;
   rest.removeAttribute('data-pending');
   rest.querySelector(':scope > .env-button-spinner')?.remove();
@@ -86,9 +95,7 @@ test('a pending button keeps its label and name, reports busy and ignores presse
   expect(text('pending-presses')()).toBe('0');
   await expect.element(page.getByRole('progressbar', { name: 'Refreshing seats' })).toBeVisible();
   if (server.browser === 'chromium') {
-    // The browser's own accessibility tree, which drops visually hidden text, still names it.
     const session = cdp();
-    // The document with the test's frame in it, whose node the button's is found among.
     const { root } = await session.send('DOM.getDocument', { depth: -1, pierce: true });
     type Node = {
       nodeId: number;
@@ -119,7 +126,6 @@ test('a pending button keeps its label and name, reports busy and ignores presse
 
 const variants = ['primary', 'secondary', 'outline', 'ghost', 'text'] as const;
 
-/** A button of each variant beside the edge of the text, and a text button alone in a row. */
 function FocusRings() {
   return (
     <div style={{ padding: '2rem' }}>
@@ -151,7 +157,6 @@ test(
     const rings: Record<string, { outer: number }> = {};
     for (const variant of variants) {
       const button = page.getByTestId(variant);
-      // Keyboard focus, so :focus-visible draws the ring: the buttons are the page's tab stops.
       await keyboard.press('Tab');
       await expect.element(button).toHaveFocus();
       const element = button.element();
@@ -161,8 +166,6 @@ test(
       const range = document.createRange();
       range.selectNodeContents(element);
       const words = range.getBoundingClientRect();
-      // The ring's inner edge is the border box grown by the offset; the label must keep 2 px
-      // from it on every side, also where the pill's round ends curve in at the label's corners.
       const radius = (frame.height + 2 * offset) / 2;
       const rise = Math.max(0, words.height / 2);
       const curve = radius - Math.sqrt(Math.max(0, radius ** 2 - rise ** 2));
@@ -179,9 +182,7 @@ test(
         outer: frame.height + 2 * (offset + Number.parseFloat(style.outlineWidth)),
       };
     }
-    // A ghost button's ring traces its state layer: no bigger than a filled button's.
     expect(rings.ghost!.outer).toBeLessThanOrEqual(rings.secondary!.outer);
-    // The text button's padding is taken back by its margin: its label starts where the text does.
     const edge = box(document.getElementById('edge')!).x;
     const range = document.createRange();
     range.selectNodeContents(page.getByTestId('aligned').element());
@@ -189,8 +190,7 @@ test(
   },
 );
 
-/** The sRGB channels, 0 to 255, and alpha of a computed color, rgb() or color(srgb …). */
-function channels(color: string) {
+function srgbChannelsAndAlpha(color: string) {
   const srgb = /^color\(srgb ([\d.e-]+) ([\d.e-]+) ([\d.e-]+)(?: \/ ([\d.e-]+))?\)$/.exec(color);
   if (srgb) return [...srgb.slice(1, 4).map((value) => Number(value) * 255), Number(srgb[4] ?? 1)];
   const rgb = /^rgba?\(([\d.]+), ([\d.]+), ([\d.]+)(?:, ([\d.]+))?\)$/.exec(color);
@@ -203,7 +203,6 @@ test('a button given its own colors lays state layers of its content color over 
   await commands.emulateMedia({ reducedMotion: 'reduce' });
   const container = [11, 110, 79];
   const content = [255, 255, 255];
-  // The state opacities are tokens: 8% under the pointer and 10% pressed in the light theme.
   const area = page.getByTestId('color-overrides').element() as HTMLElement;
   const opacity = {
     hover: Number(css(area, '--env-state-hover-opacity')),
@@ -212,11 +211,10 @@ test('a button given its own colors lays state layers of its content color over 
   expect(opacity).toEqual({ hover: 0.08, pressed: 0.1 });
   const layered = (share: number) =>
     container.map((channel, index) => channel * (1 - share) + content[index]! * share);
-  /** Waits until the button's fill is `expected`, within rounding. */
   const expectFill = (button: Element, expected: number[]) =>
     expect
       .poll(() => {
-        const [r, g, b, alpha] = channels(css(button, 'background-color'));
+        const [r, g, b, alpha] = srgbChannelsAndAlpha(css(button, 'background-color'));
         return Math.max(...[r!, g!, b!].map((value, index) => Math.abs(value - expected[index]!))) <
           1 && alpha === 1
           ? 'matches'
@@ -224,13 +222,10 @@ test('a button given its own colors lays state layers of its content color over 
       })
       .toBe('matches');
   const center = (element: Element) => {
-    // The pointer moves in the viewport, so the button must be in it.
     element.scrollIntoView({ block: 'center' });
     const { x, y, width, height } = box(element);
     return [x + width / 2, y + height / 2] as const;
   };
-  // Every variant takes the container in place of its designed fills, whose states give way to
-  // the state layers.
   for (const variant of ['primary', 'secondary', 'outline'] as const) {
     const button = page.getByTestId(`custom-button-${variant}`).element() as HTMLElement;
     button.style.setProperty('--env-button-container', 'rgb(11 110 79)');
@@ -245,7 +240,6 @@ test('a button given its own colors lays state layers of its content color over 
     await mouse.move(0, 0);
     await expectFill(button, container);
   }
-  // Its content alone set, a button keeps its own fill at rest and lays the content over it.
   const tinted = page.getByTestId('light-button-secondary').element() as HTMLElement;
   tinted.style.setProperty('--env-button-content', 'rgb(11 110 79)');
   const rest = css(tinted, 'background-color');
@@ -256,16 +250,16 @@ test('a button given its own colors lays state layers of its content color over 
   tinted.append(probe);
   const expected = getComputedStyle(probe).backgroundColor;
   probe.remove();
-  // Within rounding: the gate that tells a set content mixes in 0% of it.
   await expect
     .poll(() => {
-      const actual = channels(css(tinted, 'background-color'));
-      return channels(expected).every((value, index) => Math.abs(value - actual[index]!) < 0.01);
+      const actual = srgbChannelsAndAlpha(css(tinted, 'background-color'));
+      return srgbChannelsAndAlpha(expected).every(
+        (value, index) => Math.abs(value - actual[index]!) < 0.01,
+      );
     })
     .toBe(true);
   expect(expected).not.toBe(rest);
   await mouse.move(0, 0);
-  // The color properties don't inherit: set on an element around a button, they color nothing.
   const outside = page.getByTestId('override-outside').element();
   const before = css(outside, 'background-color');
   area.style.setProperty('--env-button-container', 'rgb(11 110 79)');
@@ -287,4 +281,28 @@ test("a toolbar's and a field's ghost default stays outside their popovers", asy
   await expect
     .element(page.getByTestId('field-popover-button'))
     .toHaveAttribute('data-variant', 'primary');
+});
+
+test('a Link in running text stays in the line of the words around it', async () => {
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  root.render(
+    <Theme theme="light">
+      <p style={{ inlineSize: '30rem', margin: 0 }}>
+        Read the <Link href="#license">MIT license</Link> first.
+      </p>
+    </Theme>,
+  );
+  await expect.poll(() => host.querySelector('.env-link')).not.toBeNull();
+  const link = host.querySelector('.env-link')!;
+  const paragraph = link.parentElement!;
+  expect(link.getClientRects().length).toBe(1);
+  expect(box(link).y).toBeGreaterThanOrEqual(box(paragraph).y - 1);
+  expect(box(link).y + box(link).height).toBeLessThanOrEqual(
+    box(paragraph).y + box(paragraph).height + 1,
+  );
+  expect(box(paragraph).height).toBeLessThan(2 * Number.parseFloat(css(paragraph, 'line-height')));
+  root.unmount();
+  host.remove();
 });

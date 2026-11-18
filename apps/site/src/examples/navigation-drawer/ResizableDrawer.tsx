@@ -11,10 +11,6 @@ const pages = [
 
 const storageKey = 'guide-drawer-width';
 
-/**
- * The width people chose on an earlier visit, if any. Storage is the browser's, and can be missing,
- * blocked or hold a value that isn't a number, so the drawer then keeps its default.
- */
 function storedWidth() {
   try {
     const stored = Number(localStorage.getItem(storageKey) ?? Number.NaN);
@@ -24,16 +20,22 @@ function storedWidth() {
   }
 }
 
+function storeWidth(width: number) {
+  try {
+    localStorage.setItem(storageKey, String(width));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export default function ResizableDrawer() {
   const [current, setCurrent] = useState('/guide/install');
-  // The application keeps the width people choose, for their next visit. It reads it once the
-  // drawer is in the browser, so a page rendered on a server starts at the default as well.
   const [width, setWidth] = useState(17.5);
   useEffect(() => {
     const stored = storedWidth();
     if (stored !== undefined) setWidth(stored);
   }, []);
-  // The same array while the width changes, so a drag renders the drawer, not each destination.
   const destinations = useMemo<NavigationDrawerDestination[]>(
     () =>
       pages.map((page) => ({
@@ -53,12 +55,7 @@ export default function ResizableDrawer() {
       maxWidth={24}
       onWidthChange={(next, { committed }) => {
         setWidth(next);
-        if (!committed) return;
-        try {
-          localStorage.setItem(storageKey, String(next));
-        } catch {
-          // Storage is blocked or full: the width lasts until the page closes.
-        }
+        if (committed) storeWidth(next);
       }}
     />
   );

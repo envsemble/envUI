@@ -20,7 +20,6 @@ import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 export const themes = true;
 
-/** A trail too long for its narrow frame: the current page cannot fit beside the earlier levels. */
 const narrowTrail = [
   { label: 'Workspace', href: '/workspace' },
   { label: 'Plans', href: '/workspace/plans' },
@@ -72,7 +71,6 @@ export default function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
         <div className="fixture-breadcrumb-frame" dir="rtl">
           <Breadcrumbs aria-label="Right-to-left trail" wrap={false} items={narrowTrail} />
         </div>
-        {/* A level whose name runs past the 20 rem a level takes. */}
         <Breadcrumbs
           aria-label="Long level trail"
           items={[
@@ -84,7 +82,6 @@ export default function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
             { label: 'Notes' },
           ]}
         />
-        {/* A small header bar as wide as a phone: the trail beside a status and an action. */}
         <Surface
           background="muted"
           padding={2}

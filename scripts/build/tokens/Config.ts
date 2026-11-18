@@ -1,5 +1,3 @@
-// The Terrazzo config of envUI's tokens: plugin-css for Tokens.css, envUI's plugin for the token
-// list, and the lint rules with what they compare, read from the token sources.
 import { RECOMMENDED_CONFIG, type Config } from '@terrazzo/parser';
 import { tokenList } from './TokenList.ts';
 import { tokensCss } from './TokensCss.ts';
@@ -15,10 +13,6 @@ import {
   resolverIn,
 } from './TokenSources.ts';
 
-/**
- * A fresh config, so a long-running build (the site's dev server) reads the tokens anew.
- * `tokensDirectory` and `outDir` (file URLs ending in a slash) build other tokens elsewhere.
- */
 export function createConfig({
   tokensDirectory = defaultTokensDirectory,
   outDir = defaultOutDir,
@@ -41,7 +35,6 @@ export function createConfig({
     lint: {
       build: { enabled: true },
       rules: {
-        // The value checks for every DTCG type, as Terrazzo recommends; names must be kebab-case.
         ...RECOMMENDED_CONFIG,
         'core/consistent-naming': ['error', { format: 'kebab-case' }],
         'envui/declared-once': ['error', { duplicates: duplicateTokens(tokensDirectory) }],

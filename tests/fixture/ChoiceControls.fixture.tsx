@@ -3,11 +3,6 @@ import { Checkbox, Radio, RadioGroup, Column, Switch } from '@envsemble/envui';
 
 export const mount = 'standalone';
 
-/**
- * Checkbox, Switch and Radio with a class, a style and a ref each, for tests/component/Checkbox.test.tsx
- * and Radio.test.tsx: the ref reaches the input, the class and the style the root
- * (ChoiceFields.test.ts). A checkbox without a visible label shows its hit area.
- */
 export default function ChoiceControlsFixture() {
   const checkbox = useRef<HTMLInputElement>(null);
   const toggle = useRef<HTMLInputElement>(null);
@@ -23,8 +18,6 @@ export default function ChoiceControlsFixture() {
         name="subscribe"
         data-testid="checkbox-input"
       />
-      {/* A checkbox without a visible label, as in a table's selection column, apart from the
-          rest, so its hit area reaches past the box. */}
       <div style={{ display: 'flex', paddingInline: '40px' }}>
         <Checkbox aria-label="Select row" />
       </div>

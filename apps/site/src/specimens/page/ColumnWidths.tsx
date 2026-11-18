@@ -6,46 +6,39 @@ import { MotionStage } from '../../figures/MotionStage';
 import { remPixels } from '../../shared/Lengths';
 import { remeasure } from '../../shared/Remeasure';
 
-/** The window the page sits in, in rem: wider than the large column, so Full reads as wider. */
-const frame = { width: 88, height: 17 };
+const windowRem = { width: 88, height: 17 };
+const windowGuttersRem = 3;
+const windowShareOfStage = 0.92;
 
-/** Each width in turn, the column's width in rem, and what the ruler names it. */
-const widths: readonly { width: PageWidth; column: number; words: string }[] = [
-  { width: 'sm', column: 40, words: 'Small · 40 rem' },
-  { width: 'md', column: 60, words: 'Medium · 60 rem' },
-  { width: 'lg', column: 76, words: 'Large · 76 rem' },
-  // Full fills the window, inside its gutters.
-  { width: 'full', column: frame.width - 3, words: 'Full' },
+const widths: readonly { width: PageWidth; columnRem: number; words: string }[] = [
+  { width: 'sm', columnRem: 40, words: 'Small · 40 rem' },
+  { width: 'md', columnRem: 60, words: 'Medium · 60 rem' },
+  { width: 'lg', columnRem: 76, words: 'Large · 76 rem' },
+  { width: 'full', columnRem: windowRem.width - windowGuttersRem, words: 'Full' },
 ];
 
-/** How long each width shows, in ms; the last leads back to Small. */
-const durations = [900, 1200, 1200, 1200];
+const durationsMs = [900, 1200, 1200, 1200];
 
-/*
- * A page in a window drawn small, its column widening from Small through Medium and Large to Full,
- * and back to Small, with a ruler above it naming the width.
- */
 function Widening() {
-  const step = useTimeline(durations);
+  const step = useTimeline(durationsMs);
   const area = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
-  const { width, column, words } = widths[step];
+  const { width, columnRem, words } = widths[step];
 
-  // The window is drawn at the scale that fits the stage, again as the stage resizes.
   useLayoutEffect(() => {
     const element = area.current;
     if (!element) return;
     const fit = () => {
       const rem = remPixels();
-      // A little room on either side, so the window reads as one on the stage.
-      setScale(Math.min(1, (0.92 * element.clientWidth) / (frame.width * rem)));
+      setScale(Math.min(1, (windowShareOfStage * element.clientWidth) / (windowRem.width * rem)));
     };
     return remeasure(fit, { first: 'now', resize: [element] }).stop;
   }, []);
 
-  const ruler: CSSProperties = { inlineSize: `calc(${scale} * ${column}rem)` };
-  // The column's own width, Full's as wide as the window's, laid out at once as Page does.
-  const page: CSSProperties = { maxInlineSize: `calc(${column}rem + 2 * var(--env-page-gutter))` };
+  const ruler: CSSProperties = { inlineSize: `calc(${scale} * ${columnRem}rem)` };
+  const page: CSSProperties = {
+    maxInlineSize: `calc(${columnRem}rem + 2 * var(--env-page-gutter))`,
+  };
   return (
     <div
       ref={area}
@@ -55,12 +48,15 @@ function Widening() {
         <span className="catalogue-width-ruler-reading">{words}</span>
       </div>
       <div
-        style={{ inlineSize: `${frame.width * scale}rem`, blockSize: `${frame.height * scale}rem` }}
+        style={{
+          inlineSize: `${windowRem.width * scale}rem`,
+          blockSize: `${windowRem.height * scale}rem`,
+        }}
       >
         <div
           style={{
-            inlineSize: `${frame.width}rem`,
-            blockSize: `${frame.height}rem`,
+            inlineSize: `${windowRem.width}rem`,
+            blockSize: `${windowRem.height}rem`,
             transform: `scale(${scale})`,
             transformOrigin: 'top left',
           }}
@@ -89,7 +85,6 @@ function Widening() {
   );
 }
 
-/** Page's widths, one after another, in a window drawn small: the column widens to each. */
 export default function ColumnWidths() {
   return (
     <SpecimenFrame size="wide">

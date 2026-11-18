@@ -11,8 +11,7 @@ import '../../styles/HoverDetail.css';
  */
 export const hoverDetailClass = 'env-hover-detail';
 
-/** The inline elements that hold text and nothing else a reader acts on. */
-const textTags = new Set([
+const inlineTextOnlyTags = new Set([
   'abbr',
   'b',
   'bdi',
@@ -39,44 +38,44 @@ interface TextLikeProps {
   role?: unknown;
 }
 
-/** The roles a text element may take and stay text. */
-const textRoles = new Set(['text', 'presentation', 'none', 'mark', 'time', 'term', 'definition']);
+const rolesThatStayText = new Set([
+  'text',
+  'presentation',
+  'none',
+  'mark',
+  'time',
+  'term',
+  'definition',
+]);
 
-/**
- * Whether an element plays a part other than text: a role of another kind, such as an image or a
- * button, or the part class of another component, such as an avatar group's overflow count.
- */
 function playsOtherPart({ role, className }: TextLikeProps): boolean {
-  if (typeof role === 'string' && role.trim() !== '' && !textRoles.has(role.trim())) return true;
+  if (typeof role === 'string' && role.trim() !== '' && !rolesThatStayText.has(role.trim()))
+    return true;
   return (
     typeof className === 'string' &&
     className.split(/\s+/).some((name) => name.startsWith('env-') && !name.startsWith('env-text'))
   );
 }
 
-/**
- * Whether an element is text: an inline text element, or Text that renders one or a p. Text that
- * a server component rendered reaches a client component as the element it renders, so a p with
- * the env-text class is Text too.
- */
 function isTextElement(element: ReactElement<TextLikeProps>): boolean {
   const { type } = element;
   if (playsOtherPart(element.props)) return false;
-  if (typeof type === 'string')
-    return (
-      textTags.has(type) ||
-      (type === 'p' &&
-        typeof element.props.className === 'string' &&
-        /(?:^|\s)env-text(?:\s|$)/.test(element.props.className))
-    );
+  if (typeof type === 'string') {
+    const textRenderedByServerComponent =
+      type === 'p' &&
+      typeof element.props.className === 'string' &&
+      /(?:^|\s)env-text(?:\s|$)/.test(element.props.className);
+    return inlineTextOnlyTags.has(type) || textRenderedByServerComponent;
+  }
   if ((typeof type !== 'function' && typeof type !== 'object') || type === null) return false;
   if (!isMarkedText(type)) return false;
   const render = element.props.render;
   if (!isValidElement(render)) return true;
-  return render.type === 'p' || (typeof render.type === 'string' && textTags.has(render.type));
+  return (
+    render.type === 'p' || (typeof render.type === 'string' && inlineTextOnlyTags.has(render.type))
+  );
 }
 
-/** Whether children hold visible text, through text elements only: an icon or avatar holds none. */
 function holdsText(children: ReactNode): boolean {
   return Children.toArray(children).some((child) => {
     if (typeof child === 'string') return child.trim() !== '';

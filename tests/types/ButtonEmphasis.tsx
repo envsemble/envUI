@@ -1,6 +1,3 @@
-// Type tests: tsc checks this file (tests/types/tsconfig.json) against envUI's source. Each
-// expected error below must occur, so a variant and tone pair that isn't designed must fail to
-// type-check; the other elements must type-check.
 import {
   Button,
   ConfirmButton,
@@ -13,8 +10,7 @@ import {
 const icon = <span />;
 const noop = () => {};
 
-/** Every designed pair, and each component's default. */
-export const designed = (
+export const designedPairsAndDefaults = (
   <>
     <Button>Save</Button>
     <Button tone="accent">Publish</Button>
@@ -57,28 +53,28 @@ export const designed = (
   </>
 );
 
-// @ts-expect-error A secondary button is neutral.
-export const secondaryDanger = <Button variant="secondary" tone="danger" />;
-// @ts-expect-error Only a primary button takes accent.
-export const outlineAccent = <Button variant="outline" tone="accent" />;
-// @ts-expect-error Without a variant an IconButton is secondary, which is neutral.
-export const iconButtonDanger = <IconButton tone="danger" icon={icon} aria-label="Delete" />;
-// @ts-expect-error Without a variant an IconButton is secondary, which is neutral.
-export const iconButtonAccent = <IconButton tone="accent" icon={icon} aria-label="Add" />;
-export const confirmSecondaryAccent = (
-  // @ts-expect-error A secondary button is neutral, also at rest.
+// @ts-expect-error
+export const secondaryIsNeutral = <Button variant="secondary" tone="danger" />;
+// @ts-expect-error
+export const onlyPrimaryTakesAccent = <Button variant="outline" tone="accent" />;
+// @ts-expect-error
+export const iconButtonIsSecondary = <IconButton tone="danger" icon={icon} aria-label="Delete" />;
+// @ts-expect-error
+export const iconButtonHasNoAccent = <IconButton tone="accent" icon={icon} aria-label="Add" />;
+export const secondaryConfirmIsNeutralAtRest = (
+  // @ts-expect-error
   <ConfirmButton variant="secondary" tone="accent" confirmLabel="Remove" onConfirm={noop}>
     Remove
   </ConfirmButton>
 );
-export const confirmDefaultAccent = (
-  // @ts-expect-error Without a variant a ConfirmButton rests outline, which has no accent.
+export const confirmRestsOutlineWithoutAccent = (
+  // @ts-expect-error
   <ConfirmButton tone="accent" confirmLabel="Remove" onConfirm={noop}>
     Remove
   </ConfirmButton>
 );
-export const confirmIconDanger = (
-  // @ts-expect-error Without a variant an icon-only ConfirmButton rests secondary, which is neutral.
+export const iconOnlyConfirmRestsNeutralSecondary = (
+  // @ts-expect-error
   <ConfirmButton
     tone="danger"
     icon={icon}
@@ -87,24 +83,20 @@ export const confirmIconDanger = (
     onConfirm={noop}
   />
 );
-// @ts-expect-error Without a variant a CopyButton is secondary, which is neutral.
-export const copyDanger = <CopyButton value="text" tone="danger" aria-label="Copy link" />;
-export const copySecondaryDanger = (
-  // @ts-expect-error A secondary button is neutral.
+// @ts-expect-error
+export const copyIsSecondary = <CopyButton value="text" tone="danger" aria-label="Copy link" />;
+export const secondaryCopyIsNeutral = (
+  // @ts-expect-error
   <CopyButton value="text" variant="secondary" tone="danger" aria-label="Copy link" />
 );
-// @ts-expect-error A ThemeToggle is an IconButton: secondary without a variant, which is neutral.
-export const toggleDanger = <ThemeToggle tone="danger" />;
+// @ts-expect-error
+export const themeToggleIsNeutralSecondaryIconButton = <ThemeToggle tone="danger" />;
 
-/**
- * A variant typed as a union of variants, as a conditional or a variable gives it, takes the tones
- * that every variant in it takes.
- */
 declare const pressed: boolean;
 declare const variant: 'primary' | 'secondary';
 declare const anyVariant: ButtonVariant;
 declare const strong: 'primary' | 'outline';
-export const unions = (
+export const unionVariantTakesTheTonesEveryVariantTakes = (
   <>
     <Button variant={pressed ? 'primary' : 'secondary'}>Show</Button>
     <Button variant={variant}>Show</Button>
@@ -124,19 +116,21 @@ export const unions = (
     <IconButton variant={anyVariant} icon={icon} aria-label="Settings" />
     <IconButton href="/settings" variant="ghost" icon={icon} aria-label="Settings" />
     <IconButton icon={icon} aria-labelledby="settings-heading" />
-    {/* @ts-expect-error IconButton is the one icon-only button. */}
-    <Button iconOnly icon={icon} aria-label="Settings" />
   </>
 );
+export const iconButtonIsTheOneIconOnlyButton = (
+  // @ts-expect-error
+  <Button iconOnly icon={icon} aria-label="Settings" />
+);
 
-// @ts-expect-error A secondary button is neutral, so a union with secondary is too.
-export const unionDanger = <Button variant={variant} tone="danger" />;
-// @ts-expect-error Only a primary button takes accent.
-export const unionAccent = <Button variant={strong} tone="accent" />;
-export const iconUnionAccent = (
-  // @ts-expect-error Only a primary button takes accent.
+// @ts-expect-error
+export const unionWithSecondaryIsNeutral = <Button variant={variant} tone="danger" />;
+// @ts-expect-error
+export const unionWithOutlineHasNoAccent = <Button variant={strong} tone="accent" />;
+export const iconButtonUnionWithOutlineHasNoAccent = (
+  // @ts-expect-error
   <IconButton variant={strong} tone="accent" icon={icon} aria-label="Add" />
 );
 
-// @ts-expect-error An IconButton needs a name: aria-label or aria-labelledby.
-export const unnamedIconButton = <IconButton icon={icon} />;
+// @ts-expect-error
+export const iconButtonNeedsAName = <IconButton icon={icon} />;

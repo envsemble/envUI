@@ -1,4 +1,3 @@
-// A page's frontmatter: what each kind of page takes, its examples' roles, and since and status.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -15,13 +14,11 @@ import {
 test('a page of a structured kind needs its frontmatter, and its frontmatter its examples', async () => {
   await pageFixture(async ({ rejects, docs }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // A page of a structured kind lists its examples; without them it is not in the structure.
     await rejects(
       frontmatter.replace(/examples:\n[\s\S]*?(?=---)/, '') + body,
       /components\/switch\.md is not in the one-file structure: its frontmatter lists no examples/,
     );
     await rejects(body, /Component page components\/switch\.md needs frontmatter/);
-    // A pattern or foundation page is in the structure too.
     await mkdir(join(docs, 'foundations'), { recursive: true });
     await writeFile(
       join(docs, 'foundations', 'motion.md'),
@@ -41,7 +38,6 @@ test('a page of a structured kind needs its frontmatter, and its frontmatter its
 test("an example's frontmatter gives its role and caption, and an overview's its framing", async () => {
   await pageFixture(async ({ page, read, rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // The frontmatter: an example's entry, a role and a caption, and on an overview its framing.
     await rejects(
       frontmatter.replace('  Parts: anatomy', '  Parts: legend') + body,
       /gives Parts the role legend; one of overview, example, variants, anatomy, do, dont, caution/,
@@ -53,7 +49,6 @@ test("an example's frontmatter gives its role and caption, and an overview's its
       ) + body,
       /gives the dont figure OnSubmit no caption, its rule/,
     );
-    // A caution, acceptable with care, states its rule too.
     await rejects(
       frontmatter.replace(
         "    role: dont\n    caption: Don't use a switch in a form that applies on submit.\n",
@@ -119,8 +114,6 @@ test("the frontmatter's fields hold what the page's kind takes", async () => {
       frontmatter.replace('[A setting that applies immediately.]', '[]') + body,
       /useWhen must not be empty/,
     );
-    // Metadata that says nothing or points nowhere. avoidWhen is the one list of related pages:
-    // each entry names an export or a page, once.
     await rejects(
       frontmatter.replace(
         '    use: Checkbox',
@@ -139,7 +132,6 @@ test("the frontmatter's fields hold what the page's kind takes", async () => {
     );
     await rejects(frontmatter.replace('aliases: [toggle]', 'aliases: []') + body, /aliases must/);
     await rejects(frontmatter.replace('since: 0.1.0', 'since: 9.9.9') + body, /since 9\.9\.9/);
-    // statuses: an export's own status, which differs from the page's and names a listed export.
     const statuses = (lines) =>
       frontmatter.replace('components: [Switch]', `components: [Switch]\nstatuses:${lines}`) + body;
     await rejects(statuses(' [beta]'), /statuses must map an export to its status/);
@@ -175,11 +167,8 @@ test('since names a stable release or the version the changesets lead to, also i
     await writeFile(changelog, '# Changelog\n\n## 0.7.0\n\nText.\n\n## 0.6.0\n\nText.\n');
     await changeset('fix', { '@envsemble/envui': 'patch' });
     assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.7.1']);
-    // A package that shares envUI's version raises it too.
     await changeset('lint', { '@envsemble/eslint-plugin-envui': 'minor' });
     assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.8.0']);
-    // In prerelease mode, a released prerelease is no version of its own, and the changesets lead
-    // to the version the prereleases are for, from the version before them.
     await changeset('names', { '@envsemble/envui': 'major' });
     await writeFile(
       join(changesets, 'pre.json'),
@@ -200,7 +189,6 @@ test("a guide's status, statuses and exportAliases hold, and name only the expor
     const setup = join(directory, 'setup.md');
     const source = await readFile(resolve('docs/setup.md'), 'utf8');
     const read = () => readDocumentation(directory, { versions: undefined });
-    // A guide's exports are stable, so a status that says so repeats the default.
     await writeFile(
       setup,
       source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: stable\n'),
@@ -211,8 +199,6 @@ test("a guide's status, statuses and exportAliases hold, and name only the expor
       source.replace('exportAliases:\n', 'exportAliases:\n  Button:\n    - push\n'),
     );
     assert.throws(read, /exportAliases names Button, which components does not list/);
-    // A guide may carry a status of the ladder, which its exports take, so one that says so
-    // repeats the guide's.
     const withStatus = (status, text = source) => `---\nstatus: ${status}\n${text.slice(4)}`;
     await writeFile(setup, withStatus('experimental'));
     assert.throws(read, /status must be one of alpha, beta, stable, deprecated/);

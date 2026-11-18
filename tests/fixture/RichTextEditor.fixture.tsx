@@ -291,18 +291,12 @@ export function RichTextEditingFixture() {
   );
 }
 
-/** A controlled document with a reference and a task, which the application replaces. */
 const controlledWithViews = [
   '[reference id="person-2" label="Second%20person" mentionSuggestionChar="%40"] owns it.',
   '',
   '- [ ] Check the totals',
 ].join('\n');
 
-/**
- * The editor as a field: its variants, an error, a disabled editor, suggestions inside a Dialog,
- * a controlled editor whose content the application replaces, and the provider's words, mounted
- * with ?section=field.
- */
 function FieldStates() {
   const [open, setOpen] = useState(false);
   const [document, setDocument] = useState(controlledWithViews);

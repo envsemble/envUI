@@ -3,10 +3,6 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
-/*
- * The pointer opens the dialog, then presses the backdrop beside it, twice: the dialog stays open, as
- * a press outside doesn't close a ConfirmDialog. Cancel closes it.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
@@ -32,7 +28,6 @@ function PressingOutside() {
   return <DeleteProject />;
 }
 
-/** The danger dialog, pressed outside to no effect, and closed with Cancel. */
 export default function PressOutsideMotion() {
   return (
     <MotionStage label="a press outside leaving the dialog open" height="18rem">

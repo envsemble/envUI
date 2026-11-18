@@ -157,7 +157,6 @@ export function Column<RenderedElement extends HTMLElement = HTMLDivElement>({
   return renderElement('div', render, primitiveAttributes('column', props));
 }
 
-/** The `grid-template-columns` of a Grid's columns. */
 function gridTemplate(columns: GridColumns): string {
   if (typeof columns === 'number') return `repeat(${columns}, minmax(0, 1fr))`;
   if (typeof columns === 'string') return columns;
@@ -180,7 +179,7 @@ export function Grid<RenderedElement extends HTMLElement = HTMLDivElement>({
       'grid',
       props,
       { 'data-columns': flag(columns !== undefined) },
-      columns === undefined ? {} : { '--env-grid-columns': gridTemplate(columns) },
+      columns === undefined ? {} : { '--_grid-columns': gridTemplate(columns) },
     ),
   );
 }

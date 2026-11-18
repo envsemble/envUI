@@ -1,11 +1,11 @@
-// The theme bootstrap script themes the document root before the first paint. These tests run the
-// built script against a stand-in root, as a browser would run it from the document head.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { runInNewContext } from 'node:vm';
-import { createThemeBootstrapScript } from '../../../packages/ui/dist/theme-bootstrap.js';
+import {
+  createThemeBootstrapScript,
+  defineTheme,
+} from '../../../packages/ui/dist/theme-bootstrap.js';
 
-/** Runs a bootstrap script and returns the root it themed. */
 function bootstrap(script, { stored = null, systemDark = false, attributes = {} } = {}) {
   const root = {
     attributes: { ...attributes },
@@ -35,12 +35,10 @@ test('the bootstrap script themes the root with the stored or system theme', () 
   );
 });
 
-test('the bootstrap script writes a high or standard contrast before the first paint', () => {
+test("the bootstrap script writes a high or standard contrast before the first paint, marked as envUI's", () => {
   for (const contrast of ['high', 'standard']) {
     const root = bootstrap(createThemeBootstrapScript({ contrast }));
     assert.equal(root.attributes['data-env-contrast'], contrast, contrast);
-    // Marked as envUI's, with the value written, so ThemePreferenceProvider replaces or removes it
-    // as its own while the page leaves it unchanged.
     assert.equal(root.attributes['data-env-contrast-source'], `envui:${contrast}`, contrast);
   }
 });
@@ -67,4 +65,20 @@ test('the bootstrap script writes a compact or comfortable scale before the firs
   }
   for (const options of [{}, { scale: 'system' }])
     assert.doesNotMatch(createThemeBootstrapScript(options), /data-env-scale/);
+});
+
+test('one theme definition gives the root its selection and corners before the first paint', () => {
+  const theme = defineTheme({
+    storageKey: 'app-theme',
+    selection: 'accent',
+    corners: 'sharp',
+  });
+  assert.ok(Object.isFrozen(theme));
+  const root = bootstrap(createThemeBootstrapScript(theme), { stored: 'dark' });
+  assert.equal(root.attributes['data-env-theme'], 'dark');
+  assert.equal(root.attributes['data-env-surface'], undefined);
+  assert.equal(root.attributes['data-env-selection'], 'accent');
+  assert.equal(root.attributes['data-env-corners'], 'sharp');
+  const plain = createThemeBootstrapScript({ selection: 'teal' as never, corners: undefined });
+  assert.doesNotMatch(plain, /data-env-selection|data-env-corners/);
 });

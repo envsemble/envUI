@@ -14,7 +14,6 @@ export default function ComboboxListAnatomy() {
       placeholder="Type a name"
       items={people}
       defaultValue="sam.lee"
-      // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
       style={{ inlineSize: 'min(100%, 20rem)' }}
     />

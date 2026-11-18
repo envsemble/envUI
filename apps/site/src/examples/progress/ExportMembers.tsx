@@ -6,7 +6,6 @@ type Export = { phase: 'idle' | 'preparing' | 'exporting' | 'done'; percent: num
 
 export default function ExportMembers() {
   const [state, setState] = useState<Export>({ phase: 'idle', percent: 0 });
-  // The export runs on a server; timers stand in for its steps here.
   useEffect(() => {
     if (state.phase === 'preparing') {
       const timer = window.setTimeout(() => setState({ phase: 'exporting', percent: 0 }), 1200);
@@ -43,7 +42,6 @@ export default function ExportMembers() {
           label={state.phase === 'preparing' ? 'Preparing export' : 'Exporting members'}
           value={state.phase === 'preparing' ? null : state.percent}
           valueText={state.phase === 'preparing' ? undefined : `${state.percent}%`}
-          // A set width, so the bar keeps its size from preparing to a known amount.
           style={{ inlineSize: 'min(100%, 22rem)' }}
         />
       )}

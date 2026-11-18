@@ -19,8 +19,6 @@ export default function ManyTabs() {
   );
   const [value, setValue] = useState<string | null>('budget');
   return (
-    // The strip scrolls sideways with the wheel, touch or the arrow keys where its tabs don't fit,
-    // and they fade at an edge they run past. Drag a tab near an edge to carry it further.
     <DocumentTabs
       aria-label="Northwind documents"
       items={tabs}

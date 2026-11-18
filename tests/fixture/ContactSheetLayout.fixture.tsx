@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Avatar,
   AvatarButton,
@@ -11,13 +10,11 @@ import {
   DescriptionList,
   Grid,
   IconButton,
-  LineArt,
   List,
   NavigationDrawer,
   NavigationRail,
   Page,
   PageHeader,
-  PanelDock,
   Panes,
   Row,
   Scaffold,
@@ -26,35 +23,13 @@ import {
   Text,
   TopBar,
   type Destination,
-  type PanelDockPanel,
 } from '@envsemble/envui';
 import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
-import { IconInfo } from '@envsemble/envui/icons/Info';
-import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { Block, Cell, Section, Strip, interactionStates } from './ContactSheetParts.fixture.js';
-
-const drawings = [
-  'golden-section',
-  'square-circle-triangle',
-  'whirling-squares',
-  'triangle-and-circles',
-  'ford-circles',
-  'harmonic-division',
-  'pappus-chain',
-  'root-rectangles',
-  'sacred-cut',
-  'gothic-tracery',
-  'quartered-square',
-  'graded-quadtree',
-  'monochord',
-  'logarithmic-grid',
-  'pointed-arcade',
-  'root-two-halving',
-] as const;
 
 function Primitives() {
   return (
@@ -169,7 +144,6 @@ function Cards() {
     meta: <Badge tone="success">Active</Badge>,
     description: 'New pricing page and onboarding.',
   };
-  // A link or button card is one control, so it holds its content as children.
   const linkContent = (
     <Column gap={1}>
       <Text variant="title" render={<span />}>
@@ -228,39 +202,6 @@ function Cards() {
             {linkContent}
           </Card>
         </Cell>
-      </Strip>
-    </Section>
-  );
-}
-
-function LineArts() {
-  return (
-    <Section name="LineArt">
-      <Strip label="Drawings">
-        {drawings.map((drawing) => (
-          <Cell key={drawing} caption={drawing} width="13rem">
-            <Surface
-              background="default"
-              padding={0}
-              style={{ overflow: 'hidden', aspectRatio: '20 / 9' }}
-            >
-              <LineArt drawing={drawing} />
-            </Surface>
-          </Cell>
-        ))}
-      </Strip>
-      <Strip label="Align">
-        {(['start', 'center', 'end'] as const).map((align) => (
-          <Cell key={align} caption={align} width="16rem">
-            <Surface
-              background="muted"
-              padding={0}
-              style={{ overflow: 'hidden', aspectRatio: '3 / 1' }}
-            >
-              <LineArt drawing="pappus-chain" align={align} />
-            </Surface>
-          </Cell>
-        ))}
       </Strip>
     </Section>
   );
@@ -332,7 +273,7 @@ function TopBars() {
     <TopBar
       start={<IconButton icon={<IconArrowBack />} aria-label="Back to projects" variant="ghost" />}
       title="Website refresh"
-      actions={
+      end={
         <>
           <IconButton icon={<IconSearch />} aria-label="Search" variant="ghost" />
           <AvatarButton name="Alex Morgan" />
@@ -388,7 +329,7 @@ function Scaffolds() {
             topBar={
               <TopBar
                 title="Northwind"
-                actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
+                end={<IconButton icon={<IconSearch />} aria-label="Search" />}
               />
             }
             navigation={{ rail: <NavigationRail destinations={destinations} /> }}
@@ -408,7 +349,7 @@ function Scaffolds() {
               expanded: 'drawer',
               large: 'drawer',
             }}
-            topBar={<TopBar title="Northwind" actions={<AvatarButton name="Alex Morgan" />} />}
+            topBar={<TopBar title="Northwind" end={<AvatarButton name="Alex Morgan" />} />}
             navigation={{ drawer: <NavigationDrawer destinations={destinations} /> }}
           >
             {content}
@@ -420,190 +361,64 @@ function Scaffolds() {
 }
 
 function PanesStrip() {
-  const [open, setOpen] = useState(true);
   return (
     <Section name="Panes">
       <Strip>
         <Cell caption="List and detail" width="50rem">
-          <Panes.Root
-            behavior="list-detail"
-            splitAt="medium"
-            defaultWidth={14}
-            style={{ blockSize: '12rem' }}
-          >
-            <Panes.List label="Inbox">
+          <Panes.Root defaultWidth={14} style={{ blockSize: '12rem' }}>
+            <Panes.Pane label="Inbox">
               <Surface padding={2} style={{ minBlockSize: '100%' }}>
                 <List.Root aria-label="Messages">
                   <List.Item label="Launch checklist" description="Priya Shah" current />
                   <List.Item label="Budget review" description="Sam Lee" />
                 </List.Root>
               </Surface>
-            </Panes.List>
-            <Panes.Divider label="Resize the inbox" />
-            <Panes.Detail label="Launch checklist">
+            </Panes.Pane>
+            <Panes.ResizeHandle label="Resize the inbox" />
+            <Panes.Pane label="Launch checklist">
               <Surface padding={4} render={<Column gap={2} />} style={{ minBlockSize: '100%' }}>
                 <Text variant="title" render={<h3 />}>
                   Launch checklist
                 </Text>
                 <Text>The venue is booked.</Text>
               </Surface>
-            </Panes.Detail>
+            </Panes.Pane>
           </Panes.Root>
         </Cell>
-        <Cell
-          caption="Divider: hover"
-          force="hover"
-          target=".env-panes-divider, [role=separator]"
-          width="50rem"
-        >
-          <Panes.Root
-            behavior="list-detail"
-            splitAt="medium"
-            defaultWidth={14}
-            style={{ blockSize: '8rem' }}
-          >
-            <Panes.List label="Inbox">
+        <Cell caption="Resize handle: hover" force="hover" target="[role=separator]" width="50rem">
+          <Panes.Root defaultWidth={14} style={{ blockSize: '8rem' }}>
+            <Panes.Pane label="Inbox">
               <Surface padding={2} style={{ minBlockSize: '100%' }}>
                 <Text>List</Text>
               </Surface>
-            </Panes.List>
-            <Panes.Divider label="Resize the inbox" />
-            <Panes.Detail label="Detail">
+            </Panes.Pane>
+            <Panes.ResizeHandle label="Resize the inbox" />
+            <Panes.Pane label="Detail">
               <Surface padding={2} style={{ minBlockSize: '100%' }}>
                 <Text>Detail</Text>
               </Surface>
-            </Panes.Detail>
+            </Panes.Pane>
           </Panes.Root>
         </Cell>
-        <Cell caption="Supporting pane open" width="50rem">
-          <Panes.Root
-            behavior="supporting"
-            splitAt="medium"
-            open={open}
-            onOpenChange={setOpen}
-            style={{ blockSize: '14rem' }}
-          >
-            <Panes.Main label="Quarterly report">
+        <Cell caption="Details at the end, no grip" width="50rem">
+          <Panes.Root sized="end" defaultWidth={18} style={{ blockSize: '10rem' }}>
+            <Panes.Pane label="Quarterly report">
               <Column gap={3} padding={4} align="start">
                 <Text variant="title" render={<h3 />}>
                   Quarterly report
                 </Text>
-                <Panes.Trigger variant="secondary" startIcon={<IconInfo />}>
-                  Details
-                </Panes.Trigger>
               </Column>
-            </Panes.Main>
-            <Panes.Supporting label="Report details">
+            </Panes.Pane>
+            <Panes.ResizeHandle label="Resize the details" grip={false} />
+            <Panes.Pane label="Report details">
               <Column padding={4}>
                 <DescriptionList.Root aria-label="About the report">
                   <DescriptionList.Item label="Owner">Sam Lee</DescriptionList.Item>
                   <DescriptionList.Item label="Due">31 March</DescriptionList.Item>
                 </DescriptionList.Root>
               </Column>
-            </Panes.Supporting>
+            </Panes.Pane>
           </Panes.Root>
-        </Cell>
-        <Cell caption="Supporting pane skeleton" width="50rem">
-          <Panes.Root
-            behavior="supporting"
-            splitAt="medium"
-            defaultOpen
-            style={{ blockSize: '10rem' }}
-          >
-            <Panes.Main label="Report">
-              <Column padding={4}>
-                <Text>Main</Text>
-              </Column>
-            </Panes.Main>
-            <Panes.Supporting label="Details" skeleton>
-              <Column padding={4}>
-                <Text>Owner: Sam Lee</Text>
-              </Column>
-            </Panes.Supporting>
-          </Panes.Root>
-        </Cell>
-      </Strip>
-    </Section>
-  );
-}
-
-function Dock({
-  initial,
-  overflow,
-}: {
-  initial: PanelDockPanel[];
-  overflow?: 'scroll' | 'minimize';
-}) {
-  const [panels, setPanels] = useState(initial);
-  return (
-    <Surface
-      background="muted"
-      padding={0}
-      style={{ position: 'relative', blockSize: '17rem', inlineSize: '100%', overflow: 'hidden' }}
-    >
-      <PanelDock.Root
-        panels={panels}
-        stackBelow="30rem"
-        overflow={overflow}
-        onModeChange={(id, mode) =>
-          setPanels((current) =>
-            current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
-          )
-        }
-        onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
-        onActivate={(id) =>
-          setPanels((current) => current.map((panel) => ({ ...panel, active: panel.id === id })))
-        }
-        onHeightChange={(id, height) =>
-          setPanels((current) =>
-            current.map((panel) => (panel.id === id ? { ...panel, height } : panel)),
-          )
-        }
-      >
-        {(panel) => (
-          <>
-            <PanelDock.Header
-              title={panel.title}
-              meta="Edited by Alex Morgan"
-              actions={
-                <IconButton variant="ghost" size="sm" icon={<IconMoreVert />} aria-label="More" />
-              }
-            />
-            <Text style={{ padding: '0 1.5rem 1.5rem' }}>The launch moves to May.</Text>
-          </>
-        )}
-      </PanelDock.Root>
-    </Surface>
-  );
-}
-
-function PanelDocks() {
-  return (
-    <Section name="PanelDock">
-      <Strip>
-        <Cell caption="One open and active, one minimized" width="34rem">
-          <Dock
-            initial={[
-              { id: 'press', title: 'Press release', mode: 'open', active: true, height: 12.5 },
-              { id: 'budget', title: 'Budget', mode: 'minimized' },
-            ]}
-          />
-        </Cell>
-        <Cell caption="Two open side by side, one minimized" width="44rem">
-          <Dock
-            initial={[
-              { id: 'press', title: 'Press release', mode: 'open', active: true, height: 12 },
-              { id: 'notes', title: 'Notes', mode: 'open', height: 10 },
-              { id: 'budget', title: 'Budget', mode: 'minimized' },
-            ]}
-          />
-        </Cell>
-        <Cell caption="Narrow: stacked" width="24rem">
-          <Dock
-            initial={[
-              { id: 'press', title: 'Press release', mode: 'open', active: true, height: 12.5 },
-            ]}
-          />
         </Cell>
       </Strip>
     </Section>
@@ -616,12 +431,10 @@ export function LayoutSheet() {
       <Primitives />
       <Surfaces />
       <Cards />
-      <LineArts />
       <Pages />
       <TopBars />
       <Scaffolds />
       <PanesStrip />
-      <PanelDocks />
     </>
   );
 }

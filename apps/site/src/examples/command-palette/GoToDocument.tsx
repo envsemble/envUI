@@ -17,7 +17,6 @@ export default function GoToDocument() {
   const [query, setQuery] = useState('');
   const [opened, setOpened] = useState('');
 
-  // The application filters and ranks the items; here, every word of the query must match.
   const items = useMemo<CommandPaletteItem[]>(() => {
     const words = query.toLowerCase().split(/\s+/).filter(Boolean);
     return documents

@@ -2,20 +2,22 @@ import { Column, DescriptionList, Panes, Surface, Text } from '@envsemble/envui'
 
 export default function ResizableDetails() {
   return (
-    // Each pane holds a surface, and the divider is the gap between them, with its grip in the
-    // middle. It resizes the supporting pane, by pointer and the arrow keys, and the width people
-    // choose is kept on this device.
     <Panes.Root
-      behavior="supporting"
-      splitAt="medium"
+      sized="end"
       defaultWidth={18}
       minWidth={14}
       maxWidth={22}
       persist="example.details-width"
-      style={{ blockSize: '14rem' }}
+      style={{ inlineSize: 'min(100%, 44rem)', blockSize: '14rem' }}
     >
-      <Panes.Main label="Launch banner">
-        <Surface padding={4} render={<Column gap={2} />} style={{ minBlockSize: '100%' }}>
+      <Panes.Pane label="Launch banner">
+        <Surface
+          radius="none"
+          padding={4}
+          background="page"
+          render={<Column gap={2} />}
+          style={{ minBlockSize: '100%' }}
+        >
           <Text variant="title" render={<h3 />}>
             Launch banner
           </Text>
@@ -24,10 +26,15 @@ export default function ResizableDetails() {
             is due on Friday.
           </Text>
         </Surface>
-      </Panes.Main>
-      <Panes.Divider label="Resize details" />
-      <Panes.Supporting label="Banner details">
-        <Surface padding={4} render={<Column gap={2} />} style={{ minBlockSize: '100%' }}>
+      </Panes.Pane>
+      <Panes.ResizeHandle label="Resize details" />
+      <Panes.Pane label="Banner details">
+        <Surface
+          radius="none"
+          padding={4}
+          render={<Column gap={2} />}
+          style={{ minBlockSize: '100%' }}
+        >
           <Text variant="title" render={<h3 />}>
             Details
           </Text>
@@ -38,7 +45,7 @@ export default function ResizableDetails() {
             <DescriptionList.Item label="Due">Friday</DescriptionList.Item>
           </DescriptionList.Root>
         </Surface>
-      </Panes.Supporting>
+      </Panes.Pane>
     </Panes.Root>
   );
 }

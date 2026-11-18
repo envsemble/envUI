@@ -1,5 +1,3 @@
-// A Tooltip around a component that takes its control as an element `trigger` moves onto that
-// trigger, which it knows by the component's mark (packages/ui/src/internal/trigger/triggerOwner.ts).
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -45,12 +43,11 @@ test('every component with an element trigger is marked as its owner', () => {
   assert.deepEqual(unmarked, [], 'Mark these with markTriggerOwner.');
 });
 
-test("a component that React's lazy loads reads as its owner once loaded", async () => {
+test("a component that React's lazy loads reads as its owner once loaded, and while loading where its trigger is an element", async () => {
   let load!: (module: { default: ComponentType }) => void;
   const module = new Promise<{ default: ComponentType }>((resolve) => (load = resolve));
   const type = lazy(() => module);
   const trigger = h('button', { type: 'button' });
-  // While it loads, an element trigger stands for the mark.
   assert.equal(isTriggerOwner(type, { trigger }), true);
   assert.equal(isTriggerOwner(type, {}), false);
   load({ default: ui.Popover as ComponentType });

@@ -1,7 +1,3 @@
-// The part contract, docs/generated/parts.json: for each component its root class, its parts
-// (class names with a one-line description), its state attributes (`data-*`) with their values,
-// and its color properties, assembled from what the extractions read in the library and the
-// hand-written packages/ui/src/partDescriptions.json.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { kebab, type PropsFile } from '../PageStructure.ts';
@@ -11,11 +7,10 @@ import { styleSheets } from './Library.ts';
 import { readSource } from './SourceExtraction.ts';
 import { readColorProperties, readStyles } from './StyleExtraction.ts';
 
-/** A component's or shared anatomy's entry in docs/generated/parts.json. */
 interface PartsEntry {
   root: string | null;
   source?: string;
-  parts: { class: string; description: string | null }[];
+  parts: { class: string; description: string | null; slot?: true }[];
   states: { attribute: string; values: string[]; parts: string[] }[];
   uses?: string[];
   usedBy?: string[];
@@ -23,7 +18,6 @@ interface PartsEntry {
   properties?: { property: string; use: 'set' | 'read'; description: string }[];
 }
 
-/** docs/generated/parts.json: the part contract. */
 export interface PartsContract {
   $comment?: string;
   schemaVersion?: number;
@@ -40,21 +34,13 @@ const partsSchemaVersion = 1;
 
 const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
-/** packages/ui/src/partDescriptions.json: the hand-written part of the contract, as its $comment says. */
 interface PartDescriptions {
-  /** A component whose root is not env-<its name>, and its root class. */
   roots?: Record<string, string>;
-  /** A component whose classes don't start with env-<its name>, and the prefix they take. */
   prefixes?: Record<string, string>;
-  /** Anatomy several components render, by name: its class prefix, and its root class. */
   shared?: Record<string, { prefix: string; root?: string }>;
-  /** A class that no prefix places, and its group. */
   placed?: Record<string, string>;
-  /** One line per part class, by component. */
   descriptions?: Record<string, Record<string, string>>;
-  /** Each component's color properties, and what each colors. */
   colors?: Record<string, Record<string, string>>;
-  /** The public custom properties that are neither tokens nor color properties, and their use. */
   properties?: Record<string, Record<string, { use: 'set' | 'read'; description: string }>>;
 }
 
@@ -71,11 +57,9 @@ const readDescriptions = fields<PartDescriptions>({
   ),
 });
 
-/** The hand-written part of the contract, read from its file. */
 const readPartDescriptions = () =>
   readDescriptions(JSON.parse(readFileSync(partDescriptionsFile, 'utf8')), 'partDescriptions.json');
 
-/** A component, namespace or shared anatomy, whose classes take its prefix. */
 interface Group {
   name: string;
   prefix: string;
@@ -84,7 +68,6 @@ interface Group {
   shared: boolean;
 }
 
-/** A state attribute of a group: the values it takes, or `free` for any, and the parts it is on. */
 interface GroupState {
   values: Set<string>;
   free: boolean;
@@ -94,13 +77,10 @@ interface GroupState {
 type SourceReading = ReturnType<typeof readSource>;
 type StateReading = SourceReading['states'][number] | ReturnType<typeof readStyles>[number];
 
-/** The groups: every exported component and namespace, and the shared anatomy, by name. */
 function readGroups(props: PropsFile, source: PartDescriptions) {
   const groups = new Map<string, Group>();
   for (const [name, entry] of Object.entries(props.exports)) {
     if (name.includes('.') || !['component', 'namespace'].includes(entry.kind)) continue;
-    // A component's classes take its name, unless `prefixes` gives it another, as ToastProvider's
-    // notifications are env-toast.
     const prefix = source.prefixes?.[name] ?? `env-${kebab(name)}`;
     groups.set(name, { name, prefix, source: entry.source, shared: false });
   }
@@ -109,7 +89,6 @@ function readGroups(props: PropsFile, source: PartDescriptions) {
   return groups;
 }
 
-/** The classes of each group, by the group's name; a class of no group is a problem. */
 function placeClasses(
   classes: SourceReading['classes'],
   groups: Map<string, Group>,
@@ -130,7 +109,6 @@ function placeClasses(
   return members;
 }
 
-/** The states the source and the style sheets set on the library's classes, by group and attribute. */
 function groupStatesOf(
   states: StateReading[],
   classes: SourceReading['classes'],
@@ -140,7 +118,6 @@ function groupStatesOf(
   for (const state of states) {
     for (const name of state.classes ?? []) {
       if (!classes.has(name)) continue;
-      // A class of the library is placed, or placeClasses() reported it.
       const group = groupOf(name)!;
       const byAttribute = groupStates.get(group) ?? new Map<string, GroupState>();
       const entry = byAttribute.get(state.attribute) ?? {
@@ -158,10 +135,6 @@ function groupStatesOf(
   return groupStates;
 }
 
-/**
- * The files a module imports, directly or through other modules, without crossing into another
- * component's module.
- */
 function reachableFrom(
   start: string,
   imports: SourceReading['imports'],
@@ -178,7 +151,6 @@ function reachableFrom(
   return found;
 }
 
-/** The hand-written public custom properties' problems: where they are, their use and description. */
 function checkProperties(
   properties: NonNullable<PartDescriptions['properties']>,
   problems: string[],
@@ -197,7 +169,6 @@ function checkProperties(
     }
 }
 
-/** The color properties' problems: each listed one registered, each registered one listed. */
 function checkColors(colors: Record<string, Record<string, string>>, problems: string[]) {
   const registered = readColorProperties();
   const listedColors = new Set<string>();
@@ -220,7 +191,6 @@ function checkColors(colors: Record<string, Record<string, string>>, problems: s
       );
 }
 
-/** A group's description problems: one for each of its parts, and none for another class. */
 function checkDescriptions(
   group: string,
   parts: string[],
@@ -239,7 +209,6 @@ function checkDescriptions(
       );
 }
 
-/** The problems of what packages/ui/src/partDescriptions.json lists for a name the contract has no entry of. */
 function checkListedGroups(
   output: Pick<PartsContract, 'components' | 'shared'>,
   { properties, colors, descriptions }: Record<'properties' | 'colors' | 'descriptions', object>,
@@ -260,13 +229,13 @@ function checkListedGroups(
       problems.push(`packages/ui/src/partDescriptions.json describes ${name}, which has no parts`);
 }
 
-/** The part contract, from the library's source, its style sheets and packages/ui/src/partDescriptions.json. */
 export function buildParts({
   source = readPartDescriptions(),
   props = JSON.parse(readFileSync(propsFile, 'utf8')),
 }: { source?: PartDescriptions; props?: PropsFile } = {}) {
   const {
     classes,
+    slots,
     states: sourceStates,
     imports,
     renders,
@@ -283,11 +252,9 @@ export function buildParts({
     byPrefix.find((group) => name === group.prefix || name.startsWith(`${group.prefix}-`))?.name;
   const members = placeClasses(classes, groups, groupOf, problems);
   const groupStates = groupStatesOf([...sourceStates, ...readStyles()], classes, groupOf);
-  /** The library's classes a group's parts are, with the files each occurs in. */
   const filesOfMembers = (group: string) =>
     (members.get(group) ?? []).flatMap((name) => [...classes.get(name)!.files]);
 
-  // Which groups each file renders the parts of.
   const filesOf = new Map<string, Set<string>>();
   for (const name of members.keys())
     for (const file of filesOfMembers(name))
@@ -296,18 +263,11 @@ export function buildParts({
     [...groups.values()].map((group) => group.source).filter(Boolean),
   );
   const reachable = (start: string) => reachableFrom(start, imports, componentSources);
-  // The groups whose parts each component module renders, by the module.
   const groupsBySource = new Map<string, string[]>();
   for (const group of groups.values())
     if (group.source && (members.get(group.name)?.length ?? 0) > 0)
       groupsBySource.set(group.source, [...(groupsBySource.get(group.source) ?? []), group.name]);
 
-  // A state's values, completed from what the group's code writes: its own module and the modules
-  // its classes occur in, which set its attributes on its parts, and, through an element's dataset,
-  // the internal modules it imports, such as List's reordering, or, for a group no public module
-  // renders, that its classes' modules import, such as a time wheel's turning. An internal module that renders
-  // several components' elements, such as the one under Button and Link, writes values that may be
-  // another's, so it counts only where the group's classes occur in it.
   for (const group of groups.values()) {
     const states = groupStates.get(group.name);
     if (!states) continue;
@@ -325,22 +285,18 @@ export function buildParts({
     }
   }
 
-  // The public custom properties that are neither tokens nor color properties: knobs an
-  // application sets, such as a popup's opacity, or values it reads, such as Scaffold's sticky top.
   const properties = source.properties ?? {};
   checkProperties(properties, problems);
   const descriptions = source.descriptions ?? {};
   const colors = source.colors ?? {};
   checkColors(colors, problems);
 
-  /** The groups whose parts a group renders through its files and the components they render. */
   const usesOf = (group: Group) => {
     const uses = new Set<string>();
     if (group.source)
       for (const file of reachable(group.source)) {
         for (const other of filesOf.get(file) ?? [])
           if (groups.get(other)!.source !== group.source) uses.add(other);
-        // The components its files import and render, such as Bar's Menu and Badge.
         for (const { source: next, names, namespace } of renders.get(file) ?? [])
           if (next !== group.source)
             for (const other of groupsBySource.get(next) ?? [])
@@ -368,7 +324,11 @@ export function buildParts({
     const entry: PartsEntry = {
       root: rootClass,
       ...(group.source && { source: group.source }),
-      parts: ordered.map((name) => ({ class: name, description: described[name] ?? null })),
+      parts: ordered.map((name) => ({
+        class: name,
+        description: described[name] ?? null,
+        ...(slots.has(name) && { slot: true as const }),
+      })),
       states: [...(groupStates.get(group.name) ?? new Map<string, GroupState>())]
         .sort(([a], [b]) => byText(a, b))
         .map(([attribute, { values, free, parts }]) => ({
@@ -398,7 +358,7 @@ export function buildParts({
   return {
     parts: {
       $comment:
-        'Generated by scripts/docs/GenerateParts.ts from packages/ui/src and the descriptions in packages/ui/src/partDescriptions.json; do not edit. Part classes, state attributes and color properties are public and versioned. In a state, values lists what the attribute takes; "" is an attribute set without a value, and an empty list one that takes any value or is selected by its presence alone. colors lists the custom properties that set a component’s colors on one instance, through style or CSS; they don’t inherit.',
+        'Generated by scripts/docs/GenerateParts.ts from packages/ui/src and the descriptions in packages/ui/src/partDescriptions.json; do not edit. Part classes, state attributes and color properties are public and versioned. A part marked slot holds what a prop gives it, placed and never styled: style sheets don’t reach inside it. In a state, values lists what the attribute takes; "" is an attribute set without a value, and an empty list one that takes any value or is selected by its presence alone. colors lists the custom properties that set a component’s colors on one instance, through style or CSS; they don’t inherit.',
       schemaVersion: partsSchemaVersion,
       ...output,
     },

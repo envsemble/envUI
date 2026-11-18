@@ -10,7 +10,6 @@ import { Listbox } from './Listbox.js';
 import { useActiveDescendant } from '../../internal/useRovingFocus.js';
 import type { RichTextReference, RichTextReferenceSource } from '../types.js';
 import '../../../styles/Base.css';
-// Rich text's rules refine the prose typography, so Prose.css comes first.
 import '../../../styles/Prose.css';
 import '../../../styles/RichText.css';
 
@@ -23,25 +22,17 @@ interface MenuHandle {
 }
 
 type MenuProps<I extends SuggestionItem> = SuggestionProps<I> & {
-  /** The list's name, such as People; the provider's Suggestions where the source names none. */
   label: string | undefined;
-  /** Whether the source's items failed to load. */
   failed: boolean;
   pluginKey: PluginKey;
   ref?: Ref<MenuHandle>;
 };
 
-/** Each option's key: its place in the list, since sources may repeat an identity. */
-const keyOf =
+const keyByPlace =
   <I,>(items: readonly I[]) =>
   (item: I) =>
     String(items.indexOf(item));
 
-/**
- * The suggestions of a trigger, such as @: a listbox beside the caret whose options the editor's
- * arrow keys move through and Enter picks, while focus stays in the document. It closes as focus
- * leaves the editor, also with Tab. Its words come from EnvUIProvider's messages.richText.
- */
 function SuggestionMenu<I extends SuggestionItem>({
   items,
   command,
@@ -53,12 +44,12 @@ function SuggestionMenu<I extends SuggestionItem>({
   ref,
 }: MenuProps<I>) {
   const messages = useMessages('richText', richTextMessages);
-  const getKey = keyOf(items);
-  // New items start at the first, in the render that shows them, so a key pressed as they arrive
-  // moves from there.
-  const [active, setActive] = useState({ items, key: items.length ? '0' : null });
-  if (active.items !== items) setActive({ items, key: items.length ? '0' : null });
-  const activeKey = active.items === items ? active.key : items.length ? '0' : null;
+  const getKey = keyByPlace(items);
+  const firstOptionKey = items.length ? '0' : null;
+  const [active, setActive] = useState({ items, key: firstOptionKey });
+  const itemsJustArrived = active.items !== items;
+  if (itemsJustArrived) setActive({ items, key: firstOptionKey });
+  const activeKey = itemsJustArrived ? firstOptionKey : active.key;
   const setActiveKey = (key: string) => setActive({ items, key });
   const listbox = useActiveDescendant({
     items,
@@ -88,33 +79,22 @@ function SuggestionMenu<I extends SuggestionItem>({
         element.removeAttribute(name);
     };
   }, [id, activeDescendant, editor]);
-  // The active option stays in view as the arrows move it past the list's edge: the list scrolls,
-  // never the page, as focus stays in the document.
   useEffect(() => {
     if (!activeDescendant) return;
     const option = editor.view.dom.ownerDocument.getElementById(activeDescendant);
     const list = option?.closest<HTMLElement>('.env-rich-text-suggestions');
-    if (!option || !list) return;
-    const shown = list.getBoundingClientRect();
-    const box = option.getBoundingClientRect();
-    // In layout pixels, as the list may be drawn scaled.
-    const scale = shown.height / list.offsetHeight || 1;
-    const top = shown.top + list.clientTop * scale;
-    const bottom = top + list.clientHeight * scale;
-    if (box.top < top) list.scrollTop -= (top - box.top) / scale;
-    else if (box.bottom > bottom) list.scrollTop += (box.bottom - bottom) / scale;
+    if (option && list) scrollListNotPageToShow(option, list);
   }, [activeDescendant, editor]);
   useImperativeHandle(
     ref,
     () => ({
       onKeyDown(event) {
-        if (event.isComposing || event.keyCode === 229) return false;
-        // Tab leaves the editor, and the list closes as focus goes.
+        const imeComposing = event.isComposing || event.keyCode === 229;
+        if (imeComposing) return false;
         if (event.key === 'Tab') {
           exitSuggestion(editor.view, pluginKey);
           return false;
         }
-        // Enter always belongs to the list while it shows, also while it loads.
         if (event.key === 'Enter') {
           if (!loading) input.onKeyDown(event);
           return true;
@@ -146,11 +126,19 @@ function SuggestionMenu<I extends SuggestionItem>({
   );
 }
 
-/**
- * Suggestions for a trigger. Tiptap owns query matching, asynchronous cancellation and staleness,
- * and positioning; the list mounts inside the editor's root, beside the caret and above what the
- * editor sits in, such as a Dialog, and closes as focus leaves the editor.
- */
+function scrollListNotPageToShow(option: HTMLElement, list: HTMLElement) {
+  const shown = list.getBoundingClientRect();
+  const box = option.getBoundingClientRect();
+  const drawnScale = shown.height / list.offsetHeight || 1;
+  const top = shown.top + list.clientTop * drawnScale;
+  const bottom = top + list.clientHeight * drawnScale;
+  if (box.top < top) list.scrollTop -= (top - box.top) / drawnScale;
+  else if (box.bottom > bottom) list.scrollTop += (box.bottom - bottom) / drawnScale;
+}
+
+const fixedAboveScrollingContainers = { strategy: 'fixed' } as const;
+const closeOnEditorBlurOnly = false;
+
 export function createSuggestionOptions<I extends SuggestionItem>(source: {
   char: string;
   label?: string;
@@ -167,11 +155,8 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
     minQueryLength: source.minQueryLength,
     debounce: source.debounce,
     allowSpaces: source.allowSpaces,
-    // Fixed, so that a scrolling container around the editor doesn't clip the list.
-    floatingUi: { strategy: 'fixed' },
-    // The list closes as focus leaves the editor (its onBlur), which a press elsewhere does; a
-    // press that leaves focus in the editor, such as on a formatting button, keeps it open.
-    dismissOnOutsideClick: false,
+    floatingUi: fixedAboveScrollingContainers,
+    dismissOnOutsideClick: closeOnEditorBlurOnly,
     items: async (request) => {
       failed = false;
       try {
@@ -197,11 +182,12 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
             props: menuProps(props),
             className: 'env-rich-text-suggestions-positioner',
           });
-          // Inside the editor's root, so it shares the editor's theme and layer, also in a Dialog,
-          // which treats a press on it as one inside.
           const element = component.element as HTMLElement;
-          const host = props.editor.view.dom.closest('.env-rich-text-editor');
-          (host ?? props.editor.view.dom.ownerDocument.body).append(element);
+          const editorRootSharingThemeLayerAndDialog =
+            props.editor.view.dom.closest('.env-rich-text-editor');
+          (editorRootSharingThemeLayerAndDialog ?? props.editor.view.dom.ownerDocument.body).append(
+            element,
+          );
           const release = props.mount(element);
           unmount = () => {
             release();

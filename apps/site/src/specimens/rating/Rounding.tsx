@@ -3,7 +3,6 @@ import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../figures/MotionStage';
 
-/* The value steps up and past the end; the stars and the number snap to half steps, and stop at 5. */
 const values = [4.3, 4.6, 4.8, 5.4];
 const steps = [900, 900, 900, 1020];
 
@@ -20,7 +19,6 @@ function Rounding() {
   );
 }
 
-/** A rating given 4.3, 4.6, 4.8 and 5.4, shown to the nearest half star within the scale. */
 export default function RoundingMotion() {
   return (
     <SpecimenFrame>

@@ -22,7 +22,6 @@ import { dialogOptions } from './SelectOptions.fixture.js';
 
 export const mount = 'standalone';
 
-/** Every field and editor, each in a box named for its kind. */
 function Fields() {
   const fields: [string, ReactNode][] = [
     ['text-field', <TextField label="Name" defaultValue="Sam Lee" />],
@@ -59,10 +58,6 @@ function Fields() {
   );
 }
 
-/**
- * Every field and editor on the page, a card, a muted surface and a popup surface, as on a sheet
- * or in a dialog, in the light and the dark theme.
- */
 export default function FieldFixture() {
   return (
     <Column gap={6}>

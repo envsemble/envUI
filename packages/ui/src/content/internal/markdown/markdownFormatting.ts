@@ -84,18 +84,14 @@ export function formatMarkdown(
   );
 }
 
-/** Whether a link may lead here: a URL Markdown keeps, or a relative path, without control characters. */
+// eslint-disable-next-line no-control-regex
+const controlCharacters = /[\u0000-\u001f\u007f]/u;
+
 export function isMarkdownHref(destination: string) {
   const href = destination.trim();
-  // Control characters are what the pattern looks for: a link may not contain them.
-  // eslint-disable-next-line no-control-regex
-  return Boolean(href && defaultUrlTransform(href) && !/[\u0000-\u001f\u007f]/u.test(href));
+  return Boolean(href && defaultUrlTransform(href) && !controlCharacters.test(href));
 }
 
-/**
- * URL validation and Markdown escaping are identical for manual and application pickers. A
- * destination isMarkdownHref refuses throws, which the editor reports in the provider's words.
- */
 export function insertMarkdownLink(
   selection: MarkdownSelection,
   link: MarkdownLink,

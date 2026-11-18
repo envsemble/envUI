@@ -1,6 +1,6 @@
 'use client';
 
-// @client-module It provides the link context, which React reads only in client modules.
+// @client-module
 
 import type { ComponentType, ReactNode } from 'react';
 import {

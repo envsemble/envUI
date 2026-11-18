@@ -1,5 +1,6 @@
-/** The root's font size in pixels, what a rem is, in the document of `element` or else this one. */
+const browserDefaultFontPx = 16;
+
 export function remPixels(element?: Element) {
   const root = (element?.ownerDocument ?? document).documentElement;
-  return Number.parseFloat(getComputedStyle(root).fontSize) || 16;
+  return Number.parseFloat(getComputedStyle(root).fontSize) || browserDefaultFontPx;
 }

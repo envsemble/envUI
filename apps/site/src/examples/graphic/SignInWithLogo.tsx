@@ -1,6 +1,5 @@
 import { Button, Graphic } from '@envsemble/envui';
 
-/** Stands in for the import of the company's logo file, such as `import logo from './logo.svg'`. */
 const logo =
   'data:image/svg+xml,' +
   encodeURIComponent(

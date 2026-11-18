@@ -20,9 +20,6 @@ import { CheckboxItem, Group, RadioGroup, RadioItem } from './MenuChoices.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
-// Menu's parts: the root, header and separator here; the items in MenuItem.tsx, the submenu in
-// MenuSubmenu.tsx, and the groups and the items that choose in MenuChoices.tsx.
-
 export type { OpenChangeDetails, OpenChangeReason } from '../internal/menuOpenChange.js';
 export type { ItemProps } from './MenuItem.js';
 export type { SubmenuProps } from './MenuSubmenu.js';
@@ -113,7 +110,6 @@ function Root({
       modal={containedModal(portal, true)}
     >
       <BaseMenu.Trigger ref={triggerRef} render={trigger} />
-      {/* Base UI names the menu after its trigger; the menu's own label replaces that name. */}
       <MenuPopup
         parts={menuParts}
         label={label}
@@ -151,8 +147,6 @@ function Separator({ className, ...props }: SeparatorProps) {
   return <BaseMenu.Separator {...props} className={classNames('env-menu-separator', className)} />;
 }
 
-// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
-// application leaves unused.
 const RootPart = /* @__PURE__ */ markTriggerOwner(
   /* @__PURE__ */ withDisplayName(Root, 'Menu.Root'),
 );

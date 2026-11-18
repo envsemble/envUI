@@ -4,7 +4,6 @@ import * as fixture from '../fixture/Stacking.fixture.tsx';
 import { box, keyboard, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** Whether nothing between an element and the root makes a stacking context of its own. */
 function inRootContext(node: Element) {
   for (let parent = node.parentElement; parent; parent = parent.parentElement) {
     const style = getComputedStyle(parent);
@@ -22,7 +21,6 @@ function inRootContext(node: Element) {
 }
 
 const zIndex = (element: Element) => Number(getComputedStyle(element).zIndex);
-/** The layer, by its class, that holds an element. */
 const layerOf = (element: Element, className: string) => element.closest(`.${className}`)!;
 
 test(
@@ -39,13 +37,15 @@ test(
     })!;
     const dialogLayer = layerOf(dialog.element(), 'env-dialog-positioner');
 
-    // A menu inside the dialog: its items are what a press over them reaches.
     await dialog.getByRole('button', { name: 'Actions' }).click();
     const menu = page.getByRole('menu', { name: 'Dialog actions' });
     await expect.element(menu).toBeVisible();
     const menuLayer = layerOf(menu.element(), 'env-menu-positioner');
     for (const layer of [backdrop, dialogLayer, menuLayer]) expect(inRootContext(layer)).toBe(true);
-    expect(zIndex(backdrop)).toBeLessThan(zIndex(dialogLayer));
+    expect(zIndex(backdrop)).toBe(zIndex(dialogLayer));
+    expect(backdrop.compareDocumentPosition(dialogLayer) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
     expect(zIndex(dialogLayer)).toBeLessThan(zIndex(menuLayer));
     const item = box(menu.getByRole('menuitem', { name: 'Archive' }));
     expect(
@@ -57,8 +57,6 @@ test(
     await expect.poll(() => shown(menu)).toBe(false);
     await expect.element(dialog).toBeVisible();
 
-    // A notice shown from the dialog waits until it closes (Toast's tests cover that), but its
-    // layer still stacks over the dialog's.
     await dialog.getByRole('button', { name: 'Show a notice' }).click();
     const notice = page.getByText('Saved over the dialog');
     await expect.poll(() => notice.query()).not.toBeNull();
@@ -67,7 +65,6 @@ test(
     expect(inRootContext(toastLayer)).toBe(true);
     expect(zIndex(toastLayer)).toBeGreaterThan(zIndex(dialogLayer));
 
-    // A tooltip in the dialog stacks over the dialog and the notice.
     await dialog.getByRole('button', { name: 'Hover for a tooltip' }).hover();
     const tooltip = page.getByText('Explains the control');
     await expect.element(tooltip).toBeVisible();
@@ -77,3 +74,35 @@ test(
     expect(zIndex(tooltipLayer)).toBeGreaterThan(zIndex(dialogLayer));
   },
 );
+
+test('a dialog opened from a sheet covers the sheet, its backdrop included', async () => {
+  mount(fixture);
+  await page.getByRole('button', { name: 'Open the sheet' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Filters' });
+  await expect.element(sheet).toBeVisible();
+  const sheetSurface = sheet.element();
+  await sheet.getByRole('button', { name: 'Discard…' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Discard the filters?' });
+  await expect.element(dialog).toBeVisible();
+  const backdrop = dialog
+    .element()
+    .closest('.env-overlay-theme')!
+    .querySelector<HTMLElement>('.env-dialog-backdrop')!;
+  expect(backdrop).not.toBeNull();
+  await expect.poll(() => getComputedStyle(backdrop).opacity).toBe('1');
+
+  const surface = box(sheetSurface);
+  const over = box(dialog);
+  const x = surface.x + surface.width - 8;
+  const y = surface.y + 8;
+  expect(x < over.x || x > over.x + over.width || y < over.y || y > over.y + over.height).toBe(
+    true,
+  );
+  expect(document.elementFromPoint(x, y)).toBe(backdrop);
+  const middle = document.elementFromPoint(over.x + over.width / 2, over.y + over.height / 2);
+  expect(dialog.element().contains(middle)).toBe(true);
+
+  await keyboard.press('Escape');
+  await expect.poll(() => dialog.query()).toBeNull();
+  await expect.element(sheet).toBeVisible();
+});

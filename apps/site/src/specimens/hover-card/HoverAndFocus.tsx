@@ -4,10 +4,6 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
-/*
- * The pointer rests on "roadmap", and the card opens after a moment. The pointer moves down onto
- * the card, which stays open while it reads; then it leaves, and the card closes.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-link', x: 0.5, y: 2.5 },
@@ -23,7 +19,6 @@ const script: PointerStep[] = [
 function Hovering() {
   usePointer(script);
   return (
-    // The sentence keeps to the top of the stage, so the card has room to open below it.
     <div style={{ display: 'grid', alignContent: 'start', minBlockSize: '9rem' }}>
       <Text>
         The launch depends on the pricing review and the{' '}
@@ -41,7 +36,6 @@ function Hovering() {
   );
 }
 
-/** A hover card opened by a resting pointer, which it keeps open as the pointer moves onto it. */
 export default function HoverAndFocus() {
   return (
     <SpecimenFrame>

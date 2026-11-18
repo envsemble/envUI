@@ -1,27 +1,24 @@
-import { Card, Grid } from '@envsemble/envui';
+import { Column, Grid, Text } from '@envsemble/envui';
 
-const projects = [
-  { name: 'Website refresh', owner: 'Priya Shah', description: 'New pages for the spring launch.' },
-  { name: 'Quarterly report', owner: 'Sam Lee', description: 'Figures for the last three months.' },
-  {
-    name: 'Onboarding guide',
-    owner: 'Alex Morgan',
-    description: 'The first week for new members.',
-  },
-  { name: 'Data migration', owner: 'Sam Lee', description: 'Moving the archive to the new store.' },
+const figures = [
+  { label: 'Open tasks', value: '128' },
+  { label: 'Done this week', value: '42' },
+  { label: 'Overdue', value: '7' },
+  { label: 'Members', value: '16' },
 ];
 
 export default function ColumnsThatFit() {
   return (
-    // As many columns as fit, each at least 14 rem wide; one column in a narrow container.
-    <Grid columns={{ min: '14rem' }} gap={4}>
-      {projects.map((project) => (
-        <Card
-          key={project.name}
-          title={project.name}
-          meta={project.owner}
-          description={project.description}
-        />
+    <Grid columns={{ min: '9rem' }} gap={5} render={<dl />}>
+      {figures.map(({ label, value }) => (
+        <Column key={label} gap={1}>
+          <Text render={<dt />} variant="caption" emphasis="muted">
+            {label}
+          </Text>
+          <Text render={<dd />} variant="headline" style={{ margin: 0 }}>
+            {value}
+          </Text>
+        </Column>
       ))}
     </Grid>
   );

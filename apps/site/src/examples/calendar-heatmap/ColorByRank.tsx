@@ -1,6 +1,5 @@
 import { CalendarHeatmap, type CalendarHeatmapDay } from '@envsemble/envui';
 
-/** Stands in for sixteen weeks of edits: a few very busy days among quiet ones. */
 const data: CalendarHeatmapDay[] = Array.from({ length: 112 }, (_, index) => {
   const time = Date.UTC(2025, 11, 10) + index * 86_400_000;
   const busy = index % 17 === 3 ? 40 : 0;
@@ -10,7 +9,6 @@ const data: CalendarHeatmapDay[] = Array.from({ length: 112 }, (_, index) => {
   };
 });
 
-// Quantiles of the active days make each color step hold about as many days.
 const active = data
   .map((day) => day.value)
   .filter((value) => value > 0)

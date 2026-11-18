@@ -78,10 +78,6 @@ const suggested: CommandPaletteItem[] = ['Home', 'Settings'].map((name) => ({
   group: 'Suggested',
 }));
 
-/**
- * One palette of the empty states: its own trigger, the pages it finds once people type, and the
- * chosen page in a log under its name.
- */
 function EmptyPalette({
   name,
   ...props
@@ -118,11 +114,6 @@ function EmptyPalette({
   );
 }
 
-/**
- * The empty states: the defaults before people type and when nothing matches, the same in another
- * language from EnvUIProvider's messages, default items with the application's own words and
- * no icon, and a palette whose results are always on their way.
- */
 function EmptyStates() {
   return (
     <div className="fixture-section" data-testid="palette-empty">
@@ -150,7 +141,6 @@ function EmptyStates() {
   );
 }
 
-/** The palette in light and in dark, and its empty states. */
 export default function CommandPaletteFixture() {
   return (
     <>

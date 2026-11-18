@@ -38,7 +38,6 @@ export default function FilterPanel() {
   return (
     <Column gap={4} align="start">
       <Sheet
-        // Shown open in the docs; without defaultOpen, it opens from its trigger.
         defaultOpen
         trigger={
           <Button variant="secondary" startIcon={<IconFilterList />}>
@@ -65,12 +64,7 @@ export default function FilterPanel() {
         }
       >
         <Column gap={5}>
-          <RadioGroup
-            orientation="vertical"
-            label="Status"
-            value={status}
-            onValueChange={setStatus}
-          >
+          <RadioGroup label="Status" value={status} onValueChange={setStatus}>
             <Radio value="any" label="Any status" />
             <Radio value="active" label="Active" />
             <Radio value="paused" label="Paused" />
@@ -84,7 +78,6 @@ export default function FilterPanel() {
           />
         </Column>
       </Sheet>
-      {/* The list takes the width of a column of the page. */}
       {shown.length > 0 ? (
         <List.Root aria-label="Projects" style={{ inlineSize: 'min(100%, 24rem)' }}>
           {shown.map((project) => (

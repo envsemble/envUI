@@ -9,8 +9,6 @@ beforeEach(() => {
 
 test('an item with key caps in its line keeps its line, its bullet beside the keys', () => {
   const items = [...page.getByTestId('keys').element().querySelectorAll('li')].map((item) => {
-    // The bullet's middle, from the item's top, sits within each key cap's height: a margin on a
-    // key would push the line, and the keys, down below the bullet.
     const bullet = getComputedStyle(item, '::after');
     const middle = Number.parseFloat(bullet.top) + Number.parseFloat(bullet.height) / 2;
     const top = item.getBoundingClientRect().top;
@@ -29,6 +27,5 @@ test('rendered again with a new renderLink, Markdown keeps its elements and uses
   await expect.element(link).toHaveAttribute('data-round', '0');
   await scope.getByRole('button', { name: 'Render again' }).click();
   await expect.element(link).toHaveAttribute('data-round', '1');
-  // The heading is the same element: a page's anchors, focus and scroll position survive.
   expect(heading.isConnected).toBe(true);
 });

@@ -39,12 +39,10 @@ export function useDirection(
   useLayoutEffect(() => {
     if (provided !== undefined) return;
     read();
-    // A dir attribute that changes while focus stays inside, as when a page switches language,
-    // turns the arrow keys at once rather than at the next key press.
     const document = ref?.current?.ownerDocument;
     if (!document || typeof MutationObserver === 'undefined') return;
-    // Committed at once, so the next key press already reads the new direction.
-    const observer = new MutationObserver(() => flushSync(read));
+    const turnArrowKeysBeforeNextKeyPress = () => flushSync(read);
+    const observer = new MutationObserver(turnArrowKeysBeforeNextKeyPress);
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['dir'],
@@ -70,7 +68,6 @@ export function useDirection(
 export function useDirectionScope<T extends Element>(forwardedRef?: Ref<T>) {
   const elementRef = useRef<T | null>(null);
   const [direction, read] = useDirection(elementRef);
-  // A React 19 callback ref may return a cleanup, which runs in place of a call with null.
   const ref = useCallback(
     (element: T | null) => {
       elementRef.current = element;

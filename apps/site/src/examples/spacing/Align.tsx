@@ -3,7 +3,6 @@ import { Button, IconButton, Row, SearchField, SegmentedControl, Select } from '
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
-// Controls of one size are as tall as each other, so the row lines up on its own.
 export default function Align() {
   const [view, setView] = useState('list');
   return (

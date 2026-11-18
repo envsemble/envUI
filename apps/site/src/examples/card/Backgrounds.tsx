@@ -2,7 +2,6 @@ import { Card, Column, Text } from '@envsemble/envui';
 
 export default function Backgrounds() {
   return (
-    // As wide as a column of cards.
     <Column gap={4} style={{ inlineSize: 'min(100%, 22rem)' }}>
       <Card title="Northwind launch">
         <Text emphasis="muted">Plans and milestones for the spring launch.</Text>

@@ -1,10 +1,3 @@
-// Which browser tests a source file concerns, by what their fixtures import: the component tests
-// and the Playwright specs, both called specs below, as in TestScope.ts. A spec opens fixtures,
-// `?fixture=<name>` of tests/fixture/App.tsx, which is `<Name>.fixture.tsx`, or a page such as
-// ForcedColors.html, or renders library source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
-// components by name, and those import the modules and style sheets they draw with, all read with
-// the TypeScript parser, so how an import is written doesn't change what it finds. TestScope.ts
-// selects specs with it; tests/tooling/TestScope.test.ts covers it.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import ts from 'typescript';
@@ -12,40 +5,27 @@ import { fixtureName } from '../../tests/fixture/FixtureName.ts';
 
 const library = 'packages/ui/src';
 const fixtures = 'tests/fixture';
-/** The browser specs' folder: the library's in library/, the site's in site/, helpers in support/. */
 const specs = 'tests/browser';
-/**
- * The folders of specs, with the ending of their files: Playwright's browser specs, and the
- * library's component tests, which Vitest mounts in the browser (tests/component).
- */
 const specFolders = [
   [`${specs}/library`, '.spec.ts'],
   [`${specs}/site`, '.spec.ts'],
   ['tests/component', '.test.tsx'],
 ] as const;
 
-/** An import of a module: its specifier and the names it imports, or all of them. */
 export interface Import {
   specifier: string;
   names: string[] | 'all';
 }
 
-/** A module's syntax tree, parsed as TSX so fixtures, specs and library modules all read. */
 const parse = (source: string) =>
   ts.createSourceFile('module.tsx', source, ts.ScriptTarget.Latest, false, ts.ScriptKind.TSX);
 
-/**
- * The imports of a module's source, and of the modules it writes out in template literals to
- * render, as a spec does: static imports, re-exports and `import()`, with what is imported only
- * as a type left out.
- */
 export function importsOf(source: string): Import[] {
   const found: Import[] = [];
   const add = (specifier: ts.Expression | undefined, names: Import['names']) => {
     if (specifier && ts.isStringLiteralLike(specifier) && names.length)
       found.push({ specifier: specifier.text, names });
   };
-  /** The names a list imports or re-exports, by their name in the module that declares them. */
   const valueNames = (elements: ts.NodeArray<ts.ImportSpecifier | ts.ExportSpecifier>) =>
     elements
       .filter((element) => !element.isTypeOnly)
@@ -74,7 +54,6 @@ export function importsOf(source: string): Import[] {
     }
     if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword)
       add(node.arguments[0], 'all');
-    // A module a spec writes out to render, its expressions standing in as values.
     const written = ts.isNoSubstitutionTemplateLiteral(node)
       ? node.text
       : ts.isTemplateExpression(node)
@@ -87,7 +66,6 @@ export function importsOf(source: string): Import[] {
   return found;
 }
 
-/** Reads the repository's sources once, by path from the root. */
 class Sources {
   readonly root: string;
   readonly #texts = new Map<string, string | undefined>();
@@ -106,7 +84,6 @@ class Sources {
     return this.#texts.get(path);
   }
 
-  /** The file a relative specifier names from a module, as `./Button.js` names `Button.tsx`. */
   relative(from: string, specifier: string) {
     const target = posix.join(posix.dirname(from), specifier.replace(/\?.*$/, ''));
     const base = target.replace(/\.js$/, '');
@@ -115,7 +92,6 @@ class Sources {
     );
   }
 
-  /** The library module an import of the package names: an entry point, or an icon. */
   entry(specifier: string) {
     const subpath = specifier.slice('@envsemble/envui'.length).replace(/^\//, '');
     if (!subpath) return `${library}/index.ts`;
@@ -125,10 +101,6 @@ class Sources {
     return this.text(path) === undefined ? undefined : path;
   }
 
-  /**
-   * The names a library module exports, each with the modules that declare it: its own
-   * declarations, and those it re-exports, followed to where they are declared.
-   */
   exportsOf(path: string): Map<string, string[]> {
     const cached = this.#exports.get(path);
     if (cached) return cached;
@@ -154,7 +126,6 @@ class Sources {
       else if (ts.isExportDeclaration(statement)) {
         const clause = statement.exportClause;
         if (!statement.moduleSpecifier || !ts.isStringLiteral(statement.moduleSpecifier)) {
-          // `export { a, b as c }` of the module's own names.
           if (clause && ts.isNamedExports(clause))
             for (const element of clause.elements) exported.set(element.name.text, [path]);
           continue;
@@ -175,7 +146,6 @@ class Sources {
     return exported;
   }
 
-  /** The files an import names: the module, or for the package's entry the modules declaring the names. */
   resolve(from: string, { specifier, names }: Import): string[] {
     if (specifier.startsWith('.')) {
       const target = this.relative(from, specifier);
@@ -190,7 +160,6 @@ class Sources {
     return names.flatMap((name) => exported.get(name) ?? []);
   }
 
-  /** The files a module imports. */
   importsOf(path: string) {
     const cached = this.#imports.get(path);
     if (cached) return cached;
@@ -202,7 +171,6 @@ class Sources {
   }
 }
 
-/** The fixture module each `?fixture=<name>` of App.tsx mounts: `<Name>.fixture.tsx`. */
 function fixtureFiles(root: string) {
   return new Map(
     readdirSync(resolve(root, fixtures))
@@ -211,7 +179,6 @@ function fixtureFiles(root: string) {
   );
 }
 
-/** The modules a spec opens or renders, by what its source and the helpers it imports name. */
 function specRoots(sources: Sources, path: string, fixtureModules: Map<string, string>) {
   const helpers = importsOf(sources.text(path) ?? '')
     .map(({ specifier }) => specifier)
@@ -229,8 +196,6 @@ function specRoots(sources: Sources, path: string, fixtureModules: Map<string, s
       for (const [, script] of html.matchAll(/<script[^>]*\bsrc="\/?([^"]+)"/g))
         if (!/^main\.tsx$/.test(script)) roots.add(`${fixtures}/${script}`);
     }
-    // Imports of the fixture's modules and of the library, also those of source it writes out to
-    // render, as a module in a template string.
     for (const item of importsOf(text))
       if (!item.specifier.startsWith('../support/'))
         for (const module of sources.resolve(file, item)) roots.add(module);
@@ -238,10 +203,6 @@ function specRoots(sources: Sources, path: string, fixtureModules: Map<string, s
   return roots;
 }
 
-/**
- * Every spec's path from the root, by its name: tests/browser/library/<Name>.spec.ts or site/, or
- * the component test tests/component/<Name>.test.tsx.
- */
 export function specPaths(root: string) {
   const paths = new Map<string, string>();
   for (const [folder, ending] of specFolders) {
@@ -253,10 +214,8 @@ export function specPaths(root: string) {
   return paths;
 }
 
-/** Whether a spec's file is a component test, which Vitest runs, rather than a Playwright spec. */
 export const isComponentTest = (path: string) => path.endsWith('.test.tsx');
 
-/** The library's modules, by path from the root, the generated icons left out. */
 function libraryModules(root: string, directory = library): string[] {
   return readdirSync(resolve(root, directory), { withFileTypes: true }).flatMap((entry) => {
     const path = `${directory}/${entry.name}`;
@@ -265,12 +224,6 @@ function libraryModules(root: string, directory = library): string[] {
   });
 }
 
-/**
- * The browser specs a changed file concerns, by what their fixtures use. A fixture module concerns
- * the specs that open it. A library file concerns the specs whose fixtures use it by name, or
- * where none does, those that use the nearest modules that import it: Button's for its style
- * sheet, and for a private helper, the components built on it.
- */
 export function fixtureUse(root: string) {
   const sources = new Sources(root);
   const fixtureModules = fixtureFiles(root);
@@ -282,7 +235,6 @@ export function fixtureUse(root: string) {
       if (seen.has(path)) continue;
       seen.add(path);
       users.set(path, (users.get(path) ?? new Set()).add(name));
-      // A fixture module leads on to what it imports; a library module is used where it is named.
       if (path.startsWith(`${fixtures}/`) && /\.tsx?$/.test(path))
         pending.push(...sources.importsOf(path));
     }
@@ -295,7 +247,6 @@ export function fixtureUse(root: string) {
   for (const [path, names] of users)
     if (path.startsWith(`${library}/`))
       for (const name of names) breadths.set(name, (breadths.get(name) ?? 0) + 1);
-  /** The specs a file concerns, the most specific first: those whose fixtures use the fewest modules. */
   const specsOf = (path: string): string[] =>
     [...concerned(path)].sort(
       (a, b) => (breadths.get(a) ?? 0) - (breadths.get(b) ?? 0) || a.localeCompare(b),

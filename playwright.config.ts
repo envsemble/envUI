@@ -3,31 +3,27 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 import { defaultPorts, resolveServers } from './scripts/test/CheckoutMarker.ts';
 
-/** The projects the command line names, if it names any. */
+const projectFlag = '--project=';
 const namedProjects = process.argv.flatMap((argument, index, all) =>
   argument === '--project'
     ? [all[index + 1]]
-    : argument.startsWith('--project=')
-      ? [argument.slice(10)]
+    : argument.startsWith(projectFlag)
+      ? [argument.slice(projectFlag.length)]
       : [],
 );
-/**
- * The servers this run needs (tests/browser/support/Servers.ts): ENVUI_SERVERS lists them (site,
- * site-build, fixture, or none), as `npm run check` sets it for the specs it picked. Without it a
- * run that only scans the hosted build (the a11y projects) needs none, and any other run needs all
- * three.
- */
+
+const allServers = ['site', 'site-build', 'fixture'];
+const scansOnlyTheHostedBuild = () =>
+  namedProjects.length > 0 && namedProjects.every((project) => project === 'a11y');
+
 function wantedServers() {
   if (process.env.ENVUI_SERVERS)
     return new Set(process.env.ENVUI_SERVERS.split(',').filter((name) => name !== 'none'));
-  if (namedProjects.length && namedProjects.every((project) => project === 'a11y'))
-    return new Set<string>();
-  return new Set(['site', 'site-build', 'fixture']);
+  if (scansOnlyTheHostedBuild()) return new Set<string>();
+  return new Set(allServers);
 }
 const wanted = wantedServers();
 
-// Ports, and whether a server running there belongs to this checkout and can be reused. Specs read
-// the chosen ports through tests/browser/support/Servers.ts; see scripts/test/CheckoutMarker.ts.
 const servers = await resolveServers(
   Object.fromEntries(
     Object.entries({
@@ -42,35 +38,44 @@ const servers = await resolveServers(
   ),
 );
 
-/**
- * Browser workers: ENVUI_WORKERS, a count or a share of the cores such as 50%; else half the cores
- * locally and 3 in CI. Each worker runs one browser, and the development servers serve them all.
- */
-const configured = process.env.ENVUI_WORKERS;
-const workers = configured
-  ? /^\d+$/.test(configured)
-    ? Number(configured)
-    : configured
+const workersInCI = 3;
+const localShareOfCores = '50%';
+const configuredWorkers = process.env.ENVUI_WORKERS;
+const workers = configuredWorkers
+  ? /^\d+$/.test(configuredWorkers)
+    ? Number(configuredWorkers)
+    : configuredWorkers
   : process.env.CI
-    ? 3
-    : '50%';
-/**
- * Firefox and WebKit stop gaining beyond a few workers each (on 24 threads, about 1.5 tests a second
- * from 4 workers on), and with more their slowest specs run out of time. Locally each takes at most
- * half the workers, and 4; CI keeps its 3 shared. They come first in the projects, so their capped
- * share starts at once and Chromium and the accessibility scan, uncapped, fill the rest and the end.
- * A run of one engine alone, as `npm run verify` makes, keeps the cap of 4 but not the half.
- */
+    ? workersInCI
+    : localShareOfCores;
+
+const mostWorkersFirefoxAndWebKitGainFrom = 4;
 const totalWorkers =
   typeof workers === 'number'
     ? workers
     : Math.max(1, Math.floor((availableParallelism() * parseFloat(workers)) / 100));
+const runsOneEngineAlone = namedProjects.length === 1;
 const engineWorkers = process.env.CI
   ? undefined
   : Math.max(
       1,
-      Math.min(4, namedProjects.length === 1 ? totalWorkers : Math.floor(totalWorkers / 2)),
+      Math.min(
+        mostWorkersFirefoxAndWebKitGainFrom,
+        runsOneEngineAlone ? totalWorkers : Math.floor(totalWorkers / 2),
+      ),
     );
+
+const testsThatDependOnTheEngine = /@engines/;
+const bounceTrackingProtectionDisabled = 0;
+const firefoxWithoutBounceTrackerWarnings = {
+  firefoxUserPrefs: { 'privacy.bounceTrackingProtection.mode': bounceTrackingProtectionDisabled },
+};
+
+const softwareRasterRoundingButNotOnePercentLightness = 0.01;
+const grayscaleTextAndWholeTileRedraws = ['--disable-lcd-text', '--disable-partial-raster'];
+
+const bundleDependenciesAgainOnStart = '--force';
+const buildAndPrerenderEveryPageTimeout = 180_000;
 
 export default defineConfig({
   testDir: './tests/browser',
@@ -88,30 +93,21 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     viewport: { width: 1440, height: 1000 },
   },
-  // `npm run test:browser` runs the behavior projects; the gates below have their own scripts.
   projects: [
-    // Firefox and WebKit run only the tests tagged @engines, which depend on the engine; the rest
-    // run once, in Chromium.
     {
       name: 'firefox',
       testIgnore: /LiveDevelopment/,
-      grep: /@engines/,
+      grep: testsThatDependOnTheEngine,
       workers: engineWorkers,
       use: {
         ...devices['Desktop Firefox'],
-        // Firefox's bounce-tracking protection, after many quick visits to one address, warns that
-        // 127.0.0.1 "has been classified as a bounce tracker" in the console of whichever test is
-        // running, which fails the specs that collect console warnings.
-        launchOptions: {
-          // 0 is MODE_DISABLED: no classification, so no warning.
-          firefoxUserPrefs: { 'privacy.bounceTrackingProtection.mode': 0 },
-        },
+        launchOptions: firefoxWithoutBounceTrackerWarnings,
       },
     },
     {
       name: 'webkit',
       testIgnore: /LiveDevelopment/,
-      grep: /@engines/,
+      grep: testsThatDependOnTheEngine,
       workers: engineWorkers,
       use: { ...devices['Desktop Safari'] },
     },
@@ -122,13 +118,11 @@ export default defineConfig({
       dependencies: ['chromium', 'firefox', 'webkit'],
       use: { ...devices['Desktop Chrome'] },
     },
-    // `npm run test:a11y`: axe over a page of each kind the site has, Chromium only.
     {
       name: 'a11y',
       testDir: './tests/accessibility',
       use: { ...devices['Desktop Chrome'], screenshot: 'off' },
     },
-    // `npm run test:visual`: the screenshot baseline, rendered in the Linux Playwright image.
     {
       name: 'visual',
       testDir: './tests/visual',
@@ -140,10 +134,7 @@ export default defineConfig({
           animations: 'disabled',
           caret: 'hide',
           scale: 'css',
-          // Chromium's software raster varies anti-aliased edge pixels by ±1 per channel between
-          // runs. 0.01 absorbs that rounding (a YIQ distance of about 2.6 levels) while a colour
-          // change of about 1% lightness or more still fails; the default, 0.2, would miss most.
-          threshold: 0.01,
+          threshold: softwareRasterRoundingButNotOnePercentLightness,
           stylePath: fileURLToPath(new URL('./tests/visual/Screenshot.css', import.meta.url)),
         },
       },
@@ -154,24 +145,13 @@ export default defineConfig({
         locale: 'en-US',
         timezoneId: 'UTC',
         colorScheme: 'light',
-        // Grayscale text everywhere. Chromium draws subpixel (LCD) text only where the content
-        // sits in an opaque, uncomposited layer, so a fixed or sticky element elsewhere on the page
-        // would switch every specimen's antialiasing; the baseline records grayscale. Whole tiles
-        // are drawn again rather than only the changed part of one: a partial redraw's edges
-        // depend on which frames came before, so the tooltip's capture varied by a pixel run to run.
-        launchOptions: { args: ['--disable-lcd-text', '--disable-partial-raster'] },
+        launchOptions: { args: grayscaleTextAndWholeTileRedraws },
       },
     },
   ],
-  // The site's development server, for the specs that need it. --force bundles the dependencies
-  // again as it starts. Vite reuses its bundle while the lockfile is unchanged, so after a change
-  // imports a dependency it holds none of, such as a code theme loaded on demand, the first page to
-  // ask for it makes Vite bundle it and reload every page the server has open, and the tests on those
-  // pages lose their state midway. The site's build and the fixture are served as built
-  // (scripts/test/ServeBuild.ts).
   webServer: [
     servers.site && {
-      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.site.port} --strictPort --force`,
+      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.site.port} --strictPort ${bundleDependenciesAgainOnStart}`,
       cwd: 'apps/site',
       url: `http://127.0.0.1:${servers.site.port}`,
       reuseExistingServer: servers.site.reuse,
@@ -180,9 +160,7 @@ export default defineConfig({
       command: `node scripts/test/ServeBuild.ts --app site --port ${servers['site-build'].port}`,
       url: `http://127.0.0.1:${servers['site-build'].port}`,
       reuseExistingServer: servers['site-build'].reuse,
-      // It builds the site and its server entry and pre-renders every page first: on a busy
-      // machine, or in the visual baseline's container, longer than a minute.
-      timeout: 180_000,
+      timeout: buildAndPrerenderEveryPageTimeout,
     },
     servers.fixture && {
       command: `node scripts/test/ServeBuild.ts --app fixture --port ${servers.fixture.port}`,

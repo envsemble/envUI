@@ -8,23 +8,9 @@ import { commands } from './support/Commands.ts';
 import { ShardByDuration } from './support/ShardByDuration.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-/**
- * The library's component tests: each fixture mounted straight into a real browser page, with no
- * server or page load per test. Each engine is a project: `npm run test:component` runs every test
- * in Chromium, and `npm run test:component:engines` those tagged `engines`, which depend on the
- * engine, in Firefox and WebKit. `ENVUI_WORKERS` sets the files run at once, as for the Playwright
- * specs.
- */
 const workers = process.env.ENVUI_WORKERS ? Number(process.env.ENVUI_WORKERS) : undefined;
 const viewport = { width: 1440, height: 1000 };
-// The language and time zone CI runs in, on every machine, so dates and numbers read the same.
 const contextOptions = { locale: 'en-US', timezoneId: 'UTC' };
-/**
- * The files whose tests emulate touch in Chromium, each a project of its own, which gives it a page
- * of its own: turned off again, touch emulation leaves the page the machine's own pointer, and a
- * machine without a mouse, such as CI's Linux runners, has none, so a later file would find no
- * fine pointer or hover. `--project='chromium*'` runs them with the rest.
- */
 const folder = fileURLToPath(new URL('.', import.meta.url));
 const touchFiles = readdirSync(folder)
   .filter((file) => file.endsWith('.test.tsx'))
@@ -38,7 +24,6 @@ export default defineConfig({
     conditions: ['envui-source', 'module', 'browser', 'development|production'],
     dedupe: ['react', 'react-dom'],
   },
-  // Every dependency the tests load, so none is found as a test loads it, which reloads the page.
   optimizeDeps: {
     include: [
       'react',
@@ -90,9 +75,14 @@ export default defineConfig({
     tags: [
       { name: 'engines', description: 'Depends on the engine: also runs in Firefox and WebKit' },
       { name: 'a11y', description: 'The accessibility scan, which `npm run test:a11y` runs' },
+      {
+        name: 'once',
+        description:
+          'Holds for a fresh page only: a module loading for the first time, or a development report envUI makes once a page; the burn-in runs it once, not repeated',
+        repeats: 0,
+      },
     ],
     maxWorkers: workers,
-    // --shard splits the files by the time each takes, as Durations.json records.
     sequence: { sequencer: ShardByDuration },
     testTimeout: 30_000,
     expect: { poll: { timeout: 8_000 } },
@@ -112,7 +102,6 @@ export default defineConfig({
         })),
         {
           browser: 'firefox',
-          // As in playwright.config.ts: no bounce-tracking warnings in the console.
           provider: playwright({
             actionTimeout: 8_000,
             contextOptions,

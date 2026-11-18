@@ -3,15 +3,9 @@ import { siteBuildUrl } from '../support/Servers';
 import { openSite } from '../support/SiteSpecHelpers';
 import { displayStorageKeys, drawerWidthKey } from '../../../apps/site/src/display/DisplayStorage';
 
-/**
- * A page of each kind the build pre-renders (scripts/site/PrerenderSite.ts): the home page, a
- * component's, a pattern's and a foundation's, a gallery, and the Docs' component page, token
- * reference, changelog and foundation guide, the last three with parts that load on their own.
- */
-const sample = [
+const onePageOfEachPrerenderedKind = [
   '/',
   '/components/button',
-  '/patterns/forms',
   '/foundations/colors',
   '/components',
   '/docs/components/button',
@@ -20,7 +14,6 @@ const sample = [
   '/docs/foundations/colors',
 ];
 
-/** The drawer widths the reader gave each part, in rem, unlike either's default. */
 const storedWidths = { catalogue: 19.5, docs: 24 } as const;
 
 for (const scheme of ['light', 'dark'] as const)
@@ -33,7 +26,6 @@ for (const scheme of ['light', 'dark'] as const)
         localStorage.setItem(keys.theme, scheme);
         localStorage.setItem(keys.scale, 'compact');
         for (const [key, width] of widths) localStorage.setItem(key, String(width));
-        // The heading as the page arrived, which hydrating keeps, where rendering anew replaces it.
         addEventListener('DOMContentLoaded', () =>
           Object.assign(window, { arrivedHeading: document.querySelector('h1') }),
         );
@@ -46,9 +38,8 @@ for (const scheme of ['light', 'dark'] as const)
         ),
       },
     );
-    // React reports a page that didn't hydrate as it was pre-rendered (main.tsx), and its warnings.
     const problems = watchProblems(page);
-    for (const path of sample) {
+    for (const path of onePageOfEachPrerenderedKind) {
       await openSite(page, `${siteBuildUrl}${path}`);
       await expect(page.locator('#root'), path).toHaveAttribute('data-site-page');
       expect(
@@ -61,13 +52,10 @@ for (const scheme of ['light', 'dark'] as const)
           ),
         `${path} hydrates the heading it arrived with`,
       ).toBe(true);
-      // The stored settings hold on the root, where the head's scripts put them, and the frame
-      // takes the root's look, a theme of no attributes of its own, before and after hydrating.
       const root = page.locator('html');
       await expect.soft(root, path).toHaveAttribute('data-env-theme', scheme);
       await expect.soft(root, path).toHaveAttribute('data-env-scale', 'compact');
       await expect.soft(page.locator('.site-app'), path).not.toHaveAttribute('data-env-theme');
-      // The home page has no drawer.
       const drawer = page.locator('.env-scaffold-drawer .env-navigation-drawer');
       if (await drawer.count())
         await expect
@@ -76,14 +64,12 @@ for (const scheme of ['light', 'dark'] as const)
             '--env-navigation-drawer-width',
             `${storedWidths[path.startsWith('/docs') ? 'docs' : 'catalogue']}rem`,
           );
-      // A figure shows its example once the page has hydrated, in place of its skeleton.
       const figure = page.locator('.site-live-example').first();
       if (await figure.count()) await expect(figure.locator('.site-loading')).toHaveCount(0);
     }
     expect(problems).toEqual([]);
   });
 
-/** React's reports of a page that didn't hydrate as it was pre-rendered, and its other problems. */
 function watchProblems(page: Page) {
   const problems: string[] = [];
   page.on('pageerror', (error) => problems.push(`${page.url()}: ${error.message}`));
@@ -94,7 +80,6 @@ function watchProblems(page: Page) {
   return problems;
 }
 
-/** The text color of the page's first inline code. */
 const codeColor = (page: Page) =>
   page
     .locator('.env-code')
@@ -112,9 +97,7 @@ test.describe('a reader with nothing stored, in dark at high contrast and reduce
   test("a section's address hydrates as it is, its code in the reader's theme from the first paint", async ({
     page,
   }) => {
-    const path = '/docs/components/button#customize';
-    // The page as it arrives, without the site's script: its code in the system's dark theme at
-    // high contrast already (Code.css), as the head's script themed the root.
+    const path = '/docs/components/button#import';
     const bare = await page.context().newPage();
     await bare.route('**/assets/*.js', (route) => route.abort());
     await bare.goto(`${siteBuildUrl}${path}`);
@@ -128,9 +111,8 @@ test.describe('a reader with nothing stored, in dark at high contrast and reduce
     await openSite(page, `${siteBuildUrl}${path}`);
     await expect(page.locator('#root')).toHaveAttribute('data-site-page', 'docs/components/button');
     await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'dark');
-    // Hydrated, the code keeps its colors, and the address's section is at the top.
     expect(await codeColor(page)).toBe(arrived);
-    const section = page.locator('#customize');
+    const section = page.locator('#import');
     await expect
       .poll(() =>
         section.evaluate(
@@ -147,7 +129,6 @@ test.describe('a reader with nothing stored, in dark at high contrast and reduce
 test('settings stored under the keys of before move to their keys now, and still apply', async ({
   page,
 }) => {
-  // A reader's settings from when the site was called the catalogue, and its drawer the site's.
   await page.addInitScript(() => {
     if (sessionStorage.getItem('seeded')) return;
     sessionStorage.setItem('seeded', 'yes');
@@ -170,7 +151,6 @@ test('settings stored under the keys of before move to their keys now, and still
 test("a campaign's query keeps the pre-rendered page in view, and an old address's query hides it", async ({
   page,
 }) => {
-  // Without the site's script, only the head's check decides what shows.
   await page.route('**/assets/*.js', (route) => route.abort());
   for (const [query, shown] of [
     ['?utm_source=newsletter&fbclid=1', true],
@@ -181,7 +161,6 @@ test("a campaign's query keeps the pre-rendered page in view, and an old address
     await page.goto(`${siteBuildUrl}/components/button${query}`);
     await expect(page.locator('#root'), query).toBeVisible({ visible: shown });
   }
-  // Each page names its one address.
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
     'https://envui.envsemble.com/components/button',

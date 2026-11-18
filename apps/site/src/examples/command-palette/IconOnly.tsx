@@ -16,7 +16,6 @@ export default function IconOnly() {
   const [searches, setSearches] = useState(0);
   return (
     <Column gap={3}>
-      {/* A narrow header: the product's name at the start, its controls at the end. */}
       <Row align="center" justify="between" gap={2}>
         <Text variant="title" render={<span />}>
           Northwind

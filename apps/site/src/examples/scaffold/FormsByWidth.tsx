@@ -16,7 +16,6 @@ import { IconInbox } from '@envsemble/envui/icons/Inbox';
 
 export default function FormsByWidth() {
   const [current, setCurrent] = useState('Inbox');
-  // One array of destinations, which each navigation form takes.
   const destinations: Destination[] = [
     { label: 'Home', icon: <IconHome /> },
     { label: 'Inbox', icon: <IconInbox />, count: 3 },
@@ -27,7 +26,6 @@ export default function FormsByWidth() {
     onClick: () => setCurrent(destination.label),
   }));
   return (
-    // A preview: the body scrolls in a frame 20 rem tall, instead of the window.
     <Scaffold
       scroll="body"
       landmarks={false}

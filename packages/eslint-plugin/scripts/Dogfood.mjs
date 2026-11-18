@@ -1,9 +1,3 @@
-// Counts what the recommended config reports in envUI's own catalogue and test fixture, without
-// enforcing it: they render raw elements on purpose. The counts show how the rules behave on real
-// envUI code.
-//
-//   node scripts/Dogfood.mjs [directory …]   default: apps/site/src tests/fixture
-
 import { ESLint } from 'eslint';
 import { fileURLToPath } from 'node:url';
 import tseslint from 'typescript-eslint';
@@ -12,6 +6,10 @@ import plugin from '../src/index.js';
 const repository = fileURLToPath(new URL('../../../', import.meta.url));
 const directories =
   process.argv.slice(2).length > 0 ? process.argv.slice(2) : ['apps/site/src', 'tests/fixture'];
+
+const ignoreDisableCommentsForUnloadedRules = {
+  linterOptions: { noInlineConfig: true, reportUnusedDisableDirectives: 'off' },
+};
 
 const eslint = new ESLint({
   cwd: repository,
@@ -22,25 +20,23 @@ const eslint = new ESLint({
       files: ['**/*.{ts,tsx,mts,cts}'],
       languageOptions: { parser: tseslint.parser },
     },
-    // The repository's own disable comments name rules this run does not load.
-    { linterOptions: { noInlineConfig: true, reportUnusedDisableDirectives: 'off' } },
+    ignoreDisableCommentsForUnloadedRules,
     plugin.configs.recommended,
   ],
 });
 
-/** What a message is about: the element, class, color or name, for grouping. */
-function subject(ruleId, message) {
+function groupingSubject(ruleId, message) {
   const patterns = {
-    'envui/no-inline-layout':
-      /^Inline `display: ([\w-]+)` lays out (a row or a column|a row|a column|a grid)/,
     'envui/no-html-elements': /^Use envUI's (\S+) instead of (.+?)(?:, or |: import)/,
     'envui/no-raw-colors': /^Raw color (.+) in an inline style/,
+    'envui/no-link-in-clickable-row': /^(.+?) inside a clickable (\S+):/,
+    'envui/no-field-in-list-row': /^A (\S+) in a List\.Item's/,
+    'envui/label-vocabulary': /instead of "(.+)"\.$/,
     'envui/no-raw-graphics':
       /^(Use envUI's Graphic instead of a raw <img>|A raw <svg [^>]*>|Graphic needs alt|A margin on a Graphic|Use envUI's icons instead of [^:]+)/,
   };
   const match = message.match(patterns[ruleId]);
   if (!match) return message;
-  if (ruleId === 'envui/no-inline-layout') return `${match[1]} (${match[2]})`;
   return ruleId === 'envui/no-html-elements' ? `${match[2]} -> ${match[1]}` : match[1];
 }
 
@@ -59,7 +55,7 @@ for (const directory of directories) {
       };
       byRule.total += 1;
       byRule.byDirectory.set(directory, (byRule.byDirectory.get(directory) ?? 0) + 1);
-      const about = subject(ruleId, message);
+      const about = groupingSubject(ruleId, message);
       byRule.bySubject.set(about, (byRule.bySubject.get(about) ?? 0) + 1);
       counts.set(ruleId, byRule);
     }

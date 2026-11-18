@@ -6,10 +6,6 @@ import { MotionStage } from '../../figures/MotionStage';
 const area = '.env-color-picker-area';
 const thumb = `${area} .env-color-picker-thumb`;
 
-/*
- * The pointer takes the area's thumb and drags it to a pale violet and on to a deep one: the hex,
- * RGB and HSL rows change together. It drags it back to where it began and lets go.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: thumb },
@@ -31,7 +27,6 @@ function Dragging() {
   return <FormatsTogether />;
 }
 
-/** The brand color's thumb dragged, and its hex, RGB and HSL rows following together. */
 export default function FormatsTogetherMotion() {
   return (
     <MotionStage label="the rows following the dragged color">

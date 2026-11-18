@@ -1,23 +1,15 @@
-// Reads apps/site/hosting/_headers, the response headers of the hosted site, as Cloudflare's
-// asset server applies them: a rule is a path pattern followed by indented `Name: value` lines, and
-// a response collects the headers of every rule matching its path, in order. `! Name` removes a
-// header an earlier rule set. In a pattern, `*` matches any run of characters and `:name` one path
-// segment. The tests serve the hosted build with these headers, so a header that breaks the site,
-// such as framing that blocks the site's own frames, fails them as it would fail the site.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const headersFile = resolve(repositoryRoot, 'apps/site/hosting/_headers');
 
-/** A rule of a _headers file: the paths it matches, and the headers it sets and removes. */
 interface HeaderRule {
   pattern: string;
   set: [string, string][];
   remove: string[];
 }
 
-/** The rules of a _headers file, in order. */
 export function parseHeaders(text: string) {
   const rules: HeaderRule[] = [];
   for (const [index, line] of text.split(/\r?\n/).entries()) {
@@ -52,7 +44,6 @@ function patternExpression(pattern: string) {
   return new RegExp(`^${source}$`);
 }
 
-/** The headers the rules give a response for a path, with lowercase names. */
 export function headersFor(rules: HeaderRule[], pathname: string) {
   const headers: Record<string, string> = {};
   for (const rule of rules) {
@@ -66,7 +57,6 @@ export function headersFor(rules: HeaderRule[], pathname: string) {
   return headers;
 }
 
-/** The rules of the catalogue's _headers. */
 export function siteHeaders(file = headersFile) {
   return parseHeaders(readFileSync(file, 'utf8'));
 }

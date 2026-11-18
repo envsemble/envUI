@@ -62,7 +62,6 @@ export function Page({
     'data-env-name': name,
     'data-width': width,
     'data-gutter': gutter ? undefined : 'none',
-    // Under a header, the content sits in a block of its own, the page's space below the header.
     children:
       header == null ? (
         children

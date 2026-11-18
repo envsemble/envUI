@@ -23,18 +23,14 @@ test('a component lists its root, its part classes and the states it is styled b
   assert.equal(card.root, 'env-card');
   assert.equal(card.parts[0].class, 'env-card', 'the root comes first');
   assert.ok(card.parts.some((part) => part.class === 'env-card-header' && part.description));
-  // Values come from the attribute's type, and "" is an attribute set without a value.
   assert.equal(state(card, 'data-layout'), undefined, 'the feature layout is a pattern');
   assert.deepEqual(state(component('Badge'), 'data-variant').values, ['outline', 'soft', 'solid']);
   assert.deepEqual(state(card, 'data-actions').values, ['']);
-  // A class built from a value is expanded over the value's type.
   assert.ok(component('Avatar').parts.some((part) => part.class === 'env-avatar-fallback-person'));
-  // The style sheets add the states Base UI sets, on the part they style.
   assert.deepEqual(state(component('Menu'), 'data-highlighted')?.parts, [
     'env-menu-choice',
     'env-menu-item',
   ]);
-  // A component whose root is not env-<name> takes it from packages/ui/src/partDescriptions.json.
   assert.equal(component('Dialog').root, 'env-dialog');
 });
 
@@ -47,7 +43,6 @@ test('a component lists its color properties, each registered so it does not inh
     '--env-button-selected',
     '--env-button-selected-content',
   ]);
-  // IconButton is a Button, and takes its properties.
   assert.deepEqual(colors('IconButton'), colors('Button'));
   for (const name of [
     'Card',
@@ -103,8 +98,6 @@ test('shared anatomy lists the components that render it', () => {
 });
 
 test('a state set through a class name held in a variable is on that part', () => {
-  // Reference.tsx sets `const className = 'env-rich-text-reference'` and then
-  // `<span className={className} data-reference-id={…}>`.
   assert.deepEqual(state(component('RichText'), 'data-reference-id'), {
     attribute: 'data-reference-id',
     values: [],
@@ -146,15 +139,12 @@ test('a part or state that goes is reported until a major changeset names it', (
     major('Card drops `env-card-meta` and `data-layout="feature"`.'),
   ]);
   assert.ok(recorded.every((item) => item.recorded));
-  // A longer name that starts with the class doesn't name it.
   assert.ok(!removedParts(before, after, [major('Renames env-card-meta-text.')])[0].recorded);
-  // A value needs its attribute and the value named, not the attribute alone.
   const value = (changesets) =>
     removedParts(before, after, changesets).find((item) => item.name === 'data-layout').recorded;
   assert.equal(value([major('Card drops `data-layout`.')]), false);
   assert.equal(value([major('Card drops `data-layout`.'), major('Lists lose `feature`.')]), false);
   assert.equal(value([major("Card's `data-layout` no longer takes `feature`.")]), true);
-  // Only a major changeset of @envsemble/envui records a removal.
   const meta = (changesets) => removedParts(before, after, changesets)[0].recorded;
   assert.equal(meta([minor('Card drops `env-card-meta`.')]), false);
   assert.equal(meta(['Card drops `env-card-meta`.']), false);
@@ -200,7 +190,6 @@ test('a part that moves to another group, or a value list that becomes free-form
     },
   };
   assert.deepEqual(removedParts(before, after), []);
-  // A value the moved part no longer takes is still gone.
   after.shared.ListRow.states[0].values = ['neutral'];
   assert.deepEqual(
     removedParts(before, after).map(({ label }) => label),
@@ -212,9 +201,8 @@ test('data-env-ssr-* attributes are private, and the contract leaves them out', 
   assert.equal(isPrivateState('data-env-ssr-placement'), true);
   assert.equal(isPrivateState('data-env-theme-switching'), true);
   assert.equal(isPrivateState('data-stacked'), false);
-  // PanelDock sets and styles them until it reads its layout; its public states stay.
-  const dock = component('PanelDock');
-  assert.ok(state(dock, 'data-stacked'));
+  const table = component('Table');
+  assert.ok(state(table, 'data-stacked'));
   const groups = [...Object.values(parts.components), ...Object.values(parts.shared)];
   assert.deepEqual(
     groups.flatMap((group) => group.states.filter((item) => isPrivateState(item.attribute))),

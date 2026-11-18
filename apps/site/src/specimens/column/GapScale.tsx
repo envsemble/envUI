@@ -17,19 +17,14 @@ const sizes: Record<SpaceStep, string> = {
   9: '4 rem',
 };
 
-/**
- * The two blocks' fill, set apart from the stage in every theme: the page's grey in the light
- * themes, where the stage is lighter than the page and a row's white barely shows on it, and a
- * row's in the dark ones.
- */
-const block: CSSProperties = {
-  '--env-surface-container-default':
-    'light-dark(var(--env-color-bg-page), var(--env-color-bg-muted))',
+const fillApartFromStage: CSSProperties = {
+  '--_surface-container-default': 'light-dark(var(--env-color-bg-page), var(--env-color-bg-muted))',
 };
 
-/** Up the scale a step at a time, from 1 to 9, and back down to 1. */
 const order: SpaceStep[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2];
 const steps = order.map((step) => (step === 1 || step === 9 ? 780 : 420));
+
+const twoBlocksAtLargestGapHeight = 'calc(2 * 2.75rem + 4rem)';
 
 function Stepping() {
   const step = order[useTimeline(steps)];
@@ -41,13 +36,11 @@ function Stepping() {
           {sizes[step]}
         </Text>
       </Column>
-      {/* As tall as the largest gap holds from the start, the first block at its top, so only the
-          second moves, at once, as a Column lays out a new gap. */}
-      <Column gap={step} style={{ flex: 1, minBlockSize: 'calc(2 * 2.75rem + 4rem)' }}>
-        <Surface radius="sm" padding={2} style={block}>
+      <Column gap={step} style={{ flex: 1, minBlockSize: twoBlocksAtLargestGapHeight }}>
+        <Surface radius="sm" padding={2} style={fillApartFromStage}>
           <Text>First</Text>
         </Surface>
-        <Surface radius="sm" padding={2} style={block}>
+        <Surface radius="sm" padding={2} style={fillApartFromStage}>
           <Text>Second</Text>
         </Surface>
       </Column>
@@ -55,7 +48,6 @@ function Stepping() {
   );
 }
 
-/** One column whose gap steps up the spacing scale and back down. */
 export default function GapScale() {
   return (
     <SpecimenFrame size="content">

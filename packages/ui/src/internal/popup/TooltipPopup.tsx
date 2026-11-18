@@ -14,13 +14,13 @@ import '../../styles/Tooltip.css';
 
 export type TooltipSide = PopupSide;
 
-/** True inside a Tooltip, so controls that show their own tooltip leave it to the outer one. */
 /**
  * Milliseconds the pointer rests on a control before its tooltip opens: Tooltip's default, which
  * every control that shows its own name as a tooltip, and CalendarHeatmap's day details, wait too.
  */
 export const tooltipDelay = 400;
 
+/** True inside a Tooltip, so controls that show their own tooltip leave it to the outer one. */
 export const TooltipNestingContext = createContext(false);
 
 /**
@@ -35,21 +35,7 @@ const parts = {
   Popup: BaseTooltip.Popup,
 };
 
-/**
- * The tooltip's popup in a portal beside its trigger, in the trigger's theme and text direction:
- * role="tooltip", so a trigger's aria-describedby can point at its id while it is open.
- */
-export function TooltipPopup({
-  content,
-  side,
-  align = 'center',
-  trigger,
-  anchor,
-  sideOffset = 8,
-  positionerClassName,
-  className,
-  popupProps,
-}: {
+export interface TooltipPopupProps {
   content: ReactNode;
   side: TooltipSide;
   /** How it lines up with the trigger along that side; center by default. */
@@ -66,7 +52,23 @@ export function TooltipPopup({
   className?: string;
   /** More props for the popup element, such as id, ref and style. */
   popupProps?: PopupElementProps;
-}) {
+}
+
+/**
+ * The tooltip's popup in a portal beside its trigger, in the trigger's theme and text direction:
+ * role="tooltip", so a trigger's aria-describedby can point at its id while it is open.
+ */
+export function TooltipPopup({
+  content,
+  side,
+  align = 'center',
+  trigger,
+  anchor,
+  sideOffset = 8,
+  positionerClassName,
+  className,
+  popupProps,
+}: TooltipPopupProps) {
   return (
     <PopupSurface
       parts={parts}
@@ -84,28 +86,27 @@ export function TooltipPopup({
   );
 }
 
-/**
- * A label cut short with an ellipsis, `cut`, shown in full in a tooltip, `label`, on hover and on
- * keyboard focus, such as a navigation drawer's or a breadcrumb's. The tooltip stays in place while
- * the label fits, so the element and its focus are kept as it resizes: its trigger is disabled
- * then, not its root, whose state would change right after it mounts and render each such tooltip
- * again, one by one, as a page with dozens of them hydrates.
- */
-export function CutLabelTooltip({
-  cut,
-  label,
-  side,
-  children,
-}: {
+export interface CutLabelTooltipProps {
   cut: boolean;
   label: ReactNode;
   side: TooltipSide;
   /** The element whose label is cut short, which takes the trigger's props and ref. */
   children: ReactElement;
-}) {
+}
+
+/**
+ * A label cut short with an ellipsis, `cut`, shown in full in a tooltip, `label`, on hover and on
+ * keyboard focus, such as a navigation drawer's or a breadcrumb's.
+ */
+export function CutLabelTooltip({ cut, label, side, children }: CutLabelTooltipProps) {
+  const disableTriggerNotRootWhileLabelFits = !cut;
   return (
     <BaseTooltip.Root>
-      <BaseTooltip.Trigger disabled={!cut} delay={tooltipDelay} render={children} />
+      <BaseTooltip.Trigger
+        disabled={disableTriggerNotRootWhileLabelFits}
+        delay={tooltipDelay}
+        render={children}
+      />
       {cut && <TooltipPopup content={label} side={side} />}
     </BaseTooltip.Root>
   );

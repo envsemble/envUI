@@ -54,7 +54,6 @@ export default function CopyButtonFixture({ theme }: { theme: ColorScheme }) {
           <CopyButton value="Plan address" aria-label={`Copy plan ${theme}`} onCopied={setCopied} />
         </Tooltip>
         <CopyButton value="Unavailable" aria-label={`Copy unavailable ${theme}`} disabled />
-        {/* The text never arrives. */}
         <CopyButton
           value={() =>
             new Promise<string>((_, reject) =>
@@ -67,7 +66,6 @@ export default function CopyButtonFixture({ theme }: { theme: ColorScheme }) {
       </div>
       <output data-testid="copied">{copied}</output>
       <output data-testid="presses">{presses}</output>
-      {/* A small toolbar: the copy action takes the 2 rem height of the controls beside it. */}
       <Surface
         background="muted"
         padding={2}
@@ -97,14 +95,12 @@ export default function CopyButtonFixture({ theme }: { theme: ColorScheme }) {
         </span>
         <CopyButton value="Narrow" aria-label="Copy narrow" />
       </div>
-      {/* Labels and names that leave a button without words of its own. */}
       <div className="fixture-toolbar" data-testid={`unnamed-${theme}`}>
         <CopyButton value="Empty label">{''}</CopyButton>
         <CopyButton value="Empty list">{[]}</CopyButton>
         <CopyButton value="Blank name" aria-label=" " />
         <CopyButton value="Kopie" aria-label="" copyLabel="Kopieren" />
       </div>
-      {/* An application's own clipboard: one that takes the text, and one that refuses it. */}
       <div className="fixture-toolbar" data-testid={`writers-${theme}`}>
         <CopyButton
           value="Bridged"

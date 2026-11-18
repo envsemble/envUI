@@ -1,4 +1,3 @@
-// What the Docs show of a page beside the catalogue (apps/site/src/documentation/DocsContent.ts).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/ImportSource.ts';

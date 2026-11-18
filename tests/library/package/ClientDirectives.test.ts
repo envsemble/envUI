@@ -9,14 +9,9 @@ import { libraryEntryPoints } from '../../../scripts/docs/LibraryEntryPoints.ts'
 import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 import { pathToFileURL } from 'node:url';
 
-// envUI and React Server Components: each module that uses client-only React APIs starts with
-// 'use client', the entry points carry no directive, the build keeps the directives where they
-// are, and a server component's module graph imports the package and renders envUI on the server.
-
 const dist = join(repositoryRoot, 'packages/ui/dist');
 const modules = await libraryModules();
 
-/** The entry points, whose `export *` and `export * as` lines a server component imports through. */
 const entries = libraryEntryPoints().map(({ file }) =>
   relative(join(repositoryRoot, 'packages/ui/src'), file).split(sep).join('/'),
 );
@@ -41,13 +36,11 @@ test("every module that uses client-only APIs, and only such a module, says 'use
     assert.ok(module, entry);
     assert.equal(module.client, false, `${entry} stays a server module`);
   }
-  // Menu.Item is a part of a client module; the Menu namespace is an `export * as` in the entry.
   assert.ok(modules.find(({ file }) => file === 'actions/menu/Menu.tsx').client);
 });
 
 test('the check sees what makes a module a client module, also by name and through types', () => {
-  const cases = [
-    // Handlers the module makes, passed by name, through a spread or to createElement.
+  const handlersTheModuleMakes = [
     [
       'export function A() { const focus = () => {}; return <span onMouseDown={focus} />; }',
       ['passes a function to onMouseDown'],
@@ -64,7 +57,8 @@ test('the check sees what makes a module a client module, also by name and throu
       'export function C() { const handlers = { onClick() {} }; return <button {...handlers} />; }',
       ['spreads a function into button'],
     ],
-    // Client-only calls, also under another name.
+  ];
+  const clientOnlyCallsUnderAnyName = [
     [
       "import { createPortal } from 'react-dom';\nexport const D = ({ c }: { c: any }) => createPortal(c, document.body);",
       ['calls createPortal'],
@@ -73,12 +67,14 @@ test('the check sees what makes a module a client module, also by name and throu
       "import { useState as state } from 'react';\nexport function E() { const [value] = state(0); return <i>{value}</i>; }",
       ['calls useState as state'],
     ],
-    // A comment gives a reason the reading cannot see.
+  ];
+  const clientModuleMarkerComments = [
     [
       '// @client-module The editor reads the DOM when it loads.\nexport const value = 1;',
       ['is marked @client-module: The editor reads the DOM when it loads.'],
     ],
-    // What a server parent may pass on, and functions made only when it passed one, are not.
+  ];
+  const propsAServerParentPassesOn = [
     [
       'export function F({ onClick, ...props }: { onClick?: () => void }) { return <button onClick={onClick} {...props} />; }',
       [],
@@ -88,7 +84,8 @@ test('the check sees what makes a module a client module, also by name and throu
       [],
     ],
     ['export const H = ({ label }: { label: string }) => <b title={label}>{label}</b>;', []],
-    // The guard written the other way round, and a prop passed on in a shorthand spread.
+  ];
+  const reversedGuardsAndShorthandSpreads = [
     [
       'export function I({ onPick }: { onPick?: () => void }) { return <button onClick={!onPick ? undefined : () => onPick()} />; }',
       [],
@@ -97,7 +94,8 @@ test('the check sees what makes a module a client module, also by name and throu
       'export function J({ onClick }: { onClick?: () => void }) { return <button {...{ onClick }} />; }',
       [],
     ],
-    // Also when the prop is destructured in the body, and through a variable that holds the props.
+  ];
+  const propsDestructuredInTheBodyOrFromAVariable = [
     [
       'export function J2(props: { onClick?: () => void }) { const { onClick } = props; return <div {...{ onClick }} />; }',
       [],
@@ -106,12 +104,14 @@ test('the check sees what makes a module a client module, also by name and throu
       'export function J3(props: { handlers: { onClick?: () => void } }) { const { handlers } = props; const { onClick } = handlers; return <div {...{ onClick }} />; }',
       [],
     ],
-    // A shorthand for a function the module makes, destructured from its own object, still counts.
+  ];
+  const shorthandsForFunctionsTheModuleMakes = [
     [
       'export function J4() { const { onClick } = { onClick: () => {} }; return <div {...{ onClick }} />; }',
       ['spreads a function into div'],
     ],
-    // So does a default that makes a function, which a server parent that passes none gets.
+  ];
+  const defaultsThatMakeAFunction = [
     [
       'export function J5(props: { onClick?: () => void }) { const { onClick = () => {} } = props; return <div {...{ onClick }} />; }',
       ['spreads a function into div'],
@@ -124,12 +124,14 @@ test('the check sees what makes a module a client module, also by name and throu
       'export function J7({ onClick = () => {} }: { onClick?: () => void }) { return <button onClick={onClick} />; }',
       ['passes a function to onClick'],
     ],
-    // A default that is not a function keeps the prop passed on.
+  ];
+  const defaultsThatAreNotFunctions = [
     [
       'export function J8(props: { onClick?: () => void }) { const { onClick = undefined } = props; return <div {...{ onClick }} />; }',
       [],
     ],
-    // A class component of either base, and the marker only in a comment, not a string.
+  ];
+  const classComponentsAndMarkersOnlyInComments = [
     [
       "import { PureComponent } from 'react';\nexport class K extends PureComponent { render() { return null; } }",
       ['is a class component'],
@@ -138,6 +140,18 @@ test('the check sees what makes a module a client module, also by name and throu
       "export const L = '// @client-module not a comment';\nexport const M = `/* @client-module nor this */`;",
       [],
     ],
+  ];
+  const cases = [
+    ...handlersTheModuleMakes,
+    ...clientOnlyCallsUnderAnyName,
+    ...clientModuleMarkerComments,
+    ...propsAServerParentPassesOn,
+    ...reversedGuardsAndShorthandSpreads,
+    ...propsDestructuredInTheBodyOrFromAVariable,
+    ...shorthandsForFunctionsTheModuleMakes,
+    ...defaultsThatMakeAFunction,
+    ...defaultsThatAreNotFunctions,
+    ...classComponentsAndMarkersOnlyInComments,
   ];
   for (const [source, reasons] of cases) assert.deepEqual(clientReasonsOf(source), reasons, source);
 });
@@ -167,12 +181,9 @@ test('a server component imports envUI and renders it on the server', () => {
     { cwd: repositoryRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
   );
   const result = JSON.parse(output);
-  // A part reached through its namespace is a client reference, which the server sends as such.
   assert.equal(result.menuItem, true);
-  // Plain functions stay functions on the server.
   assert.equal(result.themeBootstrapScript, 'string');
   assert.equal(result.bootstrapEntryScript, 'string');
-  // The server writes the application's contrast into the script, which sets it before paint.
   assert.ok(result.bootstrapContrastScript.includes('r.setAttribute("data-env-contrast","high")'));
   assert.equal(result.relativeTime, '3 hours ago');
   assert.deepEqual(result.diffLines, { result: { additions: 2, deletions: 1 } });
@@ -185,7 +196,6 @@ test('a server component imports envUI and renders it on the server', () => {
     assert.ok(survey.client.length > 0, `${entry} has client components`);
   }
   const main = result.surveys['@envsemble/envui'];
-  // Each server component renders with its documented variants too: pending, href, icon-only…
   const variants = {
     Button: [
       '(defaults)',
@@ -222,18 +232,14 @@ test('a server component imports envUI and renders it on the server', () => {
     'Field.Root',
   ])
     assert.ok(main.client.includes(name), `${name} is a client reference`);
-  // The page's client components receive only what a server can send them.
   const page = JSON.stringify(result.page);
   assert.match(page, /"client":"actions\/menu\/Menu\.js#Item"/);
   assert.match(page, /"client":"icons\/Home\.js#IconHome"/);
-  // A pending Button hands ActionElement a boolean, not a click handler.
   assert.match(
     page,
     /"client":"internal\/control\/ActionElement\.js#ActionElement","props":\{"pending":true/,
   );
   assert.match(page, /"element":"div","props":\{"role":"status","className":"env-alert"/);
-  // A List without onReorder ships no client module, and its current rows say so in the server's
-  // HTML: on the row target, or on the row without one.
   const list = JSON.stringify(result.list);
   assert.doesNotMatch(list, /"client":/);
   assert.match(list, /"element":"a","props":\{"href":"\/plans\/launch",[^}]*"aria-current":"true"/);
@@ -244,12 +250,6 @@ test('a server component imports envUI and renders it on the server', () => {
   assert.equal(list.match(/"aria-current"/g)?.length, 2);
 });
 
-/**
- * A client component's element type as React's RSC client gives it, where a server component
- * wrote the element: a lazy wrapper around the chunk that loads its module, which reading throws
- * while the chunk is pending (react-server-dom's createLazyChunkWrapper and readChunk). Built by
- * hand, as the repository has no RSC client to round-trip through.
- */
 function clientReferenceType(value, status = 'fulfilled') {
   const chunk = { status, value, reason: new Error('failed'), then() {} };
   return {
@@ -270,7 +270,6 @@ test('a Tooltip a server component writes around a Menu.Root describes its trigg
     pathToFileURL(join(repositoryRoot, 'packages/ui/dist/internal/trigger/triggerOwner.js')).href
   );
   const trigger = h('button', { type: 'button', 'aria-label': 'Sort' });
-  // The tooltip moves onto the menu's trigger, which Base UI's tooltip trigger marks.
   const markup = renderToString(
     h(
       ui.Tooltip,
@@ -279,7 +278,6 @@ test('a Tooltip a server component writes around a Menu.Root describes its trigg
     ),
   );
   assert.match(markup, /^<button [^>]*aria-haspopup="menu"[^>]*data-base-ui-tooltip-trigger=""/);
-  // A loaded wrapper reads as its component; one pending or failed, by its element trigger.
   for (const status of ['fulfilled', 'pending', 'rejected']) {
     assert.equal(isTriggerOwner(clientReferenceType(ui.Menu.Root, status), { trigger }), true);
     assert.equal(

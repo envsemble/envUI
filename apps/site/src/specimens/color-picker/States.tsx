@@ -1,10 +1,8 @@
 import { ColorPicker } from '@envsemble/envui/color';
 import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
-/** Small pickers, centred in their cells, so the four states take little room. */
 const small = { inlineSize: 'min(100%, 11rem)', marginInline: 'auto' };
 
-/** Read-only, disabled and invalid pickers beside an editable one. */
 export default function States() {
   return (
     <SpecimenFrame size="collection">

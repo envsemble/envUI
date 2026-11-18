@@ -1,11 +1,7 @@
-// The state attributes and color properties the library's style sheets declare: the `[data-*]`
-// selectors on a part class, with the values they compare, and the `@property` registrations of the
-// color properties.
 import { isPrivateState, styleSheets, type StateRecord } from './Library.ts';
 
 const withoutComments = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, '');
 
-/** Splits a selector list or a selector at `separators` outside brackets, parentheses and strings. */
 function splitTopLevel(text: string, separators: RegExp) {
   const parts: string[] = [];
   let depth = 0;
@@ -28,11 +24,6 @@ function splitTopLevel(text: string, separators: RegExp) {
   return parts.map((part) => part.trim()).filter(Boolean);
 }
 
-/**
- * The state attributes the style sheets select on a part class: `.env-x[data-y='z']` and
- * `.env-x:not([data-y])` put data-y on env-x. Selectors inside `:has()` describe other elements and
- * are read as selectors of their own.
- */
 export function readStyles() {
   const states: StateRecord[] = [];
   const visit = (selector: string, path: string) => {
@@ -42,7 +33,13 @@ export function readStyles() {
       return '';
     });
     for (const body of inner) for (const part of splitTopLevel(body, /,/)) visit(part, path);
-    for (const compound of splitTopLevel(own, /[\s>+~]/)) {
+    const ownCompounds = splitTopLevel(own, /[\s>+~]/).flatMap((compound) => {
+      const group = /^:is\(([\s\S]*)\)$/.exec(compound);
+      if (!group || splitTopLevel(group[1], /[\s>+~]/).length < 2) return [compound];
+      for (const part of splitTopLevel(group[1], /,/)) visit(part, path);
+      return [];
+    });
+    for (const compound of ownCompounds) {
       const names = [...compound.matchAll(/\.(env-[a-z\d]+(?:-[a-z\d]+)*)(?![\w-])/g)].map(
         (match) => match[1],
       );
@@ -67,10 +64,6 @@ export function readStyles() {
   return states;
 }
 
-/**
- * The color properties the style sheets register, as the public color properties are: each
- * `@property` that doesn't inherit, with the file that registers it.
- */
 export function readColorProperties() {
   const properties = new Map<string, string>();
   for (const { path, css } of styleSheets())

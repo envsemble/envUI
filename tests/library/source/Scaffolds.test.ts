@@ -1,6 +1,3 @@
-// The scaffolds Scaffold, Panes and Page: the markup they render on the server, which their style
-// sheets read to decide arrangement, so nothing is measured; and how Scaffold resolves the
-// navigation form of each window class.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -28,16 +25,13 @@ test('each window class shows the form it asks for, else the nearest one given',
     expanded: 'drawer',
     large: 'drawer',
   });
-  // Only a drawer: it stands in everywhere.
   assert.deepEqual(resolveNavigationForms({ drawer: 'D' }), {
     compact: 'drawer',
     medium: 'drawer',
     expanded: 'drawer',
     large: 'drawer',
   });
-  // A bar and a drawer: medium asks for a rail and gets the drawer, its nearest.
   assert.equal(resolveNavigationForms({ bar: 'B', drawer: 'D' }).medium, 'drawer');
-  // The application changes the form of a window class, or shows none.
   assert.deepEqual(resolveNavigationForms(all, { compact: 'none', large: 'rail' }), {
     compact: 'none',
     medium: 'rail',
@@ -52,7 +46,7 @@ test('each window class shows the form it asks for, else the nearest one given',
   ]);
 });
 
-test('Scaffold renders its regions and forms, which CSS shows by its width', () => {
+test('Scaffold renders skip links, banner, navigation and main in order, and a slot for each form shown, which CSS shows by its width', () => {
   const markup = renderToString(
     h(
       Scaffold,
@@ -69,7 +63,6 @@ test('Scaffold renders its regions and forms, which CSS shows by its width', () 
     markup,
     /data-navigation-compact="bar" data-navigation-medium="drawer" data-navigation-expanded="drawer" data-navigation-large="drawer"/,
   );
-  // Skip links first, then the banner, the navigation and the main landmark.
   const order = [
     'env-scaffold-skip-links',
     '<header class="env-scaffold-top-bar"',
@@ -87,7 +80,6 @@ test('Scaffold renders its regions and forms, which CSS shows by its width', () 
   );
   assert.match(markup, /<main id="main" tabindex="-1" class="env-scaffold-body">Body<\/main>/);
   assert.match(markup, /href="#main"/);
-  // A slot for each form that some window class shows, and none for the rail, which none does.
   assert.match(markup, /class="env-scaffold-drawer" data-navigation-form="drawer"/);
   assert.match(markup, /class="env-scaffold-bar" data-navigation-form="bar"/);
   assert.doesNotMatch(markup, /env-scaffold-rail/);
@@ -109,38 +101,42 @@ test('Scaffold without navigation renders no skip link to it, and scrolls the do
   assert.match(renderToString(h(Scaffold, { scroll: 'body' }, 'Body')), /data-scroll="body"/);
 });
 
-test('Panes renders its behavior, its split and its size for CSS, and the parts their roles', () => {
+test('Panes renders its sized pane, its stacking and its size for CSS, and names the pane the handle resizes', () => {
   const markup = renderToString(
     h(
       Panes.Root,
-      { behavior: 'supporting', name: 'doc', defaultWidth: 20 },
-      h(Panes.Main, { label: 'Document' }, 'Main'),
-      h(Panes.Divider),
-      h(Panes.Supporting, { label: 'Details' }, 'Side'),
+      { sized: 'end', stackBelow: 'medium', name: 'doc', defaultWidth: 20 },
+      h(Panes.Pane, { label: 'Document' }, 'Main'),
+      h(Panes.ResizeHandle),
+      h(Panes.Pane, { label: 'Details' }, 'Side'),
     ),
   );
   assert.match(
     markup,
-    /^<div class="env-panes" style="--env-panes-size:20rem" data-env-layout="panes" data-env-name="doc" data-behavior="supporting" data-split-at="expanded">/,
+    /^<div class="env-panes" style="--env-panes-size:20rem" data-env-layout="panes" data-env-name="doc" data-sized="end" data-stack-below="medium">/,
   );
-  assert.match(markup, /class="env-panes-main" role="region" aria-label="Document"/);
-  assert.match(markup, /role="region" aria-label="Details" class="env-panes-supporting"/);
-  // The divider names the pane it resizes, and its width in rem.
+  assert.match(markup, /class="env-panes-pane" role="region" aria-label="Document"/);
   const controls = /aria-controls="([^"]+)"/.exec(markup)?.[1];
-  assert.ok(controls && markup.includes(`id="${controls}"`), markup);
+  assert.ok(controls, markup);
+  assert.match(
+    markup,
+    new RegExp(`id="${controls}" class="env-panes-pane" role="region" aria-label="Details"`),
+  );
   assert.match(markup, /role="separator"[^>]*aria-valuetext="20 rem"/);
-  assert.match(markup, /class="env-panes-backdrop" aria-hidden="true"/);
-  const open = renderToString(
+  assert.match(markup, /class="env-resize-handle env-panes-resize-handle"/);
+  assert.doesNotMatch(markup, /data-behavior|data-split-at|data-open|env-panes-backdrop/);
+  const plain = renderToString(
     h(
       Panes.Root,
-      { behavior: 'list-detail', open: true, splitAt: 'large' },
-      h(Panes.Detail, null, 'D'),
+      null,
+      h(Panes.Pane, { id: 'list' }, 'L'),
+      h(Panes.ResizeHandle),
+      h(Panes.Pane, null, 'D'),
     ),
   );
-  assert.match(open, /data-split-at="large" data-open=""/);
-  // The back button is always in the markup; CSS shows it while one pane shows at a time.
-  assert.match(open, /class="env-panes-back"/);
-  assert.doesNotMatch(open, /env-panes-backdrop/);
+  assert.match(plain, /data-sized="start"/);
+  assert.match(plain, /aria-controls="list"/);
+  assert.doesNotMatch(plain, /data-stack-below/);
 });
 
 test('Page renders invisible structure with its width, and its header above its content', () => {
@@ -154,10 +150,9 @@ test('Page renders invisible structure with its width, and its header above its 
     ),
     /^<article class="env-page" data-env-layout="page" data-width="lg" data-gutter="none"><h1>Title<\/h1><div class="env-page-content">C<\/div><\/article>$/,
   );
-  // Its gutter follows the window class of the region it sits in, compact first.
   const css = sheet('Page.css');
   assert.match(css, /container: env-page \/ inline-size;/);
-  assert.match(css, /--env-page-gutter: var\(--env-space-4\);/);
+  assert.match(css, /--env-page-gutter: var\(--_theme-page-gutter\);/);
   assert.match(
     css,
     /@container \(width >= 37\.5rem\) \{\s*\.env-page \{\s*--env-page-gutter: var\(--env-space-5\);/,

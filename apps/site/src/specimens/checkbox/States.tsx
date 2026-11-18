@@ -7,7 +7,6 @@ const states = [
   { title: 'Mixed', checked: 'mixed' },
 ] as const;
 
-/** Each state, enabled and disabled. */
 export default function States() {
   return (
     <SpecimenFrame size="wide" still>

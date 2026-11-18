@@ -1,11 +1,8 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-/** The workspaces whose runtime dependencies ship: the library's and the hosted site's. */
 const shippingWorkspaces = ['packages/ui', 'apps/site'];
 
-/** The lockfile location a dependency of the package at `from` resolves to, as Node finds it. */
-/** A package-lock.json entry of an installed package. */
 interface LockedPackage {
   version?: string;
   license?: string;
@@ -26,10 +23,6 @@ function resolveLocked(packages: Record<string, LockedPackage>, from: string, na
   }
 }
 
-/**
- * Include the locked runtime dependencies of the shipping workspaces, including optional bundled
- * grammar modules: every non-dev package reachable from them through non-dev packages.
- */
 export async function collectDependencyNotices(repositoryRoot: string) {
   const lock: { packages: Record<string, LockedPackage> } = JSON.parse(
     await readFile(resolve(repositoryRoot, 'package-lock.json'), 'utf8'),
@@ -67,7 +60,6 @@ export async function collectDependencyNotices(repositoryRoot: string) {
   return notices.join('\n\n');
 }
 
-/** Everything the catalogue bundles: the runtime dependencies, Geist and Material Symbols. */
 export async function collectCatalogueNotices(repositoryRoot: string) {
   const notices = [await collectDependencyNotices(repositoryRoot)];
   for (const name of ['Geist-LICENSE.txt', 'Material-Symbols-LICENSE.txt'])

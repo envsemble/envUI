@@ -1,19 +1,13 @@
-/* The page of all foundations (FoundationCatalogue.tsx): one sheet on the recessed canvas, a pane
-   for each foundation meeting the others at hairlines, and the pictures in the panes
-   (figures/foundations/Glance.tsx), drawn in envUI's own tokens. */
-
-/* The sheet lays out by the column it sits in. */
 .catalogue-overview:has(> .catalogue-foundation-sheet) {
   container: catalogue-foundations / inline-size;
 }
 
-/* The type across the top, color and space, width and icons in pairs under it, and the keyboard
-   across the foot; one column on a phone. The canvas shows through the gaps as the hairlines. */
 .catalogue-foundation-sheet.catalogue-foundation-sheet {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   justify-items: stretch;
-  gap: 0.0625rem;
+  --_hairline-width: 0.0625rem;
+  gap: var(--_hairline-width);
   padding: 0;
   overflow: clip;
   background-color: var(--env-color-border-muted);
@@ -31,7 +25,6 @@
   }
 }
 
-/* A pane is one link, the whole of it: its name and its picture lead to the foundation's page. */
 .catalogue-foundation-sheet > .catalogue-foundation-pane {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -55,10 +48,6 @@
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
 }
 
-/* Under the pointer the pane's fill shifts, as envUI's own hover does: darker in the light themes
-   and lighter in the dark ones, by more there, so it stands apart from the panes beside it; its
-   hue stays. Held, a little further; the pane keeps its size, since a press that settled it would
-   bare the hairlines around it as a frame. */
 @media (hover: hover) {
   .catalogue-foundation-pane:hover {
     background-color: light-dark(
@@ -76,7 +65,6 @@
   );
 }
 
-/* The keyboard on a pane rings the whole pane, inside the sheet's edge. */
 .catalogue-foundation-pane:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
@@ -124,9 +112,6 @@
   padding-block: var(--env-space-3);
 }
 
-/* ---------- The pictures ---------- */
-
-/* Color: a row for each tone, its name, then its soft fill, its solid fill and its text. */
 .catalogue-glance-palette {
   display: grid;
   grid-template-columns: minmax(0, 15rem);
@@ -158,7 +143,6 @@
   background: var(--catalogue-tone-strong);
 }
 
-/* Type: the typeface's letters large, and each style's name in its own style. */
 .catalogue-glance-type {
   display: flex;
   align-items: center;
@@ -189,7 +173,6 @@
   line-height: 1.2;
 }
 
-/* The drawings of space and the keyboard: a frame in hairlines, and beside it what it compares. */
 .catalogue-glance-drawing {
   display: flex;
   flex-wrap: wrap;
@@ -198,7 +181,6 @@
   gap: var(--env-space-5) var(--env-space-7);
 }
 
-/* The focus ring around the drawn button, as the keyboard draws it. */
 .catalogue-glance-focus {
   position: relative;
   display: flex;
@@ -212,7 +194,6 @@
   content: '';
 }
 
-/* Width: a window of each class, from the narrowest, its panes in it, its name under it. */
 .catalogue-glance-windows {
   display: flex;
   align-items: end;
@@ -253,13 +234,11 @@
   flex: 1 1 0;
 }
 
-/* A navigation pane, the first of two or three, is narrower than the content beside it. */
 .catalogue-glance-window:is([data-window='expanded'], [data-window='large'])
   > .catalogue-glance-pane:first-of-type {
   flex-grow: 0.6;
 }
 
-/* Icons: a grid of them, outlined, with the selected one filled on its selected fill. */
 .catalogue-glance-icons {
   display: grid;
   grid-template-columns: repeat(4, 2.5rem);

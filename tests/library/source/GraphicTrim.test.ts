@@ -17,11 +17,8 @@ import {
 } from '../../../packages/ui/bin/trimGraphic.js';
 import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
-// envui-graphic, the library's command that trims a picture's empty edges, on the files in
-// tests/library/source/graphic: an SVG with empty space in its viewBox, one whose stroke and transform reach past
-// its path, and PNG, JPEG and WebP files with a transparent or white border.
-
 const fixtures = fileURLToPath(new URL('./graphic/', import.meta.url));
+const onePixelOfBlur = 1;
 const bin = join(repositoryRoot, 'packages/ui/bin/envui-graphic.js');
 let scratch;
 
@@ -33,14 +30,12 @@ after(async () => {
   if (scratch) await rm(scratch, { recursive: true, force: true });
 });
 
-/** The four numbers of an SVG's viewBox. */
 const viewBox = (svg) =>
   svg
     .match(/viewBox="([^"]+)"/)[1]
     .split(' ')
     .map(Number);
 
-/** Whether each number is within a tolerance of the one expected. */
 function assertClose(actual, expected, tolerance, message) {
   assert.equal(actual.length, expected.length, message);
   actual.forEach((value, index) =>
@@ -58,14 +53,12 @@ test("an SVG's viewBox is fitted to its drawing, and its width and height go", a
   assert.equal(unchanged, false);
   assertClose(viewBox(svg), [28, 28, 64, 64], 0.05, 'the rect and the circle inside it');
   assert.doesNotMatch(svg.match(/<svg[^>]*>/)[0], /\s(width|height)=/);
-  // The drawing itself is kept as it was.
   assert.ok(svg.includes('<rect x="28" y="28" width="64" height="64" fill="#0d9488"/>'));
 });
 
 test("an SVG's bounds count its strokes and transforms, and a trimmed SVG stays as it is", async () => {
   const source = await readFile(join(fixtures, 'stroked-line.svg'), 'utf8');
   const { output } = await trimSvg(source, sharp);
-  // The path runs from 20 to 60 across, moved 10 right and 20 down, in a stroke 10 wide.
   assertClose(viewBox(output.toString('utf8')), [30, 35, 40, 10], 0.05, 'the stroked line');
   const again = await trimSvg(output.toString('utf8'), sharp);
   assert.equal(again.unchanged, true);
@@ -83,7 +76,6 @@ test('the root element is found past comments, CDATA and the doctype that mentio
   assert.match(rootTag(source).tag, /data-note="a > b" viewBox="0 0 120 120">$/);
   const svg = (await trimSvg(source, sharp)).output.toString('utf8');
   assertClose(viewBox(svg.slice(rootTag(svg).start)), [28, 28, 64, 64], 0.05, 'the real root');
-  // The comment keeps what it said.
   assert.ok(svg.includes('<!-- exported from <svg viewBox="0 0 9 9"> -->'));
 });
 
@@ -113,8 +105,7 @@ test('a PNG loses its transparent border, and a JPEG and a WebP their white one'
     const trimmed = await trimRaster(await readFile(join(fixtures, file)), sharp);
     const { width, height, format: written } = await sharp(trimmed.output).metadata();
     assert.equal(written, format, file);
-    // The dark 40 by 20 px block, give or take a pixel of the JPEG's blur.
-    assertClose([width, height], [40, 20], 1, file);
+    assertClose([width, height], [40, 20], onePixelOfBlur, file);
   }
 });
 
@@ -160,6 +151,5 @@ test('the command reads its arguments and names files for an import', () => {
   assert.equal(importName('2024-mark.svg'), 'image2024Mark');
   assert.equal(outputPath(join('a', 'logo.svg')), join('a', 'logo-trimmed.svg'));
   assert.equal(outputPath('logo.svg', 'out'), join('out', 'logo.svg'));
-  // --out naming the file's own folder never replaces the file.
   assert.equal(outputPath(join('a', 'logo.svg'), 'a'), join('a', 'logo-trimmed.svg'));
 });

@@ -21,7 +21,6 @@ export function PaletteCustomizationProvider({ children }: { children: ReactNode
 
   return (
     <PaletteContext value={{ palettes, setValue }}>
-      {/* Every explicit theme boundary, including portals, receives the same edited roles. */}
       <style data-docs-palette>
         {paletteCSS('light', palettes.light) + '\n' + paletteCSS('dark', palettes.dark)}
       </style>

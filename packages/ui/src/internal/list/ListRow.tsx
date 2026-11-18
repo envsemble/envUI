@@ -2,6 +2,7 @@ import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 
 import { classNames } from '../classNames.js';
 import { DecorativeIcon } from '../icon/DecorativeIcon.js';
 import { flag } from '../flag.js';
+import { Slot } from '../layout/Slot.js';
 import '../../styles/Base.css';
 import '../../styles/ListRow.css';
 
@@ -18,21 +19,19 @@ export interface ListRowProps {
   indicator?: ReactNode;
   /** A decorative icon before the label. */
   icon?: ReactNode;
-  /** The row's text, which names it. */
+  /** The row's name, in the row's text color; it wraps and is never cut short. */
   label: ReactNode;
-  /** A second line under the label. */
+  /** A second line under the label, in muted text. */
   description?: ReactNode;
-  /** Content at the end, such as a count or a submenu's chevron. */
+  /** Content at the end, such as a count, keys or a submenu's chevron, which keeps its size. */
   end?: ReactNode;
-  /** A keyboard shortcut at the end, such as Ctrl+P. */
-  shortcut?: ReactNode;
   /** A class of the owner's, such as env-select-item, beside env-list-row. */
   className?: string;
 }
 
 /**
  * The one anatomy of a row in a popup list: an indicator, an icon, a label with a description
- * under it, and content or a shortcut at the end, on the element of the list's own item, so the
+ * under it, and content at the end, on the element of the list's own item, so the
  * owner keeps its roles and keyboard handling. Select, Combobox, Menu and the command palette's
  * options share it.
  */
@@ -43,10 +42,8 @@ export function ListRow({
   label,
   description,
   end,
-  shortcut,
   className,
 }: ListRowProps) {
-  // isValidElement narrows to the element, not its props.
   const own = isValidElement(render) ? (render.props as { className?: string }) : {};
   const children = (
     <>
@@ -57,15 +54,19 @@ export function ListRow({
         </span>
       )}
       <span className="env-list-row-text">
-        <span className="env-list-row-label">{label}</span>
+        <Slot className="env-list-row-label" element="span">
+          {label}
+        </Slot>
         {description != null && <span className="env-list-row-description">{description}</span>}
       </span>
-      {end != null && <span className="env-list-row-end">{end}</span>}
-      {shortcut != null && <span className="env-list-row-shortcut">{shortcut}</span>}
+      {end != null && (
+        <Slot className="env-list-row-end" element="span" layout="row" shrink="never">
+          {end}
+        </Slot>
+      )}
     </>
   );
   return cloneElement(
-    // render is an element that takes a class name and children.
     render as ReactElement<{ className?: string; children?: ReactNode }>,
     {
       className: classNames('env-list-row', className, own.className),

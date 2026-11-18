@@ -57,7 +57,6 @@ interface GraphicBaseProps extends Omit<
   tint?: GraphicTint;
 }
 
-/** A graphic from a file. */
 interface GraphicFileProps extends GraphicBaseProps {
   /**
    * The file's URL, such as an imported PNG, WebP, JPEG or SVG. While it is undefined, such as
@@ -67,7 +66,6 @@ interface GraphicFileProps extends GraphicBaseProps {
   children?: never;
 }
 
-/** A graphic from an SVG component. */
 interface GraphicSvgProps extends GraphicBaseProps {
   src?: never;
   /** An SVG, such as the application's own icon component, with a viewBox. */
@@ -76,8 +74,7 @@ interface GraphicSvgProps extends GraphicBaseProps {
 
 export type GraphicProps = GraphicFileProps | GraphicSvgProps;
 
-/** The CSS url() of a file, quoted so any URL stays one value. */
-function cssUrl(src: string) {
+function quotedCssUrl(src: string) {
   return `url(${JSON.stringify(src)})`;
 }
 
@@ -102,7 +99,7 @@ export function Graphic({
   if (src !== undefined)
     picture =
       tint === 'text' ? (
-        <span className="env-graphic-mask" style={{ maskImage: cssUrl(src) }} />
+        <span className="env-graphic-mask" style={{ maskImage: quotedCssUrl(src) }} />
       ) : (
         <img className="env-graphic-image" src={src} alt="" draggable={false} />
       );

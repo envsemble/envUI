@@ -12,7 +12,6 @@ import {
 } from '@envsemble/envui';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
-/** Person pictures, which pile closer and turn as cards do; initials, below, rest looser. */
 const people = [
   { id: 'alex', name: 'Alex Morgan', fallback: 'person' as const },
   { id: 'sam', name: 'Sam Lee', fallback: 'person' as const },
@@ -69,7 +68,6 @@ export default function AvatarGroupFixture({ theme }: { theme: ColorScheme }) {
           people={people.slice(0, 2).map((person) => ({ ...person, href: `/people/${person.id}` }))}
         />
       </LinkProvider>
-      {/* A small toolbar: 2 rem controls beside a standard and a small group. */}
       <Surface
         background="muted"
         padding={2}
@@ -94,8 +92,6 @@ export default function AvatarGroupFixture({ theme }: { theme: ColorScheme }) {
       <div dir="rtl">
         <AvatarGroup data-testid="rtl" people={people} max={3} />
       </div>
-      {/* A group at the end of a narrow list row, which wraps the action under the label when it
-          doesn't fit beside it. */}
       <div className="fixture-avatar-row">
         <List.Root aria-label={`Projects ${theme}`}>
           <List.Item

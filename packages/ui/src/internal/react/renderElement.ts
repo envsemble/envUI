@@ -11,11 +11,9 @@ import { setRef } from './setRef.js';
 
 type Props = Record<string, unknown> & { className?: string; style?: CSSProperties };
 
-/** An event handler prop, such as onClick or onKeyDownCapture. */
-const handlerName = /^on[A-Z]/;
+const eventHandlerPropName = /^on[A-Z]/;
 
-/** One callback ref that sets both refs, and cleans both up, as React 19's refs do. */
-function mergeRefs<T>(first: Ref<T> | undefined, second: Ref<T> | undefined): Ref<T> {
+function refSettingBoth<T>(first: Ref<T> | undefined, second: Ref<T> | undefined): Ref<T> {
   return (node: T | null) => {
     const cleanups = [setRef(first, node), setRef(second, node)];
     return () => {
@@ -36,27 +34,28 @@ function mergeRefs<T>(first: Ref<T> | undefined, second: Ref<T> | undefined): Re
  */
 export function renderElement(tag: string, render: ReactElement | undefined, props: Props) {
   if (!isValidElement(render)) return createElement(tag, props);
-  // isValidElement leaves an element's props unknown.
   const own = render.props as Props;
   const merged: Props = { ...props, ...own };
   for (const name of Object.keys(props)) {
     const ours = props[name];
     const theirs = own[name];
-    if (!handlerName.test(name) || typeof ours !== 'function' || typeof theirs !== 'function')
+    if (
+      !eventHandlerPropName.test(name) ||
+      typeof ours !== 'function' ||
+      typeof theirs !== 'function'
+    )
       continue;
     merged[name] = (...args: unknown[]) => {
-      // Both are functions, as checked above.
       (theirs as (...values: unknown[]) => unknown)(...args);
       (ours as (...values: unknown[]) => unknown)(...args);
     };
   }
-  // In React 19 an element's ref is one of its props, which Props leaves unknown.
   const ownRef = own.ref as Ref<unknown> | undefined;
   const ref = props.ref as Ref<unknown> | undefined;
   return cloneElement(render as ReactElement<Props>, {
     ...merged,
     className: classNames(props.className, own.className) || undefined,
     style: props.style || own.style ? { ...props.style, ...own.style } : undefined,
-    ...(ref !== undefined && { ref: ownRef ? mergeRefs(ref, ownRef) : ref }),
+    ...(ref !== undefined && { ref: ownRef ? refSettingBoth(ref, ownRef) : ref }),
   });
 }

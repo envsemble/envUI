@@ -3,7 +3,6 @@ import { IconShare } from '@envsemble/envui/icons/Share';
 
 export default function InTitleBar() {
   return (
-    // A desktop-style window draws its own title bar; the menubar sits at its start.
     <TopBar
       titleBar
       title="Roadmap.md"
@@ -23,7 +22,7 @@ export default function InTitleBar() {
           </Menubar.Menu>
         </Menubar.Root>
       }
-      actions={<IconButton icon={<IconShare />} aria-label="Share" />}
+      end={<IconButton icon={<IconShare />} aria-label="Share" />}
     />
   );
 }

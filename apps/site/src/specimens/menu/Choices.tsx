@@ -9,11 +9,6 @@ const radio = (index: number) =>
 const hiddenFiles = '[role="menuitemcheckbox"]';
 const trigger = '.env-button';
 
-/*
- * The pointer opens View and checks Hidden files: the menu stays open, and the line beside it
- * says so. It sorts by Date changed, which closes the menu. Then it puts both back, Hidden files
- * unchecked and the sort by Name, so the loop ends as it began.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: trigger, x: 0.6, y: 0.6 },
@@ -46,8 +41,6 @@ const script: PointerStep[] = [
 
 function Choosing() {
   usePointer(script);
-  // The menu opens below its trigger, in the room below. The line beside it grows as it changes:
-  // the two start at the start of a box as wide as the longest line, so neither moves.
   return (
     <Column style={{ blockSize: '20.5rem', inlineSize: 'min(100%, 33rem)' }}>
       <Choices />
@@ -55,7 +48,6 @@ function Choosing() {
   );
 }
 
-/** View's choices, checked and picked by a pointer no one sees. */
 export default function ChoicesMotion() {
   return (
     <MotionStage label="the checkbox and radio items">

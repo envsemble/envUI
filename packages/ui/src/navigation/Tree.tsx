@@ -44,23 +44,25 @@ export interface TreeItem {
   /** The row's children show, as the rows that follow it in items; its chevron points down. */
   expanded?: boolean;
   /**
-   * The row's text, which names it and ends with an ellipsis where the row is too narrow;
-   * type-ahead matches it where it is a string.
+   * The row's name, which type-ahead matches. It keeps its room before the description and the end,
+   * and ends with an ellipsis only where the row is too narrow for it alone.
    */
-  label: ReactNode;
+  label: string;
   /** A decorative icon before the label, such as a folder or a document, at the control icon size. */
   icon?: ReactNode;
   /**
-   * Muted text after the label, such as a status or a path. It gives way first where the row runs
-   * out of room, and is read with the label.
+   * Muted text after the label, such as a status or a path. It gives way first, to an ellipsis and
+   * then out of the row, where the row runs out of room, and is read with the label.
    */
-  description?: ReactNode;
-  /** Content at the end of the row, such as a Badge with a count; it is read with the label. */
+  description?: string;
+  /**
+   * Content at the end of the row, such as a Badge with a count, which keeps its size. It gives way
+   * to the label: where both don't fit, it leaves the row whole rather than squeeze the name. It
+   * is read with the label.
+   */
   end?: ReactNode;
   /** The row's native tooltip, such as the full path of a truncated name. */
   tooltip?: string;
-  /** The text type-ahead matches, where the label is not a plain string. */
-  textValue?: string;
   /**
    * The row is dimmed and reports aria-disabled: the keyboard still reaches it, but it neither
    * opens nor expands.
@@ -77,12 +79,13 @@ export interface TreeActionDetails {
   preview: boolean;
 }
 
-/** The native events the tree handles itself, for its rows; the others reach its element. */
-type TreeOwnEvents = 'onClick' | 'onDoubleClick' | 'onContextMenu' | 'onPointerDown';
+type EventsTreeHandlesForRows = 'onClick' | 'onDoubleClick' | 'onContextMenu' | 'onPointerDown';
+
+const startingShiftAppliesAtOnce = 'none';
 
 export interface TreeProps<Item extends TreeItem> extends Omit<
   ComponentPropsWithRef<'div'>,
-  'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | TreeOwnEvents
+  'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | EventsTreeHandlesForRows
 > {
   /**
    * The visible rows in order, flattened: an expanded row is followed by its visible descendants.
@@ -151,7 +154,6 @@ export function Tree<Item extends TreeItem>({
   const treeId = useId().replace(/[^A-Za-z0-9-]/g, '');
   const container = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState<string | null>(selectedId);
-  // Keyboard focus shows a ring on the active row; pointer focus does not.
   const [focusVisible, setFocusVisible] = useState(false);
   const pointerFocus = useRef(false);
   const typeahead = useRef<TypedText>({ text: '', time: 0 });
@@ -164,13 +166,12 @@ export function Tree<Item extends TreeItem>({
   const { positions, sizes } = useMemo(() => siblingPositions(items), [items]);
   const { rowsElement, arriving, motion, moving } = useTreeTransitions(items);
 
-  // The active row falls back to the selected or first row when it leaves the visible rows.
-  const lastActiveIndex = useRef(0);
+  const fallbackActiveIndex = useRef(0);
   const selectedIndex = selectedId === null ? undefined : indexById.get(selectedId);
   let activeIndex = activeId === null ? -1 : (indexById.get(activeId) ?? -1);
   if (activeIndex === -1 && items.length > 0)
-    activeIndex = selectedIndex ?? Math.min(lastActiveIndex.current, items.length - 1);
-  lastActiveIndex.current = Math.max(activeIndex, 0);
+    activeIndex = selectedIndex ?? Math.min(fallbackActiveIndex.current, items.length - 1);
+  fallbackActiveIndex.current = Math.max(activeIndex, 0);
   const activeItem = activeIndex === -1 ? undefined : items[activeIndex];
 
   const { rowHeight, pageRows, indexes, inView, scrollToIndex, onScroll } = useTreeViewport({
@@ -204,8 +205,8 @@ export function Tree<Item extends TreeItem>({
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.target !== event.currentTarget || !activeItem) return;
-    // Keys with Alt, Ctrl or ⌘ belong to the application, such as Alt+← for going back.
-    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const keyBelongsToApplication = event.altKey || event.ctrlKey || event.metaKey;
+    if (keyBelongsToApplication) return;
     const action = treeKeyAction(
       event.key,
       items,
@@ -245,7 +246,6 @@ export function Tree<Item extends TreeItem>({
     open(item, false);
   }
 
-  /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
   const row = (item: Item, index: number, top: number, leaving = false) => (
     <TreeRow
       key={item.value}
@@ -306,9 +306,8 @@ export function Tree<Item extends TreeItem>({
         className="env-tree-rows"
         style={{
           blockSize: items.length * rowHeight,
-          '--env-tree-shift': `${shift}px`,
-          // The starting shift applies at once; only the way back to 0 eases.
-          transition: shift ? 'none' : undefined,
+          '--_tree-shift': `${shift}px`,
+          transition: shift ? startingShiftAppliesAtOnce : undefined,
         }}
       >
         {rows}

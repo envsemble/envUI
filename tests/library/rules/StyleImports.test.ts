@@ -7,12 +7,6 @@ import { libraryEntryPoints } from '../../../scripts/docs/LibraryEntryPoints.ts'
 import { analyze, cssSelectors } from './composition/Analysis.ts';
 import { librarySourceDirectory } from '../../../scripts/RepositoryPaths.ts';
 
-// Each module imports the style sheets it draws with, and a bundler puts in the page those of the
-// modules an application keeps, in the order it evaluates them, each once. styles.css has them in
-// the order of index.css. Where rules of two style sheets tie (the same specificity and property on
-// one element), the later one in index.css wins, so the imports have to bring the earlier one first
-// in every bundle, whichever module a page evaluates first. These tests hold the imports to that.
-
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
 const sourceRoot = librarySourceDirectory;
@@ -30,7 +24,6 @@ function walk(directory, found = []) {
 }
 const modules = walk(sourceRoot)
   .map((path) => relative(sourceRoot, path).split(sep).join('/'))
-  // Generated icons import ../Icon.js alone; `npm run icons:check` holds them to their generator.
   .filter((module) => !module.startsWith('icons/') || module === 'icons/index.ts');
 const known = new Set(modules);
 const resolveImport = (from, specifier) => {
@@ -40,12 +33,7 @@ const resolveImport = (from, specifier) => {
   );
 };
 
-/** Each module's requests in source order, { module } or { sheet }; type-only ones are erased. */
 const requests = new Map();
-/**
- * The modules each module imports lazily, with import(): they load once it has run, after all it
- * imports itself, such as the code of an option that loads only where it is used.
- */
 const lazyRequests = new Map();
 for (const module of modules) {
   const text = readFileSync(join(sourceRoot, module), 'utf8');
@@ -88,7 +76,6 @@ for (const module of modules) {
   requests.set(module, list);
 }
 
-/** The style sheets that evaluating `requests` emits, depth first, each once. */
 function emits(list, seen = new Set(), out = []) {
   for (const request of list) {
     if (request.sheet) {
@@ -101,13 +88,7 @@ function emits(list, seen = new Set(), out = []) {
   return out;
 }
 
-/**
- * For each style sheet, those every bundle has already put in the page when it adds it. A page may
- * evaluate first a module an entry point exports, or one nothing imports; any other module comes
- * after the requests that precede it in each module importing it.
- */
 function guaranteedBefore() {
-  // With the icons' index, which the site's icon list loads, though the package exports each icon.
   const barrels = new Set([
     ...libraryEntryPoints().map(({ file }) => relative(sourceRoot, file).split(sep).join('/')),
     'icons/index.ts',
@@ -191,22 +172,20 @@ test('a module that renders a class brings the style sheets that style it', () =
   const rules = JSON.parse(
     readFileSync(new URL('./composition/Rules.json', import.meta.url), 'utf8'),
   );
-  // A shared class's own style sheet: one that belongs to no component, or the one named after it.
-  const helpers = new Set(Object.keys(rules.classes.stylesheetsWithoutComponent));
+  const sheetsWithoutComponent = new Set(Object.keys(rules.classes.stylesheetsWithoutComponent));
   const ownSheet = (name, sheet) =>
-    helpers.has(sheet) ||
+    sheetsWithoutComponent.has(sheet) ||
     sheet ===
       `${name.slice('env-'.length).replace(/(?:^|-)([a-z])/g, (_, letter) => letter.toUpperCase())}.css`;
-  // PickerPopup gives its popup TimePicker's class only for TimePicker, which brings its style sheet.
-  const rendersFor = { 'forms/internal/PickerPopup.tsx': ['env-time-picker-popup'] };
-  // The dev tools and the theme bootstrap render no envUI part; useCodeContrast only reads a theme.
+  const rendersForTheOwnerThatBringsItsSheet = {
+    'forms/internal/PickerPopup.tsx': ['env-time-picker-popup'],
+  };
   const rendersNothing = (module) =>
     module.startsWith('dev/') ||
     ['foundations/themeBootstrap.ts', 'content/internal/useCodeContrast.ts'].includes(module);
   const base = [...styleSheet('Base.css').matchAll(/^@import '\.\/([\w.]+)'/gm)].map(
     ([, name]) => name,
   );
-  // The style sheets that style a class: those with a selector whose first class it is.
   const styling = new Map();
   for (const name of readdirSync(stylesRoot).filter((file) => file.endsWith('.css')))
     for (const { selector } of cssSelectors(styleSheet(name))) {
@@ -223,10 +202,9 @@ test('a module that renders a class brings the style sheets that style it', () =
     const owner = componentOf.get(module);
     const text = readFileSync(join(sourceRoot, module), 'utf8');
     for (const name of new Set(text.match(/(?<![\w-])env-[a-z0-9]+(?:-[a-z0-9]+)*(?![\w-])/g))) {
-      // Another component's class, rendered as its slot, comes with an import of that component.
       const classOwner = ownerOf(name);
       if (classOwner !== owner && classOwner !== 'shared') continue;
-      if (rendersFor[module]?.includes(name)) continue;
+      if (rendersForTheOwnerThatBringsItsSheet[module]?.includes(name)) continue;
       const missing = [...(styling.get(name) ?? [])].filter(
         (sheet) =>
           !brought.has(sheet) &&
@@ -241,11 +219,6 @@ test('a module that renders a class brings the style sheets that style it', () =
 });
 
 test('style sheets whose rules tie come in index.css order in every bundle', () => {
-  // The pairs whose rules tie on an element a component composes, such as the dismiss button Toast
-  // renders with a class of its own, found by comparing the computed styles of the fixtures and
-  // the site's pages between styles.css and these style sheets in the orders bundlers may emit them
-  // in. A new tie between two style sheets that their modules don't order needs an import, or a
-  // specificity that doesn't depend on the order, as Skeleton.css's.
   const ties = [
     ['Button.css', 'Alert.css'],
     ['Button.css', 'ButtonGroup.css'],
@@ -254,7 +227,6 @@ test('style sheets whose rules tie come in index.css order in every bundle', () 
     ['Button.css', 'Composer.css'],
     ['Button.css', 'DocumentTabs.css'],
     ['Button.css', 'List.css'],
-    ['Button.css', 'PanelDock.css'],
     ['Button.css', 'PickerPopup.css'],
     ['Button.css', 'RichText.css'],
     ['Button.css', 'Scaffold.css'],
@@ -281,7 +253,6 @@ test('style sheets whose rules tie come in index.css order in every bundle', () 
     if (!before.get(later)?.has(earlier))
       problems.push(`a bundle may put ${later} before ${earlier}`);
   }
-  // Base.css comes before every other style sheet.
   for (const [sheet, earlier] of before)
     if (sheet !== 'Base.css' && !earlier.has('Base.css'))
       problems.push(`a bundle may put ${sheet} before Base.css`);
@@ -289,9 +260,6 @@ test('style sheets whose rules tie come in index.css order in every bundle', () 
 });
 
 test("Skeleton.css's rules win their ties whatever the order", () => {
-  // Last in styles.css, its rules won their ties with the components' rules by order; a bundler
-  // may put it first, so each rule naming the skeleton root outside :where() takes :not(env-none),
-  // one type selector more, which every element matches.
   const css = styleSheet('Skeleton.css').replace(/\/\*[\s\S]*?\*\//g, '');
   const selectors = [
     ...css.matchAll(/(?:^|[;{}])\s*([^;{}@]*\[data-env-skeleton\][^;{}]*)\{/g),

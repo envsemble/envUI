@@ -1,6 +1,5 @@
 import { CalendarHeatmap, type CalendarHeatmapDay } from '@envsemble/envui';
 
-/** Stands in for a year of deployment counts: busier midweek, with quiet stretches. */
 function deploymentsPerDay(): CalendarHeatmapDay[] {
   const end = Date.UTC(2026, 2, 31);
   return Array.from({ length: 365 }, (_, index) => {

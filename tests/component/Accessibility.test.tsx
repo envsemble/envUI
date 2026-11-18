@@ -5,18 +5,6 @@ import { fixtureName } from '../fixture/FixtureName.ts';
 import { nextFrames } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/**
- * The accessibility scan of the library: axe over each component fixture as it mounts, in the
- * themes the fixture mounts in, compared with this file's snapshot, so a new violation fails and so
- * does one that no longer occurs. The site's pages are scanned by kind in
- * tests/accessibility/Accessibility.spec.ts; `npm run test:a11y` runs both, and
- * `npm run test:a11y:update` rewrites both lists.
- *
- * Violations are counted by rule and a stable target: the element's tag with its env- classes, or,
- * without any, those of its nearest ancestor that has some.
- */
-
-/** As the fixture page mounts them (tests/fixture/App.tsx), and the rich text editor's. */
 const fixtures = Object.entries(
   import.meta.glob<FixtureModule>(
     ['../fixture/*.fixture.tsx', '!../fixture/CascadeLayers.fixture.tsx'],
@@ -25,18 +13,11 @@ const fixtures = Object.entries(
     },
   ),
 )
-  // The parts of another fixture, such as ContactSheetParts.fixture.tsx, have no default export.
   .filter(([, module]) => module.default)
   .map(([file, module]) => [fixtureName(file), module] as const);
 
-/** WCAG 2.0–2.2 A and AA plus axe's best practices, as the site's scan runs them. */
-const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
-/**
- * Rules about a whole page, which a fixture is not, run in the site's scan; contrast, which the
- * contrast gate measures for every pair of tokens in every theme (tests/component/Contrast.test.tsx),
- * and the site's scan on its pages.
- */
-const skippedRules = [
+const siteScanTags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
+const rulesTheSiteScanAndContrastGateCover = [
   'color-contrast',
   'bypass',
   'document-title',
@@ -51,18 +32,13 @@ test.for(fixtures)(
   { tags: ['a11y'] },
   async ([, module]) => {
     mount(module);
-    // What loads on its own, such as a code diff's renderer, is busy until it has: up to a few
-    // seconds, as a fixture may show a busy state on purpose.
-    for (
-      let waited = 0;
-      document.querySelector('[aria-busy="true"]') && waited < 3_000;
-      waited += 50
-    )
-      await new Promise((resolve) => setTimeout(resolve, 50));
+    await waitUntilLoadedOrBusyOnPurpose();
     await nextFrames();
     const { violations } = await axe.run(document, {
-      runOnly: { type: 'tag', values: tags },
-      rules: Object.fromEntries(skippedRules.map((rule) => [rule, { enabled: false }])),
+      runOnly: { type: 'tag', values: siteScanTags },
+      rules: Object.fromEntries(
+        rulesTheSiteScanAndContrastGateCover.map((rule) => [rule, { enabled: false }]),
+      ),
       resultTypes: ['violations'],
     });
     const found: Record<string, Record<string, number>> = {};
@@ -76,6 +52,11 @@ test.for(fixtures)(
     expect(found).toMatchSnapshot();
   },
 );
+
+async function waitUntilLoadedOrBusyOnPurpose() {
+  for (let waited = 0; document.querySelector('[aria-busy="true"]') && waited < 3_000; waited += 50)
+    await new Promise((resolve) => setTimeout(resolve, 50));
+}
 
 function stableTarget(element: Element): string {
   const part = (each: Element) =>

@@ -44,7 +44,6 @@ export default function RowDensity() {
               <Table.Cell nowrap>{report.owner}</Table.Cell>
               <Table.Cell numeric>{report.pages}</Table.Cell>
               <Table.Cell align="end" nowrap>
-                {/* Buttons in the cells take the small control height at every density. */}
                 <Row align="center" gap={4} justify="end">
                   <Button variant="text">Open</Button>
                   <IconButton
@@ -58,7 +57,6 @@ export default function RowDensity() {
           ))}
         </Table.Body>
       </Table.Root>
-      {/* Below the rows, so it moves with them rather than leaving room for the tallest. */}
       <SegmentedControl
         aria-label="Row density"
         size="sm"

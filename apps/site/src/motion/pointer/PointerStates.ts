@@ -1,27 +1,13 @@
-/*
- * The states a stylesheet shows under a real pointer, `:hover`, `:active` and `:focus`, which no
- * event can set. The virtual pointer (VirtualPointer.ts) marks what it is over, presses and focuses
- * with these attributes instead, and mirrorPointerStates gives every such rule in the site's
- * stylesheets a copy that matches the attributes.
- */
-
 export const hoverMark = 'data-catalogue-hover';
 export const pressMark = 'data-catalogue-pressed';
 export const focusMark = 'data-catalogue-focus';
 export const focusWithinMark = 'data-catalogue-focus-within';
 
-/**
- * Sets or clears one of the pointer's marks on an element, unless the element is inside an editable
- * region. An editor such as ProseMirror redraws what changes in its document, so a mark inside it
- * would replace the very element being pressed. The editor's frame, which is outside, still shows
- * hover and focus.
- */
 export function mark(element: Element, name: string, on: boolean) {
   if (element.closest('[contenteditable="true"]')) return;
   element.toggleAttribute(name, on);
 }
 
-/** The attribute that stands in for each state. */
 const marks = {
   hover: hoverMark,
   active: pressMark,
@@ -30,11 +16,9 @@ const marks = {
   focus: focusMark,
 };
 
-/** The site's rules for :hover and :active, rewritten for the pointer's marks. */
 const mirror = typeof CSSStyleSheet === 'undefined' ? null : new CSSStyleSheet();
 let mirroredSheets = -1;
 
-/** Rewrites a rule's text inside the group rules around it, such as @media and @layer. */
 type Wrap = (text: string) => string;
 
 function mirrorRules(rules: CSSRuleList, out: string[], wrap: Wrap) {
@@ -42,9 +26,6 @@ function mirrorRules(rules: CSSRuleList, out: string[], wrap: Wrap) {
     if (rule instanceof CSSStyleRule) {
       const selector = rule.selectorText;
       if (!/:(hover|active|focus)/.test(selector)) continue;
-      // A rule for an element that isn't hovered would still match the marked element, such as a
-      // labelled field's placeholder hidden while the field isn't focused, so its selector also
-      // gets the marks.
       if (/:not\([^)]*:(hover|active|focus)/.test(selector)) {
         if (!selector.includes('data-catalogue-'))
           rule.selectorText = selector.replace(
@@ -73,12 +54,6 @@ function mirrorRules(rules: CSSRuleList, out: string[], wrap: Wrap) {
   }
 }
 
-/**
- * Gives every :hover and :active rule in the site's stylesheets a copy for the virtual pointer's
- * marks, in a stylesheet of its own after them, so a marked element looks as hovered or pressed as
- * it would under a real pointer. It writes them again when stylesheets are added, as when a page
- * loads.
- */
 export function mirrorPointerStates() {
   if (!mirror || document.styleSheets.length === mirroredSheets) return;
   mirroredSheets = document.styleSheets.length;
@@ -87,7 +62,7 @@ export function mirrorPointerStates() {
     try {
       mirrorRules(sheet.cssRules, rules, (text) => text);
     } catch {
-      // A stylesheet from another origin can't be read; the site has none with these states.
+      continue;
     }
   }
   mirror.replaceSync(rules.join('\n'));

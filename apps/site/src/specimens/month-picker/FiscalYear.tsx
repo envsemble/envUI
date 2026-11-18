@@ -4,11 +4,6 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage, rowsAnd } from '../../figures/MotionStage';
 
-/*
- * The pointer opens Budget month, where the months before April are unavailable, and presses Next
- * year: the months after March are, and Next year is too, at the fiscal year's end. It goes back a
- * year and closes the popup with Esc.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-date-picker-control', x: 0.4, y: 0.55 },
@@ -31,7 +26,6 @@ const script: PointerStep[] = [
 
 function Paging() {
   usePointer(script);
-  // The field and the room its popup opens into, as tall as the two are open.
   return (
     <Column align="center" style={{ inlineSize: '100%', blockSize: rowsAnd(5.625, 9.75) }}>
       <FiscalYear />
@@ -39,7 +33,6 @@ function Paging() {
   );
 }
 
-/** The fiscal year's months, paged to its end by a pointer no one sees. */
 export default function FiscalYearMotion() {
   return (
     <MotionStage label="the fiscal year's limit">

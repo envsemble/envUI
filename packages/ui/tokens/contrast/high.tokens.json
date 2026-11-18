@@ -13,6 +13,17 @@
         },
         "pressed": {
           "$value": "{contrast-high.color.bg.selected.pressed}"
+        },
+        "accent": {
+          "$root": {
+            "$value": "{contrast-high.color.bg.selected.accent}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.selected.accent.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.selected.accent.pressed}"
+          }
         }
       },
       "navigation": {
@@ -77,6 +88,9 @@
         "pressed": {
           "$value": "{contrast-high.color.bg.popup.pressed}"
         }
+      },
+      "field": {
+        "$value": "{contrast-high.color.bg.field}"
       },
       "neutral": {
         "muted": {
@@ -387,7 +401,9 @@
         "$value": "{contrast-high.color.fg.accent}"
       },
       "on-selected": {
-        "$value": "{contrast-high.color.fg.on-selected}"
+        "accent": {
+          "$value": "{contrast-high.color.fg.on-selected.accent}"
+        }
       },
       "success": {
         "$value": "{contrast-high.color.fg.success}"

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ContextMenu, IconButton, List, Menu, Surface } from '@envsemble/envui';
+import { ContextMenu, IconButton, List, Menu } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconFileCopy } from '@envsemble/envui/icons/FileCopy';
@@ -20,8 +20,6 @@ const initialEntries: Entry[] = [
 export default function ContextMenuForRows() {
   const [entries, setEntries] = useState(initialEntries);
   const list = useRef<HTMLUListElement>(null);
-  // A deleted row takes its More actions button with it, so focus moves to the next row's, or to
-  // the list when it is empty.
   const focusNext = useRef<(() => void) | null>(null);
   useEffect(() => {
     focusNext.current?.();
@@ -38,7 +36,6 @@ export default function ContextMenuForRows() {
     setEntries((current) => current.filter((item) => item.id !== entry.id));
   };
 
-  // The same actions open from each row's button and from a right click on the row.
   const actionsFor = (entry: Entry) => (
     <>
       <Menu.Item
@@ -73,7 +70,7 @@ export default function ContextMenuForRows() {
         );
       }}
     >
-      <Surface background="default" padding={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
+      <div style={{ inlineSize: 'min(100%, 28rem)' }}>
         <List.Root ref={list} aria-label="Documents" tabIndex={-1}>
           {entries.map((entry) => (
             <List.Item
@@ -98,7 +95,7 @@ export default function ContextMenuForRows() {
             />
           ))}
         </List.Root>
-      </Surface>
+      </div>
     </ContextMenu>
   );
 }

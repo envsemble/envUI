@@ -7,11 +7,6 @@ const handle = '.env-sheet-resize-handle';
 const viewport = '.env-sheet-viewport';
 const close = '.env-sheet [aria-label="Close"]';
 
-/*
- * The pointer opens the project's details and drags the sheet's inner edge toward the start,
- * where it stops at its largest width, then toward the end, where it stops at its smallest; it
- * lets go and closes the sheet.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
@@ -40,7 +35,6 @@ function Resizing() {
   return <ResizableDetails />;
 }
 
-/** The project's details in a sheet whose inner edge the pointer drags, wider and narrower. */
 export default function ResizableDetailsMotion() {
   return (
     <MotionStage label="the sheet resized by its inner edge" height="20rem">

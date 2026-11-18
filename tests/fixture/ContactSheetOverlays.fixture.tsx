@@ -20,11 +20,9 @@ import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { Cell, Section, Stage, Strip } from './ContactSheetParts.fixture.js';
 
 const dialogStage = { height: '20rem', width: '33rem' } as const;
-/** Wide enough that a side sheet keeps its own width beside the page it covers. */
 const sheetStage = { height: '18rem', width: '48rem' } as const;
 
 function Dialogs() {
-  // A decision: the built-in close button is the Cancel, and the primary action comes last.
   const actions = <Button>Rename</Button>;
   return (
     <Section name="Dialog and DialogClose">

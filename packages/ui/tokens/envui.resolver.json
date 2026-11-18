@@ -15,6 +15,7 @@
         { "$ref": "./base/space.tokens.json" },
         { "$ref": "./base/radius.tokens.json" },
         { "$ref": "./base/size.tokens.json" },
+        { "$ref": "./base/layout.tokens.json" },
         { "$ref": "./base/motion.tokens.json" },
         { "$ref": "./base/stacking.tokens.json" },
         { "$ref": "./base/window-class.tokens.json" },

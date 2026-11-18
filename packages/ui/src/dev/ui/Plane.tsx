@@ -1,8 +1,5 @@
 'use client';
 
-// One plane of the 3D view: a node's visible box, lifted to its level, carrying a copy of its
-// surfaces, its padding and gaps hatched, and its name.
-
 import { memo, useLayoutEffect, useRef } from 'react';
 import type { Box, NodeData } from '../model.js';
 import { labelOf } from '../readout.js';
@@ -11,7 +8,6 @@ import { devStats, timed } from './stats.js';
 import { surfaceOf } from './surfaces.js';
 import { flag } from '../../internal/flag.js';
 
-/** A node's surfaces, copied at a size and a version of its content, with what scrolls them. */
 export interface CopiedSurface {
   size: string;
   version: number;
@@ -19,14 +15,8 @@ export interface CopiedSurface {
   restore: () => void;
 }
 
-/** How long the copies may take each frame, in ms: the rest wait for the next frame. */
-const copyBudget = 6;
+const copyBudgetMsPerFrame = 6;
 
-/**
- * The copies of the planes' surfaces, by node key, kept across renders, and the copies waiting to
- * be made. Copying is paced: a few nodes each animation frame, within a budget, so a page that
- * settles after a resize stays responsive while its planes fill in.
- */
 export class SurfaceCache {
   private copies = new Map<number, CopiedSurface>();
   private waiting = new Map<number, () => void>();
@@ -40,15 +30,13 @@ export class SurfaceCache {
     this.copies.set(key, copy);
   }
 
-  /** Forgets the copies of nodes that are gone. */
-  keep(keys: Set<number>) {
+  forgetNodesOtherThan(keys: Set<number>) {
     for (const key of this.copies.keys()) if (!keys.has(key)) this.copies.delete(key);
   }
 
-  /** Makes a node's copy in a coming frame, replacing any copy of it still waiting. */
   request(key: number, copy: () => void) {
     this.waiting.set(key, copy);
-    if (!this.frame) this.frame = requestAnimationFrame(this.work);
+    if (!this.frame) this.frame = requestAnimationFrame(this.copyWithinBudget);
   }
 
   cancel(key: number) {
@@ -61,34 +49,25 @@ export class SurfaceCache {
     this.waiting.clear();
   }
 
-  private work = () => {
+  private copyWithinBudget = () => {
     this.frame = 0;
     const start = performance.now();
     for (const [key, copy] of this.waiting) {
       this.waiting.delete(key);
       copy();
-      if (performance.now() - start > copyBudget) break;
+      if (performance.now() - start > copyBudgetMsPerFrame) break;
     }
-    if (this.waiting.size) this.frame = requestAnimationFrame(this.work);
+    if (this.waiting.size) this.frame = requestAnimationFrame(this.copyWithinBudget);
   };
 }
 
 export interface PlaneProps {
   node: NodeData;
-  /** Where the root is, which the plane is placed from. */
   origin: { x: number; y: number };
-  /** How high it floats, in px. */
   z: number;
-  /** The node's element, whose surfaces it copies. */
   element: HTMLElement | undefined;
-  /** How often the node's content changed: a new version is copied again. */
   version: number;
   surfaces: SurfaceCache;
-  /**
-   * Whether the page has settled: surfaces are copied only then. While the page resizes, a copy
-   * of another size is hidden rather than shown cut off, and the plane shows its outline, its
-   * name and its spacing, which follow every frame.
-   */
   settled: boolean;
   rootPx: number;
   names: boolean;
@@ -97,7 +76,6 @@ export interface PlaneProps {
   selected: boolean;
 }
 
-/** The plane of a node. Hover marks it with data-hovered from outside, without a render. */
 export const Plane = memo(
   function Plane({
     node,
@@ -120,9 +98,8 @@ export const Plane = memo(
       if (!target || !element?.isConnected) return;
       const size = `${node.size.w}x${node.size.h}`;
       const show = (copy: CopiedSurface | undefined) => {
-        // A copy at another size than the node's would be cut off, or leave the plane half
-        // empty: the plane shows none until the new one is made.
-        if (!copy || copy.size !== size) target.replaceChildren();
+        const copyFitsTheNode = copy !== undefined && copy.size === size;
+        if (!copyFitsTheNode) target.replaceChildren();
         else {
           if (copy.element.parentElement !== target) target.replaceChildren(copy.element);
           copy.restore();
@@ -161,7 +138,7 @@ export const Plane = memo(
           style={{ transform: `translate(${box.x - clip.x}px, ${box.y - clip.y}px)` }}
         >
           <div ref={host} />
-          {showSpacing ? <Spacing node={node} /> : null}
+          {showSpacing ? <HatchedSpacing node={node} /> : null}
         </div>
         {names && roomy ? <span className="env-dev-name">{labelOf(node)}</span> : null}
       </div>
@@ -195,11 +172,7 @@ const sameBox = (a: Box, b: Box) => a.x === b.x && a.y === b.y && a.w === b.w &&
 
 const rectPath = ({ x, y, w, h }: Box) => `M${x} ${y}h${w}v${h}h${-w}Z`;
 
-/**
- * Padding hatched one way, the space between and around the children the other, the children
- * dotted.
- */
-function Spacing({ node }: { node: NodeData }) {
+function HatchedSpacing({ node }: { node: NodeData }) {
   const { box, border, padding, kids } = node;
   const [bt, br, bb, bl] = border;
   const [pt, pr, pb, pl] = padding;

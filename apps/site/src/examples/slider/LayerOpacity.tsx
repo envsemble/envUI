@@ -4,7 +4,6 @@ import { Slider } from '@envsemble/envui';
 export default function LayerOpacity() {
   const [opacity, setOpacity] = useState(40);
   return (
-    // As wide as a form column.
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Slider
         label="Opacity"

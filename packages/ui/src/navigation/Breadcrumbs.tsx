@@ -7,7 +7,6 @@ import {
   type ComponentPropsWithRef,
   type MouseEvent,
   type ReactElement,
-  type ReactNode,
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
@@ -23,10 +22,10 @@ import '../styles/Breadcrumbs.css';
 
 export interface BreadcrumbsItem {
   /**
-   * The level's name, such as a folder's title. Beyond 20 rem it ends with an ellipsis, and a
-   * tooltip shows it in full on hover and keyboard focus.
+   * The level's name, such as a folder's title: text, which the trail cuts short beyond 20 rem with
+   * an ellipsis, and a tooltip shows in full on hover and keyboard focus.
    */
-  label: ReactNode;
+  label: string;
   /** A destination, rendered through the LinkProvider link. */
   href?: string;
   /** An action for applications that navigate without URLs; rendered as a button styled as a link. */
@@ -51,7 +50,6 @@ export interface BreadcrumbsProps extends Omit<ComponentPropsWithRef<'nav'>, 'ch
   className?: string;
 }
 
-/** Whether the text in an element is cut short with an ellipsis, followed as its size changes. */
 function useTruncated(element: RefObject<HTMLElement | null>) {
   const [truncated, setTruncated] = useState(false);
   useLayoutEffect(() => {
@@ -67,7 +65,6 @@ function useTruncated(element: RefObject<HTMLElement | null>) {
   return truncated;
 }
 
-/** One level: a link, a button, plain text or the current page, with its full label on hover. */
 function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
   const label = useRef<HTMLSpanElement>(null);
   const truncated = useTruncated(label);
@@ -77,18 +74,16 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
       {item.label}
     </span>
   );
-  // A label cut short that is no link takes keyboard focus, so the keyboard can show it in full. It
-  // leaves the tab order only once it has lost focus: a label that comes to fit while focused, as
-  // the window widens, keeps focus instead of dropping it to the page.
-  const focusable = {
-    tabIndex: truncated || focused ? 0 : undefined,
+  const keepsFocusUntilBlurEvenOnceItFits = focused;
+  const focusableToShowInFull = {
+    tabIndex: truncated || keepsFocusUntilBlurEvenOnceItFits ? 0 : undefined,
     onFocus: () => setFocused(true),
     onBlur: () => setFocused(false),
   };
   let crumb: ReactElement;
   if (current) {
     crumb = (
-      <span className="env-breadcrumbs-current" aria-current="page" {...focusable}>
+      <span className="env-breadcrumbs-current" aria-current="page" {...focusableToShowInFull}>
         {content}
       </span>
     );
@@ -104,7 +99,7 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
     );
   } else {
     crumb = (
-      <span className="env-breadcrumbs-text" {...focusable}>
+      <span className="env-breadcrumbs-text" {...focusableToShowInFull}>
         {content}
       </span>
     );

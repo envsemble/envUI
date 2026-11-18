@@ -1,19 +1,12 @@
-// The part classes and state attributes the library's TypeScript sets, read with ts-morph: the
-// `env-*` literals in class names (`className`, `classNames(…)`, a `class` property, a variable named
-// for a class), with `env-x-${value}` expanded over the value's type, and the `data-*` attributes set
-// in JSX on an element with a part class, with the values of the attribute's type.
 import { relative, resolve } from 'node:path';
 import { Node, Project, SyntaxKind, type JsxAttribute, type SourceFile, type Type } from 'ts-morph';
 import { kebab } from '../PageStructure.ts';
 import { libraryDirectory, librarySourceDirectory } from '../../RepositoryPaths.ts';
 import { isPrivateState, repositoryPath, type StateRecord } from './Library.ts';
 
-/** An `env-*` class in a string, not part of a selector, custom property or data attribute. */
 const classPattern = /(?<![\w.#-])env-[a-z\d]+(?:-[a-z\d]+)*(-?)/g;
-/** Attribute and property names whose values are class names. */
 const isClassName = (name: string) => /^(?:class|className|\w+ClassName)$/.test(name);
 
-/** The string values a type can take, or undefined when it takes any string or number. */
 function literalValues(type: Type): Set<string> | undefined {
   const values = new Set<string>();
   for (const member of type.isUnion() ? type.getUnionTypes() : [type]) {
@@ -27,15 +20,12 @@ function literalValues(type: Type): Set<string> | undefined {
   return values;
 }
 
-/**
- * The part classes and the state attributes the library's TypeScript sets: each class with the
- * files it occurs in, and each element's data attributes with the classes on that element.
- */
 export function readSource() {
   const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
   const classes = new Map<string, { files: Set<string> }>();
+  const slots = new Set<string>();
+  const slotNames = new Set<Node>();
   const warnings: string[] = [];
-  /** The JSX element whose attribute holds a node, if any. */
   const elementOf = (node: Node) => {
     const attribute = node.getFirstAncestor(
       (ancestor) => Node.isJsxAttribute(ancestor) && isClassName(ancestor.getNameNode().getText()),
@@ -44,11 +34,7 @@ export function readSource() {
   };
   const classesOnElement = new Map<Node, Set<string>>();
   const statesOnElement = new Map<Node, StateRecord[]>();
-  // Every data attribute each file writes, with its values, wherever it writes it: on an element of
-  // another component, in an object of props, or through an element's dataset. They complete the
-  // values of a state its parts take, such as a variant set through a component's props.
   const written = new Map<string, Map<string, Set<string> | undefined>>();
-  // The same, written through an element's dataset alone, which only the element's own code does.
   const writtenToDataset = new Map<string, Map<string, Set<string> | undefined>>();
   const write = (
     path: string,
@@ -67,8 +53,6 @@ export function readSource() {
     );
     into.set(path, byAttribute);
   };
-  // The elements whose class name reads a variable, by the variable's declaration, such as
-  // `const className = 'env-x'` before `<span className={className}>`.
   const elementsOfVariable = new Map<Node, Set<Node>>();
   const elementsOf = (node: Node): Node[] => {
     const element = elementOf(node);
@@ -76,7 +60,6 @@ export function readSource() {
     const declaration = node.getFirstAncestor(Node.isVariableDeclaration);
     return declaration ? [...(elementsOfVariable.get(declaration) ?? [])] : [];
   };
-  // Dev mode (dev.ts and dev/) is development tooling: its own UI's classes are no contract.
   const files = project
     .getSourceFiles()
     .filter(
@@ -95,6 +78,11 @@ export function readSource() {
         if (isClassName(name) && initializer) {
           anchors.push(initializer);
           const element = node.getParent().getParentOrThrow();
+          if (
+            (Node.isJsxOpeningElement(element) || Node.isJsxSelfClosingElement(element)) &&
+            element.getTagNameNode().getText() === 'Slot'
+          )
+            slotNames.add(initializer);
           for (const identifier of initializer.getDescendants())
             if (Node.isIdentifier(identifier))
               for (const declaration of identifier.getSymbol()?.getDeclarations() ?? [])
@@ -111,7 +99,6 @@ export function readSource() {
         }
         if (name.startsWith('data-')) write(path, name, attributeValues(node));
       } else if (Node.isPropertyAssignment(node) && Node.isStringLiteral(node.getNameNode())) {
-        // `{ 'data-variant': variant }`, props spread onto an element or passed to a component.
         const initializer = node.getInitializer();
         if (initializer)
           write(
@@ -120,7 +107,6 @@ export function readSource() {
             literalValues(initializer.getType()),
           );
       } else if (Node.isBinaryExpression(node) && node.getOperatorToken().getText() === '=') {
-        // `row.dataset.moving = mode`.
         const left = node.getLeft();
         if (
           Node.isPropertyAccessExpression(left) &&
@@ -144,6 +130,8 @@ export function readSource() {
         anchors.push(node.getInitializer());
     });
     for (const { name, node } of classesIn(anchors, path, warnings)) {
+      if (slotNames.has(node) || node.getFirstAncestor((ancestor) => slotNames.has(ancestor)))
+        slots.add(name);
       const entry = classes.get(name) ?? { files: new Set<string>() };
       entry.files.add(path);
       classes.set(name, entry);
@@ -162,6 +150,7 @@ export function readSource() {
   }
   return {
     classes,
+    slots,
     states,
     imports: importsOf(files),
     renders: rendersOf(files),
@@ -171,11 +160,6 @@ export function readSource() {
   };
 }
 
-/**
- * The part classes the strings in and under `anchors` name, each with the node that names it, a
- * class that ends in `-` expanded over the values of the expression that completes it. One whose
- * expression is no list of strings is a warning.
- */
 function classesIn(anchors: (Node | undefined)[], path: string, warnings: string[]) {
   const found: { name: string; node: Node }[] = [];
   const seen = new Set<Node>();
@@ -206,10 +190,6 @@ function classesIn(anchors: (Node | undefined)[], path: string, warnings: string
   return found;
 }
 
-/**
- * The text of a string or template piece that may hold class names, and for a piece followed by
- * an expression, that expression, which completes a class that ends in `-`.
- */
 function classText(node: Node): { text: string; next?: Node } | undefined {
   if (
     Node.isStringLiteral(node) ||
@@ -233,11 +213,6 @@ function classText(node: Node): { text: string; next?: Node } | undefined {
   return undefined;
 }
 
-/**
- * The library modules each file imports, by the file: a component's files are its own and the
- * internal modules it imports, so shared anatomy, such as the list row of menus, counts as used by
- * the components that render it.
- */
 function importsOf(files: SourceFile[]) {
   return new Map(
     files.map((file) => [
@@ -251,10 +226,6 @@ function importsOf(files: SourceFile[]) {
   );
 }
 
-/**
- * The components each file imports as values, by their module: the names it imports, or every
- * export of the module for a namespace import, such as Bar's `import * as Menu`.
- */
 function rendersOf(files: SourceFile[]) {
   return new Map(
     files.map((file) => [
@@ -277,10 +248,8 @@ function rendersOf(files: SourceFile[]) {
   );
 }
 
-/** The values a JSX data attribute takes: its literal, or the string values of its type. */
 function attributeValues(attribute: JsxAttribute): Set<string> | undefined {
   const initializer = attribute.getInitializer();
-  // `<div data-open>` renders data-open="true".
   if (!initializer) return new Set(['true']);
   if (Node.isStringLiteral(initializer)) return new Set([initializer.getLiteralText()]);
   const expression = Node.isJsxExpression(initializer) ? initializer.getExpression() : undefined;

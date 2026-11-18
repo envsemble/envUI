@@ -13,12 +13,6 @@ import '../../styles/Base.css';
 import '../../styles/Dialog.css';
 
 /**
- * The parts Dialog, Sheet, CommandPalette and other modal surfaces share, inside a Base UI Dialog
- * or Drawer root: the backdrop, the raised surface, the heading block and the actions row. Each owner
- * adds its own class for its placement and motion.
- */
-
-/**
  * The theme boundary in a modal surface's portal. It has no box and is no container, so it starts
  * no stacking context: the backdrop and the surface's positioner keep their own layers, under what
  * opens over them, and the positioner, fixed over the viewport, is the env-window container.
@@ -28,12 +22,15 @@ export function OverlayTheme({ className, ...props }: ThemeProps) {
 }
 
 /**
- * The backdrop behind a modal surface, which fades in and out. While it is mounted the surface counts
- * as open in its portal container, so toasts there wait until it has closed.
+ * The backdrop behind a modal surface, which fades in and out. A modal opened from inside another,
+ * such as a Dialog from a Sheet, has one of its own over the one below. While it is mounted the
+ * surface counts as open in its portal container, so toasts there wait until it has closed.
  */
 export function DialogBackdrop({ className }: { className?: string }) {
   useModalPresence(usePortalContainer().container);
-  return <BaseDialog.Backdrop className={classNames('env-dialog-backdrop', className)} />;
+  return (
+    <BaseDialog.Backdrop forceRender className={classNames('env-dialog-backdrop', className)} />
+  );
 }
 
 /**
@@ -81,7 +78,7 @@ export function DialogHeader({
         </Row>
       )}
       {description != null && (
-        <BaseDialog.Description className="env-dialog-description">
+        <BaseDialog.Description render={<div />} className="env-dialog-description">
           {description}
         </BaseDialog.Description>
       )}
@@ -112,10 +109,9 @@ export function DialogContent({
   skeleton?: boolean;
   children: ReactNode;
 }) {
-  // A skeleton dialog keeps focus on its popup, the busy root, which closes with Escape; its
-  // content is inert.
+  const contentInertWhileSkeleton = skeleton || undefined;
   return (
-    <Column gap={5} className="env-dialog-content" inert={skeleton || undefined}>
+    <Column gap={5} className="env-dialog-content" inert={contentInertWhileSkeleton}>
       <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>
     </Column>
   );

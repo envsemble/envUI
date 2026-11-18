@@ -9,14 +9,11 @@ const people = [
 
 export default function InspectorPanel() {
   const [open, setOpen] = useState(false);
-  // The person shown, who stays in the sheet while it slides out.
   const [selected, setSelected] = useState<string | null>(null);
-  // The button that showed the current person, where focus returns when the panel closes.
   const opener = useRef<HTMLButtonElement | null>(null);
   const person = people.find((candidate) => candidate.name === selected);
   return (
     <>
-      {/* The list takes the width of a column of the page. */}
       <List.Root aria-label="People" style={{ inlineSize: 'min(100%, 24rem)' }}>
         {people.map((candidate) => (
           <List.Item

@@ -6,10 +6,6 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const button = (label: string) => `.env-toolbar-button[aria-label="${label}"]`;
 
-/*
- * The pointer runs along the toolbar over the diagram: Zoom out, Zoom in and Diagram help each
- * show their names at once, with no wait, and the pointer leaves.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: button('Zoom out'), x: 0.5, y: 2.2 },
@@ -26,7 +22,6 @@ const script: PointerStep[] = [
 
 const steps = ['Sign up', 'Verify e-mail', 'Choose a plan'];
 
-/** An arrow from one step of the flow to the next. */
 function Arrow() {
   return (
     <svg width="40" height="12" viewBox="0 0 40 12" aria-hidden style={{ flex: 'none' }}>
@@ -42,7 +37,6 @@ function Arrow() {
   );
 }
 
-/** A small flow diagram, the dense content the toolbar floats over. */
 function Diagram() {
   return (
     <Surface
@@ -94,7 +88,6 @@ function Scanning() {
   return <Diagram />;
 }
 
-/** View controls floating over a diagram, their names shown at once as a pointer runs along them. */
 export default function ViewControlsMotion() {
   return (
     <MotionStage label="the buttons' names showing at once">

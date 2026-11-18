@@ -119,7 +119,6 @@ export function Popover({
   });
   const setOpen = (next: boolean, reason: PopoverOpenChangeReason) => changeOpen(next, { reason });
   const close = () => setOpen(false, 'close-press');
-  // The popup takes the text direction at its trigger.
   const triggerRef = useRef<HTMLButtonElement>(null);
   const portal = usePortalContainer();
   return (

@@ -1,5 +1,3 @@
-// internal/time/calendarDays: the minutes a time list offers, the entry typed keys name, and the
-// YYYY-MM months of MonthPicker.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -30,14 +28,12 @@ test('the minute column offers every step of the hour', () => {
   assert.deepEqual(minuteSteps(15), [0, 15, 30, 45]);
   assert.equal(minuteSteps(1).length, 60);
   assert.deepEqual(minuteSteps(60), [0]);
-  // A step that doesn't divide the hour stops before it.
   assert.deepEqual(minuteSteps(25), [0, 25, 50]);
 });
 
 test('a chosen minute between steps takes its place in order, once', () => {
   assert.deepEqual(minuteSteps(15, 40), [0, 15, 30, 40, 45]);
   assert.deepEqual(minuteSteps(15, 50), [0, 15, 30, 45, 50]);
-  // On a step, or outside the hour, it adds nothing.
   assert.deepEqual(minuteSteps(15, 45), [0, 15, 30, 45]);
   assert.deepEqual(minuteSteps(15, undefined), [0, 15, 30, 45]);
   assert.deepEqual(minuteSteps(15, 60), [0, 15, 30, 45]);
@@ -60,7 +56,6 @@ test('typed keys name the first entry that starts with them and can be chosen', 
   assert.equal(matchTyped('09', hours), 9);
   assert.equal(matchTyped('1', hours), 10);
   assert.equal(matchTyped('14', hours), 14);
-  // Unavailable entries are passed over.
   assert.equal(matchTyped('0', hours), 8);
   assert.equal(matchTyped('7', hours), -1);
   assert.equal(matchTyped('99', hours), -1);

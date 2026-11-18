@@ -31,12 +31,10 @@ import { IconButton } from '@envsemble/envui';
 import { Cell, Section, Stage, Strip, interactionStates } from './ContactSheetParts.fixture.js';
 
 const sizes = ['sm', 'md', 'lg'] as const;
-/** sm is for a field with its label hidden, as in a toolbar: one that shows its label takes md. */
 const sizeLabel = (size: (typeof sizes)[number]) =>
   size === 'sm' ? { visibleLabel: false, caption: 'sm, label hidden' } : { caption: size };
 const fieldWidth = '15rem';
 
-/** The states a text-like field is shown in, with the props each takes, and its error when invalid. */
 function fieldStates<P extends object>(
   rest: P,
   filled: P,

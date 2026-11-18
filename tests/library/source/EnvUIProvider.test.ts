@@ -1,4 +1,3 @@
-// EnvUIProvider, rendered on the server: the locale it sets is the one the components inside read.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -14,7 +13,6 @@ function LocaleProbe() {
 }
 
 test('EnvUIProvider sets the locale components read', () => {
-  // Outside a provider, components take the runtime's locale.
   assert.equal(renderToStaticMarkup(h(LocaleProbe)), '<output>runtime</output>');
   assert.equal(
     renderToStaticMarkup(h(EnvUIProvider, { locale: 'de-CH' }, h(LocaleProbe))),

@@ -8,14 +8,6 @@ import { IconPerson } from '@envsemble/envui/icons/Person';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
-/*
- * The tile of each foundation, for a Related card that points to a page without an example of its
- * own: a small, characteristic picture of what the page is about, drawn with envUI, so its tile
- * reads like the components' tiles rather than as a missing picture. The tile scales it to fit its
- * stage, as it does an example (figures/TileStage.tsx). Its styles are in Related.css.
- */
-
-/** A few real icons from the set, outline and filled. */
 function IconsTile() {
   return (
     <Row gap={5} align="center" className="catalogue-foundation-tile-icons">
@@ -29,7 +21,6 @@ function IconsTile() {
   );
 }
 
-/** The type scale, from display down to caption. */
 function TypographyTile() {
   return (
     <Row gap={6} align="center">
@@ -52,7 +43,6 @@ function TypographyTile() {
   );
 }
 
-/** The theme's roles: primary, accent and the status colors. */
 function ColorsTile() {
   return (
     <Row gap={3} className="catalogue-foundation-tile-swatches">
@@ -63,7 +53,6 @@ function ColorsTile() {
   );
 }
 
-/** The spacing steps, each a bar as long as its step. */
 function SpacingTile() {
   return (
     <Column gap={2} className="catalogue-foundation-tile-spacing">
@@ -74,7 +63,6 @@ function SpacingTile() {
   );
 }
 
-/** The control sizes, which follow the scale. */
 function ScaleTile() {
   return (
     <Row gap={3} align="center">
@@ -91,7 +79,6 @@ function ScaleTile() {
   );
 }
 
-/** The window classes: compact, medium and expanded windows, side by side. */
 function ResponsiveTile() {
   return (
     <Row gap={4} align="end" className="catalogue-foundation-tile-windows">
@@ -106,7 +93,6 @@ function ResponsiveTile() {
   );
 }
 
-/** Shared parts composed into a product's own: a card of an avatar, text and a button. */
 function CompositionTile() {
   return (
     <Card padding={4}>
@@ -128,7 +114,6 @@ function CompositionTile() {
   );
 }
 
-/** A labelled field and a button showing the focus ring that keyboard use shows. */
 function AccessibilityTile() {
   return (
     <Column gap={4} align="start">
@@ -140,7 +125,6 @@ function AccessibilityTile() {
   );
 }
 
-/** Clear, short words: an empty state's title, its next step and its action. */
 function ContentTile() {
   return (
     <Column gap={2} align="center" className="catalogue-foundation-tile-content">
@@ -167,10 +151,8 @@ const tiles: Record<string, ComponentType> = {
   content: ContentTile,
 };
 
-/** Whether a foundation page has a tile. */
 export const hasFoundationTile = (id: string) => id in tiles;
 
-/** The tile of a foundation page, by its id, such as icons. */
 export function FoundationTile({ id }: { id: string }) {
   const Tile = tiles[id];
   return Tile ? <Tile /> : null;

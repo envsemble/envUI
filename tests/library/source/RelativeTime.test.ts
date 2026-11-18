@@ -1,6 +1,3 @@
-// RelativeTime's words and its shared clock, on a fake clock from one moment: how a moment reads,
-// past or coming, in each format and language; the one timer that keeps every mounted time current;
-// and the time element the server renders.
 import { afterEach, beforeEach, mock, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -24,17 +21,12 @@ const hour = 60 * minute;
 const day = 24 * hour;
 const opened = Date.parse('2026-10-14T09:00:00Z');
 
-// The text never depends on the runtime's own language, which differs between machines.
 const locale = 'en-US';
 
 beforeEach(() => mock.timers.enable({ apis: ['setTimeout', 'Date'], now: opened }));
 afterEach(() => mock.timers.reset());
 
-/**
- * Moments followed as mounted RelativeTimes follow them: each subscribed to the shared clock by its
- * time, its text read again on each tick. `set` gives one a new moment, as a new value does.
- */
-function follow(moments) {
+function followAsMountedTimes(moments) {
   const texts = {};
   const subscriptions = new Map();
   const set = (name, value) => {
@@ -49,7 +41,7 @@ function follow(moments) {
 
 test('relative times read naturally for past and coming moments and keep up with the clock', () => {
   const fixed = { value: '2026-10-16T12:00:00Z', now: Date.parse('2026-10-14T12:00:00Z') };
-  const clock = follow({
+  const clock = followAsMountedTimes({
     'seconds-ago': opened - 30 * second,
     'seconds-ahead': opened + 20 * second,
     'minutes-ago': opened - 90 * second,
@@ -59,7 +51,6 @@ test('relative times read naturally for past and coming moments and keep up with
     'from-string': new Date(opened + 5 * day).toISOString(),
   });
   try {
-    // Ten seconds after the moments were taken.
     mock.timers.tick(10 * second);
     assert.deepEqual(clock.texts, {
       'seconds-ago': 'just now',
@@ -70,12 +61,10 @@ test('relative times read naturally for past and coming moments and keep up with
       'weeks-ago': '2 weeks ago',
       'from-string': 'in 5 days',
     });
-    // Twenty seconds later the second ticks have moved both moments past the threshold.
     mock.timers.tick(20 * second);
     assert.equal(clock.texts['seconds-ago'], '1 minute ago');
     assert.equal(clock.texts['seconds-ahead'], 'just now');
     assert.equal(clock.texts['hours-ago'], '3 hours ago');
-    // Half an hour later the minute ticks have rounded the hours up.
     mock.timers.tick(31 * minute);
     assert.equal(clock.texts['seconds-ago'], '32 minutes ago');
     assert.equal(clock.texts['hours-ago'], '4 hours ago');
@@ -83,7 +72,6 @@ test('relative times read naturally for past and coming moments and keep up with
   } finally {
     clock.stop();
   }
-  // A fixed now keeps its text, whatever the clock says.
   assert.equal(formatRelativeTime(fixed.value, { now: fixed.now, locale }), 'in 2 days');
   assert.equal(
     formatRelativeTime(fixed.value, { now: new Date(fixed.now), locale: 'de' }),
@@ -92,10 +80,9 @@ test('relative times read naturally for past and coming moments and keep up with
 });
 
 test('a time follows a new value with the shared clock', () => {
-  const clock = follow({ hours: opened - 3 * hour, saved: opened - 2 * hour });
+  const clock = followAsMountedTimes({ hours: opened - 3 * hour, saved: opened - 2 * hour });
   try {
     assert.equal(clock.texts.saved, '2 hours ago');
-    // Saved again: the new moment ticks with the others.
     clock.set('saved', Date.now());
     assert.equal(clock.texts.saved, 'just now');
     mock.timers.tick(2 * minute);
@@ -119,7 +106,6 @@ test('formats, languages and the time element', () => {
   assert.equal(format(opened + 3 * hour, { now: opened, format: 'short' }), 'in 3 hr.');
 
   const render = (element) => firstElement(renderToStaticMarkup(element));
-  // EnvUIProvider's locale and now message; a time's own locale wins.
   const provided = (props) =>
     textOf(
       render(
@@ -133,7 +119,6 @@ test('formats, languages and the time element', () => {
   assert.equal(provided({ value: opened - 3 * hour }), 'vor 3 Stunden');
   assert.equal(provided({ value: opened - 5 * second }), 'gerade eben');
   assert.equal(provided({ value: opened - 3 * hour, locale: 'en' }), '3 hours ago');
-  // The element carries the exact moment; an invalid moment renders nothing.
   const fixed = render(
     h(RelativeTime, {
       value: '2026-10-16T12:00:00Z',
@@ -145,9 +130,32 @@ test('formats, languages and the time element', () => {
   assert.equal(fixed.attributes.dateTime, '2026-10-16T12:00:00.000Z');
   assert.equal(textOf(fixed), 'in 2 days');
   assert.equal(renderToStaticMarkup(h(RelativeTime, { value: 'not a date' })), '');
-  // An invalid now is left out, and the text follows the clock.
   assert.equal(
     textOf(render(h(RelativeTime, { value: opened - 3 * hour, now: Number.NaN, locale }))),
     '3 hours ago',
+  );
+});
+
+test('a moment on the previous or the next calendar day reads yesterday or tomorrow, in the locale’s words', () => {
+  const now = new Date(2026, 9, 14, 12).getTime();
+  const at = (days: number, hours = 12) => new Date(2026, 9, 14 + days, hours).getTime();
+  const format = (time: number, options = {}) =>
+    formatRelativeTime(time, { now, locale, ...options });
+  assert.equal(format(at(-1)), 'yesterday');
+  assert.equal(format(at(1)), 'tomorrow');
+  assert.equal(format(at(-1, 1)), 'yesterday');
+  assert.equal(format(at(-1), { locale: 'de' }), 'gestern');
+  assert.equal(format(at(1), { format: 'short' }), 'tomorrow');
+  assert.equal(format(at(-2)), '2 days ago');
+  assert.equal(format(at(-7)), '1 week ago');
+  assert.equal(format(now - 3 * hour), '3 hours ago');
+  const lateEvening = new Date(2026, 9, 14, 23, 30).getTime();
+  assert.equal(
+    formatRelativeTime(new Date(2026, 9, 14, 0, 30).getTime(), { now: lateEvening, locale }),
+    '1 day ago',
+  );
+  assert.equal(
+    textOf(firstElement(renderToStaticMarkup(h(RelativeTime, { value: at(-1), now, locale })))),
+    'yesterday',
   );
 });

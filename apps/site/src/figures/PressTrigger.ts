@@ -1,20 +1,7 @@
-/*
- * A press on an open example's trigger without a pointer (useOpenOnce, OpenExample.tsx): what opens
- * its overlay, and the events a pointer's press sends there, which open it without taking focus.
- */
-
-/**
- * What opens an example's overlay: its trigger, which names the popup it opens, or else, as for a
- * palette a plain button opens, its first button.
- */
 export const triggerOf = (room: HTMLElement) =>
   room.querySelector<HTMLElement>('[aria-haspopup]:not([aria-expanded="true"])') ??
   room.querySelector<HTMLElement>('button:not(:disabled)');
 
-/**
- * Opens a live example's overlay as a press on its trigger would, without taking focus: the
- * events a pointer's press sends, in order, at the trigger's middle.
- */
 export function press(trigger: HTMLElement) {
   const box = trigger.getBoundingClientRect();
   const init = {

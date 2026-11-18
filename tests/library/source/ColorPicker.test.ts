@@ -1,5 +1,3 @@
-// ColorPicker's and ColorSwatch's markup: what a disabled and a read-only picker turn off, and how a
-// swatch names its color. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -34,19 +32,16 @@ test('a disabled picker disables every control; a read-only one keeps its color 
   );
   assert.equal(readOnly.attributes['aria-disabled'], undefined);
   const hex = hexField(readOnly);
-  // React writes the attribute as react-aria spells it; HTML reads it whatever its case.
   assert.equal(hex.attributes.readOnly ?? hex.attributes.readonly, '');
   assert.equal(hex.attributes['aria-readonly'], 'true');
   assert.equal(hex.attributes.disabled, undefined);
   for (const slider of sliders(readOnly)) assert.equal(slider.attributes.disabled, '');
-  // Copy still works on a read-only picker.
   assert.equal(copyButton(readOnly).attributes.disabled, undefined);
 });
 
 test('a color swatch writes its value beside its label, and alone names itself', () => {
   const labelled = render(h(ColorSwatch, { color: '#6750a4', format: 'rgb', label: 'Violet' }));
   assert.equal(textOf(labelled), 'Violetrgb(103, 80, 164)');
-  // The sample beside words is decoration.
   assert.equal(elementsOf(labelled)[1].attributes['aria-hidden'], 'true');
   const alone = render(h(ColorSwatch, { color: '#ffffff' }));
   assert.equal(alone.attributes.role, 'img');

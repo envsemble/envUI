@@ -6,10 +6,6 @@ import { MotionStage } from '../../figures/MotionStage';
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item) .env-button`;
 const close = '.env-sheet [aria-label="Close details"]';
 
-/*
- * The pointer presses Alex Morgan, and the sheet opens beside the list, which stays usable; it
- * presses Sam Lee, and the sheet shows Sam in place; then it closes the sheet.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: row(1), x: 0.5, y: 0.6 },
@@ -30,7 +26,6 @@ const script: PointerStep[] = [
 
 function Inspecting() {
   usePointer(script);
-  // The list at the start of the stage, as on a page, with the sheet at its end.
   return (
     <div style={{ justifySelf: 'stretch' }}>
       <InspectorPanel />
@@ -38,7 +33,6 @@ function Inspecting() {
   );
 }
 
-/** People in a list, each shown in a sheet beside it as the pointer presses them. */
 export default function InspectorPanelMotion() {
   return (
     <MotionStage

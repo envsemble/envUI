@@ -25,7 +25,6 @@ const questions = [
 
 export default function FrequentQuestions() {
   return (
-    // One answer open at a time; the first starts open.
     <Accordion.Root defaultValue={['moving']} style={{ inlineSize: 'min(100%, 32rem)' }}>
       {questions.map(({ value, question, answer }) => (
         <Accordion.Item key={value} value={value} title={question}>

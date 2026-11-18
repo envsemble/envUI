@@ -4,7 +4,7 @@ import type { CSSProperties, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { TextareaControl, type TextareaControlProps } from '../internal/field/TextareaControl.js';
-import { FieldFrame, type FieldProps } from '../internal/field/FieldFrame.js';
+import { FieldFrame, FieldLabelContent, type FieldProps } from '../internal/field/FieldFrame.js';
 
 export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** The native text area, so that a form library can register it and focus it. */
@@ -14,8 +14,7 @@ export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** Styles of the field's root element, such as its width in a row. */
   style?: CSSProperties;
   /**
-   * The field's look, as TextField's: outline or ghost. A text area is always tall, with its label
-   * resting at the top.
+   * The field's look, as TextField's: outline or ghost.
    * @default 'outline'
    */
   variant?: 'outline' | 'ghost';
@@ -36,7 +35,6 @@ export function Textarea({
   id: suppliedId,
   className,
   style,
-  placeholder,
   onChange,
   onValueChange,
   'aria-describedby': describedBy,
@@ -51,13 +49,13 @@ export function Textarea({
       label={
         label != null ? (
           <label htmlFor={id} className="env-text-field-label">
-            {label}
+            <FieldLabelContent>{label}</FieldLabelContent>
           </label>
         ) : null
       }
       description={description}
       error={error}
-      floatingLabel
+      controlBox
       multiline
       variant={variant}
       className={classNames('env-textarea', className)}
@@ -67,7 +65,6 @@ export function Textarea({
         {...props}
         ref={ref}
         {...metadata}
-        placeholder={label != null ? placeholder || ' ' : placeholder}
         onChange={(event) => {
           onChange?.(event);
           onValueChange?.(event.currentTarget.value);

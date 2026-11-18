@@ -1,7 +1,8 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../layout/Layout.js';
+import { Grid } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { AlertDismiss } from './internal/AlertDismiss.js';
 import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { IconCheckCircle } from '../icons/CheckCircle.js';
@@ -23,7 +24,7 @@ export interface AlertProps
    */
   tone?: AlertTone;
   /** A short heading for the message, such as "Sync paused", above the message. */
-  title?: ReactNode;
+  title?: string;
   /** The message: what it means and what people can do. */
   children?: ReactNode;
   /** Replaces the tone's icon; null or false shows none. */
@@ -53,8 +54,8 @@ const toneIcons: Record<AlertTone, ReactNode> = {
 };
 
 /**
- * An inline banner for a page- or section-level message, in its tone. It stays a server component:
- * its dismiss button is an IconButton with a cross, a client leaf named in the provider's language.
+ * An inline banner for a page- or section-level message, in its tone. It is a server component;
+ * its dismiss button is an IconButton with a cross, named in the provider's language.
  */
 export function Alert(allProps: AlertProps) {
   const {
@@ -70,7 +71,6 @@ export function Alert(allProps: AlertProps) {
     className,
     ...props
   } = allProps;
-  // A title or message given as undefined, as over a placeholder item, is a bar in a skeleton.
   const hasTitle = title != null || given(allProps, 'title');
   const hasMessage = children != null || given(allProps, 'children');
   const role = tone === 'info' || tone === 'success' ? 'status' : announce ? 'alert' : undefined;
@@ -101,11 +101,11 @@ export function Alert(allProps: AlertProps) {
           )}
           <Grid gap={1} className="env-alert-content">
             {hasTitle && <div className="env-alert-title">{title}</div>}
-            {hasMessage && <div className="env-alert-message">{children}</div>}
+            {hasMessage && <Slot className="env-alert-message">{children}</Slot>}
             {actions != null && (
-              <Row wrap gap={2} className="env-alert-action">
+              <Slot className="env-alert-action" layout="row">
                 {actions}
-              </Row>
+              </Slot>
             )}
           </Grid>
           {onDismiss && <AlertDismiss label={dismissLabel} onDismiss={onDismiss} />}

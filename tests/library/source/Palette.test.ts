@@ -1,6 +1,3 @@
-// The primitive palette's guarantees: every color sits in its grade's luminance band, and a grade
-// difference alone gives a contrast ratio, for any two hues. scripts/build/GeneratePalette.ts builds the
-// palette; tests/component/Contrast.test.tsx checks the semantic pairs built from it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -20,7 +17,6 @@ import {
 } from '../../../scripts/build/GeneratePalette.ts';
 
 const document = JSON.parse(await readFile(paletteFile, 'utf8'));
-/** Every palette color: hue, grade and luminance, read from the committed file. */
 const colors = Object.entries(document.palette)
   .filter(([name]) => !name.startsWith('$'))
   .flatMap(([hue, scale]) =>
@@ -106,7 +102,6 @@ test('the band edges give each guarantee for every pair of grades', () => {
       const delta = darker - lighter;
       for (const { delta: minimum, ratio } of guarantees) {
         if (delta < minimum) continue;
-        // The worst case: the darkest color of the lighter grade on the lightest of the darker.
         const worst = contrastRatio(gradeBand(lighter)[0], gradeBand(darker)[1]);
         assert.ok(
           worst >= ratio,

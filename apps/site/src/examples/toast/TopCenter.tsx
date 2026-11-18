@@ -15,7 +15,6 @@ function ReminderButton() {
   const remind = () => {
     const person = people[next.current % people.length]!;
     next.current += 1;
-    // A reminder that couldn't go out is a danger notification, which always shows.
     toast.show(
       person.email
         ? { message: `Reminder sent to ${person.name}.` }

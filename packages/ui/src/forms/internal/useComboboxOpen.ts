@@ -10,11 +10,6 @@ import {
 import { useControllableState } from '../../internal/react/useControllableState.js';
 import type { ComboboxOpenChangeDetails, ComboboxProps } from '../Combobox.js';
 
-/**
- * Whether a combobox's list is open: as it is given, or as the field keeps it itself. Returns it,
- * a function that opens or closes it and reports why, and the handler for Base UI's requests, which
- * a contained PortalContainer keeps from closing the list on presses outside it.
- */
 export function useComboboxOpen({
   open,
   defaultOpen = false,
@@ -31,7 +26,6 @@ export function useComboboxOpen({
     onChange: onOpenChange,
   });
   const portal = usePortalContainer();
-  // Base UI hides the rest of the page while the list is open; a contained one leaves it in reach.
   useKeepPageVisible(
     portal,
     popupOpen,
@@ -42,7 +36,6 @@ export function useComboboxOpen({
     setOpen(next, { reason });
   }
 
-  // The text field is the list's trigger: Esc in it, or focus leaving it, closes the list there too.
   const handleOpenChange: (next: boolean, details: BaseCombobox.Root.ChangeEventDetails) => void =
     containedOpenChange(portal, inputRef, (next, details) => changeOpen(next, details.reason));
 

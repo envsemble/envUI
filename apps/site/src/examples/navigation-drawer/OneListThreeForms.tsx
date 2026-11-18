@@ -17,7 +17,6 @@ import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 export default function OneListThreeForms() {
   const [current, setCurrent] = useState('Inbox');
-  // One array, passed to each form; Scaffold shows the one that suits its width.
   const destinations: Destination[] = [
     { label: 'Home', icon: <IconHome /> },
     { label: 'Inbox', icon: <IconInbox />, count: 4 },
@@ -29,7 +28,6 @@ export default function OneListThreeForms() {
     onClick: () => setCurrent(destination.label),
   }));
   return (
-    // A preview: the body scrolls in a frame 22 rem tall, instead of the window.
     <Scaffold
       scroll="body"
       landmarks={false}

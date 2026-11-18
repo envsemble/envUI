@@ -7,7 +7,6 @@ const members = [
   { id: 4, name: 'Jordan Ellis' },
 ];
 
-/** The groups end their rows, so they gather at the end of the room their spread takes. */
 export default function ProjectMembers() {
   return (
     <List.Root aria-label="Projects">

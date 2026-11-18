@@ -1,6 +1,3 @@
-// The packed package rendering on a server, in Node with no DOM globals, as an application's server
-// renders it: the components and icons, rich text, and the display and panel dock components,
-// whose contracts a strict TypeScript consumer also checks.
 import assert from 'node:assert/strict';
 import { before, test } from 'node:test';
 import { installTimeout, packedConsumer } from '../../support/PackedConsumer.ts';
@@ -65,10 +62,9 @@ test('public components import and render on a server with no DOM globals', () =
   assert.match(ssr.html, /aria-label="Hex"/);
   assert.match(ssr.html, /name="accent"[^>]*value="#abcdef"/);
   assert.match(ssr.html, /aria-label="Border color, #123456"/);
-  assert.ok(
-    ssr.html.includes(
-      'class="env-color-swatch-label">Violet</span><span class="env-color-swatch-value">rgb(103, 80, 164)',
-    ),
+  assert.match(
+    ssr.html,
+    /class="env-color-swatch-label"[^>]*>Violet<\/span><span class="env-color-swatch-value">rgb\(103, 80, 164\)/,
     'A color swatch writes its label and its value in the format asked for.',
   );
   assert.match(ssr.html, /data-env-theme="dark"/);
@@ -115,7 +111,7 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
   assert.match(ssr.customIcon, /aria-label="Custom star"/);
 });
 
-test('packed rich text statically renders the shared Markdown schema and reference marks', async () => {
+test('packed rich text statically renders the shared Markdown schema and reference marks, and a finished task read-only rather than disabled', async () => {
   const formattedSource =
     '## Heading\n\n**Bold** *italic* ~~strike~~ `code` [guide](/guide)\n\n- [x] Done\n- [ ] Open\n\n> Quote\n\n| Name | State |\n| --- | --- |\n| One | Ready |\n\n```js\nconst value = 1;\n```';
   const result = await consumer.runScript(
@@ -157,7 +153,6 @@ test('packed rich text statically renders the shared Markdown schema and referen
   assert.doesNotMatch(result.unsafe, /href="javascript:|src="data:/);
   assert.match(result.literalHtml, /&lt;strong&gt;raw HTML&lt;\/strong&gt;/);
   assert.match(result.unknown, /Usable/);
-  // A finished task's checkbox is read-only, in full color, not disabled (readOnlyCheckbox.ts).
   assert.match(result.task, /aria-readonly="true"/);
   assert.doesNotMatch(result.task, /disabled/);
   assert.match(result.editor, /name="source"/);
@@ -191,7 +186,6 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
     }));
   `,
   );
-  // React writes dateTime; attribute names in HTML are case-insensitive.
   assert.match(
     display.relative,
     /<time [^>]*datetime="2026-10-16T12:00:00.000Z"[^>]*>in 2 days<\/time>/i,
@@ -227,102 +221,20 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
       <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="sm" />
     </>;
     void text;
-    // @ts-expect-error An icon-only copy button requires an accessible name.
-    const unnamedCopy = <CopyButton value="text" />;
-    // @ts-expect-error Children that render nothing leave the button icon-only, without a name.
-    const falseLabel = <CopyButton value="text">{false}</CopyButton>;
-    // @ts-expect-error So does null.
-    const nullLabel = <CopyButton value="text">{null}</CopyButton>;
+    // @ts-expect-error
+    const iconOnlyCopyButtonNeedsAName = <CopyButton value="text" />;
+    // @ts-expect-error
+    const falseChildrenLeaveCopyButtonIconOnly = <CopyButton value="text">{false}</CopyButton>;
+    // @ts-expect-error
+    const nullChildrenLeaveCopyButtonIconOnly = <CopyButton value="text">{null}</CopyButton>;
     const namedWithoutLabel = <CopyButton value="text" aria-label="Copy">{null}</CopyButton>;
-    // @ts-expect-error Avatar groups take the avatar sizes.
-    const unknownSize = <AvatarGroup people={[]} size="huge" />;
-    // @ts-expect-error A pager asks the application for pages.
-    const inertPager = <Pagination page={1} pageSize={10} />;
-    // @ts-expect-error Relative times have three formats.
-    const unknownFormat = <RelativeTime value={0} format="tiny" />;
-    void [unnamedCopy, falseLabel, nullLabel, namedWithoutLabel, unknownSize, inertPager, unknownFormat];
-  `,
-  );
-});
-
-test('the panel dock renders its panels, tabs and header on a server and types its contracts', async () => {
-  const dock = await consumer.runScript(
-    'DockConsumer.mjs',
-    `
-    import { createElement as h, Fragment } from 'react';
-    import { renderToString } from 'react-dom/server';
-    import * as ui from '@envsemble/envui';
-    if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
-    const panels = [
-      { id: 'notes', title: 'Notes', mode: 'open', active: true },
-      { id: 'budget', title: 'Budget', mode: 'minimized', attention: 'Unsaved changes' },
-    ];
-    const html = renderToString(h(ui.Theme, { theme: 'light' },
-      h(ui.PanelDock.Root, { panels, onModeChange() {}, onClose() {} },
-        (panel) => h(Fragment, null,
-          h(ui.PanelDock.Header, { title: panel.title, meta: 'Edited today' }),
-          h('p', null, 'Body of ' + panel.title)))));
-    console.log(JSON.stringify({ html }));
-  `,
-  );
-  assert.match(
-    dock.html,
-    /<section [^>]*aria-label="Notes"[^>]*data-panel-id="notes"[^>]*data-mode="open"/,
-  );
-  for (const name of ['Minimize', 'Maximize', 'Close'])
-    assert.match(dock.html, new RegExp(`aria-label="${name}"`));
-  // A minimized panel's content renders too, kept out of sight behind its tab.
-  assert.match(dock.html, /<section [^>]*data-panel-id="budget"[^>]*data-placement="hidden"/);
-  assert.match(dock.html, /Body of Budget/);
-  assert.match(dock.html, /aria-label="Show Budget"/);
-  assert.match(dock.html, /Unsaved changes/);
-  // Server output is in place before it hydrates, without an entrance.
-  assert.doesNotMatch(dock.html, /data-entering/);
-
-  await consumer.typecheck(
-    'DockConsumer',
-    `
-    import { EnvUIProvider, PanelDock, type PanelDockMode, type PanelDockPanel } from '@envsemble/envui';
-    type Document = PanelDockPanel & { body: string };
-    const documents: Document[] = [
-      { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 20, preferredWidth: 30, minWidth: 20,
-        maxWidth: 40, minHeight: 15, maxHeight: 35, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
-    ];
-    const headerProps: PanelDock.HeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3, controls: true };
-    const dockProps: Omit<PanelDock.RootProps<Document>, 'children'> = {
-      panels: documents,
-      onModeChange: (id, mode) => { const typed: PanelDockMode = mode; void id; void typed; },
-      onClose: (id) => { const typed: string = id; void typed; },
-      onActivate: (id) => void id,
-      onHeightChange: (id, height) => { const typed: number = height; void id; void typed; },
-      stackBelow: '40rem',
-      onStackedChange: (stacked) => { const typed: boolean = stacked; void typed; },
-      overflow: 'minimize',
-      minimizedLabel: 'Hidden panels',
-      openLabel: (label) => 'Show ' + label,
-      closeLabel: (label) => 'Close ' + label,
-      resizeLabel: (title) => 'Resize ' + title,
-    };
-    export const dock = (
-      <EnvUIProvider messages={{ panelDock: { minimize: 'Min', maximize: 'Max', restore: 'Back', closeWindow: 'Shut' } }}>
-        <PanelDock.Root {...dockProps}>
-          {(panel) => <PanelDock.Header {...headerProps} title={panel.body} controls={false} />}
-        </PanelDock.Root>
-      </EnvUIProvider>
-    );
-    // @ts-expect-error A dock names its tabs' buttons with openLabel; showLabel, its 0.x name, is not a prop.
-    const earlierName = <PanelDock.Root {...dockProps} showLabel={(label) => 'Show ' + label}>{() => null}</PanelDock.Root>;
-    // @ts-expect-error A dock's tab labels are functions of each tab's text.
-    const plainRestore = <PanelDock.Root {...dockProps} openLabel="Show">{() => null}</PanelDock.Root>;
-    // @ts-expect-error A dock scrolls or minimizes what does not fit.
-    const unknownOverflow = <PanelDock.Root {...dockProps} overflow="hide">{() => null}</PanelDock.Root>;
-    // @ts-expect-error A panel is open, minimized or maximized.
-    const unknownMode: PanelDockPanel = { id: 'notes', title: 'Notes', mode: 'closed' };
-    // @ts-expect-error A dock asks the application to change modes and close panels.
-    const inertDock = <PanelDock.Root panels={documents}>{() => null}</PanelDock.Root>;
-    // @ts-expect-error The window controls are on or off; their names come from the provider's messages.
-    const ownControls = <PanelDock.Header title="Notes" controls={<span />} />;
-    void [earlierName, plainRestore, unknownOverflow, unknownMode, inertDock, ownControls];
+    // @ts-expect-error
+    const avatarGroupTakesAvatarSizes = <AvatarGroup people={[]} size="huge" />;
+    // @ts-expect-error
+    const paginationAsksForPages = <Pagination page={1} pageSize={10} />;
+    // @ts-expect-error
+    const relativeTimeHasThreeFormats = <RelativeTime value={0} format="tiny" />;
+    void [iconOnlyCopyButtonNeedsAName, falseChildrenLeaveCopyButtonIconOnly, nullChildrenLeaveCopyButtonIconOnly, namedWithoutLabel, avatarGroupTakesAvatarSizes, paginationAsksForPages, relativeTimeHasThreeFormats];
   `,
   );
 });

@@ -1,7 +1,3 @@
-// The skeleton shift check: a surface as a skeleton and loaded should take the same room, so the
-// page doesn't move when its content arrives. It toggles the skeleton's attribute, which the
-// styles follow, measures every element in both states, and reports the ones that move or resize.
-
 import { describeElement, isDevElement } from './elements.js';
 import { resolveRoot, toBox } from './measure.js';
 import type { Box, LayoutProblem } from './model.js';
@@ -11,7 +7,6 @@ import { toRem } from './units.js';
 import { alignPulses } from '../foundations/SkeletonScope.js';
 import { skeletonContentClass } from '../internal/skeleton.js';
 
-/** The attribute that marks a skeleton's root, which its styles follow. */
 const skeletonAttribute = 'data-env-skeleton';
 
 export interface SkeletonShiftOptions {
@@ -19,7 +14,6 @@ export interface SkeletonShiftOptions {
   tolerance?: number;
 }
 
-/** An element as the check names it: its part class, its name or layout kind, else its tag. */
 function labelOf(element: Element): string {
   const part = partClassOf(element);
   if (part) return part;
@@ -29,7 +23,6 @@ function labelOf(element: Element): string {
   return describeElement(element);
 }
 
-/** The labelled elements from the surface down to this one, such as `env-card > env-card-title`. */
 function pathOf(element: Element, surface: Element): string {
   const labels: string[] = [];
   for (let at: Element | null = element; at; at = at.parentElement) {
@@ -40,11 +33,7 @@ function pathOf(element: Element, surface: Element): string {
   return labels.join(' > ');
 }
 
-/**
- * The surfaces to toggle: the root when it is a skeleton or holds none, else the skeletons inside
- * it, the outermost of each.
- */
-function surfacesOf(root: HTMLElement): HTMLElement[] {
+function surfacesToToggle(root: HTMLElement): HTMLElement[] {
   if (root.hasAttribute(skeletonAttribute)) return [root];
   const inside = Array.from(root.querySelectorAll<HTMLElement>(`[${skeletonAttribute}]`)).filter(
     (element) =>
@@ -53,42 +42,42 @@ function surfacesOf(root: HTMLElement): HTMLElement[] {
   return inside.length > 0 ? inside : [root];
 }
 
-/**
- * Whether media has a definite width and height of its own, such as an avatar's picture, which
- * hold its place whatever loads: an aspect ratio tried on it changes nothing.
- */
-function sizedByItsBox(element: HTMLElement): boolean {
+function keepsItsSizeWhateverTheAspectRatio(element: HTMLElement): boolean {
   const before = element.getBoundingClientRect();
   if (before.width === 0 || before.height === 0) return false;
   const { style } = element;
-  const kept = [style.getPropertyValue('aspect-ratio'), style.getPropertyPriority('aspect-ratio')];
+  const ownAspectRatio = [
+    style.getPropertyValue('aspect-ratio'),
+    style.getPropertyPriority('aspect-ratio'),
+  ];
   style.setProperty('aspect-ratio', '1 / 9', 'important');
   const after = element.getBoundingClientRect();
-  if (kept[0]) style.setProperty('aspect-ratio', kept[0], kept[1]);
+  if (ownAspectRatio[0]) style.setProperty('aspect-ratio', ownAspectRatio[0], ownAspectRatio[1]);
   else style.removeProperty('aspect-ratio');
   if (!element.getAttribute('style')) element.removeAttribute('style');
   return after.width === before.width && after.height === before.height;
 }
 
-/**
- * Elements whose children must be their own, which a skeleton makes inert as a whole, with
- * skeletonListAttributes, rather than wrap.
- */
-const unwrappable = new Set(['UL', 'OL', 'DL', 'TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR', 'SELECT']);
+const tagsWhoseChildrenCannotBeWrapped = new Set([
+  'UL',
+  'OL',
+  'DL',
+  'TABLE',
+  'THEAD',
+  'TBODY',
+  'TFOOT',
+  'TR',
+  'SELECT',
+]);
 
-/**
- * The surface's content as a skeleton's component renders it: in its inert wrapper, or out of it.
- * The wrapper the surface had is put back where it was; one made for a loaded surface wraps all of
- * its content, as Surface's does.
- */
-class Wrapper {
+class SkeletonContentWrapper {
   private element: HTMLElement | null;
   private content: ChildNode[] = [];
-  private readonly made: boolean;
+  private readonly madeForLoadedSurface: boolean;
 
   constructor(private readonly surface: HTMLElement) {
     this.element = surface.querySelector<HTMLElement>(`:scope > .${skeletonContentClass}`);
-    this.made = this.element === null;
+    this.madeForLoadedSurface = this.element === null;
   }
 
   unwrap() {
@@ -102,7 +91,7 @@ class Wrapper {
   wrap() {
     if (this.element?.isConnected) return;
     if (!this.element) {
-      if (unwrappable.has(this.surface.tagName)) return;
+      if (tagsWhoseChildrenCannotBeWrapped.has(this.surface.tagName)) return;
       this.element = document.createElement('div');
       this.element.className = skeletonContentClass;
       this.element.inert = true;
@@ -113,23 +102,24 @@ class Wrapper {
     this.element.append(...this.content);
   }
 
-  /** Puts the surface back as it was: wrapped when it had a wrapper, else as it is. */
   restore(wasSkeleton: boolean) {
-    if (wasSkeleton && !this.made) this.wrap();
+    if (wasSkeleton && !this.madeForLoadedSurface) this.wrap();
     else this.unwrap();
   }
 }
 
-/** Measures every element of a surface, loaded and as a skeleton, and returns the differences. */
-function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): LayoutProblem[] {
+function skeletonShiftsOf(
+  surface: HTMLElement,
+  tolerance: number,
+  rootPx: number,
+): LayoutProblem[] {
   const elements = [surface, ...Array.from(surface.querySelectorAll('*'))].filter(
     (element) =>
       !isDevElement(element) &&
       !(element.parentElement === surface && element.matches(`.${skeletonContentClass}`)),
   );
   const wasSkeleton = surface.hasAttribute(skeletonAttribute);
-  // As the components do: the attribute, which the styles follow, and the wrapper around the content.
-  const wrapper = new Wrapper(surface);
+  const wrapper = new SkeletonContentWrapper(surface);
   const measure = (skeleton: boolean) => {
     surface.toggleAttribute(skeletonAttribute, skeleton);
     if (skeleton) wrapper.wrap();
@@ -144,7 +134,6 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
   } finally {
     surface.toggleAttribute(skeletonAttribute, wasSkeleton);
     wrapper.restore(wasSkeleton);
-    // Toggling started the root's pulse anew: put it back in step with the others.
     alignPulses();
   }
   const index = new Map(elements.map((element, at) => [element, at]));
@@ -155,13 +144,13 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
     const after = loaded[at];
     const dw = after.w - before.w;
     const dh = after.h - before.h;
-    // A move counts against the parent, so only the element that causes it is reported, not
-    // everything after it.
     const parent = element === surface ? undefined : index.get(element.parentElement!);
-    const dx =
-      after.x - before.x - (parent === undefined ? 0 : loaded[parent].x - skeleton[parent].x);
-    const dy =
-      after.y - before.y - (parent === undefined ? 0 : loaded[parent].y - skeleton[parent].y);
+    const parentMove =
+      parent === undefined
+        ? { x: 0, y: 0 }
+        : { x: loaded[parent].x - skeleton[parent].x, y: loaded[parent].y - skeleton[parent].y };
+    const dx = after.x - before.x - parentMove.x;
+    const dy = after.y - before.y - parentMove.y;
     const resized = Math.abs(dw) > tolerance || Math.abs(dh) > tolerance;
     const moved = Math.abs(dx) > tolerance || Math.abs(dy) > tolerance;
     if (!resized && !moved) return;
@@ -184,20 +173,17 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
       },
     ]);
   });
-  // An element that grows because something inside it grows isn't reported: only the deepest.
-  const deepest = found.filter(
+  const deepestShifts = found.filter(
     ([element]) => !found.some(([other]) => other !== element && element.contains(other)),
   );
-  const reported = new Set(deepest.map(([element]) => element));
-  // Media without an aspect ratio has no size until it loads, so it moves everything after it.
-  const media = elements
+  const reported = new Set(deepestShifts.map(([element]) => element));
+  const mediaWithoutAspectRatio = elements
     .filter(
       (element) =>
         !reported.has(element) &&
         element.matches('img, video, iframe') &&
         getComputedStyle(element).aspectRatio === 'auto' &&
-        // An img, video or iframe, as matched above.
-        !sizedByItsBox(element as HTMLElement),
+        !keepsItsSizeWhateverTheAspectRatio(element as HTMLElement),
     )
     .map((element): LayoutProblem => ({
       rule: 'skeleton-shift',
@@ -206,19 +192,16 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
       message:
         'Media without an aspect ratio has no size until it loads. Declare one, with width and height attributes or aspect-ratio, so its skeleton holds its place.',
     }));
-  return [...deepest.map(([, problem]) => problem), ...media];
+  return [...deepestShifts.map(([, problem]) => problem), ...mediaWithoutAspectRatio];
 }
 
-/**
- * The elements of a skeleton that move or resize when it loads, measured by toggling its
- * `data-env-skeleton` attribute and its content's inert wrapper, as the component does: the root when it is a skeleton surface or a surface to try as one,
- * else every skeleton inside it.
- */
 export function skeletonShift(
   root?: Element | string,
   { tolerance = 1 }: SkeletonShiftOptions = {},
 ): LayoutProblem[] {
   const element = resolveRoot(root);
   const rootPx = remPixels(element);
-  return surfacesOf(element).flatMap((surface) => shiftsOf(surface, tolerance, rootPx));
+  return surfacesToToggle(element).flatMap((surface) =>
+    skeletonShiftsOf(surface, tolerance, rootPx),
+  );
 }

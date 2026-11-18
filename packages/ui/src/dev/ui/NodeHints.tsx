@@ -1,6 +1,3 @@
-// What the 3D view says about the node under the pointer: a card beside the pointer with its size,
-// container and problems, and, colored by window class, a ruler over it.
-
 import { Column } from '../../layout/Layout.js';
 import { Text } from '../../foundations/Text.js';
 import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
@@ -11,7 +8,6 @@ import { toRem, windowClasses } from '../units.js';
 import { windowClassOfRem } from '../../foundations/windowClasses.js';
 import { flag } from '../../internal/flag.js';
 
-/** The hovered node in a few lines: its name, size, level, container and problems. */
 export function NodeHoverCard({
   snapshot,
   node,
@@ -48,11 +44,7 @@ export function NodeHoverCard({
   );
 }
 
-/**
- * Over the hovered node, above every plane: its width against the window classes, a dashed line
- * at each threshold its container's queries test, and how far it is from the next one.
- */
-export function Ruler({
+export function HoveredNodeRuler({
   snapshot,
   node,
   origin,

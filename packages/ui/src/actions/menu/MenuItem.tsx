@@ -27,6 +27,8 @@ export interface ItemContentProps {
   end?: ReactNode;
 }
 
+const endContentSeparateWordInName = ' ';
+
 /** Shared item layout: indicator, icon, label with optional description, end content, shortcut. */
 export function useMenuItemContent(
   { icon, children, description, shortcut, end }: ItemContentProps,
@@ -41,7 +43,6 @@ export function useMenuItemContent(
       <span className="env-menu-item-text">
         <span className="env-menu-item-label">{children}</span>
         {description != null && (
-          // Announced through aria-describedby rather than as part of the item's name.
           <span className="env-menu-item-description" id={descriptionId} aria-hidden="true">
             {description}
           </span>
@@ -49,12 +50,11 @@ export function useMenuItemContent(
       </span>
       {end != null && (
         <>
-          {/* The space keeps the end content a separate word in the item's accessible name. */}{' '}
+          {endContentSeparateWordInName}
           <span className="env-menu-item-end">{end}</span>
         </>
       )}
       {chords.length > 0 && (
-        // aria-keyshortcuts announces the shortcut; the keys show it.
         <span className="env-menu-item-shortcut" aria-hidden="true">
           {chords.map((keys, index) => (
             <Kbd key={index} keys={keys} />
@@ -126,8 +126,8 @@ export type ItemProps = ItemSharedProps &
       }
   );
 
-/** A disabled destination is no link, so a press follows nothing. */
-const preventActivation = (event: MouseEvent<HTMLElement>) => event.preventDefault();
+const disabledDestinationFollowsNothing = (event: MouseEvent<HTMLElement>) =>
+  event.preventDefault();
 
 /**
  * One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link
@@ -155,15 +155,13 @@ export function Item({
     end,
   });
   const itemClassName = classNames('env-menu-item', className);
-  // A disabled destination renders no link: it stays in place, dimmed, and reports aria-disabled,
-  // as a disabled action does.
-  if (props.href !== undefined && !disabled) {
+  const followableDestination = props.href !== undefined && !disabled;
+  if (followableDestination) {
     return (
       <BaseMenu.LinkItem
         className={itemClassName}
         closeOnClick
         onClick={props.onClick}
-        // The link component comes from LinkProvider and keeps its identity between renders.
         // eslint-disable-next-line react-hooks/static-components
         render={<LinkComponent href={props.href} target={props.target} rel={props.rel} />}
         data-tone={tone}
@@ -179,7 +177,7 @@ export function Item({
     <BaseMenu.Item
       className={itemClassName}
       disabled={disabled}
-      onClick={props.href === undefined ? props.onClick : preventActivation}
+      onClick={props.href === undefined ? props.onClick : disabledDestinationFollowsNothing}
       data-tone={tone}
       aria-current={ariaCurrent}
       aria-label={ariaLabel}

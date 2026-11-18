@@ -4,27 +4,22 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
-/** Each sheet: the marker on its trigger and its close button's name. */
 const sheets = [
-  { trigger: 'details', close: 'Close details' },
-  { trigger: 'outline', close: 'Close outline' },
-  { trigger: 'share', close: 'Close' },
+  { triggerTarget: 'details', closeLabel: 'Close details' },
+  { triggerTarget: 'outline', closeLabel: 'Close outline' },
+  { triggerTarget: 'share', closeLabel: 'Close' },
 ];
 const trigger = (name: string) => `[data-catalogue-target="${name}"]`;
 const close = (name: string) => `.env-sheet [aria-label="${name}"]`;
 
-/*
- * The pointer opens the report's details, which slide in from the end, and closes them; then its
- * outline, from the start; then its share choices, from the bottom, each closed again.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   ...sheets.flatMap((sheet, index): PointerStep[] => [
-    { to: trigger(sheet.trigger), x: 0.5, y: 0.6, duration: index === 0 ? 0 : 500 },
+    { to: trigger(sheet.triggerTarget), x: 0.5, y: 0.6, duration: index === 0 ? 0 : 500 },
     { wait: 210 },
     { click: true },
     { wait: 780 },
-    { to: close(sheet.close), duration: 550 },
+    { to: close(sheet.closeLabel), duration: 550 },
     { wait: 180 },
     { click: true },
     { wait: 420 },
@@ -90,7 +85,6 @@ function Opening() {
   );
 }
 
-/** A sheet from each side: the end, the start and the bottom, opened and closed in turn. */
 export default function Sides() {
   return (
     <SpecimenFrame size="content">

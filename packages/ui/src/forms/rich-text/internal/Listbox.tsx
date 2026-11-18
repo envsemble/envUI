@@ -7,27 +7,13 @@ import '../../../styles/Base.css';
 import '../../../styles/Listbox.css';
 
 export interface ListboxProps<Item> extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
-  /** The options, in order. */
   items: readonly Item[];
-  /** A stable key for an option, unique among them. */
   getKey(item: Item): string;
-  /** The props of an option from useActiveDescendant: its id, selection and press handling. */
   getOptionProps(item: Item): Record<string, unknown>;
-  /** An option's row: its label, and its icon, description and end content where it has them. */
   renderItem(item: Item): Omit<ListRowProps, 'render'>;
-  /** Shown, in a status beside the list, when there are no options, such as No results. */
   empty?: ReactNode;
 }
 
-/**
- * The options of a listbox whose focus stays in a text input, such as an editor's suggestions:
- * role="listbox" with an option per item, each a ListRow, wired by the owner's useActiveDescendant.
- * Name it with aria-label or aria-labelledby, and give the input aria-controls with its id.
- * `className` and `style` go to the frame around the list; the other props to the list. `empty`
- * shows in a status beside the list rather than inside it, where only options may be, and the
- * status stays mounted, so a change such as from loading to no results is announced. It mounts
- * empty, so its first message is announced too.
- */
 export function Listbox<Item>({
   items,
   getKey,
@@ -50,16 +36,14 @@ export function Listbox<Item>({
           />
         ))}
       </div>
-      {empty != null && <ListboxStatus>{showEmpty ? empty : null}</ListboxStatus>}
+      {empty != null && (
+        <StatusMountedBeforeItsMessage>{showEmpty ? empty : null}</StatusMountedBeforeItsMessage>
+      )}
     </div>
   );
 }
 
-/**
- * A polite status that mounts empty and takes its message after a frame has painted it: assistive
- * technology often misses the message of a live region that appears with it already in place.
- */
-function ListboxStatus({ children }: { children: ReactNode }) {
+function useShownAfterFirstPaint() {
   const [shown, setShown] = useState(false);
   useEffect(() => {
     let frame = requestAnimationFrame(() => {
@@ -67,6 +51,11 @@ function ListboxStatus({ children }: { children: ReactNode }) {
     });
     return () => cancelAnimationFrame(frame);
   }, []);
+  return shown;
+}
+
+function StatusMountedBeforeItsMessage({ children }: { children: ReactNode }) {
+  const shown = useShownAfterFirstPaint();
   return (
     <div role="status" className="env-listbox-empty">
       {shown ? children : null}

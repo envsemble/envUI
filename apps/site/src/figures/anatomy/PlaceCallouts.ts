@@ -1,15 +1,8 @@
-/*
- * Where an anatomy figure's callouts are placed (useAnatomyLayout.ts), from what is measured of its
- * subject (MeasureAnatomy.ts): a numbered callout on each part, on the side the part is nearest to,
- * spread so that none overlap. A variants figure's names are placed in PlaceVariants.ts. Nothing
- * here reads the page (tests/site/PlaceCallouts.test.ts).
- */
 import { inside, union, type Box } from '../../fit/FitGeometry';
 import { pixelTolerance } from '../../shared/Remeasure';
 
 export type Side = 'top' | 'bottom' | 'left' | 'right';
 
-/** A part's corner radii, in px, as drawn: none for the text of a part. */
 export interface Corners {
   topLeft: number;
   topRight: number;
@@ -17,97 +10,59 @@ export interface Corners {
   bottomRight: number;
 }
 
-/** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
 export interface Callout {
-  /** Its number, in the order the figure is read: by rows, from the top, each from the start. */
   number: number;
-  /** The legend item it calls out, from 0. */
   index: number;
-  /** A variants figure's callout: the variant's name, and the side of its item it sits on. */
   label?: string;
   side?: Side;
-  /**
-   * In a variants figure whose items stand one under another, what the variant is for, beside its
-   * item on the other side from its name, where every item's fits (stackedVariants): its lines,
-   * and where they start.
-   */
   use?: { lines: string[]; width: number; x: number; y: number; side: Side };
   badge: { x: number; y: number };
   anchor: { x: number; y: number };
-  /**
-   * The part's box, outlined: only a region's, which has no edge of its own and holds several
-   * things, such as a card's actions. A part with a fill, a border or a shadow shows its own edge,
-   * and text or an icon its own shape, so the callout's dot alone marks them.
-   */
   box?: { x: number; y: number; width: number; height: number };
-  /** Where the outline gives way, so it doesn't strike through a label it crosses. */
   gaps?: { x: number; y: number; width: number; height: number }[];
 }
 
-/** One part a legend item names, as measured in the subject (measureParts). */
 export interface Part {
-  /** Its legend item's number, from 1. */
   number: number;
-  /** Its element, as an index into the geometry's `contains`. */
   element: number;
-  /** Whether the part is its element's own text. */
   text: boolean;
-  /** What shows of it, and its corners. */
   box: Box;
   corners: Corners;
-  /** Whether it comes after text in its line, such as a time inside a sentence. */
   inline: boolean;
-  /** Whether what shows of it draws an edge of its own, and whether its element does. */
   edge: boolean;
   ownEdge: boolean;
-  /** A region: no edge or shape of its own, around several things that show. */
   region: boolean;
-  /** One of several alike, such as a list's row. */
   repeated: boolean;
 }
 
-/** An anatomy figure's subject as measured (measureParts), in the stage's coordinates. */
 export interface AnatomyGeometry {
-  /** The stage's size, and whether it reads right to left. */
   width: number;
   height: number;
   rtl: boolean;
   parts: Part[];
-  /** Whether one part's element holds another's, itself included, by their `element`. */
   contains: boolean[][];
-  /** The labels that show in the subject. */
   labels: Box[];
-  /** What opens the popup a figure shows open, such as a select's field. */
   opener?: Box;
 }
 
-/** How far outside the component a callout's badge sits, and the badges' diameter, in px. */
-const reach = 28;
-const badgeSize = 24;
-/** The least distance between two badges' centres on one side, so neighbours never touch. */
-const spacing = badgeSize + 12;
-/** How far below its top the root's callout points, at most: past a large corner's curve. */
-const rootInset = 32;
-/** How far a part's box stands off the part, in px, so it never runs through its text. */
-const fencePadding = 4;
+const badgeReachPx = 28;
+const badgeDiameterPx = 24;
+const badgeSpacingPx = badgeDiameterPx + 12;
+const mostRootInsetPx = 32;
+const fencePaddingPx = 4;
+const sidewaysSidePenaltyPx = 6;
+const crossingLinePenaltyPx = 1000;
 
-/** A part's box grown by the fence's padding on every side. */
 const fenced = (box: Box): Box => ({
-  left: box.left - fencePadding,
-  top: box.top - fencePadding,
-  right: box.right + fencePadding,
-  bottom: box.bottom + fencePadding,
+  left: box.left - fencePaddingPx,
+  top: box.top - fencePaddingPx,
+  right: box.right + fencePaddingPx,
+  bottom: box.bottom + fencePaddingPx,
 });
 
-/** The corners of a part's box, which is square. */
 const square: Corners = { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 };
 
-/**
- * Where a part's outline gives way: across the labels its edge runs through, such as a field's
- * label floated into its outline, which the outline would otherwise strike through. A label
- * wholly inside the box, or the part itself, leaves the outline whole.
- * @internal
- */
+/** @internal */
 export function gapsIn(box: Box, labels: Box[]) {
   const gaps = labels.filter(
     (label) =>
@@ -127,45 +82,34 @@ export function gapsIn(box: Box, labels: Box[]) {
     : undefined;
 }
 
-/**
- * How far in from its box's side a part's edge is at `along` past the box's start on that side, by
- * the corners at either end of the side: a callout that meets a rounded part near its corner
- * meets its curve, not the empty corner of its box.
- * @internal
- */
+/** @internal */
 export function cornerInset(along: number, length: number, start: number, end: number) {
   const curve = (radius: number, from: number) =>
     from < radius ? radius - Math.sqrt(radius ** 2 - (radius - from) ** 2) : 0;
   return Math.max(curve(start, along), curve(end, length - along));
 }
 
-/** Spreads positions along one side so badges never overlap, within `min` and `max`.
- * @internal
- */
+/** @internal */
 export function spread(positions: number[], min: number, max: number) {
   const order = positions.map((_, index) => index).sort((a, b) => positions[a]! - positions[b]!);
   const placed = order.map((index) => positions[index]!);
   for (let index = 1; index < placed.length; index++)
-    placed[index] = Math.max(placed[index]!, placed[index - 1]! + spacing);
+    placed[index] = Math.max(placed[index]!, placed[index - 1]! + badgeSpacingPx);
   if (placed.length) placed[placed.length - 1] = Math.min(placed.at(-1)!, max);
   for (let index = placed.length - 2; index >= 0; index--)
-    placed[index] = Math.min(placed[index]!, placed[index + 1]! - spacing);
+    placed[index] = Math.min(placed[index]!, placed[index + 1]! - badgeSpacingPx);
   if (placed.length) placed[0] = Math.max(placed[0]!, min);
   const result = [...positions];
   order.forEach((index, rank) => (result[index] = placed[rank]!));
   return result;
 }
 
-/**
- * Numbers the callouts in the order the figure is read: by rows of badges from the top, and along
- * each row from the start, so the numbers go round the component rather than jump about it.
- * @internal
- */
+/** @internal */
 export function inReadingOrder(callouts: Callout[], rtl: boolean) {
   const rows: Callout[][] = [];
   for (const callout of [...callouts].sort((a, b) => a.badge.y - b.badge.y)) {
     const row = rows.at(-1);
-    if (row && callout.badge.y - row[0]!.badge.y < badgeSize / 2) row.push(callout);
+    if (row && callout.badge.y - row[0]!.badge.y < badgeDiameterPx / 2) row.push(callout);
     else rows.push([callout]);
   }
   const ordered = rows.flatMap((row) =>
@@ -174,14 +118,7 @@ export function inReadingOrder(callouts: Callout[], rtl: boolean) {
   return ordered.map((callout, rank) => ({ ...callout, number: rank + 1 }));
 }
 
-/**
- * The parts the legend names alone, as their callouts would point at the edges of the parts
- * inside them: the outermost frame around several others, with no edge of its own, such as a
- * field around its label and control; and inside it, a part of its box, or the one part as wide
- * as it that holds several others, such as that control around its icon, prefix and input, but
- * not a list's row.
- * @internal
- */
+/** @internal */
 export function wholeParts(all: Part[], contains: boolean[][]) {
   const sameBox = (a: Box, b: Box) =>
     Math.abs(a.left - b.left) < 2 &&
@@ -211,40 +148,25 @@ export function wholeParts(all: Part[], contains: boolean[][]) {
   );
 }
 
-/** What a part's callout is placed by, as the sides are chosen (placeSides). */
 interface Placed {
   number: number;
   box: Box;
   corners: Corners;
   root: boolean;
   side: Side;
-  /** Where along its side its line reaches out clear of the others, if anywhere. */
   at: number | null;
   edge: boolean;
   region: boolean;
-  /** Each side it may take, and how far it is from it. */
   options: [Side, number][];
 }
 
-/** What the sides are chosen in: the parts called out, and what they keep clear of. */
 interface Layout {
   geometry: AnatomyGeometry;
   found: Part[];
-  /** The whole component, the parts the legend names alone included. */
   outer: Box;
-  /** The component and what opens it: the callouts sit outside both. */
   reachOuter: Box;
 }
 
-/**
- * Places a numbered callout on each part found in the subject: on the side of the component the
- * part is nearest to, the root at the start, with a line to what shows of the part, and a region's
- * box outlined. A part that only frames the others, with no edge of its own, such as a field
- * around its label and control, and a part of the same box as that frame, such as the control,
- * take no callout: the legend names them alone (`whole`, by their legend items, wholeParts). In a
- * figure of an open popup, the callouts keep clear of what opens it, such as a select's field: no
- * callout sits over it, or reaches a part across it.
- */
 export function placeCallouts(geometry: AnatomyGeometry): { callouts: Callout[]; whole: number[] } {
   const all = geometry.parts;
   const whole = wholeParts(all, geometry.contains);
@@ -270,7 +192,6 @@ export function placeCallouts(geometry: AnatomyGeometry): { callouts: Callout[];
   return { callouts: inReadingOrder(callouts, geometry.rtl), whole: wholeItems };
 }
 
-/** Whether what opens the popup lies between a part and a side. */
 function blocked(avoid: Box | undefined, side: Side, box: Box) {
   if (!avoid) return false;
   const across = avoid.left < box.right && avoid.right > box.left;
@@ -281,11 +202,6 @@ function blocked(avoid: Box | undefined, side: Side, box: Box) {
   return along && avoid.left >= box.right - 1;
 }
 
-/**
- * Where along a side a straight line from the part reaches out past the others, nearest its
- * middle: clear of the parts and labels on the way, but those around it or inside it, which its
- * line crosses whatever it does. Null where every line from it would cross one.
- */
 function clearAt({ found, geometry }: Layout, side: Side, box: Box) {
   const vertical = side === 'top' || side === 'bottom';
   const others = [...found.map((other) => other.box), ...geometry.labels].filter(
@@ -320,23 +236,17 @@ function clearAt({ found, geometry }: Layout, side: Side, box: Box) {
   return candidates[0] ?? null;
 }
 
-/** The side each part's callout takes, and where along it its line reaches out. */
 function placeSides(layout: Layout): Placed[] {
   const { found, outer, reachOuter, geometry } = layout;
   const avoid = geometry.opener;
-  // The root fills the component, or holds every other part, as a field holds its label floated
-  // above its own box. A part that is the text of an element, such as a button's label, is never
-  // the root, though its element holds the others.
-  const isRoot = ({ box, element, text }: Part) =>
-    (box.left - outer.left < 1 &&
-      box.top - outer.top < 1 &&
-      outer.right - box.right < 1 &&
-      outer.bottom - box.bottom < 1) ||
-    (!text &&
-      found.length > 1 &&
-      found.every((other) => geometry.contains[element]![other.element]));
-  // Parts that all fill the component, such as a number and its value, would crowd its start:
-  // their callouts sit above and below it instead, in turn.
+  const fillsComponent = (box: Box) =>
+    box.left - outer.left < 1 &&
+    box.top - outer.top < 1 &&
+    outer.right - box.right < 1 &&
+    outer.bottom - box.bottom < 1;
+  const elementHoldsEveryOther = ({ element, text }: Part) =>
+    !text && found.length > 1 && found.every((other) => geometry.contains[element]![other.element]);
+  const isRoot = (part: Part) => fillsComponent(part.box) || elementHoldsEveryOther(part);
   const roots = found.filter(isRoot).length;
   let stacked = 0;
   const placed = found.map((part): Placed => {
@@ -346,14 +256,12 @@ function placeSides(layout: Layout): Placed[] {
       const side: Side = stacked++ % 2 ? 'bottom' : 'top';
       return { number, box, corners, root, side, at: null, edge, region, options: [] };
     }
-    // The nearest side whose line reaches out clear of the other parts, with the sides above and
-    // below preferred by a few pixels.
     const distances = (
       [
         ['top', box.top - reachOuter.top],
         ['bottom', reachOuter.bottom - box.bottom],
-        ['left', box.left - reachOuter.left + 6],
-        ['right', reachOuter.right - box.right + 6],
+        ['left', box.left - reachOuter.left + sidewaysSidePenaltyPx],
+        ['right', reachOuter.right - box.right + sidewaysSidePenaltyPx],
       ] as [Side, number][]
     )
       .filter(
@@ -362,10 +270,8 @@ function placeSides(layout: Layout): Placed[] {
       )
       .map(([side, distance]): [Side, number] => [
         side,
-        distance + (root || clearAt(layout, side, box) !== null ? 0 : 1000),
+        distance + (root || clearAt(layout, side, box) !== null ? 0 : crossingLinePenaltyPx),
       ]);
-    // A root that follows text, such as a time in a sentence, takes its callout above it, clear of
-    // the words before it.
     let side: Side = root
       ? inline
         ? 'top'
@@ -373,12 +279,19 @@ function placeSides(layout: Layout): Placed[] {
           ? 'right'
           : 'left'
       : distances.reduce((best, entry) => (entry[1] < best[1] ? entry : best))[0];
-    // A part that holds others called out, as a strip holds its tabs, sits below them where it is
-    // as near below as above, so the callouts of a row of parts don't all crowd its top.
-    const holds = found.some((other) => other.number !== number && inside(box, other.box));
+    const holdsCalledOutParts = found.some(
+      (other) => other.number !== number && inside(box, other.box),
+    );
     const below = distances.find(([name]) => name === 'bottom');
     const above = distances.find(([name]) => name === 'top');
-    if (side === 'top' && !root && holds && below && above && Math.abs(below[1] - above[1]) < 1)
+    if (
+      side === 'top' &&
+      !root &&
+      holdsCalledOutParts &&
+      below &&
+      above &&
+      Math.abs(below[1] - above[1]) < 1
+    )
       side = 'bottom';
     return {
       number,
@@ -396,12 +309,6 @@ function placeSides(layout: Layout): Placed[] {
   return placed;
 }
 
-/**
- * One side for each of two parts where one holds the other, such as a select's trigger and its
- * value: their lines would run side by side, the inner one bent across the outer one's edge. The
- * outer part moves to its nearest other side that is clear, holds neither and lies just past its
- * edge, so its line crosses nothing else of the component, such as a list's other rows.
- */
 function separateNested(layout: Layout, placed: Placed[]) {
   const nested = (a: Box, b: Box) => inside(a, b) || inside(b, a);
   for (const item of placed) {
@@ -427,27 +334,22 @@ function separateNested(layout: Layout, placed: Placed[]) {
   }
 }
 
-/** The callouts of the parts on one side: their badges spread along it, each with its line. */
 function calloutsAlong(side: Side, items: Placed[], { geometry, reachOuter }: Layout): Callout[] {
   const vertical = side === 'top' || side === 'bottom';
   const centre = (box: Box) => (vertical ? (box.left + box.right) / 2 : (box.top + box.bottom) / 2);
   const extent = vertical ? geometry.width : geometry.height;
-  // The root's callout sits by its top corner, above its parts' on its side, rather than halfway
-  // down, where a tall component's own parts, such as a card's content, take theirs.
   const parts = items.filter(({ root }) => !root).map(({ box }) => centre(box));
   const along = spread(
     items.map(({ box, root, at }) =>
       root && !vertical
-        ? Math.min(centre(box), box.top + rootInset, Math.min(...parts) - spacing)
+        ? Math.min(centre(box), box.top + mostRootInsetPx, Math.min(...parts) - badgeSpacingPx)
         : (at ?? centre(box)),
     ),
-    badgeSize / 2 + 2,
-    extent - badgeSize / 2 - 2,
+    badgeDiameterPx / 2 + 2,
+    extent - badgeDiameterPx / 2 - 2,
   );
   return items.map(({ number, box: part, corners: partCorners, root, edge, region }, index) => {
     const at = along[index]!;
-    // A part with an edge of its own takes the dot on that edge, round its corners; text, an icon
-    // or a region takes it a little off, where a region's outline runs.
     const own = root || edge;
     const box = own ? part : fenced(part);
     const corners = own ? partCorners : square;
@@ -455,12 +357,12 @@ function calloutsAlong(side: Side, items: Placed[], { geometry, reachOuter }: La
       Math.min(Math.max(value, low + 2), Math.max(high - 2, low + 2));
     const badge =
       side === 'top'
-        ? { x: at, y: reachOuter.top - reach }
+        ? { x: at, y: reachOuter.top - badgeReachPx }
         : side === 'bottom'
-          ? { x: at, y: reachOuter.bottom + reach }
+          ? { x: at, y: reachOuter.bottom + badgeReachPx }
           : side === 'left'
-            ? { x: reachOuter.left - reach, y: at }
-            : { x: reachOuter.right + reach, y: at };
+            ? { x: reachOuter.left - badgeReachPx, y: at }
+            : { x: reachOuter.right + badgeReachPx, y: at };
     const x = clamp(at, box.left, box.right);
     const y = clamp(at, box.top, box.bottom);
     const width = box.right - box.left;

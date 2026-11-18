@@ -1,13 +1,9 @@
 @layer env.components {
-  /* A text area's resize handle (TextareaResizeEdge.tsx), on its bottom edge; TextField.css shows
-     its grip while the field is hovered or has focus, and hides the handle where the text area
-     grows with its text or is disabled. */
   .env-textarea-resize-handle {
     position: absolute;
     inset-inline: 0;
-    /* Over the bottom border, so the handle covers the field's edge. */
-    --env-textarea-resize-handle-overlap: -0.0625rem;
-    inset-block-end: var(--env-textarea-resize-handle-overlap);
+    --_textarea-resize-handle-overlap: -0.0625rem;
+    inset-block-end: var(--_textarea-resize-handle-overlap);
     block-size: var(--env-space-3);
     padding: 0;
     margin: 0;
@@ -18,27 +14,24 @@
     touch-action: none;
     user-select: none;
   }
-  /* The grip: two short diagonal hairlines in the end corner, inside the corner's curve, where a
-     text area's resize grip is looked for, so it reads as the corner to drag rather than as a minus
-     sign or a sheet's handle. */
   .env-textarea-resize-handle::after {
-    --env-textarea-grip-size: 0.625rem;
-    --env-textarea-grip-line: linear-gradient(
+    --_textarea-grip-size: 0.625rem;
+    content: '';
+    position: absolute;
+    inset-inline-end: var(--env-space-1);
+    inset-block-end: var(--env-space-1);
+    inline-size: var(--_textarea-grip-size);
+    block-size: var(--_textarea-grip-size);
+    --_textarea-grip-diagonal-hairline: linear-gradient(
       to top left,
       transparent calc(50% - var(--env-control-border-width) / 2),
       var(--env-color-fg-muted) calc(50% - var(--env-control-border-width) / 2)
         calc(50% + var(--env-control-border-width) / 2),
       transparent calc(50% + var(--env-control-border-width) / 2)
     );
-    content: '';
-    position: absolute;
-    inset-inline-end: var(--env-space-1);
-    inset-block-end: var(--env-space-1);
-    inline-size: var(--env-textarea-grip-size);
-    block-size: var(--env-textarea-grip-size);
     background:
-      var(--env-textarea-grip-line),
-      var(--env-textarea-grip-line) right bottom / 50% 50% no-repeat;
+      var(--_textarea-grip-diagonal-hairline),
+      var(--_textarea-grip-diagonal-hairline) right bottom / 50% 50% no-repeat;
     pointer-events: none;
     opacity: 0;
     transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);

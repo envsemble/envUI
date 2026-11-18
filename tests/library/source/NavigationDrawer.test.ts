@@ -1,6 +1,3 @@
-// NavigationDrawer's markup, rendered on the server: badges and counts in its names, the headings of
-// its groups, the width it is given, the sections the current page opens, and the marks NavigationRail
-// and NavigationBar give the top level over nested destinations.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -27,14 +24,12 @@ test("a Drawer destination's badge follows its label, and names it with the labe
     ],
   });
   const [reports, archive] = all(nav, (element) => element.tag === 'a');
-  // Named by its text: the label, then the badge.
   assert.equal(reports.attributes['aria-label'], undefined);
   assert.equal(textOf(reports), 'ReportsNew');
   assert.deepEqual(
     reports.children.map((part) => part.attributes.class),
-    ['env-navigation-drawer-label', 'env-badge'],
+    ['env-navigation-drawer-label', 'env-navigation-drawer-badge'],
   );
-  // With a count, the label and the count name the item, and the badge stands before the count.
   assert.equal(archive.attributes['aria-label'], 'Archive, 2 new');
   assert.equal(textOf(archive), 'ArchiveBeta 2');
 });
@@ -48,14 +43,13 @@ const mail = [
   { label: 'Settings', group: 'Account' },
 ].map((destination) => ({ ...destination, icon, onClick: () => undefined }));
 
-test('Drawer heads each run of a group, and Rail keeps the order without headings', () => {
+test('Drawer heads each run of a group with a level-2 heading naming its list, between its header and footer, and Rail keeps the order without headings', () => {
   const drawer = render(NavigationDrawer, {
     'aria-label': 'Mail drawer',
     destinations: mail,
     header: h('button', null, 'Compose'),
     footer: h('span', null, 'Footer'),
   });
-  // The drawer's group headings are headings, at level 2 by default, each naming its list.
   const headings = byClass(drawer, 'env-navigation-drawer-group-label');
   assert.deepEqual(headings.map(textOf), ['Folders', 'Account']);
   assert.ok(headings.every((heading) => heading.tag === 'h2'));
@@ -69,7 +63,6 @@ test('Drawer heads each run of a group, and Rail keeps the order without heading
   );
   const order = ['Inbox', 'Drafts', 'Sent', 'Starred', 'Archive', 'Settings'];
   assert.deepEqual(byClass(drawer, 'env-navigation-drawer-label').map(textOf), order);
-  // The drawer keeps its header and footer around its list.
   assert.deepEqual(
     drawer.children.map((part) => part.attributes.class),
     ['env-navigation-drawer-header', 'env-navigation-drawer-list', 'env-navigation-drawer-footer'],
@@ -93,8 +86,7 @@ test('a width that is no number is ignored, and the drawer keeps its default', (
   assert.equal(handle.attributes['aria-valuetext'], '17.5 rem');
 });
 
-/** A guide's pages, two levels deep; a section without href is a heading. */
-const guide = [
+const guidePagesTwoLevelsDeep = [
   { label: 'Overview', href: '#overview', group: 'Getting started' },
   {
     label: 'Sign-in',
@@ -115,8 +107,11 @@ const guide = [
   },
 ];
 
-test('the current page’s sections start open, the rest closed with their links in the page', () => {
-  const drawer = render(NavigationDrawer, { 'aria-label': 'Guide', destinations: guide });
+test('the current page’s sections start open, the rest closed with their links in the page, and only the current page reports aria-current', () => {
+  const drawer = render(NavigationDrawer, {
+    'aria-label': 'Guide',
+    destinations: guidePagesTwoLevelsDeep,
+  });
   const link = (href) => all(drawer, (element) => element.attributes.href === href)[0];
   const button = (name) =>
     all(
@@ -124,8 +119,6 @@ test('the current page’s sections start open, the rest closed with their links
       (element) =>
         element.tag === 'button' && (element.attributes['aria-label'] ?? textOf(element)) === name,
     )[0];
-  // A section with a page of its own is a link, with a button at its end that controls the list of
-  // its nested destinations.
   assert.equal(textOf(link('#sign-in')), 'Sign-in');
   const signIn = button('Sign-in contents');
   assert.equal(signIn.attributes['aria-expanded'], 'true');
@@ -136,8 +129,6 @@ test('the current page’s sections start open, the rest closed with their links
   assert.ok(elementsOf(contents).includes(link('#passkeys')));
   assert.equal(contents.attributes.hidden, undefined);
   assert.equal(link('#passkeys').attributes['aria-current'], 'page');
-  // A section without a page is only its heading, a button; closed, its links stay in the page,
-  // hidden (until found, once it runs in the browser).
   const billing = button('Billing');
   assert.equal(billing.attributes['aria-expanded'], 'false');
   const branch = all(drawer, (element) => element.children.includes(billing))[0];
@@ -145,7 +136,6 @@ test('the current page’s sections start open, the rest closed with their links
   assert.equal(closed.tag, 'ul');
   assert.ok('hidden' in closed.attributes);
   assert.ok(elementsOf(closed).includes(link('#invoices')));
-  // Only the current page reports aria-current.
   assert.equal(all(drawer, (element) => 'aria-current' in element.attributes).length, 1);
 });
 

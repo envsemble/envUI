@@ -48,8 +48,7 @@ const mailboxes: Mailbox[] = [
 export default function RowDensity({ density = 'md' }: Pick<TreeProps<TreeItem>, 'density'>) {
   const [clientsOpen, setClientsOpen] = useState(true);
   const [selected, setSelected] = useState<string | null>('inbox');
-  // A collapsed folder leaves its children out of the visible rows.
-  const rows = useMemo(
+  const visibleRows = useMemo(
     () =>
       mailboxes
         .filter((mailbox) => mailbox.parent !== 'clients' || clientsOpen)
@@ -57,12 +56,11 @@ export default function RowDensity({ density = 'md' }: Pick<TreeProps<TreeItem>,
     [clientsOpen],
   );
   return (
-    // The tree fills its parent's height and scrolls itself.
     <div style={{ blockSize: '16.5rem', inlineSize: 'min(100%, 20rem)' }}>
       <Tree
         aria-label="Mailboxes"
         density={density}
-        items={rows}
+        items={visibleRows}
         value={selected}
         onAction={(row) =>
           row.expandable ? setClientsOpen(!row.expanded) : setSelected(row.value)

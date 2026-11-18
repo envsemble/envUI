@@ -6,10 +6,6 @@ import type { Editor } from '@tiptap/react';
 import { exitSuggestion } from '@tiptap/suggestion';
 import { documentAttributes } from './useRichTextDocument.js';
 
-/**
- * Names, describes and states the editor's document as the field's control, and makes it editable
- * or not; its suggestion lists close as it becomes disabled or read-only.
- */
 export function useDocumentAttributes(
   editor: Editor | null,
   {
@@ -50,8 +46,9 @@ export function useDocumentAttributes(
         },
       },
     });
-    editor.setEditable(!disabled && !readOnly, false);
-    if (disabled || readOnly) {
+    const editable = !disabled && !readOnly;
+    editor.setEditable(editable, false);
+    if (!editable) {
       for (const key of suggestionKeys) exitSuggestion(editor.view, key);
     }
   }, [editor, suggestionKeys, disabled, readOnly, label, ariaLabel, id, describedBy, invalid]);

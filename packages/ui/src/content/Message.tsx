@@ -3,9 +3,11 @@ import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { ControlDefaults } from '../internal/control/ControlDefaults.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { IconError } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
+import { MessageListFollow } from './internal/MessageListFollow.js';
 import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
@@ -24,14 +26,13 @@ export interface MessageProps
    * Who wrote the message, such as a name, shown above it at weight 500. Leave it out where the
    * conversation makes it clear, such as on your own messages in a conversation with one person.
    */
-  author?: ReactNode;
+  author?: string;
   /** Supporting facts beside the author, in the muted color, such as the time or a RelativeTime. */
   meta?: ReactNode;
   /**
    * Small actions below the message, such as Copy or Try again: buttons without a variant or size of
-   * their own are ghost buttons at the small control height, with the touch height on touch
-   * screens; at the inline end for your own messages. A text IconButton at the edge lines its icon
-   * up with the message. false and null count as absent.
+   * their own are small ghost buttons, at the inline end for your own messages. false and null
+   * count as absent.
    */
   actions?: ReactNode;
   /**
@@ -53,7 +54,6 @@ export interface MessageProps
   children: ReactNode;
 }
 
-/** Conditional content such as {failed && <Retry />} leaves false behind; it counts as absent. */
 function present(node: ReactNode) {
   return node != null && node !== false;
 }
@@ -76,7 +76,6 @@ export function Message(allProps: MessageProps) {
     children,
     ...props
   } = allProps;
-  // An author or meta given as undefined, as over a placeholder item, is a bar in a skeleton.
   const hasAuthor = present(author) || given(allProps, 'author');
   const hasMeta = present(meta) || given(allProps, 'meta');
   return (
@@ -98,12 +97,20 @@ export function Message(allProps: MessageProps) {
           {(hasAuthor || hasMeta) && (
             <Row render={<header />} wrap className="env-message-header">
               {hasAuthor && <span className="env-message-author">{author}</span>}
-              {hasMeta && <span className="env-message-meta">{meta}</span>}
+              {hasMeta && (
+                <Slot className="env-message-meta" element="span">
+                  {meta}
+                </Slot>
+              )}
             </Row>
           )}
-          <div className="env-message-content" data-text={flag(typeof children === 'string')}>
-            {children}
-          </div>
+          <Slot className="env-message-content">
+            {typeof children === 'string' ? (
+              <span className="env-message-text">{children}</span>
+            ) : (
+              children
+            )}
+          </Slot>
           {status != null && (
             <Row align="center" gap={1} className="env-message-status">
               {status === 'sending' ? (
@@ -117,11 +124,11 @@ export function Message(allProps: MessageProps) {
             </Row>
           )}
           {present(actions) && (
-            <Row wrap align="center" gap={1} className="env-message-actions">
+            <Slot className="env-message-actions" layout="row">
               <ControlDefaults variant="ghost" size="sm">
                 {actions}
               </ControlDefaults>
-            </Row>
+            </Slot>
           )}
         </>,
       )}
@@ -138,24 +145,41 @@ export interface MessageListProps extends ComponentPropsWithRef<'div'> {
    */
   busy?: boolean;
   /** Who the reply on its way comes from, such as Agent, named on the busy row as a message's author. */
-  busyAuthor?: ReactNode;
+  busyAuthor?: string;
   /**
    * The text beside the busy spinner, such as "Thinking". It overrides EnvUIProvider's
    * `messages.message.working`.
    * @default 'Working'
    */
   busyLabel?: string;
+  /**
+   * The list scrolls by itself and follows the conversation: it fills the height its container
+   * gives it, opens at the latest message and keeps the latest in view while the reader is at the
+   * end. Once they scroll away and more arrives, a Jump to latest button shows at its foot, which
+   * scrolls back to the end.
+   * @default false
+   */
+  follow?: boolean;
+  /**
+   * The text of the Jump to latest button of a list that follows. It overrides EnvUIProvider's
+   * `messages.message.jumpToLatest`.
+   * @default 'Jump to latest'
+   */
+  jumpToLatestLabel?: string;
 }
 
 /**
  * The messages of a conversation in order, as a log: assistive technology politely announces
  * messages added anywhere in it and text that changes. Set busy while a reply is on its way or
- * streams in. Name it with aria-label or aria-labelledby.
+ * streams in, and follow where the list scrolls by itself. Name it with aria-label or
+ * aria-labelledby.
  */
 export function MessageList({
   busy = false,
   busyAuthor,
   busyLabel,
+  follow = false,
+  jumpToLatestLabel,
   className,
   children,
   ...props
@@ -165,12 +189,13 @@ export function MessageList({
       gap={5}
       aria-live="polite"
       aria-busy={busy || undefined}
+      tabIndex={follow ? 0 : undefined}
       {...props}
       role="log"
       className={classNames('env-message-list', className)}
+      data-follow={flag(follow)}
     >
       {children}
-      {/* Shown, not read: aria-busy says it, and the reply is announced once it is complete. */}
       {busy && (
         <Row wrap align="center" className="env-message-list-busy" aria-hidden="true">
           {present(busyAuthor) && <span className="env-message-author">{busyAuthor}</span>}
@@ -180,6 +205,7 @@ export function MessageList({
           </Row>
         </Row>
       )}
+      {follow && <MessageListFollow label={jumpToLatestLabel} />}
     </Grid>
   );
 }

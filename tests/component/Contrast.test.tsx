@@ -3,20 +3,6 @@ import { commands } from 'vitest/browser';
 import { themes } from '../contrast/Themes.ts';
 import tokenList from '../../packages/ui/src/generated/tokens.json';
 
-/**
- * The contrast gate. Every pair in tests/contrast/Pairs.ts is resolved in every theme of
- * tests/contrast/Themes.ts by the browser, against envUI's style sheet alone, so var(), relative
- * colors, color-mix() and light-dark() resolve as shipped; tests/contrast/Gate.ts measures them, in
- * Node, with WCAG 2.x, or as a ΔEOK distance for the difference and distinct pairs, which must be
- * told apart rather than read against each other. Pairs that fail today are listed in
- * tests/contrast/Exceptions.json; the gate fails on a new failure, on a listed failure that got
- * worse, and on a listed failure that now passes, so the list only shrinks. Its registry and
- * snapshot are checked in Node (tests/contrast/ContrastRegistry.test.ts).
- *
- * Set ENVUI_CONTRAST_REPORT=1 to print every pair's ratio and APCA Lc.
- */
-
-/** A theme boundary with the given attributes, as the Theme component writes them, in the page. */
 function boundary(attributes: Readonly<Record<string, string>>) {
   const element = document.createElement('div');
   element.className = 'env-theme';
@@ -25,7 +11,6 @@ function boundary(attributes: Readonly<Record<string, string>>) {
   return element;
 }
 
-/** Resolves each named color inside a theme boundary, or null where it doesn't resolve. */
 function resolveColors(
   attributes: Readonly<Record<string, string>>,
   colors: Readonly<Record<string, string>>,
@@ -35,8 +20,6 @@ function resolveColors(
   const probe = document.createElement('span');
   holder.append(probe);
   theme.append(holder);
-  // A color that doesn't resolve, such as an undefined token, leaves the probe with the color it
-  // inherits, so reading it under two different inherited colors exposes it.
   const read = (value: string, inherited: string) => {
     holder.style.color = inherited;
     probe.style.color = value;
@@ -66,7 +49,6 @@ describe('contrast', () => {
   }
 
   test('prefers-contrast: more applies the high-contrast themes unless a boundary opts out', async () => {
-    // Every token, of every type, not only the colors the pairs name.
     const names = tokenList.tokens.map((token) => token.cssVariable);
     for (const scheme of ['light', 'dark']) {
       const read = (attributes: Record<string, string>) => {

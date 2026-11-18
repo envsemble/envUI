@@ -5,10 +5,6 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const control = '.env-slider-control';
 
-/*
- * The pointer drags the volume from 60% down to 35%, the value following it, and the setting is
- * saved only once it lets go; then it drags it back up to 60%, saved again.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: control, x: 0.6 },
@@ -32,7 +28,6 @@ function Dragging() {
   return <SaveOnRelease />;
 }
 
-/** The volume dragged by a pointer no one sees, and saved once each drag is let go. */
 export default function SaveOnReleaseMotion() {
   return (
     <MotionStage label="the value saved once the slider is let go">

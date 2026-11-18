@@ -1,13 +1,5 @@
-/* The motif at the end of the one catalogue banner that has one (BannerMotif.tsx): a fan of the
-   palette on Colors & themes, drawn in envUI's own tokens, so it follows the theme and the palette.
-   Its stage covers the banner's end and is a container of its size; the fan is drawn in em of a
-   unit that follows the stage's size and faded toward the banner's text, so the text keeps its
-   full contrast on the plain fill. It is decoration: of no size in the banner's layout, out of the
-   pointer's way, and hidden from assistive technology. */
-/* stylelint-disable unit-disallowed-list -- a motif is a drawing in em, the unit its stage sets,
-   so the whole drawing scales with the banner as one picture, as no rem or token could. */
+/* stylelint-disable unit-disallowed-list */
 .catalogue-banner-motif {
-  /* An opaque color for the fade's mask, which reads only its alpha. */
   --catalogue-motif-opaque: var(--env-color-fg-default);
   position: absolute;
   inset-block: 0;
@@ -25,8 +17,6 @@
   mask-image: linear-gradient(to left, transparent, var(--catalogue-motif-opaque) 45%);
 }
 
-/* The arrangement: in a unit that fits about nineteen of it in the banner's height, turned a
-   little and set toward the banner's end. A motif may draw itself larger. */
 .catalogue-motif-art {
   --catalogue-motif-scale: 1;
   display: flex;
@@ -39,8 +29,6 @@
   translate: 12% 0;
 }
 
-/* Motion: as the page opens, each piece settles into place in turn, once. Only transforms and
-   opacity move, none of the page's layout; without a preference for motion it is drawn at rest. */
 @media (prefers-reduced-motion: no-preference) {
   .catalogue-motif-art > * {
     animation: docs-motif-enter calc(var(--env-motion-duration-slow) * 4)
@@ -56,8 +44,6 @@
   }
 }
 
-/* Swatches: a fan of color chips, one for each tone, from its muted fill down to its text,
-   upright and centred on its stage, the chips meeting with no edge between them. */
 .catalogue-motif-art[data-motif='swatches'] {
   display: grid;
   rotate: 0deg;
@@ -109,8 +95,6 @@
   }
 }
 
-/* In a narrow pane, where the text spans the banner, the motif would run under it: it goes, as a
-   drawing does (Banners.css). */
 @container site-page-header (width < 44rem) {
   .catalogue-banner-motif {
     display: none;

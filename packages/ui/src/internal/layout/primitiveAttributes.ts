@@ -3,7 +3,6 @@ import { flag } from '../flag.js';
 
 type Kind = 'box' | 'row' | 'column' | 'grid';
 
-/** A primitive's props as its attributes read them: Layout.tsx types each primitive's own. */
 type PrimitiveProps = {
   name?: string;
   container?: string;
@@ -26,7 +25,7 @@ export function primitiveAttributes(
   variables: Record<string, string> = {},
 ) {
   const custom: Record<string, string> = { ...variables };
-  if (container) custom['--env-layout-container'] = container;
+  if (container) custom['--_layout-container'] = container;
   return {
     ...props,
     ...extra,

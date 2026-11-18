@@ -4,7 +4,6 @@ import { routeHref } from '../../routes/Address';
 import { pagesOf } from '../../routes/SiteRoutes';
 import { glancePictures } from '../../figures/foundations/Glance';
 
-/** The foundations, the type first, across the sheet's top, then the rest in the catalogue's order. */
 const foundations = pagesOf('catalogue')
   .filter((page) => page.kind === 'foundation')
   .sort(
@@ -12,11 +11,6 @@ const foundations = pagesOf('catalogue')
       Number(other.document.id === 'typography') - Number(one.document.id === 'typography'),
   );
 
-/**
- * Every foundation at a glance: one sheet on the recessed canvas, a pane for each foundation with
- * its name and a picture of its values, meeting the others at hairlines, so the sheet reads as one
- * picture of envUI. Each pane is one link to its page, the whole pane, named by its heading.
- */
 export function FoundationCatalogue() {
   return (
     <div className="site-foundation-stage catalogue-foundation-sheet" data-figure="example">

@@ -9,6 +9,8 @@ import {
   type CheckboxState,
 } from './internal/useCheckedInput.js';
 import { IconCheck } from '../icons/Check.js';
+import { Slot } from '../internal/layout/Slot.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import '../styles/Base.css';
 import '../styles/Checkbox.css';
 
@@ -23,7 +25,10 @@ export interface CheckboxProps extends CheckedProps<CheckboxState> {
   className?: string;
   /** Styles of the root element. */
   style?: CSSProperties;
-  /** The text beside the box, which names the checkbox; pressing it toggles the checkbox. */
+  /**
+   * The text beside the box, which names the checkbox; pressing it toggles the checkbox. Without it,
+   * a List.Item whose control it is names it, or name it with aria-label or aria-labelledby.
+   */
   label?: ReactNode;
   /**
    * A short, muted line under the label, such as what the option changes. It is part of the
@@ -61,11 +66,13 @@ export function Checkbox({
     onChange,
     props.form,
   );
+  const naming = useRowControlNaming({ label, ...props });
   return (
     <label className={classNames('env-checkbox', className)} style={style}>
       <span className="env-checkbox-box">
         <input
           {...props}
+          {...naming}
           type="checkbox"
           ref={(node) => {
             inputRef.current = node;
@@ -82,8 +89,16 @@ export function Checkbox({
       </span>
       {label != null && (
         <span className="env-checkbox-label">
-          {label}
-          {description != null && <small className="env-checkbox-description">{description}</small>}
+          <Slot className="env-checkbox-label-content" element="span">
+            {label}
+          </Slot>
+          {description != null && (
+            <small className="env-checkbox-description">
+              <Slot className="env-checkbox-description-content" element="span">
+                {description}
+              </Slot>
+            </small>
+          )}
         </span>
       )}
     </label>

@@ -1,16 +1,11 @@
 import { Kbd, Text } from '@envsemble/envui';
 
-/** A few of an application's shortcuts, each named beside its keys. */
 const shortcuts = [
   { label: 'Search', keys: ['Ctrl', 'K'] },
   { label: 'Save', keys: ['Ctrl', 'S'] },
   { label: 'New file', keys: ['Ctrl', 'N'] },
 ];
 
-/**
- * A short list of shortcuts: what each does, and its keys. It stays still while it plays: a key has
- * no pressed or other state of its own to show.
- */
 export default function KbdTile() {
   return (
     <div

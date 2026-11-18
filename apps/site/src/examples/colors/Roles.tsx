@@ -1,6 +1,5 @@
 import { Button, Column, Row, Surface, Text } from '@envsemble/envui';
 
-// Each part takes a role, never a color; the theme gives every role its color.
 export default function Roles() {
   return (
     <Surface background="page" padding={5} radius="xl">

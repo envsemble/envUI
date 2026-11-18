@@ -9,13 +9,11 @@ import type { FixtureModule } from '../fixture/FixtureMount.tsx';
 
 type Colors = Record<string, string>;
 
-/** Every color the contrast gate measures, by name, as CSS. */
 let colors: Colors;
 beforeAll(async () => {
   colors = await commands.contrastColors();
 });
 
-/** The colors as the browser resolves them inside an element. */
 function colorsIn(element: Element): Colors {
   const probe = document.createElement('span');
   probe.hidden = true;
@@ -29,10 +27,6 @@ function colorsIn(element: Element): Colors {
   return resolved;
 }
 
-/**
- * The colors of each theme the contrast gate measures, read as the gate reads them: in a boundary
- * with the theme's attributes. Read them while the page has no contrast preference.
- */
 function gateColors(): Record<string, Colors> {
   const measured: Record<string, Colors> = {};
   for (const theme of themes) {
@@ -49,7 +43,6 @@ function gateColors(): Record<string, Colors> {
   return measured;
 }
 
-/** Sets the system's contrast preference and mounts the fixture again, as a page load would. */
 async function preferContrast(
   contrast: 'more' | 'no-preference',
   module: FixtureModule = contrastFixture,
@@ -61,10 +54,6 @@ async function preferContrast(
 const boundaryOf = (name: string) =>
   page.getByTestId(`contrast-${name.replaceAll(' ', '-')}`).element();
 
-/**
- * Opens each popup of a boundary and checks the Theme around its portal: its attributes, and that
- * every color the gate measures resolves there as in the expected theme.
- */
 async function expectPopups(
   name: string,
   expected: { theme: string; contrast: string | null; colors: Colors },
@@ -131,7 +120,6 @@ test('ThemePreferenceProvider sets the contrast of the document root, its bounda
   const boundary = page.getByTestId('contrast-provider').element().parentElement!;
   await expect.poll(() => root.getAttribute('data-env-theme')).toBe('dark');
   expect(root.getAttribute('data-env-contrast')).toBe('high');
-  // The boundary, outside any Theme, takes the root's look: no theme of its own.
   expect(boundary.hasAttribute('data-env-contrast')).toBe(false);
   expect(colorsIn(root)).toEqual(gate['dark-high-contrast']);
   expect(colorsIn(boundary)).toEqual(gate['dark-high-contrast']);

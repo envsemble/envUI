@@ -5,8 +5,6 @@ const data: CalendarHeatmapDay[] = Array.from({ length: 84 }, (_, index) => ({
   value: (index * 7) % 11,
 }));
 
-// The legend in the application's own words, in the page's language; the month and weekday names,
-// dates and numbers follow the locale the provider inherits from the page.
 const messages = { calendarHeatmap: { less: 'Quieter', more: 'Busier' } };
 
 export default function ApplicationStrings() {

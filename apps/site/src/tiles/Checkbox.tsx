@@ -5,7 +5,6 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 const box = (index: number) =>
   `.env-checkbox:nth-child(${index} of .env-checkbox) .env-checkbox-input`;
 
-/** Checks the second, clears the first, and puts both back. */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: box(2) },
@@ -25,7 +24,6 @@ const script: PointerStep[] = [
   { wait: 240 },
 ];
 
-/** Two checkboxes, one checked. */
 export default function CheckboxTile() {
   usePointer(script);
   return (

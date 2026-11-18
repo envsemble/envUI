@@ -60,7 +60,7 @@
     "Accordion.Root": {
       "kind": "component",
       "source": "packages/ui/src/content/Accordion.tsx",
-      "description": "A list of sections, each a heading that shows and hides its panel, separated by full-width hairlines. A plus at the start of a heading becomes a minus while its section is open. One item is open at a time unless `multiple` is set. Built on Base UI's Accordion.",
+      "description": "A list of sections, each a heading that shows and hides its panel, separated by full-width hairlines. A plus at the start of a heading becomes a minus while its section is open. One item is open at a time unless `multiple` is set.",
       "props": [
         {
           "name": "children",
@@ -133,7 +133,7 @@
     "Alert": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Alert.tsx",
-      "description": "An inline banner for a page- or section-level message, in its tone. It stays a server component: its dismiss button is an IconButton with a cross, a client leaf named in the provider's language.",
+      "description": "An inline banner for a page- or section-level message, in its tone. It is a server component; its dismiss button is an IconButton with a cross, named in the provider's language.",
       "props": [
         {
           "name": "tone",
@@ -144,7 +144,7 @@
         },
         {
           "name": "title",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
           "description": "A short heading for the message, such as \"Sync paused\", above the message."
         },
@@ -408,9 +408,9 @@
         },
         {
           "name": "children",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "The label: a state, a name or a category in a word or two. It stays on one line and ends with an ellipsis where the badge is wider than its container."
+          "description": "The label: a state, a name or a category in a word or two, as text. It stays on one line and ends with an ellipsis where the badge is wider than its container."
         },
         {
           "name": "count",
@@ -904,7 +904,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit."
         },
         {
           "name": "render",
@@ -969,7 +969,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The text beside the box, which names the checkbox; pressing it toggles the checkbox."
+          "description": "The text beside the box, which names the checkbox; pressing it toggles the checkbox. Without it, a List.Item whose control it is names it, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "description",
@@ -1013,25 +1013,19 @@
         "code"
       ],
       "entries": [
-        "@envsemble/envui/code"
+        "@envsemble/envui"
       ]
     },
     "CodeBlock": {
       "kind": "component",
       "source": "packages/ui/src/content/CodeBlock.tsx",
-      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string. Its words come from EnvUIProvider's messages.codeBlock.",
+      "description": "Source, a command or output as plain text in the code theme of the app theme, such as a command to copy; copy always uses the original string. It loads no highlighter: HighlightedCodeBlock, from `@envsemble/envui/code`, colors a language's syntax. Its words come from EnvUIProvider's messages.codeBlock.",
       "props": [
         {
           "name": "children",
           "type": "string",
           "required": true,
-          "description": "The source, as one string; it is shown, highlighted and copied as it is."
-        },
-        {
-          "name": "language",
-          "type": "string",
-          "required": false,
-          "description": "The language to highlight: js, jsx, ts, tsx, java, json, html, xml, css, sql, sh, bash, yaml, md or ini, or their full names. Other values, and none, leave the source plain text."
+          "description": "The source, as one string; it is shown and copied as it is."
         },
         {
           "name": "label",
@@ -1058,7 +1052,7 @@
         "div"
       ],
       "entries": [
-        "@envsemble/envui/code"
+        "@envsemble/envui"
       ]
     },
     "CodeDiff": {
@@ -1598,7 +1592,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -1616,14 +1610,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         },
         {
           "name": "multiple",
@@ -1660,7 +1654,7 @@
     "CommandPalette": {
       "kind": "component",
       "source": "packages/ui/src/actions/CommandPalette.tsx",
-      "description": "A quick-open dialog near the top of the window: a search field over a list of options the application filters and ranks, built on Base UI's Autocomplete inside a dialog. The arrow keys move the highlight while typing continues, and the number of results is announced as it changes. className, style, ref and data attributes go to the dialog's surface.",
+      "description": "A quick-open dialog near the top of the window: a search field over a list of options the application filters and ranks. The arrow keys move the highlight while typing continues, and the number of results is announced as it changes. className, style, ref and data attributes go to the dialog's surface.",
       "props": [
         {
           "name": "open",
@@ -1742,20 +1736,20 @@
           "type": "ReactNode",
           "required": false,
           "default": "'Type to search' while the search field is empty and 'No results' when its text finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty",
-          "description": "The empty state's title, the start of the one muted line shown in place of the list when there are no options, and announced."
+          "description": "The title of the EmptyState shown in place of the list when there are no options, and announced."
         },
         {
           "name": "emptyDescription",
           "type": "ReactNode",
           "required": false,
           "default": "None while the search field is empty; when its text finds nothing, 'Nothing matches “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint",
-          "description": "Text after the empty state's title on its line, such as what the palette searches; null or false shows none."
+          "description": "The empty state's description below its title, such as what the palette searches; null or false shows none."
         },
         {
           "name": "emptyIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon at the start of the empty state's line, in an option's icon place, such as an error icon when the search failed; none by default."
+          "description": "A decorative icon above the empty state's title, such as an error icon when the search failed; none by default."
         },
         {
           "name": "hints",
@@ -2459,7 +2453,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -2477,14 +2471,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         }
       ],
       "native": [
@@ -2839,8 +2833,14 @@
     "DocumentTabs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/DocumentTabs.tsx",
-      "description": "Editor-style closable tabs for open documents; the application renders the active document. className, style, ref and the other native props go to the root element, which holds the strip of tabs and the actions at its end.",
+      "description": "Editor-style closable tabs for open documents, with the active document in a panel under them. className, style, ref and the other native props go to the root element, which holds the strip of tabs, the actions at its end and the panel.",
       "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The active document, in the panel under the strip, which the active tab joins: anything the application renders, such as an editor or a page, placed as given. Without it, the application renders the panel itself and names it with panelId."
+        },
         {
           "name": "items",
           "type": "readonly DocumentTabsItem[]",
@@ -2893,7 +2893,7 @@
           "name": "panelId",
           "type": "string",
           "required": false,
-          "description": "Id of the panel the application renders for the active tab."
+          "description": "Id of the panel the active tab controls: the one DocumentTabs renders around children, or the one the application renders itself."
         },
         {
           "name": "closeLabel",
@@ -3028,7 +3028,44 @@
           "name": "inputRef",
           "type": "Ref<HTMLInputElement>",
           "required": false,
-          "description": "The native file input that opens the file picker, for example from a Replace button. The zone holds no value a form library could register, as a field's input does, so ref reaches the zone itself, the drop target, and this ref the picker."
+          "description": "The native file input that opens the file picker, for example from a Replace button; ref reaches the zone itself."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "EmptyState": {
+      "kind": "component",
+      "source": "packages/ui/src/feedback/EmptyState.tsx",
+      "description": "What a region shows when it has nothing to show: an optional icon, a title, an optional description and optional actions, centred in the region it fills, and compact where that region is narrow.",
+      "props": [
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A decorative icon above the title, such as the icon of what the region would list."
+        },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": true,
+          "description": "What the region would show, said as its absence, such as \"No projects yet\"."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A sentence on why it is empty or what fills it, such as \"Projects you create show here.\""
+        },
+        {
+          "name": "actions",
+          "type": "ReactNode",
+          "required": false,
+          "description": "What fills it, such as a Button that creates the first item, in a row that wraps."
         }
       ],
       "native": [
@@ -3264,7 +3301,7 @@
     "Field.Root": {
       "kind": "component",
       "source": "packages/ui/src/forms/Field.tsx",
-      "description": "A labelled form control with its description and error, for a control envUI has no field for, such as a control of the application's own: Field.Label names Field.Control, and the description and the error describe it, with ids, aria-invalid and the disabled state wired through Base UI's Field.",
+      "description": "A labelled form control with its description and error, for a control envUI has no field for, such as a control of the application's own: Field.Label names Field.Control, and the description and the error describe it.",
       "props": [
         {
           "name": "style",
@@ -3480,6 +3517,51 @@
         "@envsemble/envui"
       ]
     },
+    "HighlightedCodeBlock": {
+      "kind": "component",
+      "source": "packages/ui/src/content/HighlightedCodeBlock.tsx",
+      "description": "Source with its syntax colored, in the code theme of the app theme, with that code theme's own colors; copy always uses the original string. The highlighter loads with the first block that names a language it knows. For a command or output, CodeBlock shows plain text without it.",
+      "props": [
+        {
+          "name": "language",
+          "type": "string",
+          "required": false,
+          "description": "The language to highlight: js, jsx, ts, tsx, java, json, html, xml, css, sql, sh, bash, yaml, md or ini, or their full names. Other values, and none, leave the source plain text."
+        },
+        {
+          "name": "children",
+          "type": "string",
+          "required": true,
+          "description": "The source, as one string; it is shown and copied as it is."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "description": "Names the block in its heading and for assistive technology, such as a file name."
+        },
+        {
+          "name": "copyable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows a copy button in the heading that copies the source; false by default."
+        },
+        {
+          "name": "wrap",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Wraps long lines instead of scrolling them; false by default."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui/code"
+      ]
+    },
     "HoverCard": {
       "kind": "component",
       "source": "packages/ui/src/overlays/HoverCard.tsx",
@@ -3569,7 +3651,7 @@
     "Icon": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Icon.tsx",
-      "description": "The SVG that envUI's symbols render: 1 em, `currentColor`, and hidden from assistive technology unless labelled. An application's own icons and logos go in Graphic, as a file or an SVG component inside it.",
+      "description": "The SVG that envUI's symbols render: `--env-icon-size` square, the size the component around it sets, such as a List row's start, and else the control icon size; `currentColor`, and hidden from assistive technology unless labelled. An application's own icons and logos go in Graphic, as a file or an SVG component inside it.",
       "props": [
         {
           "name": "label",
@@ -3686,50 +3768,6 @@
         "@envsemble/envui"
       ]
     },
-    "LineArt": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/LineArt.tsx",
-      "description": "A geometric drawing in hairlines that fills its container's box, for a banner's end, an empty state or the background of a header: its lines in the muted edge color in every theme, one device pixel wide at any size, and the system's gray text color in forced colors. It covers the box, resting on its foot and cropped from its start by default, and is hidden from assistive technology unless a label makes it an image. With `motion`, its lines draw themselves in, out, or in and out again.",
-      "props": [
-        {
-          "name": "drawing",
-          "type": "LineArtDrawing",
-          "required": true,
-          "description": "The drawing, one of lineArtDrawings, such as golden-section or harmonic-division."
-        },
-        {
-          "name": "align",
-          "type": "'start' | 'center' | 'end'",
-          "required": false,
-          "default": "'end'",
-          "description": "Where the drawing sits in its box when the box's shape crops it: at the end, at the start or in the center, flipped in right-to-left text, as the drawing itself is. It is cropped from the other side, or from both, and always rests on the box's foot, cropped from its top."
-        },
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "description": "What the drawing shows, for a drawing that is content rather than decoration: it makes the drawing an image named by it. Without it, the drawing is hidden from assistive technology."
-        },
-        {
-          "name": "motion",
-          "type": "'appear' | 'disappear' | 'loop' | 'play'",
-          "required": false,
-          "description": "How the drawing moves as it mounts or as this changes, its lines one after another in the order of its construction: `appear` draws them in, from nothing to the whole drawing; `disappear` draws them out, from the whole drawing to nothing, where it stays; `loop` draws them in and out again for as long as it is set, ending each round where the next begins; and `play` runs each line out past its end and draws it in again, the drawing whole throughout, ending on the still. Without it, the drawing is still. Where reduced motion is preferred, the drawing shows where the motion ends at once, and stays whole for `loop`."
-        },
-        {
-          "name": "onMotionEnd",
-          "type": "() => void",
-          "required": false,
-          "description": "Called once `appear`, `disappear` or `play` has finished, at once where reduced motion is preferred, such as to unmount a drawing that has disappeared or to play it again later."
-        }
-      ],
-      "native": [
-        "svg"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Link": {
       "kind": "component",
       "source": "packages/ui/src/actions/Link.tsx",
@@ -3800,13 +3838,13 @@
     "List.Item": {
       "kind": "component",
       "source": "packages/ui/src/data-display/List.tsx",
-      "description": "One `li` row with a label, a description and content at its end; the current row, content at its start, and in a reorderable list a drag handle. It renders on the server: only the handle of a reorderable row needs the browser.",
+      "description": "One `li` row with a label, a description and content at its end, or the control of the setting it names; the current row, content at its start, and in a reorderable list a drag handle.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row. Undefined, such as over a placeholder item, a skeleton shows a bar in its place."
+          "description": "The row's name, in the row's text color, such as an item's name, or in an interactive row a link or text Button marked `data-row-target`, which then reads in the row's text color too. It takes the room the row leaves and wraps; it is never cut short. Undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "description",
@@ -3818,13 +3856,19 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Content at the end of the row, such as a Button or a Switch; it moves below the text when it doesn't fit."
+          "description": "Content at the end of the row, such as a Button or a Badge, which keeps its size; it moves below the text when it doesn't fit beside it. The control of the setting a row names goes in control."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "More content after the label and the description, such as a Badge."
+          "description": "More content under the label and the description, such as a row of Badges, placed as given."
+        },
+        {
+          "name": "control",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The selection control the row is about, at the row's end: a Switch or a Checkbox, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select, a TextField or a RadioGroup, belongs in a form, with its label above it."
         },
         {
           "name": "interactive",
@@ -3838,7 +3882,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The current row, such as the one whose details show beside a list: the selected fill, and `aria-current=\"true\"` on its `data-row-target` element in the label, description or children, or on the row without one."
+          "description": "The current row, such as the one whose details show beside a list: the selected fill and medium text, and `aria-current=\"true\"` on its `data-row-target` element in the label, description or children, or on the row without one."
         },
         {
           "name": "start",
@@ -3871,8 +3915,27 @@
     "List.Root": {
       "kind": "component",
       "source": "packages/ui/src/data-display/List.tsx",
-      "description": "A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles.",
+      "description": "A `ul` of rows, filled tiles joined into one block by small gaps with shared outer corners, for items people scan, open or choose. In a muted Surface that holds only lists, the rows take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles. With a title, a heading above the rows names the list.",
       "props": [
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The heading above the rows, such as Remote access for a group of settings. It names the list, so that a page of such groups has one consistent outline."
+        },
+        {
+          "name": "headingLevel",
+          "type": "Exclude<HeadingLevel, 1>",
+          "required": false,
+          "default": "2",
+          "description": "The heading's level, for the page's outline: 2 under the page's own heading, 3 inside a section that has one. It looks the same at every level."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A sentence under the title, in muted text, such as what the group's settings change. It describes the list."
+        },
         {
           "name": "density",
           "type": "'xs' | 'sm' | 'md' | 'lg'",
@@ -4000,7 +4063,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Show Write/Preview tabs. Preview uses the same public Markdown renderer."
+          "description": "Show the Write and Preview switch above the source. Preview uses the same public Markdown renderer."
         },
         {
           "name": "previewProps",
@@ -4018,7 +4081,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "style",
@@ -4050,7 +4113,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top."
+          "description": "The field's look, as TextField's: outline or ghost."
         },
         {
           "name": "error",
@@ -4748,7 +4811,7 @@
         },
         {
           "name": "author",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
           "description": "Who wrote the message, such as a name, shown above it at weight 500. Leave it out where the conversation makes it clear, such as on your own messages in a conversation with one person."
         },
@@ -4762,7 +4825,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are ghost buttons at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
+          "description": "Small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are small ghost buttons, at the inline end for your own messages. false and null count as absent."
         },
         {
           "name": "status",
@@ -4801,7 +4864,7 @@
     "MessageList": {
       "kind": "component",
       "source": "packages/ui/src/content/Message.tsx",
-      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. Set busy while a reply is on its way or streams in. Name it with aria-label or aria-labelledby.",
+      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. Set busy while a reply is on its way or streams in, and follow where the list scrolls by itself. Name it with aria-label or aria-labelledby.",
       "props": [
         {
           "name": "busy",
@@ -4812,7 +4875,7 @@
         },
         {
           "name": "busyAuthor",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
           "description": "Who the reply on its way comes from, such as Agent, named on the busy row as a message's author."
         },
@@ -4822,6 +4885,20 @@
           "required": false,
           "default": "'Working'",
           "description": "The text beside the busy spinner, such as \"Thinking\". It overrides EnvUIProvider's `messages.message.working`."
+        },
+        {
+          "name": "follow",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The list scrolls by itself and follows the conversation: it fills the height its container gives it, opens at the latest message and keeps the latest in view while the reader is at the end. Once they scroll away and more arrives, a Jump to latest button shows at its foot, which scrolls back to the end."
+        },
+        {
+          "name": "jumpToLatestLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Jump to latest'",
+          "description": "The text of the Jump to latest button of a list that follows. It overrides EnvUIProvider's `messages.message.jumpToLatest`."
         }
       ],
       "native": [
@@ -5032,7 +5109,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -5050,14 +5127,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         }
       ],
       "native": [
@@ -5083,7 +5160,7 @@
           "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a NavigationBar with page under a TopBar with its background."
+          "description": "The bar's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
         },
         {
           "name": "aria-label",
@@ -5110,7 +5187,7 @@
     "NavigationDrawer": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavigationDrawer.tsx",
-      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups, and nested destinations in sections that open and close. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination and section button is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
+      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups, and nested destinations in sections that open and close. It is `--env-navigation-drawer-width` wide and never wider than its container, so it also serves as a side list of a page's sections in a narrow column. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination and section button is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
       "props": [
         {
           "name": "destinations",
@@ -5161,7 +5238,7 @@
           "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The drawer's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a NavigationDrawer with its background under a TopBar with page."
+          "description": "The drawer's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
         },
         {
           "name": "aria-label",
@@ -5201,7 +5278,7 @@
           "type": "number",
           "required": false,
           "default": "15",
-          "description": "The smallest width of a `resizable` drawer, in rem."
+          "description": "The smallest width people can resize a `resizable` drawer to, in rem; it never takes more than its container."
         },
         {
           "name": "maxWidth",
@@ -5260,7 +5337,7 @@
           "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The rail's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a NavigationRail with its background beside a TopBar with page."
+          "description": "The rail's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
         },
         {
           "name": "aria-label",
@@ -5357,7 +5434,7 @@
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "A sentence under the title, in the smaller muted text, such as what the page is for."
+          "description": "Under the title, such as a sentence on what the page is for, or a status line. Text takes the smaller muted text; any content, block content too, keeps its own look."
         },
         {
           "name": "breadcrumbs",
@@ -5402,6 +5479,13 @@
           "required": false,
           "default": "'md'",
           "description": "The size of the buttons and icon buttons in `actions` and `toolbar` that set none: sm for a dense page, such as one in a small window, or md. Give fields in the toolbar the same `size`."
+        },
+        {
+          "name": "focusOnNavigation",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "In a Scaffold, moves focus to the title of a level 1 header when the page changes: as a new page's header mounts after the Scaffold first showed, not as a title changes. People using a screen reader then hear the new page, and the next Tab starts from it. Focus moved there shows no ring, and focus in a field or an open overlay stays where it is. False leaves focus to the application."
         }
       ],
       "native": [
@@ -5601,8 +5685,8 @@
           "name": "variant",
           "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "default": "'secondary'",
-          "description": "The buttons' variant, as on IconButton, such as text for a quiet toolbar."
+          "default": "'ghost'",
+          "description": "The buttons' variant, as on IconButton: quiet neutral icon buttons by default."
         },
         {
           "name": "size",
@@ -5625,193 +5709,35 @@
         "@envsemble/envui"
       ]
     },
-    "PanelDock": {
-      "kind": "namespace",
-      "source": "packages/ui/src/layout/panel-dock/PanelDock.tsx",
-      "description": "",
-      "parts": [
-        "PanelDock.Root",
-        "PanelDock.Header"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "PanelDock.Header": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/panel-dock/PanelDock.tsx",
-      "description": "The header of a docked panel. It sticks to the top of the panel while its content scrolls: the title and its metadata at the start, the application's actions and the window controls at the end, small like a title bar's.",
-      "props": [
-        {
-          "name": "title",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The panel's title, as a heading in 1.125 rem medium-weight text; it wraps between words rather than truncating."
-        },
-        {
-          "name": "meta",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Supporting text below the title, in 0.875 rem muted text, such as who changed it last."
-        },
-        {
-          "name": "actions",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The application's own actions, before the window controls, such as an Edit IconButton and a Menu of more; buttons that set no variant take the window controls' ghost one."
-        },
-        {
-          "name": "controls",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Shows the window controls, Minimize, Maximize or Restore, and Close, inside a PanelDock; false leaves them out. EnvUIProvider's messages.panelDock names them."
-        },
-        {
-          "name": "headingLevel",
-          "type": "1 | 2 | 3 | 4 | 5 | 6",
-          "required": false,
-          "default": "2",
-          "description": "The title's heading level in the page outline; the look stays the same."
-        },
-        {
-          "name": "children",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content below the title row that stays with the sticky header, such as Tabs."
-        }
-      ],
-      "native": [
-        "header"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "PanelDock.Root": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/panel-dock/PanelDock.tsx",
-      "description": "Panels docked to the bottom inline-end edge of a region, beside the page, for items people work on alongside it, such as drafts and conversations: open panels side by side, one maximized panel filling the region, and minimized panels as tabs. A panel's content stays mounted through every change of mode and order.",
-      "props": [
-        {
-          "name": "panels",
-          "type": "readonly Panel[]",
-          "required": true,
-          "description": "The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the end, and tabs follow in the same order. The application owns them."
-        },
-        {
-          "name": "children",
-          "type": "(panel: Panel) => ReactNode",
-          "required": true,
-          "description": "Renders a panel's content from its panel, such as a PanelDock.Header above the panel's body. The content mounts once and stays mounted until the panel closes."
-        },
-        {
-          "name": "onModeChange",
-          "type": "(id: string, mode: PanelDockMode) => void",
-          "required": true,
-          "description": "Called with the mode a panel asks for, from its window controls and its tab, and from the dock itself with overflow=\"minimize\"."
-        },
-        {
-          "name": "onClose",
-          "type": "(id: string) => void",
-          "required": true,
-          "description": "Called from a panel's close control and its tab's close button."
-        },
-        {
-          "name": "onActivate",
-          "type": "(id: string) => void",
-          "required": false,
-          "description": "Called when people press or focus inside a panel that is not active, and when its tab brings it back."
-        },
-        {
-          "name": "onHeightChange",
-          "type": "(id: string, height: number) => void",
-          "required": false,
-          "description": "Called with a panel's new height in rem when a drag on its top edge ends, and on each key press there."
-        },
-        {
-          "name": "stackBelow",
-          "type": "string | number",
-          "required": false,
-          "default": "'40rem'",
-          "description": "A width, as a CSS length, such as \"40rem\", or a number of rem, such as 40: while the dock itself is narrower, one panel at a time fills it and the others wait as tabs. The dock then has data-stacked."
-        },
-        {
-          "name": "onStackedChange",
-          "type": "(stacked: boolean) => void",
-          "required": false,
-          "description": "Called with true when the dock stacks and with false when its panels sit side by side."
-        },
-        {
-          "name": "overflow",
-          "type": "'scroll' | 'minimize'",
-          "required": false,
-          "default": "'scroll'",
-          "description": "What the dock does when its open panels cannot all sit side by side at their minimum widths: scroll (default) scrolls the row sideways; minimize asks onModeChange to minimize the least recently active open panel, one at a time, until the rest fit, and to open it again once the region widens and it fits. It never asks for the active panel, the newest one or the one that holds focus, so never for a panel alone in the row, and where those cannot fit by themselves the row scrolls instead."
-        },
-        {
-          "name": "minimizedLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Hidden panels', or EnvUIProvider's messages.panelDock.minimized",
-          "description": "Accessible name of the list of tabs, which holds minimized panels and the panels a stacked dock leaves out, for this dock only."
-        },
-        {
-          "name": "openLabel",
-          "type": "(label: string) => string",
-          "required": false,
-          "default": "Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.open",
-          "description": "Accessible name of a tab's button that opens its panel, from the tab's text, for this dock only. A function, as each tab names its own panel."
-        },
-        {
-          "name": "closeLabel",
-          "type": "(label: string) => string",
-          "required": false,
-          "default": "Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.close",
-          "description": "Accessible name of a tab's close button, from the tab's text, for this dock only."
-        },
-        {
-          "name": "resizeLabel",
-          "type": "(title: string) => string",
-          "required": false,
-          "default": "Resize and the title, such as Resize Quarterly report, or EnvUIProvider's messages.panelDock.resize",
-          "description": "Accessible name of a panel's resize handle, from its title, for this dock only."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Panes": {
       "kind": "namespace",
       "source": "packages/ui/src/layout/Panes.tsx",
       "description": "",
       "parts": [
         "Panes.Root",
-        "Panes.Main",
-        "Panes.Supporting",
-        "Panes.List",
-        "Panes.Detail",
-        "Panes.Divider",
-        "Panes.Trigger"
+        "Panes.Pane",
+        "Panes.ResizeHandle"
       ],
       "entries": [
         "@envsemble/envui"
       ]
     },
-    "Panes.Detail": {
+    "Panes.Pane": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The detail pane of list-detail Panes, at the end. Below `splitAt` it shows only while `open`, with a back button to the list at its start, and focus follows what shows: the back button as the detail opens, the list's current row as it closes.",
+      "description": "One pane: the first or the last child of Panes.Root, with an optional header.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": "Names the pane, which makes it a region landmark that people can jump to, such as Documents. Name the panes of a page's main layout; leave small panes unnamed."
+          "description": "Names the pane, which makes it a region landmark that people can jump to, such as Messages. Name the panes of a page's main layout; leave small panes unnamed."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The top of the pane, which stays in view while the pane's content scrolls under it, such as a PageHeader or a Toolbar."
         }
       ],
       "native": [
@@ -5821,55 +5747,30 @@
         "@envsemble/envui"
       ]
     },
-    "Panes.Divider": {
+    "Panes.ResizeHandle": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side. Place it between two surfaces, each pane's own, such as a Surface as tall as the pane, never beside content on the page.",
+      "description": "The ResizeHandle between the panes, which resizes the sized pane: invisible on the seam with its grip of three dots, a line along it under the pointer, while dragged and with keyboard focus. Its hit area reaches only into the pane after it, so the scrollbar and the controls at the edge of the pane before it stay reachable. The arrow keys move it 1 rem a step, 5 with Shift, and a double click returns the pane to its default width. It hides while the panes stack.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
           "default": "'Resize panes', or EnvUIProvider's messages.panes.resize",
-          "description": "The divider's name, which says what it resizes, such as Resize project list."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Panes.List": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The list pane of list-detail Panes, at the start. Below `splitAt` it hides while `open`.",
-      "props": [
+          "description": "The handle's name, which says what it resizes, such as Resize the project list."
+        },
         {
-          "name": "label",
-          "type": "string",
-          "required": true,
-          "description": "Names the pane's region, such as Projects."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Panes.Main": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The main pane of supporting Panes, at the start.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
+          "name": "disabled",
+          "type": "boolean",
           "required": false,
-          "description": "Names the pane, which makes it a region landmark that people can jump to, such as Documents. Name the panes of a page's main layout; leave small panes unnamed."
+          "description": "Leaves the size as it is and takes the handle out of the tab order; a drag in progress ends without a change, as when the handle goes while it is dragged."
+        },
+        {
+          "name": "grip",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Shows a grip of three dots at the handle's middle. false leaves the handle invisible until the pointer is over it, it has keyboard focus or it is dragged."
         }
       ],
       "native": [
@@ -5882,92 +5783,59 @@
     "Panes.Root": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "Two panes side by side, after Material's pane patterns, and how they behave in less room: a main pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time. Invisible structure that never paints, except the supporting pane while it is a sheet, which is modal. Its own width decides, in CSS: it is the env-panes container. Each pane scrolls on its own when Panes has a height, as in a Scaffold's body that scrolls; an optional Panes.Divider resizes them.",
+      "description": "A region split into two panes side by side, such as a list and its detail: one pane has a width of its own, which a Panes.ResizeHandle between them resizes, and the other takes the rest. Each pane's content scrolls on its own under its header when Panes has a height. With `stackBelow` the panes stack in a narrow region. Panes fill their region with square corners; an application rounds them with its own class, and the panes follow, since the root clips them.",
       "props": [
         {
-          "name": "behavior",
-          "type": "'supporting' | 'list-detail'",
-          "required": true,
-          "description": "supporting: Panes.Main and Panes.Supporting, such as a document and its details; below `splitAt` the supporting pane is a sheet over the main one while `open`. list-detail: Panes.List and Panes.Detail, such as messages and the one chosen; below `splitAt` one shows at a time, the detail while `open`, with a back button to the list."
+          "name": "sized",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Which pane has a width of its own, which Panes.ResizeHandle resizes: the first, such as a list or a sidebar, or the last, such as details. The other pane takes the rest of the room."
         },
         {
-          "name": "splitAt",
+          "name": "stackBelow",
           "type": "'medium' | 'expanded' | 'large'",
           "required": false,
-          "default": "'expanded'",
-          "description": "The window class of the Panes' own width from which the panes sit side by side: medium (37.5 rem), expanded (52.5 rem) or large (75 rem). Narrower, they behave as `behavior` says. CSS decides it, so the server's markup is right before any script runs."
-        },
-        {
-          "name": "open",
-          "type": "boolean",
-          "required": false,
-          "description": "Below `splitAt`: whether the supporting sheet is open, or the detail shows instead of the list, for Panes the application controls with onOpenChange, such as a list-detail that opens the detail as an item is chosen. Side by side, both panes show whatever it is."
-        },
-        {
-          "name": "defaultOpen",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Whether uncontrolled Panes start with the supporting sheet open, or the detail shown, below `splitAt`. Panes.Trigger opens the sheet, and Escape, the close button, the backdrop and the back button close what shows."
-        },
-        {
-          "name": "onOpenChange",
-          "type": "(open: boolean, details: OpenChangeDetails) => void",
-          "required": false,
-          "description": "Called with the new state, and why: true when Panes.Trigger opens the supporting sheet, and false when people close what `open` shows below `splitAt`: Escape, the close button or a press on the backdrop closes the supporting sheet, and the back button returns from the detail to the list."
-        },
-        {
-          "name": "closeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Close', or EnvUIProvider's messages.panes.close",
-          "description": "The name of the supporting sheet's close button, which shows only while the pane is a sheet."
-        },
-        {
-          "name": "backLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Back', or EnvUIProvider's messages.panes.back",
-          "description": "The back button's label in a list-detail's detail, below `splitAt`. Name where it goes, such as All projects."
+          "description": "The window class of the Panes' own width below which the panes stack, the first above the last, each half the height, and the resize handle hides: medium (37.5 rem), expanded (52.5 rem) or large (75 rem). CSS decides it, so the server's markup is right before any script runs. Without it the panes always sit side by side."
         },
         {
           "name": "width",
           "type": "number",
           "required": false,
-          "description": "The resized pane's width in rem, for Panes the application controls with onWidthChange: the supporting pane, or the list. It applies while the panes sit side by side."
+          "description": "The sized pane's width in rem, for Panes the application controls with onWidthChange."
         },
         {
           "name": "defaultWidth",
           "type": "number",
           "required": false,
           "default": "22.5",
-          "description": "The resized pane's width in rem until people choose one with Panes.Divider, or one is kept under `persist`, and the width a double click on the divider returns it to."
+          "description": "The sized pane's width in rem until people choose one with Panes.ResizeHandle, or one is kept under `persist`, and the width a double click on the handle returns it to."
         },
         {
           "name": "onWidthChange",
           "type": "(width: number, details: ResizeDetails) => void",
           "required": false,
-          "description": "Receives each new width of the resized pane, in rem: while dragging the divider with committed false, and with committed true as a drag ends, a key moves it or a double click resets it."
+          "description": "Receives each new width of the sized pane, in rem: while dragging the handle with committed false, and with committed true as a drag ends, a key moves it or a double click resets it."
         },
         {
           "name": "minWidth",
           "type": "number",
           "required": false,
           "default": "16",
-          "description": "The resized pane's smallest width, in rem."
+          "description": "The sized pane's smallest width, in rem."
         },
         {
           "name": "maxWidth",
           "type": "number",
           "required": false,
           "default": "40",
-          "description": "The resized pane's largest width, in rem. It never leaves the other pane less than 16 rem."
+          "description": "The sized pane's largest width, in rem. It never leaves the other pane less than 16 rem."
         },
         {
           "name": "persist",
           "type": "string",
           "required": false,
-          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the divider forgets it and returns to `defaultWidth`. Read it on the server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
+          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the handle forgets it and returns to `defaultWidth`. Read it on the server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
         },
         {
           "name": "persistedWidth",
@@ -5985,109 +5853,11 @@
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": "The panes: Panes.Main, an optional Panes.Divider and Panes.Supporting; or Panes.List, an optional Panes.Divider and Panes.Detail."
+          "description": "The two panes, with a Panes.ResizeHandle between them for people to resize them."
         }
       ],
       "native": [
         "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Panes.Supporting": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet is: fixed to the window over a backdrop, scrolling inside itself while the page stays. As a sheet it is a modal dialog with a close button: everything else on the page is inert, focus moves into it and Tab stays in it, and Escape, the close button or a press on the backdrop closes it, which returns focus to where it was. In a contained PortalContainer, such as a preview on a page, the sheet belongs to the container: it is not modal, so the page stays in use and focus stays where it is.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": true,
-          "description": "Names the pane's region, such as Details."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Panes.Trigger": {
-      "kind": "component",
-      "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The button that opens the supporting pane while it is a sheet, below `splitAt`; place it in the main pane. It hides while the panes sit side by side, where the supporting pane shows anyway, and says whether the sheet is open with aria-expanded. It takes Button's props.",
-      "props": [
-        {
-          "name": "variant",
-          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
-          "required": false,
-          "default": "'primary'",
-          "description": "The emphasis, primary for a group's main action; without it, the container's, such as ghost in a toolbar, and else primary."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'danger' | 'accent'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "The meaning: neutral for most actions, danger for one that deletes or ends something, and accent, on a primary only, for a main action that must stand apart from the brand blue."
-        },
-        {
-          "name": "underline",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Show an underline for the text variant."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md."
-        },
-        {
-          "name": "fullWidth",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
-        },
-        {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
-        },
-        {
-          "name": "endIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
-        },
-        {
-          "name": "end",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
-        },
-        {
-          "name": "pending",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
-        }
-      ],
-      "native": [
-        "button"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6193,7 +5963,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Whether the overlays belong to the container rather than the window, as in a preview of an interface: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side without flipping and sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc outside the container and the overlay's trigger doesn't close them, while the trigger and the overlay's own controls do. Make the container a containing block, such as with `contain: layout`, to keep fixed overlays, such as dialogs and their backdrops, inside it, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. A ContextMenu opens there too, at the pointer or below the focused element, without hiding the page or locking its scroll; a long press doesn't open it. Panes' supporting pane, as a sheet there, isn't modal either: the page stays in use."
+          "description": "Whether the overlays belong to the container rather than the window, as in a preview of an interface: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side without flipping and sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc outside the container and the overlay's trigger doesn't close them, while the trigger and the overlay's own controls do. Make the container a containing block, such as with `contain: layout`, to keep fixed overlays, such as dialogs and their backdrops, inside it, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. A ContextMenu opens there too, at the pointer or below the focused element, without hiding the page or locking its scroll; a long press doesn't open it."
         },
         {
           "name": "children",
@@ -6316,7 +6086,7 @@
     "RadioGroup": {
       "kind": "component",
       "source": "packages/ui/src/forms/Radio.tsx",
-      "description": "A set of options to choose exactly one from: a native fieldset whose legend names the group, with Radio options inline or as selectable rows.",
+      "description": "A set of up to five options to choose exactly one from, all in view: a native fieldset whose legend names the group, with its Radio options one under the other, or side by side.",
       "props": [
         {
           "name": "ref",
@@ -6328,7 +6098,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology; without it, use aria-label or aria-labelledby."
+          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, name it with aria-label or aria-labelledby."
         },
         {
           "name": "value",
@@ -6377,8 +6147,8 @@
           "name": "orientation",
           "type": "'horizontal' | 'vertical'",
           "required": false,
-          "default": "'horizontal'",
-          "description": "How the options are laid out: horizontal, radios before their labels side by side that wrap onto more lines; or vertical, connected selectable rows that fill the width, with the label and description at the start and the radio at the end, for options that need explaining."
+          "default": "'vertical'",
+          "description": "How the options are laid out: vertical, one radio under the other, each before its label with its description under the label; or horizontal, side by side, wrapping onto more lines, for two or three short options."
         },
         {
           "name": "disabled",
@@ -6483,6 +6253,110 @@
       ],
       "native": [
         "time"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "ResizeHandle": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/ResizeHandle.tsx",
+      "description": "A handle that resizes what is beside it, such as two panes or a panel's edge: a focusable separator, named by its label, that the pointer drags and the arrow keys, Page Up, Page Down, Home and End move, with aria-valuenow, aria-valuemin, aria-valuemax and aria-valuetext. Its track is invisible, with a grip of three dots at its middle; a 1 px line shows along it under the pointer and while it is dragged, and a 2 px line in the focus color with keyboard focus. The handle's box is what the pointer reaches: place and size it with a class on the edge it moves. The application keeps the size; give the handle `aria-controls` with the id of what it resizes. Handlers given to it run first, and one that calls preventDefault stops the handle's own. <ResizeHandle axis=\"inline\" label=\"Resize the sidebar\" aria-controls=\"sidebar\" value={width} min={12} max={30} unit=\"rem\" step={1} onChange={(next) => setWidth(next)} className=\"app-sidebar-edge\" />",
+      "props": [
+        {
+          "name": "axis",
+          "type": "'inline' | 'block'",
+          "required": true,
+          "description": "The axis the handle moves along: inline, across a row of panes, such as a sidebar's edge, or block, up and down, such as a docked panel's top edge."
+        },
+        {
+          "name": "value",
+          "type": "number",
+          "required": true,
+          "description": "The size the handle controls, in `unit`."
+        },
+        {
+          "name": "min",
+          "type": "number",
+          "required": true,
+          "description": "The smallest size."
+        },
+        {
+          "name": "max",
+          "type": "number",
+          "required": true,
+          "description": "The largest size."
+        },
+        {
+          "name": "room",
+          "type": "(handle: HTMLElement) => number",
+          "required": false,
+          "description": "The largest size the room allows, in `unit`, read from the handle as a drag starts or a key moves it: where it is under `max`, the drag starts at it and goes no further."
+        },
+        {
+          "name": "step",
+          "type": "number",
+          "required": false,
+          "description": "How far an arrow key moves it; 10 by default."
+        },
+        {
+          "name": "largeStep",
+          "type": "number",
+          "required": false,
+          "description": "How far Page Up and Page Down, and an arrow key with Shift, move it; ten steps by default."
+        },
+        {
+          "name": "unit",
+          "type": "'px' | '%' | 'rem'",
+          "required": false,
+          "description": "The size's unit: px, % of `percentOf`, or rem, of the root's font size."
+        },
+        {
+          "name": "percentOf",
+          "type": "(handle: HTMLElement) => HTMLElement | null",
+          "required": false,
+          "description": "The element a size in % is a share of, such as a column's table: the handle's parent element by default."
+        },
+        {
+          "name": "reverse",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the size grows toward the start of the axis: a panel docked at the bottom grows up as its top edge moves up, and a pane at the inline end grows as its start edge moves toward the start. The text direction is applied on top, so the inline start is the right in RTL."
+        },
+        {
+          "name": "onChange",
+          "type": "(value: number, details: ResizeDetails) => void",
+          "required": true,
+          "description": "Receives each new size, clamped to min and max: while dragging with committed false, and once more with committed true as the drag ends or a key moves it. A cancelled drag ends at the size it began with."
+        },
+        {
+          "name": "valueText",
+          "type": "(value: number) => string",
+          "required": false,
+          "description": "The size as words, such as 240 pixels or Narrow, for assistive technology."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "Leaves the size as it is and takes the handle out of the tab order; a drag in progress ends without a change, as when the handle goes while it is dragged."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "The handle's name, which says what it resizes, such as Resize the project list."
+        },
+        {
+          "name": "grip",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Shows a grip of three dots at the handle's middle. false leaves the handle invisible until the pointer is over it, it has keyboard focus or it is dragged."
+        }
+      ],
+      "native": [
+        "div"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6684,7 +6558,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -6779,7 +6653,7 @@
     "Scaffold": {
       "kind": "component",
       "source": "packages/ui/src/layout/Scaffold.tsx",
-      "description": "The invisible structure of an application's screen, after Material's: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width, CSS only: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
+      "description": "The invisible structure of an application's screen: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
       "props": [
         {
           "name": "topBar",
@@ -6877,7 +6751,7 @@
           "name": "label",
           "type": "string",
           "required": true,
-          "description": "The field's accessible name, such as Search members. It shows as a floating label only with showLabel; otherwise a placeholder gives the visible guidance."
+          "description": "The field's accessible name, such as Search members. It shows above the field only with showLabel; otherwise a placeholder gives the visible guidance."
         },
         {
           "name": "showLabel",
@@ -6939,9 +6813,9 @@
         },
         {
           "name": "prefix",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Short, non-interactive text before the value, such as the start of an address, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
         },
         {
           "name": "description",
@@ -6953,14 +6827,20 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "variant",
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, a thin border its label floats into, or ghost, a faint fill, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, a box with a thin edge, or ghost, a faint fill without an edge, for a search at the top of a sidebar or a list."
+        },
+        {
+          "name": "onValueCommitted",
+          "type": "(value: string) => boolean | void",
+          "required": false,
+          "description": "Receives the value once people finish editing it: on Enter, and when the field loses focus with a value that changed since. With it, Esc puts back the value last committed. Return false to reject the value, such as a port out of range: it stays in the field for people to correct, and Esc still puts back the last value accepted. Use it for a setting that applies at once, such as a port, rather than on every key."
         },
         {
           "name": "error",
@@ -6970,9 +6850,9 @@
         },
         {
           "name": "suffix",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
         }
       ],
       "native": [
@@ -7148,7 +7028,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -7166,14 +7046,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         }
       ],
       "native": [
@@ -7367,9 +7247,9 @@
       "props": [
         {
           "name": "label",
-          "type": "ReactNode",
+          "type": "string",
           "required": true,
-          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider."
+          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends in an ellipsis where the slider is too narrow for it."
         },
         {
           "name": "description",
@@ -7594,7 +7474,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The setting the switch turns on or off, such as Show completed tasks, beside the track. It names the switch, stays the same in both states, and pressing it toggles the switch too. Without it, name the switch with aria-label or aria-labelledby."
+          "description": "The setting the switch turns on or off, such as Show completed tasks, beside the track. It names the switch, stays the same in both states, and pressing it toggles the switch too. Without it, a List.Item whose control it is names it, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "description",
@@ -7660,7 +7540,7 @@
     "Table.Cell": {
       "kind": "component",
       "source": "packages/ui/src/data-display/Table.tsx",
-      "description": "A data cell, a native td, with a label that names its value while rows stack.",
+      "description": "A data cell, a native td, which places what it holds as given, with a label that names its value while rows stack.",
       "props": [
         {
           "name": "label",
@@ -7773,7 +7653,7 @@
     "Table.Root": {
       "kind": "component",
       "source": "packages/ui/src/data-display/Table.tsx",
-      "description": "A semantic data table on a rounded surface, in a focusable region that scrolls sideways when the columns do not fit.",
+      "description": "A semantic data table, in a focusable region that scrolls sideways when the columns do not fit. It is a shell for rows of anything: the frame, the rows, their states and their layout are the table's, and the cells place what they hold as given. It lies on a rounded raised surface, its header on a shaded band and its rows parted by hairlines; plain drops the frame and the band.",
       "props": [
         {
           "name": "aria-label",
@@ -7802,6 +7682,13 @@
           "description": "The header row stays at the top of the region while the rows scroll beneath it. The region then scrolls vertically too, so give it a height through regionClassName or the surrounding layout."
         },
         {
+          "name": "plain",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Drops the frame, the raised surface and the header's shaded band: a hairline under the header and between the rows, the table lying on the surface around it."
+        },
+        {
           "name": "regionClassName",
           "type": "string",
           "required": false,
@@ -7819,7 +7706,7 @@
           "type": "string | number",
           "required": false,
           "default": "'36rem'",
-          "description": "The region width below which a table with narrowLayout=\"stack\" stacks its rows: a CSS length such as 60rem or 480px, or a number of rem, such as 40 or \"40\", as PanelDock's. Wide tables, such as seven sortable columns, need more."
+          "description": "The region width below which a table with narrowLayout=\"stack\" stacks its rows: a CSS length such as 60rem or 480px, or a number of rem, such as 40 or \"40\". Wide tables, such as seven sortable columns, need more."
         },
         {
           "name": "onStackedChange",
@@ -7877,14 +7764,14 @@
     "Table.Row": {
       "kind": "component",
       "source": "packages/ui/src/data-display/Table.tsx",
-      "description": "A row of a table, a native tr, which can highlight on hover or be selected.",
+      "description": "A row of a table, a native tr, which can open something, highlight on hover or be selected.",
       "props": [
         {
           "name": "interactive",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The row highlights on hover and while focus is inside it, for rows that open something through a link or button in a cell. It adds no behavior of its own."
+          "description": "The row opens something through a link or button in a cell: it highlights on hover and while focus is inside it. Mark that link or button `data-row-target` to stretch it over the row, so a click anywhere in the row follows it and the row shows its focus ring; the other links, buttons and fields in the row stay clickable above it."
         },
         {
           "name": "selected",
@@ -7952,103 +7839,6 @@
         "@envsemble/envui"
       ]
     },
-    "Tabs": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/Tabs.tsx",
-      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. Every tab is a text tab, the selected one in the accent color with an indicator under it.",
-      "props": [
-        {
-          "name": "items",
-          "type": "readonly TabsItem[]",
-          "required": true,
-          "description": "The tabs in order, each with its value, its label or button, and its panel content."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": true,
-          "description": "The tab list's accessible name, such as Project views."
-        },
-        {
-          "name": "value",
-          "type": "string | null",
-          "required": false,
-          "description": "The selected tab's value, for controlled tabs; update it from onValueChange."
-        },
-        {
-          "name": "defaultValue",
-          "type": "string | null",
-          "required": false,
-          "default": "the first enabled item's value",
-          "description": "The tab that uncontrolled tabs start on."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string | null) => void",
-          "required": false,
-          "description": "Receives the value of the tab people select, by pressing it or from the keyboard."
-        },
-        {
-          "name": "activation",
-          "type": "'automatic' | 'manual'",
-          "required": false,
-          "default": "'automatic'",
-          "description": "automatic selects a tab as the arrow keys move focus to it; manual only moves focus, and Enter or Space selects, for panels that take a moment to show."
-        },
-        {
-          "name": "orientation",
-          "type": "'horizontal' | 'vertical'",
-          "required": false,
-          "default": "'horizontal'",
-          "description": "horizontal puts the tabs in a row, moved through with the left and right arrow keys; vertical in a column, with the up and down arrow keys. The panels stay below the list either way."
-        },
-        {
-          "name": "keepMounted",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Keep the panels of unselected tabs mounted and hidden, so their state, such as a draft or a scroll position, survives switching; otherwise a panel unmounts once it has faded out."
-        },
-        {
-          "name": "renderList",
-          "type": "(list: ReactElement) => ReactNode",
-          "required": false,
-          "description": "Places the tab list in a layout of your own, such as beside a heading: it receives the list and returns what to render in its place, with the list in it once. The panels stay below."
-        },
-        {
-          "name": "listClassName",
-          "type": "string",
-          "required": false,
-          "description": "A class for the tab list, the rail that holds the tabs."
-        },
-        {
-          "name": "panelClassName",
-          "type": "string",
-          "required": false,
-          "description": "A class for every panel."
-        },
-        {
-          "name": "fill",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "The selected panel takes the height left below the list, for content that fills a region, such as a canvas; give the tabs a height, for example as a flex child."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "default": "'lg'",
-          "description": "The rail's height, as on every control: sm, md or lg in the current scale. The tabs inside are a little shorter. lg gives tabs as tall as md buttons; sm suits a toolbar or a bar, beside a SegmentedControl or buttons of size sm."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Text": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Text.tsx",
@@ -8066,6 +7856,13 @@
           "type": "'default' | 'muted' | 'subtle'",
           "required": false,
           "description": "How strong the text is: default, the text color; muted, for supporting text; subtle, the weakest, for text that should recede, such as a hint beside a value."
+        },
+        {
+          "name": "tabularNumbers",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Gives every digit the same width, so numbers line up in a column and a value that changes, such as a countdown or a code, doesn't shift the text around it."
         },
         {
           "name": "render",
@@ -8090,7 +7887,7 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -8117,10 +7914,16 @@
           "description": "Receives the value as people type, after the native onChange."
         },
         {
+          "name": "onValueCommitted",
+          "type": "(value: string) => boolean | void",
+          "required": false,
+          "description": "Receives the value once people finish editing it: on Enter, and when the field loses focus with a value that changed since. With it, Esc puts back the value last committed. Return false to reject the value, such as a port out of range: it stays in the field for people to correct, and Esc still puts back the last value accepted. Use it for a setting that applies at once, such as a port, rather than on every key."
+        },
+        {
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -8139,7 +7942,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, a thin border its label floats into, or ghost, a faint fill, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, a box with a thin edge, or ghost, a faint fill without an edge, for a search at the top of a sidebar or a list."
         },
         {
           "name": "startIcon",
@@ -8158,25 +7961,25 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         },
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "prefix",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Short, non-interactive text before the value, such as the start of an address, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
         },
         {
           "name": "suffix",
-          "type": "ReactNode",
+          "type": "string",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
         }
       ],
       "native": [
@@ -8214,7 +8017,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top."
+          "description": "The field's look, as TextField's: outline or ghost."
         },
         {
           "name": "onValueChange",
@@ -8239,7 +8042,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -8264,7 +8067,7 @@
     "Theme": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "An explicit, scoped theme: a color scheme, a contrast and a scale, which nested Themes and envUI's popups keep. Theme preference and persistence belong to the app.",
+      "description": "An explicit, scoped theme: a color scheme, a contrast, a scale, and the selection and corners of the look, which nested Themes and envUI's popups keep. Theme preference and persistence belong to the app.",
       "props": [
         {
           "name": "theme",
@@ -8283,6 +8086,18 @@
           "type": "'comfortable' | 'compact' | 'system'",
           "required": false,
           "description": "The app scale of everything inside: comfortable, compact, or `system`, which is compact under a fine pointer and comfortable on touch, chosen by the stylesheet. Use one scale per app or window, and another only on a Theme around a whole region, such as a docked inspector. Defaults to the scale of the enclosing Theme, and to `system` outside any. It wins over a `data-env-scale` attribute passed to the Theme."
+        },
+        {
+          "name": "selection",
+          "type": "'neutral' | 'accent'",
+          "required": false,
+          "description": "The tone of selected items inside: neutral or accent. Defaults to the selection of the enclosing Theme, and to neutral outside any."
+        },
+        {
+          "name": "corners",
+          "type": "'sharp' | 'rounded' | 'round'",
+          "required": false,
+          "description": "The corner shape inside: sharp, rounded or round. Defaults to the corners of the enclosing Theme, and to rounded outside any."
         }
       ],
       "native": [
@@ -8348,18 +8163,11 @@
           "description": "The application, or the part of it that the preference themes."
         },
         {
-          "name": "storageKey",
-          "type": "string",
+          "name": "theme",
+          "type": "ThemeDefinition",
           "required": false,
-          "default": "'env-theme'",
-          "description": "localStorage key; match the bootstrap script's. Defaults to \"env-theme\"."
-        },
-        {
-          "name": "defaultPreference",
-          "type": "'light' | 'dark' | 'system'",
-          "required": false,
-          "default": "'system'",
-          "description": "Used when nothing is stored. Defaults to \"system\"."
+          "default": "{}",
+          "description": "The application's theme, from defineTheme: its storage key, default preference, contrast, scale, selection and corners. Give createThemeBootstrapScript the same theme, so the root has it before the first paint. Left out, the stored preference is under `env-theme`, the contrast and scale are an enclosing Theme's, or else the page's on the root, or else system, and the look is an enclosing Theme's, or else neutral and rounded."
         },
         {
           "name": "applyToDocument",
@@ -8367,18 +8175,6 @@
           "required": false,
           "default": "true",
           "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color. One provider per document applies to it: pass false to any other, nested in it or beside it. In development, envUI reports two providers that both apply. Outside any Theme, its boundary around the children is a plain element that takes the root's look, with none of a Theme's class and attributes, unless its contrast is system while the page set a contrast of its own on the root. Rendered on the server, and as the page hydrates, it renders the preference's default and leaves the page's look to the theme createThemeBootstrapScript gave the root, which knows the stored preference before the first paint; once hydrated, it takes the stored one."
-        },
-        {
-          "name": "contrast",
-          "type": "'standard' | 'high' | 'system'",
-          "required": false,
-          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme; outside any, a provider applying to the document gives its boundary a contrast the page set on the root, and otherwise system. With system, the provider removes from the root only a contrast that envUI wrote and the page left unchanged: a provider, this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
-        },
-        {
-          "name": "scale",
-          "type": "'comfortable' | 'compact' | 'system'",
-          "required": false,
-          "description": "The app scale, comfortable, compact or `system` (compact under a fine pointer, comfortable on touch), as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme; outside any, a provider applying to the document gives its boundary a scale the page set on the root, so the application, the page and its portals share it, and otherwise `system`. The root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
         },
         {
           "name": "className",
@@ -8596,7 +8392,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "description",
@@ -8614,14 +8410,14 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "visibleLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The label shows in the field, where it rests while the field is empty and floats into the outline while the field is in use or has a value. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "The label shows above the field. false hides it, for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         }
       ],
       "native": [
@@ -8954,25 +8750,31 @@
     "TopBar": {
       "kind": "component",
       "source": "packages/ui/src/layout/TopBar.tsx",
-      "description": "The bar at the top of an application or a screen: start content, such as a navigation button or the application's mark, the title, which truncates first, and the actions at the end, in one row that never wraps, at the top bar height. It can stick to the top as the page scrolls, show page progress along its bottom edge, or be the window's own title bar.",
+      "description": "The bar at the top of an application or a screen: start content, such as a navigation button or the application's mark, the title, content centered in the bar and content at the end, in one row that never wraps, at the top bar height. Each holds what the application gives it without styling it. It can stick to the top as the page scrolls, show page progress along its bottom edge, or be the window's own title bar.",
       "props": [
         {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the title, at the inline start: a navigation IconButton, such as one that opens a navigation drawer, a back IconButton, or the application's mark."
+          "description": "Content before the title, at the inline start: a navigation IconButton, such as one that opens a navigation drawer, a back IconButton, or the application's mark. It keeps its size."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "The title, such as the application's or the section's name. It truncates before the start content and the actions shrink. It is no heading: the page's own heading is its PageHeader's."
+          "description": "The title, such as the application's or the section's name, after the start content. Text given as a string truncates before anything else shrinks; any other content keeps its own look and decides how it fits. It is no heading: the page's own heading is its PageHeader's."
         },
         {
-          "name": "actions",
+          "name": "center",
           "type": "ReactNode",
           "required": false,
-          "description": "The actions at the inline end, such as a search trigger, a theme toggle and an account menu, in the order people read them."
+          "description": "Content centered in the bar, between the title and the end content, such as a search trigger or a document's name. The start and end sides take equal room, so it stays centered over the bar's middle as long as they fit."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The content at the inline end, such as a search trigger, a theme toggle and an account menu, in the order people read them. It keeps its size."
         },
         {
           "name": "sticky",
@@ -8986,14 +8788,14 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The bar is the window's title bar, in an installed web app or a desktop shell that draws its own (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls the system draws, the title is centered, and its controls are small, with buttons that set no variant ghost. Put it in a Scaffold with topBarSpan=\"full\"."
+          "description": "The bar is the window's title bar, in an installed web app or a desktop shell that draws its own (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls the system draws, the title is centered with the center content, and its controls are small, with buttons that set no variant ghost. Put it in a Scaffold with topBarSpan=\"full\"."
         },
         {
           "name": "background",
           "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a TopBar with page over a NavigationDrawer with its background."
+          "description": "The bar's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
         },
         {
           "name": "loading",
@@ -9094,6 +8896,25 @@
         "@envsemble/envui"
       ]
     },
+    "VisuallyHidden": {
+      "kind": "component",
+      "source": "packages/ui/src/content/VisuallyHidden.tsx",
+      "description": "Content that assistive technology reads and the screen doesn't show, such as words that complete a short label, or a heading over a region whose purpose shows without one.",
+      "props": [
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<h2 />} for a heading only assistive technology reads; a span by default."
+        }
+      ],
+      "native": [
+        "span"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "avatarHue": {
       "kind": "function",
       "source": "packages/ui/src/data-display/Avatar.tsx",
@@ -9124,8 +8945,18 @@
     "createThemeBootstrapScript": {
       "kind": "function",
       "source": "packages/ui/src/foundations/themeBootstrap.ts",
-      "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and a high or standard contrast applies from the start.",
-      "signature": "({ storageKey, defaultPreference, contrast, scale, }?: ThemeBootstrapOptions): string",
+      "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and the contrast, scale, selection and corners of the theme apply from the start. Give it the theme ThemePreferenceProvider takes.",
+      "signature": "(theme?: ThemeDefinition): string",
+      "entries": [
+        "@envsemble/envui",
+        "@envsemble/envui/theme-bootstrap"
+      ]
+    },
+    "defineTheme": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/themeBootstrap.ts",
+      "description": "Defines an application's theme once, for ThemePreferenceProvider's `theme` and createThemeBootstrapScript, so the two can't drift apart.",
+      "signature": "(definition?: ThemeDefinition): Readonly<ThemeDefinition>",
       "entries": [
         "@envsemble/envui",
         "@envsemble/envui/theme-bootstrap"
@@ -9134,7 +8965,7 @@
     "formatRelativeTime": {
       "kind": "function",
       "source": "packages/ui/src/data-display/formatRelativeTime.ts",
-      "description": "A moment as text relative to another, by default the current time, such as \"in 2 days\", \"3 hours ago\" or \"just now\", through Intl.RelativeTimeFormat. An invalid moment gives an empty string; an invalid now is ignored, as by RelativeTime, for the current time.",
+      "description": "A moment as text relative to another, by default the current time, such as \"in 2 days\", \"3 hours ago\", \"yesterday\" or \"just now\", through Intl.RelativeTimeFormat. A moment a day or so away on the next or the previous calendar day reads \"tomorrow\" or \"yesterday\", in the locale's words. An invalid moment gives an empty string; an invalid now is ignored, as by RelativeTime, for the current time.",
       "signature": "(value: RelativeTimeValue, options?: RelativeTimeOptions): string",
       "entries": [
         "@envsemble/envui"
@@ -9215,7 +9046,7 @@
     "useTheme": {
       "kind": "function",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast and scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of `system` leaves it to `pointer: fine`.",
+      "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast, scale, selection and corners. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of `system` leaves it to `pointer: fine`.",
       "signature": "(): ThemeContextValue",
       "entries": [
         "@envsemble/envui"

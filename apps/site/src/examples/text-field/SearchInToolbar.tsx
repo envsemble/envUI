@@ -5,7 +5,6 @@ import { IconSort } from '@envsemble/envui/icons/Sort';
 
 export default function SearchInToolbar() {
   return (
-    // A row of quiet controls above a list of files.
     <Row align="center" gap={1} style={{ inlineSize: 'min(100%, 26rem)' }}>
       <SearchField
         variant="ghost"

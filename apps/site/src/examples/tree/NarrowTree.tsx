@@ -32,7 +32,6 @@ const rowsFor = (open: boolean): TreeItem[] =>
 export default function NarrowTree() {
   const [open, setOpen] = useState(true);
   return (
-    // The tree fills its parent's height and scrolls itself.
     <div style={{ blockSize: '7rem' }}>
       <Tree
         aria-label="Files"

@@ -1,5 +1,3 @@
-// An anatomy figure's callouts (apps/site/src/figures/anatomy/PlaceCallouts.ts): their reading
-// order.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/ImportSource.ts';

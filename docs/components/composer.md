@@ -19,12 +19,8 @@ useWhen:
   - A message in a conversation, such as a chat, a comment or a prompt
   - A reply that runs after a send, which people may stop
 avoidWhen:
-  - text: A whole conversation, with the log above the composer and a reply that streams in.
-    see: conversation
   - text: Text over several lines in a form, where Enter starts a new line.
     use: Textarea
-  - text: One line of text in a form.
-    use: TextField
   - text: Formatted text with headings, lists and links.
     use: MarkdownEditor
   - text: The messages of the conversation itself.
@@ -39,12 +35,6 @@ examples:
   ComposerAnatomy: anatomy
   PendingSend: example
   GrowingDraft: example
-  PendingStaysEditable:
-    role: do
-    caption: Wait while a send is in progress, so people can keep writing.
-  DisabledWhileSending:
-    role: dont
-    caption: A disabled composer, which takes focus away from the draft.
 ---
 
 # Composer
@@ -53,16 +43,9 @@ examples:
 
 ### Layouts
 
-A composer is its field alone, or has a row below the field with controls at its start and the send button at its end, and a note under it.
-
 ```tsx figure=StartAndFooter
 
 ```
-
-| Layout           | Use for                                                         |
-| ---------------- | --------------------------------------------------------------- |
-| Field alone      | A chat or a prompt. The default.                                |
-| With a start row | Attachments or a choice of model, beside the send button below. |
 
 ## Anatomy
 
@@ -81,113 +64,21 @@ A composer is its field alone, or has a row below the field with controls at its
 
 ### Pending send
 
-While a send is in progress, the send button shows a spinner and the next send waits; the field keeps its text and height, stays editable and keeps focus.
-
 ```tsx figure=PendingSend motion
 
 ```
 
 ### Adapting to width
 
-A composer fills its container, and its field grows with its text up to a set number of lines, then scrolls.
-
 ```tsx figure=GrowingDraft widths="36 18" sweep
 
 ```
-
-## Rules
-
-A composer stays ready for the next message, below the conversation it adds to.
-
-```tsx figure=PendingStaysEditable motion
-
-```
-
-```tsx figure=DisabledWhileSending motion
-
-```
-
-### In a conversation
-
-Place the composer below the conversation it adds to.
-
-- Show a message that couldn't be sent in the conversation, with its status.
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                              | Action                                                      |
-| ------------------------------------------------ | ----------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>  | Moves to the field, the start controls and the send button. |
-| <kbd>Enter</kbd> in the field                    | Sends the message, unless it is blank, pending or running.  |
-| <kbd>Shift</kbd>+<kbd>Enter</kbd> in the field   | Starts a new line.                                          |
-| <kbd>Enter</kbd>, <kbd>Space</kbd> on the button | Sends the message, or stops the reply.                      |
-
-### envUI provides
-
-- A native `textarea` described by the footer.
-- A send button named Send or Stop, which stays focusable as it changes.
-- Focus back in the field after a send.
-- <kbd>Enter</kbd> that leaves input method composition alone.
-
-### You provide
-
-- An `aria-label` that names the field.
-- An announcement of the reply, or of a message that couldn't be sent.
-- `sendLabel` and `stopLabel` in the application's language.
-
-## Compose
-
-### Usage
-
-A Composer is a native textarea with no visible label, so name it with `aria-label` or `aria-labelledby`. <kbd>Enter</kbd> or the send button passes the text to `onSend`; blank text never sends, and neither does a disabled, running or pending composer.
-
-- Leave it uncontrolled, with `defaultValue`, and it clears after each send and when its form resets.
-- Or control it with `value` and `onValueChange`, and clear it yourself.
-
-```tsx source=AskAnything
-
-```
-
-#### Pending and running
-
-`pending` marks a send in progress: the send button shows a spinner and sending is unavailable, while the field stays editable and keeps focus, so use it rather than `disabled`. `running` marks a reply on its way: the send button becomes a stop button, which calls `onStop` and stays available when the field is disabled, and <kbd>Enter</kbd> doesn't send.
-
-```tsx
-<Composer aria-label="Reply to Priya Shah" pending={sending} onSend={send} />
-<Composer aria-label="Message" running={replying} onSend={send} onStop={stop} />
-```
-
-#### Sent by its form
-
-Without `onSend`, <kbd>Enter</kbd> and the send button submit the composer's form, which sends the text under its `name`.
-
-```tsx
-<form onSubmit={submit}>
-  <Composer name="note" aria-label="Note" placeholder="Add a note to the plan" />
-</form>
-```
-
-#### Rows, start and description
-
-The field shows `minRows` lines while empty, 1 by default, and grows to `maxRows`, 8 by default, before it scrolls. `start` holds content at the start of the action row, such as an attach button or the name of a model, and `description` supporting text below the composer, which describes the field. `sendLabel` and `stopLabel` name the button.
-
-```tsx
-<Composer
-  aria-label="Comment"
-  minRows={2}
-  maxRows={6}
-  start={<IconButton variant="text" icon={<IconAttachFile />} aria-label="Attach files" />}
-  description="Files up to 10 MB."
-  onSend={addComment}
-/>
-```
-
-### Composition
-
-Place the composer below the MessageList it adds to.
-
-### Customize
-
-The composer, `env-composer`, is on the raised popup surface, `env-composer-surface`, which holds the input, `env-composer-input`, the start content, `env-composer-start`, and the send button, `env-composer-action`; the footer, `env-composer-footer`, sits below it.
+| Key                                            | Action                                                     |
+| ---------------------------------------------- | ---------------------------------------------------------- |
+| <kbd>Enter</kbd> in the field                  | Sends the message, unless it is blank, pending or running. |
+| <kbd>Shift</kbd>+<kbd>Enter</kbd> in the field | Starts a new line.                                         |

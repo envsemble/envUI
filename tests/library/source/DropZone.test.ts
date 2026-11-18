@@ -1,5 +1,3 @@
-// DropZone's markup: a button named by its visible text over a hidden file input, busy and
-// disabled states, and an error that describes it. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -11,7 +9,6 @@ const { DropZone } = await importSource('DropZone', [
   "export * from './packages/ui/src/forms/DropZone.tsx';",
 ]);
 
-/** The zone's markup, its button, its file input and the name its button's labels give it. */
 function zone(props) {
   const root = firstElement(renderToString(h(DropZone, { onFilesAccepted() {}, ...props })));
   const elements = elementsOf(root);
@@ -30,7 +27,6 @@ test('the zone is a button named by its visible text over a hidden file input', 
     description: 'PNG, JPG or WebP up to 2 MB',
     accept: 'image/png,image/jpeg,.webp',
   });
-  // The name is what the zone shows, its label and then its description, so speech input finds it.
   assert.equal(name, 'Drop a logo here, or browse PNG, JPG or WebP up to 2 MB');
   assert.equal(button.attributes['aria-describedby'], undefined);
   assert.equal(input.attributes.hidden, '');

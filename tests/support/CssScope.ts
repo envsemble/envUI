@@ -1,7 +1,3 @@
-// Whether a style sheet's selectors match only envUI's elements, so that loading envUI's CSS leaves
-// the rest of an application's page as it was: a heuristic the package tests run on styles.css.
-
-/** The index of the parenthesis that closes the group opening at index, or -1. */
 function closingParenthesis(selector: string, index: number) {
   let depth = 0;
   for (; index < selector.length; index++) {
@@ -11,10 +7,6 @@ function closingParenthesis(selector: string, index: number) {
   return -1;
 }
 
-/**
- * The selector without its :not() groups, which leave elements out rather than name them. A group
- * that holds another negation stays, since two negations name what they negate.
- */
 function withoutNegations(selector: string) {
   let result = '';
   for (let index = 0; index < selector.length; index++) {
@@ -31,12 +23,10 @@ function withoutNegations(selector: string) {
   return result;
 }
 
-/** Whether a selector names the document element, in any case and namespace. */
 function namesDocumentElement(selector: string): boolean {
   return /(?:^|[\s>+~(,|])html(?![\w-])/i.test(withoutNegations(selector));
 }
 
-/** The compounds of a selector, each with the combinator before it, outside any group. */
 function compounds(selector: string) {
   const parts: { combinator: string; compound: string }[] = [];
   let depth = 0;
@@ -60,10 +50,6 @@ function compounds(selector: string) {
   return parts;
 }
 
-/**
- * Whether the siblings a selector reaches stay envUI's: a sibling of an envUI element must carry an
- * envUI class itself, while siblings within one, after a descendant or child combinator, do.
- */
 function siblingsStayScoped(selector: string): boolean {
   let within = false;
   for (const { combinator, compound } of compounds(selector).slice(1)) {
@@ -73,13 +59,9 @@ function siblingsStayScoped(selector: string): boolean {
   return true;
 }
 
-/**
- * A heuristic for selectors that match only envUI's elements: each starts at an envUI class, or at
- * a zero-specificity :where() around such selectors, and reaches siblings only within them or with
- * an envUI class. The document element appears only as a root that opted in with .env-theme, as one
- * compound, or in two whole selectors at zero specificity: the body of a themed root, and the
- * document element while it contains an envUI element.
- */
+const themedRootBody = 'html.env-theme > body';
+const documentHoldingEnvUIElement = ':where(html:has(';
+
 export function scopedSelector(selector: string): boolean {
   const list = splitSelectors(selector);
   if (list.length !== 1) return list.length > 1 && list.every(scopedSelector);
@@ -87,50 +69,41 @@ export function scopedSelector(selector: string): boolean {
     .replace(/\s*([>+~])\s*/g, ' $1 ')
     .replace(/\s+/g, ' ')
     .trim();
-  // A themed document root's body takes the body type, from envUI's base layer.
-  if (normalized === 'html.env-theme > body') return true;
+  if (normalized === themedRootBody) return true;
   if (
     !/[\s>+~,]/.test(normalized) &&
     /\.env-theme(?![\w-])/.test(normalized) &&
     namesDocumentElement(normalized)
   )
     return true;
-  if (normalized.startsWith(':where(html:has(')) {
-    const end = closingParenthesis(normalized, ':where(html:has'.length);
-    // Nothing may follow, inside the :where() or after it.
-    if (end === -1 || normalized.slice(end + 1) !== ')') return false;
-    const inner = splitSelectors(normalized.slice(':where(html:has('.length, end));
+  if (normalized.startsWith(documentHoldingEnvUIElement)) {
+    const end = closingParenthesis(normalized, documentHoldingEnvUIElement.length - 1);
+    const nothingFollows = normalized.slice(end + 1) === ')';
+    if (end === -1 || !nothingFollows) return false;
+    const inner = splitSelectors(normalized.slice(documentHoldingEnvUIElement.length, end));
     return inner.length > 0 && inner.every(scopedElement);
   }
   return scopedElement(normalized);
 }
 
-/**
- * A selector that starts at an envUI class or an envUI data-env- attribute, such as a layout
- * primitive's [data-env-layout], or a zero-specificity :where() around such selectors,
- * never names the document element, through which it would reach the whole page, and reaches
- * siblings only within envUI's elements or with an envUI class.
- */
 function scopedElement(selector: string): boolean {
   const list = splitSelectors(selector);
   if (list.length !== 1) return list.length > 1 && list.every(scopedElement);
   if (namesDocumentElement(selector) || !siblingsStayScoped(selector)) return false;
   if (/^(?:[a-zA-Z][\w-]*)?(?:\.env-|\[data-env-)/.test(selector)) return true;
-  if (!selector.startsWith(':where(')) return false;
-  const end = closingParenthesis(selector, ':where'.length);
+  const group = [':where(', ':is('].find((opening) => selector.startsWith(opening));
+  if (!group) return false;
+  const end = closingParenthesis(selector, group.length - 1);
   if (end === -1) return false;
-  // What follows a :where() around envUI's elements matches within them.
-  const inner = splitSelectors(selector.slice(':where('.length, end));
+  const inner = splitSelectors(selector.slice(group.length, end));
   return inner.length > 0 && inner.every(scopedElement);
 }
 
-/** The selectors of a style sheet's rules, without comments and @ statements such as @layer a; */
 export function ruleSelectors(css: string) {
   const rules = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@[^{};]*;/g, '');
   return [...rules.matchAll(/(?:^|(?<=[{}]))\s*([^{}]+)\{/g)].map((match) => match[1].trim());
 }
 
-/** The selectors of a selector list, split at its top-level commas. */
 export function splitSelectors(prelude: string) {
   const parts: string[] = [];
   let depth = 0;

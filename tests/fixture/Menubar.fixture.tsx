@@ -1,15 +1,10 @@
 import { useRef, useState } from 'react';
 import { Menu, Menubar } from '@envsemble/envui';
 
-/** A short description of an element for the log: its accessible name or tag. */
 function describe(element: Element | null) {
   return element?.getAttribute('aria-label') ?? element?.tagName.toLowerCase() ?? 'nothing';
 }
 
-/**
- * A notes window's menubar with access keys; with &open, its Edit menu starts open through
- * defaultOpen.
- */
 export default function MenubarFixture() {
   const [log, setLog] = useState<string[]>([]);
   const [wrap, setWrap] = useState(true);

@@ -1,5 +1,3 @@
-// A field's prefix and suffix: hidden from assistive technology in the well, and read with the
-// value through the field's description, before its hint and its error. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -11,7 +9,6 @@ const { TextField } = await importSource('TextField', [
   "export * from './packages/ui/src/forms/TextField.tsx';",
 ]);
 
-/** The field's markup, its input, its affixes and the description the input reads. */
 function field(props) {
   const root = firstElement(renderToString(h(TextField, props)));
   const input = elementsOf(root).find((element) => element.tag === 'input');
@@ -25,7 +22,7 @@ function field(props) {
   };
 }
 
-test('a prefix shows with the value inside the field and is read with it', () => {
+test('a prefix shows with the value inside the field and is read with it, together with a suffix', () => {
   const { input, prefix, description } = field({
     label: 'Address',
     name: 'slug',
@@ -35,7 +32,6 @@ test('a prefix shows with the value inside the field and is read with it', () =>
   assert.equal(prefix.attributes['aria-hidden'], 'true');
   assert.equal(description, 'https://example.com/');
   assert.equal(input.attributes.name, 'slug');
-  // Before the icon and after it, a prefix and a suffix are read together.
   assert.equal(
     field({ label: 'Price', visibleLabel: false, prefix: '€', suffix: 'per month' }).description,
     '€ per month',

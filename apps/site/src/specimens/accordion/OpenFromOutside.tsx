@@ -5,10 +5,8 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const billing = '.env-accordion-item:nth-child(2 of .env-accordion-item) .env-accordion-trigger';
 
-/*
- * The pointer presses Show billing help, and Billing opens below; a beat later it closes Billing
- * by its heading.
- */
+const openBillingHeight = '12.625rem';
+
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
@@ -26,14 +24,12 @@ const script: PointerStep[] = [
 function Opening() {
   usePointer(script);
   return (
-    // As tall as the open section, so the button stays put as Billing opens and closes.
-    <div style={{ inlineSize: 'min(100%, 32rem)', minBlockSize: '12.625rem' }}>
+    <div style={{ inlineSize: 'min(100%, 32rem)', minBlockSize: openBillingHeight }}>
       <OpenFromOutside />
     </div>
   );
 }
 
-/** Billing, opened by a button elsewhere and closed again, by a pointer no one sees. */
 export default function OpenFromOutsideMotion() {
   return (
     <MotionStage label="a section opened from a button" height="17.625rem">

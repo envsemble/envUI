@@ -29,18 +29,13 @@ const isFocused = (locator: Locator) => expect.element(locator).toHaveFocus();
 const accessKeysShown = () => menubar().element().hasAttribute('data-access-keys-shown');
 const noMenus = () => expect.poll(() => page.getByRole('menu').elements().length).toBe(0);
 
-/**
- * Moves focus to a menu item once the menu holds focus: a menu takes focus as it opens, which would
- * otherwise race with the move.
- */
 async function focusItem(menu: Locator, item: Locator) {
   await expect.poll(() => menu.query()?.contains(document.activeElement)).toBe(true);
   (item.element() as HTMLElement).focus();
   await isFocused(item);
 }
 
-/** The note's selection, from its start to its end. */
-const selection = () => {
+const noteSelection = () => {
   const field = note().element() as HTMLTextAreaElement;
   return [field.selectionStart, field.selectionEnd];
 };
@@ -56,35 +51,27 @@ test('menubar menus open below their trigger and switch on hover and with the ar
   await isShown(fileMenu);
   await expect.element(file).toHaveAttribute('aria-expanded', 'true');
   await expect.element(file).toHaveAttribute('data-popup-open', '');
-  // Small text triggers sit tightly in a row.
   expect(before.height).toBeCloseTo(32, 0);
   const edit = trigger('Edit');
   const editBox = box(edit);
   expect(editBox.x - (before.x + before.width)).toBeLessThanOrEqual(4);
-  // Below the trigger, aligned to its start, with a small offset.
   await expect
     .poll(() => {
       const popup = box(fileMenu);
       return [Math.round(popup.x - before.x), Math.round(popup.y - (before.y + before.height))];
     })
     .toEqual([0, 4]);
-  // Opening a menu neither locks scrolling nor moves the page.
   expect(getComputedStyle(document.documentElement).overflow).toBe(overflow);
   expect(box(file).x).toBe(before.x);
   await mouse.wheel(0, 200);
   await expect.poll(() => window.scrollY).toBeGreaterThan(0);
   window.scrollTo(0, 0);
 
-  // Once a menu is open, hovering another trigger switches to its menu. The pointer moves in steps,
-  // as a person's does.
   await mouse.move(editBox.x + 2, editBox.y + editBox.height / 2, { steps: 4 });
   await mouse.move(editBox.x + editBox.width / 2, editBox.y + editBox.height / 2, { steps: 4 });
   const editMenu = menu('Edit');
   await isShown(editMenu);
   await isHidden(fileMenu);
-  // The arrow keys move between menus. Base UI opens the next menu as its trigger takes keyboard
-  // focus (:focus-visible), which one engine does not report for synthesized keys; there the test
-  // checks that focus moves to the next trigger.
   const selectAll = editMenu.getByRole('menuitem', { name: 'Select all' });
   await isShown(selectAll);
   await focusItem(editMenu, selectAll);
@@ -117,14 +104,12 @@ test('a menubar menu with defaultOpen starts open and then closes as usual', asy
   await isShown(editMenu);
   await expect.element(edit).toHaveAttribute('aria-expanded', 'true');
   await isShown(editMenu.getByRole('menuitem', { name: 'Select all' }));
-  // Uncontrolled, it closes on Escape and opens again from its trigger.
   await expect.poll(() => editMenu.query()?.contains(document.activeElement)).toBe(true);
   await keyboard.press('Escape');
   await expect.poll(() => editMenu.elements().length).toBe(0);
   await expect.element(edit).toHaveAttribute('aria-expanded', 'false');
   await edit.click();
   await isShown(editMenu);
-  // A disabled menu does not open.
   const help = trigger('Help');
   await expect.element(help).toHaveAttribute('data-disabled', '');
   await keyboard.press('Escape');
@@ -141,16 +126,13 @@ test(
     const log = text('menubar-log');
     await note().click();
     unselect();
-    // With the pointer.
     await trigger('Edit').click();
     await expect.poll(log).toBe('Edit opened after Note');
     await menu('Edit').getByRole('menuitem', { name: 'Select all' }).click();
     await isFocused(note());
-    expect(selection()).toEqual([0, 'Quarterly report draft'.length]);
+    expect(noteSelection()).toEqual([0, 'Quarterly report draft'.length]);
     await expect.poll(log).toContain('Select all');
 
-    // With the keyboard: Alt and the access key, then Enter. The pointer rests away from the menus,
-    // where it cannot hover their items as they appear.
     await mouse.move(1, 999);
     unselect();
     await keyboard.press('Alt+KeyE');
@@ -159,13 +141,11 @@ test(
     await keyboard.press('Enter');
     await isHidden(editMenu);
     await isFocused(note());
-    expect(selection()).toEqual([0, 'Quarterly report draft'.length]);
-    // An item runs before its menu closes.
+    expect(noteSelection()).toEqual([0, 'Quarterly report draft'.length]);
     await expect
       .poll(log)
       .toBe(Array(2).fill('Edit opened after Note\nSelect all\nEdit closed after Note').join('\n'));
 
-    // A command in a submenu returns focus too.
     await keyboard.press('Alt+KeyF');
     const fileMenu = menu('File');
     await isFocused(fileMenu.getByRole('menuitem', { name: 'New note' }));
@@ -180,7 +160,6 @@ test(
     await isFocused(note());
     await expect.poll(log).toContain('Open Quarterly report');
 
-    // Pressing into the field while a menu is open closes the menu and leaves focus in the field.
     await trigger('Edit').click();
     await isShown(menu('Edit'));
     await note().click();
@@ -201,7 +180,6 @@ test(
     await keyboard.press('Alt+KeyE');
     const editMenu = menu('Edit');
     await isFocused(editMenu.getByRole('menuitem', { name: 'Select all' }));
-    // Closed while it still grows in, it would leave at once.
     await expect.element(editMenu).not.toHaveAttribute('data-starting-style');
     await nextFrames();
     await Promise.allSettled(
@@ -211,7 +189,6 @@ test(
         .map(({ finished }) => finished),
     );
     await keyboard.press('Enter');
-    // Its finalFocus, the field, takes focus while the menu still fades out.
     await expect.element(editMenu).toHaveAttribute('data-ending-style');
     await isFocused(note());
   },
@@ -225,7 +202,6 @@ test('a click elsewhere lets focus go when nothing had focus before the menu', a
   await page.getByText('Line 5', { exact: true }).click();
   await isHidden(fileMenu);
   await expect.element(trigger('File')).not.toHaveFocus();
-  // Space or a menu's letter then opens nothing.
   await keyboard.press('Space');
   await keyboard.press('f');
   await noMenus();
@@ -249,9 +225,7 @@ test(
     const fileMenu = menu('File');
     await isFocused(fileMenu.getByRole('menuitem', { name: 'New note' }));
     await keyboard.up('Alt');
-    // Releasing Alt after another key keeps the menu open.
     expect(shown(fileMenu)).toBe(true);
-    // Escape closes the menu onto its trigger; Escape again returns to the field.
     await keyboard.press('Escape');
     await isHidden(fileMenu);
     await isFocused(trigger('File'));
@@ -271,7 +245,6 @@ test('Alt alone moves focus to the menubar and back', { tags: ['engines'] }, asy
   await keyboard.press('Alt');
   await isFocused(note());
   expect(accessKeysShown()).toBe(false);
-  // From the menubar, the arrow keys move between triggers and a menu's letter opens it.
   await keyboard.press('Alt');
   await isFocused(trigger('File'));
   await keyboard.press('ArrowRight');
@@ -279,7 +252,6 @@ test('Alt alone moves focus to the menubar and back', { tags: ['engines'] }, asy
   await keyboard.press('v');
   await isShown(menu('View'));
   await isFocused(menu('View').getByRole('menuitemcheckbox', { name: 'Word wrap' }));
-  // Alt alone also leaves an open menu for the field.
   await keyboard.press('Alt');
   await isFocused(note());
   await isHidden(menu('View'));
@@ -293,7 +265,6 @@ test(
     await note().click();
     await keyboard.down('Alt');
     await expect.poll(accessKeysShown).toBe(true);
-    // Alt+Space opens the window's own menu, which may keep the release of Alt from the page.
     await keyboard.press('Space');
     await expect.poll(accessKeysShown).toBe(false);
     await keyboard.up('Alt');
@@ -302,7 +273,6 @@ test(
     await expect.poll(accessKeysShown).toBe(true);
     window.dispatchEvent(new Event('blur'));
     await expect.poll(accessKeysShown).toBe(false);
-    // Releasing Alt after the window lost focus does not move focus to the menubar.
     await keyboard.up('Alt');
     await isFocused(note());
   },
@@ -321,7 +291,6 @@ test(
     await expect.poll(keys).toBe('KeyE free');
     await keyboard.press('Alt+Shift+KeyF');
     await expect.poll(keys).toBe('KeyF free');
-    // A disabled menu's letter opens nothing.
     await keyboard.press('Alt+KeyH');
     await expect.poll(keys).toBe('KeyH free');
     await noMenus();
@@ -335,10 +304,8 @@ test(
   async () => {
     mount(fixture);
     await note().click();
-    // As behind a modal dialog: the menubar is inert, and the note outside it has focus.
     menubar().element().setAttribute('inert', '');
     await keyboard.down('Alt');
-    // Past the render holding Alt would make.
     await nextFrames();
     expect(accessKeysShown()).toBe(false);
     await keyboard.press('KeyF');

@@ -8,22 +8,14 @@ const backgrounds = [
   { background: 'page', title: 'Page' },
 ] as const;
 
-/**
- * Raised as a popup has it: over a pane's content and past the pane's edge, lifted by a popup's
- * shadow, as its fill is a pane's; where popups are solid, by a popup's edge instead.
- */
-const popup: CSSProperties = {
-  '--env-surface-outline': 'var(--env-popup-solid) var(--env-elevation-2-border)',
+const raisedLikeAPopup: CSSProperties = {
+  '--env-surface-outline': 'var(--_popup-solid) var(--env-elevation-2-border)',
   boxShadow: 'var(--env-popup-shadow)',
   marginInline: 'var(--env-space-6) calc(-1 * var(--env-space-6))',
   marginBlockEnd: 'calc(-1 * var(--env-space-6))',
   whiteSpace: 'nowrap',
 };
 
-/**
- * Every background, on the page and on a pane, each on a piece of either, as the stage is neither;
- * Recessed in the page; Raised over a pane's content, as a popup sits.
- */
 export default function Backgrounds() {
   return (
     <SpecimenFrame size="collection">
@@ -62,7 +54,7 @@ export default function Backgrounds() {
             style={{ marginBlockEnd: 'var(--env-space-6)' }}
           >
             <Text>Pane content</Text>
-            <Surface background="raised" padding={3} radius="sm" style={popup}>
+            <Surface background="raised" padding={3} radius="sm" style={raisedLikeAPopup}>
               <Text>Over a pane</Text>
             </Surface>
           </Surface>

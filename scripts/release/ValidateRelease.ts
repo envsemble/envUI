@@ -1,24 +1,11 @@
-// Checks that a release is ready: the packages and the catalogue's dependency carry the version the
-// tag names, and the library's CHANGELOG has a section for it. Publish.ts validates with it before
-// it publishes anything.
-//
-//   GITHUB_REF_NAME=v<version> node scripts/release/ValidateRelease.ts [--release-notes]
-//
-// --release-notes prints the release's notes: the version's CHANGELOG section, or its summary and a
-// link to the section when the section is longer than a GitHub release takes.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { libraryChangelogFile, libraryPackageFile, repositoryRoot } from '../RepositoryPaths.ts';
 
 const readJson = (file: string) => JSON.parse(readFileSync(file, 'utf8'));
 
-/** The library's version, which the lint packages share (a fixed group in Changesets). */
 export const libraryVersion = (): string => readJson(libraryPackageFile).version;
 
-/**
- * The release of `tag`, once it is checked: its version, whether it is a prerelease, the dist-tag
- * it goes out under and its notes. Throws on the first thing that isn't ready.
- */
 export function validateRelease(tag: string | undefined) {
   const version = libraryVersion();
   if (tag !== `v${version}`) throw new Error(`Tag ${tag} must match @envsemble/envui v${version}.`);
@@ -32,7 +19,6 @@ export function validateRelease(tag: string | undefined) {
   }
   const parts = /^\d+\.\d+\.\d+(?:-([0-9A-Za-z]+)[0-9A-Za-z.-]*)?$/.exec(version);
   if (!parts) throw new Error('Invalid version.');
-  // A prerelease goes out under its own name, such as prerelease for 1.0.0-prerelease.0.
   const prereleaseName = parts[1];
   return {
     version,
@@ -42,15 +28,8 @@ export function validateRelease(tag: string | undefined) {
   };
 }
 
-/** The most characters GitHub takes as a release's notes; a longer body fails with HTTP 422. */
 export const releaseNotesLimit = 125_000;
 
-/**
- * The release's notes: the CHANGELOG section for one version, from its `## <version>` heading to
- * the next `## ` heading. A section longer than `limit`, such as one that gathers several
- * prereleases, gives its summary, the text before its first `### ` group, and a link to the
- * changelog at the release's tag instead.
- */
 export function releaseNotes(changelog: string, version: string, limit = releaseNotesLimit) {
   const lines = changelog.replaceAll('\r\n', '\n').split('\n');
   const start = lines.findIndex(

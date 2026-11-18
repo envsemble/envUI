@@ -1,5 +1,3 @@
-// Accordion's markup as a skeleton: one busy region whose missing titles the style sheet draws as
-// bars. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -27,17 +25,15 @@ test('a skeleton is one busy region: titles become bars and indicators shapes', 
   );
   assert.equal(root.attributes['data-env-skeleton'], '');
   assert.equal(root.attributes['aria-busy'], 'true');
-  // Only the root is busy; the items inside are its inert content.
   const elements = elementsOf(root);
   assert.equal(elements.filter((element) => 'aria-busy' in element.attributes).length, 1);
   const items = elements.filter((element) => hasClass(element, 'env-accordion-item'));
   assert.equal(items.length, 2);
-  // A missing title renders an empty label, which the style sheet draws as a bar.
   const labels = elements.filter((element) => hasClass(element, 'env-accordion-label'));
   assert.deepEqual(labels.map(textOf), ['', 'Loaded title']);
   const css = readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Accordion.css'), 'utf8');
   assert.match(
     css,
-    /\[data-env-skeleton\] \.env-accordion-label \{[^}]*--env-skeleton-placeholder: inline-block;/,
+    /\[data-env-skeleton\] \.env-accordion-label \{[^}]*--_skeleton-placeholder: inline-block;/,
   );
 });

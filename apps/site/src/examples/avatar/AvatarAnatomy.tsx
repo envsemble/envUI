@@ -1,6 +1,5 @@
 import { AvatarGroup } from '@envsemble/envui';
 
-// The person picture under initials, so both fallbacks show at rest.
 const people = [
   { name: 'Sam Lee', fallback: 'person' as const },
   { name: 'Northwind Labs' },

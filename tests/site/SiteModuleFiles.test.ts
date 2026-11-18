@@ -33,7 +33,6 @@ test('each lazily loaded catalogue module maps to the files its load fetches', (
       src: 'src/examples/button/CreateProject.tsx?raw',
       isDynamicEntry: true,
     },
-    // A module that another lazily loaded one imports, and its imports in turn.
     'src/specimens/button/VariantMatrix.tsx': {
       file: 'assets/VariantMatrix-1.js',
       isDynamicEntry: true,
@@ -44,14 +43,12 @@ test('each lazily loaded catalogue module maps to the files its load fetches', (
       isDynamicEntry: true,
       imports: ['src/specimens/button/VariantMatrix.tsx', 'index.html'],
     },
-    // A dependency's own lazy chunk, which no LoadBoundary shows.
     '../../node_modules/@shikijs/langs/dist/go.mjs': {
       file: 'assets/go-1.js',
       isDynamicEntry: true,
     },
   };
   assert.deepEqual(moduleFiles(manifest), {
-    // What the page loaded with its entry is left out.
     'src/examples/button/CreateProject.tsx': ['assets/CreateProject-1.js', 'assets/Add-1.js'],
     'src/examples/button/CreateProject.tsx?raw': ['assets/CreateProject-2.js'],
     'src/specimens/button/VariantMatrix.tsx': [
@@ -73,7 +70,6 @@ test('each lazily loaded catalogue module maps to the files its load fetches', (
 test('the map is written once from the manifest, and a finalised build is left as it is', async (t) => {
   const site = await mkdtemp(join(tmpdir(), 'envui-site-'));
   t.after(() => rm(site, { recursive: true, force: true }));
-  // Without Vite's manifest or the map, the site was never built.
   await assert.rejects(writeModuleFiles(site), /vite build/);
   await mkdir(join(site, '.vite'));
   await writeFile(
@@ -86,7 +82,6 @@ test('the map is written once from the manifest, and a finalised build is left a
   assert.equal(existsSync(join(site, '.vite')), false);
   const map = await readFile(join(site, moduleFilesName), 'utf8');
   assert.deepEqual(JSON.parse(map), { 'src/usage/IconUsage.tsx': ['assets/IconUsage-1.js'] });
-  // Run again, as FinalizeSite.ts on its own after npm run build:site, it keeps the map.
   assert.equal(await writeModuleFiles(site), false);
   assert.equal(await readFile(join(site, moduleFilesName), 'utf8'), map);
 });

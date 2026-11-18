@@ -1,5 +1,3 @@
-// Badge's markup: a label, or with count a compact count named for assistive technology, which the
-// style sheet reads by data-count.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -25,7 +23,6 @@ test('a badge with count is a compact count, the number alone its name', () => {
     /^<span class="env-badge" data-tone="neutral" data-variant="soft" data-count="">/,
   );
   assert.match(markup, /<span class="env-badge-label">12<\/span><\/span>$/);
-  // Zero is a count too.
   assert.match(renderToStaticMarkup(h(Badge, { count: 0 })), /data-count="">.*>0<\/span>/);
 });
 

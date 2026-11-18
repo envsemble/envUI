@@ -8,8 +8,6 @@ Prepare **Northwind** for the _spring_ launch.
 - [ ] Send the release notes`;
 
 export default function WriteNote() {
-  // The note sits under the page's h2, so the preview's headings start one level lower. The
-  // editor keeps one width in Write and Preview.
   return (
     <MarkdownEditor
       style={{ inlineSize: 'min(100%, 30rem)' }}

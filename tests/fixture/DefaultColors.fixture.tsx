@@ -24,7 +24,6 @@ import {
   Slider,
   Surface,
   Switch,
-  Tabs,
   TextField,
   Textarea,
   Theme,
@@ -47,7 +46,6 @@ const destinations: Destination[] = [
   { label: 'Settings', icon: <IconSettings />, href: '#settings' },
 ];
 
-/** Toasts in a few tones, one with an action, kept until the page closes. */
 function Toasts() {
   const toast = useToast();
   useEffect(() => {
@@ -62,11 +60,6 @@ function Toasts() {
   return null;
 }
 
-/**
- * Every component that has color properties, at rest and disabled, with none set:
- * DefaultColors.test.tsx forces each control into its states and compares the colors it paints
- * with those the integration branch painted, so envUI's own colors can't drift.
- */
 export default function DefaultColorsFixture() {
   return (
     <Theme theme="light" className="fixture-section" data-testid="default-colors">
@@ -137,17 +130,6 @@ export default function DefaultColorsFixture() {
         <NavigationDrawer aria-label="Drawer destinations" destinations={destinations} />
         <NavigationRail aria-label="Rail destinations" destinations={destinations} />
         <NavigationBar aria-label="Bar destinations" destinations={destinations} />
-        <Tabs
-          aria-label="Tabs"
-          items={[
-            { value: 'one', button: <Button>First</Button>, content: 'First panel' },
-            {
-              value: 'two',
-              button: <Button variant="secondary">Second</Button>,
-              content: 'Second panel',
-            },
-          ]}
-        />
         <SegmentedControl
           aria-label="Status"
           value="open"

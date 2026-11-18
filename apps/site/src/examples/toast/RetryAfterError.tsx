@@ -7,11 +7,11 @@ function PublishButton() {
   const attempts = useRef(0);
   const publish = () => {
     setPublishing(true);
-    // Publishing takes a moment; a timer stands in for it, and the first attempt fails.
     window.setTimeout(() => {
       setPublishing(false);
       attempts.current += 1;
-      if (attempts.current === 1) {
+      const simulatedFailure = attempts.current === 1;
+      if (simulatedFailure) {
         const id = toast.show({
           tone: 'danger',
           message: 'Northwind launch couldn’t be published. Check your connection and try again.',

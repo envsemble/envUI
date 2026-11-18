@@ -41,7 +41,6 @@ export function Spinner({
 }: SpinnerProps) {
   if (showLabel)
     return (
-      // A status region marked busy, which the label names as it shows.
       <SpinnerArc {...props} size={size} role="status" aria-busy="true" className={className}>
         <SpinnerLabel label={label} />
       </SpinnerArc>

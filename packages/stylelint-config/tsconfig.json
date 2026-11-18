@@ -1,5 +1,4 @@
 {
-  // The package's JavaScript, checked with its JSDoc types; parameters without one stay untyped.
   "compilerOptions": {
     "target": "ES2023",
     "lib": ["ES2023"],

@@ -78,14 +78,14 @@ export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({
   children,
   ...props
 }: SurfaceProps<RenderedElement>) {
+  const keepRenderElementsOwnChildren = children === undefined;
   return useRender({
     defaultTagName: 'div',
     render,
     props: {
       ...props,
       ...skeletonAttributes(skeleton),
-      // A render element's own children stay when the surface is given none.
-      ...(children !== undefined && {
+      ...(!keepRenderElementsOwnChildren && {
         children: inSkeleton(skeleton, children),
       }),
       className: classNames('env-surface', className),
@@ -93,7 +93,7 @@ export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({
       'data-radius': radius,
       style: {
         ...(padding !== undefined
-          ? { '--env-surface-padding': padding === 0 ? '0rem' : `var(--env-space-${padding})` }
+          ? { '--_surface-padding': padding === 0 ? '0rem' : `var(--env-space-${padding})` }
           : {}),
         ...style,
       },

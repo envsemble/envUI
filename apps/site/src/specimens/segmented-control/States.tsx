@@ -18,11 +18,6 @@ const ignore = () => undefined;
 const segment = (label: string, index: number) =>
   `[aria-label="${label}"] .env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
 
-/*
- * The pointer chooses List, whose check takes its icon's place as Board gets its icon back, and
- * then Board again. The keyboard's focus arrives on Day, and the arrow key goes on to Week and
- * then past the disabled Quarter, back round to Day, each key shown as a cap in the stage's corner.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: segment('Layout', 1), x: 0.55, y: 0.6 },
@@ -52,7 +47,6 @@ const script: PointerStep[] = [
 function Choosing() {
   const [layout, setLayout] = useState('board');
   const [period, setPeriod] = useState('day');
-  // The key just pressed, as a cap in the stage's corner, since no pointer shows it.
   const [pressed, setPressed] = useState<{ keys: string[]; press: number } | null>(null);
   usePointer(script, {
     onCue: (cue) =>
@@ -107,10 +101,6 @@ function Choosing() {
   );
 }
 
-/**
- * Counts, icons, a disabled option and a disabled control: the pointer chooses an option with an
- * icon, and the arrow keys skip the disabled one.
- */
 export default function States() {
   return (
     <SpecimenFrame size="collection">

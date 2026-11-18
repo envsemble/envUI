@@ -79,8 +79,8 @@ export interface PaginationProps extends Omit<
    */
   nextLabel?: string;
   /**
-   * The buttons' variant, as on IconButton, such as text for a quiet toolbar.
-   * @default 'secondary'
+   * The buttons' variant, as on IconButton: quiet neutral icon buttons by default.
+   * @default 'ghost'
    */
   variant?: ButtonVariant;
   /**
@@ -95,11 +95,7 @@ export interface PaginationProps extends Omit<
   'aria-label'?: string;
 }
 
-/**
- * The button last pressed, and how far its load is: pressed until the page's effects have run,
- * settling for the update they cause, and loading once pending.
- */
-interface Press {
+interface PressAwaitingItsLoad {
   direction: 'previous' | 'next';
   state: 'pressed' | 'settling' | 'loading';
 }
@@ -120,7 +116,7 @@ export function Pagination({
   formatRange,
   previousLabel,
   nextLabel,
-  variant = 'secondary',
+  variant = 'ghost',
   size,
   className,
   'aria-label': label,
@@ -128,22 +124,19 @@ export function Pagination({
 }: PaginationProps) {
   const messages = useMessages('pagination', pagination);
   const numbers = useFormatters().number();
-  // A press spins its button for the load it starts: one pending in the same update as the press,
-  // or one the application starts in an effect after the page changes, as a query keyed by the page
-  // does. A press no load follows by then is forgotten, and so is one whose load ended, so a later
-  // load for another reason, such as a refresh, spins neither button.
-  const [press, setPress] = useState<Press | null>(null);
+  const [press, setPress] = useState<PressAwaitingItsLoad | null>(null);
   if (press) {
     if (pending) {
       if (press.state !== 'loading') setPress({ ...press, state: 'loading' });
     } else if (press.state !== 'pressed') setPress(null);
   }
-  useEffect(() => {
-    // The application's effects for the new page run in this same pass; the update they cause
-    // comes with this one.
-    if (press?.state === 'pressed' && !pending)
-      setPress((current) => (current === press ? { ...press, state: 'settling' } : current));
-  }, [press, pending]);
+  useEffect(
+    function settleAfterApplicationEffectsForNewPage() {
+      if (press?.state === 'pressed' && !pending)
+        setPress((current) => (current === press ? { ...press, state: 'settling' } : current));
+    },
+    [press, pending],
+  );
   const perPage = Math.max(1, Math.floor(pageSize) || 1);
   const count = total === undefined ? undefined : Math.max(0, Math.floor(total) || 0);
   const pageCount = count === undefined ? undefined : Math.max(1, Math.ceil(count / perPage));
@@ -161,6 +154,7 @@ export function Pagination({
         ? (previousLabel ?? messages.previous)
         : (nextLabel ?? messages.next);
     const loading = pending && press?.direction === direction;
+    const unavailableButFocusable = !loading && (!available || pending);
     return (
       <Tooltip content={name}>
         <IconButton
@@ -168,8 +162,7 @@ export function Pagination({
           aria-label={name}
           variant={variant}
           pending={loading}
-          // Unavailable buttons stay focusable, so focus stays put on the first and last page.
-          aria-disabled={!loading && (!available || pending) ? true : undefined}
+          aria-disabled={unavailableButFocusable ? true : undefined}
           className="env-pagination-button"
           data-direction={direction}
           onClick={() => {
@@ -196,7 +189,6 @@ export function Pagination({
         />
       }
     >
-      {/* Announced when it changes, as a page loads; its own direction keeps numbers in order. */}
       <span className="env-pagination-range" dir="auto" aria-live="polite" aria-atomic="true">
         {formatRange
           ? formatRange({ start, end, total: count, page: current, pageCount })

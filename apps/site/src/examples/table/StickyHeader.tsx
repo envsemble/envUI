@@ -24,7 +24,6 @@ const money = new Intl.NumberFormat('en-US', {
 
 export default function StickyHeader() {
   return (
-    // The region scrolls within this height; an application's layout usually gives it one.
     <Column style={{ blockSize: '18rem' }}>
       <Table.Root aria-label="Sales by month" stickyHeader>
         <Table.Head>

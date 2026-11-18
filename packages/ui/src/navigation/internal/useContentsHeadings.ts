@@ -11,7 +11,6 @@ import {
   type TableOfContentsItem,
 } from './contentsOutline.js';
 
-/** The element `container` names, or the page's main element, or the body. */
 function resolveContainer(container: RefObject<HTMLElement | null> | string | undefined) {
   if (typeof document === 'undefined') return null;
   if (typeof container === 'string') return document.querySelector<HTMLElement>(container);
@@ -19,14 +18,12 @@ function resolveContainer(container: RefObject<HTMLElement | null> | string | un
   return document.querySelector<HTMLElement>('main') ?? document.body;
 }
 
-/** A heading's words, without parts hidden from assistive technology, such as an anchor's mark. */
 function headingText(heading: HTMLElement): string {
   const copy = heading.cloneNode(true) as HTMLElement;
   for (const hidden of copy.querySelectorAll('[aria-hidden="true"]')) hidden.remove();
   return (copy.textContent ?? '').replace(/\s+/g, ' ').trim();
 }
 
-/** Reads the headings in a container, giving those without an id one from their words. */
 function readHeadings(
   container: HTMLElement,
   levels: readonly HeadingLevel[],
@@ -38,12 +35,11 @@ function readHeadings(
   const entries: HeadingEntry[] = [];
   for (const heading of container.querySelectorAll<HTMLElement>(selector)) {
     if (own?.contains(heading)) continue;
-    // A heading the page hides is left out; one hidden only while a popup is open, which marks the
-    // rest of the page inert or aria-hidden for as long as it stays open, is not.
     const hider = heading.closest('[hidden], [inert], [aria-hidden="true"]');
-    if (hider && (hider.hasAttribute('hidden') || !hider.closest('[data-base-ui-inert]'))) {
-      continue;
-    }
+    const hiddenOnlyWhilePopupOpen =
+      hider !== null && hider.closest('[data-base-ui-inert]') !== null;
+    const hiddenByPage = hider && (hider.hasAttribute('hidden') || !hiddenOnlyWhilePopupOpen);
+    if (hiddenByPage) continue;
     if (filter && !filter(heading)) continue;
     const label = headingText(heading);
     if (!label) continue;
@@ -56,7 +52,6 @@ function readHeadings(
   return entries;
 }
 
-/** A label or heading text, as a comparable key of the outline. */
 function signature(items: readonly TableOfContentsItem[]): string {
   return JSON.stringify(
     items.map((item): unknown => [
@@ -103,8 +98,6 @@ export function useContentsHeadings({
     };
     read();
     if (typeof MutationObserver === 'undefined' || headingLevels.length === 0) return;
-    // Only a change to a heading, its text or the headings in what comes or goes, changes the
-    // contents; the rest of the page, such as an animated figure, changes nothing to read.
     const headings = headingLevels.map((level) => `h${level}`).join(', ');
     const holdsHeadings = (node: Node) =>
       node.nodeType === Node.ELEMENT_NODE &&

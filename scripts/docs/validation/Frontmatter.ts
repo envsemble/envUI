@@ -1,4 +1,3 @@
-// Checking a page's frontmatter against its kind's schema.
 import {
   exampleFields,
   exampleRoles,
@@ -16,24 +15,16 @@ import { isMap } from '../Shapes.ts';
 import { pageStatuses } from '../../../apps/site/src/documentation/DocumentationTypes.ts';
 import { deviceKinds, stageFills } from './Figures.ts';
 
-/** What a page's frontmatter is checked against: its kind, and the versions its since may name. */
 export interface FrontmatterContext {
   kind: string;
-  /** The released versions and the next one; without them, since goes unchecked. */
   versions?: Set<string>;
 }
 
 type FrontmatterRule = FrontmatterSchema[string];
 
-/** The exports the frontmatter's components lists, or none when it lists none. */
 const listedComponents = (frontmatter: RawFrontmatter): unknown[] =>
   Array.isArray(frontmatter.components) ? frontmatter.components : [];
 
-/**
- * The problems of a guide's exportAliases: the names people search for an export by, for an
- * export without a component page of its own, such as "theme switcher" for ThemeToggle, a list per
- * export the page documents.
- */
 function exportAliasesProblems(frontmatter: RawFrontmatter) {
   const value = frontmatter.exportAliases;
   if (!isMap(value)) return ['exportAliases must map an export to its aliases'];
@@ -52,7 +43,6 @@ function exportAliasesProblems(frontmatter: RawFrontmatter) {
   return problems;
 }
 
-/** The problems of one example entry of `examples`, a role or a role with its figure's options. */
 function exampleProblems(key: string, name: string, entry: string | Partial<ExampleEntry> | null) {
   const problems: string[] = [];
   const { role, caption, open, stage, motion, wide, device }: Partial<ExampleEntry> =
@@ -67,7 +57,6 @@ function exampleProblems(key: string, name: string, entry: string | Partial<Exam
     Object.keys(entry).some((field) => !exampleFields.includes(field))
   )
     problems.push(`${key} gives ${name} a field other than ${exampleFields.join(', ')}`);
-  // An overview is framed here, since no fence places it; other figures on their fence.
   if (
     [open, stage, motion, wide, device].some((option) => option !== undefined) &&
     role !== 'overview'
@@ -97,7 +86,6 @@ function exampleProblems(key: string, name: string, entry: string | Partial<Exam
   return problems;
 }
 
-/** The problems of `statuses`: each export's status where it differs from the page's. */
 function statusesProblems(
   key: string,
   value: unknown,
@@ -109,7 +97,6 @@ function statusesProblems(
   for (const [name, status] of Object.entries(value)) {
     if (!listedComponents(frontmatter).includes(name))
       problems.push(`${key} names ${name}, which components does not list`);
-    // Widened, so includes takes a value the YAML gave, of any type.
     if (!(pageStatuses as readonly unknown[]).includes(status))
       problems.push(`${key} of ${name} must be one of ${pageStatuses.join(', ')}`);
     else if (status === (schema ? frontmatter.status : (frontmatter.status ?? guideExportStatus)))
@@ -122,7 +109,6 @@ function statusesProblems(
   return problems;
 }
 
-/** The problems of a field's value under its rule. */
 function fieldProblems(
   key: string,
   value: unknown,
@@ -151,7 +137,6 @@ function fieldProblems(
       if (!isMap(value))
         return [`${key} must map each example's name to its role, or to its role and caption`];
       return Object.entries(value).flatMap(([name, entry]) =>
-        // Each field of an entry is checked as exampleProblems reads it.
         exampleProblems(key, name, entry as string | Partial<ExampleEntry> | null),
       );
     case 'statuses':
@@ -159,7 +144,6 @@ function fieldProblems(
   }
 }
 
-/** Whether an avoidWhen entry is `{ text, use }` or `{ text, see }`, each a non-empty string. */
 function isAvoidEntry(item: unknown) {
   if (!isMap(item)) return false;
   const filled = (field: unknown) => typeof field === 'string' && Boolean(field.trim());
@@ -172,10 +156,6 @@ function isAvoidEntry(item: unknown) {
   );
 }
 
-/**
- * The problems of a page of a structured kind as a whole: its required and non-empty fields, its
- * summary a sentence, its since a version, and namespaces rather than parts in its lists.
- */
 function schemaProblems(
   frontmatter: RawFrontmatter,
   schema: FrontmatterSchema,
@@ -204,16 +184,9 @@ function schemaProblems(
       problems.push(
         `components lists ${name}, a part: list its namespace, ${name.split('.')[0]}, whose page documents its parts`,
       );
-  for (const name of Array.isArray(frontmatter.composes) ? frontmatter.composes : [])
-    if (typeof name === 'string' && name.includes('.'))
-      problems.push(`composes lists ${name}, a part: list its namespace, ${name.split('.')[0]}`);
   return problems;
 }
 
-/**
- * Checks a page's frontmatter against its kind's schema, throwing with every problem it has, and
- * returns it as its type.
- */
 export function validateFrontmatter(
   frontmatter: RawFrontmatter,
   path: string,

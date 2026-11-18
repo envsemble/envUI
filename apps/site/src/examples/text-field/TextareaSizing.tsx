@@ -12,7 +12,6 @@ const plan = [
 
 export default function TextareaSizing() {
   return (
-    // As wide as a form column.
     <Column gap={4} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Textarea label="Description" name="description" rows={4} defaultValue={plan} />
       <Textarea

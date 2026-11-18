@@ -1,47 +1,42 @@
 import { day, hour, minute, second } from '../../internal/time/durations.js';
 
-/** Each mounted RelativeTime: what to call on a tick, and the moment it shows. */
-const subscribers = new Map<() => void, number>();
+const shownMomentByOnTick = new Map<() => void, number>();
 let timer: ReturnType<typeof setTimeout> | undefined;
 let scheduledAt = Infinity;
 let watchingVisibility = false;
 
-/**
- * One timer for every RelativeTime on the page. It wakes as often as the nearest moment needs:
- * every second while one is less than a minute away, every minute while one is less than a day
- * away, and every hour beyond. Each tick asks every subscriber to read its text again; React
- * renders only those whose text changed.
- */
 export function subscribeToClock(time: number, onTick: () => void) {
-  subscribers.set(onTick, time);
+  shownMomentByOnTick.set(onTick, time);
   schedule();
   return () => {
-    subscribers.delete(onTick);
-    if (subscribers.size === 0) stop();
+    shownMomentByOnTick.delete(onTick);
+    if (shownMomentByOnTick.size === 0) stop();
   };
 }
 
-/** How long a moment's text can wait for the next tick. */
-function delayFor(distance: number) {
+function delayUntilTextMayChange(distance: number) {
   const away = Math.abs(distance);
   if (away < minute) return second;
   const [cadence, finer] = away < day ? [minute, minute] : [hour, day];
-  // A moment ahead comes nearer: wake when it needs the finer cadence.
-  return distance > 0 ? Math.max(second, Math.min(cadence, away - finer)) : cadence;
+  const approaching = distance > 0;
+  if (!approaching) return cadence;
+  const untilFinerCadence = away - finer;
+  return Math.max(second, Math.min(cadence, untilFinerCadence));
 }
 
 function schedule() {
   const now = Date.now();
   let delay = hour;
-  for (const time of subscribers.values()) delay = Math.min(delay, delayFor(time - now));
-  // A tick already due sooner serves the new subscriber too.
-  if (timer !== undefined && scheduledAt <= now + delay) return;
+  for (const time of shownMomentByOnTick.values())
+    delay = Math.min(delay, delayUntilTextMayChange(time - now));
+  const dueTickServesEveryone = timer !== undefined && scheduledAt <= now + delay;
+  if (dueTickServesEveryone) return;
   clearTimeout(timer);
   scheduledAt = now + delay;
   timer = setTimeout(tick, delay);
   if (!watchingVisibility && typeof document !== 'undefined') {
     watchingVisibility = true;
-    document.addEventListener('visibilitychange', onVisibilityChange);
+    document.addEventListener('visibilitychange', tickWhenPageShownAgain);
   }
 }
 
@@ -49,13 +44,12 @@ function tick() {
   clearTimeout(timer);
   timer = undefined;
   scheduledAt = Infinity;
-  for (const onTick of [...subscribers.keys()]) onTick();
-  if (subscribers.size > 0) schedule();
+  for (const onTick of [...shownMomentByOnTick.keys()]) onTick();
+  if (shownMomentByOnTick.size > 0) schedule();
 }
 
-/** Browsers slow timers in hidden pages; a page shown again reads the time at once. */
-function onVisibilityChange() {
-  if (document.visibilityState === 'visible' && subscribers.size > 0) tick();
+function tickWhenPageShownAgain() {
+  if (document.visibilityState === 'visible' && shownMomentByOnTick.size > 0) tick();
 }
 
 function stop() {
@@ -64,6 +58,6 @@ function stop() {
   scheduledAt = Infinity;
   if (watchingVisibility) {
     watchingVisibility = false;
-    document.removeEventListener('visibilitychange', onVisibilityChange);
+    document.removeEventListener('visibilitychange', tickWhenPageShownAgain);
   }
 }

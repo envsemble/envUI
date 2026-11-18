@@ -1,6 +1,3 @@
-// The contrast gate's measuring, in Node: what a theme's pairs need resolved, and, once the
-// browser has resolved them (tests/component/Contrast.test.tsx), each pair's measure against its
-// minimum and tests/contrast/Exceptions.json. The component tests reach it through their commands.
 import { readFileSync } from 'node:fs';
 import { cssColor, pairName, pairs, type ContrastPair } from './Pairs.ts';
 import { minimumOf } from './Snapshot.ts';
@@ -35,8 +32,7 @@ export function readExceptions() {
   ).exceptions;
 }
 
-/** How far a listed failure may measure below its recorded ratio, for color rounding in engines. */
-const tolerance = 0.05;
+const engineColorRoundingTolerance = 0.05;
 
 function themeNamed(name: string) {
   const theme = themes.find((each) => each.name === name);
@@ -44,11 +40,9 @@ function themeNamed(name: string) {
   return theme;
 }
 
-/** The pairs a theme measures: those of its contrast, or of both. */
 const measuredIn = (theme: ContrastTheme) =>
   pairs.filter((pair) => !pair.contrast || pair.contrast === theme.contrast);
 
-/** The colors a theme's pairs name, or every pair's, each as the CSS color the browser resolves. */
 export function contrastColors(themeName?: string): Record<string, string> {
   const measured = themeName ? measuredIn(themeNamed(themeName)) : pairs;
   const names = new Set(measured.flatMap((pair) => [pair.fg, ...pair.bg]));
@@ -103,7 +97,7 @@ function measure(
       status: 'FAIL: below minimum',
       detail: `${pair.note ? `${pair.note}. ` : ''}Fix the colors. Only if the failure is accepted for now, list it in ${exceptionsFile}: ${JSON.stringify({ pair: name, theme: theme.name, ratio: Number(formatValue(pair.kind, ratio)), note: '…' })}`,
     };
-  if (ratio < exception.ratio - tolerance)
+  if (ratio < exception.ratio - engineColorRoundingTolerance)
     return {
       ...measured,
       status: 'FAIL: worse than its exception',
@@ -112,11 +106,6 @@ function measure(
   return { ...measured, status: 'known exception', detail: exception.note };
 }
 
-/**
- * Measures a theme's pairs from the colors the browser resolved, null for one that doesn't
- * resolve, over the boundary's canvas. Set ENVUI_CONTRAST_REPORT=1 to print every pair's ratio and
- * APCA Lc.
- */
 export function measureContrast(
   themeName: string,
   resolved: Readonly<Record<string, string | null>>,

@@ -95,13 +95,24 @@
       },
       "selected": {
         "$root": {
-          "$value": "{palette.slate.80}"
+          "$value": "{palette.gray.75}"
         },
         "hover": {
-          "$value": "{palette.slate.75}"
+          "$value": "{palette.gray.80}"
         },
         "pressed": {
-          "$value": "{palette.slate.70}"
+          "$value": "{palette.gray.84}"
+        },
+        "accent": {
+          "$root": {
+            "$value": "{palette.slate.80}"
+          },
+          "hover": {
+            "$value": "{palette.slate.75}"
+          },
+          "pressed": {
+            "$value": "{palette.slate.70}"
+          }
         }
       },
       "navigation": {
@@ -194,24 +205,24 @@
       "primary": {
         "emphasis": {
           "$root": {
-            "$value": "{palette.blue.20}"
+            "$value": "{palette.blue.30}"
           },
           "hover": {
-            "$value": "{palette.blue.13}"
+            "$value": "{palette.blue.25}"
           },
           "pressed": {
-            "$value": "{palette.blue.25}"
+            "$value": "{palette.blue.35}"
           }
         },
         "strong": {
           "$root": {
-            "$value": "{palette.blue.40}"
+            "$value": "{palette.blue.55}"
           },
           "hover": {
-            "$value": "{palette.blue.45}"
+            "$value": "{palette.blue.50}"
           },
           "pressed": {
-            "$value": "{palette.blue.50}"
+            "$value": "{palette.blue.60}"
           }
         },
         "subtle": {
@@ -612,7 +623,12 @@
         "$value": "{palette.purple.20}"
       },
       "on-selected": {
-        "$value": "{palette.blue.15}"
+        "$root": {
+          "$value": "{color.fg.default}"
+        },
+        "accent": {
+          "$value": "{palette.blue.15}"
+        }
       },
       "success": {
         "$value": "{palette.green.20}"
@@ -918,15 +934,6 @@
     "3": {
       "border": {
         "$value": "{palette.neutral.55}"
-      }
-    }
-  },
-  "font": {
-    "weight": {
-      "$type": "fontWeight",
-      "medium": {
-        "$description": "Medium, a touch lighter in dark, 460: light text on a dark ground reads heavier than dark text on a light one, so labels and headings keep the weight they have in light.",
-        "$value": 460
       }
     }
   },

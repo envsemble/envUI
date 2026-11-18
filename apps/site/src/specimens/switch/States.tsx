@@ -1,7 +1,6 @@
 import { Switch } from '@envsemble/envui';
 import { SpecimenFrame, MatrixScroll } from '../../figures/SpecimenFrame';
 
-/** Off and on, enabled and disabled. */
 export default function States() {
   return (
     <SpecimenFrame size="wide" still>
