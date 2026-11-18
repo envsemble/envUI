@@ -209,6 +209,9 @@
       background: var(--_segmented-control-custom-selected, var(--_segmented-control-thumb));
       box-shadow: var(--_segmented-control-shadow);
       pointer-events: none;
+      transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+    }
+    .env-segmented-control-thumb[data-placed][data-traveling] {
       transition:
         translate var(--env-motion-duration-medium) var(--env-motion-ease),
         inline-size var(--env-motion-duration-medium) var(--env-motion-ease),

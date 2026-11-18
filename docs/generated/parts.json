@@ -4818,6 +4818,13 @@
           "parts": [
             "env-segmented-control"
           ]
+        },
+        {
+          "attribute": "data-traveling",
+          "values": [],
+          "parts": [
+            "env-segmented-control-thumb"
+          ]
         }
       ],
       "uses": [

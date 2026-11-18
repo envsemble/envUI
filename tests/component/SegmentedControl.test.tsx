@@ -1,7 +1,16 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/SegmentedControl.fixture.tsx';
-import { box, css, keyboard, mouse, passTime, stopTimers } from './support/Browser.ts';
+import {
+  animationsDone,
+  box,
+  css,
+  keyboard,
+  mouse,
+  nextFrames,
+  passTime,
+  stopTimers,
+} from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
@@ -135,6 +144,36 @@ test('a full-width control splits its container evenly and cuts long labels shor
   expect(
     box(page.getByTestId('segments-light').getByRole('radiogroup', { name: 'Layout light' })).width,
   ).toBeLessThan(300);
+});
+
+test('the thumb covers the chosen segment as the control resizes, and travels only to a new choice', async () => {
+  const { narrow, control, segments } = narrowControl();
+  const thumb = control.element().querySelector<HTMLElement>('.env-segmented-control-thumb')!;
+  const covers = (segment: Element) => {
+    const [a, b] = [box(thumb), box(segment)];
+    return Math.abs(a.x - b.x) < 1 && Math.abs(a.width - b.width) < 1;
+  };
+  const [first, second] = segments;
+  await expect.poll(() => covers(first!)).toBe(true);
+  await animationsDone(thumb);
+  const container = narrow.element() as HTMLElement;
+  for (const width of ['24rem', '18rem', '13rem']) {
+    container.style.inlineSize = width;
+    await nextFrames();
+    expect(thumb.getAnimations()).toHaveLength(0);
+    expect(covers(first!)).toBe(true);
+    expectEvenSplit(narrowControl());
+  }
+  await page.elementLocator(second!).click();
+  await expect.poll(() => thumb.getAnimations().length).toBeGreaterThan(0);
+  await animationsDone(thumb);
+  expect(covers(second!)).toBe(true);
+  container.style.inlineSize = '24rem';
+  await nextFrames();
+  expect(thumb.getAnimations()).toHaveLength(0);
+  expect(covers(second!)).toBe(true);
+  await page.elementLocator(first!).click();
+  container.style.inlineSize = '';
 });
 
 test('on a touch screen a full-width control wraps long labels instead, and a tap chooses', async () => {

@@ -184,14 +184,19 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
 function keepThumbOverChosenSegment(thumb: HTMLElement): () => void {
   const track = thumb.parentElement;
   if (!track) return () => {};
+  let placedOver: HTMLElement | null = null;
   const place = () => {
     const chosen = track.querySelector<HTMLElement>(
       ':scope > .env-segmented-control-item[data-checked]',
     );
     if (!chosen) {
+      placedOver = null;
       thumb.removeAttribute('data-placed');
+      thumb.removeAttribute('data-traveling');
       return;
     }
+    thumb.toggleAttribute('data-traveling', placedOver !== null && placedOver !== chosen);
+    placedOver = chosen;
     const box = chosen.getBoundingClientRect();
     const trackBox = track.getBoundingClientRect();
     const transformScaleX = track.offsetWidth > 0 ? trackBox.width / track.offsetWidth : 1;
