@@ -32,12 +32,14 @@
     --_slider-handle-inset: calc(var(--_slider-height) / 4);
     --_slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
     /* contrast: slider-fill */
+    --_slider-fill-standard: light-dark(
+      var(--env-color-bg-neutral-muted-pressed),
+      color-mix(in srgb, var(--env-color-bg-neutral-muted-hover) 90%, transparent)
+    );
+    --_slider-fill-high: var(--_theme-high-contrast) var(--env-color-bg-neutral-subtle-pressed);
     --_slider-fill: var(
       --env-slider-indicator,
-      light-dark(
-        var(--env-color-bg-neutral-muted-pressed),
-        color-mix(in srgb, var(--env-color-bg-neutral-muted-hover) 90%, transparent)
-      )
+      var(--_slider-fill-high, var(--_slider-fill-standard))
     );
     --_slider-ink: var(--env-slider-content, var(--env-color-fg-default));
     min-inline-size: 0;

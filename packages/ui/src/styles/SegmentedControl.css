@@ -180,14 +180,22 @@
     background: var(--_segmented-control-custom-fill, transparent);
   }
   .env-segmented-control-item:hover:not([data-checked]):not([data-disabled]) {
-    background: var(--_segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+    /* contrast: segmented-control-hover */
+    --_segmented-control-hover-layer: rgb(
+      from var(--env-color-bg-neutral-subtle-hover) r g b / calc(alpha * 0.5)
+    );
+    background: var(--_segmented-control-custom-fill, var(--_segmented-control-hover-layer));
     color: var(--_segmented-control-option-hover-color, var(--env-color-fg-default));
   }
   .env-segmented-control-item:active:not([data-checked]):not([data-disabled]) {
-    --_segmented-control-pressed-layer: rgb(
-      from var(--env-color-bg-neutral-subtle-hover) r g b / calc(alpha * (2 - alpha))
+    /* contrast: segmented-control-pressed-layer */
+    --_segmented-control-pressed-standard: var(--env-color-bg-neutral-subtle-hover);
+    --_segmented-control-pressed-high: var(--_theme-high-contrast)
+      var(--env-color-bg-neutral-subtle-pressed);
+    background: var(
+      --_segmented-control-custom-fill,
+      var(--_segmented-control-pressed-high, var(--_segmented-control-pressed-standard))
     );
-    background: var(--_segmented-control-custom-fill, var(--_segmented-control-pressed-layer));
     color: var(--_segmented-control-option-pressed-color, var(--env-color-fg-muted-pressed));
   }
   .env-segmented-control-item[data-checked] {

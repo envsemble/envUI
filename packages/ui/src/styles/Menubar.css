@@ -25,6 +25,7 @@
     background: var(--env-color-bg-neutral-subtle-hover);
   }
   .env-menubar-trigger:is(:active, [data-popup-open]):not([data-disabled]) {
+    /* contrast: menubar-trigger-pressed */
     background: rgb(
       from var(--env-color-bg-neutral-subtle-hover) r g b / calc(alpha * (2 - alpha))
     );

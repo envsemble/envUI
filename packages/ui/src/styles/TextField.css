@@ -75,6 +75,12 @@
     );
     --_text-field-border-color: var(--_text-field-border-base);
     --_text-field-frame-color: var(--_text-field-border-color);
+    /* contrast: text-field-read-only */
+    --_text-field-read-only-fill: color-mix(
+      in srgb,
+      var(--env-color-bg-neutral-muted) 35%,
+      transparent
+    );
     --env-icon-size: var(--env-control-icon-size);
     position: relative;
     min-width: 0;
@@ -139,24 +145,29 @@
   .env-text-field-control[data-variant='ghost'] {
     background: var(
       --_text-field-ghost-solid,
-      color-mix(in srgb, var(--env-color-bg-neutral-muted) 45%, transparent)
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 75%, transparent)
     );
   }
-  .env-text-field-control[data-variant='ghost']:not(
-      :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),
+  .env-text-field-control[data-variant='ghost']:is(
+      :has(> .env-text-field-input:disabled),
       [data-disabled]
     ) {
     background: var(
       --_text-field-ghost-solid,
-      color-mix(in srgb, var(--env-color-bg-neutral-muted) 75%, transparent)
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 60%, transparent)
     );
+  }
+  .env-text-field-control[data-variant='ghost']:has(
+      > .env-text-field-input:is([readonly], [aria-readonly='true'])
+    ):not(:has(> .env-text-field-input:disabled), [data-disabled]) {
+    background: var(--_text-field-ghost-solid, var(--_text-field-read-only-fill));
   }
   @media (hover: hover) {
     .env-text-field-control[data-variant='ghost']:hover:not(
         :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),
         [data-disabled]
       ) {
-      background: var(--_text-field-ghost-solid, var(--env-color-bg-neutral-muted-hover));
+      background: var(--_text-field-ghost-solid, var(--env-color-bg-neutral-muted));
     }
   }
   .env-text-field-control[data-variant='ghost']:not(
@@ -179,10 +190,7 @@
       > .env-text-field-input:is([readonly], [aria-readonly='true'])
     ):not(:has(> .env-text-field-input:disabled), [data-disabled]) {
     background:
-      linear-gradient(
-        color-mix(in srgb, var(--env-color-bg-neutral-muted) 45%, transparent),
-        color-mix(in srgb, var(--env-color-bg-neutral-muted) 45%, transparent)
-      ),
+      linear-gradient(var(--_text-field-read-only-fill), var(--_text-field-read-only-fill)),
       var(--_text-field-well, transparent);
   }
   .env-text-field-control:has(> .env-text-field-input:is([readonly], [aria-readonly='true'])) {
@@ -342,7 +350,7 @@
     min-inline-size: 0;
     overflow: hidden;
     /* contrast: text-field-affix */
-    color: color-mix(in srgb, var(--env-color-fg-muted) 85%, transparent);
+    color: var(--env-color-fg-muted);
     font: var(--env-type-body);
     font-size: var(--env-control-font-size);
     white-space: nowrap;

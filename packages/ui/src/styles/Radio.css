@@ -123,8 +123,15 @@
   .env-radio:has(input:disabled) {
     cursor: default;
   }
-  .env-radio:has(input:disabled) > span {
+  .env-radio:has(input:disabled:checked) {
+    --_radio-ring: var(--env-color-fg-disabled);
+  }
+  .env-radio:has(input:disabled:not(:checked)) > .env-radio-control,
+  .env-radio:has(input:disabled) .env-radio-description {
     opacity: var(--env-state-disabled-opacity);
+  }
+  .env-radio:has(input:disabled) > span:not(.env-radio-control) {
+    color: var(--env-color-fg-disabled);
   }
 
   .env-radio-group-description,

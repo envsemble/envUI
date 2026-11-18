@@ -54,7 +54,7 @@
   --env-color-bg-list-item-hover: var(--env-color-bg-muted-hover);
   --env-color-bg-list-item-pressed: var(--env-color-bg-muted-pressed);
   --env-color-bg-muted: #eaeaec;
-  --env-color-bg-muted-hover: #e0e0e2;
+  --env-color-bg-muted-hover: #e3e3e6;
   --env-color-bg-muted-pressed: #dadadc;
   --env-color-bg-navigation: transparent;
   --env-color-bg-navigation-hover: #dbdde1;
@@ -93,8 +93,8 @@
   --env-color-bg-recessed: #e7e7e9;
   --env-color-bg-recessed-hover: #dadadc;
   --env-color-bg-recessed-pressed: #d1d1d3;
-  --env-color-bg-row-hover: rgb(31 31 34 / 0.07);
-  --env-color-bg-row-pressed: rgb(31 31 34 / 0.11);
+  --env-color-bg-row-hover: rgb(31 31 34 / 0.09);
+  --env-color-bg-row-pressed: rgb(31 31 34 / 0.13);
   --env-color-bg-selected: #ceced0;
   --env-color-bg-selected-accent: #d7e5fd;
   --env-color-bg-selected-accent-hover: #cddefc;
@@ -122,8 +122,8 @@
   --env-color-border-danger-muted: rgb(183 43 32 / 0.28);
   --env-color-border-danger-strong: #9f0300;
   --env-color-border-default: #808083;
-  --env-color-border-default-hover: #757578;
-  --env-color-border-default-pressed: #6b6b6e;
+  --env-color-border-default-hover: #616164;
+  --env-color-border-default-pressed: #57575a;
   --env-color-border-done: rgb(78 98 126 / 0.55);
   --env-color-border-focus: #005cc8;
   --env-color-border-info-strong: #174d90;
@@ -419,8 +419,8 @@
   --env-color-border-danger-muted: rgb(248 172 166 / 0.28);
   --env-color-border-danger-strong: var(--env-elevation-2-border);
   --env-color-border-default: #898c91;
-  --env-color-border-default-hover: #95989c;
-  --env-color-border-default-pressed: #a1a4a9;
+  --env-color-border-default-hover: #afb1b6;
+  --env-color-border-default-pressed: #bdbfc3;
   --env-color-border-done: rgb(170 193 221 / 0.55);
   --env-color-border-focus: #9fc1f8;
   --env-color-border-info-strong: var(--env-elevation-2-border);
@@ -564,8 +564,6 @@
   --env-color-border-danger-muted: rgb(122 2 0 / 0.28);
   --env-color-border-danger-strong: #6b0100;
   --env-color-border-default: #6b6b6e;
-  --env-color-border-default-hover: #616164;
-  --env-color-border-default-pressed: #57575a;
   --env-color-border-done: rgb(37 54 80 / 0.55);
   --env-color-border-focus: #0053b5;
   --env-color-border-info-strong: #003068;
@@ -712,8 +710,6 @@
     --env-color-border-danger-muted: rgb(122 2 0 / 0.28);
     --env-color-border-danger-strong: #6b0100;
     --env-color-border-default: #6b6b6e;
-    --env-color-border-default-hover: #616164;
-    --env-color-border-default-pressed: #57575a;
     --env-color-border-done: rgb(37 54 80 / 0.55);
     --env-color-border-focus: #0053b5;
     --env-color-border-info-strong: #003068;
@@ -861,8 +857,6 @@
   --env-color-border-danger-muted: rgb(255 228 226 / 0.28);
   --env-color-border-danger-strong: #a1a4a9;
   --env-color-border-default: #a1a4a9;
-  --env-color-border-default-hover: #afb1b6;
-  --env-color-border-default-pressed: #bdbfc3;
   --env-color-border-done: rgb(222 236 253 / 0.55);
   --env-color-border-focus: #b5cffb;
   --env-color-border-info-strong: #a1a4a9;
@@ -1003,8 +997,6 @@
     --env-color-border-danger-muted: rgb(255 228 226 / 0.28);
     --env-color-border-danger-strong: #a1a4a9;
     --env-color-border-default: #a1a4a9;
-    --env-color-border-default-hover: #afb1b6;
-    --env-color-border-default-pressed: #bdbfc3;
     --env-color-border-done: rgb(222 236 253 / 0.55);
     --env-color-border-focus: #b5cffb;
     --env-color-border-info-strong: #a1a4a9;

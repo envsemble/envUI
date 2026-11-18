@@ -68,6 +68,10 @@
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
   }
+  .env-card[data-interactive]:is(:disabled, [aria-disabled='true'])
+    :where(.env-card-description, .env-text[data-emphasis='muted']) {
+    color: color-mix(in srgb, var(--env-color-fg-muted), var(--env-color-fg-default) 45%);
+  }
   @media (prefers-reduced-motion: reduce) {
     .env-card[data-interactive] {
       transition: none;

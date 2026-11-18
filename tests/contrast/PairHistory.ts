@@ -1670,6 +1670,24 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
         'The track of Meter and Progress is the neutral fill a Slider’s track takes, --env-color-bg-neutral-muted, rather than a state layer’s faint tint, so empty steps show on dark panels.',
     })),
   ),
+  ...[
+    '--env-color-bg-default',
+    '--env-color-bg-muted',
+    '--env-color-bg-page',
+    '--env-color-bg-popup',
+    '--env-color-bg-raised',
+    '--env-color-bg-recessed',
+    'catalogue-canvas',
+  ].flatMap((ground) =>
+    reviewed(`--env-color-bg-primary-emphasis on --env-color-bg-neutral-muted over ${ground}`).map(
+      (from) => ({
+        from,
+        to: `--env-color-bg-primary-emphasis on meter-track over ${ground === 'catalogue-canvas' ? '--env-color-bg-recessed' : ground}`,
+        rationale:
+          'The track of Meter and Progress, and each unfinished segment, is the neutral fill’s hover grade in light and 80% of it in dark, meter-track, a step stronger than a Slider’s track, so an empty bar reads as a control in both themes.',
+      }),
+    ),
+  ),
   ...(['--env-color-bg-selected', '--env-color-bg-selected-hover'] as const).flatMap((fill) =>
     ['--env-color-bg-default', '--env-color-bg-raised'].map((ground) => ({
       from: `${fill} on --env-color-bg-neutral-subtle-hover over ${ground}`,
@@ -1831,9 +1849,9 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     '--env-color-bg-recessed',
   ].map((below) => ({
     from: `--env-color-fg-muted-hover on segmented-control-hover-layer over --env-color-bg-neutral-muted over ${below}`,
-    to: `--env-color-fg-default on --env-color-bg-neutral-muted over ${below}`,
+    to: `--env-color-fg-muted-hover on segmented-control-hover over --env-color-bg-neutral-muted over ${below}`,
     rationale:
-      'A hovered segment of a SegmentedControl lays no state layer, which read as a second selection beside the thumb, and its label takes the text color on the track.',
+      'A hovered segment of a SegmentedControl that is not chosen lays half the faint neutral state layer, segmented-control-hover (SegmentedControl.css), quieter than a layer of its own, which read as a second selection beside the thumb; its label takes the muted hover text color on it over the track.',
   })),
   {
     from: `--env-color-fg-muted-hover on segmented-control-hover-layer over --env-color-bg-neutral-muted over catalogue-canvas`,
@@ -1924,11 +1942,74 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     rationale:
       'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
   })),
+  ...(
+    [
+      ['--env-color-bg-neutral-muted on popup-frosted', 'popup-row-highlight on popup-frosted'],
+      ...[
+        '--env-color-bg-selected-accent',
+        '--env-color-border-focus',
+        '--env-color-fg-danger',
+        '--env-color-fg-default',
+        '--env-color-fg-muted',
+      ].map((fg) => [
+        `${fg} on --env-color-bg-neutral-muted over popup-frosted`,
+        `${fg} on popup-row-highlight over popup-frosted`,
+      ]),
+      [
+        '--env-color-fg-default on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over popup-frosted',
+        '--env-color-fg-default on --env-color-bg-neutral-muted over popup-row-highlight over popup-frosted',
+      ],
+    ] as const
+  ).flatMap(([from, to]) =>
+    [
+      '--env-color-bg-default',
+      '--env-color-bg-muted',
+      '--env-color-bg-page',
+      '--env-color-bg-recessed',
+      'catalogue-canvas',
+    ].map((ground) => ({
+      from: `${from} over ${ground}`,
+      to: `${to} over ${ground === 'catalogue-canvas' ? '--env-color-bg-recessed' : ground}`,
+      rationale:
+        'A popup row under the cursor takes --_popup-row-highlight (Popup.css), measured as popup-row-highlight: the neutral fill in light and 80% of it in dark, rather than the neutral fill in every theme.',
+    })),
+  ),
 ];
 
 const segmentThumbHighContrast =
   'At high contrast the thumb keeps a layer of the neutral fill, measured there as segmented-control-thumb-high under the same pairs; the thumb as drawn at standard contrast, the raised neutral grade in dark, is measured there.';
+const grounds = [
+  '--env-color-bg-default',
+  '--env-color-bg-muted',
+  '--env-color-bg-page',
+  '--env-color-bg-raised',
+  '--env-color-bg-recessed',
+] as const;
+const sliderFillHighContrast =
+  'The fill of a slider is the neutral fill’s pressed grade in light and 90% of its hover grade in dark at standard contrast, measured there as slider-fill; at high contrast it keeps the pressed state layer, measured there under these pairs.';
+const segmentPressedHighContrast =
+  'A pressed segment that is not chosen takes the faint state layer at standard contrast, measured there as segmented-control-pressed-layer; at high contrast it keeps the pressed state layer, measured there under these pairs.';
 export const relaxed: readonly Relaxation[] = [
+  ...[...grounds, '--env-color-bg-popup']
+    .filter((ground) => ground !== '--env-color-bg-raised')
+    .map((ground): Relaxation => ({
+      pair: `--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over ${ground}`,
+      kind: 'text',
+      minimum: { high: 7 },
+      rationale: sliderFillHighContrast,
+    })),
+  ...[...grounds, '--env-color-bg-popup'].map((ground): Relaxation => ({
+    pair: `--env-color-bg-neutral-subtle-pressed on --env-color-bg-neutral-muted over ${ground}`,
+    kind: 'difference',
+    minimum: { high: 0.02 },
+    rationale: sliderFillHighContrast,
+  })),
+  ...grounds.map((ground): Relaxation => ({
+    pair: `--env-color-fg-muted-pressed on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over ${ground}`,
+    kind: 'text',
+    minimum: { high: 7 },
+    rationale: segmentPressedHighContrast,
+  })),
   ...[
     '--env-color-bg-default',
     '--env-color-bg-muted',

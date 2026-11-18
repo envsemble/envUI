@@ -744,10 +744,10 @@
           "$value": "{palette.neutral.40}"
         },
         "hover": {
-          "$value": "{palette.neutral.35}"
+          "$value": "{palette.neutral.25}"
         },
         "pressed": {
-          "$value": "{palette.neutral.30}"
+          "$value": "{palette.neutral.20}"
         }
       },
       "muted": {

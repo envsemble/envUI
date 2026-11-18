@@ -53,7 +53,7 @@
         },
         "hover": {
           "$description": "An interactive muted surface under the pointer.",
-          "$value": "{palette.gray.9}"
+          "$value": "{palette.gray.8}"
         },
         "pressed": {
           "$description": "An interactive muted surface while pressed.",
@@ -665,7 +665,7 @@
             "components": {
               "$ref": "#/palette/gray/92/$value/components"
             },
-            "alpha": 0.07
+            "alpha": 0.09
           },
           "$extensions": {
             "com.envsemble.envui": {
@@ -680,7 +680,7 @@
             "components": {
               "$ref": "#/palette/gray/92/$value/components"
             },
-            "alpha": 0.11
+            "alpha": 0.13
           },
           "$extensions": {
             "com.envsemble.envui": {
@@ -1078,11 +1078,11 @@
         },
         "hover": {
           "$description": "A control boundary under the pointer.",
-          "$value": "{palette.gray.50}"
+          "$value": "{palette.gray.60}"
         },
         "pressed": {
           "$description": "A control boundary while pressed.",
-          "$value": "{palette.gray.55}"
+          "$value": "{palette.gray.65}"
         }
       },
       "muted": {
