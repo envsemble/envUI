@@ -348,7 +348,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Panes
 
 - Parts: `env-panes`, `env-panes-back`, `env-panes-backdrop`, `env-panes-body`, `env-panes-close`, `env-panes-detail`, `env-panes-divider`, `env-panes-header`, `env-panes-header-content` (slot), `env-panes-list`, `env-panes-main`, `env-panes-supporting`, `env-panes-trigger`
-- States: `data-behavior` (`list-detail`, `supporting`); `data-closed`; `data-env-layout` (`panes`); `data-env-name`; `data-open`; `data-sheet-only` on `env-panes-close`; `data-split-at` (`expanded`, `large`, `medium`)
+- States: `data-axis` on `env-panes-divider`; `data-behavior` (`list-detail`, `supporting`); `data-closed`; `data-env-layout` (`panes`); `data-env-name`; `data-open`; `data-sheet-only` on `env-panes-close`; `data-split-at` (`expanded`, `large`, `medium`)
 
 ### Popover
 

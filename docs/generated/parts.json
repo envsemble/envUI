@@ -4137,6 +4137,13 @@
       ],
       "states": [
         {
+          "attribute": "data-axis",
+          "values": [],
+          "parts": [
+            "env-panes-divider"
+          ]
+        },
+        {
           "attribute": "data-behavior",
           "values": [
             "list-detail",

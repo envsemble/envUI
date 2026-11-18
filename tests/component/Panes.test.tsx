@@ -399,7 +399,7 @@ test(
     const edge = box(panes);
     const fill = page.getByTestId('rounded-list-fill').element();
     expect(getComputedStyle(panes).borderTopLeftRadius).not.toBe('0px');
-    expect(getComputedStyle(panes).overflow).toBe('hidden');
+    expect(getComputedStyle(panes).overflow).toBe('clip');
     const webkitHitsThroughRoundedClips =
       /AppleWebKit/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
     if (!webkitHitsThroughRoundedClips) {
@@ -411,5 +411,23 @@ test(
     root.unmount();
     host.remove();
     style.remove();
+  },
+);
+
+test(
+  "the divider's hit area reaches only into the pane after it, and draws a hairline",
+  { tags: ['engines'] },
+  async () => {
+    panes('width=60rem');
+    const root = page.getByTestId('supporting');
+    const divider = root.getByRole('separator', { name: 'Resize details' }).element();
+    const main = root.getByRole('region', { name: 'Document' }).element();
+    const edge = box(divider);
+    const y = edge.y + edge.height / 2;
+    const before = document.elementFromPoint(edge.x - 4, y);
+    expect(divider.contains(before)).toBe(false);
+    expect(main.contains(before)).toBe(true);
+    expect(document.elementFromPoint(edge.x + edge.width + 4, y)).toBe(divider);
+    expect(getComputedStyle(divider, '::after').width).toBe(css(divider, 'width'));
   },
 );

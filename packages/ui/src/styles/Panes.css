@@ -11,7 +11,7 @@
     block-size: 100%;
     min-block-size: 0;
     min-inline-size: 0;
-    overflow: hidden;
+    overflow: clip;
   }
   .env-panes[data-behavior='supporting'] {
     grid-template-columns: minmax(0, 1fr) auto auto;
@@ -58,7 +58,11 @@
     content: '';
     position: absolute;
     inset-block: 0;
-    inset-inline: calc((var(--_panes-gap) - var(--_panes-divider-reach)) / 2);
+    inset-inline: 0 calc(var(--_panes-gap) - var(--_panes-divider-reach));
+  }
+  .env-panes > .env-panes-divider[data-axis]::after {
+    inset-inline-start: 0;
+    inline-size: var(--_panes-gap);
   }
   .env-panes-divider::after {
     background: var(--env-color-border-muted);
@@ -319,6 +323,9 @@
   @media (forced-colors: active) {
     .env-panes-supporting {
       border-color: CanvasText;
+    }
+    .env-panes-divider::after {
+      background: CanvasText;
     }
   }
 }
