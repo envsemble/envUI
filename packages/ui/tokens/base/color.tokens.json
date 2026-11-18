@@ -62,7 +62,7 @@
       },
       "raised": {
         "$root": {
-          "$description": "A raised surface: Surface background=\"raised\", tables, docked panels and the pager. In dark a step above the default surface, with the filled surface’s fill; in light white, as the page is, so a table or the pager parts from the page by its frame and lifts off the panes and cards.",
+          "$description": "A raised surface: tables, docked panels, the pager and, in dark, Surface background=\"raised\". In dark a step above the default surface, with the filled surface’s fill; in light white, as the page is, so a table or the pager parts from the page by its frame and lifts off the panes and cards. In light Surface background=\"raised\" takes the filled surface instead, so a raised panel reads as its own background on the page as it does in dark.",
           "$value": "{palette.neutral.0}"
         },
         "hover": {

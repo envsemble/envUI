@@ -8,7 +8,7 @@ EmptyState is a component again, MessageList can follow a conversation, and the 
 
 - New: `EmptyState`, what a region shows when it has nothing to show: an optional `icon`, a `title`, an optional `description` and optional `actions`. It fills its region and centres in it, and is compact where the region is narrow. CommandPalette's empty state is now an EmptyState, its icon above its title.
 - New: `follow` on MessageList makes the list scroll by itself: it opens at the latest message, keeps it in view while the reader is at the end, and shows a Jump to latest button once they scroll away and more arrives (`jumpToLatestLabel`, or `messages.message.jumpToLatest`). Give it a height, such as the rest of a column above a Composer.
-- Composer's focus is calm: the edge darkens to a neutral hairline instead of a doubled accent border.
+- Composer's focus is its 1 px edge in the focus color, instead of a doubled accent border.
 - Message's `meta`, `actions` and content, Alert's message and actions, Composer's `start` and `description`, Disclosure's and Accordion's titles, and CommandPalette's footer and hint labels render through a slot that places their content and leaves its text, color and spacing to it. A text action at a message's edge no longer lines its icon up with the message.
 
 Breaking changes:

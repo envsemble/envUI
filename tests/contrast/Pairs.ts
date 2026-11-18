@@ -541,6 +541,14 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...text('--env-color-fg-default', ['document-tabs-strip'], 'Text on the document tab strip'),
   ...text(
+    '--env-color-fg-default',
+    [
+      ['--env-color-bg-neutral-subtle-hover', 'document-tabs-strip'],
+      ['--env-color-bg-neutral-subtle-pressed', 'document-tabs-strip'],
+    ],
+    'An inactive document tab under the pointer and pressed, on its layer over the strip',
+  ),
+  ...text(
     '--env-color-fg-danger',
     [muted],
     'The message of an invalid field on a muted surface; the tone pairs below measure the others',

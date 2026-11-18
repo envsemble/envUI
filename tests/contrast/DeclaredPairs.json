@@ -2794,6 +2794,13 @@
         "high": 7
       }
     },
+    "--env-color-fg-default on --env-color-bg-neutral-subtle-hover over document-tabs-strip": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -2867,6 +2874,13 @@
       }
     },
     "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over document-tabs-strip": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,

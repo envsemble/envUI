@@ -196,6 +196,15 @@
   :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:hover {
     color: var(--env-color-fg-default);
   }
+  :where(.env-document-tabs-list:not([data-reordering]))
+    .env-document-tabs-item:not([data-active]):hover {
+    border-start-start-radius: var(--_document-tabs-fillet);
+    border-start-end-radius: var(--_document-tabs-fillet);
+    background: var(--env-color-bg-neutral-subtle-hover);
+  }
+  .env-document-tabs-item:not([data-active]):active {
+    background: var(--env-color-bg-neutral-subtle-pressed);
+  }
   .env-document-tabs-item:is([data-active], :has(:focus-visible)) .env-document-tabs-close,
   :where(.env-document-tabs-list:not([data-reordering]))
     .env-document-tabs-item:hover

@@ -93,7 +93,7 @@
     }
   }
   .env-composer-surface:has(> .env-composer-input:focus) {
-    --_composer-border: var(--env-color-fg-default);
+    --_composer-border: var(--env-color-border-focus);
   }
   .env-composer[data-disabled] .env-composer-surface {
     cursor: default;
