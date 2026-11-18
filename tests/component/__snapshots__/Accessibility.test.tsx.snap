@@ -18,7 +18,7 @@ exports[`app-screen has no new accessibility violations 1`] = `
     "button.env-avatar-button": 1,
   },
   "landmark-unique": {
-    "div.env-panes-main": 1,
+    "div.env-panes-pane": 1,
   },
 }
 `;
@@ -112,6 +112,8 @@ exports[`disclosure has no new accessibility violations 1`] = `{}`;
 
 exports[`document-tabs has no new accessibility violations 1`] = `{}`;
 
+exports[`document-tabs-reorder has no new accessibility violations 1`] = `{}`;
+
 exports[`document-tabs-rerender has no new accessibility violations 1`] = `{}`;
 
 exports[`document-tabs-rtl has no new accessibility violations 1`] = `{}`;
@@ -160,7 +162,6 @@ exports[`messages has no new accessibility violations 1`] = `
   "label-content-name-mismatch": {
     "button.env-button": 1,
     "button.env-color-picker-button": 1,
-    "button.env-panel-dock-tab-restore": 1,
   },
 }
 `;
@@ -190,34 +191,7 @@ exports[`page-navigation has no new accessibility violations 1`] = `{}`;
 
 exports[`pagination has no new accessibility violations 1`] = `{}`;
 
-exports[`panel-dock has no new accessibility violations 1`] = `
-{
-  "landmark-main-is-top-level": {
-    "div.env-theme main": 2,
-  },
-  "landmark-no-duplicate-main": {
-    "div.env-theme main": 1,
-  },
-  "landmark-unique": {
-    "div.env-theme main": 1,
-    "section.env-panel-dock-panel": 6,
-  },
-  "scrollable-region-focusable": {
-    "div.env-panel-dock-content ol": 4,
-  },
-}
-`;
-
-exports[`panes has no new accessibility violations 1`] = `
-{
-  "scrollable-region-focusable": {
-    "div.env-panes-body": 1,
-  },
-  "target-size": {
-    "div.env-panes-body button": 3,
-  },
-}
-`;
+exports[`panes has no new accessibility violations 1`] = `{}`;
 
 exports[`popover has no new accessibility violations 1`] = `{}`;
 
@@ -269,7 +243,6 @@ exports[`scale has no new accessibility violations 1`] = `
     "nav.env-navigation-drawer": 2,
     "nav.env-navigation-rail": 1,
     "nav.env-pagination": 1,
-    "section.env-panel-dock-panel": 1,
   },
 }
 `;
@@ -314,14 +287,6 @@ exports[`table-of-contents has no new accessibility violations 1`] = `
   },
 }
 `;
-
-exports[`tabs has no new accessibility violations 1`] = `{}`;
-
-exports[`tabs-compact has no new accessibility violations 1`] = `{}`;
-
-exports[`tabs-rtl has no new accessibility violations 1`] = `{}`;
-
-exports[`tabs-scrolling has no new accessibility violations 1`] = `{}`;
 
 exports[`text has no new accessibility violations 1`] = `{}`;
 
