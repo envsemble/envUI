@@ -1072,9 +1072,22 @@
         },
         {
           "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Names the block in its heading and for assistive technology, such as a file name, or content such as a file-type icon and a path link."
+        },
+        {
+          "name": "textValue",
           "type": "string",
           "required": false,
-          "description": "Names the block in its heading and for assistive technology, such as a file name."
+          "default": "the label's text",
+          "description": "The label as plain text, which names the code for assistive technology where label isn't a string."
+        },
+        {
+          "name": "actions",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the heading before the copy button, such as Open in editor, Run, or a switch between npm, pnpm and yarn, placed as given."
         },
         {
           "name": "copyable",
@@ -1143,10 +1156,35 @@
         },
         {
           "name": "layout",
-          "type": "'auto' | 'unified'",
+          "type": "'auto' | 'split' | 'unified'",
           "required": false,
           "default": "'auto'",
-          "description": "auto (default) sets old and new side by side from 56 rem of width; unified keeps one column."
+          "description": "auto (default) sets old and new side by side from 56 rem of width; split always sets them side by side, such as for a split and unified toggle; unified keeps one column."
+        },
+        {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the file header, such as View file, Accept or Revert, or a status Badge."
+        },
+        {
+          "name": "annotations",
+          "type": "readonly CodeDiffAnnotation[]",
+          "required": false,
+          "description": "Notes attached to lines, such as review comments, which renderAnnotation draws under them."
+        },
+        {
+          "name": "renderAnnotation",
+          "type": "(annotation: CodeDiffAnnotation) => ReactNode",
+          "required": false,
+          "description": "Draws one of annotations under its line."
+        },
+        {
+          "name": "headingLevel",
+          "type": "1 | 2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "default": "3",
+          "description": "The level of the heading of what shows when the diff fails to load, for the page's outline."
         }
       ],
       "native": [
@@ -3598,9 +3636,22 @@
         },
         {
           "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Names the block in its heading and for assistive technology, such as a file name, or content such as a file-type icon and a path link."
+        },
+        {
+          "name": "textValue",
           "type": "string",
           "required": false,
-          "description": "Names the block in its heading and for assistive technology, such as a file name."
+          "default": "the label's text",
+          "description": "The label as plain text, which names the code for assistive technology where label isn't a string."
+        },
+        {
+          "name": "actions",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the heading before the copy button, such as Open in editor, Run, or a switch between npm, pnpm and yarn, placed as given."
         },
         {
           "name": "copyable",
@@ -3818,9 +3869,16 @@
       "props": [
         {
           "name": "keys",
-          "type": "readonly string[]",
+          "type": "readonly ReactNode[]",
           "required": false,
-          "description": "Keys pressed together, such as ['Ctrl', 'P']: one key cap each, joined by +, inside an outer `<kbd>`. Without it, the children are one key."
+          "description": "Keys pressed together, such as ['Ctrl', 'P']: one key cap each, joined by the separator, inside an outer `<kbd>`. A key can be any content, such as an icon for an arrow or Return. Without it, the children are one key."
+        },
+        {
+          "name": "separator",
+          "type": "ReactNode",
+          "required": false,
+          "default": "'+'",
+          "description": "What joins the keys: a +, null for none, as in ⌘⇧P, or a word for keys pressed one after another, such as then in G then I."
         }
       ],
       "native": [

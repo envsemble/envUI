@@ -326,6 +326,7 @@
   },
   "@envsemble/envui/diff": {
     "CodeDiff": "function",
+    "CodeDiffAnnotation": "interface",
     "CodeDiffProps": "interface",
     "countDiffLines": "function"
   },

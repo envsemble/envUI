@@ -1054,6 +1054,11 @@
           "description": "The block of code."
         },
         {
+          "class": "env-code-block-actions",
+          "description": "The slot of the content in the heading before the copy button.",
+          "slot": true
+        },
+        {
           "class": "env-code-block-copy-status",
           "description": "The announcement that the code was copied."
         },

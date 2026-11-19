@@ -16,13 +16,16 @@ import { Row } from '../../layout/Layout.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { useCopy } from '../../internal/useCopy.js';
 import { flag } from '../../internal/flag.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import '../../styles/Base.css';
 import '../../styles/Code.css';
 
 export interface CodeBlockFrameProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   source: string;
   language: string | undefined;
-  label: string | undefined;
+  label: ReactNode;
+  textValue: string | undefined;
+  actions: ReactNode;
   copyable: boolean;
   wrap: boolean;
   preRef?: RefObject<HTMLPreElement | null>;
@@ -43,6 +46,8 @@ export function CodeBlockFrame({
   source,
   language,
   label,
+  textValue,
+  actions,
   copyable,
   wrap,
   preRef: givenPreRef,
@@ -60,25 +65,37 @@ export function CodeBlockFrame({
     if (await copy(source, button)) return;
     if (preRef.current) selectForPeopleToCopyThemselves(preRef.current);
   }
+  const labelText = textValue ?? (typeof label === 'string' ? label : undefined);
+  const hasActions = actions != null && actions !== false;
+  const copyButton = copyable && (
+    <IconButton
+      variant="ghost"
+      icon={status === 'copied' ? <IconCheck /> : <IconContentCopy />}
+      aria-label={status === 'copied' ? messages.copied : messages.copy}
+      onClick={(event) => void copySource(event.currentTarget)}
+    />
+  );
   return (
     <div {...props} className={classNames('env-code-block', className)} data-wrap={flag(wrap)}>
-      {(label || copyable) && (
+      {(label || copyable || hasActions) && (
         <Row wrap align="center" justify="between" gap={4} className="env-code-block-header">
           <span>{label ?? language ?? messages.title}</span>
-          {copyable && (
-            <IconButton
-              variant="ghost"
-              icon={status === 'copied' ? <IconCheck /> : <IconContentCopy />}
-              aria-label={status === 'copied' ? messages.copied : messages.copy}
-              onClick={(event) => void copySource(event.currentTarget)}
-            />
+          {hasActions ? (
+            <Row align="center" gap={1}>
+              <Slot className="env-code-block-actions" layout="row">
+                {actions}
+              </Slot>
+              {copyButton}
+            </Row>
+          ) : (
+            copyButton
           )}
         </Row>
       )}
       <pre
         ref={preRef}
         tabIndex={0}
-        aria-label={label ?? messages.label({ language: language ?? messages.plainText })}
+        aria-label={labelText ?? messages.label({ language: language ?? messages.plainText })}
       >
         <code>{children}</code>
       </pre>

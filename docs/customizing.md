@@ -136,7 +136,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### CodeBlock
 
-- Parts: `env-code-block`, `env-code-block-copy-status`, `env-code-block-header`, `env-code-block-token`
+- Parts: `env-code-block`, `env-code-block-actions` (slot), `env-code-block-copy-status`, `env-code-block-header`, `env-code-block-token`
 - States: `data-wrap`
 
 ### CodeDiff

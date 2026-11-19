@@ -39,6 +39,8 @@ export function HighlightedCodeBlock({
   children: source,
   language,
   label,
+  textValue,
+  actions,
   copyable = false,
   wrap = false,
   ...props
@@ -52,6 +54,8 @@ export function HighlightedCodeBlock({
       source={source}
       language={language}
       label={label}
+      textValue={textValue}
+      actions={actions}
       copyable={copyable}
       wrap={wrap}
       preRef={preRef}
