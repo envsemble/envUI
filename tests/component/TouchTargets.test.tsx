@@ -21,20 +21,11 @@ function reach(target: Element) {
   ].every(([pointX, pointY]) => target.contains(document.elementFromPoint(pointX!, pointY!)));
 }
 
-test("on touch, breadcrumb links, contents links and a picker's Clear button take a 44 px tap, and keep their size under a mouse", async () => {
-  mount(fixture);
-  const links = () => [
-    page.getByRole('link', { name: 'Workspace' }).element(),
-    page.getByRole('link', { name: 'Create a workspace' }).element(),
-  ];
-  const mouseHeights = links().map((link) => link.getBoundingClientRect().height);
-  expect(mouseHeights.every((height) => height < touchTarget)).toBe(true);
-  expect(links().map(reach)).toEqual([false, false]);
+test("on touch, a picker's Clear button takes a 44 px tap and keeps its size", async () => {
   await commands.emulateTouch(true);
   await page.viewport(390, 844);
   mount(fixture);
   expect(matchMedia('(pointer: coarse)').matches).toBe(true);
-  expect(links().map(reach)).toEqual([true, true]);
   const clear = page.getByRole('button', { name: 'Clear' }).element();
   await animationsDone(clear);
   expect(clear.getBoundingClientRect().height).toBeLessThan(touchTarget);

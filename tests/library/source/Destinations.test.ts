@@ -126,3 +126,90 @@ test('a destination with href is a link through the LinkProvider', () => {
     assert.equal(plain.attributes['data-router-link'], undefined);
   }
 });
+
+test('a destination takes its own item props and can be disabled, keeping its name and aria-current', () => {
+  const destinations = [
+    {
+      label: 'Docs',
+      icon: h(IconHome),
+      href: '/docs',
+      current: true,
+      count: 2,
+      itemProps: {
+        target: '_blank',
+        rel: 'noopener',
+        title: 'Open the docs',
+        className: 'own-item',
+        'data-testid': 'docs',
+      },
+    },
+    { label: 'Reports', icon: h(IconInbox), href: '/reports', disabled: true },
+    { label: 'Billing', icon: h(IconSettings), onClick() {}, disabled: true },
+  ];
+  for (const [form, Navigation] of Object.entries(forms)) {
+    const nav = render(h(Navigation, { destinations }));
+    const docs = item(nav, 'Docs');
+    assert.equal(docs.attributes.target, '_blank');
+    assert.equal(docs.attributes.rel, 'noopener');
+    assert.equal(docs.attributes.title, 'Open the docs');
+    assert.equal(docs.attributes['data-testid'], 'docs');
+    assert.ok(hasClass(docs, 'own-item') && hasClass(docs, `env-navigation-${form}-item`));
+    assert.equal(docs.attributes['aria-current'], 'page');
+    assert.equal(docs.attributes['aria-label'], 'Docs, 2 new');
+    const reports = item(nav, 'Reports');
+    assert.equal(reports.tag, 'a');
+    assert.equal(reports.attributes.href, undefined);
+    assert.equal(reports.attributes['aria-disabled'], 'true');
+    assert.equal(reports.attributes.tabindex, '-1');
+    assert.equal(reports.attributes['data-disabled'], '');
+    const billing = item(nav, 'Billing');
+    assert.equal(billing.tag, 'button');
+    assert.equal(billing.attributes.disabled, '');
+  }
+});
+
+test('a label of any content keeps its text in textValue for the key and the counted name', () => {
+  const beta = [
+    {
+      label: h('span', null, 'Insights ', h('mark', null, 'Beta')),
+      textValue: 'Insights',
+      icon: h(IconInbox),
+      count: 4,
+      onClick() {},
+    },
+  ];
+  for (const [form, Navigation] of Object.entries(forms)) {
+    const nav = render(h(Navigation, { destinations: beta }));
+    const insights = items(nav)[0];
+    assert.equal(insights.attributes['aria-label'], 'Insights, 4 new');
+    const label = all(insights, (each) => hasClass(each, `env-navigation-${form}-label`))[0];
+    assert.equal(all(label, (each) => each.tag === 'mark').length, 1);
+  }
+});
+
+test('a count of true shows a dot with no number, and the name says the destination has something new', () => {
+  const activity = [
+    { label: 'Activity', icon: h(IconInbox), count: true, onClick() {} },
+    { label: 'Home', icon: h(IconHome), onClick() {} },
+  ];
+  for (const form of ['drawer', 'rail', 'bar']) {
+    const nav = render(h(forms[form], { destinations: activity }));
+    const entry = item(nav, 'Activity');
+    assert.equal(entry.attributes['aria-label'], 'Activity, new');
+    const dots = all(entry, (each) => hasClass(each, `env-navigation-${form}-count`));
+    assert.equal(dots.length, 1);
+    assert.equal(dots[0].attributes['data-dot'], '');
+    assert.equal(textOf(dots[0]), '');
+    assert.equal(textOf(entry), 'Activity');
+  }
+});
+
+test('with labels as tooltips, Rail and Bar mark the landmark and keep each label naming its destination', () => {
+  for (const form of ['rail', 'bar']) {
+    const nav = render(h(forms[form], { destinations: mail, labels: 'tooltip' }));
+    assert.equal(nav.attributes['data-labels'], 'tooltip');
+    assert.equal(textOf(item(nav, 'Drafts')), 'Drafts');
+    const shown = render(h(forms[form], { destinations: mail }));
+    assert.equal(shown.attributes['data-labels'], undefined);
+  }
+});

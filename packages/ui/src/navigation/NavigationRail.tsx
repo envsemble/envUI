@@ -3,6 +3,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
+import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import {
@@ -11,7 +12,7 @@ import {
   useNavigationMessages,
   type DestinationClasses,
 } from './internal/DestinationItem.js';
-import type { Destination } from './destinations.js';
+import type { Destination, NavigationLabels } from './destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
 import '../styles/Base.css';
 import '../styles/NavigationRail.css';
@@ -48,6 +49,13 @@ export interface NavigationRailProps
    */
   background?: NavigationBackground;
   /**
+   * How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover
+   * and keyboard focus, for an icon-only rail such as a code editor's activity bar. The label still
+   * names each destination.
+   * @default 'shown'
+   */
+  labels?: NavigationLabels;
+  /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
    */
@@ -64,6 +72,7 @@ export function NavigationRail({
   header,
   footer,
   background = 'default',
+  labels = 'shown',
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
@@ -80,6 +89,7 @@ export function NavigationRail({
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-rail', className)}
       data-background={backgroundAttribute(background)}
+      data-labels={labels === 'tooltip' ? labels : undefined}
       align="center"
       gap={4}
     >
@@ -88,11 +98,22 @@ export function NavigationRail({
         <>
           {header != null && <Slot className="env-navigation-rail-header">{header}</Slot>}
           <Column render={<ul />} className="env-navigation-rail-list" align="stretch" gap={1}>
-            {destinations.map((destination) => (
-              <li key={destinationKey(destination)}>
+            {destinations.map((destination) => {
+              const item = (
                 <DestinationItem classes={railClasses} destination={destination} topLevel />
-              </li>
-            ))}
+              );
+              return (
+                <li key={destinationKey(destination)}>
+                  {labels === 'tooltip' ? (
+                    <CutLabelTooltip cut label={destination.label} side="inline-end">
+                      {item}
+                    </CutLabelTooltip>
+                  ) : (
+                    item
+                  )}
+                </li>
+              );
+            })}
           </Column>
           {footer != null && <Slot className="env-navigation-rail-footer">{footer}</Slot>}
         </>,

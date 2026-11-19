@@ -49,6 +49,13 @@ export interface HoverCardProps
    * another control keeps its own look.
    */
   trigger: ReactElement;
+  /**
+   * Whether a text trigger takes the quiet dotted underline, env-hover-detail, that says it shows
+   * more on hover or focus. False leaves its class alone, for text styled its own way, such as
+   * @mentions in a feed.
+   * @default true
+   */
+  hoverDetail?: boolean;
   /** The details. Supplementary: never the only place essential information appears. */
   children: ReactNode;
   /**
@@ -114,6 +121,7 @@ export function HoverCard({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  hoverDetail = true,
   skeleton = false,
   className,
   ...popupProps
@@ -131,6 +139,7 @@ export function HoverCard({
     ? (trigger.props as { children?: unknown }).children
     : trigger;
   const textTrigger = isValidElement(control) && isTextTrigger(control);
+  const underlined = hoverDetail && textTrigger;
   reportInDevelopment(
     () =>
       process.env.NODE_ENV !== 'production' &&
@@ -158,7 +167,7 @@ export function HoverCard({
         <BasePreviewCard.Trigger
           ref={triggerRef}
           render={trigger}
-          className={textTrigger ? hoverDetailClass : undefined}
+          className={underlined ? hoverDetailClass : undefined}
           delay={delay}
           closeDelay={closeDelay}
           onFocus={openWithoutHoverDelayOnKeyboardFocus}

@@ -1,9 +1,17 @@
 'use client';
 
-import { Children, type ComponentPropsWithRef, type ReactNode } from 'react';
+import {
+  Children,
+  useLayoutEffect,
+  useRef,
+  type ComponentPropsWithRef,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
+import { setRef } from '../internal/react/setRef.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { useLinkComponent } from '../internal/provider/LinkComponentContext.js';
 import { useEnvUI, useMessages } from '../internal/provider/EnvUIContext.js';
@@ -29,6 +37,12 @@ export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> 
    * @default 'prev' on Pager.Previous, 'next' on Pager.Next
    */
   rel?: string;
+  /**
+   * The direction label above the title, such as Previous chapter or Back to setup, for this link
+   * alone; null leaves it out.
+   * @default 'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next
+   */
+  label?: ReactNode;
 }
 
 /** The link to the previous page. */
@@ -42,6 +56,7 @@ function PagerLink({
   children,
   className,
   rel,
+  label,
   ...props
 }: LinkProps & { direction: 'previous' | 'next' }) {
   const LinkComponent = useLinkComponent();
@@ -59,7 +74,9 @@ function PagerLink({
     >
       {isPrevious && symbol}
       <span className="env-pager-link-copy">
-        <span className="env-pager-link-label">{captionWithoutMergingNamespace}</span>
+        {label !== null && (
+          <span className="env-pager-link-label">{label ?? captionWithoutMergingNamespace}</span>
+        )}
         <span className="env-pager-link-title">{children}</span>
       </span>
       {!isPrevious && symbol}
@@ -88,8 +105,28 @@ export interface RootProps extends ComponentPropsWithRef<'nav'> {
   'aria-label'?: string;
 }
 
-function Root({ children, className, 'aria-label': ariaLabel, ...props }: RootProps) {
+function useStackedOnceWrapped(pager: RefObject<HTMLElement | null>, children: ReactNode) {
+  useLayoutEffect(() => {
+    const element = pager.current;
+    if (!element || typeof ResizeObserver === 'undefined') return;
+    let measuredWidth = -1;
+    const stackWhereLinksWrap = new ResizeObserver(() => {
+      if (element.clientWidth === measuredWidth) return;
+      measuredWidth = element.clientWidth;
+      delete element.dataset.stacked;
+      const links = [...element.children] as HTMLElement[];
+      const wrapped = links.some((link) => link.offsetTop !== links[0].offsetTop);
+      if (wrapped) element.dataset.stacked = '';
+    });
+    stackWhereLinksWrap.observe(element);
+    return () => stackWhereLinksWrap.disconnect();
+  }, [pager, children]);
+}
+
+function Root({ children, className, 'aria-label': ariaLabel, ref, ...props }: RootProps) {
   const messages = useMessages('pager', pager);
+  const element = useRef<HTMLElement>(null);
+  useStackedOnceWrapped(element, children);
   if (Children.toArray(children).length === 0) return null;
 
   return (
@@ -101,6 +138,10 @@ function Root({ children, className, 'aria-label': ariaLabel, ...props }: RootPr
       render={
         <nav
           {...props}
+          ref={(node: HTMLElement | null) => {
+            element.current = node;
+            setRef(ref, node);
+          }}
           aria-label={ariaLabel ?? messages.label}
           className={classNames('env-pager', className)}
         />
@@ -113,7 +154,8 @@ function Root({ children, className, 'aria-label': ariaLabel, ...props }: RootPr
 
 /**
  * A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous
- * and Pager.Next children; either one can be left out, and without any it renders nothing.
+ * and Pager.Next children; either one can be left out, and without any it renders nothing. Where
+ * the two don't fit side by side, they stack as rows of the pager's width, the previous first.
  */
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Pager.Root');
 /**

@@ -19,6 +19,10 @@
     --env-icon-size: var(--env-icon-size-lg);
     margin-block-end: var(--env-space-2);
   }
+  .env-empty-state-illustration {
+    max-inline-size: 100%;
+    margin-block-end: var(--env-space-4);
+  }
   .env-empty-state-heading {
     max-inline-size: 100%;
     color: var(--env-color-fg-default);

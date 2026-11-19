@@ -28,6 +28,7 @@ import {
   destinationKey,
   DestinationItem,
   destinationSections,
+  destinationText,
   useNavigationMessages,
   type DestinationClasses,
 } from './internal/DestinationItem.js';
@@ -74,6 +75,12 @@ export interface NavigationDrawerProps
   header?: ReactNode;
   /** Content below the destinations, at the bottom of the drawer, such as the account's menu. */
   footer?: ReactNode;
+  /**
+   * Content after a group's heading, outside it, such as an IconButton that adds a project to
+   * Projects, a Menu of the group's actions or a count. It keeps its size, and the heading gives
+   * way to it.
+   */
+  groupEnd?: (group: string) => ReactNode;
   /**
    * The level of the groups' headings, which assistive technology lists with the page's headings:
    * one below the heading the drawer sits under, such as 3 in a drawer under an h2.
@@ -157,6 +164,7 @@ function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
 
 interface DrawerState {
   oneLine: boolean;
+  groupEnd: ((group: string) => ReactNode) | undefined;
   expanded: ReadonlySet<string>;
   setExpanded: (key: string, open: boolean) => void;
 }
@@ -262,7 +270,7 @@ function DrawerBranch({
           toggle={
             <Collapsible.Trigger
               className="env-navigation-drawer-toggle"
-              aria-label={messages.contents({ label: destination.label })}
+              aria-label={messages.contents({ label: destinationText(destination) })}
             >
               {chevron}
             </Collapsible.Trigger>
@@ -318,16 +326,29 @@ function Section({
   const heading = useRef<HTMLHeadingElement>(null);
   const cut = useCut(heading, state.oneLine);
   const Heading = `h${level}` as const;
+  const end = state.groupEnd?.(group);
+  const headingElement = (
+    <Heading
+      ref={heading}
+      className="env-navigation-drawer-group-label"
+      id={headingId}
+      title={cut ? group : undefined}
+    >
+      {group}
+    </Heading>
+  );
   return (
     <Column render={<li />} className="env-navigation-drawer-section" align="stretch" gap={1}>
-      <Heading
-        ref={heading}
-        className="env-navigation-drawer-group-label"
-        id={headingId}
-        title={cut ? group : undefined}
-      >
-        {group}
-      </Heading>
+      {end != null && end !== false ? (
+        <div className="env-navigation-drawer-group-row">
+          {headingElement}
+          <Slot className="env-navigation-drawer-group-end" layout="row" shrink="never">
+            {end}
+          </Slot>
+        </div>
+      ) : (
+        headingElement
+      )}
       <Column render={<ul />} aria-labelledby={headingId} align="stretch" gap={1}>
         {items.map((destination) => (
           <DrawerItem key={destinationKey(destination)} destination={destination} state={state} />
@@ -416,6 +437,7 @@ export function NavigationDrawer({
   onExpandedChange,
   header,
   footer,
+  groupEnd,
   headingLevel = 2,
   background = 'default',
   'aria-label': label,
@@ -440,7 +462,7 @@ export function NavigationDrawer({
     onExpandedChange,
   );
   const listKeptAcrossResizeMoves = useMemo(() => {
-    const state: DrawerState = { oneLine: resizable, expanded, setExpanded };
+    const state: DrawerState = { oneLine: resizable, groupEnd, expanded, setExpanded };
     return (
       <Column render={<ul />} className="env-navigation-drawer-list" align="stretch" gap={1}>
         {destinationSections(destinations).map((section, index) =>
@@ -464,7 +486,7 @@ export function NavigationDrawer({
         )}
       </Column>
     );
-  }, [destinations, resizable, expanded, setExpanded, headingLevel]);
+  }, [destinations, resizable, groupEnd, expanded, setExpanded, headingLevel]);
   const resize = useResizableWidth({
     width: controlledWidth,
     defaultWidth,

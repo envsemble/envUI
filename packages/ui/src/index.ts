@@ -49,7 +49,12 @@ export * from './forms/SearchField.js';
 export * from './navigation/NavigationBar.js';
 export * from './navigation/NavigationRail.js';
 export * from './navigation/NavigationDrawer.js';
-export type { Destination, NavigationDrawerDestination } from './navigation/destinations.js';
+export type {
+  Destination,
+  DestinationElementProps,
+  NavigationDrawerDestination,
+  NavigationLabels,
+} from './navigation/destinations.js';
 export type { NavigationBackground } from './navigation/navigationBackground.js';
 export * as Pager from './navigation/Pager.js';
 export {

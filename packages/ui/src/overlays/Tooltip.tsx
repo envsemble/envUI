@@ -86,6 +86,13 @@ export interface TooltipProps extends Omit<
   /** Class of the tooltip's popup, beside env-tooltip. */
   popupClassName?: string;
   /**
+   * Whether a text trigger takes the quiet dotted underline, env-hover-detail, that says it shows
+   * more on hover or focus. False leaves its class alone, for text styled its own way, such as
+   * @mentions in a feed.
+   * @default true
+   */
+  hoverDetail?: boolean;
+  /**
    * The side of the control it opens on: top, bottom, left, right, or inline-start and inline-end,
    * which follow the text direction. Where the window has no room, it flips to the other side.
    * @default 'top'
@@ -134,7 +141,15 @@ function componentNameForReport(type: unknown): string {
 
 type Forwarded = Omit<
   TooltipProps,
-  'content' | 'children' | 'side' | 'align' | 'delay' | 'popupClassName' | 'open' | 'onOpenChange'
+  | 'content'
+  | 'children'
+  | 'side'
+  | 'align'
+  | 'delay'
+  | 'popupClassName'
+  | 'open'
+  | 'onOpenChange'
+  | 'hoverDetail'
 >;
 
 function useControlWithForwardedProps(children: ReactElement<TriggerProps>, forwarded: Forwarded) {
@@ -173,6 +188,7 @@ export function Tooltip(props: TooltipProps) {
     open,
     onOpenChange,
     popupClassName,
+    hoverDetail = true,
     ...forwarded
   } = props;
   const hoverCardTrigger = useContext(HoverCardTriggerContext);
@@ -214,6 +230,7 @@ export function Tooltip(props: TooltipProps) {
       open={open}
       onOpenChange={onOpenChange}
       popupClassName={popupClassName}
+      hoverDetail={hoverDetail}
       forwarded={forwarded}
     >
       {children}
@@ -273,6 +290,7 @@ function TooltipTrigger({
   open: controlledOpen,
   onOpenChange,
   popupClassName,
+  hoverDetail,
   forwarded,
 }: {
   content: ReactNode;
@@ -284,6 +302,7 @@ function TooltipTrigger({
   open: boolean | undefined;
   onOpenChange: TooltipProps['onOpenChange'];
   popupClassName?: string;
+  hoverDetail: boolean;
   forwarded: Forwarded;
 }) {
   const control = useControlWithForwardedProps(children, forwarded);
@@ -357,12 +376,13 @@ function TooltipTrigger({
             ) : (
               cloneElement(control, {
                 'aria-describedby': describedBy,
-                ...(isTextTrigger(children) && {
-                  className: classNames(
-                    (control.props as { className?: string }).className,
-                    hoverDetailClass,
-                  ),
-                }),
+                ...(hoverDetail &&
+                  isTextTrigger(children) && {
+                    className: classNames(
+                      (control.props as { className?: string }).className,
+                      hoverDetailClass,
+                    ),
+                  }),
               } as TriggerProps)
             )
           }

@@ -23,14 +23,24 @@ export interface AlertProps
    * @default 'info'
    */
   tone?: AlertTone;
-  /** A short heading for the message, such as "Sync paused", above the message. */
-  title?: string;
+  /**
+   * A short heading for the message, such as "Sync paused", above the message: text, or content
+   * such as a branch name in Code or a link.
+   */
+  title?: ReactNode;
   /** The message: what it means and what people can do. */
   children?: ReactNode;
   /** Replaces the tone's icon; null or false shows none. */
   icon?: ReactNode;
   /** Actions below the message, such as a Button or a Link, in a row that wraps. */
   actions?: ReactNode;
+  /**
+   * Where the actions go: below the message, or at the end of the alert's row, before the dismiss
+   * button, as in a one-line banner such as "Sync paused. Resume". At the end, they move below the
+   * message where the alert is too narrow for both.
+   * @default 'below'
+   */
+  actionsPlacement?: 'below' | 'end';
   /** Shows a dismiss button that calls it; the application removes the alert. */
   onDismiss?: () => void;
   /**
@@ -64,6 +74,7 @@ export function Alert(allProps: AlertProps) {
     children,
     icon,
     actions,
+    actionsPlacement = 'below',
     onDismiss,
     dismissLabel,
     announce = false,
@@ -75,6 +86,18 @@ export function Alert(allProps: AlertProps) {
   const hasMessage = children != null || given(allProps, 'children');
   const role = tone === 'info' || tone === 'success' ? 'status' : announce ? 'alert' : undefined;
   const symbol = icon === undefined ? toneIcons[tone] : icon;
+  const actionSlot = actions != null && (
+    <Slot className="env-alert-action" layout="row">
+      {actions}
+    </Slot>
+  );
+  const content = (
+    <Grid gap={1} className="env-alert-content">
+      {hasTitle && <div className="env-alert-title">{title}</div>}
+      {hasMessage && <Slot className="env-alert-message">{children}</Slot>}
+      {actionsPlacement === 'below' && actionSlot}
+    </Grid>
+  );
   return (
     <Grid
       columns="auto minmax(0, 1fr) auto"
@@ -99,15 +122,14 @@ export function Alert(allProps: AlertProps) {
               <DecorativeIcon>{symbol}</DecorativeIcon>
             </span>
           )}
-          <Grid gap={1} className="env-alert-content">
-            {hasTitle && <div className="env-alert-title">{title}</div>}
-            {hasMessage && <Slot className="env-alert-message">{children}</Slot>}
-            {actions != null && (
-              <Slot className="env-alert-action" layout="row">
-                {actions}
-              </Slot>
-            )}
-          </Grid>
+          {actions != null && actionsPlacement === 'end' ? (
+            <div className="env-alert-row">
+              {content}
+              {actionSlot}
+            </div>
+          ) : (
+            content
+          )}
           {onDismiss && <AlertDismiss label={dismissLabel} onDismiss={onDismiss} />}
         </>,
       )}

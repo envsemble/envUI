@@ -4,6 +4,7 @@ import { Button, Dialog, DialogClose, ToastProvider, useToast } from '@envsemble
 function ToastTriggers() {
   const toast = useToast();
   const [actionCount, setActionCount] = useState(0);
+  const [refused, setRefused] = useState('');
   return (
     <section className="fixture-section">
       <h2>Managed notifications</h2>
@@ -49,6 +50,41 @@ function ToastTriggers() {
           }
         >
           Show action notice
+        </Button>
+        <Button
+          data-testid="toast-rich"
+          onClick={() =>
+            toast.show({
+              message: (
+                <>
+                  <strong>report.pdf</strong> uploaded
+                </>
+              ),
+              text: 'report.pdf uploaded',
+              icon: <span data-testid="toast-own-icon">R</span>,
+              actions: [
+                { label: 'Undo upload', onClick: () => setActionCount((count) => count + 1) },
+                { label: 'View report', href: '#report' },
+              ],
+            })
+          }
+        >
+          Show rich notice
+        </Button>
+        <Button
+          data-testid="toast-too-many"
+          onClick={() => {
+            try {
+              toast.show({
+                message: 'Three actions',
+                actions: ['One', 'Two', 'Three'].map((label) => ({ label, onClick() {} })),
+              });
+            } catch (error) {
+              setRefused(error instanceof RangeError ? error.message : 'other');
+            }
+          }}
+        >
+          Show a notice with three actions
         </Button>
         <Button
           data-testid="toast-top"
@@ -116,6 +152,7 @@ function ToastTriggers() {
         </Button>
       </div>
       <output data-testid="toast-action-count">{actionCount}</output>
+      <output data-testid="toast-refused">{refused}</output>
     </section>
   );
 }

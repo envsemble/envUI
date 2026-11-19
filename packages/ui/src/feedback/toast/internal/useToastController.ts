@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useMemo, useRef } from 'react';
 import {
+  toastActions,
   toastPlacements,
   type ToastDelivery,
   type ToastEntry,
@@ -67,7 +68,8 @@ export function useToastController(defaultPlacement: ToastPlacement) {
         const delivery = placementStores.current.get(entry.placement);
         if (!delivery) return true;
         const durationMs =
-          entry.duration ?? (entry.tone === 'danger' || entry.action ? Infinity : 5000);
+          entry.duration ??
+          (entry.tone === 'danger' || toastActions(entry).length > 0 ? Infinity : 5000);
         if (durationMs > 0 && Number.isFinite(durationMs)) {
           dismissalTimers.current.set(entry.id, {
             durationMs,
@@ -119,6 +121,8 @@ export function useToastController(defaultPlacement: ToastPlacement) {
       const placement = notification.placement ?? currentDefaultPlacement.current;
       if (!toastPlacements.includes(placement))
         throw new RangeError('Unsupported toast placement.');
+      if ((notification.actions?.length ?? 0) > 2)
+        throw new RangeError('A toast offers at most two actions.');
       const id = `${notificationIdPrefix}-toast-${++notificationSequence.current}`;
       const entry: ToastEntry = {
         ...notification,

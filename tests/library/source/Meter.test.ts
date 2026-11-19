@@ -32,3 +32,19 @@ test('meters and progress bars read their values, Base UI’s formatted value by
   const uploading = withRole(h(Progress, { label: 'Uploading', value: 30 }), 'progressbar');
   assert.match(uploading.attributes['aria-valuetext'], /30/);
 });
+
+test('a progress bar without a label or value text is a bare bar, named by aria-label, with no row above it', () => {
+  const bare = render(h(Progress, { value: 30, 'aria-label': 'Uploading report.pdf' }));
+  const bar = elementsOf(bare).find((each) => each.attributes.role === 'progressbar');
+  assert.equal(bar.attributes['aria-label'], 'Uploading report.pdf');
+  assert.equal(
+    elementsOf(bare).some((each) => hasClass(each, 'env-progress-header')),
+    false,
+  );
+  assert.equal(
+    elementsOf(bare).some((each) => hasClass(each, 'env-progress-label')),
+    false,
+  );
+  const labelled = render(h(Progress, { value: 30, label: 'Uploading' }));
+  assert.ok(elementsOf(labelled).some((each) => hasClass(each, 'env-progress-header')));
+});

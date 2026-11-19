@@ -38,17 +38,33 @@ export interface DocumentTabsItem {
   value: string;
   /** The document's name, which names the tab and its close button. */
   label: string;
+  /**
+   * What the tab shows in place of the label, such as a dimmed folder before a duplicate file's
+   * name. The label still names the tab.
+   */
+  content?: ReactNode;
+  /**
+   * Content after the tab's name, such as a dot for unsaved changes or a status Badge. It keeps its
+   * size and is left out of the tab's name, which the label gives.
+   */
+  end?: ReactNode;
   /** Optional leading icon. */
   icon?: ReactNode;
   /** The tab's native tooltip, such as the full path; the label by default. */
   tooltip?: string;
   /** A preview tab shows its label in italics until it is pinned. */
   preview?: boolean;
+  /**
+   * The tab can be closed: its close button, a middle click, Delete and Backspace, and Close in its
+   * context menu. False keeps it open, such as a pinned or welcome tab.
+   * @default true
+   */
+  closable?: boolean;
 }
 
 export interface DocumentTabsProps extends Omit<
   ComponentPropsWithRef<'div'>,
-  'children' | 'defaultValue' | 'onChange' | 'aria-label'
+  'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu'
 > {
   /**
    * The active document, in the panel under the strip, which the active tab joins: anything the
@@ -108,6 +124,12 @@ export interface DocumentTabsProps extends Omit<
    * @default 'Tab actions', or EnvUIProvider's messages.documentTabs.contextMenu
    */
   contextMenuLabel?: string;
+  /**
+   * The application's own items for the context menu of the tab people open it on, or of the strip
+   * around the tabs when the tab is null, such as Close others or Copy path. They come after the
+   * built-in items, past a separator.
+   */
+  contextMenu?: (tab: DocumentTabsItem | null) => ReactNode;
 }
 
 /**
@@ -129,6 +151,7 @@ export function DocumentTabs({
   onCloseAll,
   closeAllLabel,
   contextMenuLabel,
+  contextMenu,
   className,
   children,
   ...props
@@ -231,12 +254,24 @@ export function DocumentTabs({
                 ?.closest('.env-document-tabs-item')
                 ?.querySelector<HTMLElement>('[role="tab"]');
               const id = tab?.dataset.tabId;
+              const item = id === undefined ? undefined : items.find((one) => one.value === id);
               const onTab = tab != null && id !== undefined;
+              const own = contextMenu?.(item ?? null);
+              const ownItems = own != null && own !== false ? own : undefined;
               const offersMenu = onTab || onCloseAll !== undefined;
-              if (!offersMenu) return null;
+              if (!offersMenu) return ownItems ?? null;
               return (
                 <TabMenuItems
-                  tab={onTab ? { id, label: tab.getAttribute('aria-label') ?? '' } : undefined}
+                  tab={
+                    onTab
+                      ? {
+                          id,
+                          label: tab.getAttribute('aria-label') ?? '',
+                          closable: item?.closable !== false,
+                        }
+                      : undefined
+                  }
+                  ownItems={ownItems}
                   closeName={closeName}
                   onClose={(tabId) => {
                     closeFocus.onCloseFromMenu();
@@ -288,7 +323,7 @@ export function DocumentTabs({
             }}
           >
             {dragged.icon != null && <DecorativeIcon>{dragged.icon}</DecorativeIcon>}
-            <span className="env-document-tabs-tab-label">{dragged.label}</span>
+            <span className="env-document-tabs-tab-label">{dragged.content ?? dragged.label}</span>
           </div>
         )}
       </BaseTabs.Root>
@@ -332,6 +367,7 @@ function DocumentTab({
   drop: 'before' | 'after' | undefined;
   onPointerDown: (event: PointerEvent<HTMLDivElement>) => void;
 }) {
+  const closable = item.closable !== false;
   return (
     <div
       className="env-document-tabs-item"
@@ -343,7 +379,7 @@ function DocumentTab({
       onAuxClick={(event) => {
         if (event.button !== middleButton) return;
         event.preventDefault();
-        onClose(item.value);
+        if (closable) onClose(item.value);
       }}
     >
       <BaseTabs.Tab
@@ -352,35 +388,43 @@ function DocumentTab({
         className="env-document-tabs-tab"
         aria-label={item.label}
         aria-controls={active ? panelId : undefined}
-        aria-keyshortcuts="Delete Backspace"
+        aria-keyshortcuts={closable ? 'Delete Backspace' : undefined}
         title={item.tooltip ?? item.label}
         tabIndex={focusable ? 0 : -1}
         data-tab-id={item.value}
         data-preview={flag(item.preview)}
         onDoubleClick={() => onPin?.(item.value)}
         onKeyDown={(event: KeyboardEvent<HTMLElement>) => {
-          if (closesTab(event)) onClose(item.value);
+          if (closable && closesTab(event)) onClose(item.value);
         }}
       >
         {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
-        <span className="env-document-tabs-tab-label">{item.label}</span>
+        <span className="env-document-tabs-tab-label">{item.content ?? item.label}</span>
+        {item.end != null && (
+          <Slot className="env-document-tabs-tab-end" element="span" layout="row" shrink="never">
+            {item.end}
+          </Slot>
+        )}
       </BaseTabs.Tab>
-      <IconButton
-        variant="ghost"
-        icon={<IconClose />}
-        aria-label={closeName(item.label)}
-        aria-hidden
-        tabIndex={-1}
-        title={closeName(item.label)}
-        className="env-document-tabs-close"
-        onClick={() => onClose(item.value)}
-      />
+      {closable && (
+        <IconButton
+          variant="ghost"
+          icon={<IconClose />}
+          aria-label={closeName(item.label)}
+          aria-hidden
+          tabIndex={-1}
+          title={closeName(item.label)}
+          className="env-document-tabs-close"
+          onClick={() => onClose(item.value)}
+        />
+      )}
     </div>
   );
 }
 
 function TabMenuItems({
   tab,
+  ownItems,
   closeName,
   onClose,
   onMove,
@@ -389,7 +433,8 @@ function TabMenuItems({
   moveLeftLabel,
   moveRightLabel,
 }: {
-  tab: { id: string; label: string } | undefined;
+  tab: { id: string; label: string; closable: boolean } | undefined;
+  ownItems: ReactNode;
   closeName: (label: string) => string;
   onClose: (id: string) => void;
   onMove: ((id: string, side: 'left' | 'right') => void) | undefined;
@@ -400,7 +445,9 @@ function TabMenuItems({
 }) {
   return (
     <>
-      {tab && <Menu.Item onClick={() => onClose(tab.id)}>{closeName(tab.label)}</Menu.Item>}
+      {tab?.closable && (
+        <Menu.Item onClick={() => onClose(tab.id)}>{closeName(tab.label)}</Menu.Item>
+      )}
       {tab && onMove && (
         <>
           <Menu.Item onClick={() => onMove(tab.id, 'left')} disabled={!canMove(tab.id, 'left')}>
@@ -415,6 +462,12 @@ function TabMenuItems({
         <Menu.Item onClick={closeAll.onClick} disabled={closeAll.disabled}>
           {closeAll.label}
         </Menu.Item>
+      )}
+      {ownItems !== undefined && (
+        <>
+          {(tab?.closable || (tab && onMove) || closeAll) && <Menu.Separator />}
+          {ownItems}
+        </>
       )}
     </>
   );

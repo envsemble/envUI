@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { classNames } from '../../internal/classNames.js';
 import { flag } from '../../internal/flag.js';
 import { Slot } from '../../internal/layout/Slot.js';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
@@ -36,8 +37,10 @@ export function TreeRow({
   top,
   leaving,
 }: TreeRowProps) {
+  const { className, style, ...rowProps } = item.rowProps ?? {};
   return (
     <div
+      {...rowProps}
       id={leaving ? undefined : id}
       role="treeitem"
       aria-level={item.depth + 1}
@@ -47,11 +50,12 @@ export function TreeRow({
       aria-selected={selected}
       aria-disabled={item.disabled || undefined}
       title={item.tooltip}
-      className="env-tree-item"
+      className={classNames('env-tree-item', className)}
       data-id={item.value}
       data-highlighted={flag(!leaving && highlighted)}
       data-starting-style={flag(arriving)}
       style={{
+        ...style,
         '--_tree-depth': item.depth,
         transform: `translateY(${top}px)`,
       }}

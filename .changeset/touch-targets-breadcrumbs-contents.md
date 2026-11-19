@@ -2,4 +2,4 @@
 '@envsemble/envui': patch
 ---
 
-On touch screens, a Breadcrumbs link takes a 44 px tap area above and below its text, and a TableOfContents link is at least 44 px tall, as every other control already was. Under a mouse they look as before.
+Breadcrumbs and TableOfContents: on a touch screen, a breadcrumb's link has a touch target of 2.75 rem (44 px) around it, and a wrapping trail's lines sit far enough apart for it; each TableOfContents link is 2.75 rem tall. With a mouse both look as before.

@@ -122,6 +122,10 @@
           "slot": true
         },
         {
+          "class": "env-alert-row",
+          "description": "The row of the title and message with the actions at its end, which wraps them below where it runs out of room."
+        },
+        {
           "class": "env-alert-title",
           "description": "The alert's title."
         }
@@ -1979,6 +1983,11 @@
           "description": "The row of actions at the bottom."
         },
         {
+          "class": "env-dialog-actions-start",
+          "description": "The slot of the content at the start of the actions' row.",
+          "slot": true
+        },
+        {
           "class": "env-dialog-backdrop",
           "description": "The backdrop behind a modal dialog."
         },
@@ -1993,6 +2002,16 @@
         {
           "class": "env-dialog-header",
           "description": "The row with the title and the close button."
+        },
+        {
+          "class": "env-dialog-header-end",
+          "description": "The slot of the content at the end of the title's row, before a close button.",
+          "slot": true
+        },
+        {
+          "class": "env-dialog-header-start",
+          "description": "The slot of the content before the title.",
+          "slot": true
         },
         {
           "class": "env-dialog-heading",
@@ -2071,6 +2090,8 @@
       ],
       "uses": [
         "Button",
+        "Icon",
+        "IconButton",
         "Overlay",
         "Skeleton",
         "Surface",
@@ -2172,6 +2193,11 @@
         {
           "class": "env-document-tabs-tab",
           "description": "A tab's button."
+        },
+        {
+          "class": "env-document-tabs-tab-end",
+          "description": "The slot after a tab's title, such as a dot for unsaved changes.",
+          "slot": true
         },
         {
           "class": "env-document-tabs-tab-label",
@@ -2362,6 +2388,11 @@
         {
           "class": "env-empty-state-icon",
           "description": "The slot of the icon above the title.",
+          "slot": true
+        },
+        {
+          "class": "env-empty-state-illustration",
+          "description": "The slot of the illustration above the title, at its own size.",
           "slot": true
         },
         {
@@ -3356,6 +3387,10 @@
           "description": "A destination's count, on the icon's top end; 999+ above 999."
         },
         {
+          "class": "env-navigation-bar-dot",
+          "description": "The dot at the end of a menu item in More whose destination has something new and no count."
+        },
+        {
           "class": "env-navigation-bar-indicator",
           "description": "The rounded rectangle around a destination's icon, filled while the destination is current."
         },
@@ -3397,8 +3432,33 @@
           ]
         },
         {
+          "attribute": "data-disabled",
+          "values": [],
+          "parts": [
+            "env-navigation-bar-item"
+          ]
+        },
+        {
+          "attribute": "data-dot",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-navigation-bar-count"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
+          "parts": [
+            "env-navigation-bar"
+          ]
+        },
+        {
+          "attribute": "data-labels",
+          "values": [
+            "tooltip"
+          ],
           "parts": [
             "env-navigation-bar"
           ]
@@ -3408,7 +3468,10 @@
         "Badge",
         "Icon",
         "Menu",
-        "Skeleton"
+        "Popup",
+        "Skeleton",
+        "Theme",
+        "Tooltip"
       ],
       "colors": [
         {
@@ -3473,8 +3536,17 @@
           "slot": true
         },
         {
+          "class": "env-navigation-drawer-group-end",
+          "description": "The slot of the content after a group's heading, outside it.",
+          "slot": true
+        },
+        {
           "class": "env-navigation-drawer-group-label",
           "description": "A group's label, which names the group's list."
+        },
+        {
+          "class": "env-navigation-drawer-group-row",
+          "description": "A group's heading with the content after it, in one row."
         },
         {
           "class": "env-navigation-drawer-header",
@@ -3526,6 +3598,20 @@
           "values": [],
           "parts": [
             "env-navigation-drawer-item"
+          ]
+        },
+        {
+          "attribute": "data-disabled",
+          "values": [],
+          "parts": [
+            "env-navigation-drawer-item"
+          ]
+        },
+        {
+          "attribute": "data-dot",
+          "values": [],
+          "parts": [
+            "env-navigation-drawer-count"
           ]
         },
         {
@@ -3648,8 +3734,31 @@
           ]
         },
         {
+          "attribute": "data-disabled",
+          "values": [],
+          "parts": [
+            "env-navigation-rail-item"
+          ]
+        },
+        {
+          "attribute": "data-dot",
+          "values": [],
+          "parts": [
+            "env-navigation-rail-count"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
+          "parts": [
+            "env-navigation-rail"
+          ]
+        },
+        {
+          "attribute": "data-labels",
+          "values": [
+            "tooltip"
+          ],
           "parts": [
             "env-navigation-rail"
           ]
@@ -3657,7 +3766,10 @@
       ],
       "uses": [
         "Icon",
-        "Skeleton"
+        "Popup",
+        "Skeleton",
+        "Theme",
+        "Tooltip"
       ],
       "colors": [
         {
@@ -3829,7 +3941,17 @@
           "description": "The title of the page a link leads to."
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-stacked",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-pager"
+          ]
+        }
+      ],
       "uses": [
         "Icon"
       ]
@@ -5756,6 +5878,10 @@
           "description": "A notification's action."
         },
         {
+          "class": "env-toast-actions",
+          "description": "A notification's two actions, side by side."
+        },
+        {
           "class": "env-toast-announcer",
           "description": "The announcements of notifications."
         },
@@ -6577,7 +6703,9 @@
         "Menu",
         "Menubar",
         "MonthPicker",
+        "NavigationBar",
         "NavigationDrawer",
+        "NavigationRail",
         "Popover",
         "RelativeTime",
         "SegmentedControl",

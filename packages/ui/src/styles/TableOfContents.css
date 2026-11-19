@@ -34,16 +34,14 @@
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     overflow-wrap: break-word;
   }
-  @media (pointer: coarse) {
-    .env-table-of-contents-link {
-      box-sizing: border-box;
-      min-block-size: var(--env-control-height-touch);
-      padding-block: max(var(--env-space-1), calc((var(--env-control-height-touch) - 1lh) / 2));
-    }
-  }
   .env-table-of-contents-link:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
+  }
+  @media (pointer: coarse) {
+    .env-table-of-contents-link {
+      padding-block: max(var(--env-space-1), (var(--env-control-height-touch) - 1lh) / 2);
+    }
   }
 
   .env-table-of-contents-wave {

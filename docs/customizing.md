@@ -62,7 +62,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Alert
 
-- Parts: `env-alert`, `env-alert-action` (slot), `env-alert-content`, `env-alert-dismiss`, `env-alert-icon`, `env-alert-message` (slot), `env-alert-title`
+- Parts: `env-alert`, `env-alert-action` (slot), `env-alert-content`, `env-alert-dismiss`, `env-alert-icon`, `env-alert-message` (slot), `env-alert-row`, `env-alert-title`
 - States: `data-env-skeleton` on `env-alert`, `env-alert-message`, `env-alert-title`; `data-tone` (`danger`, `info`, `success`, `warning`)
 - Color properties: `--env-alert-container`, `--env-alert-content`, `--env-alert-outline`, `--env-alert-icon`
 
@@ -199,7 +199,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Dialog
 
-- Parts: `env-dialog`, `env-dialog-actions`, `env-dialog-backdrop`, `env-dialog-content`, `env-dialog-description`, `env-dialog-header`, `env-dialog-heading`, `env-dialog-positioner`, `env-dialog-surface`, `env-dialog-title`
+- Parts: `env-dialog`, `env-dialog-actions`, `env-dialog-actions-start` (slot), `env-dialog-backdrop`, `env-dialog-content`, `env-dialog-description`, `env-dialog-header`, `env-dialog-header-end` (slot), `env-dialog-header-start` (slot), `env-dialog-heading`, `env-dialog-positioner`, `env-dialog-surface`, `env-dialog-title`
 - States: `data-ending-style` on `env-dialog`, `env-dialog-backdrop`; `data-env-skeleton`; `data-placement` (`center`, `top`) on `env-dialog`, `env-dialog-positioner`; `data-starting-style` on `env-dialog`, `env-dialog-backdrop`; `data-tone` (`danger`, `neutral`); `data-width` (`lg`, `md`)
 
 ### DiffStat
@@ -212,7 +212,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### DocumentTabs
 
-- Parts: `env-document-tabs`, `env-document-tabs-close`, `env-document-tabs-drag-image`, `env-document-tabs-end` (slot), `env-document-tabs-item`, `env-document-tabs-list`, `env-document-tabs-panel`, `env-document-tabs-panel-content` (slot), `env-document-tabs-strip`, `env-document-tabs-tab`, `env-document-tabs-tab-label`
+- Parts: `env-document-tabs`, `env-document-tabs-close`, `env-document-tabs-drag-image`, `env-document-tabs-end` (slot), `env-document-tabs-item`, `env-document-tabs-list`, `env-document-tabs-panel`, `env-document-tabs-panel-content` (slot), `env-document-tabs-strip`, `env-document-tabs-tab`, `env-document-tabs-tab-end` (slot), `env-document-tabs-tab-label`
 - States: `data-active` on `env-document-tabs-item`; `data-drop` (`after`, `before`) on `env-document-tabs-item`; `data-first-active`; `data-moving` (`pointer`) on `env-document-tabs-item`; `data-preview` on `env-document-tabs-tab`; `data-reordering` on `env-document-tabs-list`; `data-tab-id` on `env-document-tabs-tab`
 
 ### DropZone
@@ -222,7 +222,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### EmptyState
 
-- Parts: `env-empty-state`, `env-empty-state-actions` (slot), `env-empty-state-description` (slot), `env-empty-state-heading`, `env-empty-state-icon` (slot), `env-empty-state-title` (slot)
+- Parts: `env-empty-state`, `env-empty-state-actions` (slot), `env-empty-state-description` (slot), `env-empty-state-heading`, `env-empty-state-icon` (slot), `env-empty-state-illustration` (slot), `env-empty-state-title` (slot)
 
 ### Field
 
@@ -305,20 +305,20 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### NavigationBar
 
-- Parts: `env-navigation-bar`, `env-navigation-bar-count`, `env-navigation-bar-indicator`, `env-navigation-bar-item`, `env-navigation-bar-label`, `env-navigation-bar-list`, `env-navigation-bar-more`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-bar-item`; `data-env-skeleton`
+- Parts: `env-navigation-bar`, `env-navigation-bar-count`, `env-navigation-bar-dot`, `env-navigation-bar-indicator`, `env-navigation-bar-item`, `env-navigation-bar-label`, `env-navigation-bar-list`, `env-navigation-bar-more`
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-bar-item`; `data-disabled` on `env-navigation-bar-item`; `data-dot` on `env-navigation-bar-count`; `data-env-skeleton`; `data-labels` (`tooltip`)
 - Color properties: `--env-navigation-bar-item-container`, `--env-navigation-bar-item-content`, `--env-navigation-bar-item-icon`, `--env-navigation-bar-item-selected`, `--env-navigation-bar-item-selected-content`
 
 ### NavigationDrawer
 
-- Parts: `env-navigation-drawer`, `env-navigation-drawer-badge` (slot), `env-navigation-drawer-branch`, `env-navigation-drawer-chevron`, `env-navigation-drawer-children`, `env-navigation-drawer-count`, `env-navigation-drawer-end` (slot), `env-navigation-drawer-footer` (slot), `env-navigation-drawer-group-label`, `env-navigation-drawer-header` (slot), `env-navigation-drawer-item`, `env-navigation-drawer-label`, `env-navigation-drawer-list`, `env-navigation-drawer-resize-handle`, `env-navigation-drawer-row`, `env-navigation-drawer-section`, `env-navigation-drawer-toggle`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-drawer-item`; `data-ending-style` on `env-navigation-drawer-children`; `data-env-skeleton`; `data-resizable`; `data-starting-style` on `env-navigation-drawer-children`
+- Parts: `env-navigation-drawer`, `env-navigation-drawer-badge` (slot), `env-navigation-drawer-branch`, `env-navigation-drawer-chevron`, `env-navigation-drawer-children`, `env-navigation-drawer-count`, `env-navigation-drawer-end` (slot), `env-navigation-drawer-footer` (slot), `env-navigation-drawer-group-end` (slot), `env-navigation-drawer-group-label`, `env-navigation-drawer-group-row`, `env-navigation-drawer-header` (slot), `env-navigation-drawer-item`, `env-navigation-drawer-label`, `env-navigation-drawer-list`, `env-navigation-drawer-resize-handle`, `env-navigation-drawer-row`, `env-navigation-drawer-section`, `env-navigation-drawer-toggle`
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-drawer-item`; `data-disabled` on `env-navigation-drawer-item`; `data-dot` on `env-navigation-drawer-count`; `data-ending-style` on `env-navigation-drawer-children`; `data-env-skeleton`; `data-resizable`; `data-starting-style` on `env-navigation-drawer-children`
 - Color properties: `--env-navigation-drawer-item-container`, `--env-navigation-drawer-item-content`, `--env-navigation-drawer-item-icon`, `--env-navigation-drawer-item-selected`, `--env-navigation-drawer-item-selected-content`
 
 ### NavigationRail
 
 - Parts: `env-navigation-rail`, `env-navigation-rail-count`, `env-navigation-rail-footer` (slot), `env-navigation-rail-header` (slot), `env-navigation-rail-indicator`, `env-navigation-rail-item`, `env-navigation-rail-label`, `env-navigation-rail-list`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-rail-item`; `data-env-skeleton`
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-rail-item`; `data-disabled` on `env-navigation-rail-item`; `data-dot` on `env-navigation-rail-count`; `data-env-skeleton`; `data-labels` (`tooltip`)
 - Color properties: `--env-navigation-rail-item-container`, `--env-navigation-rail-item-content`, `--env-navigation-rail-item-icon`, `--env-navigation-rail-item-selected`, `--env-navigation-rail-item-selected-content`
 
 ### Page
@@ -334,6 +334,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Pager
 
 - Parts: `env-pager`, `env-pager-link`, `env-pager-link-copy`, `env-pager-link-label`, `env-pager-link-next`, `env-pager-link-previous`, `env-pager-link-title`
+- States: `data-stacked`
 
 ### Pagination
 
@@ -480,7 +481,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### ToastProvider
 
-- Parts: `env-toast`, `env-toast-action`, `env-toast-announcer`, `env-toast-content`, `env-toast-dismiss`, `env-toast-message`, `env-toast-queued-count`, `env-toast-status-icon`, `env-toast-theme`, `env-toast-viewport`
+- Parts: `env-toast`, `env-toast-action`, `env-toast-actions`, `env-toast-announcer`, `env-toast-content`, `env-toast-dismiss`, `env-toast-message`, `env-toast-queued-count`, `env-toast-status-icon`, `env-toast-theme`, `env-toast-viewport`
 - States: `data-ending-style`; `data-leaving`; `data-limited`; `data-placement` (`bottom-end`, `top-center`) on `env-toast-viewport`; `data-settling` on `env-toast-viewport`; `data-starting-style`; `data-toast-id` on `env-toast`, `env-toast-queued-count`; `data-tone` (`danger`, `info`, `neutral`, `success`)
 - Color properties: `--env-toast-container`, `--env-toast-content`, `--env-toast-outline`
 
@@ -563,7 +564,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 - `--env-popup-opacity`, to set: How much of a frosted popup's fill covers what is behind it.
 - `--env-popup-blur`, to set: How much a frosted popup blurs what shows through it.
 - `--env-popup-shadow`, to set: The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid.
-- Used by: Breadcrumbs, CalendarHeatmap, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationDrawer, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
+- Used by: Breadcrumbs, CalendarHeatmap, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
 
 ### Prose
 

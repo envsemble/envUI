@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { Fragment, useCallback, useLayoutEffect, useState, type ReactNode } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Badge } from '../../../data-display/Badge.js';
 import { Theme, useTheme } from '../../../foundations/Theme.js';
@@ -9,8 +9,8 @@ import { useMessages } from '../../../internal/provider/EnvUIContext.js';
 import { useFormatters } from '../../../internal/provider/useFormatters.js';
 import { useDirection } from '../../../internal/provider/useDirection.js';
 import type { ToastController } from './useToastController.js';
-import type { ToastEntry } from './toastEntry.js';
-import type { ToastPlacement } from '../toastTypes.js';
+import { toastActions, toastText, type ToastEntry } from './toastEntry.js';
+import type { ToastAction, ToastPlacement } from '../toastTypes.js';
 import { usePortalContainer } from '../../../internal/popup/PortalContainerContext.js';
 import { useModalOpen } from '../../../internal/dialog/useModalPresence.js';
 import { Button, IconButton } from '../../../actions/Button.js';
@@ -37,6 +37,38 @@ const statusTheAnnouncerReads = {
 
 function entrySetByController(toast: ToastObject) {
   return toast.data!;
+}
+
+function ActionButtons({
+  entry,
+  button,
+}: {
+  entry: ToastEntry;
+  button: (action: ToastAction, main: boolean) => ReactNode;
+}) {
+  const actions = toastActions(entry);
+  if (actions.length === 0) return null;
+  if (actions.length === 1) return button(actions[0], true);
+  return (
+    <span className="env-toast-actions">
+      {actions.map((action, index) => (
+        <Fragment key={index}>{button(action, index === actions.length - 1)}</Fragment>
+      ))}
+    </span>
+  );
+}
+
+function linkAction(action: ToastAction & { href: string }, main: boolean) {
+  return (
+    <Button
+      variant={main ? 'outline' : 'ghost'}
+      className="env-toast-action"
+      href={action.href}
+      onClick={action.onClick}
+    >
+      {action.label}
+    </Button>
+  );
 }
 
 function idsWaitingBehindHiddenCount(toasts: readonly ToastObject[], limit: number) {
@@ -222,7 +254,9 @@ export function ToastRegion({
         </BaseToast.Viewport>
         <div className="env-toast-announcer" role="status" aria-live="polite" aria-atomic="false">
           {politelyAnnounced.map((toast) => (
-            <div key={toast.id}>{entrySetByController(toast).message}</div>
+            <div key={toast.id}>
+              {toastText(entrySetByController(toast)) ?? entrySetByController(toast).message}
+            </div>
           ))}
         </div>
       </Theme>
@@ -259,13 +293,25 @@ function PictureToast({
     >
       <ToastBody
         tone={entry.tone}
+        icon={entry.icon}
         message={<div className="env-toast-message">{entry.message}</div>}
         action={
-          entry.action && (
-            <Button variant="outline" className="env-toast-action" onClick={entry.action.onClick}>
-              {entry.action.label}
-            </Button>
-          )
+          <ActionButtons
+            entry={entry}
+            button={(action, main) =>
+              action.href !== undefined ? (
+                linkAction({ ...action, href: action.href }, main)
+              ) : (
+                <Button
+                  variant={main ? 'outline' : 'ghost'}
+                  className="env-toast-action"
+                  onClick={action.onClick}
+                >
+                  {action.label}
+                </Button>
+              )
+            }
+          />
         }
         dismiss={
           entry.dismissible !== false && (
@@ -322,23 +368,35 @@ function LiveToast({
     >
       <ToastBody
         tone={entry.tone}
+        icon={entry.icon}
         message={
-          <BaseToast.Title className="env-toast-message" title={entry.message} render={<div />} />
+          <BaseToast.Title
+            className="env-toast-message"
+            title={toastText(entry)}
+            render={<div />}
+          />
         }
         action={
-          entry.action && (
-            <BaseToast.Action
-              render={
-                <Button
-                  variant="outline"
-                  className="env-toast-action"
-                  onClick={entry.action.onClick}
-                />
-              }
-            >
-              {entry.action.label}
-            </BaseToast.Action>
-          )
+          <ActionButtons
+            entry={entry}
+            button={(action, main) =>
+              action.href !== undefined ? (
+                linkAction({ ...action, href: action.href }, main)
+              ) : (
+                <BaseToast.Action
+                  render={
+                    <Button
+                      variant={main ? 'outline' : 'ghost'}
+                      className="env-toast-action"
+                      onClick={action.onClick}
+                    />
+                  }
+                >
+                  {action.label}
+                </BaseToast.Action>
+              )
+            }
+          />
         }
         dismiss={
           entry.dismissible !== false && (
