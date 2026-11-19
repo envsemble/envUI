@@ -61,11 +61,11 @@ interface PaginationOwnProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
   /** Render nothing while every item fits on one page, so neither button has anywhere to go. */
   hideWhenSinglePage?: boolean;
   /**
-   * Writes the range from the first and last item shown, the total, the page and the page count,
+   * Draws the range from the first and last item shown, the total, the page and the page count,
    * for one pager; EnvUIProvider's messages.pagination.range writes it for every pager.
    * @default 1–60 of 245, or 61–120 without total, with numbers in the locale
    */
-  formatRange?: (range: PaginationRange) => ReactNode;
+  renderRange?: (range: PaginationRange) => ReactNode;
   /**
    * The previous button's accessible name and tooltip.
    * @default 'Previous page', or EnvUIProvider's messages.pagination.previous
@@ -135,7 +135,7 @@ export function Pagination({
   pageHref,
   pending = false,
   hideWhenSinglePage = false,
-  formatRange,
+  renderRange,
   previousLabel,
   nextLabel,
   variant = 'ghost',
@@ -234,8 +234,8 @@ export function Pagination({
       }
     >
       <span className="env-pagination-range" dir="auto" aria-live="polite" aria-atomic="true">
-        {formatRange
-          ? formatRange({ start, end, total: count, page: current, pageCount })
+        {renderRange
+          ? renderRange({ start, end, total: count, page: current, pageCount })
           : messages.range({
               start: numbers.format(start),
               end: numbers.format(end),

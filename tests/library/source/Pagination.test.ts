@@ -62,7 +62,7 @@ test('ranges without a total, single pages, empty lists, past the end and in oth
       total: 1234,
       previousLabel: 'Vorherige Seite',
       nextLabel: 'Nächste Seite',
-      formatRange: ({ start, end, total }) =>
+      renderRange: ({ start, end, total }) =>
         `${start.toLocaleString('de')}–${end.toLocaleString('de')} von ${total?.toLocaleString('de')}`,
     }),
   );

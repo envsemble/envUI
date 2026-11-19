@@ -218,7 +218,7 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
       <RelativeTime {...timeProps} nowLabel="moments ago" />
       <CopyButton {...copyProps} onCopied={(copied) => { const typed: string = copied; void typed; }} />
       <CopyButton value="text" size="sm" variant="text">Copy</CopyButton>
-      <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="sm" />
+      <Pagination {...pagerProps} renderRange={describe} hasNextPage pending size="sm" />
     </>;
     void text;
     // @ts-expect-error

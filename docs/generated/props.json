@@ -6227,11 +6227,11 @@
           "description": "Render nothing while every item fits on one page, so neither button has anywhere to go."
         },
         {
-          "name": "formatRange",
+          "name": "renderRange",
           "type": "(range: PaginationRange) => ReactNode",
           "required": false,
           "default": "1–60 of 245, or 61–120 without total, with numbers in the locale",
-          "description": "Writes the range from the first and last item shown, the total, the page and the page count, for one pager; EnvUIProvider's messages.pagination.range writes it for every pager."
+          "description": "Draws the range from the first and last item shown, the total, the page and the page count, for one pager; EnvUIProvider's messages.pagination.range writes it for every pager."
         },
         {
           "name": "previousLabel",
