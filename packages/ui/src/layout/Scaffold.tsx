@@ -53,9 +53,9 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    * A region at the end edge, beside the body and under the top bar, such as an inspector, at the
    * width of its content and scrolling on its own. It stays in view as the rail does.
    */
-  end?: ReactNode;
+  aside?: ReactNode;
   /**
-   * A bar along the bottom of the body and the end region, such as a status bar, above a
+   * A bar along the bottom of the body and the aside region, such as a status bar, above a
    * NavigationBar. It stays in view as the top bar does, and focus scrolls clear of it.
    */
   bottomBar?: ReactNode;
@@ -128,7 +128,7 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 
 /**
  * The invisible structure of an application's screen: a top bar region, a navigation region and
- * the body, with an optional end region and bottom bar. It never paints. It shows one navigation form at a time by its own width: a
+ * the body, with an optional aside region and bottom bar. It never paints. It shows one navigation form at a time by its own width: a
  * NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one
  * and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top
  * bar, the bar and the rail or the drawer kept in view; `scroll="body"` scrolls the body alone.
@@ -136,7 +136,7 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
  */
 export function Scaffold({
   topBar,
-  end,
+  aside,
   bottomBar,
   navigation,
   navigationForms,
@@ -298,7 +298,7 @@ export function Scaffold({
       <Main ref={attachBody} id={mainId} tabIndex={-1} className="env-scaffold-body">
         <ScaffoldPagesContext value={pages}>{children}</ScaffoldPagesContext>
       </Main>
-      {end != null && <div className="env-scaffold-end">{end}</div>}
+      {aside != null && <div className="env-scaffold-aside">{aside}</div>}
       {bottomBar != null && <div className="env-scaffold-bottom-bar">{bottomBar}</div>}
     </div>
   );

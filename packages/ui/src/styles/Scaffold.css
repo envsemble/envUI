@@ -165,17 +165,17 @@
     grid-row: 1 / 3;
   }
 
-  .env-scaffold-end {
+  .env-scaffold-aside {
     grid-column: 3;
     grid-row: 2;
     min-block-size: 0;
     overflow-y: auto;
   }
-  .env-scaffold:not(:has(> .env-scaffold-top-bar)) > .env-scaffold-end {
+  .env-scaffold:not(:has(> .env-scaffold-top-bar)) > .env-scaffold-aside {
     grid-row: 1 / 3;
     padding-block-start: env(safe-area-inset-top);
   }
-  .env-scaffold[data-scroll='document'] > .env-scaffold-end {
+  .env-scaffold[data-scroll='document'] > .env-scaffold-aside {
     box-sizing: border-box;
     position: sticky;
     inset-block-start: var(--env-scaffold-sticky-top);
@@ -193,7 +193,7 @@
     inset-block-end: var(--_scaffold-bar-size);
     z-index: var(--env-z-sticky);
   }
-  .env-scaffold:has(> .env-scaffold-bottom-bar) > :is(.env-scaffold-body, .env-scaffold-end) {
+  .env-scaffold:has(> .env-scaffold-bottom-bar) > :is(.env-scaffold-body, .env-scaffold-aside) {
     padding-block-end: 0;
   }
 

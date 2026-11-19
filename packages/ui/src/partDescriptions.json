@@ -706,8 +706,8 @@
       "env-scaffold-rail": "The slot of the navigation rail, at the start of a medium window.",
       "env-scaffold-drawer": "The slot of the navigation drawer, at the start from expanded.",
       "env-scaffold-body": "The body, the main region, which scrolls.",
-      "env-scaffold-end": "The end region beside the body, such as an inspector, which scrolls on its own.",
-      "env-scaffold-bottom-bar": "The bottom bar region under the body and the end region, such as a status bar."
+      "env-scaffold-aside": "The aside region at the end edge beside the body, such as an inspector, which scrolls on its own.",
+      "env-scaffold-bottom-bar": "The bottom bar region under the body and the aside region, such as a status bar."
     },
     "SegmentedControl": {
       "env-segmented-control": "The segmented control: the track the segments sit in.",
