@@ -78,7 +78,6 @@
 @media (hover: none) {
   .catalogue-gallery-tile {
     grid-template-rows: auto 0;
-    overflow: visible;
   }
   .catalogue-gallery-tile > .catalogue-gallery-meta {
     block-size: 0;
