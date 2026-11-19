@@ -14,7 +14,11 @@ export default function ListAndDetail() {
       defaultWidth={16}
       minWidth={12}
       maxWidth={24}
-      style={{ inlineSize: 'min(100%, 40rem)', blockSize: '18rem' }}
+      style={{
+        inlineSize: 'min(100%, 40rem)',
+        blockSize: '18rem',
+        '--env-panes-other-min': 'min(16rem, 50cqi)',
+      }}
     >
       <Panes.Pane label="Inbox">
         <Surface radius="none" padding={2} style={{ minBlockSize: '100%' }}>

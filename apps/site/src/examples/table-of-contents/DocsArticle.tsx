@@ -40,7 +40,18 @@ export default function DocsArticle() {
   const frame = useRef<HTMLDivElement>(null);
   const article = useRef<HTMLElement>(null);
   const size = useContainerSize(frame);
-  const showContents = (size?.inlineSize ?? 0) >= contentsBesideArticleFromPx;
+  const beside = (size?.inlineSize ?? 0) >= contentsBesideArticleFromPx;
+  const Stack = beside ? Row : Column;
+  const contents = (
+    <TableOfContents
+      aria-label="Sections of the guide"
+      container={article}
+      levels={[3, 4]}
+      style={
+        beside ? { position: 'sticky', insetBlockStart: 0, inlineSize: '11rem', flexShrink: 0 } : {}
+      }
+    />
+  );
   return (
     <div
       ref={frame}
@@ -49,7 +60,8 @@ export default function DocsArticle() {
       aria-label="Getting started"
       style={{ blockSize: '20rem', inlineSize: '100%', overflow: 'auto' }}
     >
-      <Row gap={6} align="start">
+      <Stack gap={beside ? 6 : 5} align={beside ? 'start' : 'stretch'}>
+        {size && !beside && contents}
         <Column gap={5} render={<article ref={article} />} style={{ flex: 1, minInlineSize: 0 }}>
           {sections.map(({ heading, level, text }) => (
             <Column key={heading} gap={2}>
@@ -60,15 +72,8 @@ export default function DocsArticle() {
             </Column>
           ))}
         </Column>
-        {showContents && (
-          <TableOfContents
-            aria-label="Sections of the guide"
-            container={article}
-            levels={[3, 4]}
-            style={{ position: 'sticky', insetBlockStart: 0, inlineSize: '11rem', flexShrink: 0 }}
-          />
-        )}
-      </Row>
+        {beside && contents}
+      </Stack>
     </div>
   );
 }

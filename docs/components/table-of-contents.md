@@ -39,13 +39,13 @@ examples:
 
 ## Anatomy
 
-```tsx figure=TableOfContentsAnatomy enlarge
+```tsx figure=TableOfContentsAnatomy enlarge width="21"
 
 ```
 
 1. **Contents** (`env-table-of-contents`)
 2. **Reader's place** (`env-table-of-contents-wave`)
-3. **Link** (`env-table-of-contents-link:not([aria-current])`)
+3. **Link** (`env-table-of-contents-item:last-child > env-table-of-contents-link:not([aria-current])`)
 4. **Current section** (`env-table-of-contents-link[aria-current='location']`)
 
 ## Behaviour

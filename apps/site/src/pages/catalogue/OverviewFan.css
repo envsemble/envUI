@@ -43,6 +43,11 @@
     );
 }
 
+@media (pointer: coarse) {
+  .catalogue-fan-stack {
+    --catalogue-fan-height: 29.5rem;
+  }
+}
 @container (width < 64rem) {
   .catalogue-fan-stack {
     --catalogue-fan-scale: 0.9;
@@ -59,6 +64,11 @@
   }
   .catalogue-fan-card[data-narrow='hidden'] {
     display: none;
+  }
+  @media (pointer: coarse) {
+    .catalogue-fan-stack {
+      --catalogue-fan-height: 28.5rem;
+    }
   }
 }
 @container (width < 49rem) {

@@ -14,7 +14,7 @@ import { IconMenu } from '@envsemble/envui/icons/Menu';
 import { findPage, type Area, type RoutePage } from './routes/SiteRoutes';
 import { PageBoundary } from './frame/PageBoundary';
 import { SiteBanner } from './frame/SiteBanner';
-import { ContentsItems, PageContents } from './frame/PageContents';
+import { ContentsItems, contentsWorthListing, PageContents } from './frame/PageContents';
 import { PageFooter } from './frame/PageFooter';
 import { retryDocument } from './pages/PageContent';
 import { preloadPage, retryPageView, usePageContents, usePageView } from './pages/PageLoading';
@@ -104,6 +104,7 @@ function PageColumns({
   contents: boolean;
 }) {
   const items = usePageContents(contents ? page : undefined);
+  const listed = contents && contentsWorthListing(items);
   const [prerenderedPath, setPrerenderedPath] = useState(
     useFiguresMounted() ? undefined : routePath,
   );
@@ -114,7 +115,7 @@ function PageColumns({
     <div className="site-page-layout">
       <div className="site-page-grid" data-contents={contents || undefined}>
         <div className="site-page-column">
-          <ContentsItems value={contents ? items : undefined}>
+          <ContentsItems value={listed ? items : undefined}>
             <PageBoundary
               title={page?.title ?? 'Page not found'}
               route={route}
@@ -139,7 +140,7 @@ function PageColumns({
           </ContentsItems>
           {page && <PageNavigation page={page} />}
         </div>
-        {contents && page && <PageContents path={page.path} items={items} />}
+        {listed && page && <PageContents path={page.path} items={items ?? []} />}
       </div>
     </div>
   );

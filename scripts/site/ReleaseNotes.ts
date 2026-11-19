@@ -2,15 +2,11 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { headingsOf } from '../docs/MarkdownHeadings.ts';
 import { libraryChangelogFile, repositoryRoot } from '../RepositoryPaths.ts';
+import { inlinePieces, type InlinePiece } from '../../apps/site/src/documentation/InlinePieces.ts';
 
 const releaseNotesFile = resolve(repositoryRoot, 'apps/site/src/releases/release-notes.md');
 
 const highlightLimit = 5;
-
-export type InlinePiece =
-  | { kind: 'text'; text: string }
-  | { kind: 'code'; text: string }
-  | { kind: 'link'; href: string; children: InlinePiece[] };
 
 export interface ReleaseEntry {
   version: string;
@@ -18,21 +14,6 @@ export interface ReleaseEntry {
   upcoming: boolean;
   highlights: InlinePiece[][];
   breaking: InlinePiece[][];
-}
-
-export function inlinePieces(text: string): InlinePiece[] {
-  const pieces: InlinePiece[] = [];
-  const pattern = /\[([^\]]+)\]\(([^)\s]+)\)|`([^`]+)`/g;
-  let last = 0;
-  for (const match of text.matchAll(pattern)) {
-    if (match.index > last) pieces.push({ kind: 'text', text: text.slice(last, match.index) });
-    if (match[1] !== undefined)
-      pieces.push({ kind: 'link', href: match[2], children: inlinePieces(match[1]) });
-    else pieces.push({ kind: 'code', text: match[3] });
-    last = match.index + match[0].length;
-  }
-  if (last < text.length) pieces.push({ kind: 'text', text: text.slice(last) });
-  return pieces;
 }
 
 export function parseReleaseNotes(markdown: string): ReleaseEntry[] {

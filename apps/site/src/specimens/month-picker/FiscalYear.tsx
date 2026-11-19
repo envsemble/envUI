@@ -27,7 +27,13 @@ const script: PointerStep[] = [
 function Paging() {
   usePointer(script);
   return (
-    <Column align="center" style={{ inlineSize: '100%', blockSize: rowsAnd(5.625, 9.75) }}>
+    <Column
+      align="center"
+      style={{
+        inlineSize: '100%',
+        blockSize: `calc(${rowsAnd(5.625, 9.75)} + var(--catalogue-touch-popup-room, 0rem))`,
+      }}
+    >
       <FiscalYear />
     </Column>
   );

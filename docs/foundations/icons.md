@@ -68,7 +68,7 @@ The symbols are Material Design's [Material Symbols](https://m3.material.io/styl
 
 ### Customize
 
-Generated from the token list by `npm run docs:guides`; values at the default 16 px root.
+Values at the default 16 px root.
 
 #### Icon sizes
 

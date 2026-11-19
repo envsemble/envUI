@@ -59,7 +59,7 @@ examples:
 
 ## Anatomy
 
-```tsx figure=ToastAnatomy open
+```tsx figure=ToastAnatomy open width="21"
 
 ```
 

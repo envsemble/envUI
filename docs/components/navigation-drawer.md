@@ -94,7 +94,7 @@ examples:
 
 ## Anatomy
 
-```tsx figure=DrawerAnatomy stage=shaded
+```tsx figure=DrawerAnatomy stage=shaded width="20"
 
 ```
 
