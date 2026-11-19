@@ -59,7 +59,7 @@ A raw <svg width="24" height="24"> takes its size from the file: pass it to an i
 
 ### no-link-in-clickable-row
 
-A link-styled action, a raw `<a>`, a `Link` or a `Button` with `variant="text"`, inside a `List.Item`, `Table.Row` or `Card` that takes the click itself: one with `href` or `onClick`, or a List.Item with a `data-row-target` inside, which stretches over the row. That target itself passes. An `interactive` List.Item without a target only highlights, and the other links in an `interactive` Table.Row stay clickable above its `data-row-target`, so their links pass.
+A link-styled action, a raw `<a>`, a `Link` or a `Button` with `variant="text"`, inside a `List.Item`, `Table.Row` or `Card` that takes the click itself: one with `href` or `onClick`, or a List.Item with a `data-row-target` inside, which stretches over the row. That target itself passes, and so does a link in a List.Item's `start`, `end` or `control`, which sit above the row's target, such as an Avatar that opens the person's profile. An `interactive` List.Item without a target only highlights, and the other links in an `interactive` Table.Row stay clickable above its `data-row-target`, so their links pass.
 
 ```text
 A Button with variant="text" inside a clickable List.Item: the row takes the click. Move the action into its end slot as a Button, or into a Menu. When it goes where the row goes, mark it data-row-target instead.
