@@ -88,3 +88,67 @@ test('stackBelow is the length the region compares, a bare number in rem, 36 rem
   assert.equal(threshold(undefined), '36rem');
   assert.equal(render(h(Table.Root, { 'aria-label': 'Scrolling' })).attributes.style, undefined);
 });
+
+test("a header's end sits beside its sort button, outside it, and the header keeps its label as its name", () => {
+  const table = tableWithHeaderRow(
+    { 'aria-label': 'Work items' },
+    h(
+      Table.HeaderCell,
+      {
+        sortDirection: 'none',
+        onSortChange: () => {},
+        end: h('button', { type: 'button', 'aria-label': 'Filter status' }),
+      },
+      'Status',
+    ),
+    h(Table.HeaderCell, { end: h('button', { type: 'button' }, 'Help') }, 'Owner'),
+  );
+  const [sortable, plain] = byTag(table, 'th');
+  const [sortButton, filter] = byTag(sortable, 'button');
+  assert.equal(sortButton.attributes.class, 'env-table-sort-button');
+  assert.equal(byTag(sortButton, 'button').length, 1);
+  assert.equal(filter.attributes['aria-label'], 'Filter status');
+  assert.equal(labelledName(table, sortable), 'Status');
+  assert.equal(labelledName(table, plain), 'Owner');
+});
+
+test('Table.Foot is a tfoot that keeps its roles while rows stack, and regionProps reach the region', () => {
+  const table = render(
+    h(
+      Table.Root,
+      {
+        'aria-label': 'Invoices',
+        narrowLayout: 'stack',
+        regionProps: {
+          style: { maxBlockSize: '20rem' },
+          className: 'own-region',
+          'data-testid': 'invoices',
+          role: 'presentation',
+          tabIndex: -1,
+        },
+      },
+      h(Table.Body, null, h(Table.Row, null, h(Table.Cell, null, '12 hours'))),
+      h(
+        Table.Foot,
+        null,
+        h(
+          Table.Row,
+          null,
+          h(Table.HeaderCell, { scope: 'row' }, 'Total'),
+          h(Table.Cell, null, '12 hours'),
+        ),
+      ),
+    ),
+  );
+  assert.equal(table.attributes.role, 'region');
+  assert.equal(table.attributes.tabindex, '0');
+  assert.equal(table.attributes.class, 'env-table-region own-region');
+  assert.equal(table.attributes['data-testid'], 'invoices');
+  assert.match(table.attributes.style, /max-block-size:20rem/);
+  assert.match(table.attributes.style, /--_table-stack-below:36rem/);
+  const [foot] = byTag(table, 'tfoot');
+  assert.equal(foot.attributes.class, 'env-table-foot');
+  assert.equal(foot.attributes.role, 'rowgroup');
+  assert.equal(byTag(foot, 'th')[0].attributes.role, 'rowheader');
+  assert.equal(byTag(foot, 'td')[0].attributes.role, 'cell');
+});

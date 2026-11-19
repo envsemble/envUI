@@ -7566,6 +7566,7 @@
         "Table.Root",
         "Table.Head",
         "Table.Body",
+        "Table.Foot",
         "Table.Row",
         "Table.HeaderCell",
         "Table.Cell"
@@ -7626,6 +7627,18 @@
         "@envsemble/envui"
       ]
     },
+    "Table.Foot": {
+      "kind": "component",
+      "source": "packages/ui/src/data-display/Table.tsx",
+      "description": "The summary rows of a table, a native tfoot, such as its totals, on the header's shaded band under the rows.",
+      "props": [],
+      "native": [
+        "tfoot"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Table.Head": {
       "kind": "component",
       "source": "packages/ui/src/data-display/Table.tsx",
@@ -7669,6 +7682,12 @@
           "required": false,
           "default": "'Resize {header}', from EnvUIProvider's messages.table.resize",
           "description": "Accessible name of the column's resize handle, \"Resize\" followed by the header's name."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the header, beside its sort button and outside it, such as a column menu, a filter IconButton, a help Tooltip's trigger or a select-all Checkbox, placed as given. The header's name stays its label."
         },
         {
           "name": "align",
@@ -7742,6 +7761,12 @@
           "type": "string",
           "required": false,
           "description": "Class of the scroll region around the table, for example to limit its height."
+        },
+        {
+          "name": "regionProps",
+          "type": "Omit<ComponentPropsWithRef<'div'>, 'children' | 'role'>",
+          "required": false,
+          "description": "Props of the scroll region around the table, such as a ref for scrolling to a row or virtualising, a style with a measured max-height, data attributes or listeners. The region's role, name, tab stop and layout stay the table's."
         },
         {
           "name": "narrowLayout",

@@ -5157,12 +5157,25 @@
           "description": "The handle that resizes a column."
         },
         {
+          "class": "env-table-foot",
+          "description": "The foot, with summary rows such as totals, on the header's band."
+        },
+        {
           "class": "env-table-head",
           "description": "The head."
         },
         {
           "class": "env-table-header-cell",
           "description": "A column header."
+        },
+        {
+          "class": "env-table-header-content",
+          "description": "The row of a column header with content at its end: its label or sort button, then that content."
+        },
+        {
+          "class": "env-table-header-end",
+          "description": "The slot of the content at a column header's end, outside its sort button.",
+          "slot": true
         },
         {
           "class": "env-table-header-label",
