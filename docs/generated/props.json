@@ -895,6 +895,12 @@
           "description": "A short fact at the end of the title row, such as when the card was updated."
         },
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the title row, after the meta, such as an overflow Menu or an Edit Button, placed as given and kept above the card's target."
+        },
+        {
           "name": "description",
           "type": "ReactNode",
           "required": false,
@@ -904,7 +910,14 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit. For controls beside the title, use end."
+        },
+        {
+          "name": "interactive",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The card opens something through a link or button inside, such as its title: it reacts to hover, keyboard focus on that target and presses. Mark the link or button `data-row-target` to stretch it over the card; the meta, end and actions stay above it and take their own clicks."
         },
         {
           "name": "render",
@@ -3868,7 +3881,7 @@
           "name": "control",
           "type": "ReactNode",
           "required": false,
-          "description": "The selection control the row is about, at the row's end: a Switch or a Checkbox, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select, a TextField or a RadioGroup, belongs in a form, with its label above it."
+          "description": "The selection control the row is about, at the row's end: a Switch or a Checkbox, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select or a SegmentedControl, takes a label, aria-label or aria-labelledby of its own."
         },
         {
           "name": "interactive",
