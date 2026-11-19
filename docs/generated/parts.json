@@ -504,11 +504,6 @@
           "description": "The separator between two crumbs."
         },
         {
-          "class": "env-breadcrumbs-start",
-          "description": "The slot of a crumb's graphic before its label.",
-          "slot": true
-        },
-        {
           "class": "env-breadcrumbs-text",
           "description": "A crumb that is not a link."
         }

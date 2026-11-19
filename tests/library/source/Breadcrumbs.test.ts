@@ -66,42 +66,39 @@ const nameOf = (element: MarkupElement): string =>
     )
     .join('');
 
-test('a crumb draws its start graphic before the label, inside the crumb and hidden, so the label names it', () => {
-  const graphic = (letter: string) => h('span', { 'data-graphic': '' }, letter);
+test('a crumb label of any content sits in the label element of each kind of crumb and names it', () => {
+  const label = (name: string) => [
+    h('span', { key: 'mark', 'aria-hidden': 'true' }, name[0]),
+    name,
+  ];
+  const names = ['Projects', 'Northwind', 'Archive', 'Website refresh'];
   const navigation = firstElement(
     renderToStaticMarkup(
       h(Breadcrumbs, {
         items: [
-          { label: 'Projects', href: '/projects', start: graphic('P') },
-          { label: 'Northwind', onClick: () => {}, start: graphic('N') },
-          { label: 'Archive', start: graphic('A') },
-          { label: 'Website refresh', start: graphic('W') },
+          { label: label('Projects'), href: '/projects' },
+          { label: label('Northwind'), onClick: () => {} },
+          { label: label('Archive') },
+          { label: label('Website refresh') },
         ],
       }),
     ),
   );
-  const crumbs = elementsOf(navigation).filter(
-    (element) =>
-      hasClass(element, 'env-breadcrumbs-link') ||
-      hasClass(element, 'env-breadcrumbs-text') ||
-      hasClass(element, 'env-breadcrumbs-current'),
+  const crumbs = elementsOf(navigation).filter((element) =>
+    ['env-breadcrumbs-link', 'env-breadcrumbs-text', 'env-breadcrumbs-current'].some((name) =>
+      hasClass(element, name),
+    ),
   );
   assert.deepEqual(
     crumbs.map((crumb) => crumb.tag),
     ['a', 'button', 'span', 'span'],
   );
-  for (const [crumb, label] of crumbs.map(
-    (crumb, index) =>
-      [crumb, ['Projects', 'Northwind', 'Archive', 'Website refresh'][index]] as const,
-  )) {
-    const [start, text] = crumb.children as MarkupElement[];
-    assert.ok(hasClass(start, 'env-breadcrumbs-start'));
-    assert.equal(start.attributes['aria-hidden'], 'true');
-    assert.equal(start.attributes['data-env-slot-shrink'], 'never');
-    assert.equal((start.children[0] as MarkupElement).attributes['data-graphic'], '');
-    assert.ok(hasClass(text, 'env-breadcrumbs-label'));
-    assert.equal(textOf(text), label);
+  crumbs.forEach((crumb, index) => {
+    const [only, ...rest] = crumb.children as MarkupElement[];
+    assert.deepEqual(rest, []);
+    assert.ok(hasClass(only, 'env-breadcrumbs-label'));
+    assert.equal(textOf(only), `${names[index][0]}${names[index]}`);
     assert.equal(crumb.attributes['aria-label'], undefined);
-    assert.equal(nameOf(crumb), label);
-  }
+    assert.equal(nameOf(crumb), names[index]);
+  });
 });

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Avatar,
   Badge,
   Breadcrumbs,
   List,
@@ -25,6 +26,9 @@ const narrowTrail = [
   { label: 'Plans', href: '/workspace/plans' },
   { label: 'Quarterly review of the shared design tokens' },
 ];
+
+export const contentLabelName =
+  'Northwind, a project whose name runs well past the room that one level takes';
 
 const plans = Array.from({ length: 30 }, (_, index) => ({
   id: index + 1,
@@ -78,6 +82,20 @@ export default function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
             {
               label: 'A folder whose name runs well past the room that one level of a trail takes',
               href: '/workspace/folder',
+            },
+            { label: 'Notes' },
+          ]}
+        />
+        <Breadcrumbs
+          aria-label="Content label trail"
+          items={[
+            {
+              label: (
+                <>
+                  <Avatar name="Northwind" size="sm" /> {contentLabelName}
+                </>
+              ),
+              href: '/projects/northwind',
             },
             { label: 'Notes' },
           ]}
