@@ -78,7 +78,8 @@ export default {
       if (expression.type === 'JSXElement') {
         const name = envuiName(expression.openingElement.name);
         if (name && overlays.has(name)) return found;
-        if (name && fields.has(name) && !isNamed(expression.openingElement)) found.push({ node: expression.openingElement.name, name });
+        if (name && fields.has(name) && !isNamed(expression.openingElement))
+          found.push({ node: expression.openingElement.name, name });
         for (const child of expression.children) fieldsIn(child, found);
       } else if (expression.type === 'JSXFragment') {
         for (const child of expression.children) fieldsIn(child, found);

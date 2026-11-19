@@ -103,7 +103,7 @@ ruleTester.run('no-raw-graphics', rule, {
       "import { Github } from 'lucide-react'; <Button startIcon={<Github />}>Sign in</Button>;",
       `${graphic}import { SiFigma } from 'react-icons/si'; <Graphic alt="Figma"><SiFigma /></Graphic>;`,
       "import * as Icons from '@tabler/icons-react'; const items = [{ id: 'a', icon: <Icons.IconBrandSlack /> }];",
-      "const { Heart } = require('phosphor-react'); <IconButton icon={<Heart />} aria-label=\"Like\" />;",
+      'const { Heart } = require(\'phosphor-react\'); <IconButton icon={<Heart />} aria-label="Like" />;',
     ]),
     ...named('Importing or re-exporting an icon package renders nothing', [
       "import { Search } from 'lucide-react';",
@@ -235,43 +235,46 @@ ruleTester.run('no-raw-graphics', rule, {
       },
       { code: '<Graphic style={{ margin: -4 }} />', errors: [alt, margin] },
     ]),
-    ...named("Another icon package's icon outside an icon slot or Graphic, from every kind of import", [
-      {
-        code: "import { Search } from 'lucide-react';\n<Search />;",
-        errors: [
-          {
-            message:
-              "A <Search> from lucide-react takes its size from the package: pass it to an icon slot, such as Button's startIcon, or wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit its slots and text: import { IconSearch } from '@envsemble/envui/icons/Search'.",
-            line: 2,
-            column: 2,
-          },
-        ],
-      },
-      {
-        code: "import { FaGithub } from 'react-icons/fa'; <Link href={repo}><FaGithub /> GitHub</Link>;",
-        errors: [icons('FaGithub', 'react-icons/fa')],
-      },
-      {
-        code: "import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'; <MagnifyingGlassIcon className=\"size-6\" />;",
-        errors: [icons('MagnifyingGlassIcon', '@heroicons/react/24/outline')],
-      },
-      {
-        code: "import SearchIcon from '@mui/icons-material/Search'; <SearchIcon />;",
-        errors: [icons('SearchIcon', '@mui/icons-material/Search')],
-      },
-      {
-        code: "import * as Tabler from '@tabler/icons-react'; <Tabler.IconSearch size={24} />;",
-        errors: [icons('Tabler.IconSearch', '@tabler/icons-react')],
-      },
-      {
-        code: "const { Heart } = require('phosphor-react'); <Heart />;",
-        errors: [icons('Heart', 'phosphor-react')],
-      },
-      {
-        code: "import { Search as Find } from 'lucide-react'; <><Button startIcon={<Find />}>Find</Button><Find /></>;",
-        errors: [icons('Find', 'lucide-react')],
-      },
-    ]),
+    ...named(
+      "Another icon package's icon outside an icon slot or Graphic, from every kind of import",
+      [
+        {
+          code: "import { Search } from 'lucide-react';\n<Search />;",
+          errors: [
+            {
+              message:
+                "A <Search> from lucide-react takes its size from the package: pass it to an icon slot, such as Button's startIcon, or wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit its slots and text: import { IconSearch } from '@envsemble/envui/icons/Search'.",
+              line: 2,
+              column: 2,
+            },
+          ],
+        },
+        {
+          code: "import { FaGithub } from 'react-icons/fa'; <Link href={repo}><FaGithub /> GitHub</Link>;",
+          errors: [icons('FaGithub', 'react-icons/fa')],
+        },
+        {
+          code: 'import { MagnifyingGlassIcon } from \'@heroicons/react/24/outline\'; <MagnifyingGlassIcon className="size-6" />;',
+          errors: [icons('MagnifyingGlassIcon', '@heroicons/react/24/outline')],
+        },
+        {
+          code: "import SearchIcon from '@mui/icons-material/Search'; <SearchIcon />;",
+          errors: [icons('SearchIcon', '@mui/icons-material/Search')],
+        },
+        {
+          code: "import * as Tabler from '@tabler/icons-react'; <Tabler.IconSearch size={24} />;",
+          errors: [icons('Tabler.IconSearch', '@tabler/icons-react')],
+        },
+        {
+          code: "const { Heart } = require('phosphor-react'); <Heart />;",
+          errors: [icons('Heart', 'phosphor-react')],
+        },
+        {
+          code: "import { Search as Find } from 'lucide-react'; <><Button startIcon={<Find />}>Find</Button><Find /></>;",
+          errors: [icons('Find', 'lucide-react')],
+        },
+      ],
+    ),
     ...named('Allowing one package leaves the others reported', [
       {
         code: "import { SiGithub } from 'react-icons/si'; import { Search } from 'lucide-react'; <><SiGithub /><Search /></>;",

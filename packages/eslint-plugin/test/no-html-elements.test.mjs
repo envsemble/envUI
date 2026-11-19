@@ -68,11 +68,14 @@ ruleTester.run('no-html-elements', rule, {
       '<Dialog role="alertdialog" title="Delete?" />',
       '<DocumentTabs role="tablist" aria-label="Open files" items={items} />',
     ]),
-    ...named('Roles envUI has no component for: tabs an application builds, its own live messages', [
-      '<div role="tablist" aria-label="Project">{tabs}</div>',
-      'import { Column } from \'@envsemble/envui\'; <Column role="alert">Couldn\'t load the diff.</Column>;',
-      '<p role="alert">{error}</p>',
-    ]),
+    ...named(
+      'Roles envUI has no component for: tabs an application builds, its own live messages',
+      [
+        '<div role="tablist" aria-label="Project">{tabs}</div>',
+        "import { Column } from '@envsemble/envui'; <Column role=\"alert\">Couldn't load the diff.</Column>;",
+        '<p role="alert">{error}</p>',
+      ],
+    ),
     ...named('An envUI component that renders the role itself; a role on it refines its own', [
       'import { Popover, Spinner } from \'@envsemble/envui\'; <><Popover role="dialog" /><Spinner role="progressbar" /></>;',
       'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Table.Root role="table" /></>;',

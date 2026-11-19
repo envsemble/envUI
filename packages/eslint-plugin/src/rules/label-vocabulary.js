@@ -55,7 +55,7 @@ export default {
         properties: {
           allow: {
             description:
-              "Words the application keeps as labels, such as Clone or Retry in a developer tool, in any case.",
+              'Words the application keeps as labels, such as Clone or Retry in a developer tool, in any case.',
             type: 'array',
             items: { type: 'string' },
             uniqueItems: true,

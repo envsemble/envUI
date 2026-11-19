@@ -27,7 +27,7 @@ ruleTester.run('label-vocabulary', rule, {
       '<Button>Save and submit</Button>',
       '<Field description="Submit" />',
     ]),
-    ...named("Words the application keeps, by option, in any case", [
+    ...named('Words the application keeps, by option, in any case', [
       { code: '<Button onClick={clone}>Clone</Button>', options: [{ allow: ['clone', 'Retry'] }] },
       { code: '<Button>retry</Button>', options: [{ allow: ['clone', 'Retry'] }] },
       { code: '<Menu.Item label="Log  in" />', options: [{ allow: ['Log in'] }] },
