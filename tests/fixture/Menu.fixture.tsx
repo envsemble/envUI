@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Avatar, Button, ContextMenu, Menu, Theme, type ColorScheme } from '@envsemble/envui';
+import {
+  Avatar,
+  Badge,
+  Button,
+  ContextMenu,
+  Menu,
+  Theme,
+  type ColorScheme,
+} from '@envsemble/envui';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconAdd } from '@envsemble/envui/icons/Add';
@@ -213,5 +221,40 @@ export function AccountSwitcherFixture() {
       <Menu.Item icon={<IconAdd />}>Add account</Menu.Item>
       <Menu.Item>Sign out</Menu.Item>
     </Menu.Root>
+  );
+}
+
+export function ItemAttributesFixture() {
+  const [zoom, setZoom] = useState(100);
+  const [itemTag, setItemTag] = useState('');
+  return (
+    <>
+      <Menu.Root aria-label="View" trigger={<Button>View</Button>}>
+        <Menu.Item
+          closeOnClick={false}
+          data-testid="zoom-in"
+          data-analytics="zoom"
+          id="zoom-in-item"
+          style={{ fontStyle: 'italic' }}
+          ref={(node: HTMLElement | null) => {
+            if (node) setItemTag(node.tagName);
+          }}
+          onClick={() => setZoom((value) => value + 10)}
+        >
+          Zoom in
+        </Menu.Item>
+        <Menu.CheckboxItem data-testid="rulers">Rulers</Menu.CheckboxItem>
+        <Menu.Submenu
+          label="Share"
+          end={<Badge>2</Badge>}
+          triggerProps={{ className: 'fixture-share-row', 'data-testid': 'share-row' }}
+        >
+          <Menu.Item>Copy link</Menu.Item>
+        </Menu.Submenu>
+      </Menu.Root>
+      <output data-testid="zoom">
+        {zoom} {itemTag}
+      </output>
+    </>
   );
 }

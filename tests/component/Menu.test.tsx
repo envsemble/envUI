@@ -650,3 +650,28 @@ test('a start slot shows an Avatar at its own size, and every label of the menu 
   const icon = menu.getByRole('menuitem', { name: 'Add account' }).element().querySelector('svg')!;
   expect(box(icon).width).toBeCloseTo(16, 0);
 });
+
+test('menu items take native attributes, a submenu row takes its own and end content, and an action can keep the menu open', async () => {
+  mount({ default: menus.ItemAttributesFixture });
+  await page.getByRole('button', { name: 'View' }).click();
+  const menu = page.getByRole('menu', { name: 'View' });
+  await settled(menu);
+  const zoom = menu.getByRole('menuitem', { name: 'Zoom in' });
+  await expect.element(zoom).toHaveAttribute('data-testid', 'zoom-in');
+  await expect.element(zoom).toHaveAttribute('data-analytics', 'zoom');
+  await expect.element(zoom).toHaveAttribute('id', 'zoom-in-item');
+  expect(css(zoom, 'font-style')).toBe('italic');
+  await expect
+    .element(menu.getByRole('menuitemcheckbox', { name: 'Rulers' }))
+    .toHaveAttribute('data-testid', 'rulers');
+  await zoom.click();
+  await expect.poll(() => page.getByTestId('zoom').element().textContent).toBe('110 DIV');
+  await isShown(menu);
+  const share = menu.getByRole('menuitem', { name: 'Share 2' });
+  await expect.element(share).toHaveAttribute('data-testid', 'share-row');
+  expect(share.element().classList.contains('fixture-share-row')).toBe(true);
+  expect(share.element().classList.contains('env-menu-submenu-trigger')).toBe(true);
+  const badge = share.element().querySelector('.env-menu-item-end')!;
+  const chevron = share.element().querySelector('.env-menu-submenu-chevron')!;
+  expect(box(badge).x).toBeLessThan(box(chevron).x);
+});

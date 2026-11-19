@@ -4,7 +4,10 @@ import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Menubar as BaseMenubar } from '@base-ui/react/menubar';
 import {
+  Children,
   createContext,
+  Fragment,
+  isValidElement,
   useCallback,
   useContext,
   useEffect,
@@ -12,6 +15,8 @@ import {
   useRef,
   type ComponentPropsWithRef,
   type CSSProperties,
+  type HTMLAttributes,
+  type ReactElement,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -177,13 +182,18 @@ export interface MenuFocusDetails {
 }
 
 export interface MenuProps {
-  /** The trigger's text, such as File. */
+  /** The trigger's text, such as File, or content such as an icon beside the text. */
   label: ReactNode;
   /**
    * A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines
-   * it and Alt with the letter opens the menu.
+   * it, in the label's text also beside an icon, and Alt with the letter opens the menu.
    */
   accessKey?: string;
+  /**
+   * Attributes of the trigger button, such as a className, a style, a ref or a data attribute; the
+   * menu's own className, style and ref are its popup's.
+   */
+  triggerProps?: TriggerProps;
   /** The menu's items: Menu.Item, Menu.Submenu, Menu.Separator and the other menu parts. */
   children: ReactNode;
   /** Accessible name of the menu; by default the label, when it is a string. */
@@ -212,18 +222,43 @@ export interface MenuProps {
   style?: CSSProperties;
 }
 
+/** Attributes of a Menubar.Menu's trigger button. */
+export interface TriggerProps extends Omit<
+  HTMLAttributes<HTMLButtonElement>,
+  'children' | 'aria-keyshortcuts'
+> {
+  /** The trigger button. */
+  ref?: Ref<HTMLButtonElement>;
+  [attribute: `data-${string}`]: string | number | boolean | undefined;
+}
+
+function underlineFirst(node: ReactNode, accessKey: string, found: { done: boolean }): ReactNode {
+  if (found.done) return node;
+  if (typeof node === 'string') {
+    const index = node.toLowerCase().indexOf(accessKey);
+    if (index === -1) return node;
+    found.done = true;
+    return (
+      <>
+        {node.slice(0, index)}
+        <span className="env-menubar-access-key">{node.slice(index, index + 1)}</span>
+        {node.slice(index + 1)}
+      </>
+    );
+  }
+  if (Array.isArray(node))
+    return Children.map(node, (child) => underlineFirst(child, accessKey, found));
+  if (isValidElement(node) && node.type === Fragment) {
+    const fragment = node as ReactElement<{ children?: ReactNode }>;
+    return <>{underlineFirst(fragment.props.children, accessKey, found)}</>;
+  }
+  return node;
+}
+
 function AccessKeyLabel({ label, accessKey }: { label: ReactNode; accessKey: string | undefined }) {
-  const index =
-    typeof label === 'string' && accessKey !== undefined
-      ? label.toLowerCase().indexOf(accessKey)
-      : -1;
-  if (typeof label !== 'string' || index === -1)
-    return <span className="env-menubar-label">{label}</span>;
   return (
     <span className="env-menubar-label">
-      {label.slice(0, index)}
-      <span className="env-menubar-access-key">{label.slice(index, index + 1)}</span>
-      {label.slice(index + 1)}
+      {accessKey === undefined ? label : underlineFirst(label, accessKey, { done: false })}
     </span>
   );
 }
@@ -246,6 +281,7 @@ function Menu({
   className,
   ref,
   style,
+  triggerProps,
 }: MenuProps) {
   const menubar = useContext(MenubarContext);
   if (!menubar) throw new Error('Menubar.Menu must be used inside Menubar.Root.');
@@ -320,8 +356,12 @@ function Menu({
       })}
     >
       <BaseMenu.Trigger
-        ref={trigger}
-        className="env-menubar-trigger"
+        {...triggerProps}
+        ref={(node: HTMLButtonElement | null) => {
+          trigger.current = node;
+          setRef(triggerProps?.ref, node);
+        }}
+        className={classNames('env-menubar-trigger', triggerProps?.className)}
         data-access-key={key}
         aria-keyshortcuts={menubar.accessKeys && key ? `Alt+${key.toUpperCase()}` : undefined}
       >

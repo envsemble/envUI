@@ -5,7 +5,7 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { IconCheck } from '../../icons/Check.js';
 import { classNames } from '../../internal/classNames.js';
 import { Grid } from '../../layout/Layout.js';
-import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
+import { useMenuItemContent, type ItemContentProps, type ItemElementProps } from './MenuItem.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
@@ -91,7 +91,8 @@ function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   );
 }
 
-export interface RadioItemProps extends Omit<ItemContentProps, 'shortcut'> {
+export interface RadioItemProps
+  extends Omit<ItemContentProps, 'shortcut'>, Omit<ItemElementProps, 'defaultValue'> {
   /** The value the Menu.RadioGroup reports when this item is chosen. */
   value: string;
   /**
@@ -114,14 +115,20 @@ export function RadioItem({
   disabled,
   closeOnClick = true,
   className,
-  ...contentProps
+  icon,
+  start,
+  children,
+  description,
+  end,
+  ...props
 }: RadioItemProps) {
   const { content, accessibility } = useMenuItemContent(
-    contentProps,
+    { icon, start, children, description, end },
     <CheckIndicator kind="radio" />,
   );
   return (
     <BaseMenu.RadioItem
+      {...props}
       value={value}
       disabled={disabled}
       closeOnClick={closeOnClick}
@@ -133,7 +140,8 @@ export function RadioItem({
   );
 }
 
-export interface CheckboxItemProps extends ItemContentProps {
+export interface CheckboxItemProps
+  extends ItemContentProps, Omit<ItemElementProps, 'defaultChecked'> {
   /** Whether the option is on, for an item the application controls; a check mark shows while it is. */
   checked?: boolean;
   /**
@@ -162,14 +170,21 @@ export function CheckboxItem({
   disabled,
   closeOnClick = false,
   className,
-  ...contentProps
+  icon,
+  start,
+  children,
+  description,
+  shortcut,
+  end,
+  ...props
 }: CheckboxItemProps) {
   const { content, accessibility } = useMenuItemContent(
-    contentProps,
+    { icon, start, children, description, shortcut, end },
     <CheckIndicator kind="checkbox" />,
   );
   return (
     <BaseMenu.CheckboxItem
+      {...props}
       checked={checked}
       defaultChecked={defaultChecked}
       onCheckedChange={(next: boolean) => onCheckedChange?.(next)}
