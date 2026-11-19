@@ -443,7 +443,7 @@ test(
   },
 );
 
-test('the calendar fits a phone-wide window, and on touch screens its days are touch-sized', async () => {
+test('the calendar fits a phone-wide window, and on touch screens its days are touch-sized, as is the tap area of the Clear button', async () => {
   const fits = () => {
     const popup = openPopup();
     if (!popup) return false;
@@ -471,6 +471,19 @@ test('the calendar fits a phone-wide window, and on touch screens its days are t
     expect(matchMedia('(pointer: coarse)').matches).toBe(true);
     const meeting = field('Meeting light');
     expect(css(meeting, 'font-size')).toBe('16px');
+    const clear = page.getByRole('button', { name: 'Clear' }).first().element();
+    clear.scrollIntoView({ block: 'center' });
+    await animationsDone(clear);
+    const clearBox = box(clear);
+    expect(clearBox.height).toBeLessThan(44);
+    const reaches = (offset: number) =>
+      clear.contains(
+        document.elementFromPoint(
+          clearBox.x + clearBox.width / 2,
+          clearBox.y + clearBox.height / 2 + offset,
+        ),
+      );
+    expect([reaches(-21), reaches(21)]).toEqual([true, true]);
     const tap = async (target: Element) => {
       target.scrollIntoView({ block: 'nearest' });
       const at = box(target);
