@@ -329,3 +329,19 @@ test(
     expect(output('color-changes')()).toBe('0');
   },
 );
+
+test("a color picker button takes the application's own trigger, which joins a toolbar and shows the color", async () => {
+  mount({ default: fixture.ColorTriggerFixture });
+  const toolbar = page.getByRole('toolbar', { name: 'Formatting' });
+  const textColor = toolbar.getByTestId('text-color');
+  await expect.element(textColor).toHaveAccessibleName('Text color, #D32F2F');
+  expect(textColor.element().classList.contains('env-color-picker-button')).toBe(false);
+  focus(toolbar.getByRole('button', { name: 'Bold' }));
+  await keyboard.press('ArrowRight');
+  await expect.element(textColor).toHaveFocus();
+  await keyboard.press('Enter');
+  const dialog = page.getByRole('dialog', { name: 'Text color' });
+  await expect.element(dialog).toBeVisible();
+  await dialog.getByRole('listbox', { name: 'Swatches' }).getByRole('option').nth(1).click();
+  await expect.poll(() => css(textColor, 'border-bottom-color')).toBe('rgb(25, 118, 210)');
+});

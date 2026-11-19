@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, type ComponentPropsWithRef } from 'react';
+import { cloneElement, useRef, type ComponentPropsWithRef, type ReactElement } from 'react';
 import { Popover, type PopoverOpenChangeDetails } from '../../overlays/Popover.js';
 import type { ControlSize } from '../../foundations/Theme.js';
 import { colorPicker as colorPickerMessages } from '../../foundations/messages/colorPicker.js';
@@ -48,6 +48,14 @@ export interface ColorPickerButtonProps
    * picker once a swatch is chosen.
    */
   onOpenChange?: (open: boolean, details: PopoverOpenChangeDetails) => void;
+  /**
+   * The element that opens the picker in place of the swatch button, such as a text color button
+   * of a toolbar, an A over a bar of the color: an element, or a function that receives the color's
+   * value and returns one. It takes the native props given here, the opening behavior and, unless
+   * it has its own, the name after the label and the color; style it, and show the color, yourself.
+   * @default a button with a swatch and the value
+   */
+  trigger?: ReactElement | ((color: { value: string }) => ReactElement);
 }
 
 /**
@@ -70,6 +78,8 @@ export function ColorPickerButton({
   eyeDropper,
   copyable,
   swatches,
+  swatchesFirst,
+  fields,
   readOnly,
   className,
   size,
@@ -78,6 +88,7 @@ export function ColorPickerButton({
   open,
   defaultOpen = false,
   onOpenChange,
+  trigger,
   'aria-label': ownLabel,
   ...props
 }: ColorPickerButtonProps) {
@@ -92,6 +103,34 @@ export function ColorPickerButton({
     form,
   );
   const shown = displayColor(color, valueFormat);
+  const buttonName = ownLabel ?? messages.button({ label, value: shown });
+  const own =
+    typeof trigger === 'function' ? trigger({ value: formatColor(color, valueFormat) }) : trigger;
+  const ownProps = (own?.props ?? {}) as {
+    'aria-label'?: string;
+    disabled?: boolean;
+    className?: string;
+  };
+  const opener = own ? (
+    cloneElement(own as ReactElement<Record<string, unknown>>, {
+      ...props,
+      className: classNames(ownProps.className, className) || undefined,
+      disabled: disabled || ownProps.disabled,
+      'aria-label': ownLabel ?? ownProps['aria-label'] ?? buttonName,
+    })
+  ) : (
+    <button
+      {...props}
+      type="button"
+      disabled={disabled}
+      className={classNames('env-color-picker-button', className)}
+      data-size={size}
+      aria-label={buttonName}
+    >
+      <ColorSwatch color={color} aria-hidden="true" />
+      <span className="env-color-picker-button-value">{shown}</span>
+    </button>
+  );
   return (
     <ColorLocale>
       <Popover
@@ -102,19 +141,7 @@ export function ColorPickerButton({
         defaultOpen={defaultOpen}
         onOpenChange={onOpenChange}
         className="env-color-picker-popover"
-        trigger={
-          <button
-            {...props}
-            type="button"
-            disabled={disabled}
-            className={classNames('env-color-picker-button', className)}
-            data-size={size}
-            aria-label={ownLabel ?? messages.button({ label, value: shown })}
-          >
-            <ColorSwatch color={color} aria-hidden="true" />
-            <span className="env-color-picker-button-value">{shown}</span>
-          </button>
-        }
+        trigger={opener}
       >
         <ColorChangeContext
           value={(nextColor) => {
@@ -127,6 +154,8 @@ export function ColorPickerButton({
             eyeDropper={eyeDropper}
             copyable={copyable}
             swatches={swatches}
+            swatchesFirst={swatchesFirst}
+            fields={fields}
             readOnly={readOnly}
             label={label}
             visibleLabel={false}

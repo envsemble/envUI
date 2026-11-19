@@ -53,6 +53,18 @@ export interface ColorPickerValueProps {
    * `{ color, label }` with a name, such as the colors of a brand.
    */
   swatches?: readonly ColorPickerSwatch[];
+  /**
+   * Show the swatches first, above the area and the fields, for a picker where presets are the
+   * usual choice, such as a tag's color.
+   * @default false
+   */
+  swatchesFirst?: boolean;
+  /**
+   * Whether to show the row of value fields, with the format select, the eyedropper and the copy
+   * button; without it, the area, the sliders and the swatches choose the color.
+   * @default true
+   */
+  fields?: boolean;
   /** Submits the color with a form under this name, as a string in valueFormat. */
   name?: string;
   /** The id of the form the color submits with, where the picker sits outside it. */
