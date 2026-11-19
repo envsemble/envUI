@@ -75,7 +75,7 @@ A Select with no label in a List.Item's control: the row's label names only a Sw
 
 ### label-vocabulary
 
-The label of an action, `Button`, `IconButton`, `ConfirmButton`, `CopyButton`, `Link` or `Menu.Item`, in its text or its `children`, `label`, `aria-label` or `…Label` prop, that is a word the vocabulary table of envUI's writing guide replaces, from [`src/data/vocabulary.json`](src/data/vocabulary.json). A label with more words, such as "Clone repository", passes.
+The label of an action, `Button`, `IconButton`, `ConfirmButton`, `CopyButton`, `Link` or `Menu.Item`, in its text or its `children`, `label`, `aria-label` or `…Label` prop, that is a word the vocabulary table of envUI's writing guide replaces, from [`src/data/vocabulary.json`](src/data/vocabulary.json). A label with more words, such as "Clone repository", passes. Option: `allow` (words the application keeps, such as `['Clone', 'Retry']` in a developer tool, in any case).
 
 ```text
 Write "Edit" instead of "Modify".
