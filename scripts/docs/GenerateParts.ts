@@ -51,7 +51,7 @@ if (check) {
       process.exit(1);
     }
     console.log(
-      `${partsPath} matches its sources, and every part or state gone since ${base.ref} is recorded as a breaking change.`,
+      `${partsPath} matches its sources, and every part or state gone since ${base.ref}${release ? ` that ${release.tag} shipped` : ''} is recorded as a breaking change.`,
     );
   }
 } else {
