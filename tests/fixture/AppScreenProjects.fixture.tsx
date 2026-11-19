@@ -711,9 +711,14 @@ export function ProjectsScreen() {
         placeholder="Search projects and pages"
         inputValue={query}
         onInputValueChange={setQuery}
-        items={projects
-          .filter((each) => each.name.toLowerCase().includes(query.toLowerCase()))
-          .map((each) => ({ id: each.id, label: each.name, group: 'Projects' }))}
+        items={[
+          {
+            label: 'Projects',
+            items: projects
+              .filter((each) => each.name.toLowerCase().includes(query.toLowerCase()))
+              .map((each) => ({ id: each.id, label: each.name })),
+          },
+        ]}
         onAction={(item) => setOpenId(item.id)}
       />
     </AppFrame>

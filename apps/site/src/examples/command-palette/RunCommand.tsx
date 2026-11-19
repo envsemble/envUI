@@ -6,7 +6,7 @@ import {
   Kbd,
   Column,
   Text,
-  type CommandPaletteItem,
+  type CommandPaletteGroup,
 } from '@envsemble/envui';
 import { IconBolt } from '@envsemble/envui/icons/Bolt';
 import { IconDarkMode } from '@envsemble/envui/icons/DarkMode';
@@ -41,11 +41,15 @@ export default function RunCommand() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [ran, setRan] = useState('');
-  const items = useMemo<CommandPaletteItem[]>(
-    () =>
-      commands
-        .filter((command) => command.label.toLowerCase().includes(query.trim().toLowerCase()))
-        .map((command) => ({ ...command, group: 'Commands' })),
+  const items = useMemo<CommandPaletteGroup[]>(
+    () => [
+      {
+        label: 'Commands',
+        items: commands.filter((command) =>
+          command.label.toLowerCase().includes(query.trim().toLowerCase()),
+        ),
+      },
+    ],
     [query],
   );
   return (

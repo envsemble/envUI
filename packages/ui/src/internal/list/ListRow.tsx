@@ -78,3 +78,9 @@ export function ListRow({
     } as { className: string; children: ReactNode },
   );
 }
+
+export function shownLabelText(row: Element) {
+  return row
+    .querySelector(':scope > .env-list-row-text > .env-list-row-label')
+    ?.textContent?.trim();
+}

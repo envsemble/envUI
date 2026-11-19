@@ -88,7 +88,11 @@ export function SegmentContentFixture() {
             </>
           ),
           end: <Badge>New</Badge>,
-          className: 'fixture-review-segment',
+          itemProps: {
+            className: 'fixture-review-segment',
+            'data-testid': 'review-segment',
+            title: 'Review',
+          },
         },
       ]}
     />

@@ -15,7 +15,7 @@ import {
   ThemePreferenceProvider,
   ThemeToggle,
   Toolbar,
-  type CommandPaletteItem,
+  type CommandPaletteGroup,
 } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
@@ -668,29 +668,24 @@ function Toolbars() {
   );
 }
 
-const commands: CommandPaletteItem[] = [
+const commands: CommandPaletteGroup[] = [
   {
-    id: 'new',
-    label: 'New document',
-    start: <IconAdd />,
-    end: <Kbd keys={['Ctrl', 'N']} />,
-    group: 'Commands',
+    label: 'Commands',
+    items: [
+      { id: 'new', label: 'New document', start: <IconAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
+      {
+        id: 'share',
+        label: 'Share',
+        description: 'Invite people to this project',
+        start: <IconShare />,
+      },
+      { id: 'export', label: 'Export (disabled)', start: <IconDownload />, disabled: true },
+    ],
   },
   {
-    id: 'share',
-    label: 'Share',
-    description: 'Invite people to this project',
-    start: <IconShare />,
-    group: 'Commands',
+    label: 'Navigation',
+    items: [{ id: 'settings', label: 'Open settings', start: <IconSettings /> }],
   },
-  {
-    id: 'export',
-    label: 'Export (disabled)',
-    start: <IconDownload />,
-    group: 'Commands',
-    disabled: true,
-  },
-  { id: 'settings', label: 'Open settings', start: <IconSettings />, group: 'Navigation' },
 ];
 
 function Palette({
@@ -698,7 +693,7 @@ function Palette({
   loading,
   query = '',
 }: {
-  items: CommandPaletteItem[];
+  items: CommandPaletteGroup[];
   loading?: boolean;
   query?: string;
 }) {

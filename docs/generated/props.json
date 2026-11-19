@@ -1863,13 +1863,13 @@
         },
         {
           "name": "items",
-          "type": "readonly CommandPaletteItem[]",
+          "type": "readonly CommandPaletteItem[] | readonly CommandPaletteGroup[]",
           "required": true,
-          "description": "Filtered and ranked by the application, in display order."
+          "description": "Filtered and ranked by the application, in display order; or groups of items, each under a heading."
         },
         {
           "name": "suggestedItems",
-          "type": "readonly CommandPaletteItem[]",
+          "type": "readonly CommandPaletteItem[] | readonly CommandPaletteGroup[]",
           "required": false,
           "description": "Shown in place of items while the search field is empty, such as recent documents or suggested pages under a group heading; options like any other."
         },

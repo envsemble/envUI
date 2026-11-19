@@ -59,10 +59,10 @@ export function ComboboxPopup<Item extends ComboboxItem>({
         className="env-combobox-list"
         aria-busy={loading || undefined}
       >
-        {(entry: Item | ComboboxGroup<Item>) =>
+        {(entry: Item | ComboboxGroup<Item>, index: number) =>
           isGroup(entry) ? (
             <BaseCombobox.Group
-              key={entry.label}
+              key={index}
               items={entry.items}
               render={<Grid />}
               className="env-combobox-group"
@@ -97,6 +97,7 @@ function ComboboxOption<Item extends ComboboxItem>({
     <ListRow
       render={
         <BaseCombobox.Item
+          {...item.itemProps}
           value={item.value}
           disabled={item.disabled}
           aria-describedby={item.description ? descriptionId : undefined}

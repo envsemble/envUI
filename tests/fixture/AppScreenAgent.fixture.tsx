@@ -31,7 +31,7 @@ import {
   Textarea,
   Tooltip,
   useToast,
-  type CommandPaletteItem,
+  type CommandPaletteGroup,
   type Destination,
 } from '@envsemble/envui';
 import { HighlightedCodeBlock } from '@envsemble/envui/code';
@@ -323,49 +323,58 @@ function SettingsDialog({
   );
 }
 
-const commands: CommandPaletteItem[] = [
+const commands: CommandPaletteGroup[] = [
   {
-    id: 'new',
-    label: 'New agent run',
-    start: <IconSmartToy />,
-    group: 'Commands',
-    end: <Kbd keys={['Ctrl', 'N']} />,
-  },
-  { id: 'rerun', label: 'Run the failing step again', start: <IconReplay />, group: 'Commands' },
-  {
-    id: 'commit',
-    label: 'Commit the changes',
-    start: <IconCommit />,
-    group: 'Commands',
-    end: <Kbd keys={['Ctrl', 'Enter']} />,
-  },
-  {
-    id: 'settings',
-    label: 'Agent settings',
-    start: <IconTune />,
-    group: 'Commands',
-    end: <Kbd keys={['Ctrl', ',']} />,
-  },
-  {
-    id: 'billing',
-    label: 'billing-api',
-    description: 'northwind/billing-api',
-    start: <IconFolder />,
-    group: 'Projects',
+    label: 'Commands',
+    items: [
+      {
+        id: 'new',
+        label: 'New agent run',
+        start: <IconSmartToy />,
+        end: <Kbd keys={['Ctrl', 'N']} />,
+      },
+      { id: 'rerun', label: 'Run the failing step again', start: <IconReplay /> },
+      {
+        id: 'commit',
+        label: 'Commit the changes',
+        start: <IconCommit />,
+        end: <Kbd keys={['Ctrl', 'Enter']} />,
+      },
+      {
+        id: 'settings',
+        label: 'Agent settings',
+        start: <IconTune />,
+        end: <Kbd keys={['Ctrl', ',']} />,
+      },
+    ],
   },
   {
-    id: 'checkout',
-    label: 'checkout-web',
-    description: 'northwind/checkout',
-    start: <IconFolder />,
-    group: 'Projects',
+    label: 'Projects',
+    items: [
+      {
+        id: 'billing',
+        label: 'billing-api',
+        description: 'northwind/billing-api',
+        start: <IconFolder />,
+      },
+      {
+        id: 'checkout',
+        label: 'checkout-web',
+        description: 'northwind/checkout',
+        start: <IconFolder />,
+      },
+    ],
   },
   {
-    id: 'automation',
-    label: 'Nightly dependency updates',
-    start: <IconBolt />,
-    group: 'Automations',
-    end: <Badge tone="primary">New</Badge>,
+    label: 'Automations',
+    items: [
+      {
+        id: 'automation',
+        label: 'Nightly dependency updates',
+        start: <IconBolt />,
+        end: <Badge tone="primary">New</Badge>,
+      },
+    ],
   },
 ];
 
@@ -390,9 +399,12 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
   }));
   const items = useMemo(
     () =>
-      commands.filter((item) =>
-        String(item.label).toLowerCase().includes(query.trim().toLowerCase()),
-      ),
+      commands.map((group) => ({
+        ...group,
+        items: group.items.filter((item) =>
+          String(item.label).toLowerCase().includes(query.trim().toLowerCase()),
+        ),
+      })),
     [query],
   );
   return (

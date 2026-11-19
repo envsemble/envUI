@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   Button,
   CommandPalette,
+  type CommandPaletteGroup,
   type CommandPaletteItem,
   type CommandPaletteProps,
   useModifierKey,
@@ -120,8 +121,12 @@ export function SiteSearch({
     [index, query, expandedGroups],
   );
   const results = useMemo(() => grouped.flatMap((group) => group.results), [grouped]);
-  const items = useMemo<CommandPaletteItem[]>(
-    () => resultRows(grouped).map(({ kind, ...row }) => ({ ...row, icon: icons[kind] })),
+  const items = useMemo<CommandPaletteGroup[]>(
+    () =>
+      resultRows(grouped).map((group) => ({
+        ...group,
+        items: group.items.map(({ kind, ...row }) => ({ ...row, icon: icons[kind] })),
+      })),
     [grouped],
   );
   const suggestions = useMemo<CommandPaletteItem[]>(() => {
@@ -167,7 +172,7 @@ export function SiteSearch({
       inputValue={query}
       onInputValueChange={setQuery}
       items={items}
-      suggestedItems={suggestions}
+      suggestedItems={[{ label: 'Suggested', items: suggestions }]}
       loading={index.status === 'loading'}
       loadingLabel="Loading search"
       {...empty}

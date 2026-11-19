@@ -5,6 +5,7 @@ import {
   useRef,
   type ButtonHTMLAttributes,
   type ComponentProps,
+  type ComponentPropsWithoutRef,
   type CSSProperties,
   type ReactNode,
   type Ref,
@@ -55,12 +56,22 @@ export interface SelectItem {
   end?: ReactNode;
   /** Show the option but don't let people choose it; the keyboard can still highlight it. */
   disabled?: boolean;
+  /**
+   * More props for the option's element, such as a title or data attributes for tests. Its class
+   * joins the option's; the option's role, id and ARIA attributes stay its own.
+   */
+  itemProps?: SelectItemElementProps;
   /** Reserved: an entry with an `items` array is a group, so an option has none. */
   items?: never;
 }
+/** What a Select option's itemProps can set on its option element. */
+export type SelectItemElementProps = Omit<
+  ComponentPropsWithoutRef<'div'>,
+  'children' | 'id' | 'role' | 'tabIndex' | 'dangerouslySetInnerHTML' | `aria-${string}`
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
 /** Options of a Select under a heading, which also names the group for assistive technology. */
 export interface SelectGroup {
-  /** The group's heading. */
+  /** The group's heading: text, or content such as an icon or a count beside the group's name. */
   label: ReactNode;
   /** The options under the heading, in display order. */
   items: readonly SelectItem[];
@@ -159,6 +170,7 @@ function SelectOption({ item }: { item: SelectItem }) {
     <ListRow
       render={
         <BaseSelect.Item
+          {...item.itemProps}
           value={item.value}
           label={item.label}
           disabled={item.disabled}
