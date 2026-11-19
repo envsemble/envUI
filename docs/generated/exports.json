@@ -333,6 +333,8 @@
     "Markdown": "function",
     "MarkdownCommand": "type",
     "MarkdownEditor": "function",
+    "MarkdownEditorActions": "interface",
+    "MarkdownEditorMode": "type",
     "MarkdownEditorProps": "interface",
     "MarkdownLink": "interface",
     "MarkdownLinkProps": "interface",

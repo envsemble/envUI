@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, type Ref } from 'react';
+import { useCallback, useState, type ReactNode, type Ref } from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { flushSync } from 'react-dom';
 import { SegmentedControl } from '../forms/SegmentedControl.js';
@@ -9,6 +9,7 @@ import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { setRef } from '../internal/react/setRef.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import type { TextareaProps } from '../forms/Textarea.js';
 import { EditorStatus } from '../internal/editor/EditorStatus.js';
 import { EditorToolbar } from '../internal/editor/EditorToolbar.js';
@@ -32,6 +33,17 @@ export type { MarkdownCommand, MarkdownLink } from './internal/markdown/markdown
 export interface MarkdownLinkRequest {
   /** The text selected at the time, which the link will wrap; empty without a selection. */
   selectedText: string;
+}
+/** The view of a MarkdownEditor: the source to write in, or its preview. */
+export type MarkdownEditorMode = 'write' | 'preview';
+/** What a MarkdownEditor's own toolbar buttons receive, to edit the source. */
+export interface MarkdownEditorActions {
+  /**
+   * Replaces the selection with text, or inserts it at the caret, as one step Undo takes back, and
+   * shows the source; false where the editor can't take it, such as when it is read-only or the
+   * text would pass maxLength.
+   */
+  insert: (text: string) => boolean;
 }
 const defaultMarkdownCommands: readonly MarkdownCommand[] = [
   'heading',
@@ -60,14 +72,46 @@ export interface MarkdownEditorProps extends Omit<
   /** Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar. */
   toolbar?: readonly MarkdownCommand[] | false;
   /**
+   * The editor's own toolbar buttons after Undo and Redo, as Toolbar.Buttons, such as a mention,
+   * an emoji, an image or an AI rewrite; or a function that receives the editor's actions, such as
+   * insert to put text at the selection, and returns them.
+   */
+  toolbarEnd?: ReactNode | ((actions: MarkdownEditorActions) => ReactNode);
+  /**
    * Show the Write and Preview switch above the source. Preview uses the same public Markdown
    * renderer.
    */
   preview?: boolean;
-  /** Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable. */
+  /**
+   * Show the built-in Write and Preview switch of an editor with a preview. Turn it off to switch
+   * the view with the application's own control, through mode and onModeChange.
+   * @default true
+   */
+  viewSwitch?: boolean;
+  /** The view of a controlled editor with a preview: write or preview. */
+  mode?: MarkdownEditorMode;
+  /**
+   * The view an uncontrolled editor with a preview opens in.
+   * @default 'write'
+   */
+  defaultMode?: MarkdownEditorMode;
+  /** Receives the view as people switch it, or as the editor shows the source to edit it. */
+  onModeChange?: (mode: MarkdownEditorMode) => void;
+  /**
+   * Options of the Markdown that renders the preview, so it matches what the application
+   * publishes: headingOffset, renderLink, codeCopyable, components, remarkPlugins, rehypePlugins
+   * and allowHtml. Give components and plugins that keep their identity across renders, such as
+   * module constants, since a new one renders the preview again.
+   */
   previewProps?: Pick<
     import('./Markdown.js').MarkdownProps,
-    'headingOffset' | 'renderLink' | 'codeCopyable'
+    | 'headingOffset'
+    | 'renderLink'
+    | 'codeCopyable'
+    | 'components'
+    | 'remarkPlugins'
+    | 'rehypePlugins'
+    | 'allowHtml'
   >;
   /** Optional application picker. Return null to cancel; otherwise return an ordinary link. */
   pickLink?: (request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>;
@@ -98,7 +142,12 @@ export function MarkdownEditor({
   defaultValue = '',
   onValueChange,
   toolbar = defaultMarkdownCommands,
+  toolbarEnd,
   preview = true,
+  viewSwitch = true,
+  mode: controlledMode,
+  defaultMode = 'write',
+  onModeChange,
   previewProps,
   pickLink,
   label,
@@ -131,8 +180,14 @@ export function MarkdownEditor({
     form,
   });
   const inputMethodComposingRef = editing.composing;
-  const [mode, setMode] = useState('write');
-  const showSource = () => setMode('write');
+  const [mode, setMode] = useControllableState<MarkdownEditorMode>({
+    value: controlledMode,
+    defaultValue: defaultMode,
+    onChange: onModeChange,
+  });
+  const showSource = () => {
+    if (mode !== 'write') setMode('write');
+  };
   const [status, setStatus] = useState('');
   const { linkSelection, linkPending, requestLink, insertDialogLink, closeDialog } =
     useMarkdownLink({
@@ -162,6 +217,24 @@ export function MarkdownEditor({
       setStatus(messages.tooLongShort);
     }
   }
+  function insert(text: string) {
+    if (disabled || readOnly || linkPending || inputMethodComposingRef.current) return false;
+    const selection = editing.captureSelection();
+    if (!selection) return false;
+    setStatus('');
+    if (mode !== 'write') flushSync(showSource);
+    const caret = selection.start + text.length;
+    const inserted = editing.apply(selection, {
+      value:
+        selection.value.slice(0, selection.start) + text + selection.value.slice(selection.end),
+      start: caret,
+      end: caret,
+      direction: 'none',
+    });
+    if (!inserted) setStatus(messages.tooLongShort);
+    return inserted;
+  }
+  const ownButtons = typeof toolbarEnd === 'function' ? toolbarEnd({ insert }) : toolbarEnd;
   const source = (
     <Grid gap={3} className="env-markdown-editor-write">
       {toolbar !== false && (
@@ -174,7 +247,9 @@ export function MarkdownEditor({
           onCommand={runCommand}
           onUndo={() => editing.moveHistory(-1)}
           onRedo={() => editing.moveHistory(1)}
-        />
+        >
+          {ownButtons}
+        </EditorToolbar>
       )}
       <FieldFrame id={metadata.id} controlBox multiline variant={variant}>
         <TextareaControl
@@ -245,16 +320,18 @@ export function MarkdownEditor({
         >
           {preview ? (
             <Grid gap={2} className="env-markdown-editor-views">
-              <SegmentedControl
-                aria-label={messages.views}
-                size="sm"
-                value={mode}
-                onValueChange={setMode}
-                items={[
-                  { value: 'write', label: messages.write },
-                  { value: 'preview', label: messages.preview },
-                ]}
-              />
+              {viewSwitch && (
+                <SegmentedControl
+                  aria-label={messages.views}
+                  size="sm"
+                  value={mode}
+                  onValueChange={(next) => setMode(next as MarkdownEditorMode)}
+                  items={[
+                    { value: 'write', label: messages.write },
+                    { value: 'preview', label: messages.preview },
+                  ]}
+                />
+              )}
               <div className="env-markdown-editor-view" hidden={mode !== 'write'}>
                 {source}
               </div>

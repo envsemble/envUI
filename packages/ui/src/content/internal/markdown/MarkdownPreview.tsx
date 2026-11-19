@@ -4,38 +4,41 @@ import { useState, type ReactNode } from 'react';
 import { Markdown, type MarkdownProps } from '../../Markdown.js';
 import { Text } from '../../../foundations/Text.js';
 
-type PreviewOptions = Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>;
+const previewOptionNames = [
+  'headingOffset',
+  'renderLink',
+  'codeCopyable',
+  'components',
+  'remarkPlugins',
+  'rehypePlugins',
+  'allowHtml',
+] as const;
 
-interface RetainedPreview extends PreviewOptions {
+type PreviewOptions = Pick<MarkdownProps, (typeof previewOptionNames)[number]>;
+
+interface RetainedPreview {
   source: string;
+  options: PreviewOptions;
   content: ReactNode;
 }
 
 export function MarkdownPreview({
   active,
   source,
-  headingOffset,
-  renderLink,
-  codeCopyable,
   empty,
+  ...options
 }: PreviewOptions & { active: boolean; source: string; empty: string }) {
   const [retainedPreview, setRetainedPreview] = useState<RetainedPreview | null>(null);
   const retainedPreviewOutdated =
     retainedPreview === null ||
     retainedPreview.source !== source ||
-    retainedPreview.headingOffset !== headingOffset ||
-    retainedPreview.renderLink !== renderLink ||
-    retainedPreview.codeCopyable !== codeCopyable;
+    previewOptionNames.some((name) => retainedPreview.options[name] !== options[name]);
   if (active && retainedPreviewOutdated) {
     setRetainedPreview({
       source,
-      headingOffset,
-      renderLink,
-      codeCopyable,
+      options,
       content: source.trim() ? (
-        <Markdown headingOffset={headingOffset} renderLink={renderLink} codeCopyable={codeCopyable}>
-          {source}
-        </Markdown>
+        <Markdown {...options}>{source}</Markdown>
       ) : (
         <Text emphasis="muted">{empty}</Text>
       ),

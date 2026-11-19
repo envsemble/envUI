@@ -4087,6 +4087,13 @@
           "type": "Options['rehypePlugins']",
           "required": false,
           "description": "rehype plugins, such as heading ids; envUI adds none of its own."
+        },
+        {
+          "name": "allowHtml",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Keeps raw HTML in the Markdown, such as details, sub, sup or an img with a width, for trusted content such as the application's own docs or a README. Only rehype-raw in rehypePlugins renders it, so give a sanitizer with it, such as rehype-sanitize. Without it, raw HTML is dropped, apart from kbd around plain text."
         }
       ],
       "native": [
@@ -4134,6 +4141,12 @@
           "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
         },
         {
+          "name": "toolbarEnd",
+          "type": "ReactNode | ((actions: MarkdownEditorActions) => ReactNode)",
+          "required": false,
+          "description": "The editor's own toolbar buttons after Undo and Redo, as Toolbar.Buttons, such as a mention, an emoji, an image or an AI rewrite; or a function that receives the editor's actions, such as insert to put text at the selection, and returns them."
+        },
+        {
           "name": "preview",
           "type": "boolean",
           "required": false,
@@ -4141,10 +4154,36 @@
           "description": "Show the Write and Preview switch above the source. Preview uses the same public Markdown renderer."
         },
         {
-          "name": "previewProps",
-          "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
+          "name": "viewSwitch",
+          "type": "boolean",
           "required": false,
-          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
+          "default": "true",
+          "description": "Show the built-in Write and Preview switch of an editor with a preview. Turn it off to switch the view with the application's own control, through mode and onModeChange."
+        },
+        {
+          "name": "mode",
+          "type": "'write' | 'preview'",
+          "required": false,
+          "description": "The view of a controlled editor with a preview: write or preview."
+        },
+        {
+          "name": "defaultMode",
+          "type": "'write' | 'preview'",
+          "required": false,
+          "default": "'write'",
+          "description": "The view an uncontrolled editor with a preview opens in."
+        },
+        {
+          "name": "onModeChange",
+          "type": "(mode: MarkdownEditorMode) => void",
+          "required": false,
+          "description": "Receives the view as people switch it, or as the editor shows the source to edit it."
+        },
+        {
+          "name": "previewProps",
+          "type": "Pick<MarkdownProps, | 'headingOffset' | 'renderLink' | 'codeCopyable' | 'components' | 'remarkPlugins' | 'rehypePlugins' | 'allowHtml'>",
+          "required": false,
+          "description": "Options of the Markdown that renders the preview, so it matches what the application publishes: headingOffset, renderLink, codeCopyable, components, remarkPlugins, rehypePlugins and allowHtml. Give components and plugins that keep their identity across renders, such as module constants, since a new one renders the preview again."
         },
         {
           "name": "pickLink",
