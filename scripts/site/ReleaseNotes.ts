@@ -4,7 +4,7 @@ import { headingsOf } from '../docs/MarkdownHeadings.ts';
 import { libraryChangelogFile, repositoryRoot } from '../RepositoryPaths.ts';
 import { inlinePieces, type InlinePiece } from '../../apps/site/src/documentation/InlinePieces.ts';
 
-export { inlinePieces, type InlinePiece };
+export { inlinePieces };
 
 const releaseNotesFile = resolve(repositoryRoot, 'apps/site/src/releases/release-notes.md');
 
