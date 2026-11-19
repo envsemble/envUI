@@ -202,3 +202,26 @@ test('content inside the zone sits beside its target, takes drops and holds its 
   await chooseInOpenedPicker([file('plan.png', 'image/png')]);
   await expect.poll(() => list.element().textContent).toContain('plan.png');
 });
+
+test("the application's own region can be the zone, without the target, named by the label", async () => {
+  mount({ default: fixture.DropZoneRegionFixture });
+  const region = page.getByTestId('region');
+  expect(region.element().tagName).toBe('SECTION');
+  await expect.element(region).toHaveClass(/own-region/);
+  await expect.element(region).toHaveClass(/env-drop-zone/);
+  await expect.element(region).toHaveRole('group');
+  await expect.element(region).toHaveAccessibleName('Drop files on the table');
+  await expect.element(region).toHaveAccessibleDescription('Any file up to 10 MB');
+  expect(region.element().querySelector('.env-drop-zone-target')).toBeNull();
+  const rows = page.getByTestId('rows');
+  const transfer = filesTransfer([['brief.pdf', 'application/pdf']]);
+  drag(rows, 'dragenter', transfer);
+  await expect.element(region).toHaveAttribute('data-drag-over');
+  drag(rows, 'dragover', transfer);
+  drag(rows, 'drop', transfer);
+  await expect.element(region).not.toHaveAttribute('data-drag-over');
+  await expect.poll(() => rows.element().textContent).toContain('brief.pdf');
+  await page.getByRole('button', { name: 'Browse' }).click();
+  await chooseInOpenedPicker([file('plan.png', 'image/png')]);
+  await expect.poll(() => rows.element().textContent).toContain('plan.png');
+});

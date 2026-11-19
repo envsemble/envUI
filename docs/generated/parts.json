@@ -2477,7 +2477,8 @@
       "uses": [
         "Field",
         "Icon",
-        "Spinner"
+        "Spinner",
+        "VisuallyHidden"
       ]
     },
     "EmptyState": {

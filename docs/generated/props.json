@@ -3220,7 +3220,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "What to drop or choose, such as \"Drop a logo here, or browse\". With the description, it names the zone, as its visible text does."
+          "description": "What to drop or choose, such as \"Drop a logo here, or browse\". With the description, it names the zone, as its visible text does; without the target, only assistive technology reads it."
         },
         {
           "name": "description",
@@ -3316,6 +3316,19 @@
           "type": "Ref<HTMLInputElement>",
           "required": false,
           "description": "The native file input that opens the file picker, for example from a Replace button; ref reaches the zone itself."
+        },
+        {
+          "name": "target",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show the target: the button with the icon, the label and the description that opens the file picker. Without it, the zone is a group the label names, for content that has its own Browse button, which opens the picker through inputRef, such as a table the files land in."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "Another element to render the zone as, such as the application's own panel or table region, which then takes dropped files: the zone's class, its state attributes, such as data-drag-over, and its handlers merge into its props."
         }
       ],
       "native": [
