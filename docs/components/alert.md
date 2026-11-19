@@ -32,6 +32,7 @@ examples:
   BlockedRelease: overview
   Tones: variants
   CustomIcon: example
+  BannerAction: example
   SaveFailed: example
   AlertAnatomy: anatomy
 ---
@@ -52,6 +53,12 @@ examples:
 ### Another icon, or none
 
 ```tsx figure=CustomIcon
+
+```
+
+### Actions at the end
+
+```tsx figure=BannerAction widths="40 18" sweep
 
 ```
 
