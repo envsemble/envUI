@@ -5,7 +5,7 @@ import { elementsOf, firstElement } from '../../support/Markup.ts';
 import { createElement as h, type ReactElement } from 'react';
 import { renderToString } from 'react-dom/server';
 
-const { Button, ConfirmButton, CopyButton, Toolbar } = await importSource('Button', [
+const { Button, ConfirmButton, CopyButton, IconButton, Toolbar } = await importSource('Button', [
   "export * from './packages/ui/src/actions/Button.tsx';",
   "export * from './packages/ui/src/actions/ConfirmButton.tsx';",
   "export * from './packages/ui/src/actions/CopyButton.tsx';",
@@ -97,4 +97,24 @@ test("a button renders as another element with the button's look, content and st
   );
   assert.equal(off.attributes['aria-disabled'], 'true');
   assert.equal(off.attributes.disabled, undefined);
+});
+
+test("an icon button renders as another element, such as a file input's label, with its look and icon", () => {
+  const attach = firstElement(
+    renderToString(
+      h(IconButton, {
+        render: h('label', { htmlFor: 'files' }),
+        icon: h('svg'),
+        'aria-label': 'Attach files',
+        variant: 'ghost',
+      }),
+    ),
+  );
+  assert.equal(attach.tag, 'label');
+  assert.equal(attach.attributes.for, 'files');
+  assert.equal(attach.attributes.class, 'env-button env-icon-button');
+  assert.equal(attach.attributes['aria-label'], 'Attach files');
+  assert.equal(attach.attributes['data-variant'], 'ghost');
+  assert.equal(attach.attributes.type, undefined);
+  assert.ok(elementsOf(attach).some((element) => element.attributes.class === 'env-button-icon'));
 });

@@ -146,6 +146,12 @@ export type IconButtonProps = IconButtonElementProps &
     pending?: boolean;
     /** As Button's: the height, and the width, of the square button. */
     size?: ControlSize;
+    /**
+     * As Button's: another element to render the button as, such as a label for a file input
+     * shaped like an icon button. Its class, look, state attributes, icon and handlers merge into
+     * that element's props; disabled reports aria-disabled and blocks presses.
+     */
+    render?: ReactElement;
   };
 
 /**

@@ -4059,6 +4059,12 @@
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
           "description": "As Button's: the height, and the width, of the square button."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "As Button's: another element to render the button as, such as a label for a file input shaped like an icon button. Its class, look, state attributes, icon and handlers merge into that element's props; disabled reports aria-disabled and blocks presses."
         }
       ],
       "native": [
@@ -8841,6 +8847,12 @@
           "required": false,
           "requiredWhen": "in some forms",
           "description": "The id of visible text that names the action; this or aria-label."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "As Button's: another element to render the button as, such as a label for a file input shaped like an icon button. Its class, look, state attributes, icon and handlers merge into that element's props; disabled reports aria-disabled and blocks presses."
         },
         {
           "name": "size",
