@@ -10,6 +10,7 @@ export default function PanesFixture() {
   const sized = (query.get('sized') ?? undefined) as 'start' | 'end' | undefined;
   const stackBelow = (query.get('stack') ?? undefined) as Panes.StackBelow | undefined;
   const handle = query.get('handle') !== 'none';
+  const only = query.get('only');
   const [width, setWidth] = useState(query.get('width') ?? '60rem');
   const [sizes, setSizes] = useState<string[]>([]);
   return (
@@ -34,11 +35,13 @@ export default function PanesFixture() {
           name="inbox"
           data-testid="panes"
         >
-          <Panes.Pane label="Projects" header={<Text data-testid="list-header">Projects</Text>}>
-            <Text>Northwind launch</Text>
-            <Button variant="secondary">New project</Button>
-            <div style={{ blockSize: '40rem' }} />
-          </Panes.Pane>
+          {only !== 'detail' && (
+            <Panes.Pane label="Projects" header={<Text data-testid="list-header">Projects</Text>}>
+              <Text>Northwind launch</Text>
+              <Button variant="secondary">New project</Button>
+              <div style={{ blockSize: '40rem' }} />
+            </Panes.Pane>
+          )}
           {handle && (
             <Panes.ResizeHandle
               label="Resize projects"
@@ -46,11 +49,13 @@ export default function PanesFixture() {
               disabled={query.has('disabled')}
             />
           )}
-          <Panes.Pane label="Northwind launch">
-            <Surface padding={4} data-testid="detail-surface" style={{ minBlockSize: '100%' }}>
-              <Text>About Northwind launch</Text>
-            </Surface>
-          </Panes.Pane>
+          {only !== 'list' && (
+            <Panes.Pane label="Northwind launch">
+              <Surface padding={4} data-testid="detail-surface" style={{ minBlockSize: '100%' }}>
+                <Text>About Northwind launch</Text>
+              </Surface>
+            </Panes.Pane>
+          )}
         </Panes.Root>
       </div>
       <output data-testid="sizes">{sizes.join(' ')}</output>

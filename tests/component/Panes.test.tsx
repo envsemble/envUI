@@ -216,3 +216,14 @@ test(
     style.remove();
   },
 );
+
+test('a pane the application renders alone fills Panes, whichever pane is sized, and the handle hides', async () => {
+  for (const search of ['width=60rem&only=list', 'width=60rem&only=detail&sized=end']) {
+    panes(search);
+    const frame = box(page.getByTestId('frame'));
+    const pane = search.includes('only=list') ? list() : detail();
+    expect(box(pane).x).toBeCloseTo(frame.x + 1, 0);
+    expect(box(pane).width).toBeCloseTo(frame.width - 2, 0);
+    expect(shown(handle())).toBe(false);
+  }
+});
