@@ -112,6 +112,21 @@ export default function ListFixture() {
           description="Sam Lee"
         />
       </List.Root>
+      <List.Root aria-label="Edits">
+        <List.Item
+          interactive
+          label={
+            <a href="#report" data-row-target>
+              Quarterly report
+            </a>
+          }
+          description={
+            <>
+              Edited by <a href="#alex">Alex Morgan</a>
+            </>
+          }
+        />
+      </List.Root>
       <List.Root aria-label="People">
         {['Alex Morgan', 'Sam Lee'].map((name) => (
           <List.Item

@@ -261,8 +261,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### List
 
-- Parts: `env-list`, `env-list-announcer`, `env-list-description` (slot), `env-list-header`, `env-list-item`, `env-list-item-content`, `env-list-item-control` (slot), `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot), `env-list-section`, `env-list-title`
-- States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-env-skeleton` on `env-list`, `env-list-item-description`; `data-interactive` on `env-list-item`; `data-label` on `env-list-item-handle`; `data-moving` (`keyboard`, `pointer`) on `env-list-item`; `data-reorderable`; `data-reordering`; `data-selected` on `env-list-item`; `data-start` on `env-list-item`
+- Parts: `env-list`, `env-list-actions` (slot), `env-list-announcer`, `env-list-description` (slot), `env-list-header`, `env-list-item`, `env-list-item-content`, `env-list-item-control` (slot), `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot), `env-list-section`, `env-list-title`
+- States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-env-skeleton` on `env-list`, `env-list-item-description`; `data-interactive` on `env-list-item`; `data-label` on `env-list-item-handle`; `data-moving` (`keyboard`, `pointer`) on `env-list-item`; `data-placement` (`end`) on `env-list-item-handle`; `data-reorderable`; `data-reordering`; `data-selected` on `env-list-item`; `data-start` on `env-list-item`
 - Color properties: `--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected`, `--env-list-item-selected-content`
 
 ### Markdown

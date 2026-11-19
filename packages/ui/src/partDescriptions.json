@@ -415,6 +415,7 @@
     },
     "List": {
       "env-list": "The list.",
+      "env-list-actions": "The slot of the content at the end of the title's line, such as an Add button.",
       "env-list-announcer": "The announcements of a reordered item.",
       "env-list-description": "The slot of the sentence under a list's title, in muted text.",
       "env-list-header": "The list's title and description above its rows.",

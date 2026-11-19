@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { Column, Grid } from '../../layout/Layout.js';
+import { Column, Grid, Row } from '../../layout/Layout.js';
 import { Slot } from '../../internal/layout/Slot.js';
 import { SkeletonStatus } from '../../foundations/SkeletonScope.js';
 import { Text } from '../../foundations/Text.js';
@@ -42,7 +42,9 @@ export function renderList(
     headingLevel = 2,
     description,
     density = 'md',
+    actions,
     onReorder,
+    handlePlacement = 'start',
     skeleton = false,
     className,
     children,
@@ -70,7 +72,7 @@ export function renderList(
       onReorder={onReorder}
       className={className}
     >
-      {inSkeletonList(skeleton, markRowsToShowReorderHandle(children))}
+      {inSkeletonList(skeleton, markRowsToShowReorderHandle(children, handlePlacement))}
     </ReorderableList>
   ) : (
     <Grid
@@ -98,12 +100,24 @@ export function renderList(
   );
   if (title == null) return shown;
   const Heading = `h${headingLevel}` as const;
+  const heading = (
+    <Text variant="title" render={<Heading id={titleId} className="env-list-title" />}>
+      {title}
+    </Text>
+  );
   return (
     <Column gap={3} className="env-list-section">
       <Column gap={1} className="env-list-header">
-        <Text variant="title" render={<Heading id={titleId} className="env-list-title" />}>
-          {title}
-        </Text>
+        {actions != null ? (
+          <Row wrap align="center" justify="between" gap={3}>
+            {heading}
+            <Slot className="env-list-actions" layout="row" shrink="never">
+              {actions}
+            </Slot>
+          </Row>
+        ) : (
+          heading
+        )}
         {description != null && (
           <Slot id={descriptionId} className="env-list-description">
             {description}
@@ -115,12 +129,18 @@ export function renderList(
   );
 }
 
-function markRowsToShowReorderHandle(children: ReactNode): ReactNode {
+type HandlePlacement = NonNullable<RootProps['handlePlacement']>;
+
+function markRowsToShowReorderHandle(children: ReactNode, placement: HandlePlacement): ReactNode {
   return Children.map(children, (child) => {
     if (!isValidElement<{ children?: ReactNode }>(child)) return child;
     if (child.type === Fragment)
-      return cloneElement(child, undefined, markRowsToShowReorderHandle(child.props.children));
-    return cloneElement(child, { [showsReorderHandleProp]: true } as object);
+      return cloneElement(
+        child,
+        undefined,
+        markRowsToShowReorderHandle(child.props.children, placement),
+      );
+    return cloneElement(child, { [showsReorderHandleProp]: placement } as object);
   });
 }
 
@@ -165,9 +185,10 @@ export function renderItem(props: ItemProps, ids?: ListIds) {
     skeleton = false,
     children,
     className,
-    [showsReorderHandleProp]: reorderable = false,
+    [showsReorderHandleProp]: handlePlacement,
     ...rest
-  } = props as ItemProps & { [showsReorderHandleProp]?: boolean };
+  } = props as ItemProps & { [showsReorderHandleProp]?: HandlePlacement };
+  const reorderable = handlePlacement !== undefined;
   const hasDescription = description != null || given(props, 'description');
   const labelId = control != null ? ids?.label : undefined;
   const descriptionId = control != null && hasDescription ? ids?.description : undefined;
@@ -199,7 +220,7 @@ export function renderItem(props: ItemProps, ids?: ListIds) {
       {inSkeleton(
         skeleton,
         <>
-          {reorderable && <ListReorderHandle textValue={text} />}
+          {handlePlacement === 'start' && <ListReorderHandle textValue={text} />}
           {start != null && (
             <Slot className="env-list-item-start" layout="row" shrink="never">
               {start}
@@ -228,6 +249,7 @@ export function renderItem(props: ItemProps, ids?: ListIds) {
               </RowControlProvider>
             </Slot>
           )}
+          {handlePlacement === 'end' && <ListReorderHandle textValue={text} placement="end" />}
         </>,
       )}
     </li>

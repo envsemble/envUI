@@ -2701,6 +2701,11 @@
           "description": "The list."
         },
         {
+          "class": "env-list-actions",
+          "description": "The slot of the content at the end of the title's line, such as an Add button.",
+          "slot": true
+        },
+        {
           "class": "env-list-announcer",
           "description": "The announcements of a reordered item."
         },
@@ -2808,6 +2813,15 @@
           ],
           "parts": [
             "env-list-item"
+          ]
+        },
+        {
+          "attribute": "data-placement",
+          "values": [
+            "end"
+          ],
+          "parts": [
+            "env-list-item-handle"
           ]
         },
         {
