@@ -925,17 +925,17 @@
           "description": "The sentence under the title."
         },
         {
-          "class": "env-card-end",
-          "description": "The slot at the end of the title row, after the meta, such as a Menu.",
-          "slot": true
-        },
-        {
           "class": "env-card-footer",
           "description": "The strip of actions."
         },
         {
           "class": "env-card-header",
           "description": "The row with the title and the meta."
+        },
+        {
+          "class": "env-card-header-end",
+          "description": "The slot at the end of the title row, after the meta, such as a Menu.",
+          "slot": true
         },
         {
           "class": "env-card-meta",

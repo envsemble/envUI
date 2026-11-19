@@ -172,7 +172,7 @@
       "env-card-header": "The row with the title and the meta.",
       "env-card-title": "The title.",
       "env-card-meta": "The short fact at the end of the title row.",
-      "env-card-end": "The slot at the end of the title row, after the meta, such as a Menu."
+      "env-card-header-end": "The slot at the end of the title row, after the meta, such as a Menu."
     },
     "Checkbox": {
       "env-checkbox": "The checkbox with its label.",

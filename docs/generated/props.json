@@ -989,10 +989,10 @@
           "description": "A short fact at the end of the title row, such as when the card was updated."
         },
         {
-          "name": "end",
+          "name": "headerEnd",
           "type": "ReactNode",
           "required": false,
-          "description": "Content at the end of the title row, after the meta, such as an overflow Menu or an Edit Button, placed as given and kept above the card's target."
+          "description": "Content at the end of the title row, after the meta, such as an overflow Menu or an Edit Button, placed as given."
         },
         {
           "name": "description",
@@ -1004,14 +1004,14 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit. For controls beside the title, use end."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit. For controls beside the title, use headerEnd."
         },
         {
           "name": "interactive",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The card opens something through a link or button inside, such as its title: it reacts to hover, keyboard focus on that target and presses. Mark the link or button `data-row-target` to stretch it over the card; the meta, end and actions stay above it and take their own clicks."
+          "description": "The card opens something through a link or button inside, such as its title: it reacts to hover, keyboard focus on that target and presses. Mark the link or button `data-row-target` to stretch it over the card; the other links, buttons and fields in the card, such as an author's link in the description or a Menu in headerEnd, stay clickable above it."
         },
         {
           "name": "render",

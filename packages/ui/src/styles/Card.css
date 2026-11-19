@@ -87,10 +87,20 @@
   .env-card[data-interactive] [data-row-target]:focus-visible {
     outline: none;
   }
-  .env-card[data-interactive] :is(.env-card-meta, .env-card-end, .env-card-footer) {
+  .env-card[data-interactive]:has([data-row-target])
+    :where(
+      a[href],
+      button,
+      input,
+      select,
+      textarea,
+      summary,
+      label,
+      [tabindex],
+      [contenteditable]
+    ):where(:not([data-row-target], [data-row-target] *)) {
     position: relative;
     z-index: var(--env-z-raised);
-    cursor: auto;
   }
   .env-card[data-interactive]:is(:disabled, [aria-disabled='true']) {
     opacity: var(--env-state-disabled-opacity);
@@ -106,13 +116,13 @@
     }
   }
 
-  .env-card-header > :is(.env-card-meta, .env-card-end) {
+  .env-card-header > :is(.env-card-meta, .env-card-header-end) {
     margin-inline-start: auto;
   }
-  .env-card-header > .env-card-meta + .env-card-end {
+  .env-card-header > .env-card-meta + .env-card-header-end {
     margin-inline-start: 0;
   }
-  .env-card-end {
+  .env-card-header-end {
     flex-wrap: wrap;
     gap: var(--env-space-2);
   }
