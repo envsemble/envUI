@@ -163,7 +163,7 @@ export function SiteSearch({
       onOpenChange={onOpenChange}
       aria-label="Search envUI"
       className="site-search"
-      placeholder="Search components, props and tokens"
+      placeholder="Search envUI"
       inputValue={query}
       onInputValueChange={setQuery}
       items={items}
