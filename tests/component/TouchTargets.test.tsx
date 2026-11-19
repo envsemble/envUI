@@ -21,7 +21,7 @@ function reach(target: Element) {
   ].every(([pointX, pointY]) => target.contains(document.elementFromPoint(pointX!, pointY!)));
 }
 
-test('on touch, breadcrumb links, contents links and a picker's Clear button take a 44 px tap, and keep their size under a mouse', async () => {
+test("on touch, breadcrumb links, contents links and a picker's Clear button take a 44 px tap, and keep their size under a mouse", async () => {
   mount(fixture);
   const links = () => [
     page.getByRole('link', { name: 'Workspace' }).element(),
