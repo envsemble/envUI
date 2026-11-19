@@ -54,7 +54,6 @@ examples:
 
 ```
 
-1. **Toolbar** (`env-toolbar`)
-2. **Group** (`env-toolbar-group`)
-3. **Button** (`env-toolbar-button`, `icon`)
-4. **Separator** (`env-toolbar-separator`)
+1. **Group** (`env-toolbar-group`)
+2. **Button** (`env-toolbar-button`, `icon`)
+3. **Separator** (`env-toolbar-separator`)

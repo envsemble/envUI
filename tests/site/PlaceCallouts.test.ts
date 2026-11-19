@@ -27,3 +27,35 @@ test('callouts are numbered by rows from the top, each from the start', () => {
     [300, 100],
   );
 });
+
+test('a callout to a part thinner than its dot, such as a separator, points at its middle', () => {
+  const part = (number, box, corner) => ({
+    number,
+    element: number - 1,
+    text: false,
+    box,
+    corners: { topLeft: corner, topRight: corner, bottomLeft: corner, bottomRight: corner },
+    inline: false,
+    edge: true,
+    ownEdge: true,
+    region: false,
+    repeated: false,
+  });
+  const { callouts } = placement.placeCallouts({
+    width: 200,
+    height: 64,
+    rtl: false,
+    parts: [
+      part(1, { left: 0, top: 0, right: 80, bottom: 40 }, 6),
+      part(2, { left: 100, top: 4, right: 101, bottom: 36 }, 0.5),
+    ],
+    contains: [
+      [true, false],
+      [false, true],
+    ],
+    labels: [],
+  });
+  const { anchor } = callouts.find(({ index }) => index === 1);
+  assert.ok(Number.isFinite(anchor.x) && Number.isFinite(anchor.y), JSON.stringify(anchor));
+  assert.ok(anchor.x >= 100 && anchor.x <= 101, `${anchor.x} is on the separator`);
+});
