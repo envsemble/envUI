@@ -18,6 +18,8 @@
     min-inline-size: 0;
     max-inline-size: var(--_breadcrumbs-crumb-max-width);
     display: inline-flex;
+    align-items: center;
+    gap: var(--env-space-1);
     padding: calc(var(--env-space-1) / 2) var(--env-space-1);
     border-radius: var(--env-radius-sm);
   }
@@ -32,6 +34,8 @@
   }
   .env-breadcrumbs-link:hover {
     color: var(--env-color-fg-default);
+  }
+  .env-breadcrumbs-link:hover > .env-breadcrumbs-label {
     text-decoration: underline;
     text-underline-offset: 0.15em;
   }

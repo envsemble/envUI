@@ -95,7 +95,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Breadcrumbs
 
-- Parts: `env-breadcrumbs`, `env-breadcrumbs-current`, `env-breadcrumbs-item`, `env-breadcrumbs-label`, `env-breadcrumbs-link`, `env-breadcrumbs-list`, `env-breadcrumbs-separator`, `env-breadcrumbs-text`
+- Parts: `env-breadcrumbs`, `env-breadcrumbs-current`, `env-breadcrumbs-item`, `env-breadcrumbs-label`, `env-breadcrumbs-link`, `env-breadcrumbs-list`, `env-breadcrumbs-separator`, `env-breadcrumbs-start` (slot), `env-breadcrumbs-text`
 - States: `data-nowrap`
 
 ### Button
