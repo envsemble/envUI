@@ -82,7 +82,7 @@ exports[`copy-button has no new accessibility violations 1`] = `{}`;
 exports[`data-display has no new accessibility violations 1`] = `
 {
   "landmark-unique": {
-    "nav.env-breadcrumbs": 6,
+    "nav.env-breadcrumbs": 7,
   },
 }
 `;
