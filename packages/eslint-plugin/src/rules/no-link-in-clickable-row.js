@@ -15,24 +15,30 @@ const entryPoints = new Set(readData('entryPoints.json').entryPoints);
 const rows = {
   'List.Item': {
     props: ['href', 'onClick'],
+    raised: new Set(['start', 'end', 'control']),
     place: 'its end slot as a Button',
     advice: ' When it goes where the row goes, mark it data-row-target instead.',
   },
   'Table.Row': {
     props: ['onClick'],
+    raised: new Set(),
     place: 'a cell of its own as a Button',
     advice:
       ' When it goes where the row goes, mark it data-row-target and make the row interactive in place of its onClick.',
   },
   Card: {
     props: ['href', 'onClick'],
+    raised: new Set(['meta', 'end', 'actions']),
     place: 'beside the card as a Button',
     advice:
       " When it goes where the card goes, leave it out: the card's href or onClick takes the click.",
+    targeted: {
+      prop: 'interactive',
+      place: 'its end or actions as a Button',
+      advice: ' When it goes where the card goes, mark it data-row-target instead.',
+    },
   },
 };
-
-const raisedSlots = new Set(['start', 'end', 'control']);
 
 const isSet = (attribute) => attribute !== undefined && staticValue(attribute) !== false;
 
@@ -74,12 +80,12 @@ export default {
       return undefined;
     }
 
-    function inside(row) {
+    function inside(row, raised) {
       const elements = [];
       walk(row, sourceCode.visitorKeys, (node) => {
         if (node === row) return true;
         if (node.type === 'JSXAttribute' && node.parent === row.openingElement)
-          return !raisedSlots.has(jsxName(node.name));
+          return !raised.has(jsxName(node.name));
         if (node.type !== 'JSXElement') return true;
         if (rows[envuiName(node.openingElement.name)]) return false;
         elements.push(node.openingElement);
@@ -94,14 +100,21 @@ export default {
         const row = rows[name];
         if (!row) return;
         const clickable = row.props.some((prop) => isSet(findAttribute(node.openingElement, prop)));
-        if (!clickable) return;
-        for (const element of inside(node)) {
+        const elements = inside(node, row.raised);
+        const targeted =
+          !clickable &&
+          row.targeted !== undefined &&
+          isSet(findAttribute(node.openingElement, row.targeted.prop)) &&
+          elements.some((element) => findAttribute(element, 'data-row-target'));
+        if (!clickable && !targeted) return;
+        const { place, advice } = targeted ? row.targeted : row;
+        for (const element of elements) {
           const found = linkStyled(element);
           if (found)
             context.report({
               node: element.name,
               messageId: 'nested',
-              data: { found, row: name, place: row.place, advice: row.advice },
+              data: { found, row: name, place, advice },
             });
         }
       },
