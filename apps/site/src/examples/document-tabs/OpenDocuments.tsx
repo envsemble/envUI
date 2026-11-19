@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Column, DocumentTabs, Text, type DocumentTabsItem } from '@envsemble/envui';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 
-const documents: DocumentTabsItem[] = [
+const documents: (DocumentTabsItem & { label: string })[] = [
   { value: 'plans/roadmap.md', label: 'Roadmap.md' },
   { value: 'plans/decisions.md', label: 'Decisions.md' },
   { value: 'research/interviews.md', label: 'Interviews.md', preview: true },
