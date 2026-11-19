@@ -124,7 +124,11 @@ export default function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
         Open with <Kbd keys={['Ctrl', 'P']} /> or press <Kbd>F2</Kbd>.
       </p>
       <div className="fixture-table-frame">
-        <Table.Root caption={`Plans ${theme}`} stickyHeader regionClassName="fixture-table-region">
+        <Table.Root
+          caption={`Plans ${theme}`}
+          stickyHeader
+          regionProps={{ className: 'fixture-table-region' }}
+        >
           <Table.Head>
             <Table.Row>
               <Table.HeaderCell>Plan</Table.HeaderCell>
