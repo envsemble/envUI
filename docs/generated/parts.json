@@ -4379,8 +4379,16 @@
           "description": "The body, the main region, which scrolls."
         },
         {
+          "class": "env-scaffold-bottom-bar",
+          "description": "The bottom bar region under the body and the end region, such as a status bar."
+        },
+        {
           "class": "env-scaffold-drawer",
           "description": "The slot of the navigation drawer, at the start from expanded."
+        },
+        {
+          "class": "env-scaffold-end",
+          "description": "The end region beside the body, such as an inspector, which scrolls on its own."
         },
         {
           "class": "env-scaffold-navigation",
