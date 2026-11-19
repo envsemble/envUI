@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.0 — 2026-11-19
+
+A breadcrumb takes any content again: a crumb's label can hold an avatar, an icon or anything beside its text, as on 1.x.
+
+### Minor Changes
+
+- Breadcrumbs: a crumb's `label` takes any content again, as in 1.x, such as an Avatar before a project's name. It names the crumb's link or button, the trail still cuts it short beyond 20 rem, and the tooltip then shows the same content in full. The type widens from `string` to `ReactNode`: labels an app passes in keep working, and code that reads `label` back as a string needs a check that it is one. See [Breadcrumbs](https://github.com/envsemble/envUI/blob/main/docs/components/breadcrumbs.md).
+
 ## 2.0.0 — 2026-11-19
 
 envUI 2.0 steers by its code and looks quieter. Fewer, better components: Tabs, LineArt and PanelDock are gone, Panes is one part with a resize handle, and EmptyState, ResizeHandle and VisuallyHidden arrive. The light and dark themes keep things apart, and alike: light surfaces sit a step apart around a real recessed well, selection stays apart from hover, and nothing shows in one theme and disappears in the other. Each breaking change below says what to write instead.

@@ -1,5 +1,9 @@
 # @envsemble/stylelint-config-envui
 
+## 2.1.0 — 2026-11-19
+
+No changes in this release.
+
 ## 2.0.0 — 2026-11-19
 
 The Stylelint config for envUI 2.0: px is reported by `envui/no-px`, and new rules catch off-scale lengths, unknown `--env-` properties, contrast-breaking pairs and removed focus outlines. Each breaking change below says what to write instead.

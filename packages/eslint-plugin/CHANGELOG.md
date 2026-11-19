@@ -1,5 +1,9 @@
 # @envsemble/eslint-plugin-envui
 
+## 2.1.0 — 2026-11-19
+
+No changes in this release.
+
 ## 2.0.0 — 2026-11-19
 
 The ESLint plugin for envUI 2.0: new rules for links in clickable rows, fields in list rows and the writing guide's vocabulary, and `no-inline-layout` is removed. Each breaking change below says what to write instead.
