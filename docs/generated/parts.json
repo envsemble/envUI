@@ -3620,9 +3620,9 @@
           ]
         },
         {
-          "attribute": "data-labels",
+          "attribute": "data-label-hidden",
           "values": [
-            "tooltip"
+            ""
           ],
           "parts": [
             "env-navigation-bar"
@@ -3920,9 +3920,9 @@
           ]
         },
         {
-          "attribute": "data-labels",
+          "attribute": "data-label-hidden",
           "values": [
-            "tooltip"
+            ""
           ],
           "parts": [
             "env-navigation-rail"

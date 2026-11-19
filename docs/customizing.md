@@ -307,7 +307,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### NavigationBar
 
 - Parts: `env-navigation-bar`, `env-navigation-bar-count`, `env-navigation-bar-dot`, `env-navigation-bar-indicator`, `env-navigation-bar-item`, `env-navigation-bar-label`, `env-navigation-bar-list`, `env-navigation-bar-more`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-bar-item`; `data-disabled` on `env-navigation-bar-item`; `data-dot` on `env-navigation-bar-count`; `data-env-skeleton`; `data-labels` (`tooltip`)
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-bar-item`; `data-disabled` on `env-navigation-bar-item`; `data-dot` on `env-navigation-bar-count`; `data-env-skeleton`; `data-label-hidden`
 - Color properties: `--env-navigation-bar-item-container`, `--env-navigation-bar-item-content`, `--env-navigation-bar-item-icon`, `--env-navigation-bar-item-selected`, `--env-navigation-bar-item-selected-content`
 
 ### NavigationDrawer
@@ -319,7 +319,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### NavigationRail
 
 - Parts: `env-navigation-rail`, `env-navigation-rail-count`, `env-navigation-rail-footer` (slot), `env-navigation-rail-header` (slot), `env-navigation-rail-indicator`, `env-navigation-rail-item`, `env-navigation-rail-label`, `env-navigation-rail-list`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-rail-item`; `data-disabled` on `env-navigation-rail-item`; `data-dot` on `env-navigation-rail-count`; `data-env-skeleton`; `data-labels` (`tooltip`)
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-rail-item`; `data-disabled` on `env-navigation-rail-item`; `data-dot` on `env-navigation-rail-count`; `data-env-skeleton`; `data-label-hidden`
 - Color properties: `--env-navigation-rail-item-container`, `--env-navigation-rail-item-content`, `--env-navigation-rail-item-icon`, `--env-navigation-rail-item-selected`, `--env-navigation-rail-item-selected-content`
 
 ### Page
