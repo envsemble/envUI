@@ -2169,6 +2169,11 @@
           "description": "A tab's button."
         },
         {
+          "class": "env-document-tabs-tab-end",
+          "description": "The slot after a tab's title, such as a dot for unsaved changes.",
+          "slot": true
+        },
+        {
           "class": "env-document-tabs-tab-label",
           "description": "A tab's title."
         }

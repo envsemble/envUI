@@ -2921,6 +2921,12 @@
           "required": false,
           "default": "'Tab actions', or EnvUIProvider's messages.documentTabs.contextMenu",
           "description": "Accessible name of the context menu."
+        },
+        {
+          "name": "contextMenu",
+          "type": "(tab: DocumentTabsItem | null) => ReactNode",
+          "required": false,
+          "description": "The application's own items for the context menu of the tab people open it on, or of the strip around the tabs when the tab is null, such as Close others or Copy path. They come after the built-in items, past a separator."
         }
       ],
       "native": [

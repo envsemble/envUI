@@ -349,7 +349,8 @@
       "env-document-tabs-panel": "The panel of the active document, which the active tab joins.",
       "env-document-tabs-panel-content": "The slot of the active document.",
       "env-document-tabs-tab": "A tab's button.",
-      "env-document-tabs-tab-label": "A tab's title."
+      "env-document-tabs-tab-label": "A tab's title.",
+      "env-document-tabs-tab-end": "The slot after a tab's title, such as a dot for unsaved changes."
     },
     "DropZone": {
       "env-drop-zone": "The area that takes dropped files.",

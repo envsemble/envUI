@@ -212,7 +212,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### DocumentTabs
 
-- Parts: `env-document-tabs`, `env-document-tabs-close`, `env-document-tabs-drag-image`, `env-document-tabs-end` (slot), `env-document-tabs-item`, `env-document-tabs-list`, `env-document-tabs-panel`, `env-document-tabs-panel-content` (slot), `env-document-tabs-strip`, `env-document-tabs-tab`, `env-document-tabs-tab-label`
+- Parts: `env-document-tabs`, `env-document-tabs-close`, `env-document-tabs-drag-image`, `env-document-tabs-end` (slot), `env-document-tabs-item`, `env-document-tabs-list`, `env-document-tabs-panel`, `env-document-tabs-panel-content` (slot), `env-document-tabs-strip`, `env-document-tabs-tab`, `env-document-tabs-tab-end` (slot), `env-document-tabs-tab-label`
 - States: `data-active` on `env-document-tabs-item`; `data-drop` (`after`, `before`) on `env-document-tabs-item`; `data-first-active`; `data-moving` (`pointer`) on `env-document-tabs-item`; `data-preview` on `env-document-tabs-tab`; `data-reordering` on `env-document-tabs-list`; `data-tab-id` on `env-document-tabs-tab`
 
 ### DropZone
