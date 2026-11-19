@@ -123,7 +123,6 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       type ColorScheme, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { IconHome } from '@envsemble/envui/icons/Home';
     import '@envsemble/envui/styles.css';
-    import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
     import { ColorPicker, ColorPickerButton, ColorSwatch, type Color, type ColorValue } from '@envsemble/envui/color';
     const colorValue: ColorValue = 'hsl(256, 34%, 48%)';
     const advanced = (color: Color): ColorValue => color.withChannelValue('alpha', 0.5);
@@ -134,9 +133,6 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];
     const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <IconHome /> }];
     const theme: ColorScheme = 'dark';
-    const referenceSources: RichTextReferenceSource[] = [{ trigger: '@', search: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
-    const richTextConsumer = <><RichTextEditor editorRef={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
-    void richTextConsumer;
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<IconHome filled />} />
@@ -236,10 +232,6 @@ test('a small independent bundle excludes unused icons and Base UI', async () =>
       (path) => !path.includes('/color/') && !path.includes('/@react-aria/'),
     ),
     'Unused color picking must stay out of basic control bundles.',
-  );
-  assert.ok(
-    result.emittedInputs.every((path) => !path.includes('/@tiptap/')),
-    'Optional Tiptap must stay out of core bundles.',
   );
   assert.ok(
     result.emittedInputs.every((path) => !path.includes('/src/')),

@@ -51,7 +51,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [MonthPicker](components/month-picker.md)
 - [ColorPicker](components/color-picker.md)
 - [DropZone](components/drop-zone.md)
-- [RichText](components/rich-text.md)
 
 ## Navigation
 

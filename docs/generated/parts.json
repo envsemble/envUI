@@ -4545,140 +4545,6 @@
         }
       ]
     },
-    "RichText": {
-      "root": "env-rich-text",
-      "source": "packages/ui/src/forms/rich-text/RichText.tsx",
-      "parts": [
-        {
-          "class": "env-rich-text",
-          "description": "The rendered rich text."
-        },
-        {
-          "class": "env-rich-text-document",
-          "description": "The editable document."
-        },
-        {
-          "class": "env-rich-text-reference",
-          "description": "A reference to a person or an item."
-        },
-        {
-          "class": "env-rich-text-suggestions",
-          "description": "The list of suggestions while typing a reference."
-        },
-        {
-          "class": "env-rich-text-suggestions-positioner",
-          "description": "The suggestions' positioner."
-        },
-        {
-          "class": "env-rich-text-task",
-          "description": "A task item."
-        },
-        {
-          "class": "env-rich-text-task-check",
-          "description": "A task's checkbox."
-        },
-        {
-          "class": "env-rich-text-task-content",
-          "description": "A task's text."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-checked",
-          "values": [
-            "false",
-            "true"
-          ],
-          "parts": [
-            "env-rich-text-task"
-          ]
-        },
-        {
-          "attribute": "data-reference-id",
-          "values": [],
-          "parts": [
-            "env-rich-text-reference"
-          ]
-        }
-      ],
-      "uses": [
-        "Checkbox",
-        "Code",
-        "Field",
-        "Icon",
-        "Link",
-        "Prose",
-        "TextField"
-      ]
-    },
-    "RichTextEditor": {
-      "root": "env-rich-text-editor",
-      "source": "packages/ui/src/forms/rich-text/RichTextEditor.tsx",
-      "parts": [
-        {
-          "class": "env-rich-text-editor",
-          "description": "The rich text editor."
-        },
-        {
-          "class": "env-rich-text-editor-content",
-          "description": "The editable region."
-        },
-        {
-          "class": "env-rich-text-editor-control",
-          "description": "The well around the toolbar and the document."
-        },
-        {
-          "class": "env-rich-text-editor-footer",
-          "description": "The slot of the content under the document, inside the well, such as a Send button.",
-          "slot": true
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-disabled",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-rich-text-editor",
-            "env-rich-text-editor-control"
-          ]
-        },
-        {
-          "attribute": "data-invalid",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-rich-text-editor-control"
-          ]
-        },
-        {
-          "attribute": "data-readonly",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-rich-text-editor"
-          ]
-        }
-      ],
-      "uses": [
-        "Button",
-        "Checkbox",
-        "Dialog",
-        "EditorChrome",
-        "Field",
-        "Icon",
-        "ListRow",
-        "Listbox",
-        "Prose",
-        "RichText",
-        "Text",
-        "TextField",
-        "Toolbar"
-      ]
-    },
     "Scaffold": {
       "root": "env-scaffold",
       "source": "packages/ui/src/layout/Scaffold.tsx",
@@ -6672,8 +6538,7 @@
       ],
       "states": [],
       "usedBy": [
-        "MarkdownEditor",
-        "RichTextEditor"
+        "MarkdownEditor"
       ]
     },
     "HoverDetail": {
@@ -6763,29 +6628,7 @@
       "usedBy": [
         "Combobox",
         "CommandPalette",
-        "RichTextEditor",
         "Select"
-      ]
-    },
-    "Listbox": {
-      "root": "env-listbox",
-      "parts": [
-        {
-          "class": "env-listbox",
-          "description": "A list of options in a popup."
-        },
-        {
-          "class": "env-listbox-empty",
-          "description": "The message when there are no options."
-        },
-        {
-          "class": "env-listbox-options",
-          "description": "The options."
-        }
-      ],
-      "states": [],
-      "usedBy": [
-        "RichTextEditor"
       ]
     },
     "LoadingBar": {
@@ -6972,9 +6815,7 @@
       ],
       "states": [],
       "usedBy": [
-        "Markdown",
-        "RichText",
-        "RichTextEditor"
+        "Markdown"
       ]
     },
     "Skeleton": {

@@ -188,7 +188,6 @@ test('the popups’ shadow is soft, follows the theme, goes where popups are sol
   assert.deepEqual(usersOf(css, popupShadow).sort(), [
     '.env-command-palette',
     '.env-popup',
-    '.env-rich-text-suggestions',
     '.env-surface.env-dialog',
   ]);
 });

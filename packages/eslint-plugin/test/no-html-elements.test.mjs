@@ -82,7 +82,6 @@ ruleTester.run('no-html-elements', rule, {
       'import { Popover as Card } from \'@envsemble/envui\'; <Card role="dialog" />;',
       'import { Spinner } from \'@envsemble/envui\'; <Spinner role="progressbar" label="Saving" />;',
       'import { MarkdownEditor } from \'@envsemble/envui/markdown\'; <MarkdownEditor role="textbox" />;',
-      'import { RichTextEditor } from \'@envsemble/envui/rich-text\'; <RichTextEditor role="textbox" />;',
     ]),
     ...named('Without an import, the full name decides', ['<Table.Root role="table" />']),
     ...named(

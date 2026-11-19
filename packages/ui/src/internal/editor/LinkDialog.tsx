@@ -9,7 +9,7 @@ import { useMessages } from '../provider/EnvUIContext.js';
 import { TextField } from '../../forms/TextField.js';
 
 /** A link to insert: its text, and where it leads. */
-export interface EditorLink {
+interface EditorLink {
   label: string;
   href: string;
 }

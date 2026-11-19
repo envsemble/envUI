@@ -113,5 +113,3 @@ export function EditorToolbar<Command extends EditorCommand>({
     </div>
   );
 }
-
-export { keepFocusAndSelectionInEditor as keepEditorFocus };

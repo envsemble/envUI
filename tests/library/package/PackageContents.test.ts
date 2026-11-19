@@ -198,7 +198,7 @@ test('the packed README links only what the package ships, and the packed docume
   }
   const compiled = compileDocumentation();
   assert.ok(compiled.has('components/dialog.md'));
-  assert.ok(compiled.has('components/rich-text.md'));
+  assert.ok(compiled.has('components/markdown.md'));
   assert.ok([...compiled.keys()].some((path) => path.startsWith('examples/')));
   for (const [path, contents] of compiled) {
     assert.equal(

@@ -33,7 +33,7 @@ Set up envUI in my app: envui.envsemble.com/SKILL.md
 
 - **Foundations:** light, dark and high-contrast themes, design tokens, typography, spacing and density.
 - **Components:** actions, navigation, native form controls, selection, data display, dialogs and notifications, with Base UI under the complex interactions.
-- **Content:** Markdown, code highlighting, diffs and Tiptap rich text, on entry points of their own.
+- **Content:** Markdown, code highlighting and diffs, on entry points of their own.
 - **Local assets:** the Geist fonts and Material Symbols Rounded icons ship in the package, with no CDN.
 - **Lint rules:** an [ESLint plugin and a Stylelint config](https://envui.envsemble.com/docs?section=lint-rules) that name the envUI component or token to use instead of hand-built controls and raw colors.
 

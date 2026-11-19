@@ -30,7 +30,6 @@ import { pagination } from './pagination.js';
 import { panes } from './panes.js';
 import { rating } from './rating.js';
 import { relativeTime } from './relativeTime.js';
-import { richText } from './richText.js';
 import { scaffold } from './scaffold.js';
 import { searchField } from './searchField.js';
 import { table } from './table.js';
@@ -81,7 +80,6 @@ export const defaultMessages = {
   panes,
   rating,
   relativeTime,
-  richText,
   scaffold,
   searchField,
   table,

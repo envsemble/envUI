@@ -57,7 +57,6 @@
     "tests/component/Radio.test.tsx": 0.4,
     "tests/component/RelativeTime.test.tsx": 2.4,
     "tests/component/ResizeHandle.test.tsx": 0.4,
-    "tests/component/RichTextEditor.test.tsx": 6.3,
     "tests/component/Scaffold.test.tsx": 15.7,
     "tests/component/ScaffoldScrollKeysFailed.test.tsx": 0.2,
     "tests/component/Scale.test.tsx": 8.9,

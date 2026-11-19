@@ -23,8 +23,6 @@ useWhen:
 avoidWhen:
   - text: Plain text over several lines, without formatting.
     use: Textarea
-  - text: Formatted text edited as it looks, without visible Markdown syntax.
-    use: RichTextEditor
   - text: A message in a conversation, sent with Enter.
     use: Composer
 components:

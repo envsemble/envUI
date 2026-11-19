@@ -5,7 +5,6 @@ import * as code from '@envsemble/envui/code';
 import * as markdown from '@envsemble/envui/markdown';
 import * as diff from '@envsemble/envui/diff';
 import * as color from '@envsemble/envui/color';
-import * as richText from '@envsemble/envui/rich-text';
 import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconSearch } from '@envsemble/envui/icons/Search';
@@ -138,16 +137,12 @@ console.log(
       locale: 'en',
     }),
     diffLines: attempt(() => diff.countDiffLines('a\nb\nc\n', 'a\nB\nc\nd\n', 'notes.txt')),
-    richTextExtensions: attempt(() =>
-      richText.createRichTextExtensions().map((extension) => extension.name),
-    ),
     surveys: {
       '@envsemble/envui': survey('@envsemble/envui', ui),
       '@envsemble/envui/code': survey('@envsemble/envui/code', code),
       '@envsemble/envui/markdown': survey('@envsemble/envui/markdown', markdown),
       '@envsemble/envui/diff': survey('@envsemble/envui/diff', diff),
       '@envsemble/envui/color': survey('@envsemble/envui/color', color),
-      '@envsemble/envui/rich-text': survey('@envsemble/envui/rich-text', richText),
     },
     page,
   }),

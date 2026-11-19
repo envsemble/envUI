@@ -1,5 +1,4 @@
 import { fieldCharacterBox, paintField, type Field } from './FieldCopy';
-import type { RichEditor, StageEditors } from './StageEditors';
 
 const wordCharacter = /[\p{L}\p{N}\p{M}_'’]/u;
 const isWord = (text: string, index: number) => wordCharacter.test(text.charAt(index));
@@ -178,12 +177,8 @@ export class PointerSelection {
   private anchor: Caret | null = null;
   private range: Range | null = null;
   private selected: { field: Field; start: number; end: number } | null = null;
-  private editor: { editor: RichEditor; follow: () => void } | null = null;
 
-  constructor(
-    private readonly scope: Element,
-    private readonly editors: StageEditors,
-  ) {}
+  constructor(private readonly scope: Element) {}
 
   begin(point: Point, target: Element) {
     this.clear();
@@ -195,7 +190,6 @@ export class PointerSelection {
       return;
     }
     this.pressed = point;
-    if (this.editors.use(target)) this.anchorAt();
   }
 
   private pressed: Point | null = null;
@@ -210,28 +204,6 @@ export class PointerSelection {
     const parent = caret.node.parentElement;
     if (!parent || getComputedStyle(parent).userSelect === 'none') return;
     this.anchor = caret;
-    const found = this.editors.use(caret.node);
-    if (!found) return;
-    const { editor } = found;
-    const follow = () => this.follow(editor);
-    editor.on('transaction', follow);
-    this.editor = { editor, follow };
-    editor.commands.setTextSelection(editor.view.posAtDOM(caret.node, caret.offset));
-  }
-
-  private follow(editor: RichEditor) {
-    const shown = highlight();
-    if (this.range) shown?.delete(this.range);
-    this.range = null;
-    const { from, to, empty } = editor.view.state.selection;
-    if (empty) return;
-    const start = editor.view.domAtPos(from);
-    const end = editor.view.domAtPos(to);
-    const range = document.createRange();
-    range.setStart(start.node, start.offset);
-    range.setEnd(end.node, end.offset);
-    this.range = range;
-    shown?.add(range);
   }
 
   extend(point: Point) {
@@ -267,14 +239,6 @@ export class PointerSelection {
       range.setEnd(anchor.node, anchor.offset);
     } else range.setEnd(caret.node, caret.offset);
     const words = toWholeWords(range);
-    const editor = this.editor?.editor;
-    if (editor) {
-      const { view } = editor;
-      const from = view.posAtDOM(range.startContainer, range.startOffset);
-      const to = words ? view.posAtDOM(range.endContainer, range.endOffset) : from;
-      editor.commands.setTextSelection({ from, to });
-      return;
-    }
     const shown = highlight();
     if (this.range) shown?.delete(this.range);
     this.range = words ? range : null;
@@ -345,8 +309,6 @@ export class PointerSelection {
   private caret: { field: Field; at: number } | null = null;
 
   clear() {
-    if (this.editor) this.editor.editor.off('transaction', this.editor.follow);
-    this.editor = null;
     this.field = null;
     this.anchor = null;
     this.pressed = null;

@@ -76,6 +76,7 @@ const foldedPages: Record<string, { page: string; section?: string }> = {
   'components/bar': { page: 'components/navigation-drawer' },
   'components/rail': { page: 'components/navigation-drawer' },
   'components/page-header': { page: 'components/page' },
+  'components/rich-text': { page: 'components/markdown' },
   'patterns/feature-cards': { page: 'components/card', section: 'feature-card' },
   'patterns/search-trigger': {
     page: 'components/command-palette',

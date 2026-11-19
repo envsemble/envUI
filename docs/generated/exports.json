@@ -342,24 +342,6 @@
     "EnvUIMessagesInput": "type",
     "defaultMessages": "const"
   },
-  "@envsemble/envui/rich-text": {
-    "MarkdownLink": "interface",
-    "MarkdownLinkRequest": "interface",
-    "RichText": "function",
-    "RichTextAttachment": "interface",
-    "RichTextCommand": "type",
-    "RichTextEditor": "function",
-    "RichTextEditorHandle": "interface",
-    "RichTextEditorProps": "interface",
-    "RichTextLinkEvent": "type",
-    "RichTextProps": "interface",
-    "RichTextReference": "interface",
-    "RichTextReferenceSource": "interface",
-    "RichTextRenderOptions": "interface",
-    "RichTextSlashCommand": "interface",
-    "RichTextSuggestionContent": "interface",
-    "createRichTextExtensions": "function"
-  },
   "@envsemble/envui/theme-bootstrap": {
     "ThemeDefinition": "interface",
     "ThemePreference": "type",

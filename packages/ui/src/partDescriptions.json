@@ -22,10 +22,6 @@
       "prefix": "env-list-row",
       "root": "env-list-row"
     },
-    "Listbox": {
-      "prefix": "env-listbox",
-      "root": "env-listbox"
-    },
     "LoadingBar": {
       "prefix": "env-loading-bar",
       "root": "env-loading-bar"
@@ -460,11 +456,6 @@
       "env-list-row-start": "The slot of the content before a row's name in place of an icon, such as an Avatar.",
       "env-list-row-text": "The column with a row's label and description."
     },
-    "Listbox": {
-      "env-listbox": "A list of options in a popup.",
-      "env-listbox-empty": "The message when there are no options.",
-      "env-listbox-options": "The options."
-    },
     "LoadingBar": {
       "env-loading-bar": "The loading bar.",
       "env-loading-bar-contained": "A loading bar inside a region rather than the frame.",
@@ -680,22 +671,6 @@
     },
     "ResizeHandle": {
       "env-resize-handle": "The handle: an invisible track that the pointer drags, with a grip of three dots at its middle and a line along it under the pointer, while dragged and with keyboard focus."
-    },
-    "RichText": {
-      "env-rich-text": "The rendered rich text.",
-      "env-rich-text-document": "The editable document.",
-      "env-rich-text-reference": "A reference to a person or an item.",
-      "env-rich-text-suggestions": "The list of suggestions while typing a reference.",
-      "env-rich-text-suggestions-positioner": "The suggestions' positioner.",
-      "env-rich-text-task": "A task item.",
-      "env-rich-text-task-check": "A task's checkbox.",
-      "env-rich-text-task-content": "A task's text."
-    },
-    "RichTextEditor": {
-      "env-rich-text-editor": "The rich text editor.",
-      "env-rich-text-editor-content": "The editable region.",
-      "env-rich-text-editor-control": "The well around the toolbar and the document.",
-      "env-rich-text-editor-footer": "The slot of the content under the document, inside the well, such as a Send button."
     },
     "Scaffold": {
       "env-scaffold": "The scaffold: the top bar, navigation and body regions; it never paints.",

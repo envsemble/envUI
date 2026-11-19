@@ -387,16 +387,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - Parts: `env-resize-handle`
 - States: `data-axis` (`block`, `inline`); `data-grip`; `data-resizing`
 
-### RichText
-
-- Parts: `env-rich-text`, `env-rich-text-document`, `env-rich-text-reference`, `env-rich-text-suggestions`, `env-rich-text-suggestions-positioner`, `env-rich-text-task`, `env-rich-text-task-check`, `env-rich-text-task-content`
-- States: `data-checked` (`false`, `true`) on `env-rich-text-task`; `data-reference-id` on `env-rich-text-reference`
-
-### RichTextEditor
-
-- Parts: `env-rich-text-editor`, `env-rich-text-editor-content`, `env-rich-text-editor-control`, `env-rich-text-editor-footer` (slot)
-- States: `data-disabled` on `env-rich-text-editor`, `env-rich-text-editor-control`; `data-invalid` on `env-rich-text-editor-control`; `data-readonly`
-
 ### Scaffold
 
 - Parts: `env-scaffold`, `env-scaffold-bar`, `env-scaffold-body`, `env-scaffold-bottom-bar`, `env-scaffold-drawer`, `env-scaffold-end`, `env-scaffold-navigation`, `env-scaffold-rail`, `env-scaffold-skip-link`, `env-scaffold-skip-links`, `env-scaffold-top-bar`
@@ -530,7 +520,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### EditorChrome
 
 - Parts: `env-editor-status`, `env-editor-toolbar`
-- Used by: MarkdownEditor, RichTextEditor
+- Used by: MarkdownEditor
 
 ### HoverDetail
 
@@ -541,12 +531,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 - Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-icon`, `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-start` (slot), `env-list-row-text`
 - States: `data-disabled`; `data-highlighted`; `data-popup-open`; `data-selected`
-- Used by: Combobox, CommandPalette, RichTextEditor, Select
-
-### Listbox
-
-- Parts: `env-listbox`, `env-listbox-empty`, `env-listbox-options`
-- Used by: RichTextEditor
+- Used by: Combobox, CommandPalette, Select
 
 ### LoadingBar
 
@@ -576,7 +561,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Prose
 
 - Parts: `env-prose`
-- Used by: Markdown, RichText, RichTextEditor
+- Used by: Markdown
 
 ### Skeleton
 

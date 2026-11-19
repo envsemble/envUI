@@ -64,6 +64,8 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'components/drawer': 'components/navigation-drawer',
     'components/page-header?section=sticky': 'components/page?section=sticky',
     'docs/components/page-header': 'docs/components/page',
+    'components/rich-text': 'components/markdown',
+    'docs/components/rich-text': 'docs/components/markdown',
     'patterns/feature-cards': 'components/card?section=feature-card',
     'docs/patterns/feature-cards': 'docs/components/card',
     'patterns/search-trigger':

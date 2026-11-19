@@ -34,7 +34,6 @@ export const aliases: Record<string, string[]> = {
   accessibleName: ['Tooltip'],
   DialogParts: ['Dialog', 'Skeleton'],
   skeleton: ['Skeleton'],
-  Listbox: ['Select', 'Combobox'],
   ListRow: ['List'],
 };
 

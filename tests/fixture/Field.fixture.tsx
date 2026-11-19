@@ -16,7 +16,6 @@ import {
 } from '@envsemble/envui';
 import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
 import { MarkdownEditor } from '@envsemble/envui/markdown';
-import { RichTextEditor } from '@envsemble/envui/rich-text';
 import { people } from './Combobox.fixture.js';
 import { dialogOptions } from './SelectOptions.fixture.js';
 
@@ -38,7 +37,6 @@ function Fields() {
       'markdown-editor',
       <MarkdownEditor label="Notes" rows={3} defaultValue="**Ship** on Friday." />,
     ],
-    ['rich-text-editor', <RichTextEditor label="Body" defaultValue="Ship on Friday." />],
     [
       'field',
       <Field.Root>
