@@ -7,6 +7,7 @@ import {
   type ComponentPropsWithRef,
   type MouseEvent,
   type ReactElement,
+  type ReactNode,
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
@@ -17,6 +18,7 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { flag } from '../internal/flag.js';
+import { Slot } from '../internal/layout/Slot.js';
 import '../styles/Base.css';
 import '../styles/Breadcrumbs.css';
 
@@ -26,6 +28,12 @@ export interface BreadcrumbsItem {
    * an ellipsis, and a tooltip shows in full on hover and keyboard focus.
    */
   label: string;
+  /**
+   * A decorative graphic before the label, such as a small Avatar of a project or an icon: centred
+   * on the label's line, never cut short, and inside the link or button, so a click on it
+   * navigates too. It is hidden from assistive technology; the label names the crumb.
+   */
+  start?: ReactNode;
   /** A destination, rendered through the LinkProvider link. */
   href?: string;
   /** An action for applications that navigate without URLs; rendered as a button styled as a link. */
@@ -70,9 +78,22 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
   const truncated = useTruncated(label);
   const [focused, setFocused] = useState(false);
   const content = (
-    <span className="env-breadcrumbs-label" ref={label}>
-      {item.label}
-    </span>
+    <>
+      {item.start != null && (
+        <Slot
+          className="env-breadcrumbs-start"
+          element="span"
+          layout="row"
+          shrink="never"
+          aria-hidden
+        >
+          {item.start}
+        </Slot>
+      )}
+      <span className="env-breadcrumbs-label" ref={label}>
+        {item.label}
+      </span>
+    </>
   );
   const keepsFocusUntilBlurEvenOnceItFits = focused;
   const focusableToShowInFull = {
