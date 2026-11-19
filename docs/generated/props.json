@@ -6654,6 +6654,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "A short, muted line under the label that helps people choose, such as Only the people you invite. It is part of the option's label, so it is read with its name."
+        },
+        {
+          "name": "labelPlacement",
+          "type": "'end' | 'start'",
+          "required": false,
+          "default": "'end'",
+          "description": "Where the label sits beside the radio: end, after it, or start, before it, such as in an inline row whose label leads; the native label still names the radio."
         }
       ],
       "native": [

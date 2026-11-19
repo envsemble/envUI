@@ -4355,6 +4355,15 @@
       ],
       "states": [
         {
+          "attribute": "data-label-placement",
+          "values": [
+            "start"
+          ],
+          "parts": [
+            "env-radio"
+          ]
+        },
+        {
           "attribute": "data-orientation",
           "values": [
             "horizontal",
