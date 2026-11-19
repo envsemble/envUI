@@ -17,7 +17,7 @@ test('the chevron can follow the summary, and a flow panel places the details as
     renderToStaticMarkup(
       h(
         Disclosure,
-        { title: 'Show more', indicatorPosition: 'end', panelLayout: 'flow' },
+        { title: 'Show more', indicatorPlacement: 'end', panelLayout: 'flow' },
         'Two more ',
         h('a', { href: '/files' }, 'files'),
       ),

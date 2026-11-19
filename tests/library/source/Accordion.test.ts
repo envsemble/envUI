@@ -5,7 +5,13 @@ import { join } from 'node:path';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { importSource } from '../../support/ImportSource.ts';
-import { elementsOf, firstElement, hasClass, textOf } from '../../support/Markup.ts';
+import {
+  elementsOf,
+  firstElement,
+  hasClass,
+  textOf,
+  type MarkupElement,
+} from '../../support/Markup.ts';
 import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
 const { Accordion } = await importSource('Accordion', [
@@ -48,7 +54,7 @@ test("an item's end sits beside its heading, outside it, and its indicator can b
           title: 'Slack',
           end: h('button', { type: 'button', role: 'switch', 'aria-label': 'Slack on' }),
           indicator: h('svg', { 'data-chevron': '' }),
-          indicatorPosition: 'end',
+          indicatorPlacement: 'end',
         }),
         h(Accordion.Item, { title: 'Email', indicator: null }),
       ),
@@ -75,4 +81,33 @@ test("an item's end sits beside its heading, outside it, and its indicator can b
   assert.equal(slack.attributes['data-indicator'], 'end');
   assert.equal(email.attributes['data-indicator'], 'none');
   assert.ok(!elementsOf(email).some((element) => hasClass(element, 'env-accordion-indicator')));
+});
+
+test("the Root's indicator and indicatorPlacement reach every item, and an item's own replace them", () => {
+  const root = firstElement(
+    renderToStaticMarkup(
+      h(
+        Accordion.Root,
+        { indicator: h('svg', { 'data-chevron': '' }), indicatorPlacement: 'end' },
+        h(Accordion.Item, { title: 'Slack' }),
+        h(Accordion.Item, { title: 'Email', indicatorPlacement: 'start' }),
+        h(Accordion.Item, { title: 'SMS', indicator: null }),
+      ),
+    ),
+  );
+  const [slack, email, sms] = elementsOf(root).filter((element) =>
+    hasClass(element, 'env-accordion-item'),
+  );
+  const partsOf = (item: MarkupElement) =>
+    (elementsOf(item).find((element) => element.tag === 'button')?.children ?? [])
+      .filter((child) => typeof child !== 'string')
+      .map((part) => part.attributes.class);
+  assert.deepEqual(partsOf(slack), ['env-accordion-label', 'env-accordion-indicator']);
+  assert.ok(elementsOf(slack).some((element) => 'data-chevron' in element.attributes));
+  assert.equal(slack.attributes['data-indicator'], 'end');
+  assert.deepEqual(partsOf(email), ['env-accordion-indicator', 'env-accordion-label']);
+  assert.ok(elementsOf(email).some((element) => 'data-chevron' in element.attributes));
+  assert.equal(email.attributes['data-indicator'], undefined);
+  assert.deepEqual(partsOf(sms), ['env-accordion-label']);
+  assert.equal(sms.attributes['data-indicator'], 'none');
 });
