@@ -45,6 +45,19 @@
   .env-navigation-drawer-section:not(:last-child) {
     margin-block-end: var(--env-space-3);
   }
+  .env-navigation-drawer-group-row {
+    display: flex;
+    align-items: center;
+    gap: var(--env-space-1);
+    min-inline-size: 0;
+  }
+  .env-navigation-drawer-group-row > .env-navigation-drawer-group-label {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+  .env-navigation-drawer-group-end {
+    margin-inline-end: var(--env-space-1);
+  }
   .env-navigation-drawer-group-label {
     display: block;
     margin: 0;
@@ -183,6 +196,18 @@
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+  }
+  .env-navigation-drawer-count[data-dot] {
+    --_navigation-drawer-dot-size: 0.5rem;
+    min-inline-size: 0;
+    inline-size: var(--_navigation-drawer-dot-size);
+    block-size: var(--_navigation-drawer-dot-size);
+    padding: 0;
+    background: var(--env-color-bg-primary-solid);
+  }
+  .env-navigation-drawer-item[data-disabled] {
+    opacity: var(--env-state-disabled-opacity);
+    pointer-events: none;
   }
   .env-navigation-drawer-item:not([data-current]) > .env-icon {
     color: var(--_navigation-drawer-item-icon-color, var(--env-color-fg-muted));
@@ -412,6 +437,12 @@
     }
     .env-navigation-drawer-count {
       border: 1px solid CanvasText;
+    }
+    .env-navigation-drawer-count[data-dot] {
+      background: CanvasText;
+    }
+    .env-navigation-drawer-item[data-disabled] {
+      color: GrayText;
     }
     .env-navigation-drawer-item[data-current] .env-navigation-drawer-count {
       background: Canvas;

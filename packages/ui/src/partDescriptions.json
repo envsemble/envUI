@@ -525,7 +525,8 @@
       "env-navigation-bar-indicator": "The rounded rectangle around a destination's icon, filled while the destination is current.",
       "env-navigation-bar-label": "A destination's label, under its indicator, cut short with an ellipsis.",
       "env-navigation-bar-count": "A destination's count, on the icon's top end; 999+ above 999.",
-      "env-navigation-bar-more": "The last item past five destinations, which opens the rest in a menu."
+      "env-navigation-bar-more": "The last item past five destinations, which opens the rest in a menu.",
+      "env-navigation-bar-dot": "The dot at the end of a menu item in More whose destination has something new and no count."
     },
     "NavigationDrawer": {
       "env-navigation-drawer": "The navigation drawer: a nav landmark, a column with the header, the list and the footer.",
@@ -533,6 +534,8 @@
       "env-navigation-drawer-list": "The list of destinations and groups, which scrolls where the drawer is shorter.",
       "env-navigation-drawer-section": "A group: its heading and the list of its destinations.",
       "env-navigation-drawer-group-label": "A group's label, which names the group's list.",
+      "env-navigation-drawer-group-row": "A group's heading with the content after it, in one row.",
+      "env-navigation-drawer-group-end": "The slot of the content after a group's heading, outside it.",
       "env-navigation-drawer-item": "A destination: a link or button as wide as the drawer, with its icon, label and count.",
       "env-navigation-drawer-label": "A destination's label.",
       "env-navigation-drawer-count": "A destination's count, at the item's end; 999+ above 999.",

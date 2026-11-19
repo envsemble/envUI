@@ -7,18 +7,21 @@ import { classNames } from '../internal/classNames.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
+import { Tooltip } from '../overlays/Tooltip.js';
 import { IconMoreHoriz } from '../icons/MoreHoriz.js';
 import * as Menu from '../actions/menu/Menu.js';
 import {
   countedName,
   destinationKey,
   DestinationItem,
+  destinationText,
   holdsCurrent,
   shownCount,
   useNavigationMessages,
   type DestinationClasses,
 } from './internal/DestinationItem.js';
-import type { Destination } from './destinations.js';
+import type { Destination, NavigationLabels } from './destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
@@ -51,6 +54,13 @@ export interface NavigationBarProps
    */
   background?: NavigationBackground;
   /**
+   * How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover
+   * and keyboard focus, for an icon-only bar such as a code editor's activity bar. The label still
+   * names each destination.
+   * @default 'shown'
+   */
+  labels?: NavigationLabels;
+  /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
    */
@@ -65,6 +75,7 @@ export interface NavigationBarProps
 export function NavigationBar({
   destinations,
   background = 'default',
+  labels = 'shown',
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
@@ -78,18 +89,42 @@ export function NavigationBar({
     : destinations;
   const rest = overflow ? destinations.slice(mostDestinationsShownBeforeMore - 1) : [];
   const restCount = rest.reduce(
-    (sum, { count }) => (shownCount(count) === undefined ? sum : sum + (count ?? 0)),
+    (sum, { count }) => (typeof count === 'number' && shownCount(count) ? sum + count : sum),
     0,
   );
   const restShown = shownCount(restCount);
+  const restDot = restShown === undefined && rest.some(({ count }) => count === true);
   const restCurrent = rest.some(
     (destination) => destination.current === true || holdsCurrent(destination.children),
   );
-  const restName = countedName(messages.more, restCount, messages) ?? messages.more;
+  const restName =
+    countedName(messages.more, restDot ? true : restCount, messages) ?? messages.more;
   const moreState = {
     'data-current': flag(restCurrent),
     'aria-label': restCurrent ? messages.moreCurrent({ name: restName }) : restName,
   };
+  const moreTrigger = (
+    <Column
+      render={<ActionElement />}
+      className="env-navigation-bar-item env-navigation-bar-more"
+      {...moreState}
+      align="center"
+      gap={1}
+    >
+      <span className="env-navigation-bar-label">{messages.more}</span>
+      {restShown !== undefined && ' '}
+      <span className="env-navigation-bar-indicator">
+        <DecorativeIcon>
+          <IconMoreHoriz />
+        </DecorativeIcon>
+        {(restShown !== undefined || restDot) && (
+          <span className="env-navigation-bar-count" aria-hidden="true" data-dot={flag(restDot)}>
+            {restShown}
+          </span>
+        )}
+      </span>
+    </Column>
+  );
   return (
     <nav
       {...props}
@@ -98,45 +133,43 @@ export function NavigationBar({
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-bar', className)}
       data-background={backgroundAttribute(background)}
+      data-labels={labels === 'tooltip' ? labels : undefined}
     >
       {inSkeleton(
         skeleton,
         <Row render={<ul />} className="env-navigation-bar-list">
-          {shown.map((destination) => (
-            <li key={destinationKey(destination)}>
+          {shown.map((destination) => {
+            const item = (
               <DestinationItem classes={barClasses} destination={destination} topLevel />
-            </li>
-          ))}
+            );
+            return (
+              <li key={destinationKey(destination)}>
+                {labels === 'tooltip' ? (
+                  <CutLabelTooltip cut label={destination.label} side="top">
+                    {item}
+                  </CutLabelTooltip>
+                ) : (
+                  item
+                )}
+              </li>
+            );
+          })}
           {overflow && (
             <li>
               <Menu.Root
                 aria-label={messages.more}
                 side="top"
                 trigger={
-                  <Column
-                    render={<ActionElement />}
-                    className="env-navigation-bar-item env-navigation-bar-more"
-                    {...moreState}
-                    align="center"
-                    gap={1}
-                  >
-                    <span className="env-navigation-bar-label">{messages.more}</span>
-                    {restShown !== undefined && ' '}
-                    <span className="env-navigation-bar-indicator">
-                      <DecorativeIcon>
-                        <IconMoreHoriz />
-                      </DecorativeIcon>
-                      {restShown !== undefined && (
-                        <span className="env-navigation-bar-count" aria-hidden="true">
-                          {restShown}
-                        </span>
-                      )}
-                    </span>
-                  </Column>
+                  labels === 'tooltip' ? (
+                    <Tooltip content={messages.more}>{moreTrigger}</Tooltip>
+                  ) : (
+                    moreTrigger
+                  )
                 }
               >
                 {rest.map((destination) => {
                   const count = shownCount(destination.count);
+                  const dot = destination.count === true;
                   const inside = !destination.current && holdsCurrent(destination.children);
                   const shared = {
                     icon: destination.icon,
@@ -145,9 +178,17 @@ export function NavigationBar({
                       : inside
                         ? ('true' as const)
                         : undefined,
-                    'aria-label': countedName(destination.label, destination.count, messages),
-                    end:
-                      count === undefined ? undefined : <Badge count={count} aria-hidden="true" />,
+                    'aria-label': countedName(
+                      destinationText(destination),
+                      destination.count,
+                      messages,
+                    ),
+                    end: dot ? (
+                      <span className="env-navigation-bar-dot" aria-hidden="true" />
+                    ) : count === undefined ? undefined : (
+                      <Badge count={count} aria-hidden="true" />
+                    ),
+                    disabled: destination.disabled,
                     children: destination.label,
                   };
                   return destination.href === undefined ? (

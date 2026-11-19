@@ -3,6 +3,7 @@
     --_navigation-bar-indicator-width: 2.75rem;
     --_navigation-bar-indicator-height: 2rem;
     --_navigation-bar-count-size: 1rem;
+    --_navigation-bar-dot-size: 0.5rem;
     box-sizing: border-box;
     inline-size: 100%;
     padding-block: var(--env-space-2);
@@ -177,6 +178,36 @@
   .env-navigation-bar-item[data-current]:active .env-navigation-bar-indicator {
     background: var(--_navigation-bar-item-selected-fill, var(--env-color-bg-selected-pressed));
   }
+  .env-navigation-bar-count[data-dot] {
+    min-inline-size: 0;
+    inline-size: var(--_navigation-bar-dot-size);
+    block-size: var(--_navigation-bar-dot-size);
+    padding: 0;
+  }
+  .env-navigation-bar-item[data-disabled] {
+    opacity: var(--env-state-disabled-opacity);
+    pointer-events: none;
+  }
+  .env-navigation-bar[data-labels='tooltip'] .env-navigation-bar-item {
+    padding-block-end: var(--env-space-1);
+  }
+  .env-navigation-bar[data-labels='tooltip'] .env-navigation-bar-label {
+    --_navigation-bar-label-hidden-size: 0.0625rem;
+    position: absolute;
+    inline-size: var(--_navigation-bar-label-hidden-size);
+    block-size: var(--_navigation-bar-label-hidden-size);
+    margin: calc(-1 * var(--_navigation-bar-label-hidden-size));
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .env-navigation-bar-dot {
+    flex: none;
+    inline-size: var(--_navigation-bar-dot-size);
+    block-size: var(--_navigation-bar-dot-size);
+    border-radius: var(--env-radius-full);
+    background: var(--env-color-bg-primary-solid);
+  }
   .env-navigation-bar-item:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
@@ -208,6 +239,12 @@
     }
     .env-navigation-bar-count {
       border: 1px solid CanvasText;
+    }
+    .env-navigation-bar-item[data-disabled] {
+      color: GrayText;
+    }
+    .env-navigation-bar-dot {
+      background: CanvasText;
     }
     .env-navigation-bar-item[data-current] .env-navigation-bar-count {
       background: Canvas;

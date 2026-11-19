@@ -5169,6 +5169,13 @@
           "description": "The bar's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
         },
         {
+          "name": "labels",
+          "type": "'shown' | 'tooltip'",
+          "required": false,
+          "default": "'shown'",
+          "description": "How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover and keyboard focus, for an icon-only bar such as a code editor's activity bar. The label still names each destination."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,
@@ -5231,6 +5238,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
+        },
+        {
+          "name": "groupEnd",
+          "type": "(group: string) => ReactNode",
+          "required": false,
+          "description": "Content after a group's heading, outside it, such as an IconButton that adds a project to Projects, a Menu of the group's actions or a count. It keeps its size, and the heading gives way to it."
         },
         {
           "name": "headingLevel",
@@ -5344,6 +5357,13 @@
           "required": false,
           "default": "'default'",
           "description": "The rail's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
+        },
+        {
+          "name": "labels",
+          "type": "'shown' | 'tooltip'",
+          "required": false,
+          "default": "'shown'",
+          "description": "How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover and keyboard focus, for an icon-only rail such as a code editor's activity bar. The label still names each destination."
         },
         {
           "name": "aria-label",

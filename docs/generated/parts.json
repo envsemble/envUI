@@ -3356,6 +3356,10 @@
           "description": "A destination's count, on the icon's top end; 999+ above 999."
         },
         {
+          "class": "env-navigation-bar-dot",
+          "description": "The dot at the end of a menu item in More whose destination has something new and no count."
+        },
+        {
           "class": "env-navigation-bar-indicator",
           "description": "The rounded rectangle around a destination's icon, filled while the destination is current."
         },
@@ -3397,8 +3401,33 @@
           ]
         },
         {
+          "attribute": "data-disabled",
+          "values": [],
+          "parts": [
+            "env-navigation-bar-item"
+          ]
+        },
+        {
+          "attribute": "data-dot",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-navigation-bar-count"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
+          "parts": [
+            "env-navigation-bar"
+          ]
+        },
+        {
+          "attribute": "data-labels",
+          "values": [
+            "tooltip"
+          ],
           "parts": [
             "env-navigation-bar"
           ]
@@ -3408,7 +3437,10 @@
         "Badge",
         "Icon",
         "Menu",
-        "Skeleton"
+        "Popup",
+        "Skeleton",
+        "Theme",
+        "Tooltip"
       ],
       "colors": [
         {
@@ -3473,8 +3505,17 @@
           "slot": true
         },
         {
+          "class": "env-navigation-drawer-group-end",
+          "description": "The slot of the content after a group's heading, outside it.",
+          "slot": true
+        },
+        {
           "class": "env-navigation-drawer-group-label",
           "description": "A group's label, which names the group's list."
+        },
+        {
+          "class": "env-navigation-drawer-group-row",
+          "description": "A group's heading with the content after it, in one row."
         },
         {
           "class": "env-navigation-drawer-header",
@@ -3526,6 +3567,20 @@
           "values": [],
           "parts": [
             "env-navigation-drawer-item"
+          ]
+        },
+        {
+          "attribute": "data-disabled",
+          "values": [],
+          "parts": [
+            "env-navigation-drawer-item"
+          ]
+        },
+        {
+          "attribute": "data-dot",
+          "values": [],
+          "parts": [
+            "env-navigation-drawer-count"
           ]
         },
         {
@@ -3648,8 +3703,31 @@
           ]
         },
         {
+          "attribute": "data-disabled",
+          "values": [],
+          "parts": [
+            "env-navigation-rail-item"
+          ]
+        },
+        {
+          "attribute": "data-dot",
+          "values": [],
+          "parts": [
+            "env-navigation-rail-count"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
+          "parts": [
+            "env-navigation-rail"
+          ]
+        },
+        {
+          "attribute": "data-labels",
+          "values": [
+            "tooltip"
+          ],
           "parts": [
             "env-navigation-rail"
           ]
@@ -3657,7 +3735,10 @@
       ],
       "uses": [
         "Icon",
-        "Skeleton"
+        "Popup",
+        "Skeleton",
+        "Theme",
+        "Tooltip"
       ],
       "colors": [
         {
@@ -6569,7 +6650,9 @@
         "Menu",
         "Menubar",
         "MonthPicker",
+        "NavigationBar",
         "NavigationDrawer",
+        "NavigationRail",
         "Popover",
         "RelativeTime",
         "SegmentedControl",

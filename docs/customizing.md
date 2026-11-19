@@ -305,20 +305,20 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### NavigationBar
 
-- Parts: `env-navigation-bar`, `env-navigation-bar-count`, `env-navigation-bar-indicator`, `env-navigation-bar-item`, `env-navigation-bar-label`, `env-navigation-bar-list`, `env-navigation-bar-more`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-bar-item`; `data-env-skeleton`
+- Parts: `env-navigation-bar`, `env-navigation-bar-count`, `env-navigation-bar-dot`, `env-navigation-bar-indicator`, `env-navigation-bar-item`, `env-navigation-bar-label`, `env-navigation-bar-list`, `env-navigation-bar-more`
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-bar-item`; `data-disabled` on `env-navigation-bar-item`; `data-dot` on `env-navigation-bar-count`; `data-env-skeleton`; `data-labels` (`tooltip`)
 - Color properties: `--env-navigation-bar-item-container`, `--env-navigation-bar-item-content`, `--env-navigation-bar-item-icon`, `--env-navigation-bar-item-selected`, `--env-navigation-bar-item-selected-content`
 
 ### NavigationDrawer
 
-- Parts: `env-navigation-drawer`, `env-navigation-drawer-badge` (slot), `env-navigation-drawer-branch`, `env-navigation-drawer-chevron`, `env-navigation-drawer-children`, `env-navigation-drawer-count`, `env-navigation-drawer-end` (slot), `env-navigation-drawer-footer` (slot), `env-navigation-drawer-group-label`, `env-navigation-drawer-header` (slot), `env-navigation-drawer-item`, `env-navigation-drawer-label`, `env-navigation-drawer-list`, `env-navigation-drawer-resize-handle`, `env-navigation-drawer-row`, `env-navigation-drawer-section`, `env-navigation-drawer-toggle`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-drawer-item`; `data-ending-style` on `env-navigation-drawer-children`; `data-env-skeleton`; `data-resizable`; `data-starting-style` on `env-navigation-drawer-children`
+- Parts: `env-navigation-drawer`, `env-navigation-drawer-badge` (slot), `env-navigation-drawer-branch`, `env-navigation-drawer-chevron`, `env-navigation-drawer-children`, `env-navigation-drawer-count`, `env-navigation-drawer-end` (slot), `env-navigation-drawer-footer` (slot), `env-navigation-drawer-group-end` (slot), `env-navigation-drawer-group-label`, `env-navigation-drawer-group-row`, `env-navigation-drawer-header` (slot), `env-navigation-drawer-item`, `env-navigation-drawer-label`, `env-navigation-drawer-list`, `env-navigation-drawer-resize-handle`, `env-navigation-drawer-row`, `env-navigation-drawer-section`, `env-navigation-drawer-toggle`
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-drawer-item`; `data-disabled` on `env-navigation-drawer-item`; `data-dot` on `env-navigation-drawer-count`; `data-ending-style` on `env-navigation-drawer-children`; `data-env-skeleton`; `data-resizable`; `data-starting-style` on `env-navigation-drawer-children`
 - Color properties: `--env-navigation-drawer-item-container`, `--env-navigation-drawer-item-content`, `--env-navigation-drawer-item-icon`, `--env-navigation-drawer-item-selected`, `--env-navigation-drawer-item-selected-content`
 
 ### NavigationRail
 
 - Parts: `env-navigation-rail`, `env-navigation-rail-count`, `env-navigation-rail-footer` (slot), `env-navigation-rail-header` (slot), `env-navigation-rail-indicator`, `env-navigation-rail-item`, `env-navigation-rail-label`, `env-navigation-rail-list`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-rail-item`; `data-env-skeleton`
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-rail-item`; `data-disabled` on `env-navigation-rail-item`; `data-dot` on `env-navigation-rail-count`; `data-env-skeleton`; `data-labels` (`tooltip`)
 - Color properties: `--env-navigation-rail-item-container`, `--env-navigation-rail-item-content`, `--env-navigation-rail-item-icon`, `--env-navigation-rail-item-selected`, `--env-navigation-rail-item-selected-content`
 
 ### Page
@@ -563,7 +563,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 - `--env-popup-opacity`, to set: How much of a frosted popup's fill covers what is behind it.
 - `--env-popup-blur`, to set: How much a frosted popup blurs what shows through it.
 - `--env-popup-shadow`, to set: The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid.
-- Used by: Breadcrumbs, CalendarHeatmap, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationDrawer, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
+- Used by: Breadcrumbs, CalendarHeatmap, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
 
 ### Prose
 
