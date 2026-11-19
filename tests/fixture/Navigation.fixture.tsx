@@ -77,8 +77,14 @@ export default function NavigationFixture({ theme }: { theme: ColorScheme }) {
     { label: 'Drafts', icon: <IconDrafts />, href: '#drafts' },
     { label: 'Sent', icon: <IconSend />, href: '#sent' },
     { label: 'Labels', icon: <IconLabel />, count: 4, ...many.select('Labels') },
-    { label: 'Archive', icon: <IconArchive />, href: '#archive', count: 1 },
-    { label: 'Trash', icon: <IconDelete />, href: '#trash' },
+    {
+      label: 'Archive',
+      icon: <IconArchive />,
+      href: '#archive',
+      count: 1,
+      itemProps: { className: 'own-item', target: '_blank', 'data-testid': 'archive-item' },
+    },
+    { label: <span>Trash</span>, textValue: 'Trash', icon: <IconDelete />, href: '#trash' },
   ];
   const linked: Destination[] = [
     { label: 'Home', icon: <IconHome />, href: '#home', current: true },

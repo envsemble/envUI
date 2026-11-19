@@ -188,10 +188,10 @@
     opacity: var(--env-state-disabled-opacity);
     pointer-events: none;
   }
-  .env-navigation-bar[data-labels='tooltip'] .env-navigation-bar-item {
+  .env-navigation-bar[data-label-hidden] .env-navigation-bar-item {
     padding-block-end: var(--env-space-1);
   }
-  .env-navigation-bar[data-labels='tooltip'] .env-navigation-bar-label {
+  .env-navigation-bar[data-label-hidden] .env-navigation-bar-label {
     --_navigation-bar-label-hidden-size: 0.0625rem;
     position: absolute;
     inline-size: var(--_navigation-bar-label-hidden-size);

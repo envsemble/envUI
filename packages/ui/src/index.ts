@@ -58,7 +58,6 @@ export type {
   Destination,
   DestinationElementProps,
   NavigationDrawerDestination,
-  NavigationLabels,
 } from './navigation/destinations.js';
 export type { NavigationBackground } from './navigation/navigationBackground.js';
 export * as Pager from './navigation/Pager.js';
