@@ -262,7 +262,28 @@ test('token pairs that break contrast are reported', async () => {
   );
 });
 
-test('a text color as the fill of a masked icon, or of a shape that sets no text color, passes', async () => {
+test('a text color as the fill of a label that sets its font or text but inherits its color is reported', async () => {
+  assert.deepEqual(
+    (
+      await lint(
+        [
+          '.a { background: var(--env-color-fg-default); font: var(--env-type-body-sm); }',
+          '.b { background-color: var(--env-color-fg-muted); line-height: 1.5; }',
+          '.c { background: var(--env-color-fg-accent); text-transform: uppercase; }',
+          '.d { background: var(--env-color-fg-default); font-weight: 600; }',
+        ].join('\n'),
+      )
+    ).map(({ rule, text }) => `${rule} ${text}`),
+    [
+      'envui/no-contrast-breaking-pairs --env-color-fg-default',
+      'envui/no-contrast-breaking-pairs --env-color-fg-muted',
+      'envui/no-contrast-breaking-pairs --env-color-fg-accent',
+      'envui/no-contrast-breaking-pairs --env-color-fg-default',
+    ],
+  );
+});
+
+test('a text color as the fill of a masked icon, or of a shape that sets no text property, passes', async () => {
   await passes(
     [
       '.a { mask: url("icon.svg") center / contain no-repeat; background-color: var(--env-color-fg-muted); color: var(--env-color-fg-default); }',
