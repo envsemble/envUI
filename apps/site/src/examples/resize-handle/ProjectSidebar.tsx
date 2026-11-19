@@ -9,7 +9,7 @@ export default function ProjectSidebar() {
         id="projects"
         radius="none"
         padding={2}
-        style={{ inlineSize: `${width}rem`, flex: 'none' }}
+        style={{ inlineSize: `min(${width}rem, 50%)`, flex: 'none' }}
       >
         <List.Root aria-label="Projects">
           <List.Item label="Website refresh" current />

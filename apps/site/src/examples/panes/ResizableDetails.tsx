@@ -8,7 +8,11 @@ export default function ResizableDetails() {
       minWidth={14}
       maxWidth={22}
       persist="example.details-width"
-      style={{ inlineSize: 'min(100%, 44rem)', blockSize: '14rem' }}
+      style={{
+        inlineSize: 'min(100%, 44rem)',
+        blockSize: '14rem',
+        '--env-panes-other-min': 'min(16rem, 50cqi)',
+      }}
     >
       <Panes.Pane label="Launch banner">
         <Surface

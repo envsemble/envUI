@@ -9,7 +9,7 @@ export default function ResizeHandleAnatomy() {
         id="files"
         radius="none"
         padding={3}
-        style={{ inlineSize: `${width}rem`, flex: 'none' }}
+        style={{ inlineSize: `min(${width}rem, 50%)`, flex: 'none' }}
       >
         <Text>Files</Text>
       </Surface>
