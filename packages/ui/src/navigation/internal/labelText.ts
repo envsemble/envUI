@@ -6,7 +6,7 @@ const collapsed = (text: string) => text.replace(/\s+/g, ' ').trim();
  * The text content holds before it renders: its strings and numbers, through the children of its
  * elements. A component that renders text of its own adds none.
  */
-export function contentText(node: ReactNode): string {
+function contentText(node: ReactNode): string {
   if (typeof node === 'string' || typeof node === 'number' || typeof node === 'bigint')
     return String(node);
   if (Array.isArray(node)) return node.map(contentText).join('');
