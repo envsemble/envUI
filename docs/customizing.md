@@ -73,7 +73,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Avatar
 
-- Parts: `env-avatar`, `env-avatar-check`, `env-avatar-fallback`, `env-avatar-fallback-initials`, `env-avatar-fallback-person`, `env-avatar-image`, `env-avatar-person`, `env-avatar-person-background`, `env-avatar-person-figure`
+- Parts: `env-avatar`, `env-avatar-badge` (slot), `env-avatar-check`, `env-avatar-fallback`, `env-avatar-fallback-content` (slot), `env-avatar-fallback-initials`, `env-avatar-fallback-person`, `env-avatar-image`, `env-avatar-person`, `env-avatar-person-background`, `env-avatar-person-figure`
 - States: `data-hue` (`blush`, `butter`, `oat`, `orchid`, `periwinkle`, `powder`, `sage`, `seafoam`); `data-selected`; `data-size` (`lg`, `md`, `sm`, `xl`)
 - Color properties: `--env-avatar-container`, `--env-avatar-content`
 - `--env-avatar-dense`, to set: 1 on a container, such as a dense list, gives the avatars and groups in it fills at half their chroma, so their initials keep their contrast, as a table cell and a small AvatarGroup do.

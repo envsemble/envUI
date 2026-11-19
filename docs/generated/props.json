@@ -246,10 +246,10 @@
         },
         {
           "name": "fallback",
-          "type": "'person' | 'initials'",
+          "type": "'person' | 'initials' | ReactElement",
           "required": false,
           "default": "'initials'",
-          "description": "Shown without a picture: the initials of `name`, so people tell avatars apart, or the default person picture, which an empty `name` shows too."
+          "description": "Shown without a picture: the initials of `name`, so people tell avatars apart, or the default person picture, which an empty `name` shows too. An element is placed as given on the hue's fill, in its deep shade as `currentColor`, such as an icon or a Graphic for a bot, an agent, a team or a service account."
         },
         {
           "name": "hue",
@@ -277,6 +277,12 @@
           "required": false,
           "default": "false",
           "description": "Shows the avatar as chosen, such as in a list of people to pick from: a ring around it and a small check at its bottom end, so the choice never rests on color alone. It is a look only: the control around the avatar, such as a checkbox or an option, says it is chosen."
+        },
+        {
+          "name": "badge",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A small mark at the avatar's bottom end, placed as given, such as a presence dot, an unread marker or an organization's mark; at its top end while the avatar is selected, whose check takes the bottom end. It is hidden from assistive technology with the avatar, so say what it shows in the text beside it."
         }
       ],
       "native": [
@@ -299,9 +305,9 @@
         },
         {
           "name": "description",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "A second tooltip line, such as the e-mail address of the signed-in account."
+          "description": "A second tooltip line, such as the e-mail address of the signed-in account, or content such as an organization's name with its plan's Badge."
         },
         {
           "name": "src",
@@ -314,6 +320,24 @@
           "type": "AvatarProps['fallback']",
           "required": false,
           "description": "Shown without a picture: the initials of `name`, by default, or the default person picture."
+        },
+        {
+          "name": "hue",
+          "type": "AvatarProps['hue']",
+          "required": false,
+          "description": "The fill behind the initials or the person picture, as for Avatar; the name chooses one by default."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "description": "Shows the avatar as chosen, as for Avatar: a ring and a check. A look only."
+        },
+        {
+          "name": "badge",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A small mark at the avatar's bottom end, as for Avatar, such as a presence dot."
         },
         {
           "name": "size",
@@ -386,6 +410,12 @@
           "required": false,
           "default": "'{count} people: {names}'",
           "description": "The group's name from the number of people and their names, which end with formatMore's text for people counted in total but not listed, such as \"3 people: Alex Morgan, Sam Lee, 1 more\". It overrides EnvUIProvider's `messages.avatarGroup.label` for this group; aria-label replaces it."
+        },
+        {
+          "name": "renderOverflowTooltip",
+          "type": "(hidden: readonly AvatarGroupPerson[], unlisted: number) => ReactNode",
+          "required": false,
+          "description": "The overflow chip's tooltip, from the people it hides and how many more total counts but people doesn't list, such as a list of them with their avatars. Their names, one a line, and formatMore's text by default. The chip's accessible name stays their names."
         }
       ],
       "native": [

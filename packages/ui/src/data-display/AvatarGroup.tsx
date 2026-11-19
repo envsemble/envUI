@@ -8,6 +8,7 @@ import {
   type CSSProperties,
   type MouseEvent,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
   type RefObject,
 } from 'react';
 import {
@@ -36,6 +37,18 @@ export interface AvatarGroupPerson {
   src?: string | null;
   /** Initials, by default, or the default person picture, as for Avatar. */
   fallback?: AvatarProps['fallback'];
+  /**
+   * The fill behind the initials or the person picture, as for Avatar. Without it, the name
+   * chooses one, never one that looks like its neighbour's.
+   */
+  hue?: AvatarHue;
+  /** A small mark at the avatar's bottom end, as for Avatar, such as a presence dot. */
+  badge?: ReactNode;
+  /**
+   * The tooltip of a pressable avatar, such as the name with a role or an e-mail address; the
+   * name by default. The name stays its accessible name.
+   */
+  tooltip?: ReactNode;
   /** A stable key, such as an account ID; the name and position by default. */
   id?: string | number;
   /** A destination for this person: the avatar becomes a link with a name tooltip. */
@@ -86,6 +99,12 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
    * @default '{count} people: {names}'
    */
   formatLabel?: (count: number, names: readonly string[]) => string;
+  /**
+   * The overflow chip's tooltip, from the people it hides and how many more total counts but
+   * people doesn't list, such as a list of them with their avatars. Their names, one a line, and
+   * formatMore's text by default. The chip's accessible name stays their names.
+   */
+  renderOverflowTooltip?: (hidden: readonly AvatarGroupPerson[], unlisted: number) => ReactNode;
 }
 
 const lookAlikeHueFamily: Record<AvatarHue, string> = {
@@ -99,12 +118,16 @@ const lookAlikeHueFamily: Record<AvatarHue, string> = {
   oat: 'warm',
 };
 
-function huesWithoutLookAlikeNeighbours(names: readonly string[]): AvatarHue[] {
+function huesWithoutLookAlikeNeighbours(people: readonly AvatarGroupPerson[]): AvatarHue[] {
   const hues: AvatarHue[] = [];
-  for (const name of names) {
-    let hue = avatarHue(name);
+  for (const person of people) {
+    let hue = person.hue ?? avatarHue(person.name);
     const previous = hues.at(-1);
-    if (previous !== undefined && lookAlikeHueFamily[hue] === lookAlikeHueFamily[previous]) {
+    if (
+      person.hue === undefined &&
+      previous !== undefined &&
+      lookAlikeHueFamily[hue] === lookAlikeHueFamily[previous]
+    ) {
       const start = avatarHues.indexOf(hue);
       for (let step = 1; step < avatarHues.length; step += 1) {
         const next = avatarHues[(start + step) % avatarHues.length];
@@ -156,6 +179,7 @@ export function AvatarGroup({
   onPersonClick,
   formatMore: ownFormatMore,
   formatLabel: ownFormatLabel,
+  renderOverflowTooltip,
   className,
   style,
   'aria-label': label,
@@ -197,7 +221,7 @@ export function AvatarGroup({
   const overflowChipNames = hidden.map((person) => person.name);
   if (countedButUnlisted > 0) overflowChipNames.push(formatMore(countedButUnlisted));
   const counted = overflow > 0;
-  const hues = huesWithoutLookAlikeNeighbours(shown.map((person) => person.name));
+  const hues = huesWithoutLookAlikeNeighbours(shown);
   const placeForTheStyleSheetToBunch = (index: number): CSSProperties => ({
     '--_avatar-group-before': String(Math.min(index, shown.length - 1)),
     '--_avatar-group-after': String(Math.max(0, shown.length - 1 - index)),
@@ -247,12 +271,16 @@ export function AvatarGroup({
       {overflow > 0 && (
         <Tooltip
           content={
-            <span className="env-avatar-group-tooltip">
-              {hidden.map((person, index) => (
-                <span key={person.id ?? `${index}-${person.name}`}>{person.name}</span>
-              ))}
-              {countedButUnlisted > 0 && <span>{formatMore(countedButUnlisted)}</span>}
-            </span>
+            renderOverflowTooltip ? (
+              renderOverflowTooltip(hidden, Math.max(0, countedButUnlisted))
+            ) : (
+              <span className="env-avatar-group-tooltip">
+                {hidden.map((person, index) => (
+                  <span key={person.id ?? `${index}-${person.name}`}>{person.name}</span>
+                ))}
+                {countedButUnlisted > 0 && <span>{formatMore(countedButUnlisted)}</span>}
+              </span>
+            )
           }
         >
           <span
@@ -292,6 +320,7 @@ function AvatarGroupItem({
       hue={hue}
       size={size}
       selected={person.selected}
+      badge={person.badge}
       style={pressable ? undefined : style}
     />
   );
@@ -299,7 +328,7 @@ function AvatarGroupItem({
   const onClick =
     onPersonClick && ((event: MouseEvent<HTMLElement>) => onPersonClick(person, event));
   return (
-    <Tooltip content={person.name}>
+    <Tooltip content={person.tooltip ?? person.name}>
       {person.href ? (
         <ActionElement
           href={person.href}

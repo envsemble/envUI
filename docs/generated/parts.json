@@ -220,12 +220,22 @@
           "description": "The avatar: an image, initials or a figure in a circle."
         },
         {
+          "class": "env-avatar-badge",
+          "description": "The slot of the small mark at the avatar's bottom end, such as a presence dot.",
+          "slot": true
+        },
+        {
           "class": "env-avatar-check",
           "description": "The check at the bottom end of a chosen avatar."
         },
         {
           "class": "env-avatar-fallback",
           "description": "What shows without an image: initials or a figure."
+        },
+        {
+          "class": "env-avatar-fallback-content",
+          "description": "The slot of an application's own fallback, such as a bot's icon.",
+          "slot": true
         },
         {
           "class": "env-avatar-fallback-initials",

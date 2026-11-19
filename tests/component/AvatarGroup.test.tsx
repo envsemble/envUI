@@ -372,3 +372,34 @@ test('on touch screens a tap spreads the pile, later taps press touch-sized avat
     await commands.emulateTouch(false);
   }
 });
+
+test("a person's tooltip, hue and badge, the overflow tooltip and an account's description take the application's content", async () => {
+  await commands.emulateMedia({ reducedMotion: 'reduce' });
+  const group = byTestId('custom');
+  const alex = group.getByRole('button', { name: 'Alex Morgan' });
+  const avatar = alex.element().querySelector('.env-avatar')!;
+  expect(avatar.getAttribute('data-hue')).toBe('oat');
+  expect(avatar.querySelector('.env-avatar-badge')?.textContent).toBe('online');
+  group.element().scrollIntoView({ block: 'center' });
+  await pointAt(group);
+  await expect.poll(() => pointerReachesEachItem(group)).toEqual([true, true, true]);
+  await pointAt(alex);
+  await expect.poll(tooltipText).toBe('Alex Morgan, Owner');
+  await pointAt(chipOf(group));
+  await expect
+    .poll(() =>
+      [...document.querySelectorAll('.fixture-overflow-list li')].map((item) => item.textContent),
+    )
+    .toEqual(['Priya Shah', 'Jordan Rivera', 'Taylor Kim', 'and 2 more']);
+  await expect
+    .element(chipOf(group))
+    .toHaveAccessibleName('Priya Shah, Jordan Rivera, Taylor Kim, 2 more');
+  await away();
+
+  const account = byTestId('account');
+  await expect.element(account).toHaveAccessibleName('Alex Morgan');
+  expect(account.element().querySelector('.env-avatar')?.getAttribute('data-hue')).toBe('sage');
+  await pointAt(account);
+  await expect.poll(() => document.querySelector('.env-tooltip strong')?.textContent).toBe('Owner');
+  await away();
+});

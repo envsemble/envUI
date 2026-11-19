@@ -83,8 +83,10 @@
     },
     "Avatar": {
       "env-avatar": "The avatar: an image, initials or a figure in a circle.",
+      "env-avatar-badge": "The slot of the small mark at the avatar's bottom end, such as a presence dot.",
       "env-avatar-check": "The check at the bottom end of a chosen avatar.",
       "env-avatar-fallback": "What shows without an image: initials or a figure.",
+      "env-avatar-fallback-content": "The slot of an application's own fallback, such as a bot's icon.",
       "env-avatar-fallback-initials": "The fallback that shows initials.",
       "env-avatar-fallback-person": "The fallback that shows a person's figure.",
       "env-avatar-image": "The image.",
