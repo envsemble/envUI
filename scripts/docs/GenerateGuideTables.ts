@@ -133,7 +133,8 @@ function tokenTable(tokens: Token[], group: TokenGroup) {
 
 function foundationSection(tokens: Token[], groups: TokenGroup[]) {
   const tables = groups.map((group) => `#### ${group.title}\n\n${tokenTable(tokens, group)}`);
-  return `Generated from the token list by \`npm run docs:guides\`; values at the default 16 px root.\n\n${tables.join('\n\n')}`;
+  const sized = tables.some((table) => table.includes('| Comfortable | Compact |'));
+  return `${sized ? 'Values at the default 16 px root.\n\n' : ''}${tables.join('\n\n')}`;
 }
 
 function unplacedTokens(tokens: Token[]) {
@@ -189,7 +190,7 @@ function generatedSections(tokens = readTokens()): Record<string, Record<string,
   const parts: PartsContract = JSON.parse(readFileSync(partsFile, 'utf8'));
   const sections: Record<string, Record<string, string>> = {
     'customizing.md': {
-      '## Components': `Generated from \`docs/generated/parts.json\` by \`npm run docs:guides\`.\n\n${componentsSection(parts)}`,
+      '## Components': componentsSection(parts),
       '## Shared parts': sharedSection(parts),
       [`## ${lineUpTokens.title}`]: tokenTable(tokens, lineUpTokens),
     },
