@@ -574,6 +574,12 @@
           "description": "A decorative icon before the label, such as IconAdd."
         },
         {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the label at its own size rather than the icon's, such as a small Avatar of the person a button assigns or a flag; it is hidden from assistive technology, since the label names the button."
+        },
+        {
           "name": "endIcon",
           "type": "ReactNode",
           "required": false,
@@ -603,6 +609,12 @@
           "type": "string",
           "required": false,
           "description": "The destination: the element is a native link, through the LinkProvider's link component."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "Another element to render the button as, such as a label for a file input, or a router's own link in one place: the button's class, look, state attributes, content and handlers merge into its props. It takes no type or disabled attribute; disabled reports aria-disabled and blocks presses."
         }
       ],
       "native": [
@@ -1937,6 +1949,12 @@
       "description": "A button for an action that takes effect at once and cannot be undone. The first press arms it and names the consequence in place; a second press runs it. It disarms after a few seconds, when focus leaves and on Escape.",
       "props": [
         {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the label at its own size rather than the icon's, such as a small Avatar of the person a button assigns or a flag; it is hidden from assistive technology, since the label names the button."
+        },
+        {
           "name": "end",
           "type": "ReactNode",
           "required": false,
@@ -2800,6 +2818,12 @@
           "description": "A decorative icon before the label, such as IconAdd."
         },
         {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the label at its own size rather than the icon's, such as a small Avatar of the person a button assigns or a flag; it is hidden from assistive technology, since the label names the button."
+        },
+        {
           "name": "endIcon",
           "type": "ReactNode",
           "required": false,
@@ -2817,6 +2841,12 @@
           "required": false,
           "default": "false",
           "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "Another element to render the button as, such as a label for a file input, or a router's own link in one place: the button's class, look, state attributes, content and handlers merge into its props. It takes no type or disabled attribute; disabled reports aria-disabled and blocks presses."
         }
       ],
       "native": [

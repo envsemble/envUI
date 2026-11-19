@@ -37,6 +37,7 @@ components:
 examples:
   CreateProject: overview
   Icons: example
+  PictureBeforeLabel: example
   ConnectedButtons: example
   OnePrimaryAction:
     role: do
@@ -75,6 +76,12 @@ examples:
 ### Icons
 
 ```tsx figure=Icons
+
+```
+
+### Pictures
+
+```tsx figure=PictureBeforeLabel
 
 ```
 

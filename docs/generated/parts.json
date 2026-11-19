@@ -564,6 +564,11 @@
           "description": "The spinner of a pending button."
         },
         {
+          "class": "env-button-start",
+          "description": "The slot of the content before the label at its own size, such as an Avatar.",
+          "slot": true
+        },
+        {
           "class": "env-button-start-icon",
           "description": "The slot of the icon before the label.",
           "slot": true

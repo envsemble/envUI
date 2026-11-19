@@ -124,6 +124,7 @@
       "env-button-end-icon": "The slot of the icon after the label.",
       "env-button-icon": "The slot of an icon button's icon.",
       "env-button-label": "The slot of the label, the button's children.",
+      "env-button-start": "The slot of the content before the label at its own size, such as an Avatar.",
       "env-button-start-icon": "The slot of the icon before the label.",
       "env-button-spinner": "The spinner of a pending button."
     },

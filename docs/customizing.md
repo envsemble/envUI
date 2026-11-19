@@ -100,7 +100,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Button
 
-- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-end-icon` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start-icon` (slot)
+- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-end-icon` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start` (slot), `env-button-start-icon` (slot)
 - States: `data-full-width`; `data-pending`; `data-row-target`; `data-size` (`lg`, `md`, `sm`); `data-tone` (`accent`, `danger`); `data-underline`; `data-variant` (`ghost`, `outline`, `primary`, `secondary`, `text`)
 - Color properties: `--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected`, `--env-button-selected-content`
 
