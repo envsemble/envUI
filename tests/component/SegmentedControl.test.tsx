@@ -215,6 +215,36 @@ test('on a touch screen a full-width control wraps long labels instead, and a ta
   }
 });
 
+test('on a touch screen each segment takes a 44 px tap, its look still inside the track', async () => {
+  await commands.emulateTouch(true);
+  try {
+    await page.viewport(1024, 900);
+    mount(fixture);
+    expect(matchMedia('(pointer: coarse)').matches).toBe(true);
+    for (const segment of [
+      page
+        .getByRole('radiogroup', { name: 'Work items light' })
+        .getByRole('radio', { name: 'Blocked 3' }),
+      page
+        .getByRole('radiogroup', { name: 'Work items light' })
+        .getByRole('radio', { name: 'Done 40' }),
+    ]) {
+      const element = segment.element();
+      element.scrollIntoView({ block: 'center' });
+      const at = box(element);
+      expect(at.height).toBeLessThan(44);
+      expect(at.width).toBeGreaterThanOrEqual(44);
+      const reaches = (offset: number) =>
+        element.contains(
+          document.elementFromPoint(at.x + at.width / 2, at.y + at.height / 2 + offset),
+        );
+      expect([reaches(-21), reaches(21)]).toEqual([true, true]);
+    }
+  } finally {
+    await commands.emulateTouch(false);
+  }
+});
+
 test('a segment takes content in its label and at its end, or shows only its icon with its label in a tooltip', async () => {
   mount({ default: fixture.SegmentContentFixture });
   const group = page.getByRole('radiogroup', { name: 'View' });
