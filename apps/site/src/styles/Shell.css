@@ -457,7 +457,6 @@ body {
   isolation: isolate;
   overflow: hidden;
   container-type: inline-size;
-  padding-block: clamp(1.25rem, 2vw, 1.5rem);
 }
 .site-page-banner-content {
   position: relative;

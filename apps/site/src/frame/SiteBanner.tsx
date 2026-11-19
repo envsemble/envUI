@@ -31,6 +31,22 @@ export function SiteBanner({
   kind?: BannerKind;
 }) {
   const motif = kind === 'catalogue' ? motifOf(subject) : undefined;
+  const lead = trail ? (
+    <Breadcrumbs
+      className="site-page-banner-breadcrumbs"
+      wrap={false}
+      items={trail.map(({ label, route }) => ({
+        label,
+        href: route === undefined ? undefined : routeHref(route),
+      }))}
+    />
+  ) : (
+    breadcrumb && (
+      <Text variant="caption" className="catalogue-page-banner-breadcrumb">
+        {breadcrumb}
+      </Text>
+    )
+  );
   return (
     <header className="site-page-header">
       <Card background="default" padding={6} className="site-page-banner site-banner">
@@ -38,21 +54,11 @@ export function SiteBanner({
         <Column gap={6} className="site-page-banner-content">
           <div className="site-page-banner-heading">
             <Column gap={3}>
-              {trail ? (
-                <Breadcrumbs
-                  className="site-page-banner-breadcrumbs"
-                  wrap={false}
-                  items={trail.map(({ label, route }) => ({
-                    label,
-                    href: route === undefined ? undefined : routeHref(route),
-                  }))}
-                />
-              ) : (
-                breadcrumb && (
-                  <Text variant="caption" className="catalogue-page-banner-breadcrumb">
-                    {breadcrumb}
-                  </Text>
-                )
+              {(lead || corner) && (
+                <div className="site-page-banner-lead">
+                  {lead}
+                  {corner && <div className="site-page-banner-corner">{corner}</div>}
+                </div>
               )}
               <Text render={<h1 />} variant="headline" className="site-page-banner-title">
                 {title}
@@ -68,7 +74,6 @@ export function SiteBanner({
           </div>
           {children}
         </Column>
-        {corner && <div className="site-page-banner-corner">{corner}</div>}
       </Card>
       <CompactContents />
     </header>
