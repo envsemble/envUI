@@ -209,3 +209,37 @@ test('data-env-ssr-* attributes are private, and the contract leaves them out', 
     [],
   );
 });
+
+test('a part that goes counts as removed only when the last release shipped it', () => {
+  const card = (parts, values) => ({
+    components: {
+      Card: {
+        parts: parts.map((name) => ({ class: name })),
+        states: [{ attribute: 'data-layout', values, parts: ['env-card'] }],
+        colors: [{ property: '--env-card-container' }],
+      },
+    },
+    shared: {},
+  });
+  const released = card(['env-card', 'env-card-meta'], ['stack']);
+  const before = card(['env-card', 'env-card-meta', 'env-card-badge'], ['stack', 'feature']);
+  const after = {
+    components: { Card: { parts: [{ class: 'env-card' }], states: [] } },
+    shared: {},
+  };
+  const labels = (release) => removedParts(before, after, [], release).map(({ label }) => label);
+  assert.deepEqual(labels(released), [
+    'Card: .env-card-meta',
+    'Card: --env-card-container',
+    'Card: [data-layout]',
+    "Card: [data-layout='stack']",
+  ]);
+  assert.deepEqual(labels(undefined), [
+    'Card: .env-card-meta',
+    'Card: .env-card-badge',
+    'Card: --env-card-container',
+    'Card: [data-layout]',
+    "Card: [data-layout='stack']",
+    "Card: [data-layout='feature']",
+  ]);
+});

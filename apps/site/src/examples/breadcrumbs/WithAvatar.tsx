@@ -6,9 +6,12 @@ export default function WithAvatar() {
       items={[
         { label: 'Projects', href: '/projects' },
         {
-          label: 'Northwind',
+          label: (
+            <>
+              <Avatar name="Northwind" size="sm" /> Northwind
+            </>
+          ),
           href: '/projects/northwind',
-          start: <Avatar name="Northwind" size="sm" />,
         },
         { label: 'Website refresh' },
       ]}

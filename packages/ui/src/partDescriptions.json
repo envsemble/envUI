@@ -115,7 +115,6 @@
       "env-breadcrumbs-link": "A crumb's link.",
       "env-breadcrumbs-list": "The list of crumbs.",
       "env-breadcrumbs-separator": "The separator between two crumbs.",
-      "env-breadcrumbs-start": "The slot of a crumb's graphic before its label.",
       "env-breadcrumbs-text": "A crumb that is not a link."
     },
     "Button": {

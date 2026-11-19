@@ -114,3 +114,23 @@ test('a breadcrumb cut short shows its full label in a tooltip, on hover and key
     false,
   );
 });
+
+test('a crumb whose label holds other content is named by it, measured on its label and shown whole in the tooltip', async () => {
+  const scope = page.getByTestId('data-light');
+  const trail = scope.getByRole('navigation', { name: 'Content label trail' });
+  const link = trail.getByRole('link', { name: fixture.contentLabelName });
+  await expect.element(link).toBeInTheDocument();
+  const label = link.element().querySelector('.env-breadcrumbs-label')!;
+  expect(link.element().children.length).toBe(1);
+  expect(label.querySelector('.env-avatar')).not.toBeNull();
+  expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+  await keyboard.press('Shift');
+  (link.element() as HTMLElement).focus();
+  await expect.element(link).toHaveFocus();
+  await expect.poll(() => tooltip()?.querySelector('.env-avatar')).not.toBeNull();
+  const popup = tooltip()!.cloneNode(true) as HTMLElement;
+  popup.querySelector('.env-avatar')!.remove();
+  expect(popup.textContent?.trim()).toBe(fixture.contentLabelName);
+  await keyboard.press('Escape');
+  await expect.poll(tooltip).toBeNull();
+});

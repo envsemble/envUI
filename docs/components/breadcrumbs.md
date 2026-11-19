@@ -52,7 +52,7 @@ examples:
 
 ```
 
-### A graphic before the label
+### Content beside the name
 
 ```tsx figure=WithAvatar
 

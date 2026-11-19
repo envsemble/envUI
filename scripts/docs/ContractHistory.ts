@@ -48,6 +48,38 @@ export function baseContract<T>(
   }
 }
 
+const stableRelease = /^v\d+\.\d+\.\d+$/;
+
+function isAncestor(commit: string, of: string) {
+  try {
+    git(['merge-base', '--is-ancestor', commit, of]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function lastReleaseContract<T>(
+  path: string,
+  base: string | undefined,
+): { tag: string; contract: T } | undefined {
+  const ref = baseBranch(base);
+  let tags: string[];
+  try {
+    tags = git(['tag', '--list', 'v*', '--sort=-v:refname']).split(/\r?\n/);
+  } catch {
+    return undefined;
+  }
+  const releasedFromBase = (tag: string) => isAncestor(tag, ref) || isAncestor(`${tag}^2`, ref);
+  const tag = tags.filter((name) => stableRelease.test(name)).find(releasedFromBase);
+  if (!tag) return undefined;
+  try {
+    return { tag, contract: JSON.parse(git(['show', `${tag}:${path}`])) as T };
+  } catch {
+    return undefined;
+  }
+}
+
 export function pendingChangesets() {
   if (!existsSync(changesetDirectory)) return [];
   return readdirSync(changesetDirectory)

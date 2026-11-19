@@ -1,5 +1,10 @@
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
-import { baseContract, baseOption, pendingChangesets } from './ContractHistory.ts';
+import {
+  baseContract,
+  baseOption,
+  lastReleaseContract,
+  pendingChangesets,
+} from './ContractHistory.ts';
 import {
   buildParts,
   partsFile,
@@ -32,7 +37,8 @@ if (check) {
       `[33mwarning: no part or state removal was checked: ${base.missing}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
     );
   } else {
-    const removed = removedParts(base.contract, parts, pendingChangesets());
+    const release = lastReleaseContract<PartsContract>(partsPath, baseOption());
+    const removed = removedParts(base.contract, parts, pendingChangesets(), release?.contract);
     const unrecorded = removed.filter((item) => !item.recorded);
     if (removed.length)
       console.log(
@@ -45,7 +51,7 @@ if (check) {
       process.exit(1);
     }
     console.log(
-      `${partsPath} matches its sources, and every part or state gone since ${base.ref} is recorded as a breaking change.`,
+      `${partsPath} matches its sources, and every part or state gone since ${base.ref}${release ? ` that ${release.tag} shipped` : ''} is recorded as a breaking change.`,
     );
   }
 } else {
