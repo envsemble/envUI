@@ -706,6 +706,11 @@
           "description": "One day."
         },
         {
+          "class": "env-calendar-day-content",
+          "description": "The slot of a day's content from renderDay, in its mark.",
+          "slot": true
+        },
+        {
           "class": "env-calendar-day-mark",
           "description": "The mark under a day, such as today's."
         },
@@ -6512,6 +6517,11 @@
         {
           "class": "env-picker-popup-footer-end",
           "description": "The actions at the end of that row, such as Clear."
+        },
+        {
+          "class": "env-picker-popup-header",
+          "description": "The slot of the application's content above the body, such as presets.",
+          "slot": true
         }
       ],
       "states": [],

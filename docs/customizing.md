@@ -111,7 +111,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Calendar
 
-- Parts: `env-calendar`, `env-calendar-day`, `env-calendar-day-mark`, `env-calendar-grid`, `env-calendar-header`, `env-calendar-next`, `env-calendar-pad`, `env-calendar-previous`, `env-calendar-title`
+- Parts: `env-calendar`, `env-calendar-day`, `env-calendar-day-content` (slot), `env-calendar-day-mark`, `env-calendar-grid`, `env-calendar-header`, `env-calendar-next`, `env-calendar-pad`, `env-calendar-previous`, `env-calendar-title`
 - States: `data-date` on `env-calendar-day`
 
 ### CalendarHeatmap
@@ -553,7 +553,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### PickerPopup
 
-- Parts: `env-picker-popup`, `env-picker-popup-body`, `env-picker-popup-footer`, `env-picker-popup-footer-end`
+- Parts: `env-picker-popup`, `env-picker-popup-body`, `env-picker-popup-footer`, `env-picker-popup-footer-end`, `env-picker-popup-header` (slot)
 - Used by: DatePicker, MonthPicker, TimePicker
 
 ### Popup

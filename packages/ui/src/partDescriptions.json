@@ -134,6 +134,7 @@
       "env-calendar": "The calendar of one month.",
       "env-calendar-day": "One day.",
       "env-calendar-day-mark": "The mark under a day, such as today's.",
+      "env-calendar-day-content": "The slot of a day's content from renderDay, in its mark.",
       "env-calendar-grid": "The grid of days.",
       "env-calendar-header": "The row with the month and the previous and next buttons.",
       "env-calendar-title": "The month and year.",
@@ -602,6 +603,7 @@
     },
     "PickerPopup": {
       "env-picker-popup": "The card DatePicker, TimePicker and MonthPicker open.",
+      "env-picker-popup-header": "The slot of the application's content above the body, such as presets.",
       "env-picker-popup-body": "The picker's content: a calendar, a time's wheels or a year of months.",
       "env-picker-popup-footer": "The row of actions under the body.",
       "env-picker-popup-footer-end": "The actions at the end of that row, such as Clear."

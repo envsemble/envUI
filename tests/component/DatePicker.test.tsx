@@ -631,3 +631,23 @@ test(
     expect(Math.round(box(narrow).width)).toBe(128);
   },
 );
+
+test("a picker's popup takes the application's presets above its calendar and a note in its footer", async () => {
+  mount({ default: fixture.PickerPopupContentFixture });
+  const due = field('Due');
+  await due.click();
+  await isOpen();
+  const popup = openPopup()!;
+  const tomorrow = page.getByRole('button', { name: 'Tomorrow' });
+  const header = tomorrow.element().closest('.env-picker-popup-header')!;
+  expect(popup.contains(header)).toBe(true);
+  expect(box(header).y).toBeLessThan(box(popup.querySelector('.env-calendar')!).y);
+  const note = page.getByTestId('zone-note').element();
+  const footer = note.closest('.env-picker-popup-footer')!;
+  expect(box(note).x).toBeGreaterThan(box(page.getByRole('button', { name: 'Today' })).x);
+  expect(footer).not.toBeNull();
+  expect(dayIn(popup, '2026-10-17').getAttribute('aria-disabled')).toBe('true');
+  await tomorrow.click();
+  await isClosed();
+  await expect.poll(() => page.getByTestId('due').element().textContent).toBe('2026-10-15');
+});

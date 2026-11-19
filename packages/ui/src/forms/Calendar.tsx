@@ -1,6 +1,7 @@
 'use client';
 
-import { useId, useMemo, type ComponentPropsWithRef, type MouseEvent } from 'react';
+import { useId, useMemo, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
+import { Slot } from '../internal/layout/Slot.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
@@ -30,6 +31,18 @@ import '../styles/Calendar.css';
 
 export type { Weekday } from '../internal/time/calendarDays.js';
 
+/** What a calendar's renderDay receives about the day beside its date. */
+export interface CalendarDayState {
+  /** The day's number as the calendar shows it, in the locale's digits, such as 14. */
+  number: string;
+  /** The day is the chosen one. */
+  selected: boolean;
+  /** The day is today. */
+  today: boolean;
+  /** The day can't be chosen, from min, max or isDateUnavailable. */
+  unavailable: boolean;
+}
+
 export interface CalendarProps extends Omit<
   ComponentPropsWithRef<'div'>,
   'defaultValue' | 'onChange' | 'children'
@@ -44,6 +57,19 @@ export interface CalendarProps extends Omit<
   min?: string;
   /** The latest day that can be chosen, as YYYY-MM-DD; later days are unavailable. */
   max?: string;
+  /**
+   * Whether a day, as YYYY-MM-DD, can't be chosen, such as a weekend, a holiday or a booked day; it
+   * shows dimmed and reports aria-disabled, as days outside min and max do, and the keyboard still
+   * moves onto it.
+   */
+  isDateUnavailable?: (day: string) => boolean;
+  /**
+   * The content of a day's mark in place of its number, such as the number with a dot under it
+   * for a day with events, or a price; it receives the day as YYYY-MM-DD and its state. The cell
+   * keeps its role, its name, the full date, and its keyboard handling.
+   * @default the day's number
+   */
+  renderDay?: (day: string, state: CalendarDayState) => ReactNode;
   /**
    * The first day of each week, from 0 for Sunday to 6 for Saturday.
    * @default the locale's, or Monday where the browser cannot tell
@@ -117,6 +143,8 @@ export function Calendar({
   onValueChange,
   min,
   max,
+  isDateUnavailable,
+  renderDay,
   weekStart,
   locale,
   previousMonthLabel,
@@ -143,7 +171,9 @@ export function Calendar({
   const firstWeekday = weekStart ?? localeStart;
 
   const isUnavailable = (day: number) =>
-    (minDay !== undefined && day < minDay) || (maxDay !== undefined && day > maxDay);
+    (minDay !== undefined && day < minDay) ||
+    (maxDay !== undefined && day > maxDay) ||
+    isDateUnavailable?.(formatDay(day)) === true;
   const { active, grid, moveTo, choose, handleKeyDown, focusCell } = useActiveCell({
     chosen: selectedDay,
     initial: () => now().day,
@@ -267,6 +297,7 @@ export function Calendar({
                 const outsideShownMonth = !daysShown || dayParts(day).month !== shownMonth;
                 if (outsideShownMonth) return <td key={day} className="env-calendar-pad" />;
                 const unavailable = isUnavailable(day);
+                const number = formats.number.format(dayParts(day).date);
                 return (
                   <td
                     key={day}
@@ -282,7 +313,18 @@ export function Calendar({
                     onFocus={() => focusCell(day)}
                   >
                     <span className="env-calendar-day-mark">
-                      {formats.number.format(dayParts(day).date)}
+                      {renderDay ? (
+                        <Slot className="env-calendar-day-content" element="span">
+                          {renderDay(formatDay(day), {
+                            number,
+                            selected: day === selectedDay,
+                            today: day === today,
+                            unavailable,
+                          })}
+                        </Slot>
+                      ) : (
+                        number
+                      )}
                     </span>
                   </td>
                 );

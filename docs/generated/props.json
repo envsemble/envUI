@@ -677,6 +677,19 @@
           "description": "The latest day that can be chosen, as YYYY-MM-DD; later days are unavailable."
         },
         {
+          "name": "isDateUnavailable",
+          "type": "(day: string) => boolean",
+          "required": false,
+          "description": "Whether a day, as YYYY-MM-DD, can't be chosen, such as a weekend, a holiday or a booked day; it shows dimmed and reports aria-disabled, as days outside min and max do, and the keyboard still moves onto it."
+        },
+        {
+          "name": "renderDay",
+          "type": "(day: string, state: CalendarDayState) => ReactNode",
+          "required": false,
+          "default": "the day's number",
+          "description": "The content of a day's mark in place of its number, such as the number with a dot under it for a day with events, or a price; it receives the day as YYYY-MM-DD and its state. The cell keeps its role, its name, the full date, and its keyboard handling."
+        },
+        {
           "name": "weekStart",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
@@ -2317,6 +2330,18 @@
           "description": "The latest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; later days are unavailable."
         },
         {
+          "name": "isDateUnavailable",
+          "type": "CalendarProps['isDateUnavailable']",
+          "required": false,
+          "description": "As Calendar's: whether a day, as YYYY-MM-DD, can't be chosen, such as a booked day."
+        },
+        {
+          "name": "renderDay",
+          "type": "CalendarProps['renderDay']",
+          "required": false,
+          "description": "As Calendar's: the content of a day's mark in the calendar in place of its number."
+        },
+        {
           "name": "placeholderTime",
           "type": "string",
           "required": false,
@@ -2448,6 +2473,18 @@
           "required": false,
           "default": "'Next month', or EnvUIProvider's messages.calendar.nextMonth",
           "description": "Accessible name of the calendar's next month button."
+        },
+        {
+          "name": "popupHeader",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the top of the popup, above the calendar, such as presets: buttons for Tomorrow or Next Monday that set the value, from a field the application controls."
+        },
+        {
+          "name": "popupFooter",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the popup's footer, after its shortcut to the current date or time and before Clear, such as a note of the time zone or another action."
         },
         {
           "name": "label",
@@ -5181,6 +5218,18 @@
           "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
           "required": false,
           "description": "Called with the new state, and why, when the popup opens or closes."
+        },
+        {
+          "name": "popupHeader",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the top of the popup, above the calendar or the list, such as presets: buttons for Tomorrow or Next Monday that set the value, from a field the application controls."
+        },
+        {
+          "name": "popupFooter",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the popup's footer, after its shortcut to the current date or time and before Clear, such as a note of the time zone or another action."
         },
         {
           "name": "label",
@@ -8482,6 +8531,18 @@
           "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
           "required": false,
           "description": "Called with the new state, and why, when the popup opens or closes."
+        },
+        {
+          "name": "popupHeader",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the top of the popup, above the calendar or the list, such as presets: buttons for Tomorrow or Next Monday that set the value, from a field the application controls."
+        },
+        {
+          "name": "popupFooter",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the popup's footer, after its shortcut to the current date or time and before Clear, such as a note of the time zone or another action."
         },
         {
           "name": "label",

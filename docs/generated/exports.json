@@ -33,6 +33,7 @@
     "ButtonTone": "type",
     "ButtonVariant": "type",
     "Calendar": "function",
+    "CalendarDayState": "interface",
     "CalendarHeatmap": "function",
     "CalendarHeatmapCell": "interface",
     "CalendarHeatmapDay": "interface",
