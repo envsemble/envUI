@@ -334,6 +334,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Pager
 
 - Parts: `env-pager`, `env-pager-link`, `env-pager-link-copy`, `env-pager-link-label`, `env-pager-link-next`, `env-pager-link-previous`, `env-pager-link-title`
+- States: `data-stacked`
 
 ### Pagination
 

@@ -5563,6 +5563,13 @@
           "required": false,
           "default": "'prev' on Pager.Previous, 'next' on Pager.Next",
           "description": "The link's relation to this page."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "default": "'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next",
+          "description": "The direction label above the title, such as Previous chapter or Back to setup, for this link alone; null leaves it out."
         }
       ],
       "native": [
@@ -5601,6 +5608,13 @@
           "required": false,
           "default": "'prev' on Pager.Previous, 'next' on Pager.Next",
           "description": "The link's relation to this page."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "default": "'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next",
+          "description": "The direction label above the title, such as Previous chapter or Back to setup, for this link alone; null leaves it out."
         }
       ],
       "native": [
@@ -5613,7 +5627,7 @@
     "Pager.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous and Pager.Next children; either one can be left out, and without any it renders nothing.",
+      "description": "A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous and Pager.Next children; either one can be left out, and without any it renders nothing. Where the two don't fit side by side, they stack as rows of the pager's width, the previous first.",
       "props": [
         {
           "name": "children",
@@ -5669,8 +5683,14 @@
         {
           "name": "onPageChange",
           "type": "(page: number) => void",
-          "required": true,
-          "description": "Receives the page before or after the current one when its button is pressed. The application loads that page and passes it back as page."
+          "required": false,
+          "description": "Receives the page before or after the current one when its button is pressed. The application loads that page and passes it back as page. Give it, or pageHref, or both."
+        },
+        {
+          "name": "pageHref",
+          "type": "(page: number) => string",
+          "required": false,
+          "description": "The address of a page, such as `?page=3`, for a list whose pages have their own URLs: the previous and next controls are then links, through the LinkProvider's link component, which open in a new tab, are crawlable and work before hydration. A control with no page to go to reports aria-disabled and has no destination."
         },
         {
           "name": "pending",
