@@ -1,8 +1,8 @@
 name: CI
-# Pull requests into dev and main once they are ready for review, as parallel jobs on the Linux
-# runner the envsemble organization variable CI_LINUX_RUNNER names. Every job has a timeout, so a
-# hung run cannot burn the month's minutes. The job named CI at the end is the check the
-# organization's rulesets require: splitting or resharding the jobs above needs no ruleset change.
+# Pull requests into dev and main once they are ready for review, as parallel jobs on GitHub's own
+# Linux runners, free for a public repository. Every job has a timeout, so a hung run ends. The job
+# named CI at the end is the check the organization's rulesets require: splitting or resharding the
+# jobs above needs no ruleset change.
 #
 # `Changes` (scripts/test/ChooseJobs.ts) maps the changed files to the library and the site: a
 # site-only change skips the library's browser tests, a library change runs the site's smoke too,
@@ -33,7 +33,7 @@ jobs:
   changes:
     name: Changes
     if: ${{ !github.event.pull_request.draft }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
       library: ${{ steps.choose.outputs.library }}
@@ -59,7 +59,7 @@ jobs:
   static:
     name: Static checks
     if: ${{ !github.event.pull_request.draft }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -111,7 +111,7 @@ jobs:
   build:
     name: Build and unit tests
     if: ${{ !github.event.pull_request.draft }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       # Depth 2: the merge commit and its parents, the first being the tip of the branch it merges
@@ -143,7 +143,7 @@ jobs:
     name: Library browser tests (${{ matrix.shard }}/3)
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.library != 'false' }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -175,7 +175,7 @@ jobs:
     name: Site smoke
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.site != 'false' }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -201,7 +201,7 @@ jobs:
     name: Burn-in
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.burn-in == 'true' }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -227,7 +227,7 @@ jobs:
   secrets:
     name: Secret scan
     if: ${{ !github.event.pull_request.draft }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       # The whole history, which Betterleaks scans.
@@ -254,7 +254,7 @@ jobs:
     name: CI
     if: ${{ always() && !github.event.pull_request.draft }}
     needs: [changes, static, build, library, site, burn-in, secrets]
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Require every job to pass
