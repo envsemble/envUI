@@ -8795,7 +8795,7 @@
     "ThemeMenuRadioGroup": {
       "kind": "component",
       "source": "packages/ui/src/foundations/ThemeMenuRadioGroup.tsx",
-      "description": "The theme choice for a Menu: System, Light and Dark as radio items. Inside a ThemePreferenceProvider it shows and stores the provider's preference; value and onValueChange connect it to a theme the application stores itself.",
+      "description": "The theme choice for a Menu: System, Light and Dark as radio items. Inside a ThemePreferenceProvider it shows and changes the provider's preference; value and onValueChange connect it to a preference outside one.",
       "props": [
         {
           "name": "value",
@@ -8808,8 +8808,8 @@
           "name": "onValueChange",
           "type": "(value: ThemePreference) => void",
           "required": false,
-          "default": "the nearest ThemePreferenceProvider's setPreference, which stores the choice",
-          "description": "Called with the preference chosen, for an application that stores the theme itself."
+          "default": "the nearest ThemePreferenceProvider's setPreference",
+          "description": "Called with the preference chosen, for a group outside a ThemePreferenceProvider."
         },
         {
           "name": "label",
@@ -8851,7 +8851,7 @@
     "ThemePreferenceProvider": {
       "kind": "component",
       "source": "packages/ui/src/foundations/ThemePreference.tsx",
-      "description": "Owns the theme preference: persistence, the system theme and document-root theming.",
+      "description": "Themes the application by the theme preference, which the application keeps where it chooses, following the system's theme for a system preference, and themes the document root.",
       "props": [
         {
           "name": "children",
@@ -8864,14 +8864,33 @@
           "type": "ThemeDefinition",
           "required": false,
           "default": "{}",
-          "description": "The application's theme, from defineTheme: its storage key, default preference, contrast, scale, selection and corners. Give createThemeBootstrapScript the same theme, so the root has it before the first paint. Left out, the stored preference is under `env-theme`, the contrast and scale are an enclosing Theme's, or else the page's on the root, or else system, and the look is an enclosing Theme's, or else neutral and rounded."
+          "description": "The application's theme, from defineTheme: its contrast, scale, selection and corners. Give createThemeBootstrapScript the same theme, so the root has it before the first paint. Left out, the contrast and scale are an enclosing Theme's, or else the page's on the root, or else system, and the look is an enclosing Theme's, or else neutral and rounded."
+        },
+        {
+          "name": "preference",
+          "type": "'light' | 'dark' | 'system'",
+          "required": false,
+          "description": "The chosen preference, for an application that keeps it itself: in a cookie, the user's account or, with useStoredThemePreference, localStorage. Give onPreferenceChange with it."
+        },
+        {
+          "name": "defaultPreference",
+          "type": "'light' | 'dark' | 'system'",
+          "required": false,
+          "default": "'system'",
+          "description": "The preference while `preference` is left out, until people choose another."
+        },
+        {
+          "name": "onPreferenceChange",
+          "type": "(preference: ThemePreference) => void",
+          "required": false,
+          "description": "Called with the preference people choose, such as with ThemeToggle, for the application to keep."
         },
         {
           "name": "applyToDocument",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color. One provider per document applies to it: pass false to any other, nested in it or beside it. In development, envUI reports two providers that both apply. Outside any Theme, its boundary around the children is a plain element that takes the root's look, with none of a Theme's class and attributes, unless its contrast is system while the page set a contrast of its own on the root. Rendered on the server, and as the page hydrates, it renders the preference's default and leaves the page's look to the theme createThemeBootstrapScript gave the root, which knows the stored preference before the first paint; once hydrated, it takes the stored one."
+          "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color. One provider per document applies to it: pass false to any other, nested in it or beside it. In development, envUI reports two providers that both apply. Outside any Theme, its boundary around the children is a plain element that takes the root's look, with none of a Theme's class and attributes, unless its contrast is system while the page set a contrast of its own on the root. Rendered on the server, and as the page hydrates, it leaves the page's look to the theme createThemeBootstrapScript gave the root, and a system preference renders light; once hydrated, it themes the root itself."
         },
         {
           "name": "className",
@@ -8888,7 +8907,7 @@
     "ThemeToggle": {
       "kind": "component",
       "source": "packages/ui/src/foundations/ThemeToggle.tsx",
-      "description": "Switches between the light and dark themes and stores the choice.",
+      "description": "Switches between the light and dark themes, through the nearest ThemePreferenceProvider.",
       "props": [
         {
           "name": "aria-labelledby",
@@ -9712,11 +9731,20 @@
         "@envsemble/envui/rich-text"
       ]
     },
+    "createStoredThemeBootstrapScript": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/themeStorage.ts",
+      "description": "Inline script for the document head of an application that keeps the theme preference with useStoredThemePreference: createThemeBootstrapScript's script, with the preference stored in localStorage, so a stored dark theme does not flash light while the application loads.",
+      "signature": "(theme?: ThemeDefinition, { storageKey, defaultPreference }?: ThemeStorageOptions): string",
+      "entries": [
+        "@envsemble/envui/theme-storage"
+      ]
+    },
     "createThemeBootstrapScript": {
       "kind": "function",
       "source": "packages/ui/src/foundations/themeBootstrap.ts",
-      "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and the contrast, scale, selection and corners of the theme apply from the start. Give it the theme ThemePreferenceProvider takes.",
-      "signature": "(theme?: ThemeDefinition): string",
+      "description": "Inline script for the document head. It themes the root element before the first paint, so a chosen or system dark theme does not flash light while the application loads, and the contrast, scale, selection and corners of the theme apply from the start. Give it the theme and the preference ThemePreferenceProvider takes.",
+      "signature": "(theme?: ThemeDefinition, { preference }?: ThemeBootstrapOptions): string",
       "entries": [
         "@envsemble/envui",
         "@envsemble/envui/theme-bootstrap"
@@ -9820,6 +9848,15 @@
       "signature": "(): boolean",
       "entries": [
         "@envsemble/envui"
+      ]
+    },
+    "useStoredThemePreference": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/useStoredThemePreference.ts",
+      "description": "Keeps the theme preference in localStorage, follows a choice made in another window of the same origin, and keeps a choice for the page's life where storage is blocked. Spread what it returns on ThemePreferenceProvider, and give createStoredThemeBootstrapScript the same options. On the server and while the page hydrates it returns the default, as the server rendered it.",
+      "signature": "({ storageKey, defaultPreference, }?: ThemeStorageOptions): StoredThemePreference",
+      "entries": [
+        "@envsemble/envui/theme-storage"
       ]
     },
     "useTheme": {

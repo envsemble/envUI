@@ -84,7 +84,7 @@ Choose the role for what an element is, never the color it should have. A tone a
 
 ### Usage
 
-Put the interface inside `Theme`; a nested `Theme` gives one region another theme or contrast. `useTheme()` returns the nearest one's settings, and `useThemePreference()` the stored preference with `setPreference` and `toggleTheme`. Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, and a `fg-on-X` goes on its `bg-X`.
+Put the interface inside `Theme`; a nested `Theme` gives one region another theme or contrast. `useTheme()` returns the nearest one's settings, and `useThemePreference()` the theme preference with `setPreference` and `toggleTheme`. Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, and a `fg-on-X` goes on its `bg-X`.
 
 ```tsx
 import { Theme, Text, useTheme } from '@envsemble/envui';

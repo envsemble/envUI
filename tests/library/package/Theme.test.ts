@@ -141,19 +141,11 @@ test('ThemePreferenceProvider renders its default on the server and leaves the l
     return h('output', null, useTheme().theme);
   }
   const root = render(
-    h(
-      ThemePreferenceProvider,
-      { className: 'app', theme: { defaultPreference: 'system' } },
-      h(Inner),
-    ),
+    h(ThemePreferenceProvider, { className: 'app', defaultPreference: 'system' }, h(Inner)),
   ).markup;
   assert.match(root, /^<div data-env-ssr-root="" class="app"><output>light<\/output><\/div>$/);
   const own = render(
-    h(
-      ThemePreferenceProvider,
-      { applyToDocument: false, theme: { defaultPreference: 'dark' } },
-      h(Inner),
-    ),
+    h(ThemePreferenceProvider, { applyToDocument: false, defaultPreference: 'dark' }, h(Inner)),
   ).markup;
   assert.match(
     own,

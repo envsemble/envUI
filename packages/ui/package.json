@@ -80,6 +80,12 @@
       "import": "./dist/theme-bootstrap.js",
       "default": "./dist/theme-bootstrap.js"
     },
+    "./theme-storage": {
+      "envui-source": "./src/theme-storage.ts",
+      "types": "./dist/theme-storage.d.ts",
+      "import": "./dist/theme-storage.js",
+      "default": "./dist/theme-storage.js"
+    },
     "./dev": {
       "envui-source": "./src/dev.ts",
       "types": "./dist/dev.d.ts",

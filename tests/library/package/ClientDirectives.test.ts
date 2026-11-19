@@ -184,6 +184,8 @@ test('a server component imports envUI and renders it on the server', () => {
   assert.equal(result.menuItem, true);
   assert.equal(result.themeBootstrapScript, 'string');
   assert.equal(result.bootstrapEntryScript, 'string');
+  assert.equal(result.storedBootstrapScript, 'string');
+  assert.equal(result.storedPreferenceHook, true);
   assert.ok(result.bootstrapContrastScript.includes('r.setAttribute("data-env-contrast","high")'));
   assert.equal(result.relativeTime, '3 hours ago');
   assert.deepEqual(result.diffLines, { result: { additions: 2, deletions: 1 } });

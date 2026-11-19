@@ -24,6 +24,7 @@ import {
   Column,
   Text,
 } from '@envsemble/envui';
+import { useStoredThemePreference } from '@envsemble/envui/theme-storage';
 import { IconError } from '@envsemble/envui/icons/Error';
 import { IconLogout } from '@envsemble/envui/icons/Logout';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
@@ -56,8 +57,9 @@ export default function AdoptionFixture() {
   const [confirmed, setConfirmed] = useState(0);
   const [homes, setHomes] = useState(3);
   const [seatsFull, setSeatsFull] = useState(false);
+  const storedTheme = useStoredThemePreference({ storageKey: 'fixture-theme' });
   return (
-    <ThemePreferenceProvider theme={{ storageKey: 'fixture-theme' }} className="fixture-adoption">
+    <ThemePreferenceProvider {...storedTheme} className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
         <section>
           <div data-testid="adoption-plain-text">Plain application text</div>
@@ -174,10 +176,10 @@ export default function AdoptionFixture() {
             Show <AnimatedNumber value={homes} data-testid="animated-number" /> homes
           </Button>
           <output hidden data-testid="bootstrap-script">
-            {createThemeBootstrapScript({ storageKey: 'bootstrap-theme' })}
+            {createThemeBootstrapScript({}, { preference: 'dark' })}
           </output>
           <output hidden data-testid="bootstrap-contrast-script">
-            {createThemeBootstrapScript({ storageKey: 'bootstrap-theme', contrast: 'high' })}
+            {createThemeBootstrapScript({ contrast: 'high' })}
           </output>
           <Tooltip content="All seats are assigned">
             <Button disabled>Assign seat</Button>

@@ -8,6 +8,7 @@
     "@envsemble/envui/diff",
     "@envsemble/envui/color",
     "@envsemble/envui/theme-bootstrap",
+    "@envsemble/envui/theme-storage",
     "@envsemble/envui/dev",
     "@envsemble/envui/messages"
   ]

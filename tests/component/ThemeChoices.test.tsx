@@ -9,7 +9,6 @@ afterEach(() => {
   for (const name of root.getAttributeNames())
     if (name.startsWith('data-env-')) root.removeAttribute(name);
   root.classList.remove('env-theme');
-  localStorage.removeItem('fixture-theme-choices');
 });
 
 test("ThemeToggle shows the application's own icon and keeps its name", async () => {

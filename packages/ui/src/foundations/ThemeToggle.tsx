@@ -31,7 +31,7 @@ export type ThemeToggleProps = (ToggleButtonProps extends infer Props
   icon?: ReactNode;
 };
 
-/** Switches between the light and dark themes and stores the choice. */
+/** Switches between the light and dark themes, through the nearest ThemePreferenceProvider. */
 export function ThemeToggle({
   title,
   className,

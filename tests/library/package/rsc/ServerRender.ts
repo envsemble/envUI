@@ -7,6 +7,7 @@ import * as diff from '@envsemble/envui/diff';
 import * as color from '@envsemble/envui/color';
 import * as richText from '@envsemble/envui/rich-text';
 import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
+import * as themeStorage from '@envsemble/envui/theme-storage';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { render } from './Render.ts';
@@ -130,9 +131,11 @@ console.log(
   JSON.stringify({
     list,
     menuItem: isClientReference(ui.Menu.Item),
-    themeBootstrapScript: typeof ui.createThemeBootstrapScript({ storageKey: 'app-theme' }),
+    themeBootstrapScript: typeof ui.createThemeBootstrapScript({}, { preference: 'dark' }),
     bootstrapEntryScript: typeof themeBootstrap.createThemeBootstrapScript(),
     bootstrapContrastScript: themeBootstrap.createThemeBootstrapScript({ contrast: 'high' }),
+    storedBootstrapScript: typeof themeStorage.createStoredThemeBootstrapScript(),
+    storedPreferenceHook: isClientReference(themeStorage.useStoredThemePreference),
     relativeTime: ui.formatRelativeTime(Date.UTC(2026, 9, 14, 9), {
       now: Date.UTC(2026, 9, 14, 12),
       locale: 'en',

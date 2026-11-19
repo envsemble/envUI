@@ -57,7 +57,7 @@ const privacy = (
         <li>
           <Text>
             <strong>What it keeps in the browser is the application&apos;s choice.</strong>{' '}
-            ThemePreferenceProvider keeps the chosen theme in the browser&apos;s local storage,
+            useStoredThemePreference keeps the chosen theme in the browser&apos;s local storage,
             under a key the application names, and Panes with <code>persist</code> keeps a
             pane&apos;s width in a cookie of the application&apos;s own site.
           </Text>

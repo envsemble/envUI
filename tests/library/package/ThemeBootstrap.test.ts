@@ -5,8 +5,12 @@ import {
   createThemeBootstrapScript,
   defineTheme,
 } from '../../../packages/ui/dist/theme-bootstrap.js';
+import { createStoredThemeBootstrapScript } from '../../../packages/ui/dist/theme-storage.js';
 
-function bootstrap(script, { stored = null, systemDark = false, attributes = {} } = {}) {
+function bootstrap(
+  script,
+  { stored = null, storedUnder = 'env-theme', systemDark = false, attributes = {} } = {},
+) {
   const root = {
     attributes: { ...attributes },
     classes: new Set(),
@@ -16,21 +20,43 @@ function bootstrap(script, { stored = null, systemDark = false, attributes = {} 
   };
   runInNewContext(script, {
     document: { documentElement: root },
-    localStorage: { getItem: () => stored },
+    localStorage: { getItem: (key) => (key === storedUnder ? stored : null) },
     matchMedia: (query) => ({ matches: query === '(prefers-color-scheme: dark)' && systemDark }),
   });
   return root;
 }
 
-test('the bootstrap script themes the root with the stored or system theme', () => {
-  const root = bootstrap(createThemeBootstrapScript({ storageKey: 'app-theme' }), {
-    stored: 'dark',
+test('the bootstrap script themes the root with the preference given or the system theme, and reads no storage', () => {
+  const root = bootstrap(createThemeBootstrapScript({}, { preference: 'dark' }), {
+    stored: 'light',
   });
   assert.ok(root.classes.has('env-theme'));
   assert.equal(root.attributes['data-env-theme'], 'dark');
   assert.equal(root.style.colorScheme, 'dark');
+  assert.doesNotMatch(createThemeBootstrapScript(), /localStorage/);
+  for (const preference of [undefined, 'system', 'blue'])
+    assert.equal(
+      bootstrap(createThemeBootstrapScript({}, { preference }), { systemDark: true }).attributes[
+        'data-env-theme'
+      ],
+      'dark',
+      preference,
+    );
+});
+
+test('the stored bootstrap script themes the root with the stored preference, or else the default', () => {
+  const storage = { storageKey: 'app-theme', defaultPreference: 'dark' };
+  const script = createStoredThemeBootstrapScript({ corners: 'sharp' }, storage);
+  const stored = bootstrap(script, { stored: 'light', storedUnder: 'app-theme' });
+  assert.equal(stored.attributes['data-env-theme'], 'light');
+  assert.equal(stored.attributes['data-env-corners'], 'sharp');
+  for (const value of [null, 'blue'])
+    assert.equal(
+      bootstrap(script, { stored: value, storedUnder: 'app-theme' }).attributes['data-env-theme'],
+      'dark',
+    );
   assert.equal(
-    bootstrap(createThemeBootstrapScript(), { systemDark: true }).attributes['data-env-theme'],
+    bootstrap(createStoredThemeBootstrapScript(), { stored: 'dark' }).attributes['data-env-theme'],
     'dark',
   );
 });
@@ -68,13 +94,9 @@ test('the bootstrap script writes a compact or comfortable scale before the firs
 });
 
 test('one theme definition gives the root its selection and corners before the first paint', () => {
-  const theme = defineTheme({
-    storageKey: 'app-theme',
-    selection: 'accent',
-    corners: 'sharp',
-  });
+  const theme = defineTheme({ selection: 'accent', corners: 'sharp' });
   assert.ok(Object.isFrozen(theme));
-  const root = bootstrap(createThemeBootstrapScript(theme), { stored: 'dark' });
+  const root = bootstrap(createThemeBootstrapScript(theme, { preference: 'dark' }));
   assert.equal(root.attributes['data-env-theme'], 'dark');
   assert.equal(root.attributes['data-env-surface'], undefined);
   assert.equal(root.attributes['data-env-selection'], 'accent');

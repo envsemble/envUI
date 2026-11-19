@@ -1,17 +1,18 @@
 // eslint-disable-next-line no-restricted-imports
 import {
   contrastSourceAttribute,
-  createThemeBootstrapScript,
   ownContrastSource,
   ownScaleSource,
   scaleSourceAttribute,
 } from '../../../../packages/ui/src/foundations/themeBootstrap.ts';
+// eslint-disable-next-line no-restricted-imports
+import { createStoredThemeBootstrapScript } from '../../../../packages/ui/src/foundations/themeStorage.ts';
 import {
   displayStorageKeys,
   drawerWidthKey,
   drawerWidths,
   modifierAttribute,
-  siteTheme,
+  siteThemeStorage,
   storedDrawerWidthProperty,
 } from './DisplayStorage.ts';
 
@@ -25,7 +26,7 @@ const renamedStorageKeys: readonly (readonly [before: string, now: string])[] = 
 
 export const headScript = () =>
   createStorageMigrationScript() +
-  createThemeBootstrapScript(siteTheme) +
+  createStoredThemeBootstrapScript({}, siteThemeStorage) +
   createDisplayBootstrapScript() +
   createSiteBootstrapScript();
 

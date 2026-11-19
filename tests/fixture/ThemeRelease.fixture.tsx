@@ -4,7 +4,6 @@ import { Button, ThemePreferenceProvider, defineTheme } from '@envsemble/envui';
 export const mount = 'root';
 
 const theme = defineTheme({
-  storageKey: 'fixture-release-theme',
   contrast: 'high',
   scale: 'compact',
   selection: 'accent',
