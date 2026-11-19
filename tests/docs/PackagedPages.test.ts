@@ -83,7 +83,7 @@ test('a page ships the whole file, in its order, with code once', () => {
   assert.ok(hasLine(button, 'Example: OnePrimaryAction (do).'));
   assert.doesNotMatch(button, /^`{3,}tsx (?:figure|example|do|dont|anatomy|variants)=/m);
   assert.ok(hasLine(button, '1. **Container** (`env-button`)'));
-  assert.match(button, /^Also `end`, `size`, .* as on Button\.$/m);
+  assert.match(button, /^Also `start`, `end`, `size`, .* as on Button\.$/m);
   const spacing = compiled.get('foundations/spacing.md');
   assert.ok(spacing.includes('\n1. **Tight, inside a group**: '));
   assert.ok(hasLine(spacing, 'examples: # Each file is examples/spacing/<Name>.tsx.'));

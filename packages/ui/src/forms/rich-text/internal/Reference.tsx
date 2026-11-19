@@ -6,6 +6,7 @@ import { ActionElement } from '../../../internal/control/ActionElement.js';
 import { referenceFromAttributes, safeRichTextUrl } from './referenceAttributes.js';
 import type { RichTextReference, RichTextRenderOptions } from '../types.js';
 import '../../../styles/Base.css';
+import '../../../styles/Button.css';
 import '../../../styles/Prose.css';
 import '../../../styles/RichText.css';
 
