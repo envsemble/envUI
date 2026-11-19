@@ -21,6 +21,7 @@ import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import { followDrag, followOverdrag } from './internal/sliderDrag.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
 import { flag } from '../internal/flag.js';
@@ -34,9 +35,10 @@ export interface SliderProps extends Omit<
   /**
    * The value's name, inside the slider at its start, such as Opacity: text, or any content, such
    * as a volume icon beside the text. It names the slider, and ends in an ellipsis where the slider
-   * is too narrow for it.
+   * is too narrow for it. Without it, a List.Item whose control it is names the slider, or name it
+   * with aria-label or aria-labelledby.
    */
-  label: ReactNode;
+  label?: ReactNode;
   /**
    * Lasting guidance under the slider, such as what the value applies to, linked to the slider as
    * its description.
@@ -136,8 +138,19 @@ export function Slider({
   onFocus,
   'aria-describedby': describedBy,
   style,
-  ...props
+  ...ownProps
 }: SliderProps) {
+  const {
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    ...propsWithoutName
+  } = ownProps;
+  const props = label != null ? ownProps : propsWithoutName;
+  const naming = useRowControlNaming({ label, ...ownProps, 'aria-describedby': describedBy });
+  const thumbName =
+    label != null
+      ? {}
+      : { 'aria-label': ariaLabel, 'aria-labelledby': naming['aria-labelledby'] ?? ariaLabelledBy };
   const directionScope = useDirectionScope<HTMLDivElement>();
   const id = useId();
   const providedLocale = useLocale();
@@ -199,7 +212,7 @@ export function Slider({
   const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
     [
-      describedBy,
+      naming['aria-describedby'] ?? describedBy,
       description != null ? fieldMessageIds(id).description : undefined,
       error != null ? fieldMessageIds(id).error : undefined,
     ]
@@ -252,6 +265,7 @@ export function Slider({
                   input.current = node;
                   setRef(ref, node);
                 }}
+                {...thumbName}
                 aria-describedby={describedByIds}
                 getAriaValueText={(formatted, number) =>
                   formatValue ? formatValue(number) : formatted

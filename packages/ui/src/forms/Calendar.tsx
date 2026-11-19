@@ -26,6 +26,7 @@ import {
   type Weekday,
 } from '../internal/time/calendarDays.js';
 import { useActiveCell } from './internal/useActiveCell.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import '../styles/Base.css';
 import '../styles/Calendar.css';
 
@@ -134,8 +135,8 @@ function shortestDistinctWeekdayNames(short: string[], narrow: string[]) {
 /**
  * A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move
  * by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's
- * ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, it is a group
- * around the month's grid.
+ * ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, or by the
+ * List.Item whose control it is, it is a group around the month's grid.
  */
 export function Calendar({
   value,
@@ -233,13 +234,18 @@ export function Calendar({
       long: formats.weekdayName.format(sample),
     }));
   }, [formats, firstWeekday]);
-  const named = props['aria-label'] != null || props['aria-labelledby'] != null;
+  const naming = useRowControlNaming(props);
+  const named =
+    props['aria-label'] != null ||
+    props['aria-labelledby'] != null ||
+    naming['aria-labelledby'] != null;
 
   return (
     <Grid
       gap={2}
       role={named ? 'group' : undefined}
       {...props}
+      {...naming}
       className={classNames('env-calendar', className)}
     >
       <Row align="center" gap={1} className="env-calendar-header">

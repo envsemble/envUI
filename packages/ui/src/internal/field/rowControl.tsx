@@ -24,14 +24,13 @@ interface OwnNaming {
   'aria-describedby'?: string;
 }
 
-export function useRowControlNaming(own: OwnNaming) {
+export function useRowControlNaming(own: OwnNaming): {
+  'aria-labelledby'?: string;
+  'aria-describedby'?: string;
+} {
   const row = useContext(RowControlContext);
   const named = own.label != null || own['aria-label'] != null || own['aria-labelledby'] != null;
-  if (named || !row)
-    return {
-      'aria-labelledby': own['aria-labelledby'],
-      'aria-describedby': own['aria-describedby'],
-    };
+  if (named || !row) return {};
   return {
     'aria-labelledby': row.labelId,
     'aria-describedby':

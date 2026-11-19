@@ -3,6 +3,7 @@
 import type { CSSProperties, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import { TextareaControl, type TextareaControlProps } from '../internal/field/TextareaControl.js';
 import { FieldFrame, FieldLabelContent, type FieldProps } from '../internal/field/FieldFrame.js';
 
@@ -41,7 +42,14 @@ export function Textarea({
   'aria-invalid': invalid,
   ...props
 }: TextareaProps) {
-  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
+  const naming = useRowControlNaming({ label, ...props, 'aria-describedby': describedBy });
+  const metadata = useFieldMetadata(
+    suppliedId,
+    description,
+    error,
+    naming['aria-describedby'] ?? describedBy,
+    invalid,
+  );
   const { id } = metadata;
   return (
     <FieldFrame
@@ -63,6 +71,7 @@ export function Textarea({
     >
       <TextareaControl
         {...props}
+        {...naming}
         ref={ref}
         {...metadata}
         onChange={(event) => {

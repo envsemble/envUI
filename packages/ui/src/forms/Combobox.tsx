@@ -38,6 +38,7 @@ import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
 import { useComboboxSelection, type ComboboxSelection } from './internal/useComboboxSelection.js';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
@@ -215,7 +216,14 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const locale = ownLocale ?? providedLocale;
   const clearName = clearLabel ?? messages.clear;
   const removeName = removeLabel ?? ((text: string) => messages.remove({ label: text }));
-  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
+  const naming = useRowControlNaming({ label, ...inputProps, 'aria-describedby': describedBy });
+  const metadata = useFieldMetadata(
+    suppliedId,
+    description,
+    error,
+    naming['aria-describedby'] ?? describedBy,
+    invalid,
+  );
   const { id } = metadata;
   const labelId = `${id}-label`;
   const selectionId = `${id}-selection`;
@@ -294,8 +302,13 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const clearShown = showClear && selectedValues.length > 0;
   const showStart = singleItem?.start != null && inputText === singleItem.label && !isMultiple;
   const ariaLabel = inputProps['aria-label'];
+  const fieldLabelId = label != null ? labelId : naming['aria-labelledby'];
   const toolbarName =
-    label != null ? { 'aria-labelledby': labelId } : ariaLabel ? { 'aria-label': ariaLabel } : {};
+    fieldLabelId != null
+      ? { 'aria-labelledby': fieldLabelId }
+      : ariaLabel
+        ? { 'aria-label': ariaLabel }
+        : {};
 
   return (
     <DirectionProvider direction={direction}>
@@ -357,6 +370,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           )}
           <ComboboxInput
             {...inputProps}
+            {...naming}
             ref={ref}
             inputRef={inputRef}
             chosenLabel={isMultiple || readOnly ? undefined : singleItem?.label}
@@ -373,7 +387,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
             <ComboboxActions
               clearName={clearName}
               showClear={showClear}
-              fieldLabelId={label != null ? labelId : undefined}
+              fieldLabelId={fieldLabelId}
               fieldAriaLabel={ariaLabel}
             />
           </span>

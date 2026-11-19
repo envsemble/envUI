@@ -2,6 +2,7 @@
 
 import { useRef, type CSSProperties, type InputHTMLAttributes, type Ref } from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import {
   FieldFrame,
   FieldLabelContent,
@@ -80,7 +81,14 @@ export function TextField({
   'aria-invalid': invalid,
   ...props
 }: TextFieldProps) {
-  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
+  const naming = useRowControlNaming({ label, ...props, 'aria-describedby': describedBy });
+  const metadata = useFieldMetadata(
+    suppliedId,
+    description,
+    error,
+    naming['aria-describedby'] ?? describedBy,
+    invalid,
+  );
   const committed = useRef<string | null>(null);
   const rejected = useRef<string | null>(null);
   const commit = (input: HTMLInputElement) => {
@@ -127,6 +135,7 @@ export function TextField({
     >
       <input
         {...props}
+        {...naming}
         ref={ref}
         {...metadata}
         aria-describedby={describedByIds}

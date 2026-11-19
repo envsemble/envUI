@@ -67,10 +67,10 @@ A Button with variant="text" inside a clickable List.Item: the row takes the cli
 
 ### no-field-in-list-row
 
-A field with no `label`, `aria-label` or `aria-labelledby`, such as a `Select`, `Combobox`, `TextField`, `SearchField`, `Textarea`, `SegmentedControl`, `Slider`, a `RadioGroup` or a picker, in a `List.Item`'s `control` or `end`, or a `Radio` with none in its `end`. The row's label names only a `Switch`, a `Checkbox` or a `Radio` in its `control`, so a field there or in `end` needs its own name. A labelled field, such as a settings row that ends in `<Select label="Theme" />`, passes, as does a form in an overlay the row opens, such as a `Popover`, `Dialog`, `Sheet` or `Menu`.
+A field with no `label`, `aria-label` or `aria-labelledby`, such as a `Select`, `Combobox`, `TextField`, `SearchField`, `Textarea`, `SegmentedControl`, `Slider`, a `Radio`, a `RadioGroup` or a picker, in a `List.Item`'s `end`. The row's label names the control in its `control`, such as `<List.Item label="Theme" control={<Select items={themes} />} />`, and nothing names a field in `end`. A labelled field in `end` passes, as does a form in an overlay the row opens, such as a `Popover`, `Dialog`, `Sheet` or `Menu`.
 
 ```text
-A Select with no label in a List.Item's control: the row's label names only a Switch, a Checkbox or a Radio in its control, so nothing names this field. Give it a label, or an aria-label or aria-labelledby when its label shouldn't show.
+A Select with no label in a List.Item's end: the row's label names only the control in its control, so nothing names this field. Put it in control when it is the row's setting, or give it a label, or an aria-label or aria-labelledby when its label shouldn't show.
 ```
 
 ### label-vocabulary

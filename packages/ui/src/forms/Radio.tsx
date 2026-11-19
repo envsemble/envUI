@@ -47,8 +47,8 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   ref?: Ref<HTMLFieldSetElement>;
   /**
    * The group's visible name, such as Visibility, as the fieldset's legend above the options. It
-   * names the group for assistive technology. Without it, name it with aria-label or
-   * aria-labelledby.
+   * names the group for assistive technology. Without it, a List.Item whose control it is names
+   * it, or name it with aria-label or aria-labelledby.
    */
   label?: ReactNode;
   /**
@@ -120,9 +120,10 @@ export function RadioGroup({
     onChange: onValueChange,
   });
   const ids = fieldMessageIds(id);
+  const naming = useRowControlNaming({ label, ...props });
   const describedBy =
     [
-      props['aria-describedby'],
+      naming['aria-describedby'] ?? props['aria-describedby'],
       description != null ? ids.description : undefined,
       error != null ? ids.error : undefined,
     ]
@@ -143,6 +144,7 @@ export function RadioGroup({
   const fieldset = (
     <fieldset
       {...props}
+      {...naming}
       ref={(node) => {
         fieldsetRef.current = node;
         setRef(ref, node);

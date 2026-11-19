@@ -18,6 +18,7 @@ import { Slot } from '../internal/layout/Slot.js';
 import { VisuallyHidden } from '../content/VisuallyHidden.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/SegmentedControl.css';
@@ -71,8 +72,11 @@ export interface SegmentedControlProps extends Omit<
   defaultValue?: string;
   /** Receives the value of the item people choose, by pressing it or with the arrow keys. */
   onValueChange?: (value: string) => void;
-  /** The group's accessible name, such as Work items; the control has no visible label. */
-  'aria-label': string;
+  /**
+   * The group's accessible name, such as Work items; the control has no visible label. Without it,
+   * a List.Item whose control it is names it, or name it with aria-labelledby.
+   */
+  'aria-label'?: string;
   /**
    * The height, as on every control: sm, md or lg in the current scale, so it lines up with buttons
    * and fields of the same size. Without it, it takes the control height of its container, md
@@ -107,6 +111,7 @@ export function SegmentedControl({
   onFocus,
   ...props
 }: SegmentedControlProps) {
+  const naming = useRowControlNaming({ ...props, 'aria-label': label });
   const directionScope = useDirectionScope<HTMLDivElement>(ref);
   const thumb = useRef<HTMLSpanElement>(null);
   useLayoutEffect(
@@ -117,6 +122,7 @@ export function SegmentedControl({
     <DirectionProvider direction={directionScope.direction}>
       <RadioGroup
         {...props}
+        {...naming}
         ref={directionScope.ref}
         onFocus={(event) => {
           directionScope.onFocus();

@@ -717,7 +717,7 @@
     "Calendar": {
       "kind": "component",
       "source": "packages/ui/src/forms/Calendar.tsx",
-      "description": "A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, it is a group around the month's grid.",
+      "description": "A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, or by the List.Item whose control it is, it is a group around the month's grid.",
       "props": [
         {
           "name": "value",
@@ -4219,7 +4219,7 @@
           "name": "control",
           "type": "ReactNode",
           "required": false,
-          "description": "The selection control the row is about, at the row's end: a Switch, a Checkbox or a Radio, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select or a SegmentedControl, takes a label, aria-label or aria-labelledby of its own."
+          "description": "The control of the setting the row is about, at the row's end: a Switch, a Checkbox, a Radio or a field, such as a Select or a SegmentedControl, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice."
         },
         {
           "name": "interactive",
@@ -6678,7 +6678,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, name it with aria-label or aria-labelledby."
+          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, a List.Item whose control it is names it, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "value",
@@ -7511,8 +7511,8 @@
         {
           "name": "aria-label",
           "type": "string",
-          "required": true,
-          "description": "The group's accessible name, such as Work items; the control has no visible label."
+          "required": false,
+          "description": "The group's accessible name, such as Work items; the control has no visible label. Without it, a List.Item whose control it is names it, or name it with aria-labelledby."
         },
         {
           "name": "size",
@@ -7882,8 +7882,8 @@
         {
           "name": "label",
           "type": "ReactNode",
-          "required": true,
-          "description": "The value's name, inside the slider at its start, such as Opacity: text, or any content, such as a volume icon beside the text. It names the slider, and ends in an ellipsis where the slider is too narrow for it."
+          "required": false,
+          "description": "The value's name, inside the slider at its start, such as Opacity: text, or any content, such as a volume icon beside the text. It names the slider, and ends in an ellipsis where the slider is too narrow for it. Without it, a List.Item whose control it is names the slider, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "description",
