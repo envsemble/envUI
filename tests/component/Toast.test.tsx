@@ -435,7 +435,7 @@ test('notices wait while a modal dialog is open and then show for their full dur
   await expect.poll(count('Notice from a dialog')).toBe(0);
 });
 
-test('a notification takes content for its message with its text for the title and the announcement, its own icon, and every action it is given, in order, the main one last', async () => {
+test('a notification takes content for its message, titled by its text value or the message’s rendered text, its own icon, and every action it is given, in order, the main one last', async () => {
   await page.getByTestId('toast-rich').click();
   await expect.poll(() => notice('report.pdf uploaded')).not.toBeNull();
   const rich = notice('report.pdf uploaded')!;
@@ -464,4 +464,7 @@ test('a notification takes content for its message with its text for the title a
       (action) => action.textContent,
     ),
   ).toEqual(['One', 'Two', 'Three']);
+  expect(notice('Three actions')!.querySelector('.env-toast-message')!.getAttribute('title')).toBe(
+    'Three actions to choose from',
+  );
 });

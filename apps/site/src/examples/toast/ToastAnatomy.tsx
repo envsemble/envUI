@@ -7,7 +7,7 @@ function ArchivedNotice() {
     const id = toast.show({
       tone: 'success',
       message: 'Northwind launch archived.',
-      action: { label: 'Undo', onClick: () => toast.dismiss(id) },
+      actions: [{ label: 'Undo', onClick: () => toast.dismiss(id) }],
     });
     return () => toast.dismiss(id);
   }, [toast]);
