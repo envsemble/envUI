@@ -16,8 +16,6 @@ import {
   useRef,
   type ComponentPropsWithRef,
   type CSSProperties,
-  type HTMLAttributes,
-  type ReactElement,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -32,7 +30,7 @@ import {
 import { useDirection } from '../internal/provider/useDirection.js';
 import { flag } from '../internal/flag.js';
 import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';
-import type { TriggerProps } from './menu/MenuItem.js';
+import type { TriggerProps } from './internal/menuTriggerProps.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import '../styles/Base.css';
 import '../styles/Menubar.css';
