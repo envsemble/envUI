@@ -3298,7 +3298,17 @@
           "description": "The value as text."
         }
       ],
-      "states": []
+      "states": [
+        {
+          "attribute": "data-layout",
+          "values": [
+            "inline"
+          ],
+          "parts": [
+            "env-meter"
+          ]
+        }
+      ]
     },
     "MonthPicker": {
       "root": "env-month-picker",

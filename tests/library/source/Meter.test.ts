@@ -32,3 +32,19 @@ test('meters and progress bars read their values, Base UI’s formatted value by
   const uploading = withRole(h(Progress, { label: 'Uploading', value: 30 }), 'progressbar');
   assert.match(uploading.attributes['aria-valuetext'], /30/);
 });
+
+test('an inline meter lays out its label, bar and value on one line, in that order', () => {
+  const meter = withRole(
+    h(Meter, { label: 'Storage', value: 40, valueText: '40%', layout: 'inline' }),
+    'meter',
+  );
+  assert.equal(meter.attributes['data-layout'], 'inline');
+  const parts = meter.children
+    .filter((child) => typeof child !== 'string')
+    .map((child) => child.attributes.class)
+    .filter(Boolean);
+  assert.deepEqual(parts, ['env-meter-label', 'env-meter-track', 'env-meter-value']);
+  const stacked = withRole(h(Meter, { label: 'Storage', value: 40, valueText: '40%' }), 'meter');
+  assert.equal(stacked.attributes['data-layout'], undefined);
+  assert.ok(elementsOf(stacked).some((element) => hasClass(element, 'env-meter-header')));
+});

@@ -838,18 +838,25 @@
           "description": "Seven weekday names beside the rows, from Sunday."
         },
         {
+          "name": "legend",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "The legend of color steps under the grid; turn it off in a compact card, or where the application explains the colors itself."
+        },
+        {
           "name": "lessLabel",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
           "default": "'Less'",
-          "description": "Legend text before the lightest color. It overrides EnvUIProvider's `messages.calendarHeatmap.less`."
+          "description": "Legend content before the lightest color, such as 0. It overrides EnvUIProvider's `messages.calendarHeatmap.less`."
         },
         {
           "name": "moreLabel",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
           "default": "'More'",
-          "description": "Legend text after the strongest color. It overrides EnvUIProvider's `messages.calendarHeatmap.more`."
+          "description": "Legend content after the strongest color, such as 20+ deploys. It overrides EnvUIProvider's `messages.calendarHeatmap.more`."
         },
         {
           "name": "aria-label",
@@ -4969,6 +4976,13 @@
           "description": "The measurement, between min and max. A value outside the range shows, and is reported, as the nearest end."
         },
         {
+          "name": "layout",
+          "type": "'stacked' | 'inline'",
+          "required": false,
+          "default": "'stacked'",
+          "description": "stacked puts the label and the value on a row above the bar; inline puts the label, the bar and the value on one line, as in a table's usage column or a list row."
+        },
+        {
           "name": "label",
           "type": "ReactNode",
           "required": true,
@@ -6277,6 +6291,12 @@
           "required": false,
           "default": "true",
           "description": "Show the date and time in a tooltip on hover, such as \"Oct 14, 2026, 9:41 AM\", in the reader's time zone and the locale. Turn it off where the exact moment shows nearby. Inside an application's own Tooltip, that one describes the time instead."
+        },
+        {
+          "name": "formatTooltip",
+          "type": "(date: Date) => ReactNode",
+          "required": false,
+          "description": "The tooltip's content from the moment, such as the time with its time zone, in UTC, or \"Edited by Alex Morgan at 9:41\"; the date and time in the locale by default."
         },
         {
           "name": "locale",

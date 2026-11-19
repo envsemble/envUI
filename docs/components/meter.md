@@ -27,6 +27,7 @@ components:
 examples:
   SeatsAssigned: overview
   MeterAnatomy: anatomy
+  InlineUsage: example
   LongLabel: example
 ---
 
@@ -45,6 +46,12 @@ examples:
 5. **Indicator** (`env-meter-indicator`, `value`)
 
 ## Behaviour
+
+### On one line
+
+```tsx figure=InlineUsage
+
+```
 
 ### Adapting to width
 

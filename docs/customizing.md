@@ -297,6 +297,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Meter
 
 - Parts: `env-meter`, `env-meter-header`, `env-meter-indicator`, `env-meter-label`, `env-meter-track`, `env-meter-value`
+- States: `data-layout` (`inline`)
 
 ### MonthPicker
 

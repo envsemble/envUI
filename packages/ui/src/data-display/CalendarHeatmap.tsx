@@ -93,17 +93,23 @@ interface CalendarHeatmapOptions {
    */
   weekdayLabels?: readonly string[];
   /**
-   * Legend text before the lightest color. It overrides EnvUIProvider's
+   * The legend of color steps under the grid; turn it off in a compact card, or where the
+   * application explains the colors itself.
+   * @default true
+   */
+  legend?: boolean;
+  /**
+   * Legend content before the lightest color, such as 0. It overrides EnvUIProvider's
    * `messages.calendarHeatmap.less`.
    * @default 'Less'
    */
-  lessLabel?: string;
+  lessLabel?: ReactNode;
   /**
-   * Legend text after the strongest color. It overrides EnvUIProvider's
+   * Legend content after the strongest color, such as 20+ deploys. It overrides EnvUIProvider's
    * `messages.calendarHeatmap.more`.
    * @default 'More'
    */
-  moreLabel?: string;
+  moreLabel?: ReactNode;
 }
 
 type CalendarHeatmapName =
@@ -141,6 +147,7 @@ export function CalendarHeatmap({
   renderTooltip,
   monthLabels: ownMonthLabels,
   weekdayLabels: ownWeekdayLabels,
+  legend = true,
   lessLabel: ownLessLabel,
   moreLabel: ownMoreLabel,
   'aria-label': label,
@@ -253,18 +260,20 @@ export function CalendarHeatmap({
           />
         </table>
       </div>
-      <Row wrap align="center" className="env-calendar-heatmap-legend" aria-hidden="true">
-        <span>{lessLabel}</span>
-        {legendLevels.map((level) => (
-          <span
-            key={level}
-            className="env-calendar-heatmap-swatch"
-            data-level={level}
-            style={levelStyle(level, model.levelCount)}
-          />
-        ))}
-        <span>{moreLabel}</span>
-      </Row>
+      {legend && (
+        <Row wrap align="center" className="env-calendar-heatmap-legend" aria-hidden="true">
+          <span>{lessLabel}</span>
+          {legendLevels.map((level) => (
+            <span
+              key={level}
+              className="env-calendar-heatmap-swatch"
+              data-level={level}
+              style={levelStyle(level, model.levelCount)}
+            />
+          ))}
+          <span>{moreLabel}</span>
+        </Row>
+      )}
       <BaseTooltip.Root open={tip?.open ?? false} onOpenChange={onOpenChange}>
         <TooltipPopup
           side="top"
