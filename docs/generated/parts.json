@@ -122,6 +122,10 @@
           "slot": true
         },
         {
+          "class": "env-alert-row",
+          "description": "The row of the title and message with the actions at its end, which wraps them below where it runs out of room."
+        },
+        {
           "class": "env-alert-title",
           "description": "The alert's title."
         }
@@ -2379,6 +2383,11 @@
         {
           "class": "env-empty-state-icon",
           "description": "The slot of the icon above the title.",
+          "slot": true
+        },
+        {
+          "class": "env-empty-state-illustration",
+          "description": "The slot of the illustration above the title, at its own size.",
           "slot": true
         },
         {
@@ -5854,6 +5863,10 @@
         {
           "class": "env-toast-action",
           "description": "A notification's action."
+        },
+        {
+          "class": "env-toast-actions",
+          "description": "A notification's two actions, side by side."
         },
         {
           "class": "env-toast-announcer",

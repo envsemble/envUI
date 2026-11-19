@@ -62,7 +62,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Alert
 
-- Parts: `env-alert`, `env-alert-action` (slot), `env-alert-content`, `env-alert-dismiss`, `env-alert-icon`, `env-alert-message` (slot), `env-alert-title`
+- Parts: `env-alert`, `env-alert-action` (slot), `env-alert-content`, `env-alert-dismiss`, `env-alert-icon`, `env-alert-message` (slot), `env-alert-row`, `env-alert-title`
 - States: `data-env-skeleton` on `env-alert`, `env-alert-message`, `env-alert-title`; `data-tone` (`danger`, `info`, `success`, `warning`)
 - Color properties: `--env-alert-container`, `--env-alert-content`, `--env-alert-outline`, `--env-alert-icon`
 
@@ -222,7 +222,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### EmptyState
 
-- Parts: `env-empty-state`, `env-empty-state-actions` (slot), `env-empty-state-description` (slot), `env-empty-state-heading`, `env-empty-state-icon` (slot), `env-empty-state-title` (slot)
+- Parts: `env-empty-state`, `env-empty-state-actions` (slot), `env-empty-state-description` (slot), `env-empty-state-heading`, `env-empty-state-icon` (slot), `env-empty-state-illustration` (slot), `env-empty-state-title` (slot)
 
 ### Field
 
@@ -481,7 +481,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### ToastProvider
 
-- Parts: `env-toast`, `env-toast-action`, `env-toast-announcer`, `env-toast-content`, `env-toast-dismiss`, `env-toast-message`, `env-toast-queued-count`, `env-toast-status-icon`, `env-toast-theme`, `env-toast-viewport`
+- Parts: `env-toast`, `env-toast-action`, `env-toast-actions`, `env-toast-announcer`, `env-toast-content`, `env-toast-dismiss`, `env-toast-message`, `env-toast-queued-count`, `env-toast-status-icon`, `env-toast-theme`, `env-toast-viewport`
 - States: `data-ending-style`; `data-leaving`; `data-limited`; `data-placement` (`bottom-end`, `top-center`) on `env-toast-viewport`; `data-settling` on `env-toast-viewport`; `data-starting-style`; `data-toast-id` on `env-toast`, `env-toast-queued-count`; `data-tone` (`danger`, `info`, `neutral`, `success`)
 - Color properties: `--env-toast-container`, `--env-toast-content`, `--env-toast-outline`
 

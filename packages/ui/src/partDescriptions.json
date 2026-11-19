@@ -74,6 +74,7 @@
       "env-alert-dismiss": "The button that dismisses the alert.",
       "env-alert-icon": "The icon of the alert's tone.",
       "env-alert-message": "The slot of the alert's message.",
+      "env-alert-row": "The row of the title and message with the actions at its end, which wraps them below where it runs out of room.",
       "env-alert-title": "The alert's title."
     },
     "AnimatedNumber": {
@@ -376,6 +377,7 @@
       "env-empty-state-description": "The slot of the description.",
       "env-empty-state-heading": "The title's line, in the title's text style.",
       "env-empty-state-icon": "The slot of the icon above the title.",
+      "env-empty-state-illustration": "The slot of the illustration above the title, at its own size.",
       "env-empty-state-title": "The slot of the title."
     },
     "Field": {
@@ -804,6 +806,7 @@
     "ToastProvider": {
       "env-toast": "One notification.",
       "env-toast-action": "A notification's action.",
+      "env-toast-actions": "A notification's two actions, side by side.",
       "env-toast-announcer": "The announcements of notifications.",
       "env-toast-dismiss": "A notification's dismiss button.",
       "env-toast-message": "A notification's message.",

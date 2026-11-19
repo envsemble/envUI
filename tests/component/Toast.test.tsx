@@ -434,3 +434,32 @@ test('notices wait while a modal dialog is open and then show for their full dur
   vi.advanceTimersByTime(6_000);
   await expect.poll(count('Notice from a dialog')).toBe(0);
 });
+
+test('a notification takes content for its message with its text for the title and the announcement, its own icon, and two actions, the last a link', async () => {
+  await page.getByTestId('toast-rich').click();
+  await expect.poll(() => notice('report.pdf uploaded')).not.toBeNull();
+  const rich = notice('report.pdf uploaded')!;
+  const message = rich.querySelector('.env-toast-message')!;
+  expect(message.querySelector('strong')?.textContent).toBe('report.pdf');
+  expect(message.getAttribute('title')).toBe('report.pdf uploaded');
+  expect(
+    rich.querySelector('.env-toast-status-icon [data-testid="toast-own-icon"]'),
+  ).not.toBeNull();
+  const actions = [...rich.querySelectorAll('.env-toast-actions > .env-toast-action')];
+  expect(actions.map((action) => [action.tagName, action.textContent])).toEqual([
+    ['BUTTON', 'Undo upload'],
+    ['A', 'View report'],
+  ]);
+  expect(actions[1].getAttribute('href')).toBe('#report');
+  await expect
+    .poll(() => document.querySelector('.env-toast-announcer')?.textContent)
+    .toContain('report.pdf uploaded');
+  (actions[0] as HTMLElement).click();
+  await expect.element(page.getByTestId('toast-action-count')).toHaveTextContent('1');
+
+  await page.getByTestId('toast-too-many').click();
+  await expect
+    .element(page.getByTestId('toast-refused'))
+    .toHaveTextContent('A toast offers at most two actions.');
+  expect(notice('Three actions')).toBeNull();
+});
