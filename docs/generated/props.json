@@ -457,16 +457,10 @@
       "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats; with count, a compact count, such as 12 unread.",
       "props": [
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as a check mark; hidden from assistive technology. A done badge has a check mark unless it is given another icon, or `null` for none."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label, in place of the icon, placed at its own size and read by assistive technology unless it hides itself: such as a small Avatar, a color swatch or an icon that carries meaning."
+          "description": "Content before the label, such as an icon, a small Avatar or a color swatch: an envUI icon takes the badge's icon size and other content keeps its own. Assistive technology reads it unless it hides itself, as an icon without a label does. A done badge leads with a check mark unless it is given another start, or `null` for none."
         },
         {
           "name": "children",
@@ -630,16 +624,10 @@
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label at its own size rather than the icon's, such as a small Avatar of the person a button assigns or a flag; it is hidden from assistive technology, since the label names the button."
+          "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
           "name": "endIcon",
@@ -2110,7 +2098,7 @@
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label at its own size rather than the icon's, such as a small Avatar of the person a button assigns or a flag; it is hidden from assistive technology, since the label names the button."
+          "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
           "name": "end",
@@ -2144,12 +2132,6 @@
           "required": false,
           "default": "false",
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
-        },
-        {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
         },
         {
           "name": "endIcon",
@@ -2995,16 +2977,10 @@
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label at its own size rather than the icon's, such as a small Avatar of the person a button assigns or a flag; it is hidden from assistive technology, since the label names the button."
+          "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
           "name": "endIcon",
@@ -4603,16 +4579,10 @@
           "description": "Class of the item's row."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as Settings."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label in place of an icon, such as an Avatar in an account switcher, at its own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "children",
@@ -4741,16 +4711,10 @@
           "description": "Class of the item's row."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as Settings."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label in place of an icon, such as an Avatar in an account switcher, at its own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "children",
@@ -4919,19 +4883,13 @@
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label in place of an icon, such as an Avatar in an account switcher, at its own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "end",
           "type": "ReactNode",
           "required": false,
           "description": "End content, such as a Badge or a count; it is part of the item's name."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as Settings."
         },
         {
           "name": "textValue",
@@ -5127,19 +5085,13 @@
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label in place of an icon, such as an Avatar in an account switcher, at its own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "end",
           "type": "ReactNode",
           "required": false,
           "description": "End content, such as a Badge or a count; it is part of the item's name."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as Settings."
         },
         {
           "name": "textValue",
@@ -9301,7 +9253,7 @@
           "name": "render",
           "type": "ReactElement",
           "required": true,
-          "description": "The control, which joins the toolbar's arrow-key path as one of its stops: a button with a visible label, such as <Button startIcon={<IconShare />}>Share</Button>, or the trigger of a Menu or another popup. The item's props, ref and keyboard handling merge into its props; a Button takes the toolbar's ghost variant unless it sets another."
+          "description": "The control, which joins the toolbar's arrow-key path as one of its stops: a button with a visible label, such as <Button start={<IconShare />}>Share</Button>, or the trigger of a Menu or another popup. The item's props, ref and keyboard handling merge into its props; a Button takes the toolbar's ghost variant unless it sets another."
         },
         {
           "name": "disabled",

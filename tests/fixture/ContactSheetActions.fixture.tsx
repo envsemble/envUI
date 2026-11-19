@@ -80,7 +80,7 @@ function Buttons() {
       </Strip>
       <Strip label="Content">
         <Cell caption="Start icon">
-          <Button startIcon={<IconAdd />}>New project</Button>
+          <Button start={<IconAdd />}>New project</Button>
         </Cell>
         <Cell caption="End icon">
           <Button variant="secondary" endIcon={<IconDownload />}>
@@ -392,13 +392,13 @@ function MenuItems() {
   return (
     <>
       <Menu.Header>Project</Menu.Header>
-      <Menu.Item icon={<IconEdit />} shortcut="F2">
+      <Menu.Item start={<IconEdit />} shortcut="F2">
         Rename
       </Menu.Item>
-      <Menu.Item icon={<IconShare />} description="Anyone in the workspace">
+      <Menu.Item start={<IconShare />} description="Anyone in the workspace">
         Share
       </Menu.Item>
-      <Menu.Item disabled icon={<IconDownload />}>
+      <Menu.Item disabled start={<IconDownload />}>
         Export (disabled)
       </Menu.Item>
       <Menu.Separator />
@@ -414,7 +414,7 @@ function MenuItems() {
         <Menu.Item>Marketing</Menu.Item>
       </Menu.Submenu>
       <Menu.Separator />
-      <Menu.Item tone="danger" icon={<IconDelete />} shortcut="Del">
+      <Menu.Item tone="danger" start={<IconDelete />} shortcut="Del">
         Delete
       </Menu.Item>
     </>
@@ -510,10 +510,10 @@ function Menus() {
               aria-label="Row actions"
               content={
                 <>
-                  <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
+                  <Menu.Item start={<IconEdit />}>Rename</Menu.Item>
                   <Menu.Item shortcut="Ctrl+D">Duplicate</Menu.Item>
                   <Menu.Separator />
-                  <Menu.Item tone="danger" icon={<IconDelete />}>
+                  <Menu.Item tone="danger" start={<IconDelete />}>
                     Delete
                   </Menu.Item>
                 </>
@@ -657,7 +657,7 @@ function Toolbars() {
         </Cell>
         <Cell caption="With labelled buttons">
           <Toolbar.Root aria-label="Document">
-            <Button variant="ghost" startIcon={<IconShare />}>
+            <Button variant="ghost" start={<IconShare />}>
               Share
             </Button>
             <Button>Publish</Button>
@@ -672,7 +672,7 @@ const commands: CommandPaletteItem[] = [
   {
     id: 'new',
     label: 'New document',
-    icon: <IconAdd />,
+    start: <IconAdd />,
     end: <Kbd keys={['Ctrl', 'N']} />,
     group: 'Commands',
   },
@@ -680,17 +680,17 @@ const commands: CommandPaletteItem[] = [
     id: 'share',
     label: 'Share',
     description: 'Invite people to this project',
-    icon: <IconShare />,
+    start: <IconShare />,
     group: 'Commands',
   },
   {
     id: 'export',
     label: 'Export (disabled)',
-    icon: <IconDownload />,
+    start: <IconDownload />,
     group: 'Commands',
     disabled: true,
   },
-  { id: 'settings', label: 'Open settings', icon: <IconSettings />, group: 'Navigation' },
+  { id: 'settings', label: 'Open settings', start: <IconSettings />, group: 'Navigation' },
 ];
 
 function Palette({

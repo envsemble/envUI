@@ -167,7 +167,7 @@ function EditorThemeMenu({
       side="top"
       align="start"
       trigger={
-        <Button variant="ghost" size="sm" startIcon={themeIcons[value.theme]}>
+        <Button variant="ghost" size="sm" start={themeIcons[value.theme]}>
           Dev mode theme
         </Button>
       }
@@ -177,13 +177,13 @@ function EditorThemeMenu({
         value={value.theme}
         onValueChange={(theme) => onChange({ ...value, theme: theme as EditorTheme['theme'] })}
       >
-        <Menu.RadioItem value="page" icon={<IconContrast />} description="As the page is now">
+        <Menu.RadioItem value="page" start={<IconContrast />} description="As the page is now">
           Same as the page
         </Menu.RadioItem>
-        <Menu.RadioItem value="light" icon={<IconLightMode />}>
+        <Menu.RadioItem value="light" start={<IconLightMode />}>
           Light
         </Menu.RadioItem>
-        <Menu.RadioItem value="dark" icon={<IconDarkMode />}>
+        <Menu.RadioItem value="dark" start={<IconDarkMode />}>
           Dark
         </Menu.RadioItem>
       </Menu.RadioGroup>

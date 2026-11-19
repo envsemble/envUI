@@ -12,7 +12,7 @@ const logo =
 
 export default function SignInWithLogo() {
   return (
-    <Button variant="outline" startIcon={<Graphic src={logo} alt="" />}>
+    <Button variant="outline" start={<Graphic src={logo} alt="" />}>
       Sign in with Northwind
     </Button>
   );

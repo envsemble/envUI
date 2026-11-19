@@ -60,7 +60,7 @@ import { IconHome } from '@envsemble/envui/icons/Home';
 
 <>
   <IconHome filled label="Home" />
-  <Button startIcon={<IconAdd />}>Create project</Button>
+  <Button start={<IconAdd />}>Create project</Button>
 </>;
 ```
 

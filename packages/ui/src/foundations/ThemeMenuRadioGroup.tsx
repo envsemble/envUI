@@ -84,7 +84,7 @@ export function ThemeMenuRadioGroup({
           <Menu.RadioItem
             key={choice.value}
             value={choice.value}
-            icon={choice.icon}
+            start={choice.icon}
             closeOnClick={closeOnClick}
           >
             {messages[choice.value]}

@@ -1,6 +1,5 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { IconCheck } from '../icons/Check.js';
 import '../styles/Base.css';
@@ -29,14 +28,10 @@ interface BadgeAppearanceProps extends Omit<ComponentPropsWithRef<'span'>, 'chil
 
 interface LabelBadgeProps extends BadgeAppearanceProps {
   /**
-   * A decorative icon before the label, such as a check mark; hidden from assistive technology. A
-   * done badge has a check mark unless it is given another icon, or `null` for none.
-   */
-  icon?: ReactNode;
-  /**
-   * Content before the label, in place of the icon, placed at its own size and read by assistive
-   * technology unless it hides itself: such as a small Avatar, a color swatch or an icon that
-   * carries meaning.
+   * Content before the label, such as an icon, a small Avatar or a color swatch: an envUI icon takes
+   * the badge's icon size and other content keeps its own. Assistive technology reads it unless it
+   * hides itself, as an icon without a label does. A done badge leads with a check mark unless it
+   * is given another start, or `null` for none.
    */
   start?: ReactNode;
   /**
@@ -59,7 +54,6 @@ interface CountBadgeProps extends BadgeAppearanceProps {
    * number; the number alone otherwise.
    */
   'aria-label'?: string;
-  icon?: never;
   start?: never;
   children?: never;
 }
@@ -74,7 +68,6 @@ export type BadgeProps = LabelBadgeProps | CountBadgeProps;
 export function Badge({
   tone = 'neutral',
   variant = 'soft',
-  icon,
   start,
   count,
   children,
@@ -104,6 +97,7 @@ export function Badge({
       </span>
     );
   }
+  const shownStart = start === undefined && tone === 'done' ? <IconCheck /> : start;
   return (
     <span
       {...props}
@@ -111,15 +105,10 @@ export function Badge({
       data-tone={tone}
       data-variant={variant}
     >
-      {start != null ? (
+      {shownStart != null && (
         <Slot className="env-badge-start" element="span" layout="row" shrink="never">
-          {start}
+          {shownStart}
         </Slot>
-      ) : (
-        icon !== null &&
-        (icon !== undefined || tone === 'done') && (
-          <DecorativeIcon>{icon ?? <IconCheck />}</DecorativeIcon>
-        )
       )}
       <span className="env-badge-label">{children}</span>
     </span>

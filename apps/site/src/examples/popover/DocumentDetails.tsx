@@ -8,7 +8,7 @@ export default function DocumentDetails() {
         defaultOpen
         title="Launch plan.md"
         trigger={
-          <Button variant="secondary" startIcon={<IconInfo />}>
+          <Button variant="secondary" start={<IconInfo />}>
             Details
           </Button>
         }

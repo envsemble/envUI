@@ -451,7 +451,7 @@
         },
         {
           "class": "env-badge-start",
-          "description": "The slot of the content before a label, in place of its icon.",
+          "description": "The slot of the content before the label, such as an icon or an Avatar.",
           "slot": true
         }
       ],
@@ -604,12 +604,7 @@
         },
         {
           "class": "env-button-start",
-          "description": "The slot of the content before the label at its own size, such as an Avatar.",
-          "slot": true
-        },
-        {
-          "class": "env-button-start-icon",
-          "description": "The slot of the icon before the label.",
+          "description": "The slot of the content before the label, such as an icon or an Avatar.",
           "slot": true
         }
       ],
@@ -3146,7 +3141,7 @@
         },
         {
           "class": "env-menu-item-start",
-          "description": "The slot of the content before an item's label in place of an icon, such as an Avatar.",
+          "description": "The slot of the content before an item's label, such as an icon or an Avatar.",
           "slot": true
         },
         {
@@ -3239,7 +3234,7 @@
         },
         {
           "property": "--env-menu-item-icon",
-          "description": "The leading icon."
+          "description": "The content before the label, such as its icon."
         }
       ]
     },
@@ -6682,10 +6677,6 @@
           "slot": true
         },
         {
-          "class": "env-list-row-icon",
-          "description": "A row's icon."
-        },
-        {
           "class": "env-list-row-indicator",
           "description": "The check of a chosen row."
         },
@@ -6696,7 +6687,7 @@
         },
         {
           "class": "env-list-row-start",
-          "description": "The slot of the content before a row's name in place of an icon, such as an Avatar.",
+          "description": "The slot of the content before a row's name, such as an icon or an Avatar.",
           "slot": true
         },
         {

@@ -101,7 +101,7 @@ const page = render(
     { title: 'Release' },
     h(ui.Text, null, 'Ready to ship'),
     h(ui.Badge, null, 'New'),
-    h(ui.Button, { startIcon: h(IconHome), href: '/home' }, 'Home'),
+    h(ui.Button, { start: h(IconHome), href: '/home' }, 'Home'),
     h(ui.Button, { pending: true }, 'Publish'),
     h(ui.Button, { href: '/archive', pending: true }, 'Archive'),
     h(ui.Button, { href: '/history', disabled: true }, 'History'),

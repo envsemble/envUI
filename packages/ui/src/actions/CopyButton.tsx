@@ -172,7 +172,7 @@ export function CopyButton({
       {...({
         ...shared,
         fallbackVariant: 'primary',
-        startIcon: symbol,
+        start: symbol,
         'aria-label': name,
         children,
       } as ButtonBaseProps)}

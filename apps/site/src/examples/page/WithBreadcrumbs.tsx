@@ -20,7 +20,7 @@ export default function WithBreadcrumbs() {
       meta={<Badge tone="success">On track</Badge>}
       actions={
         <>
-          <Button variant="secondary" startIcon={<IconShare />}>
+          <Button variant="secondary" start={<IconShare />}>
             Share
           </Button>
           <Button>New task</Button>

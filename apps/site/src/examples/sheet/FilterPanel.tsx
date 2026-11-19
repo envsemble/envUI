@@ -40,7 +40,7 @@ export default function FilterPanel() {
       <Sheet
         defaultOpen
         trigger={
-          <Button variant="secondary" startIcon={<IconFilterList />}>
+          <Button variant="secondary" start={<IconFilterList />}>
             Filters
           </Button>
         }

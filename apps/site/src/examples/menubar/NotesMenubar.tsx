@@ -22,13 +22,13 @@ export default function NotesMenubar() {
         <Menubar.Root aria-label="Notes menu" accessKeys>
           <Menubar.Menu label="File" accessKey="F">
             <Menu.Item
-              icon={<IconNoteAdd />}
+              start={<IconNoteAdd />}
               shortcut="Ctrl+N"
               onClick={() => setLastCommand('New note')}
             >
               New note
             </Menu.Item>
-            <Menu.Submenu label="Open recent" icon={<IconHistory />}>
+            <Menu.Submenu label="Open recent" start={<IconHistory />}>
               {recent.map((name) => (
                 <Menu.Item key={name} onClick={() => setLastCommand(`Opened ${name}`)}>
                   {name}
@@ -37,7 +37,7 @@ export default function NotesMenubar() {
             </Menu.Submenu>
             <Menu.Separator />
             <Menu.Item
-              icon={<IconSave />}
+              start={<IconSave />}
               shortcut="Ctrl+S"
               onClick={() => setLastCommand('Saved')}
             >
@@ -52,7 +52,7 @@ export default function NotesMenubar() {
             }}
           >
             <Menu.Item
-              icon={<IconContentCopy />}
+              start={<IconContentCopy />}
               shortcut="Ctrl+C"
               onClick={() => {
                 const target = field();

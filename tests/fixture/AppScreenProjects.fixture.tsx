@@ -295,7 +295,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
         {inlineFilters ? (
           <Row align="center" gap={3} style={{ flex: '1 0 auto' }}>
             {filters}
-            <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
+            <Button variant="secondary" size="sm" start={<IconAdd />}>
               Add filter
             </Button>
             <Row align="center" gap={2} style={{ marginInlineStart: 'auto' }}>
@@ -308,7 +308,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
             side="bottom"
             closeLabel="Close filters"
             trigger={
-              <Button variant="secondary" size="sm" startIcon={<IconFilterList />}>
+              <Button variant="secondary" size="sm" start={<IconFilterList />}>
                 Filters
                 <Badge count={3} aria-label="3 in use" />
               </Button>
@@ -370,16 +370,16 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
             </Row>
             {wide ? (
               <Row role="group" aria-label="Selected projects" align="center" gap={1}>
-                <Button variant="ghost" size="sm" startIcon={<IconRocketLaunch />}>
+                <Button variant="ghost" size="sm" start={<IconRocketLaunch />}>
                   Deploy
                 </Button>
-                <Button variant="ghost" size="sm" startIcon={<IconDownload />}>
+                <Button variant="ghost" size="sm" start={<IconDownload />}>
                   Export
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  startIcon={<IconArchive />}
+                  start={<IconArchive />}
                   onClick={() => {
                     toast.show({ message: `${projectCount(selected.length)} archived.` });
                     setSelected([]);
@@ -387,7 +387,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                 >
                   Archive
                 </Button>
-                <Button variant="ghost" tone="danger" size="sm" startIcon={<IconDelete />}>
+                <Button variant="ghost" tone="danger" size="sm" start={<IconDelete />}>
                   Delete…
                 </Button>
               </Row>
@@ -530,11 +530,11 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                     />
                   }
                 >
-                  <Menu.Item icon={<IconRocketLaunch />}>Deploy</Menu.Item>
-                  <Menu.Item icon={<IconShare />}>Share</Menu.Item>
-                  <Menu.Item icon={<IconArchive />}>Archive</Menu.Item>
+                  <Menu.Item start={<IconRocketLaunch />}>Deploy</Menu.Item>
+                  <Menu.Item start={<IconShare />}>Share</Menu.Item>
+                  <Menu.Item start={<IconArchive />}>Archive</Menu.Item>
                   <Menu.Separator />
-                  <Menu.Item icon={<IconDelete />}>Delete project…</Menu.Item>
+                  <Menu.Item start={<IconDelete />}>Delete project…</Menu.Item>
                 </Menu.Root>
               </Table.Cell>
             </Table.Row>
@@ -675,10 +675,10 @@ export function ProjectsScreen() {
                 meta={<Badge count={48} aria-label="48 projects" />}
                 actions={
                   <>
-                    <Button variant="secondary" startIcon={<IconDownload />}>
+                    <Button variant="secondary" start={<IconDownload />}>
                       Import
                     </Button>
-                    <Button startIcon={<IconAdd />}>New project</Button>
+                    <Button start={<IconAdd />}>New project</Button>
                   </>
                 }
               />

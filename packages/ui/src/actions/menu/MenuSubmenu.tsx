@@ -67,7 +67,6 @@ const reasonsClosingOnlyTheSubmenu = new Set(['escape-key', 'list-navigation']);
 export function Submenu({
   label,
   textValue,
-  icon,
   start,
   description,
   end,
@@ -86,7 +85,6 @@ export function Submenu({
   const popup = useRef<HTMLDivElement | null>(null);
   const closeReason = useRef<string | null>(null);
   const { content, accessibility } = useMenuItemContent({
-    icon,
     start,
     children: label,
     textValue,

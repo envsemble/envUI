@@ -80,7 +80,7 @@ export function MessageListFollow({ label }: { label: string | undefined }) {
   return (
     <div ref={anchor} className="env-message-list-jump" aria-live="off">
       {unseen && (
-        <Button variant="primary" size="sm" startIcon={<IconArrowDownward />} onClick={jump}>
+        <Button variant="primary" size="sm" start={<IconArrowDownward />} onClick={jump}>
           {label ?? messages.jumpToLatest}
         </Button>
       )}

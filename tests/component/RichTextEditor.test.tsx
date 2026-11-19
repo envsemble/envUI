@@ -665,7 +665,7 @@ test('suggestion rows, slash commands, the toolbar end and the footer take the a
   await replace(editor, '/meeting');
   const command = page.getByRole('option', { name: /^Meeting template/ });
   await expect.element(command).toBeVisible();
-  expect(command.element().querySelector('.env-list-row-icon svg')).not.toBeNull();
+  expect(command.element().querySelector('.env-list-row-start svg')).not.toBeNull();
   expect(command.element().querySelector('.env-list-row-description')?.textContent).toBe(
     'Agenda, notes and actions',
   );

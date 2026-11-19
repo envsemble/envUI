@@ -36,7 +36,7 @@ test("a count's aria-label is read in place of the number, which is hidden", () 
   assert.match(markup, /<span class="env-badge-count-label">120 unread<\/span>/);
 });
 
-test('a label takes any inline content, and start is placed as given in place of the icon', () => {
+test('a label takes any inline content, and start is placed as given in place of the check mark', () => {
   const label = renderToStaticMarkup(h(Badge, null, h('strong', null, '12'), ' seats'));
   assert.match(label, /<span class="env-badge-label"><strong>12<\/strong> seats<\/span>/);
   const started = renderToStaticMarkup(
@@ -46,5 +46,19 @@ test('a label takes any inline content, and start is placed as given in place of
   assert.match(
     started,
     /<span class="env-badge-start" data-env-slot="row" data-env-slot-shrink="never"><span data-swatch="">N<\/span><\/span><span class="env-badge-label">Northwind<\/span>/,
+  );
+});
+
+test('a done badge leads with a check mark in its start slot, and start={null} shows none', () => {
+  const done = renderToStaticMarkup(h(Badge, { tone: 'done' }, 'Shipped'));
+  assert.match(
+    done,
+    /^<span class="env-badge" data-tone="done" data-variant="soft"><span class="env-badge-start" data-env-slot="row" data-env-slot-shrink="never"><svg [^>]*class="env-icon-symbol"/,
+  );
+  const plain = renderToStaticMarkup(h(Badge, { tone: 'done', start: null }, 'Shipped'));
+  assert.doesNotMatch(plain, /env-badge-start|svg/);
+  assert.doesNotMatch(
+    renderToStaticMarkup(h(Badge, { tone: 'success' }, 'Live')),
+    /env-badge-start/,
   );
 });

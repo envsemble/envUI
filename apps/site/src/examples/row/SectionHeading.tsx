@@ -10,7 +10,7 @@ export default function SectionHeading() {
         </Text>
         <Badge>12</Badge>
       </Row>
-      <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
+      <Button variant="secondary" size="sm" start={<IconAdd />}>
         Invite people
       </Button>
     </Row>

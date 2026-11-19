@@ -285,7 +285,7 @@ export function CodeDiff({
           </Column>
           <Button
             variant="secondary"
-            startIcon={<IconRefresh />}
+            start={<IconRefresh />}
             onClick={() => {
               setFailed(false);
               setAttempt((current) => current + 1);

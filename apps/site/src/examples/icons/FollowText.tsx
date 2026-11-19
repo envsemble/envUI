@@ -8,11 +8,11 @@ export default function FollowText() {
   return (
     <Column gap={4} align="center">
       <Row gap={2} wrap justify="center" align="center">
-        <Button startIcon={<IconAdd />}>New report</Button>
-        <Button variant="secondary" startIcon={<IconEdit />}>
+        <Button start={<IconAdd />}>New report</Button>
+        <Button variant="secondary" start={<IconEdit />}>
           Rename
         </Button>
-        <Button variant="ghost" tone="danger" startIcon={<IconDelete />}>
+        <Button variant="ghost" tone="danger" start={<IconDelete />}>
           Delete
         </Button>
         <IconButton variant="ghost" icon={<IconMoreVert />} aria-label="More" />

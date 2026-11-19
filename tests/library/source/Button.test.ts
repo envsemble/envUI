@@ -61,18 +61,19 @@ test('a pair no variant is designed in renders neutral, and is reported', (conte
   );
 });
 
-test('a button shows start content at its own size before its label, hidden from assistive technology', () => {
-  const root = firstElement(
-    renderToString(
-      h(Button, { start: h('span', { className: 'avatar' }, 'PS'), startIcon: h('svg') }, 'Assign'),
-    ),
-  );
-  const [start, icon, label] = root.children.filter((child) => typeof child !== 'string');
-  assert.equal(start.attributes.class, 'env-button-start');
-  assert.equal(start.attributes['aria-hidden'], 'true');
-  assert.ok(!elementsOf(start).some((element) => element.attributes.class === 'env-icon'));
-  assert.equal(icon.attributes.class, 'env-button-start-icon');
-  assert.equal(label.attributes.class, 'env-button-label');
+test('a button shows one start slot before its label, hidden from assistive technology', () => {
+  for (const content of [
+    h('span', { className: 'avatar' }, 'PS'),
+    h('svg', { className: 'env-icon-symbol' }),
+  ]) {
+    const root = firstElement(renderToString(h(Button, { start: content }, 'Assign')));
+    const [start, label, ...rest] = root.children.filter((child) => typeof child !== 'string');
+    assert.equal(start.attributes.class, 'env-button-start');
+    assert.equal(start.attributes['aria-hidden'], 'true');
+    assert.ok(!elementsOf(start).some((element) => element.attributes.class === 'env-icon'));
+    assert.equal(label.attributes.class, 'env-button-label');
+    assert.deepEqual(rest, []);
+  }
 });
 
 test("a button renders as another element with the button's look, content and state", () => {

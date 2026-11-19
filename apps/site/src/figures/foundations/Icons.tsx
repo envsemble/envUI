@@ -47,13 +47,13 @@ function FollowTextSteps() {
   return (
     <Column gap={4} align="center" className="catalogue-icons-sample">
       <Row gap={2} wrap justify="center" align="center" className="catalogue-icons-buttons">
-        <Button size={size} startIcon={<IconAdd />}>
+        <Button size={size} start={<IconAdd />}>
           New report
         </Button>
-        <Button size={size} variant="secondary" startIcon={<IconEdit />}>
+        <Button size={size} variant="secondary" start={<IconEdit />}>
           Rename
         </Button>
-        <Button size={size} variant="ghost" tone="danger" startIcon={<IconDelete />}>
+        <Button size={size} variant="ghost" tone="danger" start={<IconDelete />}>
           Delete
         </Button>
         <IconButton size={size} variant="ghost" icon={<IconMoreVert />} aria-label="More" />

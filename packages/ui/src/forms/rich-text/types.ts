@@ -62,7 +62,10 @@ export interface RichTextReferenceSource {
 }
 /** What a suggestion row shows beside its label. */
 export interface RichTextSuggestionContent {
-  /** Content before the label, such as an Avatar or an icon, at its own size; decorative. */
+  /**
+   * Content before the label, such as an Avatar or an icon: an envUI icon takes the icon size and
+   * other content keeps its own. Decorative.
+   */
   start?: ReactNode;
   /** A muted second line under the label, such as an e-mail address. */
   description?: ReactNode;
@@ -120,8 +123,11 @@ export interface RichTextSlashCommand {
   id: string;
   /** The command's name in the menu, which typing after / filters by. */
   label: string;
-  /** A decorative icon before the name in the menu. */
-  icon?: ReactNode;
+  /**
+   * Content before the name in the menu, such as an icon, which takes the icon size; other content
+   * keeps its own. Decorative.
+   */
+  start?: ReactNode;
   /** A muted second line under the name in the menu, such as what the command inserts. */
   description?: ReactNode;
   /** Runs the command on the Tiptap editor, once the typed / and query are removed. */

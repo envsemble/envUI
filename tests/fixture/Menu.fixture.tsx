@@ -40,7 +40,11 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
           const name = target?.closest<HTMLElement>('[data-document]')?.dataset.document;
           return name ? (
             <>
-              <Menu.Item icon={<IconEdit />} shortcut="F2" onClick={() => setLog(`Rename ${name}`)}>
+              <Menu.Item
+                start={<IconEdit />}
+                shortcut="F2"
+                onClick={() => setLog(`Rename ${name}`)}
+              >
                 Rename {name}
               </Menu.Item>
               <Menu.Item
@@ -50,7 +54,7 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
                 Open to the side
               </Menu.Item>
               <Menu.Separator />
-              <Menu.Item icon={<IconDelete />} onClick={() => setLog(`Delete ${name}`)}>
+              <Menu.Item start={<IconDelete />} onClick={() => setLog(`Delete ${name}`)}>
                 Delete
               </Menu.Item>
             </>
@@ -111,7 +115,7 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
       >
         <Menu.Group label="Document">
           <Menu.Item
-            icon={<IconAdd />}
+            start={<IconAdd />}
             shortcut="Ctrl+Shift+N"
             onClick={() => setLog('New window')}
           >
@@ -123,7 +127,7 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
         </Menu.Group>
         <Menu.Submenu
           label="Open recent"
-          icon={<IconHistory />}
+          start={<IconHistory />}
           onOpenChange={(open) => {
             if (open) setRecentLoads((count) => count + 1);
           }}
@@ -164,7 +168,7 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
           <Menu.RadioItem value="tight">Tight</Menu.RadioItem>
         </Menu.RadioGroup>
         <Menu.Separator data-testid={`density-separator-${theme}`} />
-        <Menu.CheckboxItem defaultChecked icon={<IconHistory />}>
+        <Menu.CheckboxItem defaultChecked start={<IconHistory />}>
           Show icons
         </Menu.CheckboxItem>
       </Menu.Root>
@@ -215,7 +219,7 @@ export function AccountSwitcherFixture() {
   return (
     <>
       <Menu.Root aria-label="Switch account" trigger={<Button>Switch account</Button>}>
-        <Menu.Item icon={<IconAdd />}>Add account</Menu.Item>
+        <Menu.Item start={<IconAdd />}>Add account</Menu.Item>
         <Menu.Item start={<Avatar name="Alex Morgan" size="sm" />} description="alex@example.com">
           Alex Morgan
         </Menu.Item>
@@ -275,5 +279,17 @@ export function ItemAttributesFixture() {
         {zoom} {itemTag}
       </output>
     </>
+  );
+}
+
+export function IconStartFixture() {
+  return (
+    <Menu.Root aria-label="Edit" trigger={<Button>Edit</Button>}>
+      <Menu.Item start={<IconEdit />}>Rename</Menu.Item>
+      <Menu.Item start={<IconHistory />} description="Every saved version of the document">
+        Version history
+      </Menu.Item>
+      <Menu.Item>Close</Menu.Item>
+    </Menu.Root>
   );
 }

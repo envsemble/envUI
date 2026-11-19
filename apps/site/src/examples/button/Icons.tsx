@@ -6,7 +6,7 @@ import { IconSettings } from '@envsemble/envui/icons/Settings';
 export default function Icons() {
   return (
     <Row wrap align="center" gap={4}>
-      <Button startIcon={<IconAdd />}>New section</Button>
+      <Button start={<IconAdd />}>New section</Button>
       <Button variant="secondary" endIcon={<IconChevronRight />}>
         Next step
       </Button>

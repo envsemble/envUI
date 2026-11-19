@@ -15,7 +15,7 @@ export default function ShareChoices() {
         open={open}
         onOpenChange={setOpen}
         trigger={
-          <Button variant="secondary" startIcon={<IconShare />}>
+          <Button variant="secondary" start={<IconShare />}>
             Share
           </Button>
         }

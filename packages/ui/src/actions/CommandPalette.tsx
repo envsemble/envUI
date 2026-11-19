@@ -38,11 +38,9 @@ export interface CommandPaletteItem {
   textValue?: string;
   /** Muted text under the label, such as a folder path. */
   description?: ReactNode;
-  /** A decorative icon before the label. */
-  icon?: ReactNode;
   /**
-   * Content before the label in place of an icon, such as a person's Avatar among the results, at
-   * its own size rather than the icon's; it is hidden from assistive technology.
+   * Content before the label, such as an icon or a person's Avatar among the results: an envUI icon
+   * takes the icon size and other content keeps its own. It is hidden from assistive technology.
    */
   start?: ReactNode;
   /** A heading shows where the group changes between consecutive items. */

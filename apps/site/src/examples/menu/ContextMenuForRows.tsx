@@ -39,14 +39,14 @@ export default function ContextMenuForRows() {
   const actionsFor = (entry: Entry) => (
     <>
       <Menu.Item
-        icon={<IconFileCopy />}
+        start={<IconFileCopy />}
         shortcut="Ctrl+D"
         onClick={() => add({ ...entry, name: `${entry.name} (copy)` })}
       >
         Duplicate
       </Menu.Item>
       <Menu.Separator />
-      <Menu.Item icon={<IconDelete />} tone="danger" shortcut="Del" onClick={() => remove(entry)}>
+      <Menu.Item start={<IconDelete />} tone="danger" shortcut="Del" onClick={() => remove(entry)}>
         Delete
       </Menu.Item>
     </>
@@ -62,7 +62,7 @@ export default function ContextMenuForRows() {
           actionsFor(entry)
         ) : (
           <Menu.Item
-            icon={<IconAdd />}
+            start={<IconAdd />}
             onClick={() => add({ name: 'Untitled document', editor: 'Alex Morgan' })}
           >
             New document

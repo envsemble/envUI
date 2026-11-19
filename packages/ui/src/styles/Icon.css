@@ -24,6 +24,10 @@
     fill: currentColor;
   }
 
+  :where([data-env-slot]) > :is(.env-icon, .env-icon-symbol) {
+    color: var(--_slot-icon-color, currentColor);
+  }
+
   [data-env-skeleton] .env-icon {
     forced-color-adjust: none;
     border-radius: var(--env-radius-sm);

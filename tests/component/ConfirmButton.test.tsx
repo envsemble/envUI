@@ -75,7 +75,7 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await expect.element(icon).toHaveAttribute('data-tone', 'danger');
   await expect.element(icon).not.toHaveClass(/env-icon-button/);
   await expect.element(icon).toHaveFocus();
-  expect(icon.element().querySelectorAll('.env-icon')).toHaveLength(1);
+  expect(icon.element().querySelectorAll('.env-button-start .env-icon-symbol')).toHaveLength(1);
   expect(box(icon).width).toBeGreaterThan(rest.width + 40);
   expect(css(icon, 'border-top-left-radius')).toBe(corner);
   expect(document.querySelectorAll('.env-confirm-button-status')[1]!.textContent).toBe(

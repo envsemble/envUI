@@ -59,7 +59,7 @@ ruleTester.run('no-raw-graphics', rule, {
       '<svg width="0" height="0" aria-hidden="true"><defs /></svg>',
     ]),
     ...named('An svg in an icon slot, or in a Graphic, takes its size from there', [
-      '<Button startIcon={<svg width="24" height="24" />}>Save</Button>',
+      '<Button endIcon={<svg width="24" height="24" />}>Save</Button>',
       '<IconButton icon={<svg width="16" height="16" fill="#1a73e8" />} />',
       '<Badge endIcon={open ? <svg width="12" /> : null} />',
       `${graphic}<Graphic alt=""><svg width="24" height="24" fill="#000" /></Graphic>`,
@@ -100,7 +100,7 @@ ruleTester.run('no-raw-graphics', rule, {
       "const icons = require(name); const m = import(name); require('lodash', 1);",
     ]),
     ...named("Another icon package's icon in an icon slot or a Graphic, which sizes it", [
-      "import { Github } from 'lucide-react'; <Button startIcon={<Github />}>Sign in</Button>;",
+      "import { Github } from 'lucide-react'; <Button endIcon={<Github />}>Sign in</Button>;",
       `${graphic}import { SiFigma } from 'react-icons/si'; <Graphic alt="Figma"><SiFigma /></Graphic>;`,
       "import * as Icons from '@tabler/icons-react'; const items = [{ id: 'a', icon: <Icons.IconBrandSlack /> }];",
       'const { Heart } = require(\'phosphor-react\'); <IconButton icon={<Heart />} aria-label="Like" />;',
@@ -139,7 +139,7 @@ ruleTester.run('no-raw-graphics', rule, {
       errors: [
         {
           message:
-            'A raw <svg width="24" height="24"> takes its size from the file: pass it to an icon slot, such as Button\'s startIcon, or wrap it in envUI\'s <Graphic alt="">: import { Graphic } from \'@envsemble/envui\'.',
+            'A raw <svg width="24" height="24"> takes its size from the file: pass it to an icon slot, such as IconButton\'s icon, or wrap it in envUI\'s <Graphic alt="">: import { Graphic } from \'@envsemble/envui\'.',
           line: 1,
           column: 2,
         },
@@ -243,7 +243,7 @@ ruleTester.run('no-raw-graphics', rule, {
           errors: [
             {
               message:
-                "A <Search> from lucide-react takes its size from the package: pass it to an icon slot, such as Button's startIcon, or wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit its slots and text: import { IconSearch } from '@envsemble/envui/icons/Search'.",
+                "A <Search> from lucide-react takes its size from the package: pass it to an icon slot, such as IconButton's icon, or wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit its slots and text: import { IconSearch } from '@envsemble/envui/icons/Search'.",
               line: 2,
               column: 2,
             },
@@ -270,7 +270,7 @@ ruleTester.run('no-raw-graphics', rule, {
           errors: [icons('Heart', 'phosphor-react')],
         },
         {
-          code: "import { Search as Find } from 'lucide-react'; <><Button startIcon={<Find />}>Find</Button><Find /></>;",
+          code: "import { Search as Find } from 'lucide-react'; <><Button endIcon={<Find />}>Find</Button><Find /></>;",
           errors: [icons('Find', 'lucide-react')],
         },
       ],

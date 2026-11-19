@@ -120,7 +120,7 @@ function ViewMenu({ angle, onAngle }: { angle: Angle | null; onAngle: (angle: An
                 size="sm"
                 variant={angle === cell ? 'secondary' : 'ghost'}
                 aria-pressed={angle === cell}
-                startIcon={angleIcons[cell]}
+                start={angleIcons[cell]}
                 onClick={() => {
                   onAngle(cell);
                   close();
@@ -150,21 +150,21 @@ function ShowMenu({
       trigger={<Toolbar.Button icon={<IconLayers />} label="Show" />}
     >
       <Menu.CheckboxItem
-        icon={<IconLabel />}
+        start={<IconLabel />}
         checked={show.names}
         onCheckedChange={(names) => onShowChange({ ...show, names })}
       >
         Names
       </Menu.CheckboxItem>
       <Menu.CheckboxItem
-        icon={<IconPadding />}
+        start={<IconPadding />}
         checked={show.spacing}
         onCheckedChange={(spacing) => onShowChange({ ...show, spacing })}
       >
         Padding and gaps
       </Menu.CheckboxItem>
       <Menu.CheckboxItem
-        icon={<IconFilterAlt />}
+        start={<IconFilterAlt />}
         description="And what is inside it"
         checked={show.onlySelected}
         onCheckedChange={(onlySelected) => onShowChange({ ...show, onlySelected })}
@@ -172,7 +172,7 @@ function ShowMenu({
         Only the selected
       </Menu.CheckboxItem>
       <Menu.CheckboxItem
-        icon={<IconPalette />}
+        start={<IconPalette />}
         checked={show.colorBy === 'window'}
         onCheckedChange={(on) => onShowChange({ ...show, colorBy: on ? 'window' : 'kind' })}
       >
@@ -212,7 +212,7 @@ function ResponsiveMenu({
       trigger={<Toolbar.Button icon={<IconResponsiveLayout />} label="Responsive" />}
     >
       <Menu.CheckboxItem
-        icon={<IconResponsiveLayout />}
+        start={<IconResponsiveLayout />}
         description="Lays the page out at another size"
         checked={on}
         onCheckedChange={(next) =>
@@ -259,10 +259,10 @@ function ResponsiveMenu({
             onFrameChange({ width: frameHeight, height: frameWidth, device: frame.device });
         }}
       >
-        <Menu.RadioItem value="portrait" icon={<IconStayCurrentPortrait />} disabled={!on}>
+        <Menu.RadioItem value="portrait" start={<IconStayCurrentPortrait />} disabled={!on}>
           Portrait
         </Menu.RadioItem>
-        <Menu.RadioItem value="landscape" icon={<IconStayCurrentLandscape />} disabled={!on}>
+        <Menu.RadioItem value="landscape" start={<IconStayCurrentLandscape />} disabled={!on}>
           Landscape
         </Menu.RadioItem>
       </Menu.RadioGroup>

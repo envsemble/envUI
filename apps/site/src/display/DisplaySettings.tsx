@@ -140,7 +140,7 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
             <IconButton variant="ghost" icon={<IconTune />} aria-label="Display" />
           </Tooltip>
         ) : (
-          <Button variant="ghost" startIcon={<IconTune />}>
+          <Button variant="ghost" start={<IconTune />}>
             Display
           </Button>
         )

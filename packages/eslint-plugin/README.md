@@ -54,7 +54,7 @@ Raw color #fff in an inline style: use an envUI color token instead, such as var
 A remote or computed `<img>`, an `<svg>` with a fixed size or fill or another icon package's icon, such as lucide-react's, outside an icon slot or Graphic, and a Graphic without `alt` or with a negative margin, which makes up for a file's empty edges. Another package's icon in an icon slot or a Graphic, such as a brand mark Material Symbols lacks, passes, and so does a margin that spaces a Graphic. An `<img>` of the application's own image passes: a relative or root-relative `src`, such as `/brand/logo.svg`, or an imported image file. Option: `allow` (icon packages whose icons may render anywhere).
 
 ```text
-A raw <svg width="24" height="24"> takes its size from the file: pass it to an icon slot, such as Button's startIcon, or wrap it in envUI's <Graphic alt="">: import { Graphic } from '@envsemble/envui'.
+A raw <svg width="24" height="24"> takes its size from the file: pass it to an icon slot, such as IconButton's icon, or wrap it in envUI's <Graphic alt="">: import { Graphic } from '@envsemble/envui'.
 ```
 
 ### no-link-in-clickable-row

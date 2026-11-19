@@ -121,7 +121,7 @@ export default function AdoptionFixture() {
               Account settings
             </Menu.Item>
             <Menu.Separator />
-            <Menu.Item icon={<IconLogout />} onClick={() => setAction('Signed out')}>
+            <Menu.Item start={<IconLogout />} onClick={() => setAction('Signed out')}>
               Sign out
             </Menu.Item>
           </Menu.Root>
@@ -142,7 +142,7 @@ export default function AdoptionFixture() {
             <Button
               variant="secondary"
               fullWidth
-              startIcon={<IconSearch />}
+              start={<IconSearch />}
               end={<Kbd keys={['Ctrl', 'K']} aria-hidden />}
               aria-keyshortcuts="Control+K"
               data-testid="end-button"

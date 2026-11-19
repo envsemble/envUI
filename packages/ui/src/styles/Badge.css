@@ -109,7 +109,7 @@
     border: var(--_badge-own-border, var(--_badge-edge-border));
     background: var(--env-badge-container, transparent);
   }
-  .env-badge .env-icon {
+  .env-badge-start {
     --env-icon-size: 0.875rem;
   }
   .env-badge-label {

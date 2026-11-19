@@ -9,22 +9,22 @@ import { IconWarning } from '@envsemble/envui/icons/Warning';
 export default function Status() {
   return (
     <Row wrap gap={2}>
-      <Badge tone="neutral" icon={<IconArchive />}>
+      <Badge tone="neutral" start={<IconArchive />}>
         Archived
       </Badge>
-      <Badge tone="primary" icon={<IconRadioButtonChecked />}>
+      <Badge tone="primary" start={<IconRadioButtonChecked />}>
         Current
       </Badge>
-      <Badge tone="success" icon={<IconCheckCircle />}>
+      <Badge tone="success" start={<IconCheckCircle />}>
         Ready
       </Badge>
-      <Badge tone="warning" icon={<IconWarning />}>
+      <Badge tone="warning" start={<IconWarning />}>
         Due soon
       </Badge>
-      <Badge tone="danger" icon={<IconError />}>
+      <Badge tone="danger" start={<IconError />}>
         Failed
       </Badge>
-      <Badge tone="done" icon={<IconTaskAlt />}>
+      <Badge tone="done" start={<IconTaskAlt />}>
         Completed
       </Badge>
     </Row>

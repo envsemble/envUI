@@ -318,7 +318,7 @@ function ListRowSample() {
       >
         <ListRow
           render={<BaseMenu.Item />}
-          icon={<IconSettings />}
+          start={<IconSettings />}
           label="Settings"
           description="Account and workspace"
           end={<Kbd keys={['Ctrl', ',']} />}

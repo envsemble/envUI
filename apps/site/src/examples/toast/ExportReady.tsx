@@ -22,7 +22,7 @@ function ExportButton() {
   return (
     <Button
       variant="secondary"
-      startIcon={<IconDownload />}
+      start={<IconDownload />}
       pending={exporting}
       onClick={exportMembers}
     >

@@ -34,7 +34,7 @@ export default function LabelledControls() {
       />
       <Toolbar.Button icon={<IconFormatItalic />} label="Italic" shortcut="Ctrl+I" />
       <Toolbar.Separator />
-      <Toolbar.Item render={<Button startIcon={<IconShare />}>Share</Button>} />
+      <Toolbar.Item render={<Button start={<IconShare />}>Share</Button>} />
     </Toolbar.Root>
   );
 }

@@ -14,7 +14,7 @@ export default function TypeToSearch() {
     .map((name) => ({ id: name, label: name, icon: <IconDescription /> }));
   return (
     <>
-      <Button variant="secondary" startIcon={<IconSearch />} onClick={() => setOpen(true)}>
+      <Button variant="secondary" start={<IconSearch />} onClick={() => setOpen(true)}>
         Go to document
       </Button>
       <CommandPalette

@@ -141,7 +141,7 @@ function Conversation() {
           author="Agent"
           meta={<RelativeTime value={minutesAgo(14)} />}
           actions={
-            <Button variant="text" size="sm" startIcon={<IconReplay />}>
+            <Button variant="text" size="sm" start={<IconReplay />}>
               Run again
             </Button>
           }
@@ -197,7 +197,7 @@ function Conversation() {
         start={
           <>
             <IconButton variant="text" icon={<IconAttachFile />} aria-label="Attach files" />
-            <Badge icon={<IconTerminal />}>billing-api</Badge>
+            <Badge start={<IconTerminal />}>billing-api</Badge>
           </>
         }
         description="The agent can run commands in the sandbox and push to agent/* branches."
@@ -215,7 +215,7 @@ function RunPanel() {
           <Text render={<h2 />} variant="title">
             Run
           </Text>
-          <Badge tone="primary" icon={<Spinner size="sm" label="Running" />}>
+          <Badge tone="primary" start={<Spinner size="sm" label="Running" />}>
             Running
           </Badge>
         </Row>
@@ -260,7 +260,7 @@ function RunPanel() {
                 A preview deploys once the tests pass.
               </Text>
             </Column>
-            <Button variant="secondary" size="sm" startIcon={<IconRocketLaunch />}>
+            <Button variant="secondary" size="sm" start={<IconRocketLaunch />}>
               Deploy preview now
             </Button>
           </Column>
@@ -327,22 +327,22 @@ const commands: CommandPaletteItem[] = [
   {
     id: 'new',
     label: 'New agent run',
-    icon: <IconSmartToy />,
+    start: <IconSmartToy />,
     group: 'Commands',
     end: <Kbd keys={['Ctrl', 'N']} />,
   },
-  { id: 'rerun', label: 'Run the failing step again', icon: <IconReplay />, group: 'Commands' },
+  { id: 'rerun', label: 'Run the failing step again', start: <IconReplay />, group: 'Commands' },
   {
     id: 'commit',
     label: 'Commit the changes',
-    icon: <IconCommit />,
+    start: <IconCommit />,
     group: 'Commands',
     end: <Kbd keys={['Ctrl', 'Enter']} />,
   },
   {
     id: 'settings',
     label: 'Agent settings',
-    icon: <IconTune />,
+    start: <IconTune />,
     group: 'Commands',
     end: <Kbd keys={['Ctrl', ',']} />,
   },
@@ -350,20 +350,20 @@ const commands: CommandPaletteItem[] = [
     id: 'billing',
     label: 'billing-api',
     description: 'northwind/billing-api',
-    icon: <IconFolder />,
+    start: <IconFolder />,
     group: 'Projects',
   },
   {
     id: 'checkout',
     label: 'checkout-web',
     description: 'northwind/checkout',
-    icon: <IconFolder />,
+    start: <IconFolder />,
     group: 'Projects',
   },
   {
     id: 'automation',
     label: 'Nightly dependency updates',
-    icon: <IconBolt />,
+    start: <IconBolt />,
     group: 'Automations',
     end: <Badge tone="primary">New</Badge>,
   },
@@ -417,7 +417,7 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
                       onClick={() => setSettings(true)}
                     />
                   </Tooltip>
-                  <Button startIcon={<IconCommit />}>Open pull request</Button>
+                  <Button start={<IconCommit />}>Open pull request</Button>
                 </>
               }
             />

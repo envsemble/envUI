@@ -20,10 +20,10 @@ before(
     const custom = h(ui.Icon, { label: 'Custom star', viewBox: '0 0 8 8' }, h('path', { d: 'M0 0L8 8' }));
     const html = renderToString(h(ui.Theme, { theme: 'dark' },
       h(ThemeProbe),
-      h(ui.Button, { startIcon: h(IconHome) }, 'Create'),
+      h(ui.Button, { start: h(IconHome) }, 'Create'),
       h(ui.IconButton, { icon: custom, 'aria-label': 'Open item' }),
       h(ui.ButtonGroup, { orientation: 'vertical', 'aria-label': 'Connected actions' },
-        h(ui.Button, { startIcon: h(IconHome) }, 'Continue'),
+        h(ui.Button, { start: h(IconHome) }, 'Continue'),
         h(ui.IconButton, { icon: custom, 'aria-label': 'Settings' }),
         h(ui.Button, { variant: 'primary', tone: 'accent', href: '/confirm' }, 'Confirm')),
       h(ui.Pager.Previous, { href: '/previous-guide' }, 'Earlier guide'),
