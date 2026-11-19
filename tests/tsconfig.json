@@ -79,7 +79,6 @@
     "library/source/NavigationDrawer.test.ts",
     "library/source/Pagination.test.ts",
     "library/source/Palette.test.ts",
-    "library/source/Rating.test.ts",
     "library/source/RelativeTime.test.ts",
     "library/source/Table.test.ts",
     "library/source/TableOfContents.test.ts",

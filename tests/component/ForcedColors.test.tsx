@@ -102,7 +102,6 @@ const states: Record<string, [state: Target, rest: Target]> = {
     ['.env-table-of-contents-link[aria-current=location]'],
     ['.env-table-of-contents-link:not([aria-current])'],
   ],
-  'a filled star': [['.env-rating-star'], ['.env-rating-star', { index: 4 }]],
   'a checked menu item': [['[role=menuitemcheckbox]'], ['[role=menuitemcheckbox]', { index: 1 }]],
 };
 
@@ -240,7 +239,6 @@ test(
       'the selected tree row': 'highlight',
       'the chosen calendar day': 'highlight',
       'the active document tab': 'highlight',
-      'a filled star': 'highlight',
       "today's calendar day": 'outline',
       'an invalid field': 'dashed',
       'a pressed toolbar toggle': 'highlight',

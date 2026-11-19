@@ -668,13 +668,6 @@
       "env-radio-group-error": "The error under the options.",
       "env-radio-group-label": "The slot of the group's label, in its legend."
     },
-    "Rating": {
-      "env-rating": "The rating.",
-      "env-rating-star": "One star.",
-      "env-rating-star-half": "The filled half of a half star.",
-      "env-rating-stars": "The row of stars.",
-      "env-rating-value": "The rating as text."
-    },
     "RelativeTime": {
       "env-relative-time": "A time relative to now, with the exact time in a tooltip."
     },

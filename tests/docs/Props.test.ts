@@ -33,7 +33,6 @@ test('a default that names a private value shows the value, or nothing', () => {
     props('DocumentTabs').closeLabel.default,
     "'Close {label}', or EnvUIProvider's messages.documentTabs.close",
   );
-  assert.equal(props('Rating').formatLabel.default, "'{value} out of {max} stars'");
   assert.equal(
     props('MarkdownEditor').toolbar.default,
     "['heading', 'bold', 'italic', 'inline-code', 'bullet-list', 'numbered-list', 'quote', 'code-block', 'link']",

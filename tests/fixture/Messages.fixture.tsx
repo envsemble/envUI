@@ -39,7 +39,6 @@ import {
   DiffStat,
   Message,
   MessageList,
-  Rating,
   RelativeTime,
 } from '@envsemble/envui';
 import { useMessages } from '../../packages/ui/src/internal/provider/EnvUIContext.js';
@@ -149,7 +148,6 @@ export default function MessagesFixture() {
           <CopyButton value="Northwind" aria-label="" />
           <ThemeToggle />
           <AvatarGroup people={[]} total={3} />
-          <Rating value={4.5} showValue />
           <DiffStat additions={12} deletions={3} />
           <MessageList aria-label="Thread">
             <Message from="self" status="sending">

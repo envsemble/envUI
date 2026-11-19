@@ -70,6 +70,9 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'components/search-trigger':
       'components/command-palette?section=opening-it-the-button-and-the-shortcut',
     'docs/patterns/search-trigger': 'docs/components/command-palette',
+    'components/rating': 'components/meter?section=a-score-in-stars',
+    'components/rating/props': 'docs/components/meter',
+    'docs/components/rating': 'docs/components/meter',
     patterns: 'docs',
     'docs/patterns': 'docs',
     'patterns/forms': 'docs',

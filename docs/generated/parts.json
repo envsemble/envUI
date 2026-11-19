@@ -4448,47 +4448,6 @@
         "Icon"
       ]
     },
-    "Rating": {
-      "root": "env-rating",
-      "source": "packages/ui/src/data-display/Rating.tsx",
-      "parts": [
-        {
-          "class": "env-rating",
-          "description": "The rating."
-        },
-        {
-          "class": "env-rating-star",
-          "description": "One star."
-        },
-        {
-          "class": "env-rating-star-half",
-          "description": "The filled half of a half star."
-        },
-        {
-          "class": "env-rating-stars",
-          "description": "The row of stars."
-        },
-        {
-          "class": "env-rating-value",
-          "description": "The rating as text."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-fill",
-          "values": [
-            "full",
-            "half"
-          ],
-          "parts": [
-            "env-rating-star"
-          ]
-        }
-      ],
-      "uses": [
-        "Icon"
-      ]
-    },
     "RelativeTime": {
       "root": "env-relative-time",
       "source": "packages/ui/src/data-display/RelativeTime.tsx",

@@ -676,9 +676,6 @@
           "$value": "{palette.blue.7}"
         }
       },
-      "rating-star": {
-        "$value": "{palette.amber.20}"
-      },
       "avatar": {
         "$root": {
           "$value": "{color.fg.avatar.powder}"

@@ -189,8 +189,6 @@
     "RadioGroup": "function",
     "RadioGroupProps": "interface",
     "RadioProps": "interface",
-    "Rating": "function",
-    "RatingProps": "interface",
     "RelativeTime": "function",
     "RelativeTimeOptions": "interface",
     "RelativeTimeProps": "interface",

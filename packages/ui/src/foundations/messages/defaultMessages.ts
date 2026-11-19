@@ -28,7 +28,6 @@ import { navigation } from './navigation.js';
 import { pager } from './pager.js';
 import { pagination } from './pagination.js';
 import { panes } from './panes.js';
-import { rating } from './rating.js';
 import { relativeTime } from './relativeTime.js';
 import { richText } from './richText.js';
 import { scaffold } from './scaffold.js';
@@ -79,7 +78,6 @@ export const defaultMessages = {
   pager,
   pagination,
   panes,
-  rating,
   relativeTime,
   richText,
   scaffold,

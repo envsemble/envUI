@@ -87,7 +87,6 @@ test('no English default is left under a provider that sets every message', asyn
   for (const marked of [
     '⟦avatarGroup.label⟧',
     '⟦avatarGroup.more⟧',
-    '⟦rating.label⟧',
     '⟦diffStat.label⟧',
     '⟦message.sending⟧',
     '⟦message.failed⟧',

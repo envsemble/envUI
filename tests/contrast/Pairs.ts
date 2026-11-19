@@ -573,7 +573,7 @@ const registry: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-border-default',
     [field, page, surface, muted, raised, popup],
-    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
+    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone takes it too',
   ),
   ...nonText(
     'composer-hover-edge',

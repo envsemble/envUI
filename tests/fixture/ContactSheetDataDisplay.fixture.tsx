@@ -13,7 +13,6 @@ import {
   Link,
   List,
   Meter,
-  Rating,
   RelativeTime,
   Table,
   type CalendarHeatmapDay,
@@ -401,7 +400,7 @@ function Lists() {
 
 function Measures() {
   return (
-    <Section name="Meter, Rating, RelativeTime">
+    <Section name="Meter, RelativeTime">
       <Strip label="Meter">
         {[0, 35, 80, 100].map((value) => (
           <Cell key={value} caption={`${value}%`} width="12rem">
@@ -410,19 +409,6 @@ function Measures() {
         ))}
         <Cell caption="Value text" width="12rem">
           <Meter label="Seats" value={9} max={12} valueText="9 of 12" />
-        </Cell>
-      </Strip>
-      <Strip label="Rating">
-        {[0, 2.5, 4, 5].map((value) => (
-          <Cell key={value} caption={`${value} of 5`}>
-            <Rating value={value} />
-          </Cell>
-        ))}
-        <Cell caption="Value shown">
-          <Rating value={4.3} showValue />
-        </Cell>
-        <Cell caption="Out of 10">
-          <Rating value={7} max={10} />
         </Cell>
       </Strip>
       <Strip label="RelativeTime">

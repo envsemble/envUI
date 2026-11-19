@@ -6772,46 +6772,6 @@
         "@envsemble/envui"
       ]
     },
-    "Rating": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/Rating.tsx",
-      "description": "A read-only rating, such as a review score: stars filled to the value in half steps in their own gold, with an optional number before them, named once for assistive technology as an image, such as \"4.5 out of 5 stars\". It shows a rating; it does not ask for one.",
-      "props": [
-        {
-          "name": "value",
-          "type": "number",
-          "required": true,
-          "description": "The rating, from 0 to max, such as 4.5. It shows rounded to the nearest half star, kept within 0 and max; a value that is not a number, such as NaN, shows no stars filled."
-        },
-        {
-          "name": "max",
-          "type": "number",
-          "required": false,
-          "default": "5",
-          "description": "How many stars the scale has, as a whole number, such as 10. A fraction rounds to the nearest whole star; a value below 1 or not a number shows 5 stars."
-        },
-        {
-          "name": "showValue",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the rating as a number before the stars, such as 4.5, in tabular digits and the locale's number format, such as 4,5 in German. The number is the rounded value the stars show, and it is hidden from assistive technology, since the stars' name already says it."
-        },
-        {
-          "name": "formatLabel",
-          "type": "(value: number, max: number) => string",
-          "required": false,
-          "default": "'{value} out of {max} stars'",
-          "description": "Writes the accessible name of the stars from the shown value, rounded to a half star, and the number of stars. It overrides EnvUIProvider's `messages.rating.label`, which receives both as text in the locale's number format."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "RelativeTime": {
       "kind": "component",
       "source": "packages/ui/src/data-display/RelativeTime.tsx",

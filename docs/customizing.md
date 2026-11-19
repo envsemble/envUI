@@ -373,11 +373,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - Parts: `env-radio-group`, `env-radio-group-description`, `env-radio-group-description-content` (slot), `env-radio-group-error`, `env-radio-group-label` (slot)
 - States: `data-orientation` (`horizontal`, `vertical`)
 
-### Rating
-
-- Parts: `env-rating`, `env-rating-star`, `env-rating-star-half`, `env-rating-stars`, `env-rating-value`
-- States: `data-fill` (`full`, `half`) on `env-rating-star`
-
 ### RelativeTime
 
 - Parts: `env-relative-time`

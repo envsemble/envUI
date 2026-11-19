@@ -551,9 +551,6 @@
         "danger-on-strong": {
           "$value": "{palette.red.10}"
         },
-        "rating-star": {
-          "$value": "{palette.amber.80}"
-        },
         "avatar": {
           "powder": {
             "$value": "{palette.powder.80}"
