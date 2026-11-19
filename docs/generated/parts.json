@@ -3170,7 +3170,8 @@
         },
         {
           "class": "env-message-author",
-          "description": "The author's name."
+          "description": "The author's name.",
+          "slot": true
         },
         {
           "class": "env-message-content",
@@ -3184,6 +3185,11 @@
         {
           "class": "env-message-meta",
           "description": "The slot of the time or another fact about the message.",
+          "slot": true
+        },
+        {
+          "class": "env-message-start",
+          "description": "The slot of the content beside the message at its inline start, such as the author's avatar.",
           "slot": true
         },
         {
@@ -3211,6 +3217,15 @@
           "values": [
             "other",
             "self"
+          ],
+          "parts": [
+            "env-message"
+          ]
+        },
+        {
+          "attribute": "data-start",
+          "values": [
+            ""
           ],
           "parts": [
             "env-message"

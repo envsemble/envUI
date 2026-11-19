@@ -4867,9 +4867,15 @@
         },
         {
           "name": "author",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Who wrote the message, such as a name, shown above it at weight 500. Leave it out where the conversation makes it clear, such as on your own messages in a conversation with one person."
+          "description": "Who wrote the message, such as a name, shown above it at weight 500, or content such as a link to their profile with a Bot or Owner Badge. Leave it out where the conversation makes it clear, such as on your own messages in a conversation with one person."
+        },
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content beside the message, at its inline start, placed as given, such as the author's Avatar or an assistant's mark, in a column of its own beside the header and the content."
         },
         {
           "name": "meta",
@@ -4891,10 +4897,10 @@
         },
         {
           "name": "statusLabel",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
           "default": "'Sending' or 'Not sent'",
-          "description": "The text beside the status icon, such as \"Could not deliver\". It overrides EnvUIProvider's `messages.message.sending` and `.failed`."
+          "description": "The content beside the status icon, such as \"Could not deliver\" or a sentence with a Try again link. It overrides EnvUIProvider's `messages.message.sending` and `.failed`."
         },
         {
           "name": "children",
@@ -4931,16 +4937,16 @@
         },
         {
           "name": "busyAuthor",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Who the reply on its way comes from, such as Agent, named on the busy row as a message's author."
+          "description": "Who the reply on its way comes from, such as Agent or the agent's name with its Avatar, named on the busy row as a message's author."
         },
         {
           "name": "busyLabel",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
           "default": "'Working'",
-          "description": "The text beside the busy spinner, such as \"Thinking\". It overrides EnvUIProvider's `messages.message.working`."
+          "description": "The content beside the busy spinner, such as \"Thinking\" or the current step, Running tests…. It overrides EnvUIProvider's `messages.message.working`. The busy row is hidden from assistive technology, which hears aria-busy on the log instead."
         },
         {
           "name": "follow",

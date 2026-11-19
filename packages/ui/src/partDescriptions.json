@@ -493,6 +493,7 @@
       "env-message-content": "The slot of the message's content, in a bubble on your own messages.",
       "env-message-header": "The row with the author and the meta.",
       "env-message-meta": "The slot of the time or another fact about the message.",
+      "env-message-start": "The slot of the content beside the message at its inline start, such as the author's avatar.",
       "env-message-status": "The sending or failed status.",
       "env-message-text": "Content given as plain text, which keeps its line breaks."
     },
