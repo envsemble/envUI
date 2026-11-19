@@ -21,10 +21,6 @@ async function shipped() {
   return result.outputFiles.find((file) => file.path.endsWith('.css')).text;
 }
 
-async function devMode() {
-  return readFile(join(repositoryRoot, 'packages/ui/src/dev/ui/DevMode.css'), 'utf8');
-}
-
 async function catalogue() {
   const folder = join(repositoryRoot, 'apps/site/src');
   const files = (await readdir(folder, { recursive: true })).filter((name) =>
@@ -137,11 +133,6 @@ const catalogueShadows = [
 test('no envUI style sheet draws a drop shadow but the avatars’, the popups’, the tooltips’ and the chosen segment’s; rings stay', async () => {
   const library = { allowed: libraryShadows };
   assert.deepEqual(problems([await shipped()], library), [], 'The shipped style sheet');
-  assert.deepEqual(
-    problems([await shipped(), await devMode()], library),
-    [],
-    'Dev mode’s style sheet',
-  );
   assert.deepEqual(
     problems(await catalogue(), { allowed: catalogueShadows }),
     [],

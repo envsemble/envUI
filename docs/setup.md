@@ -251,7 +251,6 @@ Components with state, effects or context carry `'use client'`; components that 
 - `@envsemble/envui/icons/<Name>` for each icon, `Icon<Name>`.
 - `@envsemble/envui/messages` for `defaultMessages`.
 - `@envsemble/envui/theme-bootstrap` for `defineTheme` and `createThemeBootstrapScript`.
-- `@envsemble/envui/dev` for [dev mode](dev-mode.md), behind a development check.
 - `@envsemble/envui/assets/*` for raw assets, such as the Geist font file.
 
 These entry points need libraries the application installs itself, at these versions or later ones of the same major:

@@ -17,7 +17,7 @@ aliases:
 useWhen:
   - An inset and nothing else, such as around a region of a page
   - A region whose width the application's own styles respond to
-  - A region that shows up by name in dev mode and the docs
+  - A region the application's styles or tests find by name
 avoidWhen:
   - text: Children one under another with gaps.
     use: Column

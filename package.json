@@ -58,7 +58,6 @@
     "docs:snippets": "node scripts/docs/CheckSnippets.ts",
     "changeset": "changeset",
     "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts",
-    "docs:dev-mode-image": "node scripts/docs/CaptureDevModeImage.ts",
     "docs:readme-images": "node scripts/docs/CaptureReadmeImages.ts",
     "site:part-sizes": "node scripts/site/RecordPartSizes.ts"
   },

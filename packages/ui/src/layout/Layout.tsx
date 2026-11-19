@@ -47,8 +47,8 @@ type PrimitiveOptions<RenderedElement extends HTMLElement> = {
    */
   ref?: Ref<RenderedElement>;
   /**
-   * A name for this node, such as "filters" or "summary", which dev mode and the docs show; it
-   * renders as `data-env-name`. A component's part class names its node instead.
+   * A name for this node, such as "filters" or "summary", for the application's styles and tests
+   * to find it by; it renders as `data-env-name`. A component's part class names its node instead.
    */
   name?: string;
   /**

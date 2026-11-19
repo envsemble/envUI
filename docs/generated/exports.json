@@ -319,21 +319,6 @@
     "ColorSwatchProps": "interface",
     "ColorValue": "type"
   },
-  "@envsemble/envui/dev": {
-    "DevModeHandle": "interface",
-    "DevModeOptions": "interface",
-    "LayoutApi": "interface",
-    "LayoutAtResult": "interface",
-    "LayoutOptions": "interface",
-    "LayoutProblem": "interface",
-    "LayoutProblemRule": "type",
-    "LayoutSize": "type",
-    "PartsEntry": "interface",
-    "PartsFile": "interface",
-    "SkeletonShiftOptions": "interface",
-    "installDevMode": "function",
-    "layout": "const"
-  },
   "@envsemble/envui/diff": {
     "CodeDiff": "function",
     "CodeDiffAnnotation": "interface",

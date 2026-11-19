@@ -24,7 +24,6 @@
     "tests/component/DatePicker.test.tsx": 7.1,
     "tests/component/DefaultColors.test.tsx": 7.9,
     "tests/component/DescriptionList.test.tsx": 0.1,
-    "tests/component/DevMode.test.tsx": 17.1,
     "tests/component/Dialog.test.tsx": 5.3,
     "tests/component/Direction.test.tsx": 0.5,
     "tests/component/Disclosure.test.tsx": 0.9,

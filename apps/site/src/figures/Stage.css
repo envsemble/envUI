@@ -158,8 +158,7 @@
     .catalogue-tile-canvas,
     .catalogue-motion-subject
   )
-  > .env-scaffold,
-.site-live-example > [data-dev-mode-demo] > .env-scaffold {
+  > .env-scaffold {
   background-color: var(--env-color-bg-page);
 }
 

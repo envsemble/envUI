@@ -12,7 +12,7 @@ const codingAgents = `${docsRoute}?section=coding-agents`;
 
 const oldDocuments: Record<string, string> = {
   'get-started': docsRoute,
-  'dev-mode-overview': 'docs/dev-mode',
+  'dev-mode-overview': docsRoute,
   changelog: 'docs/changelog',
   codemods: docsRoute,
   migration: docsRoute,
@@ -64,7 +64,8 @@ const movedPages: Record<string, string> = {
   'docs/local-development': docsRoute,
   benchmark: homeRoute,
   changelog: 'docs/changelog',
-  'dev-mode': 'docs/dev-mode',
+  'dev-mode': docsRoute,
+  'docs/dev-mode': docsRoute,
   'foundations/tokens': 'docs/tokens',
   'docs/foundations/scale': 'docs/foundations/spacing',
   'docs/customizing-colors': 'docs/customizing',

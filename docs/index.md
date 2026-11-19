@@ -16,7 +16,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Install and set up](setup.md) — Install, theme, router, locale and entry points.
 - [Customize](customizing.md) — The styling contract of every component, the theme settings and colors.
 - [Writing](writing.md) — The words of an interface: the vocabulary and sentence case.
-- [Dev mode](dev-mode.md) — A readout of a page's layout and its problems, and a 3D view.
 
 ## Foundations
 

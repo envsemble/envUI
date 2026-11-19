@@ -81,8 +81,8 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    */
   persistedWidth?: number;
   /**
-   * A name for this node, such as "inbox", which dev mode and the docs show; it renders as
-   * `data-env-name`.
+   * A name for this node, such as "inbox", for the application's styles and tests to find it by; it
+   * renders as `data-env-name`.
    */
   name?: string;
   /** The two panes, with a Panes.ResizeHandle between them for people to resize them. */
