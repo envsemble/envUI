@@ -43,7 +43,7 @@ export default function CommentBox() {
           <Button
             variant="primary"
             size="sm"
-            startIcon={<IconSend />}
+            start={<IconSend />}
             disabled={comment.trim() === ''}
             onClick={() => {
               setSent(comment);

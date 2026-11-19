@@ -39,7 +39,7 @@ export function SearchButton({
   return (
     <Button
       variant="secondary"
-      startIcon={<IconSearch />}
+      start={<IconSearch />}
       end={
         <>
           <Kbd

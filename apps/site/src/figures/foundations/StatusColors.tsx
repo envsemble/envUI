@@ -66,7 +66,7 @@ function StatusSteps() {
             <Badge
               tone={tone.badge ?? 'primary'}
               variant={variant}
-              icon={tone.icon}
+              start={tone.icon}
               style={tone.own?.[variant]}
             >
               {tone.word}

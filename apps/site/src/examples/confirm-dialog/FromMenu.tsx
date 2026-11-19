@@ -12,7 +12,7 @@ export default function FromMenu() {
         aria-label="Project actions"
         trigger={<IconButton ref={menuButton} icon={<IconMoreVert />} aria-label="More actions" />}
       >
-        <Menu.Item icon={<IconDelete />} onClick={() => setOpen(true)}>
+        <Menu.Item start={<IconDelete />} onClick={() => setOpen(true)}>
           Delete project…
         </Menu.Item>
       </Menu.Root>

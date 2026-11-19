@@ -651,6 +651,29 @@ test('a start slot shows an Avatar at its own size, and every label of the menu 
   expect(box(icon).width).toBeCloseTo(16, 0);
 });
 
+test('a start holding an icon takes the icon size and the leading column stays an icon wide', async () => {
+  mount({ default: menus.IconStartFixture });
+  await page.getByRole('button', { name: 'Edit' }).click();
+  const menu = page.getByRole('menu', { name: 'Edit' });
+  await settled(menu);
+  const item = (name: string) => menu.getByRole('menuitem', { name, exact: true }).element();
+  const rename = item('Rename').querySelector<HTMLElement>('.env-menu-item-start')!;
+  expect(rename.getAttribute('aria-hidden')).toBe('true');
+  expect(box(rename).width).toBeCloseTo(16, 0);
+  expect(box(rename.querySelector('svg')!).width).toBeCloseTo(16, 0);
+  const [muted] = tokenColors(menu, ['--env-color-fg-muted']);
+  expect(getComputedStyle(rename.querySelector('svg')!).color).toBe(muted);
+  const label = (name: string) => box(item(name).querySelector('.env-menu-item-label')!);
+  expect(label('Close').x).toBeCloseTo(label('Rename').x, 0);
+  expect(label('Rename').x - box(rename).x).toBeCloseTo(
+    16 + Number.parseFloat(css(item('Rename'), 'column-gap')),
+    0,
+  );
+  const history = item('Version history').querySelector('svg')!;
+  const firstLine = label('Version history');
+  expect(box(history).y + 8).toBeCloseTo(firstLine.y + firstLine.height / 2, 0);
+});
+
 test("typing in a menu matches its items' labels, past an Avatar's initials at their start", async () => {
   mount({ default: menus.AccountSwitcherFixture });
   const trigger = page.getByRole('button', { name: 'Switch account' });

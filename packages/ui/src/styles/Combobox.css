@@ -170,7 +170,8 @@
   }
 
   .env-combobox-popup {
-    --_list-row-icon-size: var(--env-picture-size-sm);
+    --_list-row-described-start-align: flex-start;
+    --_list-row-described-start-offset: calc((1lh - var(--env-picture-size-sm)) / 2);
     width: max-content;
     min-width: min(var(--anchor-width), var(--available-width));
     --_combobox-popup-max-width: 22rem;

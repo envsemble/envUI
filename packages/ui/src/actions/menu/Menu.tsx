@@ -22,6 +22,7 @@ import '../../styles/Menu.css';
 
 export type { OpenChangeDetails, OpenChangeReason } from '../internal/menuOpenChange.js';
 export type { ItemProps, ItemElementProps } from './MenuItem.js';
+export type { TriggerProps } from '../internal/menuTriggerProps.js';
 export type { SubmenuProps } from './MenuSubmenu.js';
 export type {
   CheckboxItemProps,

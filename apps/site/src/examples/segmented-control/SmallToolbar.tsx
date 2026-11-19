@@ -21,7 +21,7 @@ export default function SmallToolbar() {
             { value: 'timeline', label: 'Timeline', icon: <IconViewTimeline />, disabled: true },
           ]}
         />
-        <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
+        <Button variant="secondary" size="sm" start={<IconAdd />}>
           New project
         </Button>
       </Row>

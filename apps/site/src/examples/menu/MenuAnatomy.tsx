@@ -13,15 +13,15 @@ export default function MenuAnatomy() {
       trigger={<IconButton icon={<IconMoreVert />} aria-label="More actions" />}
     >
       <Menu.Group label="Report">
-        <Menu.Item icon={<IconEdit />} shortcut="F2">
+        <Menu.Item start={<IconEdit />} shortcut="F2">
           Rename
         </Menu.Item>
-        <Menu.Item icon={<IconDownload />} description="Once the report is final" disabled>
+        <Menu.Item start={<IconDownload />} description="Once the report is final" disabled>
           Download PDF
         </Menu.Item>
       </Menu.Group>
       <Menu.Separator />
-      <Menu.Item icon={<IconDelete />} shortcut="Del">
+      <Menu.Item start={<IconDelete />} shortcut="Del">
         Delete
       </Menu.Item>
     </Menu.Root>

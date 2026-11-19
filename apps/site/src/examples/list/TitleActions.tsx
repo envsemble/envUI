@@ -13,7 +13,7 @@ export default function TitleActions() {
       headingLevel={3}
       description="People who can edit Website refresh."
       actions={
-        <Button size="sm" variant="outline" startIcon={<IconAdd />}>
+        <Button size="sm" variant="outline" start={<IconAdd />}>
           Add member
         </Button>
       }

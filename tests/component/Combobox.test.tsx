@@ -98,6 +98,12 @@ test('typing filters by label and description, ignoring case and accents, and En
   await expect.poll(optionTexts).toEqual(['Sam Leesam.lee@example.com']);
   const sam = option('Sam Lee');
   await expect.element(sam).toHaveAccessibleDescription('sam.lee@example.com');
+  const samStart = sam.element().querySelector<HTMLElement>('.env-list-row-start')!;
+  expect(samStart.getAttribute('aria-hidden')).toBe('true');
+  const samAvatar = box(samStart.querySelector('.env-avatar')!);
+  const samLabel = box(sam.element().querySelector('.env-list-row-label')!);
+  expect(samAvatar.width).toBeCloseTo(24, 0);
+  expect(samAvatar.y + samAvatar.height / 2).toBeCloseTo(samLabel.y + samLabel.height / 2, 0);
   await expect.poll(highlighted).toEqual(['Sam Lee']);
   await expect.element(author).toHaveAttribute('aria-activedescendant', sam.element().id);
   expect(wellOf(author).querySelector('.env-combobox-value-icon')).toBeNull();

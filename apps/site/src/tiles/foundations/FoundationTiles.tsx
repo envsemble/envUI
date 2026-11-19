@@ -118,7 +118,7 @@ function AccessibilityTile() {
   return (
     <Column gap={4} align="start">
       <TextField label="Email" defaultValue="alex.morgan@example.com" />
-      <Button startIcon={<IconAdd />} className="catalogue-foundation-tile-focus">
+      <Button start={<IconAdd />} className="catalogue-foundation-tile-focus">
         Add member
       </Button>
     </Column>

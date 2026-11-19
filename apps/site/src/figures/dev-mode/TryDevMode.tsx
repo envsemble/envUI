@@ -33,7 +33,7 @@ export function TryDevMode() {
       <Row>
         <Button
           variant="primary"
-          startIcon={<IconViewInAr />}
+          start={<IconViewInAr />}
           pending={devModeLoading}
           onClick={() => (devMode ? devMode.open() : setStarted(true))}
         >

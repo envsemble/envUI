@@ -18,7 +18,7 @@ export default function Choices() {
         aria-label="View options"
         align="start"
         trigger={
-          <Button variant="secondary" startIcon={<IconVisibility />}>
+          <Button variant="secondary" start={<IconVisibility />}>
             View
           </Button>
         }

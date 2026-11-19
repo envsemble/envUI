@@ -223,7 +223,7 @@ function ToolbarSection() {
             />
             <SearchField size={size} label="Search" placeholder="Search" />
             <Select size={size} aria-label="Sort" items={plans} defaultValue="team" />
-            <Button size={size} variant="secondary" startIcon={<IconFilterList />}>
+            <Button size={size} variant="secondary" start={<IconFilterList />}>
               Filter
             </Button>
             <Pagination page={page} pageSize={25} total={240} onPageChange={setPage} size={size} />
@@ -244,19 +244,19 @@ function MenuSection() {
           trigger={<Button variant="secondary">Menu</Button>}
           align="start"
         >
-          <Menu.Item icon={<IconEdit />} shortcut="F2">
+          <Menu.Item start={<IconEdit />} shortcut="F2">
             Rename
           </Menu.Item>
           <Menu.Item
-            icon={<IconContentCopy />}
+            start={<IconContentCopy />}
             shortcut="Ctrl+D"
             description="Copy beside the original"
           >
             Duplicate
           </Menu.Item>
-          <Menu.Item icon={<IconFolder />}>Move to folder</Menu.Item>
+          <Menu.Item start={<IconFolder />}>Move to folder</Menu.Item>
           <Menu.Separator />
-          <Menu.Item icon={<IconDelete />}>Delete</Menu.Item>
+          <Menu.Item start={<IconDelete />}>Delete</Menu.Item>
         </Menu.Root>
       </div>
     </div>
@@ -458,7 +458,7 @@ function DesktopSection() {
         </aside>
         <div className="density-app-main">
           <div className="density-row">
-            <Button variant="primary" startIcon={<IconAdd />}>
+            <Button variant="primary" start={<IconAdd />}>
               New report
             </Button>
             <SearchField label="Search reports" placeholder="Search reports" />

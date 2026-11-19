@@ -1,6 +1,5 @@
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../classNames.js';
-import { DecorativeIcon } from '../icon/DecorativeIcon.js';
 import { flag } from '../flag.js';
 import { Slot } from '../layout/Slot.js';
 import '../../styles/Base.css';
@@ -17,11 +16,10 @@ export interface ListRowProps {
   render: ReactElement;
   /** The check mark or radio dot slot at the start, such as a Base UI ItemIndicator. */
   indicator?: ReactNode;
-  /** A decorative icon before the label. */
-  icon?: ReactNode;
   /**
-   * Content before the label in place of an icon, such as an Avatar, at its own size rather than
-   * the icon's; it is hidden from assistive technology, since the label names the row.
+   * Content before the label, such as an icon or an Avatar: an envUI icon takes the icon size and
+   * other content keeps its own. It is hidden from assistive technology, since the label names the
+   * row.
    */
   start?: ReactNode;
   /** The row's name, in the row's text color; it wraps and is never cut short. */
@@ -35,15 +33,14 @@ export interface ListRowProps {
 }
 
 /**
- * The one anatomy of a row in a popup list: an indicator, an icon, a label with a description
- * under it, and content at the end, on the element of the list's own item, so the
+ * The one anatomy of a row in a popup list: an indicator, content before the label, a label with a
+ * description under it, and content at the end, on the element of the list's own item, so the
  * owner keeps its roles and keyboard handling. Select, Combobox, Menu and the command palette's
  * options share it.
  */
 export function ListRow({
   render,
   indicator,
-  icon,
   start,
   label,
   description,
@@ -54,11 +51,6 @@ export function ListRow({
   const children = (
     <>
       {indicator != null && <span className="env-list-row-indicator">{indicator}</span>}
-      {icon != null && (
-        <span className="env-list-row-icon">
-          <DecorativeIcon>{icon}</DecorativeIcon>
-        </span>
-      )}
       {start != null && (
         <Slot className="env-list-row-start" element="span" layout="row" shrink="never" aria-hidden>
           {start}

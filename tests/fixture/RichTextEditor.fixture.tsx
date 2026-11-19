@@ -361,7 +361,7 @@ const templateCommand: RichTextSlashCommand[] = [
   {
     id: 'template',
     label: 'Meeting template',
-    icon: <IconDescription />,
+    start: <IconDescription />,
     description: 'Agenda, notes and actions',
     run: (editor) => {
       editor.commands.insertContent('Agenda');

@@ -93,7 +93,7 @@ examples:
 ```
 
 1. **Pill** (`env-badge`)
-2. **Icon** (`env-badge > env-icon`, `icon`)
+2. **Start** (`env-badge-start`, `start`)
 3. **Label** (`env-badge-label`, `children`)
 
 ## Behaviour

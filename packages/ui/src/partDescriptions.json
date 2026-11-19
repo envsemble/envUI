@@ -111,7 +111,7 @@
       "env-badge": "The badge: a small pill label, or with data-count a compact count.",
       "env-badge-count-label": "What a count means, such as 12 unread, for assistive technology; visually hidden.",
       "env-badge-label": "The badge's text, or its count.",
-      "env-badge-start": "The slot of the content before a label, in place of its icon."
+      "env-badge-start": "The slot of the content before the label, such as an icon or an Avatar."
     },
     "Breadcrumbs": {
       "env-breadcrumbs": "The breadcrumb navigation.",
@@ -130,8 +130,7 @@
       "env-button-end-icon": "The slot of the icon after the label.",
       "env-button-icon": "The slot of an icon button's icon.",
       "env-button-label": "The slot of the label, the button's children.",
-      "env-button-start": "The slot of the content before the label at its own size, such as an Avatar.",
-      "env-button-start-icon": "The slot of the icon before the label.",
+      "env-button-start": "The slot of the content before the label, such as an icon or an Avatar.",
       "env-button-spinner": "The spinner of a pending button."
     },
     "ButtonGroup": {
@@ -452,10 +451,9 @@
       "env-list-row": "The row anatomy of menu, select and combobox options.",
       "env-list-row-description": "A row's description.",
       "env-list-row-end": "The slot of the content at a row's end, such as a count or keys.",
-      "env-list-row-icon": "A row's icon.",
       "env-list-row-indicator": "The check of a chosen row.",
       "env-list-row-label": "The slot of a row's name.",
-      "env-list-row-start": "The slot of the content before a row's name in place of an icon, such as an Avatar.",
+      "env-list-row-start": "The slot of the content before a row's name, such as an icon or an Avatar.",
       "env-list-row-text": "The column with a row's label and description."
     },
     "Listbox": {
@@ -492,7 +490,7 @@
       "env-menu-item-end": "The end of an item, for a shortcut or a chevron.",
       "env-menu-item-label": "An item's label.",
       "env-menu-item-shortcut": "An item's keyboard shortcut.",
-      "env-menu-item-start": "The slot of the content before an item's label in place of an icon, such as an Avatar.",
+      "env-menu-item-start": "The slot of the content before an item's label, such as an icon or an Avatar.",
       "env-menu-item-text": "The column with an item's label and description.",
       "env-menu-positioner": "The menu's positioner.",
       "env-menu-separator": "The line between groups.",
@@ -939,7 +937,7 @@
     "Menu": {
       "--env-menu-item-container": "The item's fill; the highlight and press are state layers over it.",
       "--env-menu-item-content": "The label, and the color of the state layers.",
-      "--env-menu-item-icon": "The leading icon."
+      "--env-menu-item-icon": "The content before the label, such as its icon."
     },
     "NavigationBar": {
       "--env-navigation-bar-item-container": "The indicator around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",

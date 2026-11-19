@@ -172,7 +172,7 @@ function Badges() {
             </Cell>
           ))}
           <Cell caption="Icon">
-            <Badge variant={variant} tone="success" icon={<IconCheck />}>
+            <Badge variant={variant} tone="success" start={<IconCheck />}>
               Passed
             </Badge>
           </Cell>

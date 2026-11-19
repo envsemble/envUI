@@ -457,16 +457,10 @@
       "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats; with count, a compact count, such as 12 unread.",
       "props": [
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as a check mark; hidden from assistive technology. A done badge has a check mark unless it is given another icon, or `null` for none."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label, in place of the icon, placed at its own size and read by assistive technology unless it hides itself: such as a small Avatar, a color swatch or an icon that carries meaning."
+          "description": "Content before the label, such as an icon, a small Avatar or a color swatch: an envUI icon takes the badge's icon size and other content keeps its own. Assistive technology reads it unless it hides itself, as an icon without a label does. A done badge leads with a check mark unless it is given another start, or `null` for none."
         },
         {
           "name": "children",
@@ -630,16 +624,10 @@
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label at its own size rather than the icon's, such as a small Avatar of the person a button assigns or a flag; it is hidden from assistive technology, since the label names the button."
+          "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
           "name": "endIcon",
@@ -2110,7 +2098,7 @@
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label at its own size rather than the icon's, such as a small Avatar of the person a button assigns or a flag; it is hidden from assistive technology, since the label names the button."
+          "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
           "name": "end",
@@ -2144,12 +2132,6 @@
           "required": false,
           "default": "false",
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
-        },
-        {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
         },
         {
           "name": "endIcon",
@@ -2995,16 +2977,10 @@
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label at its own size rather than the icon's, such as a small Avatar of the person a button assigns or a flag; it is hidden from assistive technology, since the label names the button."
+          "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
           "name": "endIcon",
@@ -3244,7 +3220,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "What to drop or choose, such as \"Drop a logo here, or browse\". With the description, it names the zone, as its visible text does."
+          "description": "What to drop or choose, such as \"Drop a logo here, or browse\". With the description, it names the zone, as its visible text does; without the target, only assistive technology reads it."
         },
         {
           "name": "description",
@@ -3340,6 +3316,19 @@
           "type": "Ref<HTMLInputElement>",
           "required": false,
           "description": "The native file input that opens the file picker, for example from a Replace button; ref reaches the zone itself."
+        },
+        {
+          "name": "target",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show the target: the button with the icon, the label and the description that opens the file picker. Without it, the zone is a group the label names, for content that has its own Browse button, which opens the picker through inputRef, such as a table the files land in."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "Another element to render the zone as, such as the application's own panel or table region, which then takes dropped files: the zone's class, its state attributes, such as data-drag-over, and its handlers merge into its props."
         }
       ],
       "native": [
@@ -4083,6 +4072,12 @@
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
           "description": "As Button's: the height, and the width, of the square button."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "As Button's: another element to render the button as, such as a label for a file input shaped like an icon button. Its class, look, state attributes, icon and handlers merge into that element's props; disabled reports aria-disabled and blocks presses."
         }
       ],
       "native": [
@@ -4603,16 +4598,10 @@
           "description": "Class of the item's row."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as Settings."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label in place of an icon, such as an Avatar in an account switcher, at its own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "children",
@@ -4741,16 +4730,10 @@
           "description": "Class of the item's row."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as Settings."
-        },
-        {
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label in place of an icon, such as an Avatar in an account switcher, at its own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "children",
@@ -4919,19 +4902,13 @@
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label in place of an icon, such as an Avatar in an account switcher, at its own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "end",
           "type": "ReactNode",
           "required": false,
           "description": "End content, such as a Badge or a count; it is part of the item's name."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as Settings."
         },
         {
           "name": "textValue",
@@ -5119,7 +5096,7 @@
         },
         {
           "name": "triggerProps",
-          "type": "ItemElementProps & { className?: string }",
+          "type": "TriggerProps",
           "required": false,
           "description": "Attributes of the row that opens the submenu, such as a className, a style, a ref or a data attribute; the submenu's own className, style and ref are its popup's."
         },
@@ -5127,19 +5104,13 @@
           "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "Content before the label in place of an icon, such as an Avatar in an account switcher, at its own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "end",
           "type": "ReactNode",
           "required": false,
           "description": "End content, such as a Badge or a count; it is part of the item's name."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as Settings."
         },
         {
           "name": "textValue",
@@ -5189,7 +5160,7 @@
           "name": "accessKey",
           "type": "string",
           "required": false,
-          "description": "A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines it, in the label's text also beside an icon, and Alt with the letter opens the menu."
+          "description": "A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines it, in the label's text also beside an icon or inside an element such as a span, and Alt with the letter opens the menu."
         },
         {
           "name": "triggerProps",
@@ -8891,6 +8862,12 @@
           "description": "The id of visible text that names the action; this or aria-label."
         },
         {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "As Button's: another element to render the button as, such as a label for a file input shaped like an icon button. Its class, look, state attributes, icon and handlers merge into that element's props; disabled reports aria-disabled and blocks presses."
+        },
+        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -9301,7 +9278,7 @@
           "name": "render",
           "type": "ReactElement",
           "required": true,
-          "description": "The control, which joins the toolbar's arrow-key path as one of its stops: a button with a visible label, such as <Button startIcon={<IconShare />}>Share</Button>, or the trigger of a Menu or another popup. The item's props, ref and keyboard handling merge into its props; a Button takes the toolbar's ghost variant unless it sets another."
+          "description": "The control, which joins the toolbar's arrow-key path as one of its stops: a button with a visible label, such as <Button start={<IconShare />}>Share</Button>, or the trigger of a Menu or another popup. The item's props, ref and keyboard handling merge into its props; a Button takes the toolbar's ghost variant unless it sets another."
         },
         {
           "name": "disabled",

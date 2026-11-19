@@ -169,7 +169,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const colorValue: ColorValue = 'hsl(256, 34%, 48%)';
     const advanced = (color: Color): ColorValue => color.withChannelValue('alpha', 0.5);
     void advanced;
-    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <IconHome /> };
+    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), start: <IconHome /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
     const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <IconHome /> };
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];

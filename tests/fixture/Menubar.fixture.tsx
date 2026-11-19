@@ -97,6 +97,21 @@ export function RichTriggerFixture() {
       >
         <Menu.Item>New file</Menu.Item>
       </Menubar.Menu>
+      <Menubar.Menu
+        label={
+          <span className="fixture-wrapped-label">
+            <em>Sel</em>ection
+          </span>
+        }
+        aria-label="Selection"
+        accessKey="c"
+        triggerProps={{ 'data-testid': 'selection-trigger' }}
+      >
+        <Menu.Item>Select all</Menu.Item>
+        <Menu.Submenu label="Expand" triggerProps={{ 'data-testid': 'expand-trigger' }}>
+          <Menu.Item>To word</Menu.Item>
+        </Menu.Submenu>
+      </Menubar.Menu>
     </Menubar.Root>
   );
 }

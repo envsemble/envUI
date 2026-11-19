@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useImperativeHandle, useState, type ReactNode, type Ref } from 'react';
+import { useEffect, useId, useImperativeHandle, useState, type Ref } from 'react';
 import { ReactRenderer } from '@tiptap/react';
 import { exitSuggestion, type SuggestionOptions, type SuggestionProps } from '@tiptap/suggestion';
 import { PluginKey } from '@tiptap/pm/state';
@@ -25,7 +25,7 @@ interface MenuHandle {
   onKeyDown: (event: KeyboardEvent) => boolean;
 }
 
-type RowContent<I> = (item: I) => RichTextSuggestionContent & { icon?: ReactNode };
+type RowContent<I> = (item: I) => RichTextSuggestionContent;
 
 type MenuProps<I extends SuggestionItem> = SuggestionProps<I> & {
   label: string | undefined;

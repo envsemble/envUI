@@ -29,7 +29,7 @@ export default function SearchButton() {
     <Column gap={3} align="start">
       <Button
         variant="secondary"
-        startIcon={<IconSearch />}
+        start={<IconSearch />}
         end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
         aria-keyshortcuts={`${modifier.key}+K`}
         onClick={() => setOpen(true)}

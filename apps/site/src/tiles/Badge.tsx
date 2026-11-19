@@ -53,7 +53,7 @@ export default function BadgeTile() {
         return (
           <div key={name} style={{ display: 'contents' }}>
             <Text>{name}</Text>
-            <Badge tone={tone} icon={icon} style={{ justifySelf: 'start' }}>
+            <Badge tone={tone} start={icon} style={{ justifySelf: 'start' }}>
               {label}
             </Badge>
           </div>

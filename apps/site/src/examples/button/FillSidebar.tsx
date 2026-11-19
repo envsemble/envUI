@@ -8,7 +8,7 @@ export default function FillSidebar() {
   return (
     <Column gap={5} style={{ inlineSize: 'min(100%, 16rem)' }}>
       <ButtonGroup fullWidth aria-label="Start a document">
-        <Button startIcon={<IconAdd />}>New document</Button>
+        <Button start={<IconAdd />}>New document</Button>
         <IconButton variant="primary" icon={<IconExpandMore />} aria-label="More ways to start" />
       </ButtonGroup>
       <Column gap={3}>

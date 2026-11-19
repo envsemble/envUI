@@ -12,7 +12,7 @@ export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {
     <div className="site-page-actions">
       <div className="site-page-actions-bar">
         <span className="site-wide-only">
-          <Button variant="ghost" href={href} startIcon={<Icon />} onClick={keepSection}>
+          <Button variant="ghost" href={href} start={<Icon />} onClick={keepSection}>
             {label}
           </Button>
           <DisplayMenu />

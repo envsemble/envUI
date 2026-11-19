@@ -8,12 +8,12 @@ const items: CommandPaletteItem[] = [
   {
     id: 'new',
     label: 'New document',
-    icon: <IconNoteAdd />,
+    start: <IconNoteAdd />,
     end: <Kbd keys={['Ctrl', 'N']} />,
     group: 'Commands',
   },
-  { id: 'invite', label: 'Invite people', icon: <IconPersonAdd />, group: 'Commands' },
-  { id: 'settings', label: 'Open settings', icon: <IconSettings />, group: 'Commands' },
+  { id: 'invite', label: 'Invite people', start: <IconPersonAdd />, group: 'Commands' },
+  { id: 'settings', label: 'Open settings', start: <IconSettings />, group: 'Commands' },
 ];
 
 export default function CommandPaletteAnatomy() {

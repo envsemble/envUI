@@ -30,7 +30,7 @@ export default function ExportMembers() {
       <Row wrap align="center" gap={4}>
         <Button
           variant="secondary"
-          startIcon={<IconDownload />}
+          start={<IconDownload />}
           pending={running}
           onClick={() => setState({ phase: 'preparing', percent: 0 })}
         >

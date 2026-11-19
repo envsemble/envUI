@@ -25,7 +25,6 @@ export function ButtonBase({
   fullWidth = false,
   iconOnly = false,
   icon,
-  startIcon,
   start,
   endIcon,
   end,
@@ -44,11 +43,6 @@ export function ButtonBase({
       {start != null && (
         <Slot className="env-button-start" element="span" layout="row" shrink="never" aria-hidden>
           {start}
-        </Slot>
-      )}
-      {startIcon != null && (
-        <Slot className="env-button-start-icon" element="span" layout="row" shrink="never">
-          <DecorativeIcon>{startIcon}</DecorativeIcon>
         </Slot>
       )}
       {children != null && (

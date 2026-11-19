@@ -98,7 +98,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Button
 
-- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-end-icon` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start` (slot), `env-button-start-icon` (slot)
+- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-end-icon` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start` (slot)
 - States: `data-full-width`; `data-pending`; `data-row-target`; `data-size` (`lg`, `md`, `sm`); `data-tone` (`accent`, `danger`); `data-underline`; `data-variant` (`ghost`, `outline`, `primary`, `secondary`, `text`)
 - Color properties: `--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected`, `--env-button-selected-content`
 
@@ -534,7 +534,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### ListRow
 
-- Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-icon`, `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-start` (slot), `env-list-row-text`
+- Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-start` (slot), `env-list-row-text`
 - States: `data-disabled`; `data-highlighted`; `data-popup-open`; `data-selected`
 - Used by: Combobox, CommandPalette, RichTextEditor, Select
 

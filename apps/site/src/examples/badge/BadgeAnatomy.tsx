@@ -3,7 +3,7 @@ import { IconCheckCircle } from '@envsemble/envui/icons/CheckCircle';
 
 export default function BadgeAnatomy() {
   return (
-    <Badge tone="success" icon={<IconCheckCircle />}>
+    <Badge tone="success" start={<IconCheckCircle />}>
       Approved
     </Badge>
   );

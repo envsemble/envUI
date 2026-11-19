@@ -124,7 +124,7 @@ export default function DefaultColorsFixture() {
           />
         </List.Root>
         <Menu.Root aria-label="Actions" defaultOpen trigger={<Button>Actions</Button>}>
-          <Menu.Item icon={<IconSettings />}>Preferences</Menu.Item>
+          <Menu.Item start={<IconSettings />}>Preferences</Menu.Item>
           <Menu.Item>Rename</Menu.Item>
         </Menu.Root>
         <NavigationDrawer aria-label="Drawer destinations" destinations={destinations} />

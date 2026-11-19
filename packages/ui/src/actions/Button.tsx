@@ -73,12 +73,10 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    * @default false
    */
   fullWidth?: boolean;
-  /** A decorative icon before the label, such as IconAdd. */
-  startIcon?: ReactNode;
   /**
-   * Content before the label at its own size rather than the icon's, such as a small Avatar of the
-   * person a button assigns or a flag; it is hidden from assistive technology, since the label
-   * names the button.
+   * Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an
+   * envUI icon takes the button's icon size and other content keeps its own. It is hidden from
+   * assistive technology, since the label names the button.
    */
   start?: ReactNode;
   /** A decorative icon after the label, such as a ChevronRight for a next step. */
@@ -148,6 +146,12 @@ export type IconButtonProps = IconButtonElementProps &
     pending?: boolean;
     /** As Button's: the height, and the width, of the square button. */
     size?: ControlSize;
+    /**
+     * As Button's: another element to render the button as, such as a label for a file input
+     * shaped like an icon button. Its class, look, state attributes, icon and handlers merge into
+     * that element's props; disabled reports aria-disabled and blocks presses.
+     */
+    render?: ReactElement;
   };
 
 /**

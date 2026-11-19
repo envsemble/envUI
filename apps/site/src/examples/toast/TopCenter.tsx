@@ -25,7 +25,7 @@ function ReminderButton() {
     );
   };
   return (
-    <Button variant="secondary" startIcon={<IconSend />} onClick={remind}>
+    <Button variant="secondary" start={<IconSend />} onClick={remind}>
       Send reminder
     </Button>
   );

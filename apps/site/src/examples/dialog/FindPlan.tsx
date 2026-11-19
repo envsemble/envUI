@@ -26,7 +26,7 @@ export default function FindPlan() {
         }}
         placement="top"
         trigger={
-          <Button variant="secondary" startIcon={<IconSearch />}>
+          <Button variant="secondary" start={<IconSearch />}>
             Find a plan
           </Button>
         }
