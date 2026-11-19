@@ -57,8 +57,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Accordion
 
-- Parts: `env-accordion`, `env-accordion-content`, `env-accordion-header`, `env-accordion-indicator`, `env-accordion-item`, `env-accordion-label` (slot), `env-accordion-panel`, `env-accordion-trigger`
-- States: `data-disabled` on `env-accordion-trigger`; `data-ending-style` on `env-accordion-panel`; `data-env-skeleton`; `data-interactive` on `env-accordion-trigger`; `data-panel-open` on `env-accordion-trigger`; `data-starting-style` on `env-accordion-panel`
+- Parts: `env-accordion`, `env-accordion-content`, `env-accordion-end` (slot), `env-accordion-header`, `env-accordion-indicator`, `env-accordion-indicator-content` (slot), `env-accordion-item`, `env-accordion-label` (slot), `env-accordion-panel`, `env-accordion-trigger`
+- States: `data-disabled` on `env-accordion-trigger`; `data-ending-style` on `env-accordion-panel`; `data-env-skeleton`; `data-indicator` (`end`, `none`) on `env-accordion-item`; `data-interactive` on `env-accordion-trigger`; `data-panel-open` on `env-accordion-trigger`; `data-starting-style` on `env-accordion-panel`
 
 ### Alert
 
@@ -208,7 +208,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Disclosure
 
-- Parts: `env-disclosure`, `env-disclosure-indicator`, `env-disclosure-panel`, `env-disclosure-title` (slot)
+- Parts: `env-disclosure`, `env-disclosure-indicator`, `env-disclosure-panel` (slot), `env-disclosure-title` (slot)
+- States: `data-indicator` (`end`)
 
 ### DocumentTabs
 

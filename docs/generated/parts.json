@@ -15,12 +15,22 @@
           "description": "The panel's content, in muted text lined up with the title."
         },
         {
+          "class": "env-accordion-end",
+          "description": "The slot of the content beside an item's heading, outside its button, such as a switch.",
+          "slot": true
+        },
+        {
           "class": "env-accordion-header",
           "description": "An item's heading, which holds its button."
         },
         {
           "class": "env-accordion-indicator",
           "description": "The plus that becomes a minus while the item is open."
+        },
+        {
+          "class": "env-accordion-indicator-content",
+          "description": "The slot of an application's own indicator in place of the plus and minus.",
+          "slot": true
         },
         {
           "class": "env-accordion-item",
@@ -60,6 +70,16 @@
           "values": [],
           "parts": [
             "env-accordion"
+          ]
+        },
+        {
+          "attribute": "data-indicator",
+          "values": [
+            "end",
+            "none"
+          ],
+          "parts": [
+            "env-accordion-item"
           ]
         },
         {
@@ -2157,7 +2177,8 @@
         },
         {
           "class": "env-disclosure-panel",
-          "description": "The panel it shows."
+          "description": "The panel it shows.",
+          "slot": true
         },
         {
           "class": "env-disclosure-title",
@@ -2165,7 +2186,17 @@
           "slot": true
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-indicator",
+          "values": [
+            "end"
+          ],
+          "parts": [
+            "env-disclosure"
+          ]
+        }
+      ],
       "uses": [
         "Icon"
       ]

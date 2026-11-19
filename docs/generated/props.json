@@ -48,6 +48,25 @@
           "type": "(open: boolean) => void",
           "required": false,
           "description": "Receives whether this item is open, each time it opens or closes."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the item's heading row, beside its button and outside it, such as a Switch, a Badge with a Menu, or a Delete IconButton, placed as given."
+        },
+        {
+          "name": "indicator",
+          "type": "ReactNode",
+          "required": false,
+          "description": "What shows whether the item is open, in place of the plus that becomes a minus, such as a chevron the application turns while the button has data-panel-open; null for none. It is hidden from assistive technology, which hears the button's expanded state."
+        },
+        {
+          "name": "indicatorPosition",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where the indicator sits in the button: before the title, or after it at the button's end."
         }
       ],
       "native": [
@@ -2921,6 +2940,20 @@
           "type": "(open: boolean) => void",
           "required": false,
           "description": "Receives whether the details show, each time the disclosure opens or closes."
+        },
+        {
+          "name": "indicatorPosition",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where the chevron sits in the summary: before its words, or after them, as in a Show more link."
+        },
+        {
+          "name": "panelLayout",
+          "type": "'stack' | 'flow'",
+          "required": false,
+          "default": "'stack'",
+          "description": "stack lays the details out one under another, a small gap apart; flow places them as given, so they keep their own spacing and flow, such as inline text."
         }
       ],
       "native": [

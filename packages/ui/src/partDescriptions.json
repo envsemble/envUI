@@ -60,8 +60,10 @@
     "Accordion": {
       "env-accordion": "The accordion: sections separated by full-width hairlines.",
       "env-accordion-content": "The panel's content, in muted text lined up with the title.",
+      "env-accordion-end": "The slot of the content beside an item's heading, outside its button, such as a switch.",
       "env-accordion-header": "An item's heading, which holds its button.",
       "env-accordion-indicator": "The plus that becomes a minus while the item is open.",
+      "env-accordion-indicator-content": "The slot of an application's own indicator in place of the plus and minus.",
       "env-accordion-item": "One section, with the hairline under it.",
       "env-accordion-label": "The slot of an item's title.",
       "env-accordion-panel": "The panel that opens below the heading.",
