@@ -12,3 +12,30 @@ export const grouped = <Combobox label="Owner" items={teams} />;
 
 // @ts-expect-error
 export const optionHasNoItems: ComboboxItem = { value: 'all', label: 'All', items: [] };
+
+export const headingWithContent = (
+  <Combobox
+    label="Owner"
+    items={[
+      {
+        label: (
+          <>
+            Team <b>2</b>
+          </>
+        ),
+        items: people,
+      },
+    ]}
+  />
+);
+export const tagged: ComboboxItem = {
+  value: 'ada',
+  label: 'Ada',
+  itemProps: { 'data-testid': 'ada', className: 'is-new', title: 'Ada' },
+};
+export const roleStaysTheOptions: ComboboxItem = {
+  value: 'a',
+  label: 'A',
+  // @ts-expect-error
+  itemProps: { role: 'x' },
+};

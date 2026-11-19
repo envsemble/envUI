@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
 /** One option of a Combobox. */
 export interface ComboboxItem {
@@ -17,14 +17,25 @@ export interface ComboboxItem {
   end?: ReactNode;
   /** The option shows but can't be chosen. */
   disabled?: boolean;
+  /**
+   * More props for the option's element, such as a title or data attributes for tests. Its class
+   * joins the option's; the option's role, id and ARIA attributes stay its own.
+   */
+  itemProps?: ComboboxItemElementProps;
   /** Reserved: an entry with an `items` array is a group, so an option has none. */
   items?: never;
 }
 
+/** What a Combobox option's itemProps can set on its option element. */
+export type ComboboxItemElementProps = Omit<
+  ComponentPropsWithoutRef<'div'>,
+  'children' | 'id' | 'role' | 'tabIndex' | 'dangerouslySetInnerHTML' | `aria-${string}`
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
+
 /** Options under a heading, which also names the group for assistive technology. */
 export interface ComboboxGroup<Item extends ComboboxItem = ComboboxItem> {
-  /** The group's heading. */
-  label: string;
+  /** The group's heading: text, or content such as an icon or a count beside the group's name. */
+  label: ReactNode;
   /** The options under the heading, in display order. */
   items: readonly Item[];
 }

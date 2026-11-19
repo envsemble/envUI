@@ -33,6 +33,7 @@ import {
   type ComboboxFilter,
   type ComboboxGroup,
   type ComboboxItem,
+  type ComboboxItemElementProps,
 } from './internal/comboboxItems.js';
 import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
@@ -42,7 +43,7 @@ import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChang
 import '../styles/Base.css';
 import '../styles/Combobox.css';
 
-export type { ComboboxFilter, ComboboxGroup, ComboboxItem };
+export type { ComboboxFilter, ComboboxGroup, ComboboxItem, ComboboxItemElementProps };
 
 /** What a combobox's onOpenChange receives beside the requested state. */
 export interface ComboboxOpenChangeDetails {

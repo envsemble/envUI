@@ -7,6 +7,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type ComponentPropsWithoutRef,
   type ComponentPropsWithRef,
   type ReactNode,
 } from 'react';
@@ -50,11 +51,30 @@ export interface SegmentedControlItem {
    * part of the item's name.
    */
   end?: ReactNode;
-  /** A class of the segment's button, beside env-segmented-control-item. */
-  className?: string;
   /** Show the item but don't let people choose it; the arrow keys skip it. */
   disabled?: boolean;
+  /**
+   * More props for the segment's button, such as a title or data attributes for tests. Its class
+   * joins the segment's; the segment's role, id, ARIA attributes, value and disabled state stay its
+   * own.
+   */
+  itemProps?: SegmentedControlItemElementProps;
 }
+
+/** What a SegmentedControl item's itemProps can set on its button. */
+export type SegmentedControlItemElementProps = Omit<
+  ComponentPropsWithoutRef<'button'>,
+  | 'children'
+  | 'id'
+  | 'role'
+  | 'type'
+  | 'value'
+  | 'name'
+  | 'disabled'
+  | 'tabIndex'
+  | 'dangerouslySetInnerHTML'
+  | `aria-${string}`
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
 
 export interface SegmentedControlProps extends Omit<
   ComponentPropsWithRef<'div'>,
@@ -145,6 +165,7 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
   const formatters = useFormatters();
   const [labelCutShort, setLabelCutShort] = useState(false);
   const labelShown = item.visibleLabel !== false;
+  const { className: itemClassName, ...itemProps } = item.itemProps ?? {};
   useLayoutEffect(() => {
     const element = labelRef.current;
     if (!fullWidth || !element) {
@@ -163,8 +184,8 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       value={item.value}
       disabled={item.disabled}
       nativeButton
-      render={<button type="button" />}
-      className={classNames('env-segmented-control-item', item.className)}
+      render={<button {...itemProps} type="button" />}
+      className={classNames('env-segmented-control-item', itemClassName)}
     >
       {item.icon != null && (
         <Slot

@@ -3,36 +3,43 @@
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import type { MouseEvent, ReactNode, Ref } from 'react';
 import { Grid } from '../../layout/Layout.js';
-import { ListRow } from '../../internal/list/ListRow.js';
-import type { CommandPaletteItem } from '../CommandPalette.js';
+import { ListRow, shownLabelText } from '../../internal/list/ListRow.js';
+import type { CommandPaletteGroup, CommandPaletteItem } from '../CommandPalette.js';
 import '../../styles/Base.css';
 import '../../styles/CommandPalette.css';
 
 export interface CommandPaletteSection {
   id: string;
-  label: string | undefined;
   heading: ReactNode;
-  items: CommandPaletteItem[];
+  items: readonly CommandPaletteItem[];
 }
 
-export function sectionsOf(items: readonly CommandPaletteItem[]) {
-  const sections: CommandPaletteSection[] = [];
-  for (const item of items) {
-    const current = sections.at(-1);
-    if (current && current.label === item.group) current.items.push(item);
-    else
-      sections.push({
-        id: `section-${sections.length}`,
-        label: item.group,
-        heading: item.groupLabel ?? item.group,
-        items: [item],
-      });
-  }
-  return sections;
+export type SectionsBaseUiTakesAsItsGroups = readonly CommandPaletteItem[];
+
+function isGroup(entry: CommandPaletteItem | CommandPaletteGroup): entry is CommandPaletteGroup {
+  return Array.isArray(entry.items);
 }
 
-export function textOf(item: CommandPaletteItem) {
-  return item.textValue ?? (typeof item.label === 'string' ? item.label : item.id);
+export function sectionsOf(
+  entries: readonly CommandPaletteItem[] | readonly CommandPaletteGroup[],
+): CommandPaletteSection[] {
+  const groups = entries.filter(isGroup);
+  if (groups.length === 0)
+    return entries.length === 0
+      ? []
+      : [{ id: 'section-0', heading: undefined, items: entries as readonly CommandPaletteItem[] }];
+  return groups
+    .map((group, index) => ({ id: `section-${index}`, heading: group.label, items: group.items }))
+    .filter((section) => section.items.length > 0);
+}
+
+export function textOf(item: CommandPaletteItem, list: HTMLElement | null) {
+  if (item.textValue !== undefined) return item.textValue;
+  if (typeof item.label === 'string' || typeof item.label === 'number') return String(item.label);
+  const option = Array.from(list?.querySelectorAll('[data-item-id]') ?? []).find(
+    (element) => element.getAttribute('data-item-id') === item.id,
+  );
+  return (option && shownLabelText(option)) ?? '';
 }
 
 export function CommandPaletteOptions({
@@ -61,11 +68,15 @@ export function CommandPaletteOptions({
       end={item.end}
       render={
         <BaseAutocomplete.Item
+          {...item.itemProps}
           value={item}
           disabled={item.disabled}
           data-item-id={item.id}
           aria-label={item.textValue}
-          onClick={(event: MouseEvent) => onAct(item, event.ctrlKey || event.metaKey)}
+          onClick={(event: MouseEvent<HTMLDivElement>) => {
+            item.itemProps?.onClick?.(event);
+            onAct(item, event.ctrlKey || event.metaKey);
+          }}
         />
       }
     />
@@ -81,7 +92,7 @@ export function CommandPaletteOptions({
     >
       {grouped
         ? (section: CommandPaletteSection) =>
-            section.label === undefined ? (
+            section.heading == null ? (
               <BaseAutocomplete.Group key={section.id} items={section.items}>
                 <BaseAutocomplete.Collection>{renderItem}</BaseAutocomplete.Collection>
               </BaseAutocomplete.Group>

@@ -188,7 +188,12 @@ export function SelectContentFixture() {
           label: 'Open',
           items: [
             { value: 'active', label: 'Active', start: statusDot('green'), end: <Badge>3</Badge> },
-            { value: 'paused', label: 'Paused', start: statusDot('orange') },
+            {
+              value: 'paused',
+              label: 'Paused',
+              start: statusDot('orange'),
+              itemProps: { 'data-testid': 'paused', title: 'On hold', className: 'fixture-paused' },
+            },
           ],
         },
         { label: 'Closed', items: [{ value: 'done', label: 'Done' }] },

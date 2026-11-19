@@ -2,7 +2,13 @@
 
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
-import { useId, useRef, type ComponentPropsWithRef, type ReactNode } from 'react';
+import {
+  useId,
+  useRef,
+  type ComponentPropsWithoutRef,
+  type ComponentPropsWithRef,
+  type ReactNode,
+} from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Column, Row } from '../layout/Layout.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
@@ -23,7 +29,12 @@ import {
   usePortalContainer,
 } from '../internal/popup/PortalContainerContext.js';
 import { CommandPaletteFooter } from './internal/CommandPaletteFooter.js';
-import { CommandPaletteOptions, sectionsOf, textOf } from './internal/CommandPaletteOptions.js';
+import {
+  CommandPaletteOptions,
+  sectionsOf,
+  textOf,
+  type SectionsBaseUiTakesAsItsGroups,
+} from './internal/CommandPaletteOptions.js';
 import { CommandPaletteStatus } from './internal/CommandPaletteStatus.js';
 import { useCommandPaletteKeys } from './internal/useCommandPaletteKeys.js';
 import '../styles/Base.css';
@@ -34,7 +45,10 @@ export interface CommandPaletteItem {
   id: string;
   /** The option's text; also its accessible name unless textValue is set. */
   label: ReactNode;
-  /** Plain text of the label when it is not a string, for the option's accessible name. */
+  /**
+   * The label as plain text, where the label is content rather than text.
+   * @default the label when it is a string, else the label's rendered text
+   */
   textValue?: string;
   /** Muted text under the label, such as a folder path. */
   description?: ReactNode;
@@ -45,18 +59,31 @@ export interface CommandPaletteItem {
    * its own size rather than the icon's; it is hidden from assistive technology.
    */
   start?: ReactNode;
-  /** A heading shows where the group changes between consecutive items. */
-  group?: string;
-  /**
-   * The heading's content where it differs from group, such as an icon or a count beside the
-   * group's name; group stays the key that starts a new section.
-   * @default group
-   */
-  groupLabel?: ReactNode;
   /** End content, such as a Kbd shortcut or a Badge. */
   end?: ReactNode;
   /** The option shows but can't be chosen, such as a command that doesn't apply here. */
   disabled?: boolean;
+  /**
+   * More props for the option's element, such as a title or data attributes for tests. Its class
+   * joins the option's; the option's role, id and ARIA attributes stay its own.
+   */
+  itemProps?: CommandPaletteItemElementProps;
+  /** Reserved: an entry with an `items` array is a group, so an item has none. */
+  items?: never;
+}
+
+/** What a CommandPalette item's itemProps can set on its option element. */
+export type CommandPaletteItemElementProps = Omit<
+  ComponentPropsWithoutRef<'div'>,
+  'children' | 'id' | 'role' | 'tabIndex' | 'dangerouslySetInnerHTML' | `aria-${string}`
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
+
+/** Items of a CommandPalette under a heading, which also names the group for assistive technology. */
+export interface CommandPaletteGroup {
+  /** The group's heading: text, or content such as an icon or a count beside the group's name. */
+  label: ReactNode;
+  /** The items under the heading, in display order; a group with none shows no heading. */
+  items: readonly CommandPaletteItem[];
 }
 
 /** A key hint in the footer: the keys as Kbd, then what they do. */
@@ -95,13 +122,16 @@ export interface CommandPaletteProps extends Omit<
   inputValue: string;
   /** Receives the text as people type. */
   onInputValueChange: (inputValue: string) => void;
-  /** Filtered and ranked by the application, in display order. */
-  items: readonly CommandPaletteItem[];
+  /**
+   * Filtered and ranked by the application, in display order; or groups of items, each under a
+   * heading.
+   */
+  items: readonly CommandPaletteItem[] | readonly CommandPaletteGroup[];
   /**
    * Shown in place of items while the search field is empty, such as recent documents or
    * suggested pages under a group heading; options like any other.
    */
-  suggestedItems?: readonly CommandPaletteItem[];
+  suggestedItems?: readonly CommandPaletteItem[] | readonly CommandPaletteGroup[];
   /** Enter or a press on an option; Ctrl or Cmd sets modifier. */
   onAction: (item: CommandPaletteItem, details: CommandPaletteActionDetails) => void;
   /**
@@ -193,9 +223,9 @@ export function CommandPalette({
   const list = useRef<HTMLDivElement>(null);
   const query = inputValue.trim();
   const showSuggestions = query === '' && suggestedItems !== undefined;
-  const items = showSuggestions ? suggestedItems : results;
-  const sections = sectionsOf(items);
-  const grouped = sections.some((section) => section.label !== undefined);
+  const sections = sectionsOf(showSuggestions ? suggestedItems : results);
+  const items = sections.flatMap((section) => section.items);
+  const grouped = sections.some((section) => section.heading != null);
   const empty = items.length === 0;
 
   function act(item: CommandPaletteItem, modifier: boolean) {
@@ -229,12 +259,12 @@ export function CommandPalette({
                 <BaseAutocomplete.Root
                   open
                   inline
-                  items={grouped ? sections : items}
+                  items={grouped ? (sections as unknown as SectionsBaseUiTakesAsItsGroups) : items}
                   filter={null}
                   autoHighlight="always"
                   keepHighlight
                   locale={locale}
-                  itemToStringValue={(item: CommandPaletteItem) => textOf(item)}
+                  itemToStringValue={(item: CommandPaletteItem) => textOf(item, list.current)}
                   value={inputValue}
                   onValueChange={(next, details) => {
                     const optionChosen = details.reason === 'item-press';

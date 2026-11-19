@@ -343,6 +343,11 @@ test('options take start and end content and groups, and the trigger shows the c
   const row = active.element();
   expect(box(row.querySelector('[data-testid="dot-green"]')!).width).toBeCloseTo(8, 0);
   expect(row.querySelector('.env-list-row-start')!.getAttribute('aria-hidden')).toBe('true');
+  const paused = page.getByTestId('paused');
+  await expect.element(paused).toHaveRole('option');
+  await expect.element(paused).toHaveAttribute('title', 'On hold');
+  await expect.element(paused).toHaveClass('fixture-paused');
+  await expect.element(paused).toHaveClass('env-select-item');
   await keyboard.press('ArrowDown');
   await keyboard.press('Enter');
   await isClosed();

@@ -666,3 +666,18 @@ test('an option shows end content at the end of its row, and typing still matche
   await keyboard.press('Enter');
   await expect.poll(value(member)).toBe('Alex Morgan');
 });
+
+test("a group's heading takes content, and an option's itemProps reach its element", async () => {
+  mount({ default: fixture.ComboboxGroupsFixture });
+  await field('Reviewer').click();
+  await expect.element(page.getByRole('group', { name: 'Team 2' })).toBeVisible();
+  await expect.element(page.getByRole('group', { name: 'Guests' })).toBeVisible();
+  const alex = page.getByTestId('alex');
+  await expect.element(alex).toHaveRole('option');
+  await expect.element(alex).toHaveAttribute('title', 'Alex');
+  await expect.element(alex).toHaveClass('fixture-alex');
+  await expect.element(alex).toHaveClass('env-combobox-item');
+  await keyboard.type('kim');
+  await expect.element(page.getByRole('group', { name: 'Team 2' })).not.toBeInTheDocument();
+  await expect.element(option('Kim Park')).toBeVisible();
+});
