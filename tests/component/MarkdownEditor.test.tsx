@@ -123,3 +123,15 @@ test("the editor's own toolbar buttons insert at the selection as one undoable s
   await scope.getByRole('button', { name: 'Toggle comment preview' }).click();
   await isShown(source);
 });
+
+test("editorRef's insert puts text at the selection from a control outside the toolbar, and shows the source", async () => {
+  const scope = page.getByTestId('own-toolbar-markdown');
+  const source = scope.getByRole('textbox', { name: 'Comment source' });
+  await source.fill('Done ');
+  textarea(source).setSelectionRange(5, 5);
+  await scope.getByRole('button', { name: 'Toggle comment preview' }).click();
+  await expect.poll(() => shown(source)).toBe(false);
+  await scope.getByRole('button', { name: 'Insert party emoji' }).click();
+  await isShown(source);
+  await expect.element(source).toHaveValue('Done 🎉');
+});

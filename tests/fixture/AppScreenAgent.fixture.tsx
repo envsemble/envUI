@@ -127,8 +127,7 @@ function Conversation() {
       <MessageList
         ref={log}
         aria-label="Conversation with the agent"
-        busy={running}
-        busyAuthor="Agent"
+        aria-busy={running || undefined}
         tabIndex={0}
         style={{ flex: 1, minBlockSize: 0, overflowY: 'auto', paddingInline: 'var(--env-space-1)' }}
       >
@@ -187,6 +186,7 @@ function Conversation() {
             />
           </Column>
         </Message>
+        {running && <Message from="other" author="Agent" status="working" />}
       </MessageList>
       <Composer
         aria-label="Message the agent"

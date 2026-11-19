@@ -111,7 +111,7 @@ export default function ComposerFixture({ theme }: { theme: ColorScheme }) {
       <Composer
         aria-label={`Review ${theme}`}
         sendKey="mod-enter"
-        top={<span data-testid={`composer-attachment-${theme}`}>report.pdf</span>}
+        header={<span data-testid={`composer-attachment-${theme}`}>report.pdf</span>}
         end={<IconButton variant="text" icon={<IconAttachFile />} aria-label="Voice input" />}
         onSend={(value) => setReviews((list) => [...list, value])}
       />

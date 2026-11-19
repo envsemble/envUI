@@ -15,7 +15,7 @@ export default function PackageManagers() {
     <CodeBlock
       label="Install"
       copyable
-      actions={
+      headerEnd={
         <SegmentedControl
           aria-label="Package manager"
           size="sm"

@@ -30,7 +30,7 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'ul'>, 'title'>, S
    * Content at the end of the title's line, outside the heading, such as an Add Button, a Manage
    * link or a count, placed as given; it wraps below the title when it doesn't fit beside it.
    */
-  actions?: ReactNode;
+  headerEnd?: ReactNode;
   /**
    * How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text.
    * @default 'md'

@@ -18,7 +18,7 @@ const references: RichTextReferenceSource[] = [
       people
         .filter((person) => person.label.toLowerCase().includes(query.toLowerCase()))
         .map(({ id, label }) => ({ id, label, kind: 'person' })),
-    renderSuggestion: (reference) => ({
+    suggestion: (reference) => ({
       start: <Avatar name={reference.label} size="sm" />,
       description: people.find((person) => person.id === reference.id)?.email,
     }),

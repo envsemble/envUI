@@ -60,7 +60,7 @@ export interface RootProps
   density?: RowDensity;
   /**
    * The header row stays at the top of the region while the rows scroll beneath it. The region then
-   * scrolls vertically too, so give it a height through regionClassName or the surrounding layout.
+   * scrolls vertically too, so give it a height through regionProps or the surrounding layout.
    */
   stickyHeader?: boolean;
   /**
@@ -69,12 +69,10 @@ export interface RootProps
    * @default false
    */
   plain?: boolean;
-  /** Class of the scroll region around the table, for example to limit its height. */
-  regionClassName?: string;
   /**
-   * Props of the scroll region around the table, such as a ref for scrolling to a row or
-   * virtualising, a style with a measured max-height, data attributes or listeners. The region's
-   * role, name, tab stop and layout stay the table's.
+   * Props of the scroll region around the table, such as a class or a style that limits its
+   * height, a ref for scrolling to a row or virtualising, data attributes or listeners. Its class
+   * joins the region's; the region's role, name, tab stop and layout stay the table's.
    */
   regionProps?: Omit<ComponentPropsWithRef<'div'>, 'children' | 'role'>;
   /**
@@ -178,7 +176,6 @@ function Root({
   density = 'md',
   stickyHeader = false,
   plain = false,
-  regionClassName,
   regionProps,
   narrowLayout = 'scroll',
   stackBelow = defaultStackBelowRegionWidth,
@@ -228,7 +225,7 @@ function Root({
     <div
       {...ownRegionProps}
       ref={setRegion}
-      className={classNames('env-table-region', regionClassName, ownRegionClassName)}
+      className={classNames('env-table-region', ownRegionClassName)}
       {...skeletonAttributes(skeleton)}
       role="region"
       tabIndex={keyboardScrollTabStop}

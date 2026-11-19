@@ -93,8 +93,9 @@ interface CalendarHeatmapOptions {
    */
   weekdayLabels?: readonly string[];
   /**
-   * The legend of color steps under the grid; turn it off in a compact card, or where the
-   * application explains the colors itself.
+   * The legend of color steps under the grid; turn it off in a compact card, where the application
+   * explains the colors itself, or to place a CalendarHeatmapLegend elsewhere, such as beside a
+   * heading.
    * @default true
    */
   legend?: boolean;
@@ -127,6 +128,90 @@ export type CalendarHeatmapProps = CalendarHeatmapOptions &
     ComponentPropsWithRef<'div'>,
     keyof CalendarHeatmapOptions | 'children' | 'aria-label' | 'aria-labelledby'
   >;
+
+export interface CalendarHeatmapLegendProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
+  /**
+   * The heatmap's color steps including the empty step, 2 to 10: its levels, or one more than the
+   * number of its thresholds.
+   * @default 5
+   */
+  levels?: number;
+  /**
+   * The heatmap's tone, which the colors are mixed from.
+   * @default 'primary'
+   */
+  tone?: BadgeTone;
+  /**
+   * Content before the lightest color, such as 0. It overrides EnvUIProvider's
+   * `messages.calendarHeatmap.less`.
+   * @default 'Less'
+   */
+  lessLabel?: ReactNode;
+  /**
+   * Content after the strongest color, such as 20+ deploys. It overrides EnvUIProvider's
+   * `messages.calendarHeatmap.more`.
+   * @default 'More'
+   */
+  moreLabel?: ReactNode;
+}
+
+function LegendRow({
+  levelCount,
+  tone,
+  lessLabel,
+  moreLabel,
+  className,
+  ...props
+}: Omit<CalendarHeatmapLegendProps, 'levels' | 'tone'> & {
+  levelCount: number;
+  tone: BadgeTone;
+}) {
+  return (
+    <Row
+      aria-hidden="true"
+      {...props}
+      wrap
+      align="center"
+      className={classNames('env-calendar-heatmap-legend', className)}
+      data-tone={tone}
+    >
+      <span>{lessLabel}</span>
+      {Array.from({ length: levelCount }, (_, level) => (
+        <span
+          key={level}
+          className="env-calendar-heatmap-swatch"
+          data-level={level}
+          style={levelStyle(level, levelCount)}
+        />
+      ))}
+      <span>{moreLabel}</span>
+    </Row>
+  );
+}
+
+/**
+ * A CalendarHeatmap's legend of color steps on its own, for the application to place, such as
+ * beside the heading above a heatmap with legend false. Give it the heatmap's levels and tone. Like
+ * the built-in legend, it is hidden from assistive technology, since each day names its value.
+ */
+export function CalendarHeatmapLegend({
+  levels = 5,
+  tone = 'primary',
+  lessLabel,
+  moreLabel,
+  ...props
+}: CalendarHeatmapLegendProps) {
+  const messages = useMessages('calendarHeatmap', calendarHeatmapMessages);
+  return (
+    <LegendRow
+      {...props}
+      levelCount={Math.min(10, Math.max(2, Math.round(levels)))}
+      tone={tone}
+      lessLabel={lessLabel ?? messages.less}
+      moreLabel={moreLabel ?? messages.more}
+    />
+  );
+}
 
 /**
  * A calendar of daily values with weeks as columns and weekdays as rows, colored in steps of a tone.
@@ -232,7 +317,6 @@ export function CalendarHeatmap({
   }
 
   const shown = tip ? model.days.get(tip.day) : undefined;
-  const legendLevels = Array.from({ length: model.levelCount }, (_, level) => level);
   return (
     <Grid
       {...props}
@@ -261,18 +345,12 @@ export function CalendarHeatmap({
         </table>
       </div>
       {legend && (
-        <Row wrap align="center" className="env-calendar-heatmap-legend" aria-hidden="true">
-          <span>{lessLabel}</span>
-          {legendLevels.map((level) => (
-            <span
-              key={level}
-              className="env-calendar-heatmap-swatch"
-              data-level={level}
-              style={levelStyle(level, model.levelCount)}
-            />
-          ))}
-          <span>{moreLabel}</span>
-        </Row>
+        <LegendRow
+          levelCount={model.levelCount}
+          tone={tone}
+          lessLabel={lessLabel}
+          moreLabel={moreLabel}
+        />
       )}
       <BaseTooltip.Root open={tip?.open ?? false} onOpenChange={onOpenChange}>
         <TooltipPopup

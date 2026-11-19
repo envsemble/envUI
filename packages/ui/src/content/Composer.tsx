@@ -82,7 +82,7 @@ interface ComposerOptions {
    * Content inside the composer above the field, such as attachment chips, a quoted reply or
    * context pills, placed as given.
    */
-  top?: ReactNode;
+  header?: ReactNode;
   /**
    * The key that sends: enter, where Shift+Enter starts a new line, or mod-enter, Ctrl+Enter or
    * ⌘+Enter, where Enter starts a new line, for prompts that mostly take several lines.
@@ -169,7 +169,7 @@ export function Composer({
   maxRows = 8,
   start,
   end,
-  top,
+  header,
   sendKey = 'enter',
   description,
   disabled = false,
@@ -254,7 +254,7 @@ export function Composer({
       data-disabled={flag(disabled)}
       data-start={flag(start != null)}
       data-end={flag(end != null)}
-      data-top={flag(top != null)}
+      data-header={flag(header != null)}
     >
       <div
         className="env-composer-surface"
@@ -264,7 +264,7 @@ export function Composer({
           inputRef.current?.focus();
         }}
       >
-        {top != null && <Slot className="env-composer-top">{top}</Slot>}
+        {header != null && <Slot className="env-composer-header">{header}</Slot>}
         <TextareaControl
           bare
           {...props}

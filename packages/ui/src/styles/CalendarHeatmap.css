@@ -10,33 +10,36 @@
       --_calendar-heatmap-lift: 0;
     }
   }
-  .env-calendar-heatmap {
+  .env-calendar-heatmap,
+  .env-calendar-heatmap-legend {
     --_calendar-heatmap-tone: var(--env-color-fg-primary);
     --_calendar-heatmap-cell: 0.75rem;
     --_calendar-heatmap-gap: 0.1875rem;
-    inline-size: fit-content;
-    max-inline-size: 100%;
     color: var(--env-color-fg-muted);
     --_calendar-heatmap-font-size: 0.75rem;
     font: var(--env-font-weight-regular) var(--_calendar-heatmap-font-size) / 1
       var(--env-font-family);
   }
-  .env-calendar-heatmap[data-tone='accent'] {
+  .env-calendar-heatmap {
+    inline-size: fit-content;
+    max-inline-size: 100%;
+  }
+  :is(.env-calendar-heatmap, .env-calendar-heatmap-legend)[data-tone='accent'] {
     --_calendar-heatmap-tone: var(--env-color-fg-accent);
   }
-  .env-calendar-heatmap[data-tone='neutral'] {
+  :is(.env-calendar-heatmap, .env-calendar-heatmap-legend)[data-tone='neutral'] {
     --_calendar-heatmap-tone: var(--env-color-fg-muted);
   }
-  .env-calendar-heatmap[data-tone='success'] {
+  :is(.env-calendar-heatmap, .env-calendar-heatmap-legend)[data-tone='success'] {
     --_calendar-heatmap-tone: var(--env-color-fg-success);
   }
-  .env-calendar-heatmap[data-tone='warning'] {
+  :is(.env-calendar-heatmap, .env-calendar-heatmap-legend)[data-tone='warning'] {
     --_calendar-heatmap-tone: var(--env-color-fg-warning);
   }
-  .env-calendar-heatmap[data-tone='danger'] {
+  :is(.env-calendar-heatmap, .env-calendar-heatmap-legend)[data-tone='danger'] {
     --_calendar-heatmap-tone: var(--env-color-fg-danger);
   }
-  .env-calendar-heatmap[data-tone='done'] {
+  :is(.env-calendar-heatmap, .env-calendar-heatmap-legend)[data-tone='done'] {
     --_calendar-heatmap-tone: var(--env-color-fg-done);
   }
   .env-calendar-heatmap-scroll {
@@ -127,7 +130,8 @@
     block-size: var(--_calendar-heatmap-cell);
   }
   @media (pointer: coarse) {
-    .env-calendar-heatmap {
+    .env-calendar-heatmap,
+    .env-calendar-heatmap-legend {
       --_calendar-heatmap-cell: 1.25rem;
       --_calendar-heatmap-gap: 0.25rem;
     }

@@ -1,20 +1,17 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { Markdown, type MarkdownProps } from '../../Markdown.js';
 import { Text } from '../../../foundations/Text.js';
 
-const previewOptionNames = [
-  'headingOffset',
-  'renderLink',
-  'codeCopyable',
-  'components',
-  'remarkPlugins',
-  'rehypePlugins',
-  'allowHtml',
-] as const;
+type PreviewOptions = Omit<MarkdownProps, 'children' | keyof ComponentPropsWithRef<'div'>>;
 
-type PreviewOptions = Pick<MarkdownProps, (typeof previewOptionNames)[number]>;
+function sameOptions(before: PreviewOptions, after: PreviewOptions) {
+  const names = new Set([...Object.keys(before), ...Object.keys(after)]) as Set<
+    keyof PreviewOptions
+  >;
+  return [...names].every((name) => before[name] === after[name]);
+}
 
 interface RetainedPreview {
   source: string;
@@ -32,7 +29,7 @@ export function MarkdownPreview({
   const retainedPreviewOutdated =
     retainedPreview === null ||
     retainedPreview.source !== source ||
-    previewOptionNames.some((name) => retainedPreview.options[name] !== options[name]);
+    !sameOptions(retainedPreview.options, options);
   if (active && retainedPreviewOutdated) {
     setRetainedPreview({
       source,

@@ -31,7 +31,7 @@ export interface DisclosureProps extends Omit<ComponentPropsWithRef<'details'>, 
    * link.
    * @default 'start'
    */
-  indicatorPosition?: 'start' | 'end';
+  indicatorPlacement?: 'start' | 'end';
   /**
    * stack lays the details out one under another, a small gap apart; flow places them as given,
    * so they keep their own spacing and flow, such as inline text.
@@ -49,7 +49,7 @@ export function Disclosure({
   open,
   defaultOpen = false,
   onOpenChange,
-  indicatorPosition = 'start',
+  indicatorPlacement = 'start',
   panelLayout = 'stack',
   onToggle,
   className,
@@ -96,14 +96,14 @@ export function Disclosure({
         setShown(openedByBrowser);
       }}
       className={classNames('env-disclosure', className)}
-      data-indicator={indicatorPosition === 'end' ? 'end' : undefined}
+      data-indicator={indicatorPlacement === 'end' ? 'end' : undefined}
     >
       <summary onClick={askParentBeforeTogglingControlled}>
-        {indicatorPosition !== 'end' && indicator}
+        {indicatorPlacement !== 'end' && indicator}
         <Slot className="env-disclosure-title" element="span">
           {title}
         </Slot>
-        {indicatorPosition === 'end' && indicator}
+        {indicatorPlacement === 'end' && indicator}
       </summary>
       {panelLayout === 'flow' ? (
         <div className="env-disclosure-panel" data-layout="flow">

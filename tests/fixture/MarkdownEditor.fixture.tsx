@@ -1,8 +1,8 @@
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { Button, Column, Toolbar } from '@envsemble/envui';
 import { IconAlternateEmail } from '@envsemble/envui/icons/AlternateEmail';
 import { HighlightedCodeBlock } from '@envsemble/envui/code';
-import { MarkdownEditor } from '@envsemble/envui/markdown';
+import { MarkdownEditor, type MarkdownEditorHandle } from '@envsemble/envui/markdown';
 
 const ownPreviewComponents = {
   strong: ({ children }: { children?: ReactNode }) => <strong data-mention="">{children}</strong>,
@@ -22,6 +22,7 @@ export default function MarkdownEditorFixture() {
   const [requiredSubmissions, setRequiredSubmissions] = useState(0);
   const [block, setBlock] = useState<string | null>(null);
   const [commentMode, setCommentMode] = useState<'write' | 'preview'>('write');
+  const commentEditor = useRef<MarkdownEditorHandle>(null);
   return (
     <Column gap={4} render={<section />} className="fixture-section" data-testid="markdown-editing">
       <form
@@ -79,13 +80,14 @@ export default function MarkdownEditorFixture() {
         <MarkdownEditor
           label="Comment source"
           toolbar={['bold']}
-          toolbarEnd={({ insert }) => (
+          editorRef={commentEditor}
+          toolbarEnd={
             <Toolbar.Button
               icon={<IconAlternateEmail />}
               label="Mention"
-              onClick={() => insert('**@alex** ')}
+              onClick={() => commentEditor.current?.insert('**@alex** ')}
             />
-          )}
+          }
           viewSwitch={false}
           mode={commentMode}
           onModeChange={setCommentMode}
@@ -94,6 +96,7 @@ export default function MarkdownEditorFixture() {
         <Button onClick={() => setCommentMode((mode) => (mode === 'write' ? 'preview' : 'write'))}>
           Toggle comment preview
         </Button>
+        <Button onClick={() => commentEditor.current?.insert('🎉')}>Insert party emoji</Button>
       </div>
       <div data-testid="highlight-lifecycle">
         <Button onClick={() => setBlock('const first = 1;')}>Show code workload</Button>

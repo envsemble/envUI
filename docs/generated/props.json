@@ -59,14 +59,15 @@
           "name": "indicator",
           "type": "ReactNode",
           "required": false,
-          "description": "What shows whether the item is open, in place of the plus that becomes a minus, such as a chevron the application turns while the button has data-panel-open; null for none. It is hidden from assistive technology, which hears the button's expanded state."
+          "default": "the Root's indicator",
+          "description": "What shows in this item's button whether it is open, in place of the Root's indicator, such as a chevron the application turns while the button has data-panel-open; null for none."
         },
         {
-          "name": "indicatorPosition",
+          "name": "indicatorPlacement",
           "type": "'start' | 'end'",
           "required": false,
-          "default": "'start'",
-          "description": "Where the indicator sits in the button: before the title, or after it at the button's end."
+          "default": "the Root's indicatorPlacement",
+          "description": "Where this item's indicator sits in its button: before the title, or after it at the button's end."
         }
       ],
       "native": [
@@ -119,6 +120,19 @@
           "required": false,
           "default": "3",
           "description": "The level of each item's heading, for the page's outline; they look the same at every level."
+        },
+        {
+          "name": "indicator",
+          "type": "ReactNode",
+          "required": false,
+          "description": "What shows in every item's button whether the item is open, in place of the plus that becomes a minus, such as a chevron the application turns while the button has data-panel-open; null for none. It is hidden from assistive technology, which hears the button's expanded state. An item's own indicator replaces it."
+        },
+        {
+          "name": "indicatorPlacement",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where every item's indicator sits in its button: before the title, or after it at the button's end. An item's own indicatorPlacement replaces it."
         },
         {
           "name": "disabled",
@@ -881,7 +895,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "The legend of color steps under the grid; turn it off in a compact card, or where the application explains the colors itself."
+          "description": "The legend of color steps under the grid; turn it off in a compact card, where the application explains the colors itself, or to place a CalendarHeatmapLegend elsewhere, such as beside a heading."
         },
         {
           "name": "lessLabel",
@@ -910,6 +924,47 @@
           "required": false,
           "requiredWhen": "`aria-label` is not set",
           "description": "The id of visible text that names the grid of days, such as a heading; this or aria-label."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "CalendarHeatmapLegend": {
+      "kind": "component",
+      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
+      "description": "A CalendarHeatmap's legend of color steps on its own, for the application to place, such as beside the heading above a heatmap with legend false. Give it the heatmap's levels and tone. Like the built-in legend, it is hidden from assistive technology, since each day names its value.",
+      "props": [
+        {
+          "name": "levels",
+          "type": "number",
+          "required": false,
+          "default": "5",
+          "description": "The heatmap's color steps including the empty step, 2 to 10: its levels, or one more than the number of its thresholds."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
+          "required": false,
+          "default": "'primary'",
+          "description": "The heatmap's tone, which the colors are mixed from."
+        },
+        {
+          "name": "lessLabel",
+          "type": "ReactNode",
+          "required": false,
+          "default": "'Less'",
+          "description": "Content before the lightest color, such as 0. It overrides EnvUIProvider's `messages.calendarHeatmap.less`."
+        },
+        {
+          "name": "moreLabel",
+          "type": "ReactNode",
+          "required": false,
+          "default": "'More'",
+          "description": "Content after the strongest color, such as 20+ deploys. It overrides EnvUIProvider's `messages.calendarHeatmap.more`."
         }
       ],
       "native": [
@@ -1133,20 +1188,13 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "Names the block in its heading and for assistive technology, such as a file name, or content such as a file-type icon and a path link."
+          "description": "Names the block in its heading and for assistive technology, such as a file name, or content such as a file-type icon and a path link. Without one, the code takes the generic name of its language, such as Plain text code or TypeScript code, from messages.codeBlock.label."
         },
         {
-          "name": "textValue",
-          "type": "string",
-          "required": false,
-          "default": "the label, when it is a string",
-          "description": "The label as plain text, which names the code for assistive technology where label isn't a string; without it, such a label leaves the code the generic name of its language, such as Plain text code or TypeScript code, from messages.codeBlock.label."
-        },
-        {
-          "name": "actions",
+          "name": "headerEnd",
           "type": "ReactNode",
           "required": false,
-          "description": "Content in the heading before the copy button, such as Open in editor, Run, or a switch between npm, pnpm and yarn, placed as given."
+          "description": "Content at the end of the heading, before the copy button, such as Open in editor, Run, or a switch between npm, pnpm and yarn, placed as given."
         },
         {
           "name": "copyable",
@@ -2049,7 +2097,7 @@
           "description": "Content in the action row just before the send button, such as a voice button, a model picker or a token count; the field then takes a row of its own above the action row."
         },
         {
-          "name": "top",
+          "name": "header",
           "type": "ReactNode",
           "required": false,
           "description": "Content inside the composer above the field, such as attachment chips, a quoted reply or context pills, placed as given."
@@ -3091,7 +3139,7 @@
           "description": "Receives whether the details show, each time the disclosure opens or closes."
         },
         {
-          "name": "indicatorPosition",
+          "name": "indicatorPlacement",
           "type": "'start' | 'end'",
           "required": false,
           "default": "'start'",
@@ -3858,20 +3906,13 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "Names the block in its heading and for assistive technology, such as a file name, or content such as a file-type icon and a path link."
+          "description": "Names the block in its heading and for assistive technology, such as a file name, or content such as a file-type icon and a path link. Without one, the code takes the generic name of its language, such as Plain text code or TypeScript code, from messages.codeBlock.label."
         },
         {
-          "name": "textValue",
-          "type": "string",
-          "required": false,
-          "default": "the label, when it is a string",
-          "description": "The label as plain text, which names the code for assistive technology where label isn't a string; without it, such a label leaves the code the generic name of its language, such as Plain text code or TypeScript code, from messages.codeBlock.label."
-        },
-        {
-          "name": "actions",
+          "name": "headerEnd",
           "type": "ReactNode",
           "required": false,
-          "description": "Content in the heading before the copy button, such as Open in editor, Run, or a switch between npm, pnpm and yarn, placed as given."
+          "description": "Content at the end of the heading, before the copy button, such as Open in editor, Run, or a switch between npm, pnpm and yarn, placed as given."
         },
         {
           "name": "copyable",
@@ -4290,7 +4331,7 @@
           "description": "A sentence under the title, in muted text, such as what the group's settings change. It describes the list."
         },
         {
-          "name": "actions",
+          "name": "headerEnd",
           "type": "ReactNode",
           "required": false,
           "description": "Content at the end of the title's line, outside the heading, such as an Add Button, a Manage link or a count, placed as given; it wraps below the title when it doesn't fit beside it."
@@ -4406,6 +4447,12 @@
           "description": "The native text area of the source, so that a form library can register it and focus it."
         },
         {
+          "name": "editorRef",
+          "type": "Ref<MarkdownEditorHandle>",
+          "required": false,
+          "description": "Gives the editor's commands, such as editorRef.current.insert to put text at the selection, for the application's own controls: toolbar buttons, an emoji picker or a file drop."
+        },
+        {
           "name": "value",
           "type": "string",
           "required": false,
@@ -4433,9 +4480,9 @@
         },
         {
           "name": "toolbarEnd",
-          "type": "ReactNode | ((actions: MarkdownEditorActions) => ReactNode)",
+          "type": "ReactNode",
           "required": false,
-          "description": "The editor's own toolbar buttons after Undo and Redo, as Toolbar.Buttons, such as a mention, an emoji, an image or an AI rewrite; or a function that receives the editor's actions, such as insert to put text at the selection, and returns them. They show only with the toolbar: with toolbar false, they don't render."
+          "description": "The editor's own toolbar buttons after Undo and Redo, as Toolbar.Buttons, such as a mention, an emoji, an image or an AI rewrite, which edit the source through editorRef. They show only with the toolbar: with toolbar false, they don't render."
         },
         {
           "name": "preview",
@@ -4472,9 +4519,9 @@
         },
         {
           "name": "previewProps",
-          "type": "Pick<MarkdownProps, | 'headingOffset' | 'renderLink' | 'codeCopyable' | 'components' | 'remarkPlugins' | 'rehypePlugins' | 'allowHtml'>",
+          "type": "Omit<MarkdownProps, 'children' | keyof ComponentPropsWithRef<'div'>>",
           "required": false,
-          "description": "Options of the Markdown that renders the preview, so it matches what the application publishes: headingOffset, renderLink, codeCopyable, components, remarkPlugins, rehypePlugins and allowHtml. Give components and plugins that keep their identity across renders, such as module constants, since a new one renders the preview again."
+          "description": "Options of the Markdown that renders the preview, so it matches what the application publishes, such as headingOffset, renderLink, components or remarkPlugins: every option Markdown takes besides its source and its element's props. Give components and plugins that keep their identity across renders, such as module constants, since a new one renders the preview again."
         },
         {
           "name": "pickLink",
@@ -5315,22 +5362,22 @@
         },
         {
           "name": "status",
-          "type": "'sending' | 'failed'",
+          "type": "'sending' | 'failed' | 'working'",
           "required": false,
-          "description": "A message on its way, sending, with a spinner and Sending; or one that could not be sent, failed, with an error icon and Not sent in the danger tone and, on your own message, a red outline around the bubble. Without it the message is sent."
+          "description": "A message on its way, sending, with a spinner and Sending; one that could not be sent, failed, with an error icon and Not sent in the danger tone and, on your own message, a red outline around the bubble; or a reply still being written, working, with a spinner and Working, such as an agent's while it runs, last in a MessageList with aria-busy. Without it the message is sent."
         },
         {
           "name": "statusLabel",
           "type": "ReactNode",
           "required": false,
-          "default": "'Sending' or 'Not sent'",
-          "description": "The content beside the status icon, such as \"Could not deliver\" or a sentence with a Try again link. It overrides EnvUIProvider's `messages.message.sending` and `.failed`."
+          "default": "'Sending', 'Not sent' or 'Working'",
+          "description": "The content beside the status icon, such as \"Could not deliver\", a sentence with a Try again link or the step a reply is on, Running tests…. It overrides EnvUIProvider's `messages.message.sending`, `.failed` and `.working`."
         },
         {
           "name": "children",
           "type": "ReactNode",
-          "required": true,
-          "description": "The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the width of a message from someone else."
+          "required": false,
+          "description": "The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the width of a message from someone else. A working message shows the reply streamed so far, or only its status while it is empty."
         },
         {
           "name": "skeleton",
@@ -5350,28 +5397,8 @@
     "MessageList": {
       "kind": "component",
       "source": "packages/ui/src/content/Message.tsx",
-      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. Set busy while a reply is on its way or streams in, and follow where the list scrolls by itself. Name it with aria-label or aria-labelledby.",
+      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. While a reply is on its way or streams in, set aria-busy, so assistive technology waits for it to finish instead of announcing every step, and show it as a Message with status working, last. Set follow where the list scrolls by itself. Name it with aria-label or aria-labelledby.",
       "props": [
-        {
-          "name": "busy",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "A reply is on its way or streaming in: after the last message, where the reply will show, a row with the busy author, a quiet spinner and Working in the muted color; and the log reports aria-busy, so assistive technology can wait for the reply to finish instead of announcing every step."
-        },
-        {
-          "name": "busyAuthor",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Who the reply on its way comes from, such as Agent or the agent's name with its Avatar, named on the busy row as a message's author."
-        },
-        {
-          "name": "busyLabel",
-          "type": "ReactNode",
-          "required": false,
-          "default": "'Working'",
-          "description": "The content beside the busy spinner, such as \"Thinking\" or the current step, Running tests…. It overrides EnvUIProvider's `messages.message.working`. The busy row is hidden from assistive technology, which hears aria-busy on the log instead."
-        },
         {
           "name": "follow",
           "type": "boolean",
@@ -6790,7 +6817,7 @@
           "description": "Show the date and time in a tooltip on hover, such as \"Oct 14, 2026, 9:41 AM\", in the reader's time zone and the locale. Turn it off where the exact moment shows nearby. Inside an application's own Tooltip, that one describes the time instead."
         },
         {
-          "name": "formatTooltip",
+          "name": "renderTooltip",
           "type": "(date: Date) => ReactNode",
           "required": false,
           "description": "The tooltip's content from the moment, such as the time with its time zone, in UTC, or \"Edited by Alex Morgan at 9:41\"; the date and time in the locale by default."
@@ -8325,7 +8352,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The header row stays at the top of the region while the rows scroll beneath it. The region then scrolls vertically too, so give it a height through regionClassName or the surrounding layout."
+          "description": "The header row stays at the top of the region while the rows scroll beneath it. The region then scrolls vertically too, so give it a height through regionProps or the surrounding layout."
         },
         {
           "name": "plain",
@@ -8335,16 +8362,10 @@
           "description": "Drops the frame, the raised surface and the header's shaded band: a hairline under the header and between the rows, the table lying on the surface around it."
         },
         {
-          "name": "regionClassName",
-          "type": "string",
-          "required": false,
-          "description": "Class of the scroll region around the table, for example to limit its height."
-        },
-        {
           "name": "regionProps",
           "type": "Omit<ComponentPropsWithRef<'div'>, 'children' | 'role'>",
           "required": false,
-          "description": "Props of the scroll region around the table, such as a ref for scrolling to a row or virtualising, a style with a measured max-height, data attributes or listeners. The region's role, name, tab stop and layout stay the table's."
+          "description": "Props of the scroll region around the table, such as a class or a style that limits its height, a ref for scrolling to a row or virtualising, data attributes or listeners. Its class joins the region's; the region's role, name, tab stop and layout stay the table's."
         },
         {
           "name": "narrowLayout",

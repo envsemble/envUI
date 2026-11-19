@@ -332,7 +332,7 @@ test('on a coarse pointer, the action grows to the touch height, and the field t
   }
 });
 
-test('with sendKey mod-enter, Enter starts a line and Ctrl+Enter sends; top sits above the field and end before the send button', async () => {
+test('with sendKey mod-enter, Enter starts a line and Ctrl+Enter sends; header sits above the field and end before the send button', async () => {
   const review = field('Review');
   const reviews = text('composer-reviews');
   await expect.element(review).not.toHaveAttribute('enterkeyhint');

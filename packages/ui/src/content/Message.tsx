@@ -13,7 +13,7 @@ import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Message.css';
 
-export type MessageStatus = 'sending' | 'failed';
+export type MessageStatus = 'sending' | 'failed' | 'working';
 
 export interface MessageProps
   extends Omit<ComponentPropsWithRef<'article'>, 'children'>, SkeletonProps {
@@ -42,22 +42,26 @@ export interface MessageProps
    */
   actions?: ReactNode;
   /**
-   * A message on its way, sending, with a spinner and Sending; or one that could not be sent,
-   * failed, with an error icon and Not sent in the danger tone and, on your own message, a red
-   * outline around the bubble. Without it the message is sent.
+   * A message on its way, sending, with a spinner and Sending; one that could not be sent, failed,
+   * with an error icon and Not sent in the danger tone and, on your own message, a red outline
+   * around the bubble; or a reply still being written, working, with a spinner and Working, such
+   * as an agent's while it runs, last in a MessageList with aria-busy. Without it the message is
+   * sent.
    */
   status?: MessageStatus;
   /**
-   * The content beside the status icon, such as "Could not deliver" or a sentence with a Try again
-   * link. It overrides EnvUIProvider's `messages.message.sending` and `.failed`.
-   * @default 'Sending' or 'Not sent'
+   * The content beside the status icon, such as "Could not deliver", a sentence with a Try again
+   * link or the step a reply is on, Running tests…. It overrides EnvUIProvider's
+   * `messages.message.sending`, `.failed` and `.working`.
+   * @default 'Sending', 'Not sent' or 'Working'
    */
   statusLabel?: ReactNode;
   /**
    * The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the
-   * width of a message from someone else.
+   * width of a message from someone else. A working message shows the reply streamed so far, or
+   * only its status while it is empty.
    */
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 function present(node: ReactNode) {
@@ -87,8 +91,12 @@ export function Message(allProps: MessageProps) {
   const hasAuthor = present(author) || given(allProps, 'author');
   const hasMeta = present(meta) || given(allProps, 'meta');
   const hasStart = present(start);
+  const hasContent = status !== 'working' || (present(children) && children !== '');
   const rowsBesideStart =
-    Number(hasAuthor || hasMeta) + 1 + Number(status != null) + Number(present(actions));
+    Number(hasAuthor || hasMeta) +
+    Number(hasContent) +
+    Number(status != null) +
+    Number(present(actions));
   const styleWithRowsBesideStart: CSSProperties | undefined = hasStart
     ? { ...style, '--_message-rows': String(rowsBesideStart) }
     : style;
@@ -121,16 +129,18 @@ export function Message(allProps: MessageProps) {
               )}
             </Row>
           )}
-          <Slot className="env-message-content">
-            {typeof children === 'string' ? (
-              <span className="env-message-text">{children}</span>
-            ) : (
-              children
-            )}
-          </Slot>
+          {hasContent && (
+            <Slot className="env-message-content">
+              {typeof children === 'string' ? (
+                <span className="env-message-text">{children}</span>
+              ) : (
+                children
+              )}
+            </Slot>
+          )}
           {status != null && (
             <Row align="center" gap={1} className="env-message-status">
-              {status === 'sending' ? (
+              {status !== 'failed' ? (
                 <Spinner size="sm" />
               ) : (
                 <DecorativeIcon>
@@ -155,25 +165,6 @@ export function Message(allProps: MessageProps) {
 
 export interface MessageListProps extends ComponentPropsWithRef<'div'> {
   /**
-   * A reply is on its way or streaming in: after the last message, where the reply will show, a
-   * row with the busy author, a quiet spinner and Working in the muted color; and the log reports
-   * aria-busy, so assistive technology can wait for the reply to finish instead of announcing
-   * every step.
-   */
-  busy?: boolean;
-  /**
-   * Who the reply on its way comes from, such as Agent or the agent's name with its Avatar, named
-   * on the busy row as a message's author.
-   */
-  busyAuthor?: ReactNode;
-  /**
-   * The content beside the busy spinner, such as "Thinking" or the current step, Running tests….
-   * It overrides EnvUIProvider's `messages.message.working`. The busy row is hidden from
-   * assistive technology, which hears aria-busy on the log instead.
-   * @default 'Working'
-   */
-  busyLabel?: ReactNode;
-  /**
    * The list scrolls by itself and follows the conversation: it fills the height its container
    * gives it, opens at the latest message and keeps the latest in view while the reader is at the
    * end. Once they scroll away and more arrives, a Jump to latest button shows at its foot, which
@@ -191,14 +182,12 @@ export interface MessageListProps extends ComponentPropsWithRef<'div'> {
 
 /**
  * The messages of a conversation in order, as a log: assistive technology politely announces
- * messages added anywhere in it and text that changes. Set busy while a reply is on its way or
- * streams in, and follow where the list scrolls by itself. Name it with aria-label or
- * aria-labelledby.
+ * messages added anywhere in it and text that changes. While a reply is on its way or streams in,
+ * set aria-busy, so assistive technology waits for it to finish instead of announcing every step,
+ * and show it as a Message with status working, last. Set follow where the list scrolls by itself.
+ * Name it with aria-label or aria-labelledby.
  */
 export function MessageList({
-  busy = false,
-  busyAuthor,
-  busyLabel,
   follow = false,
   jumpToLatestLabel,
   className,
@@ -209,7 +198,6 @@ export function MessageList({
     <Grid
       gap={5}
       aria-live="polite"
-      aria-busy={busy || undefined}
       tabIndex={follow ? 0 : undefined}
       {...props}
       role="log"
@@ -217,15 +205,6 @@ export function MessageList({
       data-follow={flag(follow)}
     >
       {children}
-      {busy && (
-        <Row wrap align="center" className="env-message-list-busy" aria-hidden="true">
-          {present(busyAuthor) && <span className="env-message-author">{busyAuthor}</span>}
-          <Row align="center" gap={1} className="env-message-status">
-            <Spinner size="sm" />
-            <MessageStatusLabel status="working" label={busyLabel} />
-          </Row>
-        </Row>
-      )}
       {follow && <MessageListFollow label={jumpToLatestLabel} />}
     </Grid>
   );

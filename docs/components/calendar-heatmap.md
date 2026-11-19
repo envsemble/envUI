@@ -23,10 +23,12 @@ avoidWhen:
     use: Calendar
 components:
   - CalendarHeatmap
+  - CalendarHeatmapLegend
 examples:
   Deployments: overview
   ColorByRank: example
   CustomTooltip: example
+  LegendBesideHeading: example
   HeatmapAnatomy: anatomy
   ApplicationStrings: example
   ScrollingWeeks: example
@@ -49,6 +51,12 @@ examples:
 ### A tooltip of your own
 
 ```tsx figure=CustomTooltip motion
+
+```
+
+### A legend of your own
+
+```tsx figure=LegendBesideHeading
 
 ```
 

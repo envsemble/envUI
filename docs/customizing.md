@@ -114,8 +114,13 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### CalendarHeatmap
 
-- Parts: `env-calendar-heatmap`, `env-calendar-heatmap-corner`, `env-calendar-heatmap-day`, `env-calendar-heatmap-grid`, `env-calendar-heatmap-legend`, `env-calendar-heatmap-month`, `env-calendar-heatmap-pad`, `env-calendar-heatmap-scroll`, `env-calendar-heatmap-swatch`, `env-calendar-heatmap-tooltip`, `env-calendar-heatmap-tooltip-positioner`, `env-calendar-heatmap-weekday`
+- Parts: `env-calendar-heatmap`, `env-calendar-heatmap-corner`, `env-calendar-heatmap-day`, `env-calendar-heatmap-grid`, `env-calendar-heatmap-month`, `env-calendar-heatmap-pad`, `env-calendar-heatmap-scroll`, `env-calendar-heatmap-swatch`, `env-calendar-heatmap-tooltip`, `env-calendar-heatmap-tooltip-positioner`, `env-calendar-heatmap-weekday`
 - States: `data-closed` on `env-calendar-heatmap-tooltip-positioner`; `data-date` on `env-calendar-heatmap-day`; `data-day` on `env-calendar-heatmap-day`; `data-level` on `env-calendar-heatmap-day`, `env-calendar-heatmap-swatch`; `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`)
+
+### CalendarHeatmapLegend
+
+- Parts: `env-calendar-heatmap-legend`
+- States: `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`)
 
 ### Card
 
@@ -135,7 +140,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### CodeBlock
 
-- Parts: `env-code-block`, `env-code-block-actions` (slot), `env-code-block-copy-status`, `env-code-block-header`, `env-code-block-token`
+- Parts: `env-code-block`, `env-code-block-copy-status`, `env-code-block-header`, `env-code-block-header-end` (slot), `env-code-block-token`
 - States: `data-wrap`
 
 ### CodeDiff
@@ -171,8 +176,8 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Composer
 
-- Parts: `env-composer`, `env-composer-action`, `env-composer-description` (slot), `env-composer-end` (slot), `env-composer-footer`, `env-composer-input`, `env-composer-start` (slot), `env-composer-surface`, `env-composer-top` (slot)
-- States: `data-disabled`; `data-end`; `data-running`; `data-start`; `data-top`
+- Parts: `env-composer`, `env-composer-action`, `env-composer-description` (slot), `env-composer-end` (slot), `env-composer-footer`, `env-composer-header` (slot), `env-composer-input`, `env-composer-start` (slot), `env-composer-surface`
+- States: `data-disabled`; `data-end`; `data-header`; `data-running`; `data-start`
 
 ### ConfirmButton
 
@@ -261,7 +266,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### List
 
-- Parts: `env-list`, `env-list-actions` (slot), `env-list-announcer`, `env-list-description` (slot), `env-list-header`, `env-list-item`, `env-list-item-content`, `env-list-item-control` (slot), `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot), `env-list-section`, `env-list-title`
+- Parts: `env-list`, `env-list-announcer`, `env-list-description` (slot), `env-list-header`, `env-list-header-end` (slot), `env-list-item`, `env-list-item-content`, `env-list-item-control` (slot), `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot), `env-list-section`, `env-list-title`
 - States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-env-skeleton` on `env-list`, `env-list-item-description`; `data-interactive` on `env-list-item`; `data-label` on `env-list-item-handle`; `data-moving` (`keyboard`, `pointer`) on `env-list-item`; `data-placement` (`end`) on `env-list-item-handle`; `data-reorderable`; `data-reordering`; `data-selected` on `env-list-item`; `data-start` on `env-list-item`
 - Color properties: `--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected`, `--env-list-item-selected-content`
 
@@ -287,11 +292,11 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Message
 
 - Parts: `env-message`, `env-message-actions` (slot), `env-message-author`, `env-message-content` (slot), `env-message-header`, `env-message-meta` (slot), `env-message-start` (slot), `env-message-status`, `env-message-text`
-- States: `data-env-skeleton` on `env-message`, `env-message-author`, `env-message-header`, `env-message-meta`; `data-from` (`other`, `self`); `data-start`; `data-status` (`failed`, `sending`)
+- States: `data-env-skeleton` on `env-message`, `env-message-author`, `env-message-header`, `env-message-meta`; `data-from` (`other`, `self`); `data-start`; `data-status` (`failed`, `sending`, `working`)
 
 ### MessageList
 
-- Parts: `env-message-list`, `env-message-list-busy`, `env-message-list-jump`
+- Parts: `env-message-list`, `env-message-list-jump`
 - States: `data-follow`
 
 ### Meter
@@ -566,7 +571,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - `--env-popup-opacity`, to set: How much of a frosted popup's fill covers what is behind it.
 - `--env-popup-blur`, to set: How much a frosted popup blurs what shows through it.
 - `--env-popup-shadow`, to set: The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid.
-- Used by: Breadcrumbs, CalendarHeatmap, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
+- Used by: Breadcrumbs, CalendarHeatmap, CalendarHeatmapLegend, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
 
 ### Prose
 
@@ -576,7 +581,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Skeleton
 
 - Parts: `env-skeleton-content`, `env-skeleton-status`
-- Used by: Accordion, Alert, Breadcrumbs, CalendarHeatmap, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
+- Used by: Accordion, Alert, Breadcrumbs, CalendarHeatmap, CalendarHeatmapLegend, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
 
 ### TimeList
 

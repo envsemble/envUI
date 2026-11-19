@@ -813,10 +813,6 @@
           "description": "The grid of days."
         },
         {
-          "class": "env-calendar-heatmap-legend",
-          "description": "The legend of levels."
-        },
-        {
           "class": "env-calendar-heatmap-month",
           "description": "A month's label above the grid."
         },
@@ -888,6 +884,39 @@
           ],
           "parts": [
             "env-calendar-heatmap"
+          ]
+        }
+      ],
+      "uses": [
+        "Popup",
+        "Skeleton",
+        "Theme",
+        "Tooltip"
+      ]
+    },
+    "CalendarHeatmapLegend": {
+      "root": "env-calendar-heatmap-legend",
+      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
+      "parts": [
+        {
+          "class": "env-calendar-heatmap-legend",
+          "description": "The legend of levels."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-tone",
+          "values": [
+            "accent",
+            "danger",
+            "done",
+            "neutral",
+            "primary",
+            "success",
+            "warning"
+          ],
+          "parts": [
+            "env-calendar-heatmap-legend"
           ]
         }
       ],
@@ -1098,17 +1127,17 @@
           "description": "The block of code."
         },
         {
-          "class": "env-code-block-actions",
-          "description": "The slot of the content in the heading before the copy button.",
-          "slot": true
-        },
-        {
           "class": "env-code-block-copy-status",
           "description": "The announcement that the code was copied."
         },
         {
           "class": "env-code-block-header",
           "description": "The row above the code: its label, such as a file name, and the copy button."
+        },
+        {
+          "class": "env-code-block-header-end",
+          "description": "The slot of the content at the end of the heading, before the copy button.",
+          "slot": true
         },
         {
           "class": "env-code-block-token",
@@ -1763,6 +1792,11 @@
           "description": "The supporting text below the composer, which describes the field."
         },
         {
+          "class": "env-composer-header",
+          "description": "The slot of the content inside the composer above the input, such as attachments.",
+          "slot": true
+        },
+        {
           "class": "env-composer-input",
           "description": "The text input."
         },
@@ -1774,11 +1808,6 @@
         {
           "class": "env-composer-surface",
           "description": "The surface around the input and the footer."
-        },
-        {
-          "class": "env-composer-top",
-          "description": "The slot of the content inside the composer above the input, such as attachments.",
-          "slot": true
         }
       ],
       "states": [
@@ -1801,6 +1830,15 @@
           ]
         },
         {
+          "attribute": "data-header",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-composer"
+          ]
+        },
+        {
           "attribute": "data-running",
           "values": [
             ""
@@ -1811,15 +1849,6 @@
         },
         {
           "attribute": "data-start",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-composer"
-          ]
-        },
-        {
-          "attribute": "data-top",
           "values": [
             ""
           ],
@@ -2840,11 +2869,6 @@
           "description": "The list."
         },
         {
-          "class": "env-list-actions",
-          "description": "The slot of the content at the end of the title's line, such as an Add button.",
-          "slot": true
-        },
-        {
           "class": "env-list-announcer",
           "description": "The announcements of a reordered item."
         },
@@ -2856,6 +2880,11 @@
         {
           "class": "env-list-header",
           "description": "The list's title and description above its rows."
+        },
+        {
+          "class": "env-list-header-end",
+          "description": "The slot of the content at the end of the title's line, such as an Add button.",
+          "slot": true
         },
         {
           "class": "env-list-item",
@@ -3337,7 +3366,7 @@
         },
         {
           "class": "env-message-status",
-          "description": "The sending or failed status."
+          "description": "The sending, failed or working status."
         },
         {
           "class": "env-message-text",
@@ -3378,7 +3407,8 @@
           "attribute": "data-status",
           "values": [
             "failed",
-            "sending"
+            "sending",
+            "working"
           ],
           "parts": [
             "env-message"
@@ -3399,10 +3429,6 @@
         {
           "class": "env-message-list",
           "description": "The list of messages."
-        },
-        {
-          "class": "env-message-list-busy",
-          "description": "The row after the last message while busy: the busy author, a spinner and Working."
         },
         {
           "class": "env-message-list-jump",
@@ -6908,6 +6934,7 @@
       "usedBy": [
         "Breadcrumbs",
         "CalendarHeatmap",
+        "CalendarHeatmapLegend",
         "ColorPickerButton",
         "Combobox",
         "CopyButton",
@@ -6960,6 +6987,7 @@
         "Alert",
         "Breadcrumbs",
         "CalendarHeatmap",
+        "CalendarHeatmapLegend",
         "Card",
         "ColorPickerButton",
         "Combobox",

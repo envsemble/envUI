@@ -1,11 +1,14 @@
 'use client';
 
+import { mergeProps } from '@base-ui/react/merge-props';
 import {
   useEffect,
   useRef,
   useState,
+  type ComponentPropsWithoutRef,
   type ComponentPropsWithRef,
   type CSSProperties,
+  type HTMLAttributes,
   type MouseEvent,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
@@ -31,23 +34,16 @@ import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/AvatarGroup.css';
 
-export interface AvatarGroupPerson {
-  /** The person's name: the tooltip and accessible name of a pressable avatar, and the initials. */
-  name: string;
-  /** Picture URL; the fallback shows while it loads and when it is missing or fails. */
-  src?: string | null;
-  /** Initials, by default, or the default person picture, as for Avatar. */
-  fallback?: AvatarProps['fallback'];
-  /**
-   * The fill behind the initials or the person picture, as for Avatar. Without it, the name
-   * chooses one, never one that looks like its neighbour's.
-   */
-  hue?: AvatarHue;
-  /**
-   * A small mark at the avatar's bottom end, as for Avatar, such as a presence dot. Text, such as
-   * online, also follows the name in a pressable avatar's accessible name, as it shows there.
-   */
-  badge?: ReactNode;
+/**
+ * One person in an AvatarGroup: the Avatar props a pile shows, a tooltip, a key, a destination and
+ * itemProps. Without a hue, the name chooses one, never one that looks like its neighbour's. The
+ * name is a pressable avatar's tooltip and accessible name, and a badge given as text, such as
+ * online, follows the name there, as it shows.
+ */
+export interface AvatarGroupPerson extends Pick<
+  AvatarProps,
+  'name' | 'src' | 'fallback' | 'hue' | 'badge' | 'selected'
+> {
   /**
    * The tooltip of a pressable avatar, such as the name with a role or an e-mail address; the
    * name by default. The name stays its accessible name.
@@ -58,11 +54,25 @@ export interface AvatarGroupPerson {
   /** A destination for this person: the avatar becomes a link with a name tooltip. */
   href?: string;
   /**
-   * Shows the person's avatar as chosen: a ring and a check. A look only: say what is chosen in
-   * the control around the group, such as an option or the group's label.
+   * More props for the person's avatar, or for its link or button when it is pressable, such as
+   * data attributes for tests or a title. Its class joins the avatar's, its style and listeners
+   * join the group's, and the avatar's name and role stay.
    */
-  selected?: boolean;
+  itemProps?: AvatarGroupItemProps;
 }
+
+/** What a person's itemProps can set on their avatar, or on its link or button. */
+export type AvatarGroupItemProps = Omit<
+  ComponentPropsWithoutRef<'a'>,
+  | 'children'
+  | 'href'
+  | 'id'
+  | 'role'
+  | 'aria-label'
+  | 'aria-labelledby'
+  | 'aria-hidden'
+  | 'dangerouslySetInnerHTML'
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
 
 export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The people, in order. Pass a preview with total when there are many more. */
@@ -316,8 +326,10 @@ function AvatarGroupItem({
   onPersonClick: AvatarGroupProps['onPersonClick'];
 }) {
   const pressable = Boolean(person.href) || onPersonClick !== undefined;
+  const itemProps = (person.itemProps ?? {}) as HTMLAttributes<HTMLElement>;
   const avatar = (
     <Avatar
+      {...(pressable ? undefined : mergeProps(itemProps, { style }))}
       name={person.name}
       src={person.src}
       fallback={person.fallback}
@@ -325,33 +337,25 @@ function AvatarGroupItem({
       size={size}
       selected={person.selected}
       badge={person.badge}
-      style={pressable ? undefined : style}
     />
   );
   if (!pressable) return avatar;
   const onClick =
     onPersonClick && ((event: MouseEvent<HTMLElement>) => onPersonClick(person, event));
+  const ownItemProps = mergeProps(itemProps, {
+    'aria-label': nameWithBadge(person.name, person.badge),
+    className: 'env-avatar-group-item',
+    style,
+    onClick,
+  });
   return (
     <Tooltip content={person.tooltip ?? person.name}>
       {person.href ? (
-        <ActionElement
-          href={person.href}
-          aria-label={nameWithBadge(person.name, person.badge)}
-          className="env-avatar-group-item"
-          style={style}
-          onClick={onClick}
-        >
+        <ActionElement {...ownItemProps} href={person.href}>
           {avatar}
         </ActionElement>
       ) : (
-        <ActionElement
-          aria-label={nameWithBadge(person.name, person.badge)}
-          className="env-avatar-group-item"
-          style={style}
-          onClick={onClick}
-        >
-          {avatar}
-        </ActionElement>
+        <ActionElement {...ownItemProps}>{avatar}</ActionElement>
       )}
     </Tooltip>
   );

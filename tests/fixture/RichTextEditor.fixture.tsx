@@ -350,7 +350,7 @@ const people: RichTextReferenceSource[] = [
     trigger: '@',
     label: 'People',
     search: () => [{ id: 'priya', label: 'Priya Shah' }],
-    renderSuggestion: () => ({
+    suggestion: () => ({
       start: <Avatar name="Priya Shah" size="sm" />,
       description: 'priya@example.com',
       end: <Badge>Owner</Badge>,

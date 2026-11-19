@@ -1,6 +1,13 @@
 'use client';
 
-import { useCallback, useState, type ReactNode, type Ref } from 'react';
+import {
+  useCallback,
+  useImperativeHandle,
+  useState,
+  type ComponentPropsWithRef,
+  type ReactNode,
+  type Ref,
+} from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { flushSync } from 'react-dom';
 import { SegmentedControl } from '../forms/SegmentedControl.js';
@@ -11,6 +18,7 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import type { TextareaProps } from '../forms/Textarea.js';
+import type { MarkdownProps } from './Markdown.js';
 import { EditorStatus } from '../internal/editor/EditorStatus.js';
 import { EditorToolbar } from '../internal/editor/EditorToolbar.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
@@ -36,8 +44,8 @@ export interface MarkdownLinkRequest {
 }
 /** The view of a MarkdownEditor: the source to write in, or its preview. */
 export type MarkdownEditorMode = 'write' | 'preview';
-/** What a MarkdownEditor's own toolbar buttons receive, to edit the source. */
-export interface MarkdownEditorActions {
+/** What a MarkdownEditor's editorRef gives, to edit the source from the application's controls. */
+export interface MarkdownEditorHandle {
   /**
    * Replaces the selection with text, or inserts it at the caret, as one step Undo takes back, and
    * shows the source; false where the editor can't take it, such as when it is read-only or the
@@ -63,6 +71,11 @@ export interface MarkdownEditorProps extends Omit<
 > {
   /** The native text area of the source, so that a form library can register it and focus it. */
   ref?: Ref<HTMLTextAreaElement>;
+  /**
+   * Gives the editor's commands, such as editorRef.current.insert to put text at the selection,
+   * for the application's own controls: toolbar buttons, an emoji picker or a file drop.
+   */
+  editorRef?: Ref<MarkdownEditorHandle>;
   /** The Markdown source of a controlled editor; replacing it clears the undo history. */
   value?: string;
   /** The source an uncontrolled editor starts with, and that a form reset restores. */
@@ -73,11 +86,10 @@ export interface MarkdownEditorProps extends Omit<
   toolbar?: readonly MarkdownCommand[] | false;
   /**
    * The editor's own toolbar buttons after Undo and Redo, as Toolbar.Buttons, such as a mention,
-   * an emoji, an image or an AI rewrite; or a function that receives the editor's actions, such as
-   * insert to put text at the selection, and returns them. They show only with the toolbar: with
-   * toolbar false, they don't render.
+   * an emoji, an image or an AI rewrite, which edit the source through editorRef. They show only
+   * with the toolbar: with toolbar false, they don't render.
    */
-  toolbarEnd?: ReactNode | ((actions: MarkdownEditorActions) => ReactNode);
+  toolbarEnd?: ReactNode;
   /**
    * Show the Write and Preview switch above the source. Preview uses the same public Markdown
    * renderer.
@@ -100,20 +112,12 @@ export interface MarkdownEditorProps extends Omit<
   onModeChange?: (mode: MarkdownEditorMode) => void;
   /**
    * Options of the Markdown that renders the preview, so it matches what the application
-   * publishes: headingOffset, renderLink, codeCopyable, components, remarkPlugins, rehypePlugins
-   * and allowHtml. Give components and plugins that keep their identity across renders, such as
-   * module constants, since a new one renders the preview again.
+   * publishes, such as headingOffset, renderLink, components or remarkPlugins: every option
+   * Markdown takes besides its source and its element's props. Give components and plugins that
+   * keep their identity across renders, such as module constants, since a new one renders the
+   * preview again.
    */
-  previewProps?: Pick<
-    import('./Markdown.js').MarkdownProps,
-    | 'headingOffset'
-    | 'renderLink'
-    | 'codeCopyable'
-    | 'components'
-    | 'remarkPlugins'
-    | 'rehypePlugins'
-    | 'allowHtml'
-  >;
+  previewProps?: Omit<MarkdownProps, 'children' | keyof ComponentPropsWithRef<'div'>>;
   /** Optional application picker. Return null to cancel; otherwise return an ordinary link. */
   pickLink?: (request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>;
 }
@@ -139,6 +143,7 @@ function ctrlOrCommandShortcut(event: {
  */
 export function MarkdownEditor({
   ref: forwardedRef,
+  editorRef,
   value,
   defaultValue = '',
   onValueChange,
@@ -235,7 +240,7 @@ export function MarkdownEditor({
     if (!inserted) setStatus(messages.tooLongShort);
     return inserted;
   }
-  const ownButtons = typeof toolbarEnd === 'function' ? toolbarEnd({ insert }) : toolbarEnd;
+  useImperativeHandle(editorRef, () => ({ insert }));
   const source = (
     <Grid gap={3} className="env-markdown-editor-write">
       {toolbar !== false && (
@@ -249,7 +254,7 @@ export function MarkdownEditor({
           onUndo={() => editing.moveHistory(-1)}
           onRedo={() => editing.moveHistory(1)}
         >
-          {ownButtons}
+          {toolbarEnd}
         </EditorToolbar>
       )}
       <FieldFrame id={metadata.id} controlBox multiline variant={variant}>
