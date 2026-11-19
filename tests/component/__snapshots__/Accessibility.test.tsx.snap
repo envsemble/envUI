@@ -39,6 +39,8 @@ exports[`button-group has no new accessibility violations 1`] = `{}`;
 
 exports[`calendar-heatmap has no new accessibility violations 1`] = `{}`;
 
+exports[`card has no new accessibility violations 1`] = `{}`;
+
 exports[`choice-controls has no new accessibility violations 1`] = `{}`;
 
 exports[`code-block has no new accessibility violations 1`] = `{}`;
@@ -46,7 +48,7 @@ exports[`code-block has no new accessibility violations 1`] = `{}`;
 exports[`code-diff has no new accessibility violations 1`] = `
 {
   "aria-command-name": {
-    "div.env-code-diff diffs-container": 1,
+    "div.env-code-diff diffs-container": 2,
   },
 }
 `;
@@ -290,6 +292,8 @@ exports[`table-of-contents has no new accessibility violations 1`] = `
 
 exports[`text has no new accessibility violations 1`] = `{}`;
 
+exports[`theme-choices has no new accessibility violations 1`] = `{}`;
+
 exports[`theme-contrast has no new accessibility violations 1`] = `{}`;
 
 exports[`theme-contrast-nested has no new accessibility violations 1`] = `{}`;
@@ -303,6 +307,8 @@ exports[`theme-release has no new accessibility violations 1`] = `{}`;
 exports[`time-picker has no new accessibility violations 1`] = `{}`;
 
 exports[`toast has no new accessibility violations 1`] = `{}`;
+
+exports[`toolbar-items has no new accessibility violations 1`] = `{}`;
 
 exports[`tooltip has no new accessibility violations 1`] = `{}`;
 
