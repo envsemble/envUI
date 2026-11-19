@@ -51,7 +51,7 @@ Raw color #fff in an inline style: use an envUI color token instead, such as var
 
 ### no-raw-graphics
 
-A remote or computed `<img>`, an `<svg>` with a fixed size or fill outside an icon slot or Graphic, an import from another icon package, and a Graphic without `alt` or with a margin. An `<img>` of the application's own image passes: a relative or root-relative `src`, such as `/brand/logo.svg`, or an imported image file. Option: `allow` (icon packages).
+A remote or computed `<img>`, an `<svg>` with a fixed size or fill or another icon package's icon, such as lucide-react's, outside an icon slot or Graphic, and a Graphic without `alt` or with a negative margin, which makes up for a file's empty edges. Another package's icon in an icon slot or a Graphic, such as a brand mark Material Symbols lacks, passes, and so does a margin that spaces a Graphic. An `<img>` of the application's own image passes: a relative or root-relative `src`, such as `/brand/logo.svg`, or an imported image file. Option: `allow` (icon packages whose icons may render anywhere).
 
 ```text
 A raw <svg width="24" height="24"> takes its size from the file: pass it to an icon slot, such as Button's startIcon, or wrap it in envUI's <Graphic alt="">: import { Graphic } from '@envsemble/envui'.
@@ -59,7 +59,7 @@ A raw <svg width="24" height="24"> takes its size from the file: pass it to an i
 
 ### no-link-in-clickable-row
 
-A link-styled action, a raw `<a>`, a `Link` or a `Button` with `variant="text"`, inside a `List.Item`, `Table.Row` or `Card` that takes the click itself: one with `href` or `onClick`, or a List.Item with a `data-row-target` inside, which stretches over the row. That target itself passes. An `interactive` List.Item without a target only highlights, and the other links in an `interactive` Table.Row stay clickable above its `data-row-target`, so their links pass.
+A link-styled action, a raw `<a>`, a `Link` or a `Button` with `variant="text"`, inside a `List.Item`, `Table.Row` or `Card` that takes the click itself: one with `href` or `onClick`, or a List.Item with a `data-row-target` inside, which stretches over the row. That target itself passes, and so does a link in a List.Item's `start`, `end` or `control`, which sit above the row's target, such as an Avatar that opens the person's profile. An `interactive` List.Item without a target only highlights, and the other links in an `interactive` Table.Row stay clickable above its `data-row-target`, so their links pass.
 
 ```text
 A Button with variant="text" inside a clickable List.Item: the row takes the click. Move the action into its end slot as a Button, or into a Menu. When it goes where the row goes, mark it data-row-target instead.
@@ -67,15 +67,15 @@ A Button with variant="text" inside a clickable List.Item: the row takes the cli
 
 ### no-field-in-list-row
 
-A field, such as a `Select`, `Combobox`, `TextField`, `SearchField`, `Textarea`, `SegmentedControl`, `Slider`, a `RadioGroup` or `Radio`, or a picker, in a `List.Item`'s `control` or `end`. A list row holds a `Switch` or a `Checkbox` that its label names; a field goes in a form, with its label above it. A form in an overlay the row opens, such as a `Popover`, `Dialog`, `Sheet` or `Menu`, passes.
+A field with no `label`, `aria-label` or `aria-labelledby`, such as a `Select`, `Combobox`, `TextField`, `SearchField`, `Textarea`, `SegmentedControl`, `Slider`, a `RadioGroup` or a picker, in a `List.Item`'s `control` or `end`. The row's label names only a `Switch` or a `Checkbox` in its `control`, so a field there or in `end` needs its own name. A labelled field, such as a settings row that ends in `<Select label="Theme" />`, passes, as does a form in an overlay the row opens, such as a `Popover`, `Dialog`, `Sheet` or `Menu`.
 
 ```text
-A Select in a List.Item's control: the row doesn't label it and a list row holds only a Switch or a Checkbox. Put it in a form as a field with its label above it.
+A Select with no label in a List.Item's control: the row's label names only a Switch or a Checkbox, so nothing names this field. Give it a label, or an aria-label or aria-labelledby when its label shouldn't show.
 ```
 
 ### label-vocabulary
 
-The label of an action, `Button`, `IconButton`, `ConfirmButton`, `CopyButton`, `Link` or `Menu.Item`, in its text or its `children`, `label`, `aria-label` or `…Label` prop, that is a word the vocabulary table of envUI's writing guide replaces, from [`src/data/vocabulary.json`](src/data/vocabulary.json). A label with more words, such as "Clone repository", passes.
+The label of an action, `Button`, `IconButton`, `ConfirmButton`, `CopyButton`, `Link` or `Menu.Item`, in its text or its `children`, `label`, `aria-label` or `…Label` prop, that is a word the vocabulary table of envUI's writing guide replaces, from [`src/data/vocabulary.json`](src/data/vocabulary.json). A label with more words, such as "Clone repository", passes. Option: `allow` (words the application keeps, such as `['Clone', 'Retry']` in a developer tool, in any case).
 
 ```text
 Write "Edit" instead of "Modify".

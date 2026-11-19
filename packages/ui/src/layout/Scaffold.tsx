@@ -50,6 +50,16 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   /** The top bar region, above the body: usually a TopBar. */
   topBar?: ReactNode;
   /**
+   * A region at the end edge, beside the body and under the top bar, such as an inspector, at the
+   * width of its content and scrolling on its own. It stays in view as the rail does.
+   */
+  end?: ReactNode;
+  /**
+   * A bar along the bottom of the body and the end region, such as a status bar, above a
+   * NavigationBar. It stays in view as the top bar does, and focus scrolls clear of it.
+   */
+  bottomBar?: ReactNode;
+  /**
    * The navigation forms, such as `{ bar: <NavigationBar … />, rail: <NavigationRail … />, drawer: <NavigationDrawer … /> }`
    * with the same destinations. One shows at a time, chosen by the Scaffold's own width; give only
    * the forms the application uses.
@@ -118,7 +128,7 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 
 /**
  * The invisible structure of an application's screen: a top bar region, a navigation region and
- * the body. It never paints. It shows one navigation form at a time by its own width: a
+ * the body, with an optional end region and bottom bar. It never paints. It shows one navigation form at a time by its own width: a
  * NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one
  * and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top
  * bar, the bar and the rail or the drawer kept in view; `scroll="body"` scrolls the body alone.
@@ -126,6 +136,8 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
  */
 export function Scaffold({
   topBar,
+  end,
+  bottomBar,
   navigation,
   navigationForms,
   topBarSpan = 'body',
@@ -170,34 +182,48 @@ export function Scaffold({
   const hasNavigation = shown.has('bar') || shown.has('rail') || shown.has('drawer');
   const hasTopBar = topBar != null;
   const hasBar = shown.has('bar');
+  const hasBottomBar = bottomBar != null;
 
   useEffect(
     function publishBarSizesCssCannotKnow() {
-      if (!root || (!hasTopBar && !hasBar)) return;
+      if (!root || (!hasTopBar && !hasBar && !hasBottomBar)) return;
       const html = root.ownerDocument.documentElement;
       const topBarRegion = root.querySelector<HTMLElement>(':scope > .env-scaffold-top-bar');
       const barSlot = root.querySelector<HTMLElement>(
         ':scope > .env-scaffold-navigation > .env-scaffold-bar',
       );
+      const bottomBarRegion = root.querySelector<HTMLElement>(':scope > .env-scaffold-bottom-bar');
       const publish = () => {
         const top = topBarRegion?.offsetHeight ?? 0;
+        const bar = barSlot?.offsetHeight ?? 0;
         root.style.setProperty('--_scaffold-top-bar-size', `${top}px`);
+        root.style.setProperty('--_scaffold-bar-size', `${bar}px`);
+        root.style.setProperty(
+          '--_scaffold-bottom-size',
+          `${bar + (bottomBarRegion?.offsetHeight ?? 0)}px`,
+        );
         const documentScrollPaddingKeepsFocusClearOfBars = scroll === 'document';
         if (!documentScrollPaddingKeepsFocusClearOfBars) return;
         html.style.setProperty('--_scaffold-scroll-top', `${top}px`);
-        html.style.setProperty('--_scaffold-scroll-bottom', `${barSlot?.offsetHeight ?? 0}px`);
+        html.style.setProperty(
+          '--_scaffold-scroll-bottom',
+          `${bar + (bottomBarRegion?.offsetHeight ?? 0)}px`,
+        );
       };
       publish();
       const observer = new ResizeObserver(publish);
-      for (const region of [topBarRegion, barSlot]) if (region) observer.observe(region);
+      for (const region of [topBarRegion, barSlot, bottomBarRegion])
+        if (region) observer.observe(region);
       return () => {
         observer.disconnect();
         root.style.removeProperty('--_scaffold-top-bar-size');
+        root.style.removeProperty('--_scaffold-bar-size');
+        root.style.removeProperty('--_scaffold-bottom-size');
         html.style.removeProperty('--_scaffold-scroll-top');
         html.style.removeProperty('--_scaffold-scroll-bottom');
       };
     },
-    [root, scroll, hasTopBar, hasBar],
+    [root, scroll, hasTopBar, hasBar, hasBottomBar],
   );
   useNavigationFocusHandoff(root, hasNavigation, navigationId);
   const slotThatCssShowsAtItsWidth = (form: ScaffoldNavigationForm) =>
@@ -272,6 +298,8 @@ export function Scaffold({
       <Main ref={attachBody} id={mainId} tabIndex={-1} className="env-scaffold-body">
         <ScaffoldPagesContext value={pages}>{children}</ScaffoldPagesContext>
       </Main>
+      {end != null && <div className="env-scaffold-end">{end}</div>}
+      {bottomBar != null && <div className="env-scaffold-bottom-bar">{bottomBar}</div>}
     </div>
   );
 }

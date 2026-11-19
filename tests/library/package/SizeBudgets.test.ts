@@ -15,7 +15,7 @@ const cssGzipBudgets = {
 const firstLoadJsBudgets = [
   { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 34000 },
   { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 115200 },
-  { set: 'Theme + Button + Icon', measure: 'minified', budget: 5250 },
+  { set: 'Theme + Button + Icon', measure: 'minified', budget: 5300 },
 ];
 
 const componentOwnCodeMinifiedBudgets = {

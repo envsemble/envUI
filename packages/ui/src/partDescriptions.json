@@ -163,7 +163,8 @@
       "env-card-footer": "The strip of actions.",
       "env-card-header": "The row with the title and the meta.",
       "env-card-title": "The title.",
-      "env-card-meta": "The short fact at the end of the title row."
+      "env-card-meta": "The short fact at the end of the title row.",
+      "env-card-end": "The slot at the end of the title row, after the meta, such as a Menu."
     },
     "Checkbox": {
       "env-checkbox": "The checkbox with its label.",
@@ -676,7 +677,9 @@
       "env-scaffold-bar": "The slot of the navigation bar, at the bottom of a compact window.",
       "env-scaffold-rail": "The slot of the navigation rail, at the start of a medium window.",
       "env-scaffold-drawer": "The slot of the navigation drawer, at the start from expanded.",
-      "env-scaffold-body": "The body, the main region, which scrolls."
+      "env-scaffold-body": "The body, the main region, which scrolls.",
+      "env-scaffold-end": "The end region beside the body, such as an inspector, which scrolls on its own.",
+      "env-scaffold-bottom-bar": "The bottom bar region under the body and the end region, such as a status bar."
     },
     "SegmentedControl": {
       "env-segmented-control": "The segmented control: the track the segments sit in.",

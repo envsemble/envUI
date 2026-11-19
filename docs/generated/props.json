@@ -895,6 +895,12 @@
           "description": "A short fact at the end of the title row, such as when the card was updated."
         },
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the title row, after the meta, such as an overflow Menu or an Edit Button, placed as given and kept above the card's target."
+        },
+        {
           "name": "description",
           "type": "ReactNode",
           "required": false,
@@ -904,7 +910,14 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit. For controls beside the title, use end."
+        },
+        {
+          "name": "interactive",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The card opens something through a link or button inside, such as its title: it reacts to hover, keyboard focus on that target and presses. Mark the link or button `data-row-target` to stretch it over the card; the meta, end and actions stay above it and take their own clicks."
         },
         {
           "name": "render",
@@ -3868,7 +3881,7 @@
           "name": "control",
           "type": "ReactNode",
           "required": false,
-          "description": "The selection control the row is about, at the row's end: a Switch or a Checkbox, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select, a TextField or a RadioGroup, belongs in a form, with its label above it."
+          "description": "The selection control the row is about, at the row's end: a Switch or a Checkbox, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select or a SegmentedControl, takes a label, aria-label or aria-labelledby of its own."
         },
         {
           "name": "interactive",
@@ -5486,6 +5499,12 @@
           "required": false,
           "default": "true",
           "description": "In a Scaffold, moves focus to the title of a level 1 header when the page changes: as a new page's header mounts after the Scaffold first showed, not as a title changes. People using a screen reader then hear the new page, and the next Tab starts from it. Focus moved there shows no ring, and focus in a field or an open overlay stays where it is. False leaves focus to the application."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "More rows under the toolbar, placed as given, such as a progress strip or an inline Alert. They stay in the header, so they stick with it."
         }
       ],
       "native": [
@@ -5783,7 +5802,7 @@
     "Panes.Root": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "A region split into two panes side by side, such as a list and its detail: one pane has a width of its own, which a Panes.ResizeHandle between them resizes, and the other takes the rest. Each pane's content scrolls on its own under its header when Panes has a height. With `stackBelow` the panes stack in a narrow region. Panes fill their region with square corners; an application rounds them with its own class, and the panes follow, since the root clips them.",
+      "description": "A region split into two panes side by side, such as a list and its detail: one pane has a width of its own, which a Panes.ResizeHandle between them resizes, and the other takes the rest. Each pane's content scrolls on its own under its header when Panes has a height. With `stackBelow` the panes stack in a narrow region. A pane the application renders alone, such as the list while no item is open, fills the region and the handle hides. Panes fill their region with square corners; an application rounds them with its own class, and the panes follow, since the root clips them.",
       "props": [
         {
           "name": "sized",
@@ -6653,13 +6672,25 @@
     "Scaffold": {
       "kind": "component",
       "source": "packages/ui/src/layout/Scaffold.tsx",
-      "description": "The invisible structure of an application's screen: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
+      "description": "The invisible structure of an application's screen: a top bar region, a navigation region and the body, with an optional end region and bottom bar. It never paints. It shows one navigation form at a time by its own width: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
       "props": [
         {
           "name": "topBar",
           "type": "ReactNode",
           "required": false,
           "description": "The top bar region, above the body: usually a TopBar."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A region at the end edge, beside the body and under the top bar, such as an inspector, at the width of its content and scrolling on its own. It stays in view as the rail does."
+        },
+        {
+          "name": "bottomBar",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A bar along the bottom of the body and the end region, such as a status bar, above a NavigationBar. It stays in view as the top bar does, and focus scrolls clear of it."
         },
         {
           "name": "navigation",
@@ -8098,6 +8129,12 @@
           "type": "'sharp' | 'rounded' | 'round'",
           "required": false,
           "description": "The corner shape inside: sharp, rounded or round. Defaults to the corners of the enclosing Theme, and to rounded outside any."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The boundary's element, for its meaning or its place in the markup, such as render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class and attributes merge into it. A div by default."
         }
       ],
       "native": [
@@ -8143,7 +8180,19 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open."
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open. It applies to the three default choices; choices given as children set their own."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The choices, as Menu.RadioItems valued system, light or dark, in place of the three default ones: such as Light and Dark alone, or a choice with a hint beside it."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The group's class, beside env-menu-group."
         }
       ],
       "native": [],
@@ -8233,6 +8282,13 @@
           "type": "string",
           "required": false,
           "description": "The button's name; without it, Switch to dark theme or Switch to light theme, or EnvUIProvider's messages.themePreference."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "the dark mode icon in the light theme, the light mode icon in the dark theme",
+          "description": "The button's icon, such as one of the application's own; useThemePreference gives the theme to choose it by."
         }
       ],
       "native": [

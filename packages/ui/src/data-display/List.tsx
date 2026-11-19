@@ -75,8 +75,8 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
   /**
    * The selection control the row is about, at the row's end: a Switch or a Checkbox, given no label
    * of its own. The row's label names it and the row's description describes it, so it isn't
-   * labelled twice. A field, such as a Select, a TextField or a RadioGroup, belongs in a form, with
-   * its label above it.
+   * labelled twice. A field, such as a Select or a SegmentedControl, takes a label, aria-label or
+   * aria-labelledby of its own.
    */
   control?: ReactNode;
   /**

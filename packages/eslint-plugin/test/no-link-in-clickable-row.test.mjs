@@ -27,6 +27,10 @@ ruleTester.run('no-link-in-clickable-row', rule, {
     ...named('A text Button already in the end slot of a clickable row', [
       '<List.Item onClick={open} label="Report" end={<Button variant="text">Share</Button>} />',
     ]),
+    ...named('A link in the start or control slot, which sit above the row target', [
+      '<List.Item interactive start={<Link href="/people/ada"><Avatar name="Ada" /></Link>} label={<Link href="/r/1" data-row-target>Report</Link>} />',
+      '<List.Item onClick={open} label="Report" control={<a href="/help">Help</a>} />',
+    ]),
     '<Card href="/r/1">Report</Card>',
     '<Table.Row><Table.Cell><Link href="/r/1">Report</Link></Table.Cell></Table.Row>',
     ...named("Another library's component of the same name", [

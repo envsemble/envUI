@@ -269,8 +269,10 @@ function ResizeHandle({ label, className, onDoubleClick, ...props }: ResizeHandl
  * A region split into two panes side by side, such as a list and its detail: one pane has a width
  * of its own, which a Panes.ResizeHandle between them resizes, and the other takes the rest. Each
  * pane's content scrolls on its own under its header when Panes has a height. With `stackBelow`
- * the panes stack in a narrow region. Panes fill their region with square corners; an application
- * rounds them with its own class, and the panes follow, since the root clips them.
+ * the panes stack in a narrow region. A pane the application renders alone, such as the list
+ * while no item is open, fills the region and the handle hides. Panes fill their region with square
+ * corners; an application rounds them with its own class, and the panes follow, since the root
+ * clips them.
  */
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Panes.Root');
 /** One pane: the first or the last child of Panes.Root, with an optional header. */

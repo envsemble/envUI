@@ -9,8 +9,13 @@ const {
 
 const ruleName = 'envui/no-off-scale-values';
 
+export const offsetProperty = /^(?:inset(?:-[a-z-]+)?|top|right|bottom|left)$/i;
+
+export const isHairline = ({ value, unit }) =>
+  (unit === 'px' && Math.abs(value) <= 1) || (unit === 'rem' && Math.abs(value) <= 1 / 16);
+
 export const scaleProperty =
-  /^(?:gap|row-gap|column-gap|grid-(?:row-|column-)?gap|padding(?:-[a-z-]+)?|margin(?:-[a-z-]+)?|inset(?:-[a-z-]+)?|border(?:-[a-z]+)*-radius)$/i;
+  /^(?:gap|row-gap|column-gap|grid-(?:row-|column-)?gap|padding(?:-[a-z-]+)?|margin(?:-[a-z-]+)?|border(?:-[a-z]+)*-radius)$/i;
 
 const steps = JSON.parse(readFileSync(new URL('../data/scales.json', import.meta.url), 'utf8'));
 
@@ -63,7 +68,10 @@ function literalLengths(value) {
     if (passes(word)) return [];
     const lengths = numbers(word).filter(
       ({ value: size, unit, functions }) =>
-        size !== 0 && unit !== '' && !functions.some((name) => name === 'var' || name === 'env'),
+        size !== 0 &&
+        unit !== '' &&
+        !isHairline({ value: size, unit }) &&
+        !functions.some((name) => name === 'var' || name === 'env'),
     );
     if (!lengths.every(({ unit }) => onScaleUnit(unit))) return [];
     return lengths.map((length) => ({ ...length, index: index + length.index }));
