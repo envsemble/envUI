@@ -301,6 +301,28 @@ test('references preserve punctuation and stable identities through editor and s
   await expect.poll(text('rich-text-reference-click')).toBe(`editor:${referenceId}`);
 });
 
+test('a clickable reference without a destination sits inline in its sentence, at the text size', async () => {
+  open('form');
+  const editor = await editorIn(page.getByTestId('rich-text-form'), 'Rich source');
+  await replace(editor, '@second');
+  await page.getByRole('option', { name: 'Second person', exact: true }).click();
+  await keyboard.type('owns the press kit');
+  const preview = page.getByTestId('rich-text-preview');
+  const reference = preview.getByRole('button', { name: '@Second person', exact: true });
+  await expect.element(reference).toBeVisible();
+  const paragraph = reference.element().closest('p')!;
+  expect(css(reference, 'font-size')).toBe(css(paragraph, 'font-size'));
+  const after = document.createRange();
+  after.selectNodeContents(reference.element().nextSibling ?? paragraph);
+  const line = after.getClientRects()[0]!;
+  const own = box(reference);
+  expect(own.height).toBeLessThan(Number.parseFloat(css(paragraph, 'line-height')) + 1);
+  expect(Math.abs(own.y + own.height / 2 - (line.top + line.height / 2))).toBeLessThan(2);
+  focus(reference);
+  await keyboard.press('Enter');
+  await expect.poll(text('rich-text-reference-click')).toBe('person-2|Second person|undefined|@');
+});
+
 test(
   'generic at, hash and slash sources support arrow selection, Escape and IME Enter',
   { tags: ['engines'] },

@@ -2,7 +2,6 @@
 
 import { createContext, useContext } from 'react';
 import { NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from '@tiptap/react';
-import { Button } from '../../../actions/Button.js';
 import { ActionElement } from '../../../internal/control/ActionElement.js';
 import { referenceFromAttributes, safeRichTextUrl } from './referenceAttributes.js';
 import type { RichTextReference, RichTextRenderOptions } from '../types.js';
@@ -53,14 +52,13 @@ export function ReferenceContent({
     );
   if (options.onReferenceClick)
     return (
-      <Button
+      <ActionElement
         className={className}
-        variant="secondary"
         data-reference-id={reference.id}
         onClick={(event) => options.onReferenceClick?.(reference, event)}
       >
         {content}
-      </Button>
+      </ActionElement>
     );
   return (
     <span
