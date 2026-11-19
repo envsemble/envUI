@@ -2851,10 +2851,17 @@
         },
         {
           "name": "closeButton",
-          "type": "'actions' | 'heading' | 'none'",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether the dialog shows its built-in close button, as on a Sheet. Leave it out only where the dialog places its own DialogClose."
+        },
+        {
+          "name": "closeButtonPlacement",
+          "type": "'actions' | 'heading'",
           "required": false,
           "default": "'actions'",
-          "description": "Where the built-in close button is: actions, a secondary button that starts the actions; heading, an IconButton with a cross at the end of the heading, as on a Sheet; or none, for a dialog that places its own DialogClose."
+          "description": "Where the built-in close button is: actions, a secondary button that starts the actions; heading, an IconButton with a cross at the end of the heading, as on a Sheet."
         },
         {
           "name": "closeLabel",
@@ -3175,7 +3182,7 @@
           "type": "(label: string) => string",
           "required": false,
           "default": "'Close {label}', or EnvUIProvider's messages.documentTabs.close",
-          "description": "The name of the context menu's item that closes a tab, and the tooltip of its close button."
+          "description": "The name of the context menu's item that closes a tab, and the tooltip of its close button, from the tab's text value."
         },
         {
           "name": "onCloseAll",
@@ -3353,7 +3360,7 @@
           "name": "illustration",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative illustration above the title, such as an SVG drawing or an image, at its own size and no wider than the region. It is hidden from assistive technology."
+          "description": "A decorative illustration above the title, such as an SVG drawing or an image, at its own size and no wider than the region, in place of the icon where both are given. It is hidden from assistive technology."
         },
         {
           "name": "title",
@@ -3900,7 +3907,7 @@
           "description": "The element that opens the card on hover and keyboard focus; it receives the ref. Text, such as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; give it tabIndex={0}, so keyboard focus reaches it, which envUI reports while developing. A link or another control keeps its own look."
         },
         {
-          "name": "hoverDetail",
+          "name": "underline",
           "type": "boolean",
           "required": false,
           "default": "true",
@@ -5408,8 +5415,8 @@
         {
           "name": "label",
           "type": "ReactNode",
-          "required": true,
-          "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
+          "required": false,
+          "description": "What the bar shows, such as Seats assigned; it shows with the bar and names it. Leave it out for a bare bar named with aria-label or aria-labelledby, such as by the name beside it in a row; without a label or valueText the bar has no row above it."
         },
         {
           "name": "min",
@@ -5661,11 +5668,11 @@
           "description": "The bar's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
         },
         {
-          "name": "labels",
-          "type": "'shown' | 'tooltip'",
+          "name": "visibleLabel",
+          "type": "boolean",
           "required": false,
-          "default": "'shown'",
-          "description": "How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover and keyboard focus, for an icon-only bar such as a code editor's activity bar. The label still names each destination."
+          "default": "true",
+          "description": "Whether the destinations' labels show under their icons. False shows the icons only, for an icon-only bar such as a code editor's activity bar: each label still names its destination and shows in a tooltip on hover and keyboard focus."
         },
         {
           "name": "aria-label",
@@ -5851,11 +5858,11 @@
           "description": "The rail's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
         },
         {
-          "name": "labels",
-          "type": "'shown' | 'tooltip'",
+          "name": "visibleLabel",
+          "type": "boolean",
           "required": false,
-          "default": "'shown'",
-          "description": "How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover and keyboard focus, for an icon-only rail such as a code editor's activity bar. The label still names each destination."
+          "default": "true",
+          "description": "Whether the destinations' labels show under their icons. False shows the icons only, for an icon-only rail such as a code editor's activity bar: each label still names its destination and shows in a tooltip on hover and keyboard focus."
         },
         {
           "name": "aria-label",
@@ -6179,18 +6186,6 @@
           "description": "Whether a later page exists, for a list without total, such as from a cursor's has more."
         },
         {
-          "name": "onPageChange",
-          "type": "(page: number) => void",
-          "required": false,
-          "description": "Receives the page before or after the current one when its button is pressed. The application loads that page and passes it back as page. Give it, or pageHref, or both."
-        },
-        {
-          "name": "pageHref",
-          "type": "(page: number) => string",
-          "required": false,
-          "description": "The address of a page, such as `?page=3`, for a list whose pages have their own URLs: the previous and next controls are then links, through the LinkProvider's link component, which open in a new tab, are crawlable and work before hydration. A control with no page to go to reports aria-disabled and has no destination."
-        },
-        {
           "name": "pending",
           "type": "boolean",
           "required": false,
@@ -6244,6 +6239,20 @@
           "required": false,
           "default": "'Pagination', or EnvUIProvider's messages.pagination.label",
           "description": "The navigation landmark's name, such as Report pages, where a page has more than one."
+        },
+        {
+          "name": "onPageChange",
+          "type": "(page: number) => void",
+          "required": false,
+          "requiredWhen": "`pageHref` is not set",
+          "description": "Receives the page before or after the current one when its button is pressed. The application loads that page and passes it back as page. Give it, or pageHref, or both."
+        },
+        {
+          "name": "pageHref",
+          "type": "(page: number) => string",
+          "required": false,
+          "requiredWhen": "`onPageChange` is not set",
+          "description": "The address of a page, such as `?page=3`, for a list whose pages have their own URLs: the previous and next controls are then links, through the LinkProvider's link component, which open in a new tab, are crawlable and work before hydration. A control with no page to go to reports aria-disabled and has no destination."
         }
       ],
       "native": [
@@ -6534,12 +6543,6 @@
       "description": "How much of a task is done, such as an upload or an import: a label, an optional value and a bar, exposed as a progress bar. Pass value null while the amount of work is unknown, and the bar sweeps instead.",
       "props": [
         {
-          "name": "label",
-          "type": "ReactNode",
-          "required": false,
-          "description": "What the bar shows, such as Uploading report.pdf; it is visible above the bar and names it. Leave it out for a bare bar named with aria-label or aria-labelledby, such as by the file name beside it in a row; without a label or valueText the bar has no row above it."
-        },
-        {
           "name": "value",
           "type": "number | null",
           "required": true,
@@ -6552,17 +6555,10 @@
           "description": "Splits the track into this many equal steps, such as 4 for a task of four stages, each filling in turn. Without it, the track is one bar."
         },
         {
-          "name": "aria-valuetext",
-          "type": "string",
+          "name": "label",
+          "type": "ReactNode",
           "required": false,
-          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the value as a percentage of the range, in the locale of the nearest EnvUIProvider."
-        },
-        {
-          "name": "max",
-          "type": "number",
-          "required": false,
-          "default": "100",
-          "description": "The high end of the range."
+          "description": "What the bar shows, such as Seats assigned; it shows with the bar and names it. Leave it out for a bare bar named with aria-label or aria-labelledby, such as by the name beside it in a row; without a label or valueText the bar has no row above it."
         },
         {
           "name": "min",
@@ -6572,10 +6568,23 @@
           "description": "The low end of the range."
         },
         {
+          "name": "max",
+          "type": "number",
+          "required": false,
+          "default": "100",
+          "description": "The high end of the range."
+        },
+        {
           "name": "valueText",
           "type": "ReactNode",
           "required": false,
           "description": "The value as text at the end of the label's row, formatted by the application, such as 2 of 5 or 40%. Without it, no value shows."
+        },
+        {
+          "name": "aria-valuetext",
+          "type": "string",
+          "required": false,
+          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the value as a percentage of the range, in the locale of the nearest EnvUIProvider."
         }
       ],
       "native": [
@@ -9433,7 +9442,7 @@
           "description": "Class of the tooltip's popup, beside env-tooltip."
         },
         {
-          "name": "hoverDetail",
+          "name": "underline",
           "type": "boolean",
           "required": false,
           "default": "true",

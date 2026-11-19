@@ -70,7 +70,7 @@ test('a rail with labels as tooltips hides each label but names the destination 
       <Theme theme="light">
         <NavigationRail
           aria-label="Activity bar"
-          labels="tooltip"
+          visibleLabel={false}
           destinations={[
             { label: 'Explorer', icon, onClick: () => {}, current: true },
             { label: 'Search', icon, onClick: () => {} },

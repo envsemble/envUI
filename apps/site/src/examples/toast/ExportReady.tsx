@@ -12,10 +12,12 @@ function ExportButton() {
       const id = toast.show({
         tone: 'info',
         message: 'Export ready: members.csv',
-        action: {
-          label: 'Download',
-          onClick: () => toast.dismiss(id),
-        },
+        actions: [
+          {
+            label: 'Download',
+            onClick: () => toast.dismiss(id),
+          },
+        ],
       });
     }, 2000);
   };

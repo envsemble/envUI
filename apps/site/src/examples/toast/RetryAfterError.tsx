@@ -15,13 +15,15 @@ function PublishButton() {
         const id = toast.show({
           tone: 'danger',
           message: 'Northwind launch couldn’t be published. Check your connection and try again.',
-          action: {
-            label: 'Try again',
-            onClick: () => {
-              toast.dismiss(id);
-              publish();
+          actions: [
+            {
+              label: 'Try again',
+              onClick: () => {
+                toast.dismiss(id);
+                publish();
+              },
             },
-          },
+          ],
         });
       } else {
         toast.show({ tone: 'success', message: 'Northwind launch published.' });

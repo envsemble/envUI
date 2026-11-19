@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useCallback, useLayoutEffect, useState, type ReactNode } from 'react';
+import { Fragment, useCallback, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Badge } from '../../../data-display/Badge.js';
 import { Theme, useTheme } from '../../../foundations/Theme.js';
@@ -17,6 +17,7 @@ import { Button, IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';
 import { flag } from '../../../internal/flag.js';
 import { ToastBody } from './ToastBody.js';
+import { useRenderedText } from './useRenderedText.js';
 import { useToastGlide } from './useToastGlide.js';
 import type { PictureNotice } from './PictureNotice.js';
 import { optionModule, useOptionModule } from '../../../internal/react/useOptionModule.js';
@@ -344,6 +345,9 @@ function LiveToast({
 }) {
   const entry = entrySetByController(toast);
   const danger = entry.tone === 'danger';
+  const messageElement = useRef<HTMLDivElement>(null);
+  const text = toastText(entry);
+  const renderedText = useRenderedText(messageElement, text === undefined);
   return (
     <BaseToast.Root
       toast={toast}
@@ -371,8 +375,9 @@ function LiveToast({
         icon={entry.icon}
         message={
           <BaseToast.Title
+            ref={messageElement}
             className="env-toast-message"
-            title={toastText(entry)}
+            title={text ?? renderedText}
             render={<div />}
           />
         }

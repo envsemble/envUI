@@ -7,13 +7,13 @@ export type ToastEntry = ToastNotification & {
   placement: ToastPlacement;
 };
 
-/** A notification's text, for its native title and its announcement, where it has one. */
+/** A notification's text before it renders: its textValue, else its message when that is a string. */
 export const toastText = (entry: ToastNotification) =>
-  entry.text ?? (typeof entry.message === 'string' ? entry.message : undefined);
+  entry.textValue ?? (typeof entry.message === 'string' ? entry.message : undefined);
 
-/** A notification's actions, the main one last: actions, or its one action. */
+/** A notification's actions, the main one last. */
 export const toastActions = (entry: ToastNotification): readonly ToastAction[] =>
-  entry.actions ?? (entry.action ? [entry.action] : []);
+  entry.actions ?? [];
 export type ToastDelivery = Pick<
   ReturnType<typeof BaseToast.useToastManager<ToastEntry>>,
   'add' | 'close'

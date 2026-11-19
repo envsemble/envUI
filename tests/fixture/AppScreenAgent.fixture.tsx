@@ -388,7 +388,7 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
     const id = toast.show({
       message: 'Pushed 2 commits to agent/webhook-retries.',
       tone: 'success',
-      action: { label: 'View', onClick: () => undefined },
+      actions: [{ label: 'View', onClick: () => undefined }],
     });
     return () => toast.dismiss(id);
   }, [toast]);

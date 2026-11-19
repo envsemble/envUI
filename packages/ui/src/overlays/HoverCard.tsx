@@ -55,7 +55,7 @@ export interface HoverCardProps
    * @mentions in a feed.
    * @default true
    */
-  hoverDetail?: boolean;
+  underline?: boolean;
   /** The details. Supplementary: never the only place essential information appears. */
   children: ReactNode;
   /**
@@ -121,7 +121,7 @@ export function HoverCard({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
-  hoverDetail = true,
+  underline = true,
   skeleton = false,
   className,
   ...popupProps
@@ -139,7 +139,7 @@ export function HoverCard({
     ? (trigger.props as { children?: unknown }).children
     : trigger;
   const textTrigger = isValidElement(control) && isTextTrigger(control);
-  const underlined = hoverDetail && textTrigger;
+  const underlined = underline && textTrigger;
   reportInDevelopment(
     () =>
       process.env.NODE_ENV !== 'production' &&

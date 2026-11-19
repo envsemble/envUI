@@ -194,10 +194,10 @@
     opacity: var(--env-state-disabled-opacity);
     pointer-events: none;
   }
-  .env-navigation-rail[data-labels='tooltip'] .env-navigation-rail-item {
+  .env-navigation-rail[data-label-hidden] .env-navigation-rail-item {
     padding-block-end: var(--env-space-1);
   }
-  .env-navigation-rail[data-labels='tooltip'] .env-navigation-rail-label {
+  .env-navigation-rail[data-label-hidden] .env-navigation-rail-label {
     --_navigation-rail-label-hidden-size: 0.0625rem;
     position: absolute;
     inline-size: var(--_navigation-rail-label-hidden-size);

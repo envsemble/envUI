@@ -33,20 +33,31 @@ test('meters and progress bars read their values, Base UI’s formatted value by
   assert.match(uploading.attributes['aria-valuetext'], /30/);
 });
 
-test('a progress bar without a label or value text is a bare bar, named by aria-label, with no row above it', () => {
-  const bare = render(h(Progress, { value: 30, 'aria-label': 'Uploading report.pdf' }));
-  const bar = elementsOf(bare).find((each) => each.attributes.role === 'progressbar');
-  assert.equal(bar.attributes['aria-label'], 'Uploading report.pdf');
+test('a meter or progress bar without a label or value text is a bare bar, named by aria-label, with no row above it', () => {
+  for (const [Bar, name, role] of [
+    [Progress, 'progress', 'progressbar'],
+    [Meter, 'meter', 'meter'],
+  ]) {
+    const bare = render(h(Bar, { value: 30, 'aria-label': 'Uploading report.pdf' }));
+    const bar = elementsOf(bare).find((each) => each.attributes.role === role);
+    assert.equal(bar.attributes['aria-label'], 'Uploading report.pdf');
+    assert.equal(bar.attributes['aria-labelledby'], undefined);
+    assert.equal(
+      elementsOf(bare).some((each) => hasClass(each, `env-${name}-header`)),
+      false,
+    );
+    assert.equal(
+      elementsOf(bare).some((each) => hasClass(each, `env-${name}-label`)),
+      false,
+    );
+    const labelled = render(h(Bar, { value: 30, label: 'Uploading' }));
+    assert.ok(elementsOf(labelled).some((each) => hasClass(each, `env-${name}-header`)));
+  }
+  const inline = render(h(Meter, { value: 30, layout: 'inline', 'aria-label': 'Storage' }));
   assert.equal(
-    elementsOf(bare).some((each) => hasClass(each, 'env-progress-header')),
+    elementsOf(inline).some((each) => hasClass(each, 'env-meter-label')),
     false,
   );
-  assert.equal(
-    elementsOf(bare).some((each) => hasClass(each, 'env-progress-label')),
-    false,
-  );
-  const labelled = render(h(Progress, { value: 30, label: 'Uploading' }));
-  assert.ok(elementsOf(labelled).some((each) => hasClass(each, 'env-progress-header')));
 });
 
 test('an inline meter lays out its label, bar and value on one line, in that order', () => {

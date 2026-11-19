@@ -21,7 +21,7 @@ import {
   useNavigationMessages,
   type DestinationClasses,
 } from './internal/DestinationItem.js';
-import type { Destination, NavigationLabels } from './destinations.js';
+import type { Destination } from './destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
@@ -54,12 +54,12 @@ export interface NavigationBarProps
    */
   background?: NavigationBackground;
   /**
-   * How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover
-   * and keyboard focus, for an icon-only bar such as a code editor's activity bar. The label still
-   * names each destination.
-   * @default 'shown'
+   * Whether the destinations' labels show under their icons. False shows the icons only, for an
+   * icon-only bar such as a code editor's activity bar: each label still names its destination
+   * and shows in a tooltip on hover and keyboard focus.
+   * @default true
    */
-  labels?: NavigationLabels;
+  visibleLabel?: boolean;
   /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
@@ -75,7 +75,7 @@ export interface NavigationBarProps
 export function NavigationBar({
   destinations,
   background = 'default',
-  labels = 'shown',
+  visibleLabel = true,
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
@@ -133,7 +133,7 @@ export function NavigationBar({
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-bar', className)}
       data-background={backgroundAttribute(background)}
-      data-labels={labels === 'tooltip' ? labels : undefined}
+      data-label-hidden={flag(!visibleLabel)}
     >
       {inSkeleton(
         skeleton,
@@ -144,7 +144,7 @@ export function NavigationBar({
             );
             return (
               <li key={destinationKey(destination)}>
-                {labels === 'tooltip' ? (
+                {!visibleLabel ? (
                   <CutLabelTooltip cut label={destination.label} side="top">
                     {item}
                   </CutLabelTooltip>
@@ -160,7 +160,7 @@ export function NavigationBar({
                 aria-label={messages.more}
                 side="top"
                 trigger={
-                  labels === 'tooltip' ? (
+                  !visibleLabel ? (
                     <Tooltip content={messages.more}>{moreTrigger}</Tooltip>
                   ) : (
                     moreTrigger
@@ -171,7 +171,16 @@ export function NavigationBar({
                   const count = shownCount(destination.count);
                   const dot = destination.count === true;
                   const inside = !destination.current && holdsCurrent(destination.children);
+                  const {
+                    className: itemClassName,
+                    target,
+                    rel,
+                    ...itemProps
+                  } = destination.itemProps ?? {};
                   const shared = {
+                    ...(itemProps as Omit<Menu.ItemElementProps, 'rel'>),
+                    className: itemClassName,
+                    textValue: destinationText(destination),
                     icon: destination.icon,
                     'aria-current': destination.current
                       ? ('page' as const)
@@ -202,6 +211,8 @@ export function NavigationBar({
                       key={destinationKey(destination)}
                       {...shared}
                       href={destination.href}
+                      target={target}
+                      rel={rel}
                       onClick={destination.onClick}
                     />
                   );

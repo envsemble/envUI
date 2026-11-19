@@ -12,8 +12,9 @@ import {
   useNavigationMessages,
   type DestinationClasses,
 } from './internal/DestinationItem.js';
-import type { Destination, NavigationLabels } from './destinations.js';
+import type { Destination } from './destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationRail.css';
 
@@ -49,12 +50,12 @@ export interface NavigationRailProps
    */
   background?: NavigationBackground;
   /**
-   * How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover
-   * and keyboard focus, for an icon-only rail such as a code editor's activity bar. The label still
-   * names each destination.
-   * @default 'shown'
+   * Whether the destinations' labels show under their icons. False shows the icons only, for an
+   * icon-only rail such as a code editor's activity bar: each label still names its destination
+   * and shows in a tooltip on hover and keyboard focus.
+   * @default true
    */
-  labels?: NavigationLabels;
+  visibleLabel?: boolean;
   /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
@@ -72,7 +73,7 @@ export function NavigationRail({
   header,
   footer,
   background = 'default',
-  labels = 'shown',
+  visibleLabel = true,
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
@@ -89,7 +90,7 @@ export function NavigationRail({
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-rail', className)}
       data-background={backgroundAttribute(background)}
-      data-labels={labels === 'tooltip' ? labels : undefined}
+      data-label-hidden={flag(!visibleLabel)}
       align="center"
       gap={4}
     >
@@ -104,7 +105,7 @@ export function NavigationRail({
               );
               return (
                 <li key={destinationKey(destination)}>
-                  {labels === 'tooltip' ? (
+                  {!visibleLabel ? (
                     <CutLabelTooltip cut label={destination.label} side="inline-end">
                       {item}
                     </CutLabelTooltip>

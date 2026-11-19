@@ -102,3 +102,37 @@ test('a crumb label of any content sits in the label element of each kind of cru
     assert.equal(nameOf(crumb), names[index]);
   });
 });
+
+test('a crumb’s itemProps reach its link, button or text, with its class joined', () => {
+  const tagged = (id: string) => ({ className: 'own', 'data-testid': id });
+  const all = elementsOf(
+    firstElement(
+      renderToStaticMarkup(
+        h(Breadcrumbs, {
+          items: [
+            {
+              label: 'Workspace',
+              href: '/workspace',
+              itemProps: { ...tagged('link'), target: '_blank', rel: 'noopener' },
+            },
+            { label: 'Plans', onClick: () => {}, itemProps: tagged('button') },
+            { label: 'Search', itemProps: tagged('text') },
+            { label: 'Roadmap.md', itemProps: tagged('current') },
+          ],
+        }),
+      ),
+    ),
+  );
+  const byId = (id: string) => all.find((element) => element.attributes['data-testid'] === id)!;
+  assert.equal(byId('link').tag, 'a');
+  assert.equal(byId('link').attributes.target, '_blank');
+  assert.equal(byId('link').attributes.rel, 'noopener');
+  assert.ok(hasClass(byId('link'), 'env-breadcrumbs-link') && hasClass(byId('link'), 'own'));
+  assert.equal(byId('button').tag, 'button');
+  assert.ok(hasClass(byId('button'), 'env-breadcrumbs-link') && hasClass(byId('button'), 'own'));
+  assert.ok(hasClass(byId('text'), 'env-breadcrumbs-text') && hasClass(byId('text'), 'own'));
+  assert.equal(byId('current').attributes['aria-current'], 'page');
+  assert.ok(
+    hasClass(byId('current'), 'env-breadcrumbs-current') && hasClass(byId('current'), 'own'),
+  );
+});

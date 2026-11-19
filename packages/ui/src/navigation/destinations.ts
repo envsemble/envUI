@@ -75,12 +75,6 @@ type DestinationLabel =
       textValue: string;
     };
 
-/**
- * How NavigationRail and NavigationBar show their destinations' labels: shown under each icon, or
- * only in a tooltip.
- */
-export type NavigationLabels = 'shown' | 'tooltip';
-
 /** How a destination is reached: a link, or a button that runs onClick. */
 type DestinationTarget =
   | {

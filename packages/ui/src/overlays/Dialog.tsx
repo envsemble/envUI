@@ -110,12 +110,17 @@ export interface DialogProps
    */
   actionsStart?: ReactNode;
   /**
+   * Whether the dialog shows its built-in close button, as on a Sheet. Leave it out only where the
+   * dialog places its own DialogClose.
+   * @default true
+   */
+  closeButton?: boolean;
+  /**
    * Where the built-in close button is: actions, a secondary button that starts the actions;
-   * heading, an IconButton with a cross at the end of the heading, as on a Sheet; or none, for a
-   * dialog that places its own DialogClose.
+   * heading, an IconButton with a cross at the end of the heading, as on a Sheet.
    * @default 'actions'
    */
-  closeButton?: 'actions' | 'heading' | 'none';
+  closeButtonPlacement?: 'actions' | 'heading';
   /**
    * The label of the built-in close button, such as Cancel, or its name in the heading.
    * @default 'Close', or EnvUIProvider's messages.dialog.close
@@ -223,7 +228,8 @@ export function Dialog({
   children,
   actions,
   actionsStart,
-  closeButton = 'actions',
+  closeButton = true,
+  closeButtonPlacement = 'actions',
   closeLabel: ownCloseLabel,
   headerStart,
   headerEnd,
@@ -241,6 +247,7 @@ export function Dialog({
   const theme = useTheme();
   const messages = useMessages('dialog', dialog);
   const closeLabel = ownCloseLabel ?? messages.close;
+  const closesInActions = closeButton && closeButtonPlacement === 'actions';
   const portal = usePortalContainer();
   return (
     <BaseDialog.Root
@@ -278,7 +285,7 @@ export function Dialog({
                       start={headerStart}
                       end={headerEnd}
                       close={
-                        closeButton === 'heading' ? (
+                        closeButton && closeButtonPlacement === 'heading' ? (
                           <BaseDialog.Close
                             render={
                               <IconButton
@@ -293,9 +300,9 @@ export function Dialog({
                       }
                     />
                     {children}
-                    {(closeButton === 'actions' || actions != null || actionsStart != null) && (
+                    {(closesInActions || actions != null || actionsStart != null) && (
                       <DialogActions start={actionsStart}>
-                        {closeButton === 'actions' && <DialogClose>{closeLabel}</DialogClose>}
+                        {closesInActions && <DialogClose>{closeLabel}</DialogClose>}
                         {withPendingAction(actions, pending)}
                       </DialogActions>
                     )}

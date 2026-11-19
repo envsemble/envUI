@@ -204,12 +204,12 @@ test('a count of true shows a dot with no number, and the name says the destinat
   }
 });
 
-test('with labels as tooltips, Rail and Bar mark the landmark and keep each label naming its destination', () => {
+test('with visibleLabel false, Rail and Bar mark the landmark and keep each label naming its destination', () => {
   for (const form of ['rail', 'bar']) {
-    const nav = render(h(forms[form], { destinations: mail, labels: 'tooltip' }));
-    assert.equal(nav.attributes['data-labels'], 'tooltip');
+    const nav = render(h(forms[form], { destinations: mail, visibleLabel: false }));
+    assert.equal(nav.attributes['data-label-hidden'], '');
     assert.equal(textOf(item(nav, 'Drafts')), 'Drafts');
     const shown = render(h(forms[form], { destinations: mail }));
-    assert.equal(shown.attributes['data-labels'], undefined);
+    assert.equal(shown.attributes['data-label-hidden'], undefined);
   }
 });

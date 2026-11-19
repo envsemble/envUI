@@ -13,7 +13,8 @@ export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
   icon?: ReactNode;
   /**
    * A decorative illustration above the title, such as an SVG drawing or an image, at its own size
-   * and no wider than the region. It is hidden from assistive technology.
+   * and no wider than the region, in place of the icon where both are given. It is hidden from
+   * assistive technology.
    */
   illustration?: ReactNode;
   /** What the region would show, said as its absence, such as "No projects yet". */
@@ -49,7 +50,7 @@ export function EmptyState({
           {illustration}
         </Slot>
       )}
-      {present(icon) && (
+      {present(icon) && !present(illustration) && (
         <Slot className="env-empty-state-icon" layout="row" shrink="never">
           <DecorativeIcon>{icon}</DecorativeIcon>
         </Slot>

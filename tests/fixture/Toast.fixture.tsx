@@ -44,7 +44,9 @@ function ToastTriggers() {
             toast.show({
               message: 'Persistent action notice',
               tone: 'info',
-              action: { label: 'Undo notice', onClick: () => setActionCount((count) => count + 1) },
+              actions: [
+                { label: 'Undo notice', onClick: () => setActionCount((count) => count + 1) },
+              ],
             })
           }
         >
@@ -59,7 +61,6 @@ function ToastTriggers() {
                   <strong>report.pdf</strong> uploaded
                 </>
               ),
-              text: 'report.pdf uploaded',
               icon: <span data-testid="toast-own-icon">R</span>,
               actions: [
                 { label: 'Undo upload', onClick: () => setActionCount((count) => count + 1) },
@@ -75,6 +76,7 @@ function ToastTriggers() {
           onClick={() =>
             toast.show({
               message: 'Three actions',
+              textValue: 'Three actions to choose from',
               actions: ['One', 'Two', 'Three'].map((label) => ({ label, onClick() {} })),
             })
           }
@@ -118,10 +120,12 @@ function ToastTriggers() {
               toast.show({
                 message: `Action notice ${index}`,
                 duration: 0,
-                action: {
-                  label: 'Restore previous version',
-                  onClick: () => setActionCount((count) => count + 1),
-                },
+                actions: [
+                  {
+                    label: 'Restore previous version',
+                    onClick: () => setActionCount((count) => count + 1),
+                  },
+                ],
               });
           }}
         >

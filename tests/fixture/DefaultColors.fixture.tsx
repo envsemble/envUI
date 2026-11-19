@@ -54,7 +54,7 @@ function Toasts() {
     toast.show({
       message: 'Error toast',
       tone: 'danger',
-      action: { label: 'Retry', onClick: () => {} },
+      actions: [{ label: 'Retry', onClick: () => {} }],
     });
   }, [toast]);
   return null;
