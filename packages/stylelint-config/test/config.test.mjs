@@ -243,7 +243,7 @@ test('token pairs that break contrast are reported', async () => {
       await lint(
         [
           '.a { color: var(--env-color-fg-on-emphasis); background: var(--env-color-bg-default); }',
-          '.b { background-color: var(--env-color-fg-default); }',
+          '.b { background-color: var(--env-color-fg-default); color: var(--env-color-fg-on-emphasis); }',
           '.c { color: var(--env-color-bg-page); }',
         ].join('\n'),
       )
@@ -262,11 +262,13 @@ test('token pairs that break contrast are reported', async () => {
   );
 });
 
-test('a text color as the fill of a masked icon passes', async () => {
+test('a text color as the fill of a masked icon, or of a shape that sets no text color, passes', async () => {
   await passes(
     [
-      '.a { mask: url("icon.svg") center / contain no-repeat; background-color: var(--env-color-fg-muted); }',
+      '.a { mask: url("icon.svg") center / contain no-repeat; background-color: var(--env-color-fg-muted); color: var(--env-color-fg-default); }',
       '.b { -webkit-mask-image: url("icon.svg"); background: var(--env-color-fg-default); }',
+      '.status-dot { inline-size: 0.5rem; block-size: 0.5rem; background: var(--env-color-fg-success); }',
+      '.separator { inline-size: 100%; background-color: var(--env-color-fg-muted); }',
     ].join('\n'),
   );
 });
