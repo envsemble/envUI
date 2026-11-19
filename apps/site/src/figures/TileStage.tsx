@@ -90,6 +90,7 @@ export function TileStage({
   return (
     <Theme
       {...theme}
+      scale={kind.tile ? 'compact' : theme.scale}
       ref={stage}
       className={className}
       data-example={picture?.foundation || picture?.tile ? undefined : picture?.name}
