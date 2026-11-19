@@ -71,6 +71,7 @@ export function useRichTextExtensions(
       const options = createSuggestionOptions<RichTextSlashCommand>({
         char: '/',
         label: slashListLabelReadOncePerSession,
+        rowContent: ({ icon, description }) => ({ icon, description }),
         items: ({ query }) =>
           builtInBlockCommandsThenApplicationsOwn().filter((command) =>
             command.label.toLowerCase().includes(query.toLowerCase()),

@@ -1,5 +1,15 @@
 import { useRef, useState } from 'react';
-import { Button, Dialog, EnvUIProvider, Column, Theme } from '@envsemble/envui';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Dialog,
+  EnvUIProvider,
+  Column,
+  Theme,
+  Toolbar,
+} from '@envsemble/envui';
+import { IconDescription } from '@envsemble/envui/icons/Description';
 import {
   RichText,
   RichTextEditor,
@@ -332,5 +342,43 @@ function FieldStates() {
         <RichTextEditor label="German notes" defaultValue="- [ ] " />
       </EnvUIProvider>
     </div>
+  );
+}
+
+const people: RichTextReferenceSource[] = [
+  {
+    trigger: '@',
+    label: 'People',
+    search: () => [{ id: 'priya', label: 'Priya Shah' }],
+    renderSuggestion: () => ({
+      start: <Avatar name="Priya Shah" size="sm" />,
+      description: 'priya@example.com',
+      end: <Badge>Owner</Badge>,
+    }),
+  },
+];
+const templateCommand: RichTextSlashCommand[] = [
+  {
+    id: 'template',
+    label: 'Meeting template',
+    icon: <IconDescription />,
+    description: 'Agenda, notes and actions',
+    run: (editor) => {
+      editor.commands.insertContent('Agenda');
+    },
+  },
+];
+
+export function RichTextContentFixture() {
+  const [sent, setSent] = useState(0);
+  return (
+    <RichTextEditor
+      label="Comment"
+      toolbar={['bold']}
+      references={people}
+      slashCommands={templateCommand}
+      toolbarEnd={<Toolbar.Button icon={<IconDescription />} label="Insert template" />}
+      footer={<Button onClick={() => setSent((count) => count + 1)}>Send {sent}</Button>}
+    />
   );
 }

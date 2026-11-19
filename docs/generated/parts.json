@@ -4313,6 +4313,11 @@
         {
           "class": "env-rich-text-editor-control",
           "description": "The well around the toolbar and the document."
+        },
+        {
+          "class": "env-rich-text-editor-footer",
+          "description": "The slot of the content under the document, inside the well, such as a Send button.",
+          "slot": true
         }
       ],
       "states": [

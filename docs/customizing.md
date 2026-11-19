@@ -387,7 +387,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### RichTextEditor
 
-- Parts: `env-rich-text-editor`, `env-rich-text-editor-content`, `env-rich-text-editor-control`
+- Parts: `env-rich-text-editor`, `env-rich-text-editor-content`, `env-rich-text-editor-control`, `env-rich-text-editor-footer` (slot)
 - States: `data-disabled` on `env-rich-text-editor`, `env-rich-text-editor-control`; `data-invalid` on `env-rich-text-editor-control`; `data-readonly`
 
 ### Scaffold

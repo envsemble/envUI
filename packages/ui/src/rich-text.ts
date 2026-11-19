@@ -11,6 +11,7 @@ export type {
   RichTextAttachment,
   RichTextCommand,
   RichTextSlashCommand,
+  RichTextSuggestionContent,
   RichTextLinkEvent,
 } from './forms/rich-text/types.js';
 export type { MarkdownLink, MarkdownLinkRequest } from './content/MarkdownEditor.js';

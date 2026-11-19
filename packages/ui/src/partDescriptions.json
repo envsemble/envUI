@@ -667,7 +667,8 @@
     "RichTextEditor": {
       "env-rich-text-editor": "The rich text editor.",
       "env-rich-text-editor-content": "The editable region.",
-      "env-rich-text-editor-control": "The well around the toolbar and the document."
+      "env-rich-text-editor-control": "The well around the toolbar and the document.",
+      "env-rich-text-editor-footer": "The slot of the content under the document, inside the well, such as a Send button."
     },
     "Scaffold": {
       "env-scaffold": "The scaffold: the top bar, navigation and body regions; it never paints.",

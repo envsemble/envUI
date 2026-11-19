@@ -153,6 +153,11 @@
     :is(.env-rich-text-document, .env-rich-text-reference) {
     color: var(--env-color-fg-disabled);
   }
+  .env-rich-text-editor-footer {
+    justify-content: flex-end;
+    gap: var(--env-space-2);
+    padding: 0 var(--env-space-2) var(--env-space-2);
+  }
   .env-rich-text-reference:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
   }

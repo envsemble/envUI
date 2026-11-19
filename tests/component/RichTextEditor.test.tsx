@@ -1,7 +1,10 @@
 import axe from 'axe-core';
 import { expect, test } from 'vitest';
 import { page, server, type Locator } from 'vitest/browser';
-import { RichTextEditingFixture } from '../fixture/RichTextEditor.fixture.tsx';
+import {
+  RichTextContentFixture,
+  RichTextEditingFixture,
+} from '../fixture/RichTextEditor.fixture.tsx';
 import { addStyle, box, collectErrors, css, keyboard, mouse, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
@@ -632,4 +635,38 @@ test('a controlled editor replaces documents with references and tasks without a
   } finally {
     console.warn = warn;
   }
+});
+
+test('suggestion rows, slash commands, the toolbar end and the footer take the application content', async () => {
+  mount({ default: RichTextContentFixture });
+  const editor = await editorIn(page.elementLocator(document.body), 'Comment');
+  const toolbar = page.getByRole('toolbar');
+  const bold = toolbar.getByRole('button', { name: 'Bold' });
+  focus(bold);
+  await keyboard.press('ArrowLeft');
+  await expect.element(toolbar.getByRole('button', { name: 'Insert template' })).toHaveFocus();
+  const footer = page.getByRole('button', { name: 'Send 0' });
+  expect(footer.element().closest('.env-rich-text-editor-control')).not.toBeNull();
+  expect(
+    footer.element().compareDocumentPosition(editor.element()) & Node.DOCUMENT_POSITION_PRECEDING,
+  ).toBeTruthy();
+  await footer.click();
+  await expect.element(page.getByRole('button', { name: 'Send 1' })).toBeVisible();
+  await replace(editor, '@pri');
+  const person = page.getByRole('option', { name: /^Priya Shah/ });
+  await expect.element(person).toBeVisible();
+  expect(person.element().querySelector('.env-list-row-description')?.textContent).toBe(
+    'priya@example.com',
+  );
+  expect(person.element().querySelector('.env-list-row-end')?.textContent).toBe('Owner');
+  expect(person.element().querySelector('.env-list-row-start .env-avatar')).not.toBeNull();
+  await keyboard.press('Enter');
+  await expect.poll(editorText(editor)).toBe('@Priya Shah');
+  await replace(editor, '/meeting');
+  const command = page.getByRole('option', { name: /^Meeting template/ });
+  await expect.element(command).toBeVisible();
+  expect(command.element().querySelector('.env-list-row-icon svg')).not.toBeNull();
+  expect(command.element().querySelector('.env-list-row-description')?.textContent).toBe(
+    'Agenda, notes and actions',
+  );
 });
