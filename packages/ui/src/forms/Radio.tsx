@@ -16,6 +16,7 @@ import { useControllableState } from '../internal/react/useControllableState.js'
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
 import { Slot } from '../internal/layout/Slot.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import '../styles/Base.css';
 import '../styles/Radio.css';
 
@@ -213,8 +214,12 @@ export interface RadioProps extends Omit<
   style?: CSSProperties;
   /** The value the group reports and a form submits when this option is chosen. */
   value: string;
-  /** The option's visible name, such as Private; pressing it chooses the option. */
-  label: ReactNode;
+  /**
+   * The option's visible name, such as Private; pressing it chooses the option. Without it, a
+   * List.Item whose control it is names it, such as a plan's row with its price and features, or
+   * name it with aria-label or aria-labelledby, such as a radio in a table's cell.
+   */
+  label?: ReactNode;
   /**
    * A short, muted line under the label that helps people choose, such as Only the people you
    * invite. It is part of the option's label, so it is read with its name.
@@ -249,9 +254,11 @@ export function Radio({
     },
     [groupDefaultValue, groupValue, value],
   );
+  const naming = useRowControlNaming({ label, ...props });
   const radioInput = (
     <input
       {...props}
+      {...naming}
       ref={(node) => {
         inputRef.current = node;
         setRef(ref, node);
@@ -270,7 +277,7 @@ export function Radio({
       }}
     />
   );
-  const labelContent = (
+  const labelContent = label != null && (
     <span>
       <Slot className="env-radio-label" element="span">
         {label}

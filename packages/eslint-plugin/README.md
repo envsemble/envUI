@@ -67,10 +67,10 @@ A Button with variant="text" inside a clickable List.Item: the row takes the cli
 
 ### no-field-in-list-row
 
-A field, such as a `Select`, `Combobox`, `TextField`, `SearchField`, `Textarea`, `SegmentedControl`, `Slider`, a `RadioGroup` or `Radio`, or a picker, in a `List.Item`'s `control` or `end`. A list row holds a `Switch` or a `Checkbox` that its label names; a field goes in a form, with its label above it. A form in an overlay the row opens, such as a `Popover`, `Dialog`, `Sheet` or `Menu`, passes.
+A field, such as a `Select`, `Combobox`, `TextField`, `SearchField`, `Textarea`, `SegmentedControl`, `Slider`, a `RadioGroup`, or a picker, in a `List.Item`'s `control` or `end`, or a `Radio` in its `end`. A list row's `control` is a `Switch`, a `Checkbox` or a `Radio` that its label names; a field goes in a form, with its label above it. A form in an overlay the row opens, such as a `Popover`, `Dialog`, `Sheet` or `Menu`, passes.
 
 ```text
-A Select in a List.Item's control: the row doesn't label it and a list row holds only a Switch or a Checkbox. Put it in a form as a field with its label above it.
+A Select in a List.Item's control: the row doesn't label it and a list row's control is a Switch, a Checkbox or a Radio. Put it in a form as a field with its label above it.
 ```
 
 ### label-vocabulary

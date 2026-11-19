@@ -5,7 +5,8 @@ import { descriptions, elementsOf, firstElement, hasClass, textOf } from '../../
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
-const { RadioGroup, Radio, Checkbox, Switch, Slider } = await importSource('ChoiceFields', [
+const { RadioGroup, Radio, Checkbox, Switch, Slider, List } = await importSource('ChoiceFields', [
+  "export * as List from './packages/ui/src/data-display/List.tsx';",
   "export * from './packages/ui/src/forms/Radio.tsx';",
   "export * from './packages/ui/src/forms/Checkbox.tsx';",
   "export * from './packages/ui/src/forms/Switch.tsx';",
@@ -84,4 +85,34 @@ test('a choice control takes its class and style on its root, the label, and its
     if (props.name) assert.equal(input.attributes.name, props.name, name);
     assert.equal(label.attributes['data-testid'], undefined, name);
   }
+});
+
+test('a radio without a label takes its name and description from the List.Item it is the control of', () => {
+  const group = render(
+    h(
+      RadioGroup,
+      { label: 'Plan', defaultValue: 'team' },
+      h(
+        List.Root,
+        null,
+        h(List.Item, {
+          label: 'Team',
+          description: '10 seats, shared projects',
+          control: h(Radio, { value: 'team' }),
+        }),
+      ),
+      h(Radio, { value: 'custom', 'aria-label': 'Custom plan' }),
+    ),
+  );
+  const [team, custom] = elementsOf(group).filter((element) => element.attributes.type === 'radio');
+  const label = find(
+    group,
+    (element) => element.attributes.id === team.attributes['aria-labelledby'],
+  );
+  assert.equal(textOf(label), 'Team');
+  assert.deepEqual(descriptions(group, team), ['10 seats, shared projects']);
+  assert.equal(team.attributes.name, custom.attributes.name);
+  assert.equal(custom.attributes['aria-label'], 'Custom plan');
+  assert.equal(custom.attributes['aria-labelledby'], undefined);
+  assert.ok(!elementsOf(group).some((element) => hasClass(element, 'env-radio-label')));
 });

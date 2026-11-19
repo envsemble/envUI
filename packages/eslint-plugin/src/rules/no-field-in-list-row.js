@@ -19,6 +19,8 @@ const overlays = new Set([
   'CommandPalette',
 ]);
 
+const namedByTheRowAsItsControl = new Set(['Radio']);
+
 const fields = new Set([
   'Select',
   'RadioGroup',
@@ -49,7 +51,7 @@ export default {
     schema: [],
     messages: {
       field:
-        "A {{field}} in a List.Item's {{slot}}: the row doesn't label it and a list row holds only a Switch or a Checkbox. Put it in a form as a field with its label above it.",
+        "A {{field}} in a List.Item's {{slot}}: the row doesn't label it and a list row's control is a Switch, a Checkbox or a Radio. Put it in a form as a field with its label above it.",
     },
   },
   create(context) {
@@ -91,8 +93,10 @@ export default {
           if (attribute.type !== 'JSXAttribute') continue;
           const slot = jsxName(attribute.name);
           if (slot !== 'control' && slot !== 'end') continue;
-          for (const { node: at, name } of fieldsIn(attribute.value, []))
+          for (const { node: at, name } of fieldsIn(attribute.value, [])) {
+            if (slot === 'control' && namedByTheRowAsItsControl.has(name)) continue;
             context.report({ node: at, messageId: 'field', data: { field: name, slot } });
+          }
         }
       },
     };

@@ -6137,8 +6137,8 @@
         {
           "name": "label",
           "type": "ReactNode",
-          "required": true,
-          "description": "The option's visible name, such as Private; pressing it chooses the option."
+          "required": false,
+          "description": "The option's visible name, such as Private; pressing it chooses the option. Without it, a List.Item whose control it is names it, such as a plan's row with its price and features, or name it with aria-label or aria-labelledby, such as a radio in a table's cell."
         },
         {
           "name": "description",

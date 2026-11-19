@@ -8,6 +8,7 @@ ruleTester.run('no-field-in-list-row', rule, {
     ...named('Selection controls in a row', [
       '<List.Item label="Sync" control={<Switch checked={on} />} />',
       '<List.Item label="Archive" control={<Checkbox />} />',
+      '<List.Item label="Team" description="10 seats" control={<Radio value="team" />} />',
       '<List.Item label="Report" end={<IconButton icon={<IconMore />} aria-label="More" />} />',
     ]),
     ...named("A form in an overlay a row's end opens", [
@@ -29,7 +30,11 @@ ruleTester.run('no-field-in-list-row', rule, {
     },
     {
       code: '<List.Item label="Theme" control={<RadioGroup><Radio value="a" label="A" /></RadioGroup>} />',
-      errors: [field('RadioGroup', 'control'), field('Radio', 'control')],
+      errors: [field('RadioGroup', 'control')],
+    },
+    {
+      code: '<List.Item label="Team" end={<Radio value="team" />} />',
+      errors: [field('Radio', 'end')],
     },
     {
       code: '<List.Item label="Port" control={on ? <TextField /> : null} />',
@@ -44,7 +49,7 @@ ruleTester.run('no-field-in-list-row', rule, {
       errors: [
         {
           message:
-            "A SegmentedControl in a List.Item's control: the row doesn't label it and a list row holds only a Switch or a Checkbox. Put it in a form as a field with its label above it.",
+            "A SegmentedControl in a List.Item's control: the row doesn't label it and a list row's control is a Switch, a Checkbox or a Radio. Put it in a form as a field with its label above it.",
         },
       ],
     },
