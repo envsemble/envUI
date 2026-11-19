@@ -1695,6 +1695,11 @@
           "slot": true
         },
         {
+          "class": "env-composer-end",
+          "description": "The slot of the content in the action row before the send button.",
+          "slot": true
+        },
+        {
           "class": "env-composer-footer",
           "description": "The supporting text below the composer, which describes the field."
         },
@@ -1710,11 +1715,25 @@
         {
           "class": "env-composer-surface",
           "description": "The surface around the input and the footer."
+        },
+        {
+          "class": "env-composer-top",
+          "description": "The slot of the content inside the composer above the input, such as attachments.",
+          "slot": true
         }
       ],
       "states": [
         {
           "attribute": "data-disabled",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-composer"
+          ]
+        },
+        {
+          "attribute": "data-end",
           "values": [
             ""
           ],
@@ -1733,6 +1752,15 @@
         },
         {
           "attribute": "data-start",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-composer"
+          ]
+        },
+        {
+          "attribute": "data-top",
           "values": [
             ""
           ],

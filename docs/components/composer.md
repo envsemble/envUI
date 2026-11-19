@@ -32,6 +32,7 @@ examples:
     role: overview
     motion: true
   StartAndFooter: example
+  AttachmentsAndVoice: example
   ComposerAnatomy: anatomy
   PendingSend: example
   GrowingDraft: example
@@ -44,6 +45,12 @@ examples:
 ### Layouts
 
 ```tsx figure=StartAndFooter
+
+```
+
+### Above the field and before Send
+
+```tsx figure=AttachmentsAndVoice
 
 ```
 
@@ -78,7 +85,8 @@ examples:
 
 ### Keyboard
 
-| Key                                            | Action                                                     |
-| ---------------------------------------------- | ---------------------------------------------------------- |
-| <kbd>Enter</kbd> in the field                  | Sends the message, unless it is blank, pending or running. |
-| <kbd>Shift</kbd>+<kbd>Enter</kbd> in the field | Starts a new line.                                         |
+| Key                                                                            | Action                                                              |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| <kbd>Enter</kbd> in the field                                                  | Sends the message, unless it is blank, pending or running.          |
+| <kbd>Shift</kbd>+<kbd>Enter</kbd> in the field                                 | Starts a new line.                                                  |
+| <kbd>Ctrl</kbd>+<kbd>Enter</kbd> or <kbd>⌘</kbd>+<kbd>Enter</kbd> in the field | With sendKey mod-enter, sends the message; Enter starts a new line. |

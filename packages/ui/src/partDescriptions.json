@@ -272,10 +272,12 @@
       "env-composer": "The message composer.",
       "env-composer-action": "The send or stop button.",
       "env-composer-description": "The slot of the supporting text below the composer.",
+      "env-composer-end": "The slot of the content in the action row before the send button.",
       "env-composer-footer": "The supporting text below the composer, which describes the field.",
       "env-composer-input": "The text input.",
       "env-composer-start": "The slot of the content at the start of the action row.",
-      "env-composer-surface": "The surface around the input and the footer."
+      "env-composer-surface": "The surface around the input and the footer.",
+      "env-composer-top": "The slot of the content inside the composer above the input, such as attachments."
     },
     "ConfirmButton": {
       "env-confirm-button": "The button that asks to confirm before acting.",

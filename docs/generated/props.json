@@ -1817,7 +1817,7 @@
     "Composer": {
       "kind": "component",
       "source": "packages/ui/src/content/Composer.tsx",
-      "description": "The message field of a conversation: a multiline field on a raised surface that grows with its text up to maxRows, with a send button at the end that becomes a stop button while running. Enter submits, Shift+Enter starts a new line and an input method's composition never submits. Without onSend, Enter and the send button submit the field's form.",
+      "description": "The message field of a conversation: a multiline field on a raised surface that grows with its text up to maxRows, with a send button at the end that becomes a stop button while running. Enter submits, or with sendKey mod-enter Ctrl+Enter or ⌘+Enter; Shift+Enter starts a new line and an input method's composition never submits. Without onSend, Enter and the send button submit the field's form.",
       "props": [
         {
           "name": "value",
@@ -1897,6 +1897,25 @@
           "type": "ReactNode",
           "required": false,
           "description": "Content at the start of the action row, such as an attach button or the name of a model."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the action row just before the send button, such as a voice button, a model picker or a token count; the field then takes a row of its own above the action row."
+        },
+        {
+          "name": "top",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content inside the composer above the field, such as attachment chips, a quoted reply or context pills, placed as given."
+        },
+        {
+          "name": "sendKey",
+          "type": "'enter' | 'mod-enter'",
+          "required": false,
+          "default": "'enter'",
+          "description": "The key that sends: enter, where Shift+Enter starts a new line, or mod-enter, Ctrl+Enter or ⌘+Enter, where Enter starts a new line, for prompts that mostly take several lines."
         },
         {
           "name": "description",

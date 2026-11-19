@@ -172,8 +172,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Composer
 
-- Parts: `env-composer`, `env-composer-action`, `env-composer-description` (slot), `env-composer-footer`, `env-composer-input`, `env-composer-start` (slot), `env-composer-surface`
-- States: `data-disabled`; `data-running`; `data-start`
+- Parts: `env-composer`, `env-composer-action`, `env-composer-description` (slot), `env-composer-end` (slot), `env-composer-footer`, `env-composer-input`, `env-composer-start` (slot), `env-composer-surface`, `env-composer-top` (slot)
+- States: `data-disabled`; `data-end`; `data-running`; `data-start`; `data-top`
 
 ### ConfirmButton
 
