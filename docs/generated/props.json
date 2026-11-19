@@ -8117,6 +8117,12 @@
           "type": "'sharp' | 'rounded' | 'round'",
           "required": false,
           "description": "The corner shape inside: sharp, rounded or round. Defaults to the corners of the enclosing Theme, and to rounded outside any."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The boundary's element, for its meaning or its place in the markup, such as render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class and attributes merge into it. A div by default."
         }
       ],
       "native": [

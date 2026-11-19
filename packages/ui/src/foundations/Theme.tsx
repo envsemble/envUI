@@ -1,7 +1,14 @@
 'use client';
 
-import { createContext, useContext, useMemo, type ComponentPropsWithRef } from 'react';
+import {
+  createContext,
+  useContext,
+  useMemo,
+  type ComponentPropsWithRef,
+  type ReactElement,
+} from 'react';
 import { classNames } from '../internal/classNames.js';
+import { renderElement } from '../internal/react/renderElement.js';
 import { outsideTheme } from './internal/outsideTheme.js';
 import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
@@ -83,6 +90,12 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
    * Theme, and to rounded outside any.
    */
   corners?: ThemeCorners;
+  /**
+   * The boundary's element, for its meaning or its place in the markup, such as
+   * render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class
+   * and attributes merge into it. A div by default.
+   */
+  render?: ReactElement;
 }
 
 const ThemeContext = createContext<ThemeContextValue>(outsideTheme);
@@ -133,6 +146,7 @@ export function Theme({
   selection: ownSelection,
   corners: ownCorners,
   className,
+  render,
   children,
   ...props
 }: ThemeProps) {
@@ -160,20 +174,19 @@ export function Theme({
   const boundaryTakesRootLook = themeFromRootAttribute in props;
   return (
     <ThemeContext value={value}>
-      <div
-        {...props}
-        className={className}
-        {...(!boundaryTakesRootLook && {
+      {renderElement('div', render, {
+        ...props,
+        className,
+        ...(!boundaryTakesRootLook && {
           className: classNames('env-theme', className),
           'data-env-theme': theme,
           'data-env-contrast': contrast === 'system' ? undefined : contrast,
           'data-env-scale': scale,
           'data-env-selection': selection,
           'data-env-corners': corners,
-        })}
-      >
-        {children}
-      </div>
+        }),
+        children,
+      })}
     </ThemeContext>
   );
 }
