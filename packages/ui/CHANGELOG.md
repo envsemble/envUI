@@ -75,6 +75,7 @@ envUI 2.1 lets an app put what it wants where it wants. Labels across the librar
 
 ### Patch Changes
 
+- AvatarButton and a pressable AvatarGroup avatar: a `badge` given as text, such as online, now follows the name in the button's or link's accessible name, as in Alex Morgan, online, so the name includes the text the button shows. A badge that is an element, such as a presence dot, leaves the name as it was.
 - Pager: where the previous and next links don't fit side by side, such as on a phone, they stack as rows of the pager's full width, the previous first, rather than wrap into two centred cards of different widths.
 - RichText and RichTextEditor: a reference with `onReferenceClick` and no `href` sits in its sentence at the text's size, as a link reference does, rather than as a full-height button that pushed the rest of the line down. It is still a button, focusable and named by its text. See [RichTextEditor](https://github.com/envsemble/envUI/blob/main/docs/components/rich-text.md).
 - Toolbar: a separator stays visible on the recessed surface in the light theme, where it had faded to almost the well's own shade since 2.0's deeper well. In light it is now a tint of the text color, so it keeps the same step from any surface a toolbar sits on; dark and high contrast look as before.
