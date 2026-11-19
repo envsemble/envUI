@@ -45,6 +45,17 @@
   .env-breadcrumbs-text {
     color: var(--env-color-fg-muted);
   }
+  @media (pointer: coarse) {
+    .env-breadcrumbs-link {
+      position: relative;
+    }
+    .env-breadcrumbs-link::before {
+      content: '';
+      position: absolute;
+      inset-block: min(0%, calc((100% - var(--env-control-height-touch)) / 2));
+      inset-inline: 0;
+    }
+  }
   .env-breadcrumbs-current {
     color: var(--env-color-fg-default);
     font-weight: var(--env-font-weight-medium);
