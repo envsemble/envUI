@@ -49,7 +49,7 @@ export interface RichTextReferenceSource {
    * the row shows as its name and what the inserted reference shows.
    * @default the label alone
    */
-  renderSuggestion?: (reference: RichTextReference) => RichTextSuggestionContent;
+  suggestion?: (reference: RichTextReference) => RichTextSuggestionContent;
   /**
    * Returns the references that match the text typed after the trigger, at once or as a promise,
    * such as from a search on a server. The signal aborts when the query changes or the menu closes;

@@ -220,12 +220,12 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
 export function referenceSuggestion({
   trigger,
   search,
-  renderSuggestion,
+  suggestion,
   ...source
 }: RichTextReferenceSource) {
   return createSuggestionOptions<RichTextReference>({
     ...source,
-    rowContent: renderSuggestion,
+    rowContent: suggestion,
     char: trigger,
     items: async (request) => [...(await search(request))],
   });

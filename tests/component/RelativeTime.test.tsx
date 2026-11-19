@@ -51,7 +51,7 @@ test('the tooltip shows the date and time on hover, in the theme of the page', a
   await expect.poll(tooltip).toBeNull();
 });
 
-test("formatTooltip gives the tooltip the application's content from the moment", async () => {
+test("renderTooltip gives the tooltip the application's content from the moment", async () => {
   const own = page.getByTestId('relative-times-light').getByTestId('own-tooltip').element();
   await hover(own);
   await expect

@@ -26,7 +26,7 @@ export default function RelativeTimeFixture({ theme }: { theme: ColorScheme }) {
         data-testid="own-tooltip"
         value="2026-10-14T09:00:00Z"
         now={Date.parse('2026-10-14T12:00:00Z')}
-        formatTooltip={(date) => <strong>{`${date.toISOString().slice(11, 16)} UTC`}</strong>}
+        renderTooltip={(date) => <strong>{`${date.toISOString().slice(11, 16)} UTC`}</strong>}
       />
       <Tooltip content={`Updated by Alex Morgan ${theme}`}>
         <RelativeTime
