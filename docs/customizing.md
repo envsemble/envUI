@@ -168,7 +168,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### CommandPalette
 
-- Parts: `env-command-palette`, `env-command-palette-close`, `env-command-palette-footer`, `env-command-palette-footer-content` (slot), `env-command-palette-group`, `env-command-palette-group-label`, `env-command-palette-header`, `env-command-palette-hint`, `env-command-palette-hint-label` (slot), `env-command-palette-input`, `env-command-palette-item`, `env-command-palette-list`, `env-command-palette-positioner`, `env-command-palette-search`, `env-command-palette-status`
+- Parts: `env-command-palette`, `env-command-palette-close`, `env-command-palette-footer`, `env-command-palette-footer-content` (slot), `env-command-palette-group`, `env-command-palette-group-label`, `env-command-palette-header`, `env-command-palette-hint`, `env-command-palette-hint-label` (slot), `env-command-palette-input`, `env-command-palette-item`, `env-command-palette-list`, `env-command-palette-positioner`, `env-command-palette-search`, `env-command-palette-search-end` (slot), `env-command-palette-search-start` (slot), `env-command-palette-status`
 - States: `data-empty` on `env-command-palette-status`; `data-ending-style`; `data-starting-style`
 
 ### Composer

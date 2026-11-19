@@ -1,5 +1,8 @@
 import { useMemo, useState } from 'react';
 import {
+  Avatar,
+  Badge,
+  Button,
   CommandPalette,
   EnvUIProvider,
   Kbd,
@@ -148,5 +151,45 @@ export default function CommandPaletteFixture() {
       <ThemedPalette theme="dark" />
       <EmptyStates />
     </>
+  );
+}
+
+export function PaletteContentFixture() {
+  const [query, setQuery] = useState('');
+  return (
+    <CommandPalette
+      open
+      onOpenChange={() => undefined}
+      aria-label="Search people"
+      inputValue={query}
+      onInputValueChange={setQuery}
+      onAction={() => undefined}
+      searchStart={<Badge>In: People</Badge>}
+      searchEnd={<Button size="sm">Projects</Button>}
+      items={[
+        {
+          id: 'priya',
+          label: 'Priya Shah',
+          start: <Avatar name="Priya Shah" size="sm" />,
+          group: 'people',
+          groupLabel: (
+            <>
+              People <Badge>2</Badge>
+            </>
+          ),
+        },
+        {
+          id: 'sam',
+          label: 'Sam Lee',
+          start: <Avatar name="Sam Lee" size="sm" />,
+          group: 'people',
+          groupLabel: (
+            <>
+              People <Badge>2</Badge>
+            </>
+          ),
+        },
+      ]}
+    />
   );
 }

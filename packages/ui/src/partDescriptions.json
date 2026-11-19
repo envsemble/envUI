@@ -265,6 +265,8 @@
       "env-command-palette-list": "The list of commands.",
       "env-command-palette-positioner": "The palette's positioner.",
       "env-command-palette-search": "The search field, a ghost TextField around the search input.",
+      "env-command-palette-search-end": "The slot of the content after the search field, such as a mode switch.",
+      "env-command-palette-search-start": "The slot of the content before the search field, such as a scope chip.",
       "env-command-palette-status": "The EmptyState in place of the list, and the announcement of the number of results."
     },
     "Composer": {

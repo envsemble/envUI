@@ -1829,6 +1829,18 @@
           "type": "ReactNode",
           "required": false,
           "description": "Other content below the list, after the hints."
+        },
+        {
+          "name": "searchStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the search field in its row, such as a scope chip, In: Projects."
+        },
+        {
+          "name": "searchEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content after the search field in its row, before the close button, such as a mode switch."
         }
       ],
       "native": [

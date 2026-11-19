@@ -1637,6 +1637,16 @@
           "description": "The search field, a ghost TextField around the search input."
         },
         {
+          "class": "env-command-palette-search-end",
+          "description": "The slot of the content after the search field, such as a mode switch.",
+          "slot": true
+        },
+        {
+          "class": "env-command-palette-search-start",
+          "description": "The slot of the content before the search field, such as a scope chip.",
+          "slot": true
+        },
+        {
           "class": "env-command-palette-status",
           "description": "The EmptyState in place of the list, and the announcement of the number of results."
         }

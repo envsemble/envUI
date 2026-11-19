@@ -1,7 +1,7 @@
 'use client';
 
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
-import type { MouseEvent, Ref } from 'react';
+import type { MouseEvent, ReactNode, Ref } from 'react';
 import { Grid } from '../../layout/Layout.js';
 import { ListRow } from '../../internal/list/ListRow.js';
 import type { CommandPaletteItem } from '../CommandPalette.js';
@@ -11,6 +11,7 @@ import '../../styles/CommandPalette.css';
 export interface CommandPaletteSection {
   id: string;
   label: string | undefined;
+  heading: ReactNode;
   items: CommandPaletteItem[];
 }
 
@@ -19,7 +20,13 @@ export function sectionsOf(items: readonly CommandPaletteItem[]) {
   for (const item of items) {
     const current = sections.at(-1);
     if (current && current.label === item.group) current.items.push(item);
-    else sections.push({ id: `section-${sections.length}`, label: item.group, items: [item] });
+    else
+      sections.push({
+        id: `section-${sections.length}`,
+        label: item.group,
+        heading: item.groupLabel ?? item.group,
+        items: [item],
+      });
   }
   return sections;
 }
@@ -86,7 +93,7 @@ export function CommandPaletteOptions({
                 className="env-command-palette-group"
               >
                 <BaseAutocomplete.GroupLabel className="env-command-palette-group-label">
-                  {section.label}
+                  {section.heading}
                 </BaseAutocomplete.GroupLabel>
                 <BaseAutocomplete.Collection>{renderItem}</BaseAutocomplete.Collection>
               </BaseAutocomplete.Group>

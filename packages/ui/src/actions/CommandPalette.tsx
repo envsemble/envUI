@@ -6,6 +6,7 @@ import { useId, useRef, type ComponentPropsWithRef, type ReactNode } from 'react
 import { classNames } from '../internal/classNames.js';
 import { Column, Row } from '../layout/Layout.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { useTheme } from '../foundations/Theme.js';
 import { IconSearch } from '../icons/Search.js';
@@ -46,6 +47,12 @@ export interface CommandPaletteItem {
   start?: ReactNode;
   /** A heading shows where the group changes between consecutive items. */
   group?: string;
+  /**
+   * The heading's content where it differs from group, such as an icon or a count beside the
+   * group's name; group stays the key that starts a new section.
+   * @default group
+   */
+  groupLabel?: ReactNode;
   /** End content, such as a Kbd shortcut or a Badge. */
   end?: ReactNode;
   /** The option shows but can't be chosen, such as a command that doesn't apply here. */
@@ -142,6 +149,10 @@ export interface CommandPaletteProps extends Omit<
   hints?: readonly CommandPaletteHint[];
   /** Other content below the list, after the hints. */
   footer?: ReactNode;
+  /** Content before the search field in its row, such as a scope chip, In: Projects. */
+  searchStart?: ReactNode;
+  /** Content after the search field in its row, before the close button, such as a mode switch. */
+  searchEnd?: ReactNode;
 }
 
 /**
@@ -168,6 +179,8 @@ export function CommandPalette({
   emptyIcon,
   hints,
   footer,
+  searchStart,
+  searchEnd,
   className,
   ...popupProps
 }: CommandPaletteProps) {
@@ -233,6 +246,15 @@ export function CommandPalette({
                   }
                 >
                   <Row align="center" gap={2} className="env-command-palette-header">
+                    {searchStart != null && (
+                      <Slot
+                        className="env-command-palette-search-start"
+                        layout="row"
+                        shrink="never"
+                      >
+                        {searchStart}
+                      </Slot>
+                    )}
                     <FieldFrame
                       id={searchId}
                       controlBox
@@ -254,6 +276,11 @@ export function CommandPalette({
                         onKeyDown={keys.onKeyDown}
                       />
                     </FieldFrame>
+                    {searchEnd != null && (
+                      <Slot className="env-command-palette-search-end" layout="row" shrink="never">
+                        {searchEnd}
+                      </Slot>
+                    )}
                     <BaseDialog.Close
                       render={
                         <IconButton
