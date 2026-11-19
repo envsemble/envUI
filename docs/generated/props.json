@@ -6785,9 +6785,15 @@
       "props": [
         {
           "name": "label",
-          "type": "string",
+          "type": "ReactNode",
           "required": true,
-          "description": "The field's accessible name, such as Search members. It shows above the field only with showLabel; otherwise a placeholder gives the visible guidance."
+          "description": "The field's accessible name, such as Search members: text, or any content, such as an icon beside the text. It shows above the field only with showLabel; otherwise a placeholder gives the visible guidance."
+        },
+        {
+          "name": "endAction",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A control at the end of the field, after the clear button, such as an IconButton that opens filters, or a quiet hint such as a shortcut's Kbd; name a control with aria-label. A button that sets no variant takes ghost here."
         },
         {
           "name": "showLabel",
@@ -6849,9 +6855,9 @@
         },
         {
           "name": "prefix",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
+          "description": "Short, non-interactive content before the value: text, such as the start of an address, or any content, such as a currency's flag beside its code, or a small Avatar, at its own size. It is cut short with an ellipsis where it is long, is not part of the value, and its text is read after the label."
         },
         {
           "name": "description",
@@ -6886,9 +6892,9 @@
         },
         {
           "name": "suffix",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
+          "description": "Short, non-interactive content after the value: text, such as a unit, or any content, such as an icon beside the unit. It is cut short with an ellipsis where it is long, is not part of the value, and its text is read after the label."
         }
       ],
       "native": [
@@ -8007,15 +8013,15 @@
         },
         {
           "name": "prefix",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
+          "description": "Short, non-interactive content before the value: text, such as the start of an address, or any content, such as a currency's flag beside its code, or a small Avatar, at its own size. It is cut short with an ellipsis where it is long, is not part of the value, and its text is read after the label."
         },
         {
           "name": "suffix",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
+          "description": "Short, non-interactive content after the value: text, such as a unit, or any content, such as an icon beside the unit. It is cut short with an ellipsis where it is long, is not part of the value, and its text is read after the label."
         }
       ],
       "native": [

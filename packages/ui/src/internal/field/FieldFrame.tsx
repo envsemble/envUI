@@ -71,15 +71,18 @@ export interface TextFieldDecorationProps {
 
 export interface TextFieldAffixProps {
   /**
-   * Short, non-interactive text before the value, such as the start of an address, cut short with an
-   * ellipsis where it is long. It is not part of the value and is read after the label.
+   * Short, non-interactive content before the value: text, such as the start of an address, or any
+   * content, such as a currency's flag beside its code, or a small Avatar, at its own size. It is cut
+   * short with an ellipsis where it is long, is not part of the value, and its text is read after
+   * the label.
    */
-  prefix?: string;
+  prefix?: ReactNode;
   /**
-   * Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it
-   * is long. It is not part of the value and is read after the label.
+   * Short, non-interactive content after the value: text, such as a unit, or any content, such as
+   * an icon beside the unit. It is cut short with an ellipsis where it is long, is not part of the
+   * value, and its text is read after the label.
    */
-  suffix?: string;
+  suffix?: ReactNode;
 }
 
 function placeCaretAtNearerEnd(event: MouseEvent<HTMLElement>) {
