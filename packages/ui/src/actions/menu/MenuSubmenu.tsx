@@ -15,7 +15,7 @@ import {
   menuPopupInlineEndInset,
 } from '../internal/MenuPopup.js';
 import type { OpenChangeDetails } from '../internal/menuOpenChange.js';
-import { useMenuItemContent, type ItemContentProps, type ItemElementProps } from './MenuItem.js';
+import { useMenuItemContent, type ItemContentProps, type TriggerProps } from './MenuItem.js';
 import { classNames } from '../../internal/classNames.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
@@ -54,7 +54,7 @@ export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'short
    * Attributes of the row that opens the submenu, such as a className, a style, a ref or a data
    * attribute; the submenu's own className, style and ref are its popup's.
    */
-  triggerProps?: ItemElementProps & { className?: string };
+  triggerProps?: TriggerProps;
 }
 
 const gapFromParentMenuEdge = 2;

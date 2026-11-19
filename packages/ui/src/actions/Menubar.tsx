@@ -5,6 +5,7 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Menubar as BaseMenubar } from '@base-ui/react/menubar';
 import {
   Children,
+  cloneElement,
   createContext,
   Fragment,
   isValidElement,
@@ -31,6 +32,7 @@ import {
 import { useDirection } from '../internal/provider/useDirection.js';
 import { flag } from '../internal/flag.js';
 import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';
+import type { TriggerProps } from './menu/MenuItem.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import '../styles/Base.css';
 import '../styles/Menubar.css';
@@ -186,7 +188,8 @@ export interface MenuProps {
   label: ReactNode;
   /**
    * A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines
-   * it, in the label's text also beside an icon, and Alt with the letter opens the menu.
+   * it, in the label's text also beside an icon or inside an element such as a span, and Alt with
+   * the letter opens the menu.
    */
   accessKey?: string;
   /**
@@ -222,16 +225,6 @@ export interface MenuProps {
   style?: CSSProperties;
 }
 
-/** Attributes of a Menubar.Menu's trigger button. */
-export interface TriggerProps extends Omit<
-  HTMLAttributes<HTMLButtonElement>,
-  'children' | 'aria-keyshortcuts'
-> {
-  /** The trigger button. */
-  ref?: Ref<HTMLButtonElement>;
-  [attribute: `data-${string}`]: string | number | boolean | undefined;
-}
-
 function underlineFirst(node: ReactNode, accessKey: string, found: { done: boolean }): ReactNode {
   if (found.done) return node;
   if (typeof node === 'string') {
@@ -248,11 +241,12 @@ function underlineFirst(node: ReactNode, accessKey: string, found: { done: boole
   }
   if (Array.isArray(node))
     return Children.map(node, (child) => underlineFirst(child, accessKey, found));
-  if (isValidElement(node) && node.type === Fragment) {
-    const fragment = node as ReactElement<{ children?: ReactNode }>;
-    return <>{underlineFirst(fragment.props.children, accessKey, found)}</>;
-  }
-  return node;
+  const rendersItsChildren =
+    isValidElement<{ children?: ReactNode }>(node) &&
+    (node.type === Fragment || typeof node.type === 'string');
+  if (!rendersItsChildren || node.props.children == null) return node;
+  const children = underlineFirst(node.props.children, accessKey, found);
+  return found.done ? cloneElement(node, undefined, children) : node;
 }
 
 function AccessKeyLabel({ label, accessKey }: { label: ReactNode; accessKey: string | undefined }) {

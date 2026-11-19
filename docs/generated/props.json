@@ -5096,7 +5096,7 @@
         },
         {
           "name": "triggerProps",
-          "type": "ItemElementProps & { className?: string }",
+          "type": "TriggerProps",
           "required": false,
           "description": "Attributes of the row that opens the submenu, such as a className, a style, a ref or a data attribute; the submenu's own className, style and ref are its popup's."
         },
@@ -5160,7 +5160,7 @@
           "name": "accessKey",
           "type": "string",
           "required": false,
-          "description": "A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines it, in the label's text also beside an icon, and Alt with the letter opens the menu."
+          "description": "A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines it, in the label's text also beside an icon or inside an element such as a span, and Alt with the letter opens the menu."
         },
         {
           "name": "triggerProps",
