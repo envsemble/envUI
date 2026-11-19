@@ -652,3 +652,17 @@ test('open in a contained PortalContainer, the list leaves the rest of the page 
     .toBe(0);
   expect(shown(page.getByRole('combobox', { name: 'Owner' }))).toBe(true);
 });
+
+test('an option shows end content at the end of its row, and typing still matches its label', async () => {
+  mount({ default: fixture.ComboboxEndFixture });
+  const member = field('Member');
+  await member.click();
+  await keyboard.type('alex');
+  const alex = option('Alex Morgan Admin');
+  await expect.element(alex).toBeVisible();
+  const end = alex.element().querySelector('.env-list-row-end')!;
+  expect(end.textContent).toBe('Admin');
+  expect(box(end).x).toBeGreaterThan(box(alex.element().querySelector('.env-list-row-label')!).x);
+  await keyboard.press('Enter');
+  await expect.poll(value(member)).toBe('Alex Morgan');
+});
