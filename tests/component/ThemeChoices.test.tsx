@@ -33,4 +33,19 @@ test('ThemeMenuRadioGroup shows the choices it is given, in place of the three, 
   await expect.element(items.first()).toHaveAttribute('aria-checked', 'true');
   await page.getByRole('menuitemradio', { name: 'Dark, easier at night' }).click();
   await expect.element(page.getByTestId('preference')).toHaveTextContent('dark');
+  await expect.element(group).toBeVisible();
+});
+
+test("Theme's render element keeps its own style, handler and ref beside the boundary's", async () => {
+  mount({ default: fixture.ThemeRenderFixture });
+  const region = page.getByRole('region', { name: 'Dark region' });
+  await expect.element(region).toHaveAttribute('data-env-theme', 'dark');
+  await expect.element(region).toHaveClass('env-theme fixture-region');
+  const style = (region.element() as HTMLElement).style;
+  expect([style.paddingInline, style.paddingBlock]).toEqual(['1px', '2px']);
+  await page.getByRole('button', { name: 'Inside' }).click();
+  await expect.element(page.getByTestId('presses')).toHaveTextContent('section theme');
+  await expect
+    .poll(() => page.getByTestId('refs').element().textContent!.split(' ').sort())
+    .toEqual(['section', 'theme']);
 });

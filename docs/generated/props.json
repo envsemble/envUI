@@ -4900,7 +4900,7 @@
           "name": "closeOnClick",
           "type": "boolean",
           "required": false,
-          "default": "true",
+          "default": "true, or the closeOnClick of the ThemeMenuRadioGroup around it",
           "description": "Close the menu after choosing."
         },
         {
@@ -8782,7 +8782,7 @@
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "The boundary's element, for its meaning or its place in the markup, such as render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class and attributes merge into it. A div by default."
+          "description": "The boundary's element, for its meaning or its place in the markup, such as render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class and attributes merge into its props, as on Text: classes join, styles merge, both event handlers run and both refs receive the node. A div by default."
         }
       ],
       "native": [
@@ -8828,7 +8828,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open. It applies to the three default choices; choices given as children set their own."
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open. It applies to the choices given as children too, unless one sets its own."
         },
         {
           "name": "children",
