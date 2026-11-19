@@ -161,7 +161,7 @@ export function Slider({
     function veilAtCurrentValue() {
       if (control.current) veilIndicatorUnderText(control.current);
     },
-    [current, label, formatValue, renderValue],
+    [current],
   );
   useEffect(function veilOnResize() {
     const element = control.current;

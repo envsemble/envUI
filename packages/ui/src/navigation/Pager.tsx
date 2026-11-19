@@ -105,7 +105,7 @@ export interface RootProps extends ComponentPropsWithRef<'nav'> {
   'aria-label'?: string;
 }
 
-function useStackedOnceWrapped(pager: RefObject<HTMLElement | null>, children: ReactNode) {
+function useStackedOnceWrapped(pager: RefObject<HTMLElement | null>, linkCount: number) {
   useLayoutEffect(() => {
     const element = pager.current;
     if (!element || typeof ResizeObserver === 'undefined') return;
@@ -120,14 +120,15 @@ function useStackedOnceWrapped(pager: RefObject<HTMLElement | null>, children: R
     });
     stackWhereLinksWrap.observe(element);
     return () => stackWhereLinksWrap.disconnect();
-  }, [pager, children]);
+  }, [pager, linkCount]);
 }
 
 function Root({ children, className, 'aria-label': ariaLabel, ref, ...props }: RootProps) {
   const messages = useMessages('pager', pager);
   const element = useRef<HTMLElement>(null);
-  useStackedOnceWrapped(element, children);
-  if (Children.toArray(children).length === 0) return null;
+  const linkCount = Children.toArray(children).length;
+  useStackedOnceWrapped(element, linkCount);
+  if (linkCount === 0) return null;
 
   return (
     <Row
