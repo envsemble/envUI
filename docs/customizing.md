@@ -89,7 +89,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Badge
 
-- Parts: `env-badge`, `env-badge-count-label`, `env-badge-label`
+- Parts: `env-badge`, `env-badge-count-label`, `env-badge-label`, `env-badge-start` (slot)
 - States: `data-count`; `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`); `data-variant` (`outline`, `soft`, `solid`)
 - Color properties: `--env-badge-container`, `--env-badge-content`, `--env-badge-outline`
 

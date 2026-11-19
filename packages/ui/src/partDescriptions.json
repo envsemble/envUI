@@ -105,7 +105,8 @@
     "Badge": {
       "env-badge": "The badge: a small pill label, or with data-count a compact count.",
       "env-badge-count-label": "What a count means, such as 12 unread, for assistive technology; visually hidden.",
-      "env-badge-label": "The badge's text, or its count."
+      "env-badge-label": "The badge's text, or its count.",
+      "env-badge-start": "The slot of the content before a label, in place of its icon."
     },
     "Breadcrumbs": {
       "env-breadcrumbs": "The breadcrumb navigation.",

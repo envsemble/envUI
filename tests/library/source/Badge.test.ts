@@ -35,3 +35,16 @@ test("a count's aria-label is read in place of the number, which is hidden", () 
   assert.match(markup, /<span class="env-badge-label" aria-hidden="true">99\+<\/span>/);
   assert.match(markup, /<span class="env-badge-count-label">120 unread<\/span>/);
 });
+
+test('a label takes any inline content, and start is placed as given in place of the icon', () => {
+  const label = renderToStaticMarkup(h(Badge, null, h('strong', null, '12'), ' seats'));
+  assert.match(label, /<span class="env-badge-label"><strong>12<\/strong> seats<\/span>/);
+  const started = renderToStaticMarkup(
+    h(Badge, { tone: 'done', start: h('span', { 'data-swatch': '' }, 'N') }, 'Northwind'),
+  );
+  assert.doesNotMatch(started, /env-icon|aria-hidden/);
+  assert.match(
+    started,
+    /<span class="env-badge-start" data-env-slot="row" data-env-slot-shrink="never"><span data-swatch="">N<\/span><\/span><span class="env-badge-label">Northwind<\/span>/,
+  );
+});

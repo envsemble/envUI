@@ -414,6 +414,11 @@
         {
           "class": "env-badge-label",
           "description": "The badge's text, or its count."
+        },
+        {
+          "class": "env-badge-start",
+          "description": "The slot of the content before a label, in place of its icon.",
+          "slot": true
         }
       ],
       "states": [

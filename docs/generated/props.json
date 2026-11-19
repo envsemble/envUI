@@ -407,10 +407,16 @@
           "description": "A decorative icon before the label, such as a check mark; hidden from assistive technology. A done badge has a check mark unless it is given another icon, or `null` for none."
         },
         {
-          "name": "children",
-          "type": "string",
+          "name": "start",
+          "type": "ReactNode",
           "required": false,
-          "description": "The label: a state, a name or a category in a word or two, as text. It stays on one line and ends with an ellipsis where the badge is wider than its container."
+          "description": "Content before the label, in place of the icon, placed at its own size and read by assistive technology unless it hides itself: such as a small Avatar, a color swatch or an icon that carries meaning."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The label: a state, a name or a category in a word or two, such as text with a bold value or a RelativeTime in it. It stays on one line and ends with an ellipsis where the badge is wider than its container."
         },
         {
           "name": "count",
