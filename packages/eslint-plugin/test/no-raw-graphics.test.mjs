@@ -20,7 +20,7 @@ const definition = (attributes, what = 'size') => ({
   messageId: 'definition',
   data: { attributes, what, fix: fixes[what] },
 });
-const icons = (source) => ({ messageId: 'iconPackage', data: { source } });
+const icons = (name, source) => ({ messageId: 'iconPackage', data: { name, source } });
 
 const graphic = "import { Graphic } from '@envsemble/envui';\n";
 
@@ -89,18 +89,30 @@ ruleTester.run('no-raw-graphics', rule, {
         '<Card style={{ margin: 0 }} />',
       ],
     ),
-    ...named('A margin of zero removes no edge', [
-      `${graphic}<Graphic alt="" style={{ margin: 0, marginInline: '0', marginBlockStart: '0px', 'margin-left': '0 0' }} />`,
+    ...named('A margin of zero, or one that spaces the Graphic, removes no edge', [
+      `${graphic}<Graphic alt="" style={{ margin: 0, marginInline: '0', marginBlockStart: '0px', 'margin-left': '0 -0' }} />`,
+      `${graphic}<Graphic alt="" style={{ marginInlineEnd: 'var(--env-space-2)', marginBlock: 4, margin: '0.5rem 0' }} />`,
     ]),
     ...named('Modules that only share a prefix with an icon package, and other packages', [
-      "import { Search } from 'lucide-react-native-shim';",
-      "import Icons from 'react-iconset';",
-      "import { Box } from '@mui/material';",
+      "import { Search } from 'lucide-react-native-shim'; <Search />;",
+      "import Icons from 'react-iconset'; <Icons.Star />;",
+      "import { Box } from '@mui/material'; <Box />;",
       "const icons = require(name); const m = import(name); require('lodash', 1);",
+    ]),
+    ...named("Another icon package's icon in an icon slot or a Graphic, which sizes it", [
+      "import { Github } from 'lucide-react'; <Button startIcon={<Github />}>Sign in</Button>;",
+      `${graphic}import { SiFigma } from 'react-icons/si'; <Graphic alt="Figma"><SiFigma /></Graphic>;`,
+      "import * as Icons from '@tabler/icons-react'; const items = [{ id: 'a', icon: <Icons.IconBrandSlack /> }];",
+      'const { Heart } = require(\'phosphor-react\'); <IconButton icon={<Heart />} aria-label="Like" />;',
+    ]),
+    ...named('Importing or re-exporting an icon package renders nothing', [
+      "import { Search } from 'lucide-react';",
+      "export { IconSearch } from '@tabler/icons-react';",
+      "export * from '@phosphor-icons/react';",
     ]),
     ...named('Allowed by option', [
       {
-        code: "import { SiGithub } from 'react-icons/si';",
+        code: "import { SiGithub } from 'react-icons/si'; <SiGithub />;",
         options: [{ allow: ['react-icons'] }],
       },
     ]),
@@ -205,62 +217,69 @@ ruleTester.run('no-raw-graphics', rule, {
       { code: "import * as ui from '@envsemble/envui'; <ui.Graphic src={logo} />", errors: [alt] },
       { code: '<Graphic src={logo} />', errors: [alt] },
     ]),
-    ...named('A margin on a Graphic, by each of its properties', [
+    ...named('A negative margin on a Graphic, by each of its properties', [
       {
         code: `${graphic}<Graphic src={logo} alt="Acme" style={{ marginInlineStart: '-0.25rem', color: 'red' }} />`,
         errors: [
           {
             message:
-              "A margin on a Graphic makes up for the file's empty edges: trim the file once with npx envui-graphic <file>, and drop the margin.",
+              "A negative margin on a Graphic makes up for the file's empty edges: trim the file once with npx envui-graphic <file>, and drop the margin.",
             line: 2,
             column: 41,
           },
         ],
       },
       {
-        code: `${graphic}<Graphic alt="" style={{ margin: 4, marginLeft: -2, 'margin-block-end': '1px', marginBlock: 0, marginInline: '0 2px' }} />`,
+        code: `${graphic}<Graphic alt="" style={{ margin: -4, marginLeft: 2, 'margin-block-end': '-1px', marginBlock: 0, marginInline: '0 -2px', marginTop: 'calc(-1 * var(--env-space-1))' }} />`,
         errors: [margin, margin, margin, margin],
       },
-      { code: '<Graphic style={{ margin: 4 }} />', errors: [alt, margin] },
+      { code: '<Graphic style={{ margin: -4 }} />', errors: [alt, margin] },
     ]),
-    ...named('Imports from other icon packages, in every form', [
-      {
-        code: "import { Search } from 'lucide-react';",
-        errors: [
-          {
-            message:
-              "Use envUI's icons instead of lucide-react: import { IconSearch } from '@envsemble/envui/icons/Search'. For the app's own icons and logos, use Graphic: import { Graphic } from '@envsemble/envui'.",
-            line: 1,
-            column: 24,
-          },
-        ],
-      },
-      { code: "import { FaGithub } from 'react-icons/fa';", errors: [icons('react-icons/fa')] },
-      {
-        code: "import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';",
-        errors: [icons('@heroicons/react/24/outline')],
-      },
-      {
-        code: "import SearchIcon from '@mui/icons-material/Search';",
-        errors: [icons('@mui/icons-material/Search')],
-      },
-      {
-        code: "export { IconSearch } from '@tabler/icons-react';",
-        errors: [icons('@tabler/icons-react')],
-      },
-      { code: "export * from '@phosphor-icons/react';", errors: [icons('@phosphor-icons/react')] },
-      { code: "const { Heart } = require('phosphor-react');", errors: [icons('phosphor-react')] },
-      {
-        code: 'const icons = import(`lucide-react`);',
-        languageOptions: { ecmaVersion: 2022 },
-        errors: [icons('lucide-react')],
-      },
-    ]),
+    ...named(
+      "Another icon package's icon outside an icon slot or Graphic, from every kind of import",
+      [
+        {
+          code: "import { Search } from 'lucide-react';\n<Search />;",
+          errors: [
+            {
+              message:
+                "A <Search> from lucide-react takes its size from the package: pass it to an icon slot, such as Button's startIcon, or wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit its slots and text: import { IconSearch } from '@envsemble/envui/icons/Search'.",
+              line: 2,
+              column: 2,
+            },
+          ],
+        },
+        {
+          code: "import { FaGithub } from 'react-icons/fa'; <Link href={repo}><FaGithub /> GitHub</Link>;",
+          errors: [icons('FaGithub', 'react-icons/fa')],
+        },
+        {
+          code: 'import { MagnifyingGlassIcon } from \'@heroicons/react/24/outline\'; <MagnifyingGlassIcon className="size-6" />;',
+          errors: [icons('MagnifyingGlassIcon', '@heroicons/react/24/outline')],
+        },
+        {
+          code: "import SearchIcon from '@mui/icons-material/Search'; <SearchIcon />;",
+          errors: [icons('SearchIcon', '@mui/icons-material/Search')],
+        },
+        {
+          code: "import * as Tabler from '@tabler/icons-react'; <Tabler.IconSearch size={24} />;",
+          errors: [icons('Tabler.IconSearch', '@tabler/icons-react')],
+        },
+        {
+          code: "const { Heart } = require('phosphor-react'); <Heart />;",
+          errors: [icons('Heart', 'phosphor-react')],
+        },
+        {
+          code: "import { Search as Find } from 'lucide-react'; <><Button startIcon={<Find />}>Find</Button><Find /></>;",
+          errors: [icons('Find', 'lucide-react')],
+        },
+      ],
+    ),
     ...named('Allowing one package leaves the others reported', [
       {
-        code: "import { SiGithub } from 'react-icons/si'; import { Search } from 'lucide-react';",
+        code: "import { SiGithub } from 'react-icons/si'; import { Search } from 'lucide-react'; <><SiGithub /><Search /></>;",
         options: [{ allow: ['react-icons'] }],
-        errors: [icons('lucide-react')],
+        errors: [icons('Search', 'lucide-react')],
       },
     ]),
   ],
@@ -278,12 +297,12 @@ typeScriptRuleTester.run('no-raw-graphics with TypeScript', rule, {
   ],
   invalid: [
     {
-      code: "import Search = require('lucide-react');",
-      errors: [icons('lucide-react')],
+      code: "import Lucide = require('lucide-react'); <Lucide.Search />;",
+      errors: [icons('Lucide.Search', 'lucide-react')],
     },
     {
-      code: "import { type LucideProps, Search } from 'lucide-react';",
-      errors: [icons('lucide-react')],
+      code: "import { type LucideProps, Search } from 'lucide-react'; <Search />;",
+      errors: [icons('Search', 'lucide-react')],
     },
     {
       code: `${graphic}const Logo = ({ size }: { size: 'md' }) => <Graphic src={logo} size={size} />;`,

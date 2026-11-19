@@ -19,6 +19,11 @@ export interface ListRowProps {
   indicator?: ReactNode;
   /** A decorative icon before the label. */
   icon?: ReactNode;
+  /**
+   * Content before the label in place of an icon, such as an Avatar, at its own size rather than
+   * the icon's; it is hidden from assistive technology, since the label names the row.
+   */
+  start?: ReactNode;
   /** The row's name, in the row's text color; it wraps and is never cut short. */
   label: ReactNode;
   /** A second line under the label, in muted text. */
@@ -39,6 +44,7 @@ export function ListRow({
   render,
   indicator,
   icon,
+  start,
   label,
   description,
   end,
@@ -52,6 +58,11 @@ export function ListRow({
         <span className="env-list-row-icon">
           <DecorativeIcon>{icon}</DecorativeIcon>
         </span>
+      )}
+      {start != null && (
+        <Slot className="env-list-row-start" element="span" layout="row" shrink="never" aria-hidden>
+          {start}
+        </Slot>
       )}
       <span className="env-list-row-text">
         <Slot className="env-list-row-label" element="span">

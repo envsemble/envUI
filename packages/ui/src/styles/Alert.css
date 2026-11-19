@@ -90,6 +90,21 @@
     color: var(--_alert-text-color);
     font: var(--env-type-body-sm);
   }
+  .env-alert-row {
+    --_alert-row-message-basis: 12rem;
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--env-space-2) var(--env-space-3);
+    min-inline-size: 0;
+  }
+  .env-alert-row > .env-alert-content {
+    flex: 1 1 var(--_alert-row-message-basis);
+  }
+  .env-alert-row > .env-alert-action {
+    margin-block-start: 0;
+  }
   .env-alert-title {
     color: var(--_alert-text-color);
     font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);

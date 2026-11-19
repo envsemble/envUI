@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { describe, expect, test } from 'vitest';
-import { DocumentTabs, Surface, Theme } from '@envsemble/envui';
+import { DocumentTabs, Menu, Surface, Theme } from '@envsemble/envui';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as tabsFixture from '../fixture/DocumentTabs.fixture.tsx';
 import * as rerenderFixture from '../fixture/DocumentTabsRerender.fixture.tsx';
@@ -472,3 +472,83 @@ test(
     host.remove();
   },
 );
+
+test('a tab shows its own content and end under its label’s name, can stay open, and the context menu ends with the application’s items', async () => {
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  const closed: string[] = [];
+  const menuFor: (string | null)[] = [];
+  root.render(
+    <Theme theme="light">
+      <DocumentTabs
+        aria-label="Own tabs"
+        items={[
+          { value: 'welcome', label: 'Welcome', closable: false },
+          {
+            value: 'src/index.ts',
+            label: 'index.ts',
+            content: (
+              <>
+                <span data-testid="folder">src/</span>index.ts
+              </>
+            ),
+            end: <span data-testid="modified">●</span>,
+          },
+        ]}
+        value="welcome"
+        onValueChange={() => undefined}
+        onClose={(id) => closed.push(id)}
+        contextMenu={(tab) => {
+          menuFor.push(tab?.value ?? null);
+          return <Menu.Item>Copy path</Menu.Item>;
+        }}
+      />
+    </Theme>,
+  );
+  try {
+    const strip = page.getByRole('tablist', { name: 'Own tabs' });
+    const welcome = strip.getByRole('tab', { name: 'Welcome', exact: true });
+    const index = strip.getByRole('tab', { name: 'index.ts', exact: true });
+    await expect.element(index).toBeInTheDocument();
+    const indexElement = index.element();
+    expect(
+      indexElement.querySelector('.env-document-tabs-tab-label [data-testid="folder"]'),
+    ).not.toBeNull();
+    expect(
+      indexElement.querySelector('.env-document-tabs-tab-end [data-testid="modified"]'),
+    ).not.toBeNull();
+    expect(
+      indexElement.closest('.env-document-tabs-item')!.querySelector('.env-document-tabs-close'),
+    ).not.toBeNull();
+    const welcomeItem = welcome.element().closest('.env-document-tabs-item')!;
+    expect(welcomeItem.querySelector('.env-document-tabs-close')).toBeNull();
+    expect(welcome.element().hasAttribute('aria-keyshortcuts')).toBe(false);
+
+    focus(welcome);
+    await keyboard.press('Delete');
+    await mouse.click(box(welcome.element()).x + 8, box(welcome.element()).y + 8, {
+      button: 'middle',
+    });
+    expect(closed).toEqual([]);
+
+    const menu = page.getByRole('menu', { name: 'Tab actions' });
+    const items = menu.getByRole('menuitem');
+    await welcome.click({ button: 'right' });
+    await expect.poll(() => texts(items)).toEqual(['Copy path']);
+    expect(menu.element().querySelector('[role="separator"]')).toBeNull();
+    await keyboard.press('Escape');
+    await expect.poll(() => shown(menu)).toBe(false);
+
+    await index.click({ button: 'right' });
+    await expect.poll(() => texts(items)).toEqual(['Close index.ts', 'Copy path']);
+    expect(menu.element().querySelector('[role="separator"]')).not.toBeNull();
+    expect(menuFor).toContain('welcome');
+    expect(menuFor.at(-1)).toBe('src/index.ts');
+    await keyboard.press('Escape');
+    await expect.poll(() => shown(menu)).toBe(false);
+  } finally {
+    root.unmount();
+    host.remove();
+  }
+});

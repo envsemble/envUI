@@ -1,6 +1,12 @@
 'use client';
 
-import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
+import {
+  useEffect,
+  useState,
+  type ComponentPropsWithRef,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
 import { Tooltip } from '../overlays/Tooltip.js';
@@ -51,9 +57,16 @@ export interface PaginationProps extends Omit<
   hasNextPage?: boolean;
   /**
    * Receives the page before or after the current one when its button is pressed. The application
-   * loads that page and passes it back as page.
+   * loads that page and passes it back as page. Give it, or pageHref, or both.
    */
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
+  /**
+   * The address of a page, such as `?page=3`, for a list whose pages have their own URLs: the
+   * previous and next controls are then links, through the LinkProvider's link component, which
+   * open in a new tab, are crawlable and work before hydration. A control with no page to go to
+   * reports aria-disabled and has no destination.
+   */
+  pageHref?: (page: number) => string;
   /**
    * A page is loading: the button pressed shows a spinner, also when the load starts in an effect
    * after the page changes, and both buttons ignore presses while staying focusable. A load for
@@ -111,6 +124,7 @@ export function Pagination({
   total,
   hasNextPage,
   onPageChange,
+  pageHref,
   pending = false,
   hideWhenSinglePage = false,
   formatRange,
@@ -155,22 +169,44 @@ export function Pagination({
         : (nextLabel ?? messages.next);
     const loading = pending && press?.direction === direction;
     const unavailableButFocusable = !loading && (!available || pending);
+    const target = direction === 'previous' ? current - 1 : current + 1;
+    const shared = {
+      icon: direction === 'previous' ? <IconChevronLeft /> : <IconChevronRight />,
+      'aria-label': name,
+      variant,
+      pending: loading,
+      'aria-disabled': unavailableButFocusable ? true : undefined,
+    };
     return (
       <Tooltip content={name}>
-        <IconButton
-          icon={direction === 'previous' ? <IconChevronLeft /> : <IconChevronRight />}
-          aria-label={name}
-          variant={variant}
-          pending={loading}
-          aria-disabled={unavailableButFocusable ? true : undefined}
-          className="env-pagination-button"
-          data-direction={direction}
-          onClick={() => {
-            if (!available || pending) return;
-            setPress({ direction, state: 'pressed' });
-            onPageChange(direction === 'previous' ? current - 1 : current + 1);
-          }}
-        />
+        {pageHref ? (
+          <IconButton
+            {...shared}
+            className="env-pagination-button"
+            data-direction={direction}
+            href={available ? pageHref(target) : ''}
+            disabled={!available}
+            onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+              if (pending) {
+                event.preventDefault();
+                return;
+              }
+              setPress({ direction, state: 'pressed' });
+              onPageChange?.(target);
+            }}
+          />
+        ) : (
+          <IconButton
+            {...shared}
+            className="env-pagination-button"
+            data-direction={direction}
+            onClick={() => {
+              if (!available || pending) return;
+              setPress({ direction, state: 'pressed' });
+              onPageChange?.(target);
+            }}
+          />
+        )}
       </Tooltip>
     );
   }

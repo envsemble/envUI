@@ -1,7 +1,12 @@
-import { useState } from 'react';
-import { Button, Column } from '@envsemble/envui';
+import { useState, type ReactNode } from 'react';
+import { Button, Column, Toolbar } from '@envsemble/envui';
+import { IconAlternateEmail } from '@envsemble/envui/icons/AlternateEmail';
 import { HighlightedCodeBlock } from '@envsemble/envui/code';
 import { MarkdownEditor } from '@envsemble/envui/markdown';
+
+const ownPreviewComponents = {
+  strong: ({ children }: { children?: ReactNode }) => <strong data-mention="">{children}</strong>,
+};
 
 const defaultSource =
   Array.from(
@@ -16,6 +21,7 @@ export default function MarkdownEditorFixture() {
   const [headingOffset, setHeadingOffset] = useState<0 | 1>(0);
   const [requiredSubmissions, setRequiredSubmissions] = useState(0);
   const [block, setBlock] = useState<string | null>(null);
+  const [commentMode, setCommentMode] = useState<'write' | 'preview'>('write');
   return (
     <Column gap={4} render={<section />} className="fixture-section" data-testid="markdown-editing">
       <form
@@ -69,6 +75,26 @@ export default function MarkdownEditorFixture() {
         <Button type="submit">Submit required Markdown</Button>
         <output data-testid="required-markdown-submissions">{requiredSubmissions}</output>
       </form>
+      <div data-testid="own-toolbar-markdown">
+        <MarkdownEditor
+          label="Comment source"
+          toolbar={['bold']}
+          toolbarEnd={({ insert }) => (
+            <Toolbar.Button
+              icon={<IconAlternateEmail />}
+              label="Mention"
+              onClick={() => insert('**@alex** ')}
+            />
+          )}
+          viewSwitch={false}
+          mode={commentMode}
+          onModeChange={setCommentMode}
+          previewProps={{ components: ownPreviewComponents }}
+        />
+        <Button onClick={() => setCommentMode((mode) => (mode === 'write' ? 'preview' : 'write'))}>
+          Toggle comment preview
+        </Button>
+      </div>
       <div data-testid="highlight-lifecycle">
         <Button onClick={() => setBlock('const first = 1;')}>Show code workload</Button>
         <Button onClick={() => setBlock('const latest = 2;')}>Replace code workload</Button>

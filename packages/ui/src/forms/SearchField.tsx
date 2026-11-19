@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, type KeyboardEvent } from 'react';
+import { useRef, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
 import { IconSearch } from '../icons/Search.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
@@ -18,20 +18,20 @@ function keepEscapeFromEnclosingDialog(event: KeyboardEvent) {
 
 export interface SearchFieldProps extends Omit<
   TextFieldProps,
-  | 'type'
-  | 'startIcon'
-  | 'endAction'
-  | 'label'
-  | 'visibleLabel'
-  | 'value'
-  | 'defaultValue'
-  | 'onValueChange'
+  'type' | 'startIcon' | 'label' | 'visibleLabel' | 'value' | 'defaultValue' | 'onValueChange'
 > {
   /**
-   * The field's accessible name, such as Search members. It shows above the field only with
-   * showLabel; otherwise a placeholder gives the visible guidance.
+   * The field's accessible name, such as Search members: text, or any content, such as an icon
+   * beside the text. It shows above the field only with showLabel; otherwise a placeholder gives the
+   * visible guidance.
    */
-  label: string;
+  label: ReactNode;
+  /**
+   * A control at the end of the field, after the clear button, such as an IconButton that opens
+   * filters, or a quiet hint such as a shortcut's Kbd; name a control with aria-label. A button that
+   * sets no variant takes ghost here.
+   */
+  endAction?: ReactNode;
   /**
    * Show the label in the field, as TextField does. A search field leaves it out, so that it sits
    * in a toolbar with a placeholder such as Search.
@@ -75,6 +75,8 @@ export function SearchField({
   showLabel = false,
   placeholder,
   disabled,
+  endAction,
+  style,
   ...props
 }: SearchFieldProps) {
   const messages = useMessages('searchField', searchFieldMessages);
@@ -92,9 +94,28 @@ export function SearchField({
     },
     props.form,
   );
+  const clearButton = query ? (
+    <IconButton
+      variant="ghost"
+      icon={<IconClose />}
+      aria-label={clearName}
+      title={clearName}
+      disabled={disabled}
+      onClick={() => {
+        update('');
+        inputRef.current?.focus();
+      }}
+    />
+  ) : null;
+  const endActions = (clearButton ? 1 : 0) + (endAction != null ? 1 : 0);
   return (
     <TextField
       {...props}
+      style={
+        endActions > 1
+          ? ({ '--_text-field-end-actions': endActions, ...style } as CSSProperties)
+          : style
+      }
       ref={(node) => {
         inputRef.current = node;
         setRef(ref, node);
@@ -118,18 +139,11 @@ export function SearchField({
       }}
       startIcon={<IconSearch />}
       endAction={
-        query ? (
-          <IconButton
-            variant="ghost"
-            icon={<IconClose />}
-            aria-label={clearName}
-            title={clearName}
-            disabled={disabled}
-            onClick={() => {
-              update('');
-              inputRef.current?.focus();
-            }}
-          />
+        endActions > 0 ? (
+          <>
+            {clearButton}
+            {endAction}
+          </>
         ) : undefined
       }
     />

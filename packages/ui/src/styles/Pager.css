@@ -6,6 +6,13 @@
   .env-pager > .env-pager-link {
     flex: 0 1 auto;
   }
+  .env-pager[data-stacked] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .env-pager[data-stacked] > .env-pager-link {
+    inline-size: 100%;
+  }
   .env-pager-link {
     box-sizing: border-box;
     display: inline-flex;

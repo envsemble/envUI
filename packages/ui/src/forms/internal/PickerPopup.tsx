@@ -6,6 +6,7 @@ import { classNames } from '../../internal/classNames.js';
 import { type Direction } from '../../internal/provider/EnvUIContext.js';
 import { PopupSurface } from '../../internal/popup/PopupSurface.js';
 import { Grid, Row } from '../../layout/Layout.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import '../../styles/Base.css';
 import '../../styles/PickerPopup.css';
 
@@ -28,6 +29,7 @@ export interface PickerPopupProps {
   dir: Direction | undefined;
   name: PickerName;
   initialFocus: (popup: HTMLElement | null) => HTMLElement | null;
+  header?: ReactNode;
   start: ReactNode;
   end?: ReactNode;
   children: ReactNode;
@@ -41,6 +43,7 @@ export function PickerPopup({
   dir,
   name,
   initialFocus,
+  header,
   start,
   end,
   children,
@@ -58,6 +61,7 @@ export function PickerPopup({
       popupProps={{ ref: popupRef, ...name }}
       initialFocus={() => initialFocus(popupRef.current) ?? true}
     >
+      {header != null && <Slot className="env-picker-popup-header">{header}</Slot>}
       <Grid className="env-picker-popup-body">{children}</Grid>
       <Row wrap align="center" gap={2} className="env-picker-popup-footer env-date-picker-actions">
         {start}

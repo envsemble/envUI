@@ -91,6 +91,16 @@ export interface PickerFieldProps
   defaultOpen?: boolean;
   /** Called with the new state, and why, when the popup opens or closes. */
   onOpenChange?: (open: boolean, details: PickerOpenChangeDetails) => void;
+  /**
+   * Content at the top of the popup, above the calendar or the list, such as presets: buttons for
+   * Tomorrow or Next Monday that set the value, from a field the application controls.
+   */
+  popupHeader?: ReactNode;
+  /**
+   * Content in the popup's footer, after its shortcut to the current date or time and before Clear,
+   * such as a note of the time zone or another action.
+   */
+  popupFooter?: ReactNode;
 }
 
 export function usePickerOpen({
@@ -217,6 +227,8 @@ export function PickerField({
   popupClassName,
   popupStart,
   popupEnd,
+  popupHeader,
+  popupFooter,
   initialFocus,
   clearLabel,
   onClear,
@@ -377,7 +389,13 @@ export function PickerField({
         dir={direction}
         name={accessibleName}
         initialFocus={initialFocus}
-        start={popupStart}
+        header={popupHeader}
+        start={
+          <>
+            {popupStart}
+            {popupFooter}
+          </>
+        }
         end={popupEnd}
       >
         <Fragment key={freshContentPerOpening.count}>

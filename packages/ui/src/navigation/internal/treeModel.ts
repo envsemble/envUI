@@ -50,6 +50,10 @@ function stillTypingAhead(typed: TypedText) {
   return performance.now() - typed.time <= typeaheadTimeout;
 }
 
+function typeaheadText(item: TreeItem) {
+  return item.textValue ?? (typeof item.label === 'string' ? item.label : '');
+}
+
 function findTypedRow(
   items: readonly TreeItem[],
   typed: TypedText,
@@ -65,7 +69,7 @@ function findTypedRow(
   const start = repeated || query.length === 1 ? activeIndex + 1 : activeIndex;
   for (let offset = 0; offset < items.length; offset += 1) {
     const index = (start + offset) % items.length;
-    if (items[index].label.toLocaleLowerCase().startsWith(search)) return index;
+    if (typeaheadText(items[index]).toLocaleLowerCase().startsWith(search)) return index;
   }
   return -1;
 }

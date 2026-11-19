@@ -30,6 +30,7 @@ examples:
     role: overview
     open: true
   SideBySide: example
+  PlanRows: example
   RadioAnatomy: anatomy
   RequiredChoice: example
 ---
@@ -41,6 +42,12 @@ examples:
 ### Side by side
 
 ```tsx figure=SideBySide
+
+```
+
+### Rows of a list
+
+```tsx figure=PlanRows
 
 ```
 

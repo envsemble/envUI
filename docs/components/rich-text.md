@@ -41,6 +41,7 @@ examples:
   RichTextAnatomy: anatomy
   SavedContent: example
   References: example
+  CommentBox: example
   SlashCommands: example
   UploadsAndLinks: example
 ---
@@ -79,6 +80,12 @@ examples:
 ### References
 
 ```tsx figure=References motion
+
+```
+
+### Suggestion rows, toolbar controls and a footer
+
+```tsx figure=CommentBox
 
 ```
 

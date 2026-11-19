@@ -15,6 +15,7 @@ import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { Slot } from '../internal/layout/Slot.js';
+import { VisuallyHidden } from '../content/VisuallyHidden.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
 import { flag } from '../internal/flag.js';
@@ -26,10 +27,17 @@ export interface SegmentedControlItem {
   /** The value onValueChange reports when this item is chosen. */
   value: string;
   /**
-   * The item's short visible name, such as Open or Board; it names the item. In a full-width control
-   * a name too long for its share ends in an ellipsis, and its tooltip shows it whole.
+   * The item's short visible name, such as Open or Board: text, or any content, such as a status
+   * dot beside the text. It names the item. In a full-width control a name too long for its share
+   * ends in an ellipsis, and its tooltip shows the same content whole.
    */
-  label: string;
+  label: ReactNode;
+  /**
+   * Show the label on the segment. Without it the segment shows only its icon, as in a List and
+   * Grid view switch: the label still names it, and shows in a tooltip on hover and keyboard focus.
+   * @default true
+   */
+  visibleLabel?: boolean;
   /**
    * A small muted number after the label, such as the items in a view, in the locale's number
    * format; it is read as part of the item's name, such as Open 12.
@@ -37,6 +45,13 @@ export interface SegmentedControlItem {
   count?: number;
   /** A decorative icon before the label, at the control icon size of 1 rem. */
   icon?: ReactNode;
+  /**
+   * Content after the label and the count, such as a Badge, which keeps its size; it is read as
+   * part of the item's name.
+   */
+  end?: ReactNode;
+  /** A class of the segment's button, beside env-segmented-control-item. */
+  className?: string;
   /** Show the item but don't let people choose it; the arrow keys skip it. */
   disabled?: boolean;
 }
@@ -129,6 +144,7 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
   const labelRef = useRef<HTMLSpanElement>(null);
   const formatters = useFormatters();
   const [labelCutShort, setLabelCutShort] = useState(false);
+  const labelShown = item.visibleLabel !== false;
   useLayoutEffect(() => {
     const element = labelRef.current;
     if (!fullWidth || !element) {
@@ -141,14 +157,14 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [fullWidth]);
+  }, [fullWidth, labelShown]);
   const segment = (
     <Radio.Root
       value={item.value}
       disabled={item.disabled}
       nativeButton
       render={<button type="button" />}
-      className="env-segmented-control-item"
+      className={classNames('env-segmented-control-item', item.className)}
     >
       {item.icon != null && (
         <Slot
@@ -160,9 +176,13 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
           <DecorativeIcon>{item.icon}</DecorativeIcon>
         </Slot>
       )}
-      <span ref={labelRef} className="env-segmented-control-item-label">
-        {item.label}
-      </span>
+      {labelShown ? (
+        <span ref={labelRef} className="env-segmented-control-item-label">
+          {item.label}
+        </span>
+      ) : (
+        <VisuallyHidden>{item.label}</VisuallyHidden>
+      )}
       {item.count !== undefined && (
         <>
           {' '}
@@ -171,11 +191,24 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
           </span>
         </>
       )}
+      {item.end != null && (
+        <>
+          {' '}
+          <Slot
+            className="env-segmented-control-item-end"
+            element="span"
+            layout="row"
+            shrink="never"
+          >
+            {item.end}
+          </Slot>
+        </>
+      )}
     </Radio.Root>
   );
-  if (!fullWidth) return segment;
+  if (!fullWidth && labelShown) return segment;
   return (
-    <CutLabelTooltip cut={labelCutShort} label={item.label} side="top">
+    <CutLabelTooltip cut={!labelShown || labelCutShort} label={item.label} side="top">
       {segment}
     </CutLabelTooltip>
   );

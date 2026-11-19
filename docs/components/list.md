@@ -37,6 +37,7 @@ examples:
   CurrentRow: example
   OpenFromRow: example
   SwitchRows: example
+  TitleActions: example
 ---
 
 # List
@@ -72,6 +73,12 @@ examples:
 ### Rows with switches
 
 ```tsx figure=SwitchRows
+
+```
+
+### A title with actions
+
+```tsx figure=TitleActions
 
 ```
 

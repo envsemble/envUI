@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type ComponentPropsWithoutRef,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -44,17 +45,23 @@ export interface TreeItem {
   /** The row's children show, as the rows that follow it in items; its chevron points down. */
   expanded?: boolean;
   /**
-   * The row's name, which type-ahead matches. It keeps its room before the description and the end,
-   * and ends with an ellipsis only where the row is too narrow for it alone.
+   * The row's name: text, or content such as a name with its matched letters highlighted. It keeps
+   * its room before the description and the end, and ends with an ellipsis only where the row is
+   * too narrow for it alone. Type-ahead matches it when it is a string.
    */
-  label: string;
+  label: ReactNode;
+  /**
+   * The row's name as plain text, which type-ahead matches where `label` isn't a string.
+   * @default the label, when it is a string
+   */
+  textValue?: string;
   /** A decorative icon before the label, such as a folder or a document, at the control icon size. */
   icon?: ReactNode;
   /**
    * Muted text after the label, such as a status or a path. It gives way first, to an ellipsis and
    * then out of the row, where the row runs out of room, and is read with the label.
    */
-  description?: string;
+  description?: ReactNode;
   /**
    * Content at the end of the row, such as a Badge with a count, which keeps its size. It gives way
    * to the label: where both don't fit, it leaves the row whole rather than squeeze the name. It
@@ -68,7 +75,18 @@ export interface TreeItem {
    * opens nor expands.
    */
   disabled?: boolean;
+  /**
+   * The row element's own props, such as a className, data attributes for its state, draggable and
+   * drag handlers for moving files. The tree's role, id, ARIA attributes and title stay its own.
+   */
+  rowProps?: TreeRowElementProps;
 }
+
+/** What a Tree row's rowProps can set on the row element. */
+export type TreeRowElementProps = Omit<
+  ComponentPropsWithoutRef<'div'>,
+  'children' | 'id' | 'role' | 'title' | 'dangerouslySetInnerHTML' | `aria-${string}`
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
 
 /** What Tree's onAction receives beside the row. */
 export interface TreeActionDetails {
@@ -79,13 +97,11 @@ export interface TreeActionDetails {
   preview: boolean;
 }
 
-type EventsTreeHandlesForRows = 'onClick' | 'onDoubleClick' | 'onContextMenu' | 'onPointerDown';
-
 const startingShiftAppliesAtOnce = 'none';
 
 export interface TreeProps<Item extends TreeItem> extends Omit<
   ComponentPropsWithRef<'div'>,
-  'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | EventsTreeHandlesForRows
+  'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu'
 > {
   /**
    * The visible rows in order, flattened: an expanded row is followed by its visible descendants.
@@ -148,6 +164,10 @@ export function Tree<Item extends TreeItem>({
   onKeyDown: ownKeyDown,
   onScroll: ownScroll,
   onFocus: ownFocus,
+  onPointerDown: ownPointerDown,
+  onClick: ownClick,
+  onDoubleClick: ownDoubleClick,
+  onContextMenu: ownContextMenu,
   ...props
 }: TreeProps<Item>) {
   const messages = useMessages('tree', treeMessages);
@@ -285,7 +305,8 @@ export function Tree<Item extends TreeItem>({
         ownScroll?.(event);
         onScroll(event.currentTarget.scrollTop);
       }}
-      onPointerDown={() => {
+      onPointerDown={(event) => {
+        ownPointerDown?.(event);
         pointerFocus.current = true;
         setFocusVisible(false);
       }}
@@ -294,9 +315,16 @@ export function Tree<Item extends TreeItem>({
         if (event.target === event.currentTarget) setFocusVisible(!pointerFocus.current);
         pointerFocus.current = false;
       }}
-      onClick={onRowClick}
-      onDoubleClick={onRowDoubleClick}
+      onClick={(event) => {
+        ownClick?.(event);
+        if (!event.defaultPrevented) onRowClick(event);
+      }}
+      onDoubleClick={(event) => {
+        ownDoubleClick?.(event);
+        if (!event.defaultPrevented) onRowDoubleClick(event);
+      }}
       onContextMenu={(event) => {
+        ownContextMenu?.(event);
         const item = rowFromEvent(event);
         if (item) setActiveId(item.value);
       }}

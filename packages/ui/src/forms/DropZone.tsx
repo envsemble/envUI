@@ -27,7 +27,7 @@ import '../styles/DropZone.css';
 
 export interface DropZoneProps extends Omit<
   ComponentPropsWithRef<'div'>,
-  'children' | 'onDragEnter' | 'onDragOver' | 'onDragLeave' | 'onDrop'
+  'onDragEnter' | 'onDragOver' | 'onDragLeave' | 'onDrop'
 > {
   /**
    * What to drop or choose, such as "Drop a logo here, or browse". With the description, it names
@@ -38,6 +38,12 @@ export interface DropZoneProps extends Omit<
   description?: ReactNode;
   /** Replaces the upload icon. */
   icon?: ReactNode;
+  /**
+   * Content inside the zone, under its target, such as the chosen files with their previews and
+   * Remove buttons, or a Browse button that opens the file picker through inputRef. Files dropped on
+   * it are taken too; it can hold controls, since it is beside the target button, not inside it.
+   */
+  children?: ReactNode;
   /**
    * The file types the zone takes, as in the native accept attribute: MIME types such as image/png,
    * groups such as image/*, and extensions such as .webp.
@@ -112,6 +118,7 @@ export function DropZone({
   form,
   inputRef,
   className,
+  children,
   ...props
 }: DropZoneProps) {
   const id = useId();
@@ -236,6 +243,7 @@ export function DropZone({
       <Grid gap={3} className="env-drop-zone-target" render={target}>
         {targetContent}
       </Grid>
+      {children != null && <Slot className="env-drop-zone-content">{children}</Slot>}
       <FileInput
         ref={(node) => {
           filePicker.current = node;

@@ -102,3 +102,24 @@ test('submitting an empty preview reveals and focuses the required native source
   await expect.element(form.getByRole('textbox', { name: 'Required source' })).toHaveFocus();
   expect(form.getByTestId('required-markdown-submissions').element().textContent).toBe('0');
 });
+
+test("the editor's own toolbar buttons insert at the selection as one undoable step, and the application's control switches the view", async () => {
+  const scope = page.getByTestId('own-toolbar-markdown');
+  const source = scope.getByRole('textbox', { name: 'Comment source' });
+  expect(scope.getByRole('radio').elements()).toHaveLength(0);
+  await source.fill('Thanks ');
+  textarea(source).setSelectionRange(7, 7);
+  await button(scope, 'Mention').click();
+  await expect.element(source).toHaveValue('Thanks **@alex** ');
+  expect([textarea(source).selectionStart, textarea(source).selectionEnd]).toEqual([17, 17]);
+  await button(scope, 'Undo').click();
+  await expect.element(source).toHaveValue('Thanks ');
+  await button(scope, 'Redo').click();
+  await scope.getByRole('button', { name: 'Toggle comment preview' }).click();
+  await expect
+    .poll(() => scope.element().querySelector('.env-markdown [data-mention]')?.textContent)
+    .toBe('@alex');
+  await expect.poll(() => shown(source)).toBe(false);
+  await scope.getByRole('button', { name: 'Toggle comment preview' }).click();
+  await isShown(source);
+});

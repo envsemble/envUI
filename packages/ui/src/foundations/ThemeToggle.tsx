@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
@@ -22,6 +23,12 @@ export type ThemeToggleProps = (ToggleButtonProps extends infer Props
    * EnvUIProvider's messages.themePreference.
    */
   'aria-label'?: string;
+  /**
+   * The button's icon, such as one of the application's own; useThemePreference gives the theme
+   * to choose it by.
+   * @default the dark mode icon in the light theme, the light mode icon in the dark theme
+   */
+  icon?: ReactNode;
 };
 
 /** Switches between the light and dark themes and stores the choice. */
@@ -29,6 +36,7 @@ export function ThemeToggle({
   title,
   className,
   'aria-label': ownLabel,
+  icon,
   ...props
 }: ThemeToggleProps) {
   const { theme, toggleTheme } = useThemePreference();
@@ -38,7 +46,7 @@ export function ThemeToggle({
     <IconButton
       {...props}
       className={classNames('env-theme-toggle', className)}
-      icon={theme === 'light' ? <IconDarkMode /> : <IconLightMode />}
+      icon={icon ?? (theme === 'light' ? <IconDarkMode /> : <IconLightMode />)}
       aria-label={label}
       title={title ?? label}
       onClick={toggleTheme}

@@ -377,3 +377,15 @@ test("a Switch or Checkbox without a label of its own takes the row's name, and 
   await expect.element(checkbox).toHaveAccessibleDescription('Keep this computer in step.');
   await expect.element(list.getByRole('switch')).toHaveAccessibleName('Mute alerts');
 });
+
+test("a link in an interactive row's description stays clickable above the row target", async () => {
+  mount(fixture);
+  const edits = page.getByRole('list', { name: 'Edits', exact: true });
+  const author = edits.getByRole('link', { name: 'Alex Morgan' });
+  const target = edits.getByRole('link', { name: 'Quarterly report' });
+  const at = (point: { x: number; y: number }) => document.elementFromPoint(point.x, point.y);
+  edits.element().scrollIntoView({ block: 'center' });
+  expect(author.element().contains(at(centre(author)))).toBe(true);
+  const row = box(edits.getByRole('listitem'));
+  expect(target.element().contains(at({ x: row.x + row.width - 8, y: row.y + 8 }))).toBe(true);
+});

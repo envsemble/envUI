@@ -41,6 +41,7 @@ examples:
     role: overview
     caption: 'Code: a command, a value or a file name inside a sentence.'
   WrapLongLines: example
+  PackageManagers: example
   CodeBlockAnatomy: anatomy
   PlainOutput: example
   SettingsDiff: example
@@ -54,6 +55,12 @@ examples:
 ### Long lines
 
 ```tsx figure=WrapLongLines motion
+
+```
+
+### Actions in the heading
+
+```tsx figure=PackageManagers
 
 ```
 

@@ -15,12 +15,22 @@
           "description": "The panel's content, in muted text lined up with the title."
         },
         {
+          "class": "env-accordion-end",
+          "description": "The slot of the content beside an item's heading, outside its button, such as a switch.",
+          "slot": true
+        },
+        {
           "class": "env-accordion-header",
           "description": "An item's heading, which holds its button."
         },
         {
           "class": "env-accordion-indicator",
           "description": "The plus that becomes a minus while the item is open."
+        },
+        {
+          "class": "env-accordion-indicator-content",
+          "description": "The slot of an application's own indicator in place of the plus and minus.",
+          "slot": true
         },
         {
           "class": "env-accordion-item",
@@ -60,6 +70,16 @@
           "values": [],
           "parts": [
             "env-accordion"
+          ]
+        },
+        {
+          "attribute": "data-indicator",
+          "values": [
+            "end",
+            "none"
+          ],
+          "parts": [
+            "env-accordion-item"
           ]
         },
         {
@@ -120,6 +140,10 @@
           "class": "env-alert-message",
           "description": "The slot of the alert's message.",
           "slot": true
+        },
+        {
+          "class": "env-alert-row",
+          "description": "The row of the title and message with the actions at its end, which wraps them below where it runs out of room."
         },
         {
           "class": "env-alert-title",
@@ -220,12 +244,22 @@
           "description": "The avatar: an image, initials or a figure in a circle."
         },
         {
+          "class": "env-avatar-badge",
+          "description": "The slot of the small mark at the avatar's bottom end, such as a presence dot.",
+          "slot": true
+        },
+        {
           "class": "env-avatar-check",
           "description": "The check at the bottom end of a chosen avatar."
         },
         {
           "class": "env-avatar-fallback",
           "description": "What shows without an image: initials or a figure."
+        },
+        {
+          "class": "env-avatar-fallback-content",
+          "description": "The slot of an application's own fallback, such as a bot's icon.",
+          "slot": true
         },
         {
           "class": "env-avatar-fallback-initials",
@@ -414,6 +448,11 @@
         {
           "class": "env-badge-label",
           "description": "The badge's text, or its count."
+        },
+        {
+          "class": "env-badge-start",
+          "description": "The slot of the content before a label, in place of its icon.",
+          "slot": true
         }
       ],
       "states": [
@@ -564,6 +603,11 @@
           "description": "The spinner of a pending button."
         },
         {
+          "class": "env-button-start",
+          "description": "The slot of the content before the label at its own size, such as an Avatar.",
+          "slot": true
+        },
+        {
           "class": "env-button-start-icon",
           "description": "The slot of the icon before the label.",
           "slot": true
@@ -704,6 +748,11 @@
         {
           "class": "env-calendar-day",
           "description": "One day."
+        },
+        {
+          "class": "env-calendar-day-content",
+          "description": "The slot of a day's content from renderDay, in its mark.",
+          "slot": true
         },
         {
           "class": "env-calendar-day-mark",
@@ -876,6 +925,11 @@
           "description": "The sentence under the title."
         },
         {
+          "class": "env-card-end",
+          "description": "The slot at the end of the title row, after the meta, such as a Menu.",
+          "slot": true
+        },
+        {
           "class": "env-card-footer",
           "description": "The strip of actions."
         },
@@ -1000,7 +1054,17 @@
           "slot": true
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-label-placement",
+          "values": [
+            "start"
+          ],
+          "parts": [
+            "env-checkbox"
+          ]
+        }
+      ],
       "uses": [
         "Icon"
       ],
@@ -1037,6 +1101,11 @@
         {
           "class": "env-code-block",
           "description": "The block of code."
+        },
+        {
+          "class": "env-code-block-actions",
+          "description": "The slot of the content in the heading before the copy button.",
+          "slot": true
         },
         {
           "class": "env-code-block-copy-status",
@@ -1617,6 +1686,16 @@
           "description": "The search field, a ghost TextField around the search input."
         },
         {
+          "class": "env-command-palette-search-end",
+          "description": "The slot of the content after the search field, such as a mode switch.",
+          "slot": true
+        },
+        {
+          "class": "env-command-palette-search-start",
+          "description": "The slot of the content before the search field, such as a scope chip.",
+          "slot": true
+        },
+        {
           "class": "env-command-palette-status",
           "description": "The EmptyState in place of the list, and the announcement of the number of results."
         }
@@ -1680,6 +1759,11 @@
           "slot": true
         },
         {
+          "class": "env-composer-end",
+          "description": "The slot of the content in the action row before the send button.",
+          "slot": true
+        },
+        {
           "class": "env-composer-footer",
           "description": "The supporting text below the composer, which describes the field."
         },
@@ -1695,11 +1779,25 @@
         {
           "class": "env-composer-surface",
           "description": "The surface around the input and the footer."
+        },
+        {
+          "class": "env-composer-top",
+          "description": "The slot of the content inside the composer above the input, such as attachments.",
+          "slot": true
         }
       ],
       "states": [
         {
           "attribute": "data-disabled",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-composer"
+          ]
+        },
+        {
+          "attribute": "data-end",
           "values": [
             ""
           ],
@@ -1718,6 +1816,15 @@
         },
         {
           "attribute": "data-start",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-composer"
+          ]
+        },
+        {
+          "attribute": "data-top",
           "values": [
             ""
           ],
@@ -1974,6 +2081,11 @@
           "description": "The row of actions at the bottom."
         },
         {
+          "class": "env-dialog-actions-start",
+          "description": "The slot of the content at the start of the actions' row.",
+          "slot": true
+        },
+        {
           "class": "env-dialog-backdrop",
           "description": "The backdrop behind a modal dialog."
         },
@@ -1988,6 +2100,16 @@
         {
           "class": "env-dialog-header",
           "description": "The row with the title and the close button."
+        },
+        {
+          "class": "env-dialog-header-end",
+          "description": "The slot of the content at the end of the title's row, before a close button.",
+          "slot": true
+        },
+        {
+          "class": "env-dialog-header-start",
+          "description": "The slot of the content before the title.",
+          "slot": true
         },
         {
           "class": "env-dialog-heading",
@@ -2066,6 +2188,8 @@
       ],
       "uses": [
         "Button",
+        "Icon",
+        "IconButton",
         "Overlay",
         "Skeleton",
         "Surface",
@@ -2117,7 +2241,26 @@
           "slot": true
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-indicator",
+          "values": [
+            "end"
+          ],
+          "parts": [
+            "env-disclosure"
+          ]
+        },
+        {
+          "attribute": "data-layout",
+          "values": [
+            "flow"
+          ],
+          "parts": [
+            "env-disclosure-panel"
+          ]
+        }
+      ],
       "uses": [
         "Icon"
       ]
@@ -2167,6 +2310,11 @@
         {
           "class": "env-document-tabs-tab",
           "description": "A tab's button."
+        },
+        {
+          "class": "env-document-tabs-tab-end",
+          "description": "The slot after a tab's title, such as a dot for unsaved changes.",
+          "slot": true
         },
         {
           "class": "env-document-tabs-tab-label",
@@ -2250,6 +2398,11 @@
         {
           "class": "env-drop-zone",
           "description": "The area that takes dropped files."
+        },
+        {
+          "class": "env-drop-zone-content",
+          "description": "The slot of the content under the target, such as the chosen files.",
+          "slot": true
         },
         {
           "class": "env-drop-zone-description",
@@ -2357,6 +2510,11 @@
         {
           "class": "env-empty-state-icon",
           "description": "The slot of the icon above the title.",
+          "slot": true
+        },
+        {
+          "class": "env-empty-state-illustration",
+          "description": "The slot of the illustration above the title, at its own size.",
           "slot": true
         },
         {
@@ -2686,6 +2844,11 @@
           "description": "The list."
         },
         {
+          "class": "env-list-actions",
+          "description": "The slot of the content at the end of the title's line, such as an Add button.",
+          "slot": true
+        },
+        {
           "class": "env-list-announcer",
           "description": "The announcements of a reordered item."
         },
@@ -2793,6 +2956,15 @@
           ],
           "parts": [
             "env-list-item"
+          ]
+        },
+        {
+          "attribute": "data-placement",
+          "values": [
+            "end"
+          ],
+          "parts": [
+            "env-list-item-handle"
           ]
         },
         {
@@ -2971,6 +3143,11 @@
         {
           "class": "env-menu-item-shortcut",
           "description": "An item's keyboard shortcut."
+        },
+        {
+          "class": "env-menu-item-start",
+          "description": "The slot of the content before an item's label in place of an icon, such as an Avatar.",
+          "slot": true
         },
         {
           "class": "env-menu-item-text",
@@ -3158,6 +3335,11 @@
           "slot": true
         },
         {
+          "class": "env-message-start",
+          "description": "The slot of the content beside the message at its inline start, such as the author's avatar.",
+          "slot": true
+        },
+        {
           "class": "env-message-status",
           "description": "The sending or failed status."
         },
@@ -3182,6 +3364,15 @@
           "values": [
             "other",
             "self"
+          ],
+          "parts": [
+            "env-message"
+          ]
+        },
+        {
+          "attribute": "data-start",
+          "values": [
+            ""
           ],
           "parts": [
             "env-message"
@@ -3269,7 +3460,17 @@
           "description": "The value as text."
         }
       ],
-      "states": []
+      "states": [
+        {
+          "attribute": "data-layout",
+          "values": [
+            "inline"
+          ],
+          "parts": [
+            "env-meter"
+          ]
+        }
+      ]
     },
     "MonthPicker": {
       "root": "env-month-picker",
@@ -3351,6 +3552,10 @@
           "description": "A destination's count, on the icon's top end; 999+ above 999."
         },
         {
+          "class": "env-navigation-bar-dot",
+          "description": "The dot at the end of a menu item in More whose destination has something new and no count."
+        },
+        {
           "class": "env-navigation-bar-indicator",
           "description": "The rounded rectangle around a destination's icon, filled while the destination is current."
         },
@@ -3392,8 +3597,33 @@
           ]
         },
         {
+          "attribute": "data-disabled",
+          "values": [],
+          "parts": [
+            "env-navigation-bar-item"
+          ]
+        },
+        {
+          "attribute": "data-dot",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-navigation-bar-count"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
+          "parts": [
+            "env-navigation-bar"
+          ]
+        },
+        {
+          "attribute": "data-labels",
+          "values": [
+            "tooltip"
+          ],
           "parts": [
             "env-navigation-bar"
           ]
@@ -3403,7 +3633,10 @@
         "Badge",
         "Icon",
         "Menu",
-        "Skeleton"
+        "Popup",
+        "Skeleton",
+        "Theme",
+        "Tooltip"
       ],
       "colors": [
         {
@@ -3468,8 +3701,17 @@
           "slot": true
         },
         {
+          "class": "env-navigation-drawer-group-end",
+          "description": "The slot of the content after a group's heading, outside it.",
+          "slot": true
+        },
+        {
           "class": "env-navigation-drawer-group-label",
           "description": "A group's label, which names the group's list."
+        },
+        {
+          "class": "env-navigation-drawer-group-row",
+          "description": "A group's heading with the content after it, in one row."
         },
         {
           "class": "env-navigation-drawer-header",
@@ -3521,6 +3763,20 @@
           "values": [],
           "parts": [
             "env-navigation-drawer-item"
+          ]
+        },
+        {
+          "attribute": "data-disabled",
+          "values": [],
+          "parts": [
+            "env-navigation-drawer-item"
+          ]
+        },
+        {
+          "attribute": "data-dot",
+          "values": [],
+          "parts": [
+            "env-navigation-drawer-count"
           ]
         },
         {
@@ -3643,8 +3899,31 @@
           ]
         },
         {
+          "attribute": "data-disabled",
+          "values": [],
+          "parts": [
+            "env-navigation-rail-item"
+          ]
+        },
+        {
+          "attribute": "data-dot",
+          "values": [],
+          "parts": [
+            "env-navigation-rail-count"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
+          "parts": [
+            "env-navigation-rail"
+          ]
+        },
+        {
+          "attribute": "data-labels",
+          "values": [
+            "tooltip"
+          ],
           "parts": [
             "env-navigation-rail"
           ]
@@ -3652,7 +3931,10 @@
       ],
       "uses": [
         "Icon",
-        "Skeleton"
+        "Popup",
+        "Skeleton",
+        "Theme",
+        "Tooltip"
       ],
       "colors": [
         {
@@ -3824,7 +4106,17 @@
           "description": "The title of the page a link leads to."
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-stacked",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-pager"
+          ]
+        }
+      ],
       "uses": [
         "Icon"
       ]
@@ -4284,7 +4576,6 @@
         }
       ],
       "uses": [
-        "Button",
         "Checkbox",
         "Code",
         "Field",
@@ -4309,6 +4600,11 @@
         {
           "class": "env-rich-text-editor-control",
           "description": "The well around the toolbar and the document."
+        },
+        {
+          "class": "env-rich-text-editor-footer",
+          "description": "The slot of the content under the document, inside the well, such as a Send button.",
+          "slot": true
         }
       ],
       "states": [
@@ -4374,8 +4670,16 @@
           "description": "The body, the main region, which scrolls."
         },
         {
+          "class": "env-scaffold-bottom-bar",
+          "description": "The bottom bar region under the body and the end region, such as a status bar."
+        },
+        {
           "class": "env-scaffold-drawer",
           "description": "The slot of the navigation drawer, at the start from expanded."
+        },
+        {
+          "class": "env-scaffold-end",
+          "description": "The end region beside the body, such as an inspector, which scrolls on its own."
         },
         {
           "class": "env-scaffold-navigation",
@@ -4534,6 +4838,11 @@
           "description": "A segment's count."
         },
         {
+          "class": "env-segmented-control-item-end",
+          "description": "The slot of the content after a segment's label and count, such as a Badge.",
+          "slot": true
+        },
+        {
           "class": "env-segmented-control-item-icon",
           "description": "The slot of a segment's icon.",
           "slot": true
@@ -4602,7 +4911,8 @@
         "Popup",
         "Skeleton",
         "Theme",
-        "Tooltip"
+        "Tooltip",
+        "VisuallyHidden"
       ],
       "colors": [
         {
@@ -4644,6 +4954,14 @@
           "description": "The chevron's place at the end of the well."
         },
         {
+          "class": "env-select-group",
+          "description": "A group of options."
+        },
+        {
+          "class": "env-select-group-label",
+          "description": "A group's heading."
+        },
+        {
           "class": "env-select-icon",
           "description": "The chevron."
         },
@@ -4682,6 +5000,11 @@
         {
           "class": "env-select-value",
           "description": "The chosen option's label."
+        },
+        {
+          "class": "env-select-value-start",
+          "description": "The slot of the chosen option's start content on the trigger.",
+          "slot": true
         }
       ],
       "states": [
@@ -5070,7 +5393,17 @@
           "slot": true
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-label-placement",
+          "values": [
+            "start"
+          ],
+          "parts": [
+            "env-switch"
+          ]
+        }
+      ],
       "colors": [
         {
           "property": "--env-switch-container",
@@ -5128,12 +5461,25 @@
           "description": "The handle that resizes a column."
         },
         {
+          "class": "env-table-foot",
+          "description": "The foot, with summary rows such as totals, on the header's band."
+        },
+        {
           "class": "env-table-head",
           "description": "The head."
         },
         {
           "class": "env-table-header-cell",
           "description": "A column header."
+        },
+        {
+          "class": "env-table-header-content",
+          "description": "The row of a column header with content at its end: its label or sort button, then that content."
+        },
+        {
+          "class": "env-table-header-end",
+          "description": "The slot of the content at a column header's end, outside its sort button.",
+          "slot": true
         },
         {
           "class": "env-table-header-label",
@@ -5743,6 +6089,10 @@
           "description": "A notification's action."
         },
         {
+          "class": "env-toast-actions",
+          "description": "A notification's actions, side by side, wrapping when they don't fit."
+        },
+        {
           "class": "env-toast-announcer",
           "description": "The announcements of notifications."
         },
@@ -6345,6 +6695,11 @@
           "slot": true
         },
         {
+          "class": "env-list-row-start",
+          "description": "The slot of the content before a row's name in place of an icon, such as an Avatar.",
+          "slot": true
+        },
+        {
           "class": "env-list-row-text",
           "description": "The column with a row's label and description."
         }
@@ -6474,6 +6829,11 @@
         {
           "class": "env-picker-popup-footer-end",
           "description": "The actions at the end of that row, such as Clear."
+        },
+        {
+          "class": "env-picker-popup-header",
+          "description": "The slot of the application's content above the body, such as presets.",
+          "slot": true
         }
       ],
       "states": [],
@@ -6564,7 +6924,9 @@
         "Menu",
         "Menubar",
         "MonthPicker",
+        "NavigationBar",
         "NavigationDrawer",
+        "NavigationRail",
         "Popover",
         "RelativeTime",
         "SegmentedControl",

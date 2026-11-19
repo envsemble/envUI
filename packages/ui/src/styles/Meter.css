@@ -13,6 +13,17 @@
     color: var(--env-color-fg-control);
     font-weight: var(--env-font-weight-medium);
   }
+  .env-meter[data-layout='inline'] {
+    font: var(--env-type-body-sm);
+  }
+  .env-meter[data-layout='inline'] > .env-meter-track {
+    flex: 1 1 0;
+    min-inline-size: var(--env-space-8);
+  }
+  .env-meter[data-layout='inline'] > :is(.env-meter-label, .env-meter-value) {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+  }
   .env-meter-track,
   .env-progress-track {
     --_meter-track-height: 0.625rem;

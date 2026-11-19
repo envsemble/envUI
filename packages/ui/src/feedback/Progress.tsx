@@ -5,12 +5,19 @@ import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
+import type { ReactNode } from 'react';
 import type { RangeBarProps } from '../internal/rangeBarProps.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Meter.css';
 
-export interface ProgressProps extends RangeBarProps {
+export interface ProgressProps extends Omit<RangeBarProps, 'label'> {
+  /**
+   * What the bar shows, such as Uploading report.pdf; it is visible above the bar and names it.
+   * Leave it out for a bare bar named with aria-label or aria-labelledby, such as by the file name
+   * beside it in a row; without a label or valueText the bar has no row above it.
+   */
+  label?: ReactNode;
   /**
    * How much of the task is done, between min and max, such as 40 of 100; null while the amount of
    * work is unknown, which shows an indeterminate bar announced as Loading.
@@ -58,10 +65,14 @@ export function Progress({
       className={classNames('env-progress', className)}
       data-segmented={flag(steps !== undefined)}
     >
-      <Row wrap justify="between" gap={3} className="env-progress-header">
-        <BaseProgress.Label className="env-progress-label">{label}</BaseProgress.Label>
-        {valueText != null && <span className="env-progress-value">{valueText}</span>}
-      </Row>
+      {(label != null || valueText != null) && (
+        <Row wrap justify="between" gap={3} className="env-progress-header">
+          {label != null && (
+            <BaseProgress.Label className="env-progress-label">{label}</BaseProgress.Label>
+          )}
+          {valueText != null && <span className="env-progress-value">{valueText}</span>}
+        </Row>
+      )}
       <BaseProgress.Track className="env-progress-track">
         {steps === undefined || value === null ? (
           <BaseProgress.Indicator className="env-progress-indicator" />

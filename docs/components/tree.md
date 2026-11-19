@@ -32,6 +32,7 @@ examples:
   RowDensity: example
   TreeAnatomy: anatomy
   ContextMenuActions: example
+  MatchedLetters: example
   NarrowTree: example
 ---
 
@@ -71,6 +72,12 @@ examples:
 
 ```
 
+### Content in a name
+
+```tsx figure=MatchedLetters
+
+```
+
 ### Adapting to width
 
 ```tsx figure=NarrowTree widths="24 12" sweep
@@ -90,6 +97,6 @@ examples:
 | <kbd>←</kbd>                                              | Collapses a row, or moves to its parent. <kbd>→</kbd> in right-to-left text.    |
 | <kbd>Enter</kbd>                                          | Opens the active row.                                                           |
 | <kbd>Space</kbd>                                          | Previews the active row.                                                        |
-| A letter or digit                                         | Moves to the next row whose label starts with what was typed.                   |
+| A letter or digit                                         | Moves to the next row whose label or text value starts with what was typed.     |
 | <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd>        | Opens the context menu; <kbd>Esc</kbd> closes it and returns focus to the tree. |
 | Keys with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> | Left to the application.                                                        |

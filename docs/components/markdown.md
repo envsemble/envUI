@@ -33,6 +33,7 @@ components:
 examples:
   WriteNote: overview
   LinkPicker: example
+  OwnToolbarButtons: example
   MarkdownEditorAnatomy: anatomy
   OpenInPanel: example
   CustomElements: example
@@ -50,6 +51,12 @@ examples:
 ### Toolbar
 
 ```tsx figure=LinkPicker motion
+
+```
+
+### Your own toolbar buttons
+
+```tsx figure=OwnToolbarButtons
 
 ```
 

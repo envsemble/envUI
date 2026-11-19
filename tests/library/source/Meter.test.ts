@@ -32,3 +32,35 @@ test('meters and progress bars read their values, Base UI’s formatted value by
   const uploading = withRole(h(Progress, { label: 'Uploading', value: 30 }), 'progressbar');
   assert.match(uploading.attributes['aria-valuetext'], /30/);
 });
+
+test('a progress bar without a label or value text is a bare bar, named by aria-label, with no row above it', () => {
+  const bare = render(h(Progress, { value: 30, 'aria-label': 'Uploading report.pdf' }));
+  const bar = elementsOf(bare).find((each) => each.attributes.role === 'progressbar');
+  assert.equal(bar.attributes['aria-label'], 'Uploading report.pdf');
+  assert.equal(
+    elementsOf(bare).some((each) => hasClass(each, 'env-progress-header')),
+    false,
+  );
+  assert.equal(
+    elementsOf(bare).some((each) => hasClass(each, 'env-progress-label')),
+    false,
+  );
+  const labelled = render(h(Progress, { value: 30, label: 'Uploading' }));
+  assert.ok(elementsOf(labelled).some((each) => hasClass(each, 'env-progress-header')));
+});
+
+test('an inline meter lays out its label, bar and value on one line, in that order', () => {
+  const meter = withRole(
+    h(Meter, { label: 'Storage', value: 40, valueText: '40%', layout: 'inline' }),
+    'meter',
+  );
+  assert.equal(meter.attributes['data-layout'], 'inline');
+  const parts = meter.children
+    .filter((child) => typeof child !== 'string')
+    .map((child) => child.attributes.class)
+    .filter(Boolean);
+  assert.deepEqual(parts, ['env-meter-label', 'env-meter-track', 'env-meter-value']);
+  const stacked = withRole(h(Meter, { label: 'Storage', value: 40, valueText: '40%' }), 'meter');
+  assert.equal(stacked.attributes['data-layout'], undefined);
+  assert.ok(elementsOf(stacked).some((element) => hasClass(element, 'env-meter-header')));
+});

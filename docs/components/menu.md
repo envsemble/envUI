@@ -40,6 +40,7 @@ examples:
   GroupsAndSeparators: example
   Choices: example
   Submenus: example
+  AccountSwitcher: example
   Destinations: example
   MenuAnatomy: anatomy
 ---
@@ -69,6 +70,12 @@ examples:
 ### Submenus
 
 ```tsx figure=Submenus motion
+
+```
+
+### Pictures before the label
+
+```tsx figure=AccountSwitcher open
 
 ```
 

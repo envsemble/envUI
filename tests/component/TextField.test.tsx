@@ -222,3 +222,19 @@ test(
     expect(commits()).toBe('rejected=7420x rejected=7420y');
   },
 );
+
+test("SearchField's end action follows the clear button, and the query stops short of both", async () => {
+  await open({ default: affixes.SearchEndActionFixture });
+  const search = page.getByRole('searchbox', { name: 'Search issues' });
+  const clear = page.getByRole('button', { name: 'Clear search' });
+  const filters = page.getByRole('button', { name: 'Filters' });
+  expect(box(filters).x).toBeGreaterThan(box(clear).x);
+  const input = search.element() as HTMLInputElement;
+  const textEnd = box(input).x + box(input).width - Number.parseFloat(css(input, 'padding-right'));
+  expect(textEnd).toBeLessThanOrEqual(box(clear).x);
+  await expect.element(filters).toHaveAttribute('data-variant', 'ghost');
+  await clear.click();
+  await expect.element(search).toHaveValue('');
+  expect(clear.elements()).toHaveLength(0);
+  await expect.element(filters).toBeVisible();
+});

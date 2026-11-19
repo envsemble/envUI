@@ -140,3 +140,15 @@ test('Markdown accepts component overrides and remark and rehype plugins, and st
   assert.ok(paragraphs.includes('Not keys: A B'));
   assert.ok(!elements.some((element) => 'onclick' in element.attributes || element.tag === 'b'));
 });
+
+test('allowHtml keeps raw HTML for the rehype plugins, which a sanitizing rehype-raw then renders', () => {
+  const source = 'H<sub>2</sub>O\n\n<details>More</details>';
+  const kept = render(source, { allowHtml: true, rehypePlugins: [rehypeRawStandIn] });
+  assert.deepEqual(kept.filter((element) => 'data-raw' in element.attributes).map(textOf), [
+    '<sub>',
+    '</sub>',
+    '<details>More</details>',
+  ]);
+  const dropped = render(source, { rehypePlugins: [rehypeRawStandIn] });
+  assert.ok(!dropped.some((element) => 'data-raw' in element.attributes));
+});

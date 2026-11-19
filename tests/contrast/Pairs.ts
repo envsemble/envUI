@@ -609,6 +609,17 @@ const registry: readonly ContrastPair[] = merged([
   ),
 
   ...nonText(
+    'toolbar-separator',
+    [page, surface, muted, raised, popup],
+    'Separators between a toolbar’s groups, on every surface a toolbar sits on',
+    {
+      contrast: 'standard',
+      minimum: { standard: 1.4 },
+      rationale:
+        'Decorative at standard contrast, as list dividers are, but held to 1.4:1 on every surface, the recessed well too, where the muted hairline faded to 1.1:1: in light a tint of the text color, so it keeps its step from any ground. High contrast draws it in --env-color-border-muted, measured there.',
+    },
+  ),
+  ...nonText(
     '--env-elevation-2-border',
     [popup, surface, page, muted, raised],
     'The edge of menus, Select and Combobox lists, popovers, hover cards, the date picker, rich text suggestions and docked panels, against the popup and what it floats over',
@@ -1351,6 +1362,7 @@ const derived: Readonly<Record<string, string>> = {
   'tooltip-key': ofLabel(tooltipKeyFill, '--env-color-fg-on-strong'),
   'tooltip-worst-backdrop': '#fff',
   'composer-hover-edge': markedColor('packages/ui/src/styles/Composer.css', 'composer-hover-edge'),
+  'toolbar-separator': markedColor('packages/ui/src/styles/Toolbar.css', 'toolbar-separator'),
   'text-field-affix': markedColor('packages/ui/src/styles/TextField.css', 'text-field-affix'),
   'segmented-control-thumb': markedColor(
     'packages/ui/src/styles/SegmentedControl.css',

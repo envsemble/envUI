@@ -55,12 +55,12 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Accordion
 
-- Parts: `env-accordion`, `env-accordion-content`, `env-accordion-header`, `env-accordion-indicator`, `env-accordion-item`, `env-accordion-label` (slot), `env-accordion-panel`, `env-accordion-trigger`
-- States: `data-disabled` on `env-accordion-trigger`; `data-ending-style` on `env-accordion-panel`; `data-env-skeleton`; `data-interactive` on `env-accordion-trigger`; `data-panel-open` on `env-accordion-trigger`; `data-starting-style` on `env-accordion-panel`
+- Parts: `env-accordion`, `env-accordion-content`, `env-accordion-end` (slot), `env-accordion-header`, `env-accordion-indicator`, `env-accordion-indicator-content` (slot), `env-accordion-item`, `env-accordion-label` (slot), `env-accordion-panel`, `env-accordion-trigger`
+- States: `data-disabled` on `env-accordion-trigger`; `data-ending-style` on `env-accordion-panel`; `data-env-skeleton`; `data-indicator` (`end`, `none`) on `env-accordion-item`; `data-interactive` on `env-accordion-trigger`; `data-panel-open` on `env-accordion-trigger`; `data-starting-style` on `env-accordion-panel`
 
 ### Alert
 
-- Parts: `env-alert`, `env-alert-action` (slot), `env-alert-content`, `env-alert-dismiss`, `env-alert-icon`, `env-alert-message` (slot), `env-alert-title`
+- Parts: `env-alert`, `env-alert-action` (slot), `env-alert-content`, `env-alert-dismiss`, `env-alert-icon`, `env-alert-message` (slot), `env-alert-row`, `env-alert-title`
 - States: `data-env-skeleton` on `env-alert`, `env-alert-message`, `env-alert-title`; `data-tone` (`danger`, `info`, `success`, `warning`)
 - Color properties: `--env-alert-container`, `--env-alert-content`, `--env-alert-outline`, `--env-alert-icon`
 
@@ -71,7 +71,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Avatar
 
-- Parts: `env-avatar`, `env-avatar-check`, `env-avatar-fallback`, `env-avatar-fallback-initials`, `env-avatar-fallback-person`, `env-avatar-image`, `env-avatar-person`, `env-avatar-person-background`, `env-avatar-person-figure`
+- Parts: `env-avatar`, `env-avatar-badge` (slot), `env-avatar-check`, `env-avatar-fallback`, `env-avatar-fallback-content` (slot), `env-avatar-fallback-initials`, `env-avatar-fallback-person`, `env-avatar-image`, `env-avatar-person`, `env-avatar-person-background`, `env-avatar-person-figure`
 - States: `data-hue` (`blush`, `butter`, `oat`, `orchid`, `periwinkle`, `powder`, `sage`, `seafoam`); `data-selected`; `data-size` (`lg`, `md`, `sm`, `xl`)
 - Color properties: `--env-avatar-container`, `--env-avatar-content`
 - `--env-avatar-dense`, to set: 1 on a container, such as a dense list, gives the avatars and groups in it fills at half their chroma, so their initials keep their contrast, as a table cell and a small AvatarGroup do.
@@ -87,7 +87,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Badge
 
-- Parts: `env-badge`, `env-badge-count-label`, `env-badge-label`
+- Parts: `env-badge`, `env-badge-count-label`, `env-badge-label`, `env-badge-start` (slot)
 - States: `data-count`; `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`); `data-variant` (`outline`, `soft`, `solid`)
 - Color properties: `--env-badge-container`, `--env-badge-content`, `--env-badge-outline`
 
@@ -98,7 +98,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Button
 
-- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-end-icon` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start-icon` (slot)
+- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-end-icon` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start` (slot), `env-button-start-icon` (slot)
 - States: `data-full-width`; `data-pending`; `data-row-target`; `data-size` (`lg`, `md`, `sm`); `data-tone` (`accent`, `danger`); `data-underline`; `data-variant` (`ghost`, `outline`, `primary`, `secondary`, `text`)
 - Color properties: `--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected`, `--env-button-selected-content`
 
@@ -109,7 +109,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Calendar
 
-- Parts: `env-calendar`, `env-calendar-day`, `env-calendar-day-mark`, `env-calendar-grid`, `env-calendar-header`, `env-calendar-next`, `env-calendar-pad`, `env-calendar-previous`, `env-calendar-title`
+- Parts: `env-calendar`, `env-calendar-day`, `env-calendar-day-content` (slot), `env-calendar-day-mark`, `env-calendar-grid`, `env-calendar-header`, `env-calendar-next`, `env-calendar-pad`, `env-calendar-previous`, `env-calendar-title`
 - States: `data-date` on `env-calendar-day`
 
 ### CalendarHeatmap
@@ -119,13 +119,14 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Card
 
-- Parts: `env-card`, `env-card-actions` (slot), `env-card-body`, `env-card-description`, `env-card-footer`, `env-card-header`, `env-card-meta`, `env-card-title`
+- Parts: `env-card`, `env-card-actions` (slot), `env-card-body`, `env-card-description`, `env-card-end` (slot), `env-card-footer`, `env-card-header`, `env-card-meta`, `env-card-title`
 - States: `data-actions`; `data-background` (`page`); `data-emphasis` (`muted`) on `env-card-description`; `data-env-skeleton` on `env-card`, `env-card-description`, `env-card-header`, `env-card-meta`, `env-card-title`; `data-interactive`
 - Color properties: `--env-card-container`, `--env-card-content`, `--env-card-outline`
 
 ### Checkbox
 
 - Parts: `env-checkbox`, `env-checkbox-box`, `env-checkbox-description`, `env-checkbox-description-content` (slot), `env-checkbox-indicator`, `env-checkbox-input`, `env-checkbox-label`, `env-checkbox-label-content` (slot)
+- States: `data-label-placement` (`start`)
 - Color properties: `--env-checkbox-outline`, `--env-checkbox-selected`, `--env-checkbox-selected-content`
 
 ### Code
@@ -134,7 +135,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### CodeBlock
 
-- Parts: `env-code-block`, `env-code-block-copy-status`, `env-code-block-header`, `env-code-block-token`
+- Parts: `env-code-block`, `env-code-block-actions` (slot), `env-code-block-copy-status`, `env-code-block-header`, `env-code-block-token`
 - States: `data-wrap`
 
 ### CodeDiff
@@ -165,13 +166,13 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### CommandPalette
 
-- Parts: `env-command-palette`, `env-command-palette-close`, `env-command-palette-footer`, `env-command-palette-footer-content` (slot), `env-command-palette-group`, `env-command-palette-group-label`, `env-command-palette-header`, `env-command-palette-hint`, `env-command-palette-hint-label` (slot), `env-command-palette-input`, `env-command-palette-item`, `env-command-palette-list`, `env-command-palette-positioner`, `env-command-palette-search`, `env-command-palette-status`
+- Parts: `env-command-palette`, `env-command-palette-close`, `env-command-palette-footer`, `env-command-palette-footer-content` (slot), `env-command-palette-group`, `env-command-palette-group-label`, `env-command-palette-header`, `env-command-palette-hint`, `env-command-palette-hint-label` (slot), `env-command-palette-input`, `env-command-palette-item`, `env-command-palette-list`, `env-command-palette-positioner`, `env-command-palette-search`, `env-command-palette-search-end` (slot), `env-command-palette-search-start` (slot), `env-command-palette-status`
 - States: `data-empty` on `env-command-palette-status`; `data-ending-style`; `data-starting-style`
 
 ### Composer
 
-- Parts: `env-composer`, `env-composer-action`, `env-composer-description` (slot), `env-composer-footer`, `env-composer-input`, `env-composer-start` (slot), `env-composer-surface`
-- States: `data-disabled`; `data-running`; `data-start`
+- Parts: `env-composer`, `env-composer-action`, `env-composer-description` (slot), `env-composer-end` (slot), `env-composer-footer`, `env-composer-input`, `env-composer-start` (slot), `env-composer-surface`, `env-composer-top` (slot)
+- States: `data-disabled`; `data-end`; `data-running`; `data-start`; `data-top`
 
 ### ConfirmButton
 
@@ -197,7 +198,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Dialog
 
-- Parts: `env-dialog`, `env-dialog-actions`, `env-dialog-backdrop`, `env-dialog-content`, `env-dialog-description`, `env-dialog-header`, `env-dialog-heading`, `env-dialog-positioner`, `env-dialog-surface`, `env-dialog-title`
+- Parts: `env-dialog`, `env-dialog-actions`, `env-dialog-actions-start` (slot), `env-dialog-backdrop`, `env-dialog-content`, `env-dialog-description`, `env-dialog-header`, `env-dialog-header-end` (slot), `env-dialog-header-start` (slot), `env-dialog-heading`, `env-dialog-positioner`, `env-dialog-surface`, `env-dialog-title`
 - States: `data-ending-style` on `env-dialog`, `env-dialog-backdrop`; `data-env-skeleton`; `data-placement` (`center`, `top`) on `env-dialog`, `env-dialog-positioner`; `data-starting-style` on `env-dialog`, `env-dialog-backdrop`; `data-tone` (`danger`, `neutral`); `data-width` (`lg`, `md`)
 
 ### DiffStat
@@ -207,20 +208,21 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Disclosure
 
 - Parts: `env-disclosure`, `env-disclosure-indicator`, `env-disclosure-panel`, `env-disclosure-title` (slot)
+- States: `data-indicator` (`end`); `data-layout` (`flow`) on `env-disclosure-panel`
 
 ### DocumentTabs
 
-- Parts: `env-document-tabs`, `env-document-tabs-close`, `env-document-tabs-drag-image`, `env-document-tabs-end` (slot), `env-document-tabs-item`, `env-document-tabs-list`, `env-document-tabs-panel`, `env-document-tabs-panel-content` (slot), `env-document-tabs-strip`, `env-document-tabs-tab`, `env-document-tabs-tab-label`
+- Parts: `env-document-tabs`, `env-document-tabs-close`, `env-document-tabs-drag-image`, `env-document-tabs-end` (slot), `env-document-tabs-item`, `env-document-tabs-list`, `env-document-tabs-panel`, `env-document-tabs-panel-content` (slot), `env-document-tabs-strip`, `env-document-tabs-tab`, `env-document-tabs-tab-end` (slot), `env-document-tabs-tab-label`
 - States: `data-active` on `env-document-tabs-item`; `data-drop` (`after`, `before`) on `env-document-tabs-item`; `data-first-active`; `data-moving` (`pointer`) on `env-document-tabs-item`; `data-preview` on `env-document-tabs-tab`; `data-reordering` on `env-document-tabs-list`; `data-tab-id` on `env-document-tabs-tab`
 
 ### DropZone
 
-- Parts: `env-drop-zone`, `env-drop-zone-description`, `env-drop-zone-description-content` (slot), `env-drop-zone-icon`, `env-drop-zone-icon-content` (slot), `env-drop-zone-label`, `env-drop-zone-label-content` (slot), `env-drop-zone-target`, `env-drop-zone-text`
+- Parts: `env-drop-zone`, `env-drop-zone-content` (slot), `env-drop-zone-description`, `env-drop-zone-description-content` (slot), `env-drop-zone-icon`, `env-drop-zone-icon-content` (slot), `env-drop-zone-label`, `env-drop-zone-label-content` (slot), `env-drop-zone-target`, `env-drop-zone-text`
 - States: `data-drag-over`; `data-invalid`; `data-pending`; `data-size` (`md`, `sm`)
 
 ### EmptyState
 
-- Parts: `env-empty-state`, `env-empty-state-actions` (slot), `env-empty-state-description` (slot), `env-empty-state-heading`, `env-empty-state-icon` (slot), `env-empty-state-title` (slot)
+- Parts: `env-empty-state`, `env-empty-state-actions` (slot), `env-empty-state-description` (slot), `env-empty-state-heading`, `env-empty-state-icon` (slot), `env-empty-state-illustration` (slot), `env-empty-state-title` (slot)
 
 ### Field
 
@@ -259,8 +261,8 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### List
 
-- Parts: `env-list`, `env-list-announcer`, `env-list-description` (slot), `env-list-header`, `env-list-item`, `env-list-item-content`, `env-list-item-control` (slot), `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot), `env-list-section`, `env-list-title`
-- States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-env-skeleton` on `env-list`, `env-list-item-description`; `data-interactive` on `env-list-item`; `data-label` on `env-list-item-handle`; `data-moving` (`keyboard`, `pointer`) on `env-list-item`; `data-reorderable`; `data-reordering`; `data-selected` on `env-list-item`; `data-start` on `env-list-item`
+- Parts: `env-list`, `env-list-actions` (slot), `env-list-announcer`, `env-list-description` (slot), `env-list-header`, `env-list-item`, `env-list-item-content`, `env-list-item-control` (slot), `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot), `env-list-section`, `env-list-title`
+- States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-env-skeleton` on `env-list`, `env-list-item-description`; `data-interactive` on `env-list-item`; `data-label` on `env-list-item-handle`; `data-moving` (`keyboard`, `pointer`) on `env-list-item`; `data-placement` (`end`) on `env-list-item-handle`; `data-reorderable`; `data-reordering`; `data-selected` on `env-list-item`; `data-start` on `env-list-item`
 - Color properties: `--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected`, `--env-list-item-selected-content`
 
 ### Markdown
@@ -273,7 +275,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Menu
 
-- Parts: `env-menu`, `env-menu-choice`, `env-menu-group`, `env-menu-group-label`, `env-menu-header`, `env-menu-item`, `env-menu-item-description`, `env-menu-item-end`, `env-menu-item-indicator`, `env-menu-item-indicator-slot`, `env-menu-item-label`, `env-menu-item-shortcut`, `env-menu-item-text`, `env-menu-positioner`, `env-menu-separator`, `env-menu-submenu-chevron`, `env-menu-submenu-trigger`
+- Parts: `env-menu`, `env-menu-choice`, `env-menu-group`, `env-menu-group-label`, `env-menu-header`, `env-menu-item`, `env-menu-item-description`, `env-menu-item-end`, `env-menu-item-indicator`, `env-menu-item-indicator-slot`, `env-menu-item-label`, `env-menu-item-shortcut`, `env-menu-item-start` (slot), `env-menu-item-text`, `env-menu-positioner`, `env-menu-separator`, `env-menu-submenu-chevron`, `env-menu-submenu-trigger`
 - States: `data-checked` on `env-menu-choice`; `data-disabled` on `env-menu-item`; `data-highlighted` on `env-menu-choice`, `env-menu-item`; `data-instant` (`group`); `data-popup-open` on `env-menu-choice`, `env-menu-item`; `data-tone` (`danger`, `neutral`) on `env-menu-item`
 - Color properties: `--env-menu-item-container`, `--env-menu-item-content`, `--env-menu-item-icon`
 
@@ -284,8 +286,8 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Message
 
-- Parts: `env-message`, `env-message-actions` (slot), `env-message-author`, `env-message-content` (slot), `env-message-header`, `env-message-meta` (slot), `env-message-status`, `env-message-text`
-- States: `data-env-skeleton` on `env-message`, `env-message-author`, `env-message-header`, `env-message-meta`; `data-from` (`other`, `self`); `data-status` (`failed`, `sending`)
+- Parts: `env-message`, `env-message-actions` (slot), `env-message-author`, `env-message-content` (slot), `env-message-header`, `env-message-meta` (slot), `env-message-start` (slot), `env-message-status`, `env-message-text`
+- States: `data-env-skeleton` on `env-message`, `env-message-author`, `env-message-header`, `env-message-meta`; `data-from` (`other`, `self`); `data-start`; `data-status` (`failed`, `sending`)
 
 ### MessageList
 
@@ -295,6 +297,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Meter
 
 - Parts: `env-meter`, `env-meter-header`, `env-meter-indicator`, `env-meter-label`, `env-meter-track`, `env-meter-value`
+- States: `data-layout` (`inline`)
 
 ### MonthPicker
 
@@ -303,20 +306,20 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### NavigationBar
 
-- Parts: `env-navigation-bar`, `env-navigation-bar-count`, `env-navigation-bar-indicator`, `env-navigation-bar-item`, `env-navigation-bar-label`, `env-navigation-bar-list`, `env-navigation-bar-more`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-bar-item`; `data-env-skeleton`
+- Parts: `env-navigation-bar`, `env-navigation-bar-count`, `env-navigation-bar-dot`, `env-navigation-bar-indicator`, `env-navigation-bar-item`, `env-navigation-bar-label`, `env-navigation-bar-list`, `env-navigation-bar-more`
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-bar-item`; `data-disabled` on `env-navigation-bar-item`; `data-dot` on `env-navigation-bar-count`; `data-env-skeleton`; `data-labels` (`tooltip`)
 - Color properties: `--env-navigation-bar-item-container`, `--env-navigation-bar-item-content`, `--env-navigation-bar-item-icon`, `--env-navigation-bar-item-selected`, `--env-navigation-bar-item-selected-content`
 
 ### NavigationDrawer
 
-- Parts: `env-navigation-drawer`, `env-navigation-drawer-badge` (slot), `env-navigation-drawer-branch`, `env-navigation-drawer-chevron`, `env-navigation-drawer-children`, `env-navigation-drawer-count`, `env-navigation-drawer-end` (slot), `env-navigation-drawer-footer` (slot), `env-navigation-drawer-group-label`, `env-navigation-drawer-header` (slot), `env-navigation-drawer-item`, `env-navigation-drawer-label`, `env-navigation-drawer-list`, `env-navigation-drawer-resize-handle`, `env-navigation-drawer-row`, `env-navigation-drawer-section`, `env-navigation-drawer-toggle`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-drawer-item`; `data-ending-style` on `env-navigation-drawer-children`; `data-env-skeleton`; `data-resizable`; `data-starting-style` on `env-navigation-drawer-children`
+- Parts: `env-navigation-drawer`, `env-navigation-drawer-badge` (slot), `env-navigation-drawer-branch`, `env-navigation-drawer-chevron`, `env-navigation-drawer-children`, `env-navigation-drawer-count`, `env-navigation-drawer-end` (slot), `env-navigation-drawer-footer` (slot), `env-navigation-drawer-group-end` (slot), `env-navigation-drawer-group-label`, `env-navigation-drawer-group-row`, `env-navigation-drawer-header` (slot), `env-navigation-drawer-item`, `env-navigation-drawer-label`, `env-navigation-drawer-list`, `env-navigation-drawer-resize-handle`, `env-navigation-drawer-row`, `env-navigation-drawer-section`, `env-navigation-drawer-toggle`
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-drawer-item`; `data-disabled` on `env-navigation-drawer-item`; `data-dot` on `env-navigation-drawer-count`; `data-ending-style` on `env-navigation-drawer-children`; `data-env-skeleton`; `data-resizable`; `data-starting-style` on `env-navigation-drawer-children`
 - Color properties: `--env-navigation-drawer-item-container`, `--env-navigation-drawer-item-content`, `--env-navigation-drawer-item-icon`, `--env-navigation-drawer-item-selected`, `--env-navigation-drawer-item-selected-content`
 
 ### NavigationRail
 
 - Parts: `env-navigation-rail`, `env-navigation-rail-count`, `env-navigation-rail-footer` (slot), `env-navigation-rail-header` (slot), `env-navigation-rail-indicator`, `env-navigation-rail-item`, `env-navigation-rail-label`, `env-navigation-rail-list`
-- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-rail-item`; `data-env-skeleton`
+- States: `data-background` (`default`, `page`); `data-current` on `env-navigation-rail-item`; `data-disabled` on `env-navigation-rail-item`; `data-dot` on `env-navigation-rail-count`; `data-env-skeleton`; `data-labels` (`tooltip`)
 - Color properties: `--env-navigation-rail-item-container`, `--env-navigation-rail-item-content`, `--env-navigation-rail-item-icon`, `--env-navigation-rail-item-selected`, `--env-navigation-rail-item-selected-content`
 
 ### Page
@@ -332,6 +335,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Pager
 
 - Parts: `env-pager`, `env-pager-link`, `env-pager-link-copy`, `env-pager-link-label`, `env-pager-link-next`, `env-pager-link-previous`, `env-pager-link-title`
+- States: `data-stacked`
 
 ### Pagination
 
@@ -385,24 +389,24 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### RichTextEditor
 
-- Parts: `env-rich-text-editor`, `env-rich-text-editor-content`, `env-rich-text-editor-control`
+- Parts: `env-rich-text-editor`, `env-rich-text-editor-content`, `env-rich-text-editor-control`, `env-rich-text-editor-footer` (slot)
 - States: `data-disabled` on `env-rich-text-editor`, `env-rich-text-editor-control`; `data-invalid` on `env-rich-text-editor-control`; `data-readonly`
 
 ### Scaffold
 
-- Parts: `env-scaffold`, `env-scaffold-bar`, `env-scaffold-body`, `env-scaffold-drawer`, `env-scaffold-navigation`, `env-scaffold-rail`, `env-scaffold-skip-link`, `env-scaffold-skip-links`, `env-scaffold-top-bar`
+- Parts: `env-scaffold`, `env-scaffold-bar`, `env-scaffold-body`, `env-scaffold-bottom-bar`, `env-scaffold-drawer`, `env-scaffold-end`, `env-scaffold-navigation`, `env-scaffold-rail`, `env-scaffold-skip-link`, `env-scaffold-skip-links`, `env-scaffold-top-bar`
 - States: `data-env-layout` (`scaffold`); `data-env-name`; `data-navigation-compact` (`bar`, `drawer`, `none`, `rail`); `data-navigation-expanded` (`bar`, `drawer`, `none`, `rail`); `data-navigation-form` (`bar`, `drawer`, `rail`) on `env-scaffold-bar`, `env-scaffold-drawer`, `env-scaffold-rail`; `data-navigation-large` (`bar`, `drawer`, `none`, `rail`); `data-navigation-medium` (`bar`, `drawer`, `none`, `rail`); `data-scroll` (`body`, `document`); `data-skip` (`navigation`) on `env-scaffold-skip-link`; `data-top-bar-span` (`body`, `full`)
 - `--env-scaffold-sticky-top`, to read: How far below the window's top sticky content in the body sticks: under the top bar where the document scrolls.
 
 ### SegmentedControl
 
-- Parts: `env-segmented-control`, `env-segmented-control-item`, `env-segmented-control-item-count`, `env-segmented-control-item-icon` (slot), `env-segmented-control-item-label`, `env-segmented-control-thumb`
+- Parts: `env-segmented-control`, `env-segmented-control-item`, `env-segmented-control-item-count`, `env-segmented-control-item-end` (slot), `env-segmented-control-item-icon` (slot), `env-segmented-control-item-label`, `env-segmented-control-thumb`
 - States: `data-checked` on `env-segmented-control-item`; `data-disabled` on `env-segmented-control-item`; `data-full-width`; `data-placed` on `env-segmented-control-thumb`; `data-size` (`lg`, `md`, `sm`); `data-traveling` on `env-segmented-control-thumb`
 - Color properties: `--env-segmented-control-container`, `--env-segmented-control-outline`, `--env-segmented-control-content`, `--env-segmented-control-selected`, `--env-segmented-control-selected-content`
 
 ### Select
 
-- Parts: `env-select`, `env-select-control`, `env-select-end`, `env-select-icon`, `env-select-item`, `env-select-item-indicator`, `env-select-label`, `env-select-list`, `env-select-placeholder`, `env-select-popup`, `env-select-sizer`, `env-select-trigger`, `env-select-value`
+- Parts: `env-select`, `env-select-control`, `env-select-end`, `env-select-group`, `env-select-group-label`, `env-select-icon`, `env-select-item`, `env-select-item-indicator`, `env-select-label`, `env-select-list`, `env-select-placeholder`, `env-select-popup`, `env-select-sizer`, `env-select-trigger`, `env-select-value`, `env-select-value-start` (slot)
 - States: `data-disabled` on `env-select-item`; `data-highlighted` on `env-select-item`; `data-label-hidden`; `data-selected` on `env-select-item`
 - Color properties: `--env-select-container`, `--env-select-content`, `--env-select-outline`
 
@@ -432,11 +436,12 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Switch
 
 - Parts: `env-switch`, `env-switch-description`, `env-switch-description-content` (slot), `env-switch-input`, `env-switch-label`, `env-switch-label-content` (slot)
+- States: `data-label-placement` (`start`)
 - Color properties: `--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected`, `--env-switch-selected-content`
 
 ### Table
 
-- Parts: `env-table`, `env-table-body`, `env-table-caption`, `env-table-cell`, `env-table-cell-content` (slot), `env-table-cell-label`, `env-table-column-resize-handle`, `env-table-head`, `env-table-header-cell`, `env-table-header-label`, `env-table-region`, `env-table-row`, `env-table-sort-button`
+- Parts: `env-table`, `env-table-body`, `env-table-caption`, `env-table-cell`, `env-table-cell-content` (slot), `env-table-cell-label`, `env-table-column-resize-handle`, `env-table-foot`, `env-table-head`, `env-table-header-cell`, `env-table-header-content`, `env-table-header-end` (slot), `env-table-header-label`, `env-table-region`, `env-table-row`, `env-table-sort-button`
 - States: `data-align` (`end`, `start`) on `env-table-cell`, `env-table-header-cell`; `data-density` (`lg`, `md`, `sm`, `xs`); `data-fixed-layout`; `data-interactive` on `env-table-row`; `data-labelled` on `env-table-cell`; `data-narrow-layout` (`stack`) on `env-table-region`; `data-nowrap` on `env-table-cell`, `env-table-header-cell`; `data-numeric` on `env-table-cell`, `env-table-header-cell`; `data-plain` on `env-table-region`; `data-resizable` on `env-table-header-cell`; `data-resizing` on `env-table`, `env-table-column-resize-handle`; `data-sortable` on `env-table-header-cell`; `data-stacked` on `env-table-region`; `data-sticky-header` on `env-table-region`
 
 ### TableOfContents
@@ -478,7 +483,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### ToastProvider
 
-- Parts: `env-toast`, `env-toast-action`, `env-toast-announcer`, `env-toast-content`, `env-toast-dismiss`, `env-toast-message`, `env-toast-queued-count`, `env-toast-status-icon`, `env-toast-theme`, `env-toast-viewport`
+- Parts: `env-toast`, `env-toast-action`, `env-toast-actions`, `env-toast-announcer`, `env-toast-content`, `env-toast-dismiss`, `env-toast-message`, `env-toast-queued-count`, `env-toast-status-icon`, `env-toast-theme`, `env-toast-viewport`
 - States: `data-ending-style`; `data-leaving`; `data-limited`; `data-placement` (`bottom-end`, `top-center`) on `env-toast-viewport`; `data-settling` on `env-toast-viewport`; `data-starting-style`; `data-toast-id` on `env-toast`, `env-toast-queued-count`; `data-tone` (`danger`, `info`, `neutral`, `success`)
 - Color properties: `--env-toast-container`, `--env-toast-content`, `--env-toast-outline`
 
@@ -529,7 +534,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### ListRow
 
-- Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-icon`, `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-text`
+- Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-icon`, `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-start` (slot), `env-list-row-text`
 - States: `data-disabled`; `data-highlighted`; `data-popup-open`; `data-selected`
 - Used by: Combobox, CommandPalette, RichTextEditor, Select
 
@@ -551,7 +556,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### PickerPopup
 
-- Parts: `env-picker-popup`, `env-picker-popup-body`, `env-picker-popup-footer`, `env-picker-popup-footer-end`
+- Parts: `env-picker-popup`, `env-picker-popup-body`, `env-picker-popup-footer`, `env-picker-popup-footer-end`, `env-picker-popup-header` (slot)
 - Used by: DatePicker, MonthPicker, TimePicker
 
 ### Popup
@@ -561,7 +566,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - `--env-popup-opacity`, to set: How much of a frosted popup's fill covers what is behind it.
 - `--env-popup-blur`, to set: How much a frosted popup blurs what shows through it.
 - `--env-popup-shadow`, to set: The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid.
-- Used by: Breadcrumbs, CalendarHeatmap, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationDrawer, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
+- Used by: Breadcrumbs, CalendarHeatmap, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
 
 ### Prose
 

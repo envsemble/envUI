@@ -165,3 +165,21 @@ test('Rail and Bar show the top level, marking the destination whose section hol
     assert.doesNotMatch(textOf(nav), /Passkeys/);
   }
 });
+
+test('Drawer puts groupEnd after a group’s heading, outside it, and leaves a heading without one alone', () => {
+  const drawer = render(NavigationDrawer, {
+    destinations: [
+      { label: 'Atlas', group: 'Projects', icon, onClick() {} },
+      { label: 'Profile', group: 'Account', icon, onClick() {} },
+    ],
+    groupEnd: (group) => (group === 'Projects' ? h('button', null, 'New project') : null),
+  });
+  const [row] = byClass(drawer, 'env-navigation-drawer-group-row');
+  const [heading, end] = row.children;
+  assert.ok(hasClass(heading, 'env-navigation-drawer-group-label'));
+  assert.equal(textOf(heading), 'Projects');
+  assert.ok(hasClass(end, 'env-navigation-drawer-group-end'));
+  assert.equal(textOf(end), 'New project');
+  assert.equal(byClass(drawer, 'env-navigation-drawer-group-row').length, 1);
+  assert.equal(byClass(drawer, 'env-navigation-drawer-group-label').length, 2);
+});

@@ -1,5 +1,6 @@
 import { createElement as h } from 'react';
-import { hydrateRoot } from 'react-dom/client';
+import { flushSync } from 'react-dom';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, onTestFinished, test, vi } from 'vitest';
 import { page } from 'vitest/browser';
@@ -283,4 +284,75 @@ test('a row keeps its label whole before its end: an end that does not fit besid
     0,
   );
   expect(short.querySelector('.env-badge')!.getBoundingClientRect().width).toBeGreaterThan(30);
+});
+
+test('a row takes content for its name with a text value for type-ahead, its own row props, and the application handlers beside the tree’s', async () => {
+  const log: string[] = [];
+  const items = [
+    { value: 'a', depth: 0, label: 'Alpha.md' },
+    {
+      value: 'b',
+      depth: 0,
+      label: h('span', null, h('mark', null, 'Br'), 'avo.md'),
+      textValue: 'Bravo.md',
+      description: h('code', null, 'M'),
+      rowProps: { className: 'modified', 'data-status': 'modified', draggable: true },
+    },
+  ];
+  const element = h(
+    Theme,
+    { theme: 'light' },
+    h(
+      'div',
+      { style: { blockSize: '10rem', display: 'grid' } },
+      h(Tree, {
+        'aria-label': 'Rich rows',
+        items,
+        onAction: (item, { preview }) => log.push(`${preview ? 'preview' : 'open'} ${item.value}`),
+        onExpandedChange: () => {},
+        onPointerDown: () => log.push('pointerdown'),
+        onClick: (event) => {
+          log.push('click');
+          if ((event.target as Element).closest('[data-id="a"]')) event.preventDefault();
+        },
+        onDoubleClick: () => log.push('dblclick'),
+      }),
+    ),
+  );
+  const container = document.createElement('div');
+  document.body.append(container);
+  const root = createRoot(container);
+  onTestFinished(() => {
+    root.unmount();
+    container.remove();
+  });
+  flushSync(() => root.render(element));
+  const tree = page.getByRole('tree', { name: 'Rich rows' });
+  const bravo = tree.getByRole('treeitem', { name: 'Bravo.md M' });
+  await expect.element(bravo).toHaveAttribute('data-status', 'modified');
+  await expect.element(bravo).toHaveAttribute('draggable', 'true');
+  await expect.element(bravo).toHaveClass('env-tree-item', 'modified');
+  await expect.element(bravo).toHaveAttribute('role', 'treeitem');
+  expect(bravo.element().querySelector('.env-tree-label mark')?.textContent).toBe('Br');
+
+  (tree.element() as HTMLElement).focus();
+  await keyboard.press('b');
+  await expect
+    .poll(() => tree.element().getAttribute('aria-activedescendant'))
+    .toBe(bravo.element().id);
+
+  await tree.getByRole('treeitem', { name: 'Alpha.md' }).click();
+  expect(log).toEqual(['pointerdown', 'click']);
+  log.length = 0;
+  await bravo.dblClick();
+  expect(log).toEqual([
+    'pointerdown',
+    'click',
+    'preview b',
+    'pointerdown',
+    'click',
+    'preview b',
+    'dblclick',
+    'open b',
+  ]);
 });

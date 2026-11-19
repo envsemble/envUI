@@ -38,7 +38,12 @@ export * from './forms/Radio.js';
 export * from './forms/SegmentedControl.js';
 export * from './forms/Select.js';
 export * from './forms/Combobox.js';
-export { Calendar, type CalendarProps, type Weekday } from './forms/Calendar.js';
+export {
+  Calendar,
+  type CalendarDayState,
+  type CalendarProps,
+  type Weekday,
+} from './forms/Calendar.js';
 export * from './forms/DatePicker.js';
 export * from './forms/TimePicker.js';
 export * from './forms/MonthPicker.js';
@@ -49,7 +54,12 @@ export * from './forms/SearchField.js';
 export * from './navigation/NavigationBar.js';
 export * from './navigation/NavigationRail.js';
 export * from './navigation/NavigationDrawer.js';
-export type { Destination, NavigationDrawerDestination } from './navigation/destinations.js';
+export type {
+  Destination,
+  DestinationElementProps,
+  NavigationDrawerDestination,
+  NavigationLabels,
+} from './navigation/destinations.js';
 export type { NavigationBackground } from './navigation/navigationBackground.js';
 export * as Pager from './navigation/Pager.js';
 export {

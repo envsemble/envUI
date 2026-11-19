@@ -30,10 +30,17 @@ export interface ThemeMenuRadioGroupProps {
   'aria-labelledby'?: string;
   /**
    * Close the menu after a choice. Off by default, so people see the theme change with the menu
-   * still open.
+   * still open. It applies to the three default choices; choices given as children set their own.
    * @default false
    */
   closeOnClick?: boolean;
+  /**
+   * The choices, as Menu.RadioItems valued system, light or dark, in place of the three default
+   * ones: such as Light and Dark alone, or a choice with a hint beside it.
+   */
+  children?: ReactNode;
+  /** The group's class, beside env-menu-group. */
+  className?: string;
 }
 
 const choices = [
@@ -53,6 +60,8 @@ export function ThemeMenuRadioGroup({
   label,
   'aria-labelledby': labelledBy,
   closeOnClick = false,
+  children,
+  className,
 }: ThemeMenuRadioGroupProps) {
   const provider = useContext(ThemePreferenceContext);
   const messages = useMessages('themePreference', themePreference);
@@ -68,17 +77,19 @@ export function ThemeMenuRadioGroup({
       onValueChange={(next) => change(next as ThemePreference)}
       label={label}
       aria-labelledby={labelledBy}
+      className={className}
     >
-      {choices.map((choice) => (
-        <Menu.RadioItem
-          key={choice.value}
-          value={choice.value}
-          icon={choice.icon}
-          closeOnClick={closeOnClick}
-        >
-          {messages[choice.value]}
-        </Menu.RadioItem>
-      ))}
+      {children ??
+        choices.map((choice) => (
+          <Menu.RadioItem
+            key={choice.value}
+            value={choice.value}
+            icon={choice.icon}
+            closeOnClick={closeOnClick}
+          >
+            {messages[choice.value]}
+          </Menu.RadioItem>
+        ))}
     </Menu.RadioGroup>
   );
 }

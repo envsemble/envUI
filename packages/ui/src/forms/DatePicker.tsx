@@ -1,13 +1,19 @@
 'use client';
 
-import { useId, type ButtonHTMLAttributes, type CSSProperties, type Ref } from 'react';
+import {
+  useId,
+  type ButtonHTMLAttributes,
+  type CSSProperties,
+  type ReactNode,
+  type Ref,
+} from 'react';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
 import { Button } from '../actions/Button.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { IconCalendarClock } from '../icons/CalendarClock.js';
 import { IconCalendarMonth } from '../icons/CalendarMonth.js';
-import { Calendar, calendarActiveDay } from './Calendar.js';
+import { Calendar, calendarActiveDay, type CalendarProps } from './Calendar.js';
 import {
   type FieldProps,
   type FieldSizeProps,
@@ -72,6 +78,10 @@ export interface DatePickerProps
   min?: string;
   /** The latest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; later days are unavailable. */
   max?: string;
+  /** As Calendar's: whether a day, as YYYY-MM-DD, can't be chosen, such as a booked day. */
+  isDateUnavailable?: CalendarProps['isDateUnavailable'];
+  /** As Calendar's: the content of a day's mark in the calendar in place of its number. */
+  renderDay?: CalendarProps['renderDay'];
   /** The time a newly chosen day starts with, as HH:mm; 00:00 by default. */
   placeholderTime?: string;
   /**
@@ -151,6 +161,16 @@ export interface DatePickerProps
    * @default 'Next month', or EnvUIProvider's messages.calendar.nextMonth
    */
   nextMonthLabel?: string;
+  /**
+   * Content at the top of the popup, above the calendar, such as presets: buttons for
+   * Tomorrow or Next Monday that set the value, from a field the application controls.
+   */
+  popupHeader?: ReactNode;
+  /**
+   * Content in the popup's footer, after its shortcut to the current date or time and before Clear,
+   * such as a note of the time zone or another action.
+   */
+  popupFooter?: ReactNode;
 }
 
 interface DateTimeValue {
@@ -190,6 +210,8 @@ export function DatePicker({
   granularity = 'day',
   min,
   max,
+  isDateUnavailable,
+  renderDay,
   placeholderTime,
   minuteStep,
   locale,
@@ -284,7 +306,8 @@ export function DatePicker({
     ? (minMoment === undefined || momentOf(reference.day, reference.minutes) >= minMoment) &&
       (maxMoment === undefined || momentOf(reference.day, reference.minutes) <= maxMoment)
     : (minDay === undefined || reference.day >= minDay) &&
-      (maxDay === undefined || reference.day <= maxDay);
+      (maxDay === undefined || reference.day <= maxDay) &&
+      isDateUnavailable?.(formatDay(reference.day)) !== true;
 
   const calendar = (
     <Calendar
@@ -292,6 +315,8 @@ export function DatePicker({
       onValueChange={chooseDay}
       min={minDay === undefined ? undefined : formatDay(minDay)}
       max={maxDay === undefined ? undefined : formatDay(maxDay)}
+      isDateUnavailable={isDateUnavailable}
+      renderDay={renderDay}
       weekStart={weekStart}
       locale={locale}
       previousMonthLabel={previousMonthLabel}

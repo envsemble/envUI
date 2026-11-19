@@ -1,4 +1,4 @@
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import type { ComponentPropsWithRef, ReactElement, ReactNode } from 'react';
 import type { ActionElementProps } from '../internal/control/ActionElement.js';
 import type { ControlTone, ControlVariant } from '../internal/control/ControlDefaults.js';
 import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
@@ -75,6 +75,12 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
   fullWidth?: boolean;
   /** A decorative icon before the label, such as IconAdd. */
   startIcon?: ReactNode;
+  /**
+   * Content before the label at its own size rather than the icon's, such as a small Avatar of the
+   * person a button assigns or a flag; it is hidden from assistive technology, since the label
+   * names the button.
+   */
+  start?: ReactNode;
   /** A decorative icon after the label, such as a ChevronRight for a next step. */
   endIcon?: ReactNode;
   /**
@@ -89,7 +95,16 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    */
   pending?: boolean;
 };
-export type ButtonProps = ButtonAppearanceProps & ActionElementProps;
+export type ButtonProps = ButtonAppearanceProps &
+  ActionElementProps & {
+    /**
+     * Another element to render the button as, such as a label for a file input, or a router's own
+     * link in one place: the button's class, look, state attributes, content and handlers merge
+     * into its props. It takes no type or disabled attribute; disabled reports aria-disabled and
+     * blocks presses.
+     */
+    render?: ReactElement;
+  };
 
 /**
  * Starts an action, or goes to a destination with href, in one of five variants and three tones,

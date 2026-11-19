@@ -6,8 +6,16 @@ import '../styles/Base.css';
 import '../styles/EmptyState.css';
 
 export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
-  /** A decorative icon above the title, such as the icon of what the region would list. */
+  /**
+   * A decorative icon above the title, such as the icon of what the region would list, at the
+   * icon size of the region's width.
+   */
   icon?: ReactNode;
+  /**
+   * A decorative illustration above the title, such as an SVG drawing or an image, at its own size
+   * and no wider than the region. It is hidden from assistive technology.
+   */
+  illustration?: ReactNode;
   /** What the region would show, said as its absence, such as "No projects yet". */
   title: ReactNode;
   /** A sentence on why it is empty or what fills it, such as "Projects you create show here." */
@@ -21,12 +29,13 @@ function present(node: ReactNode) {
 }
 
 /**
- * What a region shows when it has nothing to show: an optional icon, a title, an optional
+ * What a region shows when it has nothing to show: an optional illustration or icon, a title, an optional
  * description and optional actions, centred in the region it fills, and compact where that region
  * is narrow.
  */
 export function EmptyState({
   icon,
+  illustration,
   title,
   description,
   actions,
@@ -35,6 +44,11 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div {...props} className={classNames('env-empty-state', className)}>
+      {present(illustration) && (
+        <Slot className="env-empty-state-illustration" aria-hidden>
+          {illustration}
+        </Slot>
+      )}
       {present(icon) && (
         <Slot className="env-empty-state-icon" layout="row" shrink="never">
           <DecorativeIcon>{icon}</DecorativeIcon>

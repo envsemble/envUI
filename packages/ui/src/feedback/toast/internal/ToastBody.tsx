@@ -6,7 +6,13 @@ import type { ToastTone } from '../toastTypes.js';
 import '../../../styles/Base.css';
 import '../../../styles/Toast.css';
 
-function StatusIcon({ tone }: { tone: ToastTone }) {
+function StatusIcon({ tone, icon }: { tone: ToastTone; icon: ReactNode }) {
+  if (icon !== undefined)
+    return icon === null || icon === false ? null : (
+      <span className="env-icon env-toast-status-icon" aria-hidden="true">
+        {icon}
+      </span>
+    );
   if (tone === 'neutral') return null;
   const StatusSymbol =
     tone === 'success' ? IconCheckCircle : tone === 'info' ? IconInfo : IconError;
@@ -19,11 +25,13 @@ function StatusIcon({ tone }: { tone: ToastTone }) {
 
 export function ToastBody({
   tone,
+  icon,
   message,
   action,
   dismiss,
 }: {
   tone: ToastTone;
+  icon: ReactNode;
   message: ReactNode;
   action?: ReactNode;
   dismiss?: ReactNode;
@@ -31,7 +39,7 @@ export function ToastBody({
   return (
     <>
       <div className="env-toast-content">
-        <StatusIcon tone={tone} />
+        <StatusIcon tone={tone} icon={icon} />
         {message}
       </div>
       {action}

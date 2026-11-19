@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   Avatar,
+  Badge,
   Button,
   Combobox,
   Dialog,
@@ -272,5 +273,17 @@ export default function ComboboxFixture({ theme }: { theme: ColorScheme }) {
         <Combobox multiple label={`Share with ${theme}`} visibleLabel items={people} clearable />
       </Dialog>
     </Theme>
+  );
+}
+
+export function ComboboxEndFixture() {
+  return (
+    <Combobox
+      label="Member"
+      items={[
+        { value: 'alex', label: 'Alex Morgan', end: <Badge>Admin</Badge> },
+        { value: 'sam', label: 'Sam Lee' },
+      ]}
+    />
   );
 }

@@ -104,6 +104,19 @@
     );
     font-weight: var(--env-font-weight-medium);
   }
+  .env-toast-actions {
+    flex: 0 1 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--env-space-1);
+    max-inline-size: 60%;
+    min-inline-size: 0;
+  }
+  .env-toast-actions > .env-toast-action {
+    max-inline-size: none;
+  }
   .env-toast-action:hover:not(:disabled):not([aria-disabled='true']) {
     background: var(--_button-custom-fill, var(--_toast-dismiss-hover));
     border-color: var(--env-button-outline, var(--_toast-text));

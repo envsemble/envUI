@@ -7178,6 +7178,42 @@
         "standard": 4.5,
         "high": 7
       }
+    },
+    "toolbar-separator on --env-color-bg-default": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-popup": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-recessed": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
     }
   },
   "dropped": [
@@ -8585,7 +8621,8 @@
     "slider-fill on --env-color-bg-neutral-muted over catalogue-canvas",
     "text-field-affix on --env-color-bg-neutral-muted over catalogue-canvas",
     "text-field-affix on catalogue-canvas",
-    "text-field-affix on text-field-read-only over catalogue-canvas"
+    "text-field-affix on text-field-read-only over catalogue-canvas",
+    "toolbar-separator on catalogue-canvas"
   ],
   "relaxed": [
     {

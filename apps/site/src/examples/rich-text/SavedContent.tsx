@@ -3,8 +3,7 @@ import { Column, Text } from '@envsemble/envui';
 import { RichText } from '@envsemble/envui/rich-text';
 
 const savedMarkdown = `
-[reference id="person%3Apriya" label="Priya%20Shah" kind="person" mentionSuggestionChar="%40"]
-owns the press kit; the dates are in the [launch plan](/docs/launch-plan).
+[reference id="person%3Apriya" label="Priya%20Shah" kind="person" mentionSuggestionChar="%40"] owns the press kit; the dates are in the [launch plan](/docs/launch-plan).
 
 - [x] Pricing page frozen
 - [ ] Press kit sent`;

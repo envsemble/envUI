@@ -114,6 +114,22 @@ export interface ItemProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
   disabled?: boolean;
   /** Receives whether this item is open, each time it opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /**
+   * Content at the end of the item's heading row, beside its button and outside it, such as a
+   * Switch, a Badge with a Menu, or a Delete IconButton, placed as given.
+   */
+  end?: ReactNode;
+  /**
+   * What shows whether the item is open, in place of the plus that becomes a minus, such as a
+   * chevron the application turns while the button has data-panel-open; null for none. It is
+   * hidden from assistive technology, which hears the button's expanded state.
+   */
+  indicator?: ReactNode;
+  /**
+   * Where the indicator sits in the button: before the title, or after it at the button's end.
+   * @default 'start'
+   */
+  indicatorPosition?: 'start' | 'end';
 }
 
 /**
@@ -121,31 +137,64 @@ export interface ItemProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
  * panel below it.
  */
 function Item(allProps: ItemProps) {
-  const { title, value, disabled, onOpenChange, className, children, ...props } = allProps;
+  const {
+    title,
+    value,
+    disabled,
+    onOpenChange,
+    end,
+    indicator: ownIndicator,
+    indicatorPosition = 'start',
+    className,
+    children,
+    ...props
+  } = allProps;
   const level = useContext(HeadingLevelContext);
   const Heading = `h${level}` as const;
   const titleGivenEvenAsUndefined = title != null || given(allProps, 'title');
+  const ownIndicatorGiven = ownIndicator !== undefined;
+  const indicator =
+    ownIndicator === null ? null : (
+      <span className="env-accordion-indicator" aria-hidden="true">
+        {ownIndicatorGiven ? (
+          <Slot className="env-accordion-indicator-content" element="span" layout="row">
+            {ownIndicator}
+          </Slot>
+        ) : (
+          <>
+            <IconAdd />
+            <IconRemove />
+          </>
+        )}
+      </span>
+    );
+  const indicatorPlacement =
+    ownIndicator === null ? 'none' : indicatorPosition === 'end' ? 'end' : undefined;
   return (
     <BaseAccordion.Item
       {...props}
       className={classNames('env-accordion-item', className)}
+      data-indicator={indicatorPlacement}
       {...(value !== undefined && { value })}
       disabled={disabled}
       onOpenChange={onOpenChange ? (open) => onOpenChange(open) : undefined}
     >
       <BaseAccordion.Header render={<Heading />} className="env-accordion-header">
         <BaseAccordion.Trigger className="env-accordion-trigger" data-interactive="">
-          <span className="env-accordion-indicator" aria-hidden="true">
-            <IconAdd />
-            <IconRemove />
-          </span>
+          {indicatorPosition !== 'end' && indicator}
           {titleGivenEvenAsUndefined && (
             <Slot className="env-accordion-label" element="span" grow>
               {title}
             </Slot>
           )}
+          {indicatorPosition === 'end' && indicator}
         </BaseAccordion.Trigger>
       </BaseAccordion.Header>
+      {end != null && (
+        <Slot className="env-accordion-end" layout="row" shrink="never">
+          {end}
+        </Slot>
+      )}
       <BaseAccordion.Panel className="env-accordion-panel">
         <div className="env-accordion-content">{children}</div>
       </BaseAccordion.Panel>

@@ -105,3 +105,27 @@ test('disabled, read-only and invalid fields', () => {
   assert.equal(trigger(invalid).attributes['aria-invalid'], 'true');
   assert.deepEqual(descriptions(invalid, trigger(invalid)), ['Choose a later day.']);
 });
+
+test('a calendar takes days the application makes unavailable, and content for each day', () => {
+  const calendar = render(Calendar, {
+    'aria-label': 'Booking',
+    locale: 'en-GB',
+    value: '2026-03-10',
+    isDateUnavailable: (date) => date === '2026-03-14' || date === '2026-03-15',
+    renderDay: (date, state) =>
+      h(
+        'span',
+        { 'data-events': date === '2026-03-10' ? '2' : undefined },
+        state.number,
+        state.selected ? '*' : '',
+      ),
+  });
+  assert.equal(day(calendar, '2026-03-14').attributes['aria-disabled'], 'true');
+  assert.equal(day(calendar, '2026-03-13').attributes['aria-disabled'], undefined);
+  const chosen = day(calendar, '2026-03-10');
+  assert.equal(chosen.attributes['aria-label'], 'Tuesday, 10 March 2026');
+  assert.equal(chosen.attributes['aria-selected'], 'true');
+  const [content] = byClass(chosen, 'env-calendar-day-content');
+  assert.equal(textOf(content), '10*');
+  assert.ok(all(content, (element) => element.attributes['data-events'] === '2').length === 1);
+});

@@ -15,6 +15,7 @@ import { classNames } from '../../internal/classNames.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { FileInput } from '../internal/FileInput.js';
 import { flag } from '../../internal/flag.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import { useLatest } from '../../internal/useLatest.js';
 import {
   defaultRichTextCommands,
@@ -55,6 +56,8 @@ export function RichTextEditor({
   disabled = false,
   readOnly = false,
   toolbar = defaultRichTextCommands,
+  toolbarEnd,
+  footer,
   references = emptySources,
   slashCommands = false,
   extensions = emptyExtensions,
@@ -186,6 +189,7 @@ export function RichTextEditor({
                 onClick={() => input.current?.click()}
               />
             )}
+            {toolbarEnd}
           </EditorToolbar>
         )}
         <FieldFrame
@@ -200,6 +204,11 @@ export function RichTextEditor({
           >
             <EditorContent editor={editor} className="env-rich-text-editor-content" />
           </RichTextRenderingContext>
+          {footer != null && (
+            <Slot className="env-rich-text-editor-footer" layout="row">
+              {footer}
+            </Slot>
+          )}
         </FieldFrame>
         {onUpload && (
           <FileInput

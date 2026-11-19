@@ -47,3 +47,32 @@ test('a color swatch writes its value beside its label, and alone names itself',
   assert.equal(alone.attributes.role, 'img');
   assert.equal(alone.attributes['aria-label'], 'white');
 });
+
+const partsInOrder = (root) =>
+  elementsOf(root)
+    .map((element) =>
+      element.attributes.role === 'listbox'
+        ? 'swatches'
+        : element.attributes.class?.includes('env-color-picker-controls')
+          ? 'area'
+          : null,
+    )
+    .filter(Boolean);
+
+test('a picker can leave out its value fields and show its swatches first', () => {
+  const tag = render(
+    h(ColorPicker, {
+      label: 'Tag color',
+      defaultValue: '#1976d2',
+      swatches: ['#d32f2f', '#1976d2'],
+      swatchesFirst: true,
+      fields: false,
+    }),
+  );
+  assert.equal(hexField(tag), undefined);
+  assert.equal(copyButton(tag), undefined);
+  assert.deepEqual(partsInOrder(tag), ['swatches', 'area']);
+  const usual = render(h(ColorPicker, { label: 'Usual', swatches: ['#d32f2f'] }));
+  assert.ok(hexField(usual));
+  assert.deepEqual(partsInOrder(usual), ['area', 'swatches']);
+});

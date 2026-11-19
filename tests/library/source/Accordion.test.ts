@@ -37,3 +37,42 @@ test('a skeleton is one busy region: titles become bars and indicators shapes', 
     /\[data-env-skeleton\] \.env-accordion-label \{[^}]*--_skeleton-placeholder: inline-block;/,
   );
 });
+
+test("an item's end sits beside its heading, outside it, and its indicator can be its own or at the end", () => {
+  const root = firstElement(
+    renderToStaticMarkup(
+      h(
+        Accordion.Root,
+        null,
+        h(Accordion.Item, {
+          title: 'Slack',
+          end: h('button', { type: 'button', role: 'switch', 'aria-label': 'Slack on' }),
+          indicator: h('svg', { 'data-chevron': '' }),
+          indicatorPosition: 'end',
+        }),
+        h(Accordion.Item, { title: 'Email', indicator: null }),
+      ),
+    ),
+  );
+  const [slack, email] = elementsOf(root).filter((element) =>
+    hasClass(element, 'env-accordion-item'),
+  );
+  const heading = elementsOf(slack).find((element) => hasClass(element, 'env-accordion-header'));
+  const end = slack.children.find(
+    (child) => typeof child !== 'string' && hasClass(child, 'env-accordion-end'),
+  );
+  assert.ok(heading && end && typeof end !== 'string');
+  assert.ok(!elementsOf(heading).some((element) => element.attributes.role === 'switch'));
+  assert.equal(elementsOf(end).filter((element) => element.attributes.role === 'switch').length, 1);
+  const trigger = elementsOf(heading).find((element) => element.tag === 'button');
+  assert.ok(trigger);
+  const parts = trigger.children.filter((child) => typeof child !== 'string');
+  assert.deepEqual(
+    parts.map((part) => part.attributes.class),
+    ['env-accordion-label', 'env-accordion-indicator'],
+  );
+  assert.ok(elementsOf(parts[1]).some((element) => 'data-chevron' in element.attributes));
+  assert.equal(slack.attributes['data-indicator'], 'end');
+  assert.equal(email.attributes['data-indicator'], 'none');
+  assert.ok(!elementsOf(email).some((element) => hasClass(element, 'env-accordion-indicator')));
+});

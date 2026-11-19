@@ -90,9 +90,22 @@ export interface SheetProps
   children?: ReactNode;
   /**
    * Actions at the end of the content, such as Apply, with the primary action last. While the sheet
-   * is pending, the last one shows it, where it is a Button that sets no pending of its own.
+   * is pending, the last one shows it, where it is a Button that sets no pending of its own; another
+   * component reads it with useDialogPending.
    */
   actions?: ReactNode;
+  /**
+   * Content at the start of the actions' row, which takes the room the actions leave, such as a
+   * Reset button or a Learn more link.
+   */
+  actionsStart?: ReactNode;
+  /** Content before the title in the heading's row, such as a back button. */
+  headerStart?: ReactNode;
+  /**
+   * Content at the end of the heading's row, before the close button, such as a Menu of more
+   * actions or an Open full page button.
+   */
+  headerEnd?: ReactNode;
   /**
    * Whether the sheet shows its close button, an IconButton with a cross at the end of the heading. Leave it
    * out only where the sheet holds another control that closes it.
@@ -275,6 +288,9 @@ export function Sheet({
   description,
   children,
   actions,
+  actionsStart,
+  headerStart,
+  headerEnd,
   closeButton = true,
   closeLabel: ownCloseLabel,
   width = 'md',
@@ -383,6 +399,8 @@ export function Sheet({
                     <DialogHeader
                       title={title}
                       description={description}
+                      start={headerStart}
+                      end={headerEnd}
                       close={
                         closeButton ? (
                           <BaseDrawer.Close
@@ -403,8 +421,10 @@ export function Sheet({
                         {children}
                       </Column>
                     )}
-                    {actions != null && (
-                      <DialogActions>{withPendingAction(actions, pending)}</DialogActions>
+                    {(actions != null || actionsStart != null) && (
+                      <DialogActions start={actionsStart}>
+                        {withPendingAction(actions, pending)}
+                      </DialogActions>
                     )}
                     {resizable && (
                       <ResizeHandle

@@ -1,6 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { IconCheck } from '../icons/Check.js';
 import '../styles/Base.css';
 import '../styles/Badge.css';
@@ -33,10 +34,17 @@ interface LabelBadgeProps extends BadgeAppearanceProps {
    */
   icon?: ReactNode;
   /**
-   * The label: a state, a name or a category in a word or two, as text. It stays on one line and
-   * ends with an ellipsis where the badge is wider than its container.
+   * Content before the label, in place of the icon, placed at its own size and read by assistive
+   * technology unless it hides itself: such as a small Avatar, a color swatch or an icon that
+   * carries meaning.
    */
-  children: string;
+  start?: ReactNode;
+  /**
+   * The label: a state, a name or a category in a word or two, such as text with a bold value or a
+   * RelativeTime in it. It stays on one line and ends with an ellipsis where the badge is wider
+   * than its container.
+   */
+  children: ReactNode;
   count?: undefined;
 }
 
@@ -52,6 +60,7 @@ interface CountBadgeProps extends BadgeAppearanceProps {
    */
   'aria-label'?: string;
   icon?: never;
+  start?: never;
   children?: never;
 }
 
@@ -66,6 +75,7 @@ export function Badge({
   tone = 'neutral',
   variant = 'soft',
   icon,
+  start,
   count,
   children,
   className,
@@ -101,8 +111,15 @@ export function Badge({
       data-tone={tone}
       data-variant={variant}
     >
-      {icon !== null && (icon !== undefined || tone === 'done') && (
-        <DecorativeIcon>{icon ?? <IconCheck />}</DecorativeIcon>
+      {start != null ? (
+        <Slot className="env-badge-start" element="span" layout="row" shrink="never">
+          {start}
+        </Slot>
+      ) : (
+        icon !== null &&
+        (icon !== undefined || tone === 'done') && (
+          <DecorativeIcon>{icon ?? <IconCheck />}</DecorativeIcon>
+        )
       )}
       <span className="env-badge-label">{children}</span>
     </span>

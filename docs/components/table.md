@@ -35,6 +35,7 @@ examples:
   NumericColumns: example
   TableAnatomy: anatomy
   SortableColumns: example
+  HeaderEndAndTotals: example
   SelectRows: example
   ResizableColumns: example
   StickyHeader: example
@@ -77,6 +78,12 @@ examples:
 ### Sort by a column
 
 ```tsx figure=SortableColumns motion
+
+```
+
+### Header actions and totals
+
+```tsx figure=HeaderEndAndTotals
 
 ```
 

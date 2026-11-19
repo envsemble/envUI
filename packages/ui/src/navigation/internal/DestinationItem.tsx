@@ -1,6 +1,8 @@
 'use client';
 
+import { mergeProps } from '@base-ui/react/merge-props';
 import type { HTMLAttributes, ReactNode, Ref } from 'react';
+import { classNames } from '../../internal/classNames.js';
 import { ActionElement } from '../../internal/control/ActionElement.js';
 import { Column, Row } from '../../layout/Layout.js';
 import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
@@ -45,9 +47,13 @@ export function destinationSections<Item extends { group?: string }>(
   return sections;
 }
 
-/** A destination's key: its id, else its address, else its label, which the list keeps unique. */
+/** A destination's name as text: its textValue, else its label, which is then a string. */
+export const destinationText = (destination: NavigationDrawerDestination) =>
+  destination.textValue ?? (typeof destination.label === 'string' ? destination.label : '');
+
+/** A destination's key: its id, else its address, else its name, which the list keeps unique. */
 export const destinationKey = (destination: NavigationDrawerDestination) =>
-  destination.id ?? destination.href ?? destination.label;
+  destination.id ?? destination.href ?? destinationText(destination);
 
 /** Whether a destination nested under these, at any depth, is the current one. */
 export function holdsCurrent(
@@ -56,18 +62,22 @@ export function holdsCurrent(
   return children?.some((child) => child.current === true || holdsCurrent(child.children)) ?? false;
 }
 
-/** The count as it shows: nothing for none, and 999+ above 999. */
-export function shownCount(count: number | undefined): string | undefined {
-  if (count === undefined || !Number.isFinite(count) || count <= 0) return undefined;
+/** The count as it shows: nothing for none or a dot, and 999+ above 999. */
+export function shownCount(count: number | true | undefined): string | undefined {
+  if (typeof count !== 'number' || !Number.isFinite(count) || count <= 0) return undefined;
   return count > 999 ? '999+' : String(Math.floor(count));
 }
 
-/** The name of an item with a count, such as Inbox, 3 new; undefined where its label names it. */
+/**
+ * The name of an item with a count, such as Inbox, 3 new, or with a dot, such as Activity, new;
+ * undefined where its label names it.
+ */
 export function countedName(
   label: string,
-  count: number | undefined,
+  count: number | true | undefined,
   messages: NavigationMessages,
 ): string | undefined {
+  if (count === true) return messages.itemNew({ label });
   const shown = shownCount(count);
   return shown === undefined ? undefined : messages.itemCount({ label, count: shown });
 }
@@ -110,39 +120,42 @@ export function DestinationItem({
   ...tooltipTriggerProps
 }: DestinationItemProps) {
   const messages = useNavigationMessages();
-  const { label, icon, count, current = false, href, onClick } = destination;
+  const { label, icon, count, current = false, disabled = false, href, onClick } = destination;
   const inside = topLevel && !current && holdsCurrent(destination.children);
   const marked = current || inside;
   const shown = shownCount(count);
+  const dot = count === true;
   const icons =
     icon == null ? null : (
       <SymbolIconFill selected={marked}>
         <DecorativeIcon>{icon}</DecorativeIcon>
       </SymbolIconFill>
     );
-  const countBadge = shown !== undefined && (
-    <span className={classes.count} aria-hidden="true">
+  const countBadge = (shown !== undefined || dot) && (
+    <span className={classes.count} aria-hidden="true" data-dot={flag(dot)}>
       {shown}
     </span>
   );
   const control =
     href !== undefined ? (
-      <ActionElement href={href} onClick={onClick} />
+      <ActionElement href={href} onClick={onClick} disabled={disabled} />
     ) : onClick !== undefined ? (
-      <ActionElement onClick={onClick} />
+      <ActionElement onClick={onClick} disabled={disabled} />
     ) : (
-      <ActionElement />
+      <ActionElement disabled={disabled} />
     );
+  const { className: itemClassName, ...itemProps } = destination.itemProps ?? {};
   const shared = {
-    ...tooltipTriggerProps,
+    ...(mergeProps(itemProps, tooltipTriggerProps) as HTMLAttributes<HTMLElement>),
     ref,
     render: control,
-    className: classes.item,
+    className: classNames(classes.item, itemClassName),
     'data-current': flag(marked),
+    'data-disabled': flag(disabled),
     'aria-current': current ? ('page' as const) : inside ? ('true' as const) : undefined,
-    'aria-label': countedName(label, count, messages),
+    'aria-label': countedName(destinationText(destination), count, messages),
   };
-  const spaceBetweenLabelAndCount = countBadge && ' ';
+  const spaceBetweenLabelAndCount = shown !== undefined && ' ';
   return classes.indicator === undefined ? (
     <Row {...shared} align="center" gap={3}>
       {icons}
