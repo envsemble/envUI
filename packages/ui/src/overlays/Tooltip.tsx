@@ -91,7 +91,7 @@ export interface TooltipProps extends Omit<
    * @mentions in a feed.
    * @default true
    */
-  hoverDetail?: boolean;
+  underline?: boolean;
   /**
    * The side of the control it opens on: top, bottom, left, right, or inline-start and inline-end,
    * which follow the text direction. Where the window has no room, it flips to the other side.
@@ -149,7 +149,7 @@ type Forwarded = Omit<
   | 'popupClassName'
   | 'open'
   | 'onOpenChange'
-  | 'hoverDetail'
+  | 'underline'
 >;
 
 function useControlWithForwardedProps(children: ReactElement<TriggerProps>, forwarded: Forwarded) {
@@ -188,7 +188,7 @@ export function Tooltip(props: TooltipProps) {
     open,
     onOpenChange,
     popupClassName,
-    hoverDetail = true,
+    underline = true,
     ...forwarded
   } = props;
   const hoverCardTrigger = useContext(HoverCardTriggerContext);
@@ -230,7 +230,7 @@ export function Tooltip(props: TooltipProps) {
       open={open}
       onOpenChange={onOpenChange}
       popupClassName={popupClassName}
-      hoverDetail={hoverDetail}
+      underline={underline}
       forwarded={forwarded}
     >
       {children}
@@ -290,7 +290,7 @@ function TooltipTrigger({
   open: controlledOpen,
   onOpenChange,
   popupClassName,
-  hoverDetail,
+  underline,
   forwarded,
 }: {
   content: ReactNode;
@@ -302,7 +302,7 @@ function TooltipTrigger({
   open: boolean | undefined;
   onOpenChange: TooltipProps['onOpenChange'];
   popupClassName?: string;
-  hoverDetail: boolean;
+  underline: boolean;
   forwarded: Forwarded;
 }) {
   const control = useControlWithForwardedProps(children, forwarded);
@@ -376,7 +376,7 @@ function TooltipTrigger({
             ) : (
               cloneElement(control, {
                 'aria-describedby': describedBy,
-                ...(hoverDetail &&
+                ...(underline &&
                   isTextTrigger(children) && {
                     className: classNames(
                       (control.props as { className?: string }).className,
