@@ -2225,29 +2225,6 @@
         "Theme"
       ]
     },
-    "DiffStat": {
-      "root": "env-diff-stat",
-      "source": "packages/ui/src/data-display/DiffStat.tsx",
-      "parts": [
-        {
-          "class": "env-diff-stat",
-          "description": "The count of added and removed lines."
-        },
-        {
-          "class": "env-diff-stat-additions",
-          "description": "The added lines."
-        },
-        {
-          "class": "env-diff-stat-deletions",
-          "description": "The removed lines."
-        },
-        {
-          "class": "env-diff-stat-label",
-          "description": "The label for assistive technology."
-        }
-      ],
-      "states": []
-    },
     "Disclosure": {
       "root": "env-disclosure",
       "source": "packages/ui/src/content/Disclosure.tsx",

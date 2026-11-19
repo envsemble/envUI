@@ -3087,38 +3087,6 @@
         "@envsemble/envui"
       ]
     },
-    "DiffStat": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/DiffStat.tsx",
-      "description": "The size of a change as one compact pill, such as +12 −3: additions in the success tone and deletions in the danger tone, on a counter badge's quiet fill.",
-      "props": [
-        {
-          "name": "additions",
-          "type": "number",
-          "required": true,
-          "description": "Lines or items added, shown as +12 in the success tone, in the locale's digits; left out where it is 0 and deletions aren't."
-        },
-        {
-          "name": "deletions",
-          "type": "number",
-          "required": true,
-          "description": "Lines or items removed, shown as −3 in the danger tone, in the locale's digits; left out where it is 0 and additions aren't."
-        },
-        {
-          "name": "formatLabel",
-          "type": "(additions: number, deletions: number) => string",
-          "required": false,
-          "default": "'{additions} added lines and {deletions} removed lines'",
-          "description": "Full meaning for assistive technology. It overrides EnvUIProvider's `messages.diffStat.label`."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Disclosure": {
       "kind": "component",
       "source": "packages/ui/src/content/Disclosure.tsx",
@@ -9671,7 +9639,7 @@
     "countDiffLines": {
       "kind": "function",
       "source": "packages/ui/src/content/countDiffLines.ts",
-      "description": "How many lines a change adds and removes, as a DiffStat shows them.",
+      "description": "How many lines a change adds and removes, such as for the size of a change beside its file's name.",
       "signature": "(before: string, after: string, filename?: string): { additions: number; deletions: number; }",
       "entries": [
         "@envsemble/envui/diff"

@@ -7,7 +7,6 @@ import {
   Button,
   CalendarHeatmap,
   DescriptionList,
-  DiffStat,
   Graphic,
   IconButton,
   Link,
@@ -160,7 +159,7 @@ const badgeTones = [
 
 function Badges() {
   return (
-    <Section name="Badge and DiffStat">
+    <Section name="Badge">
       {(['soft', 'solid', 'outline'] as const).map((variant) => (
         <Strip key={variant} label={variant} middle>
           {badgeTones.map((tone) => (
@@ -183,17 +182,6 @@ function Badges() {
           </Cell>
         </Strip>
       ))}
-      <Strip label="DiffStat">
-        <Cell caption="Both">
-          <DiffStat additions={128} deletions={14} />
-        </Cell>
-        <Cell caption="Additions only">
-          <DiffStat additions={40} deletions={0} />
-        </Cell>
-        <Cell caption="Deletions only">
-          <DiffStat additions={0} deletions={9} />
-        </Cell>
-      </Strip>
     </Section>
   );
 }

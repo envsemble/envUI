@@ -345,12 +345,6 @@
       "env-dialog-surface": "The dialog's surface.",
       "env-dialog-title": "The title."
     },
-    "DiffStat": {
-      "env-diff-stat": "The count of added and removed lines.",
-      "env-diff-stat-additions": "The added lines.",
-      "env-diff-stat-deletions": "The removed lines.",
-      "env-diff-stat-label": "The label for assistive technology."
-    },
     "Disclosure": {
       "env-disclosure": "The disclosure: a summary that shows and hides a panel.",
       "env-disclosure-indicator": "The chevron before the summary's words, turned down while open.",

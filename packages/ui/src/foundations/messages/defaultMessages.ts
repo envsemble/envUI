@@ -15,7 +15,6 @@ import { confirmDialog } from './confirmDialog.js';
 import { copyButton } from './copyButton.js';
 import { datePicker } from './datePicker.js';
 import { dialog } from './dialog.js';
-import { diffStat } from './diffStat.js';
 import { documentTabs } from './documentTabs.js';
 import { editor } from './editor.js';
 import { linkDialog } from './linkDialog.js';
@@ -65,7 +64,6 @@ export const defaultMessages = {
   copyButton,
   datePicker,
   dialog,
-  diffStat,
   documentTabs,
   editor,
   linkDialog,

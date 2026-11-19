@@ -26,7 +26,6 @@ const documented = JSON.parse(
 
 const requiredProps = {
   AvatarGroup: { people: [{ name: 'Alex Morgan' }, { name: 'Sam Lee' }] },
-  DiffStat: { additions: 12, deletions: 3 },
 };
 
 const icon = h(IconHome);

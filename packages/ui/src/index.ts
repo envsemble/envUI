@@ -75,7 +75,6 @@ export * from './navigation/Pagination.js';
 
 export * as List from './data-display/List.js';
 export * from './data-display/Badge.js';
-export * from './data-display/DiffStat.js';
 export * as Table from './data-display/Table.js';
 export * from './data-display/Avatar.js';
 export * from './data-display/AvatarButton.js';

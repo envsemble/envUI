@@ -279,9 +279,6 @@
       "AnimatedNumber": {
         "styles": ["Text.css"]
       },
-      "Badge": {
-        "modules": ["data-display/DiffStat.tsx"]
-      },
       "Code": {
         "modules": [
           "content/CodeBlock.tsx",

@@ -206,10 +206,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - Parts: `env-dialog`, `env-dialog-actions`, `env-dialog-actions-start` (slot), `env-dialog-backdrop`, `env-dialog-content`, `env-dialog-description`, `env-dialog-header`, `env-dialog-header-end` (slot), `env-dialog-header-start` (slot), `env-dialog-heading`, `env-dialog-positioner`, `env-dialog-surface`, `env-dialog-title`
 - States: `data-ending-style` on `env-dialog`, `env-dialog-backdrop`; `data-env-skeleton`; `data-placement` (`center`, `top`) on `env-dialog`, `env-dialog-positioner`; `data-starting-style` on `env-dialog`, `env-dialog-backdrop`; `data-tone` (`danger`, `neutral`); `data-width` (`lg`, `md`)
 
-### DiffStat
-
-- Parts: `env-diff-stat`, `env-diff-stat-additions`, `env-diff-stat-deletions`, `env-diff-stat-label`
-
 ### Disclosure
 
 - Parts: `env-disclosure`, `env-disclosure-indicator`, `env-disclosure-panel`, `env-disclosure-title` (slot)

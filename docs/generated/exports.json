@@ -98,8 +98,6 @@
     "DialogOpenChangeDetails": "interface",
     "DialogOpenChangeReason": "type",
     "DialogProps": "interface",
-    "DiffStat": "function",
-    "DiffStatProps": "interface",
     "Disclosure": "function",
     "DisclosureProps": "interface",
     "DocumentTabs": "function",

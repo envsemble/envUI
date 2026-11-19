@@ -33,14 +33,7 @@ import {
 import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
 import { Markdown, MarkdownEditor } from '@envsemble/envui/markdown';
 import { defaultMessages } from '@envsemble/envui/messages';
-import {
-  AvatarGroup,
-  CalendarHeatmap,
-  DiffStat,
-  Message,
-  MessageList,
-  RelativeTime,
-} from '@envsemble/envui';
+import { AvatarGroup, CalendarHeatmap, Message, MessageList, RelativeTime } from '@envsemble/envui';
 import { useMessages } from '../../packages/ui/src/internal/provider/EnvUIContext.js';
 import { common } from '../../packages/ui/src/foundations/messages/common.js';
 
@@ -148,7 +141,6 @@ export default function MessagesFixture() {
           <CopyButton value="Northwind" aria-label="" />
           <ThemeToggle />
           <AvatarGroup people={[]} total={3} />
-          <DiffStat additions={12} deletions={3} />
           <MessageList aria-label="Thread">
             <Message from="self" status="sending">
               On its way

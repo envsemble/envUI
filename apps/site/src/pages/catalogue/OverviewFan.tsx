@@ -8,7 +8,6 @@ import {
   Card,
   Column,
   Composer,
-  DiffStat,
   Message,
   MessageList,
   Row,
@@ -107,7 +106,10 @@ const cards: {
         <CardHeader title="Fix the flaky checkout test" note="#482 · opened by the agent" />
         <Column gap={4} className="catalogue-fan-body">
           <Row align="center" justify="between" gap={2}>
-            <DiffStat additions={128} deletions={34} />
+            <Badge style={{ fontVariantNumeric: 'tabular-nums' }}>
+              <span style={{ color: 'var(--env-color-fg-success)' }}>+128</span>{' '}
+              <span style={{ color: 'var(--env-color-fg-danger)' }}>−34</span>
+            </Badge>
             <AvatarGroup people={reviewers} size="sm" />
           </Row>
           <Row wrap gap={2}>
