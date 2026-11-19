@@ -835,7 +835,7 @@
     "ToastProvider": {
       "env-toast": "One notification.",
       "env-toast-action": "A notification's action.",
-      "env-toast-actions": "A notification's two actions, side by side.",
+      "env-toast-actions": "A notification's actions, side by side, wrapping when they don't fit.",
       "env-toast-announcer": "The announcements of notifications.",
       "env-toast-dismiss": "A notification's dismiss button.",
       "env-toast-message": "A notification's message.",

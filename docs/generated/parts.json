@@ -6090,7 +6090,7 @@
         },
         {
           "class": "env-toast-actions",
-          "description": "A notification's two actions, side by side."
+          "description": "A notification's actions, side by side, wrapping when they don't fit."
         },
         {
           "class": "env-toast-announcer",

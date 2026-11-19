@@ -107,6 +107,8 @@
   .env-toast-actions {
     flex: 0 1 auto;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     align-items: center;
     gap: var(--env-space-1);
     max-inline-size: 60%;

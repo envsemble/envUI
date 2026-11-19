@@ -121,8 +121,6 @@ export function useToastController(defaultPlacement: ToastPlacement) {
       const placement = notification.placement ?? currentDefaultPlacement.current;
       if (!toastPlacements.includes(placement))
         throw new RangeError('Unsupported toast placement.');
-      if ((notification.actions?.length ?? 0) > 2)
-        throw new RangeError('A toast offers at most two actions.');
       const id = `${notificationIdPrefix}-toast-${++notificationSequence.current}`;
       const entry: ToastEntry = {
         ...notification,

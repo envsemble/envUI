@@ -58,8 +58,8 @@ export interface ToastNotification {
    */
   action?: ToastAction;
   /**
-   * Two actions in place of action, such as Undo and View, the main one last; more than two throw a
-   * RangeError.
+   * Actions in place of action, such as Undo and View, shown in the order given with the main one
+   * last; they wrap onto more lines when they don't fit beside the message.
    */
   actions?: readonly ToastAction[];
   /**
@@ -86,7 +86,7 @@ export interface ToastNotification {
 export interface ToastManager {
   /**
    * Shows a notification at once and returns its id, for dismiss. Throws a RangeError for an
-   * invalid duration or placement, or more than two actions.
+   * invalid duration or placement.
    */
   show: (notification: ToastNotification) => string;
   /** Dismisses the notification with the id that show returned; a dismissed id does nothing. */
