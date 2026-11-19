@@ -8168,7 +8168,19 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open."
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open. It applies to the three default choices; choices given as children set their own."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The choices, as Menu.RadioItems valued system, light or dark, in place of the three default ones: such as Light and Dark alone, or a choice with a hint beside it."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The group's class, beside env-menu-group."
         }
       ],
       "native": [],
@@ -8258,6 +8270,13 @@
           "type": "string",
           "required": false,
           "description": "The button's name; without it, Switch to dark theme or Switch to light theme, or EnvUIProvider's messages.themePreference."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "the dark mode icon in the light theme, the light mode icon in the dark theme",
+          "description": "The button's icon, such as one of the application's own; useThemePreference gives the theme to choose it by."
         }
       ],
       "native": [
