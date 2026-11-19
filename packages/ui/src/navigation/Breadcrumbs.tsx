@@ -1,10 +1,13 @@
 'use client';
 
+import { mergeProps } from '@base-ui/react/merge-props';
 import {
   useLayoutEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type ComponentPropsWithoutRef,
+  type HTMLAttributes,
   type MouseEvent,
   type ReactElement,
   type ReactNode,
@@ -32,7 +35,19 @@ export interface BreadcrumbsItem {
   href?: string;
   /** An action for applications that navigate without URLs; rendered as a button styled as a link. */
   onClick?: (event: MouseEvent<HTMLElement>) => void;
+  /**
+   * More props for the crumb's link, button or text, such as target and rel to open it in a new
+   * tab, or data attributes for tests. Its class joins the crumb's; the crumb's aria-current and
+   * name stay its own.
+   */
+  itemProps?: BreadcrumbsItemElementProps;
 }
+
+/** What a crumb's itemProps can set on its link, button or text. */
+export type BreadcrumbsItemElementProps = Omit<
+  ComponentPropsWithoutRef<'a'>,
+  'children' | 'href' | 'onClick' | 'id' | 'role' | 'dangerouslySetInnerHTML' | `aria-${string}`
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
 
 export interface BreadcrumbsProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /** From the top level to the current page, which is last. */
@@ -77,23 +92,39 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
     </span>
   );
   const keepsFocusUntilBlurEvenOnceItFits = focused;
-  const focusableToShowInFull = {
-    tabIndex: truncated || keepsFocusUntilBlurEvenOnceItFits ? 0 : undefined,
+  const { className: ownClassName, ...ownProps } = item.itemProps ?? {};
+  const focusableToShowInFull = mergeProps(ownProps as HTMLAttributes<HTMLSpanElement>, {
+    tabIndex: truncated || keepsFocusUntilBlurEvenOnceItFits ? 0 : ownProps.tabIndex,
     onFocus: () => setFocused(true),
     onBlur: () => setFocused(false),
-  };
+  });
   let crumb: ReactElement;
   if (current) {
     crumb = (
-      <span className="env-breadcrumbs-current" aria-current="page" {...focusableToShowInFull}>
+      <span
+        {...focusableToShowInFull}
+        className={classNames('env-breadcrumbs-current', ownClassName)}
+        aria-current="page"
+      >
         {content}
       </span>
     );
-  } else if (item.href !== undefined || item.onClick) {
+  } else if (item.href !== undefined) {
     crumb = (
       <ActionElement
-        {...(item.href !== undefined ? { href: item.href } : {})}
-        className="env-breadcrumbs-link"
+        {...ownProps}
+        href={item.href}
+        className={classNames('env-breadcrumbs-link', ownClassName)}
+        onClick={item.onClick}
+      >
+        {content}
+      </ActionElement>
+    );
+  } else if (item.onClick) {
+    crumb = (
+      <ActionElement
+        {...(ownProps as HTMLAttributes<HTMLButtonElement>)}
+        className={classNames('env-breadcrumbs-link', ownClassName)}
         onClick={item.onClick}
       >
         {content}
@@ -101,7 +132,7 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
     );
   } else {
     crumb = (
-      <span className="env-breadcrumbs-text" {...focusableToShowInFull}>
+      <span {...focusableToShowInFull} className={classNames('env-breadcrumbs-text', ownClassName)}>
         {content}
       </span>
     );
