@@ -19,6 +19,8 @@ const rules = {
   'no-raw-graphics': noRawGraphics,
 };
 
+const wordingRules = new Set(['label-vocabulary']);
+
 /** @type {import('eslint').ESLint.Plugin & { configs: Record<string, import('eslint').Linter.Config> }} */
 const plugin = {
   meta: { name, version, namespace: 'envui' },
@@ -32,7 +34,9 @@ const recommended = {
   files: ['**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}'],
   plugins: { envui: plugin },
   languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
-  rules: Object.fromEntries(Object.keys(rules).map((rule) => [`envui/${rule}`, 'error'])),
+  rules: Object.fromEntries(
+    Object.keys(rules).map((rule) => [`envui/${rule}`, wordingRules.has(rule) ? 'warn' : 'error']),
+  ),
 };
 plugin.configs.recommended = recommended;
 

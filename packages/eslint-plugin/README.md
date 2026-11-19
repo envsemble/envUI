@@ -1,6 +1,6 @@
 # @envsemble/eslint-plugin-envui
 
-ESLint rules for applications built with envUI. Each reports what envUI already provides but the code builds by hand, and its message says what to write instead and how to import it. Every rule is an error. The [Stylelint config](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) does the same for style sheets.
+ESLint rules for applications built with envUI. Each reports what envUI already provides but the code builds by hand, and its message says what to write instead and how to import it. Every rule is an error, apart from `label-vocabulary`, a warning about wording. The [Stylelint config](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) does the same for style sheets.
 
 ## Install
 
