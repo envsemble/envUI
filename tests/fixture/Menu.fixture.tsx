@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, ContextMenu, Menu, Theme, type ColorScheme } from '@envsemble/envui';
+import { Avatar, Button, ContextMenu, Menu, Theme, type ColorScheme } from '@envsemble/envui';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconAdd } from '@envsemble/envui/icons/Add';
@@ -200,5 +200,18 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
         {appearance} {recentLoads}
       </output>
     </Theme>
+  );
+}
+
+export function AccountSwitcherFixture() {
+  return (
+    <Menu.Root aria-label="Switch account" trigger={<Button>Switch account</Button>}>
+      <Menu.Item start={<Avatar name="Alex Morgan" size="sm" />} description="alex@example.com">
+        Alex Morgan
+      </Menu.Item>
+      <Menu.Item start={<Avatar name="Priya Shah" size="sm" />}>Priya Shah</Menu.Item>
+      <Menu.Item icon={<IconAdd />}>Add account</Menu.Item>
+      <Menu.Item>Sign out</Menu.Item>
+    </Menu.Root>
   );
 }

@@ -48,6 +48,7 @@ export function CommandPaletteOptions({
       key={item.id}
       className="env-command-palette-item"
       icon={item.icon}
+      start={item.start}
       label={item.label}
       description={item.description}
       end={item.end}

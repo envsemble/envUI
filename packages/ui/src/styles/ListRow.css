@@ -75,6 +75,11 @@
     --env-icon-size: var(--_list-row-icon-size, var(--env-control-icon-size));
     color: var(--env-color-fg-muted);
   }
+  .env-list-row-start {
+    justify-content: center;
+    min-inline-size: var(--env-picture-size-sm);
+    align-self: center;
+  }
   .env-list-row-text {
     min-inline-size: 0;
     flex: 1 1 auto;

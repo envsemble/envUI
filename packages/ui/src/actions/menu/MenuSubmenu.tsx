@@ -61,6 +61,7 @@ const reasonsClosingOnlyTheSubmenu = new Set(['escape-key', 'list-navigation']);
 export function Submenu({
   label,
   icon,
+  start,
   description,
   children,
   'aria-label': ariaLabel,
@@ -75,7 +76,12 @@ export function Submenu({
   const trigger = useRef<HTMLDivElement>(null);
   const popup = useRef<HTMLDivElement | null>(null);
   const closeReason = useRef<string | null>(null);
-  const { content, accessibility } = useMenuItemContent({ icon, children: label, description });
+  const { content, accessibility } = useMenuItemContent({
+    icon,
+    start,
+    children: label,
+    description,
+  });
   const textLabel = typeof label === 'string' ? label : undefined;
   const portal = usePortalContainer();
   const clearParentMenuEdge = () =>

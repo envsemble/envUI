@@ -627,3 +627,26 @@ describe('Focus as a menu closes', { tags: ['engines'] }, () => {
     await isFocused(save);
   });
 });
+
+test('a start slot shows an Avatar at its own size, and every label of the menu lines up', async () => {
+  mount({ default: menus.AccountSwitcherFixture });
+  await page.getByRole('button', { name: 'Switch account' }).click();
+  const menu = page.getByRole('menu', { name: 'Switch account' });
+  await settled(menu);
+  const alex = menu.getByRole('menuitem', { name: 'Alex Morgan', exact: true });
+  await expect.element(alex).toHaveAccessibleDescription('alex@example.com');
+  const avatar = alex.element().querySelector('.env-menu-item-start')!;
+  expect(avatar.getAttribute('aria-hidden')).toBe('true');
+  expect(box(avatar.querySelector('.env-avatar')!).width).toBeCloseTo(24, 0);
+  const labelStart = (name: string) =>
+    box(
+      menu
+        .getByRole('menuitem', { name, exact: true })
+        .element()
+        .querySelector('.env-menu-item-label')!,
+    ).x;
+  for (const name of ['Priya Shah', 'Add account', 'Sign out'])
+    expect(labelStart(name)).toBeCloseTo(labelStart('Alex Morgan'), 0);
+  const icon = menu.getByRole('menuitem', { name: 'Add account' }).element().querySelector('svg')!;
+  expect(box(icon).width).toBeCloseTo(16, 0);
+});

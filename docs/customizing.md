@@ -275,7 +275,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Menu
 
-- Parts: `env-menu`, `env-menu-choice`, `env-menu-group`, `env-menu-group-label`, `env-menu-header`, `env-menu-item`, `env-menu-item-description`, `env-menu-item-end`, `env-menu-item-indicator`, `env-menu-item-indicator-slot`, `env-menu-item-label`, `env-menu-item-shortcut`, `env-menu-item-text`, `env-menu-positioner`, `env-menu-separator`, `env-menu-submenu-chevron`, `env-menu-submenu-trigger`
+- Parts: `env-menu`, `env-menu-choice`, `env-menu-group`, `env-menu-group-label`, `env-menu-header`, `env-menu-item`, `env-menu-item-description`, `env-menu-item-end`, `env-menu-item-indicator`, `env-menu-item-indicator-slot`, `env-menu-item-label`, `env-menu-item-shortcut`, `env-menu-item-start` (slot), `env-menu-item-text`, `env-menu-positioner`, `env-menu-separator`, `env-menu-submenu-chevron`, `env-menu-submenu-trigger`
 - States: `data-checked` on `env-menu-choice`; `data-disabled` on `env-menu-item`; `data-highlighted` on `env-menu-choice`, `env-menu-item`; `data-instant` (`group`); `data-popup-open` on `env-menu-choice`, `env-menu-item`; `data-tone` (`danger`, `neutral`) on `env-menu-item`
 - Color properties: `--env-menu-item-container`, `--env-menu-item-content`, `--env-menu-item-icon`
 
@@ -404,7 +404,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Select
 
-- Parts: `env-select`, `env-select-control`, `env-select-end`, `env-select-icon`, `env-select-item`, `env-select-item-indicator`, `env-select-label`, `env-select-list`, `env-select-placeholder`, `env-select-popup`, `env-select-sizer`, `env-select-trigger`, `env-select-value`
+- Parts: `env-select`, `env-select-control`, `env-select-end`, `env-select-group`, `env-select-group-label`, `env-select-icon`, `env-select-item`, `env-select-item-indicator`, `env-select-label`, `env-select-list`, `env-select-placeholder`, `env-select-popup`, `env-select-sizer`, `env-select-trigger`, `env-select-value`, `env-select-value-start` (slot)
 - States: `data-disabled` on `env-select-item`; `data-highlighted` on `env-select-item`; `data-label-hidden`; `data-selected` on `env-select-item`
 - Color properties: `--env-select-container`, `--env-select-content`, `--env-select-outline`
 
@@ -531,7 +531,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### ListRow
 
-- Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-icon`, `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-text`
+- Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-icon`, `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-start` (slot), `env-list-row-text`
 - States: `data-disabled`; `data-highlighted`; `data-popup-open`; `data-selected`
 - Used by: Combobox, CommandPalette, RichTextEditor, Select
 

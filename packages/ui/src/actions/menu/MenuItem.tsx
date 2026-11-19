@@ -5,6 +5,7 @@ import { useId, type AriaAttributes, type MouseEvent, type ReactNode } from 'rea
 import { classNames } from '../../internal/classNames.js';
 import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import { Kbd } from '../../content/Kbd.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import { useLinkComponent } from '../../internal/provider/LinkComponentContext.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 import '../../styles/Base.css';
@@ -13,6 +14,12 @@ import '../../styles/Menu.css';
 export interface ItemContentProps {
   /** A decorative icon before the label, such as Settings. */
   icon?: ReactNode;
+  /**
+   * Content before the label in place of an icon, such as an Avatar in an account switcher, at its
+   * own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from
+   * assistive technology, since the label names the item.
+   */
+  start?: ReactNode;
   /** The item's label, which names it. */
   children: ReactNode;
   /** A second, muted line; announced as the item's description. */
@@ -31,7 +38,7 @@ const endContentSeparateWordInName = ' ';
 
 /** Shared item layout: indicator, icon, label with optional description, end content, shortcut. */
 export function useMenuItemContent(
-  { icon, children, description, shortcut, end }: ItemContentProps,
+  { icon, start, children, description, shortcut, end }: ItemContentProps,
   indicator?: ReactNode,
 ) {
   const descriptionId = useId();
@@ -40,6 +47,17 @@ export function useMenuItemContent(
     <>
       {indicator}
       {icon != null && <DecorativeIcon>{icon}</DecorativeIcon>}
+      {start != null && (
+        <Slot
+          className="env-menu-item-start"
+          element="span"
+          layout="row"
+          shrink="never"
+          aria-hidden
+        >
+          {start}
+        </Slot>
+      )}
       <span className="env-menu-item-text">
         <span className="env-menu-item-label">{children}</span>
         {description != null && (
@@ -135,6 +153,7 @@ const disabledDestinationFollowsNothing = (event: MouseEvent<HTMLElement>) =>
  */
 export function Item({
   icon,
+  start,
   children,
   description,
   shortcut,
@@ -149,6 +168,7 @@ export function Item({
   const LinkComponent = useLinkComponent();
   const { content, accessibility } = useMenuItemContent({
     icon,
+    start,
     children,
     description,
     shortcut,

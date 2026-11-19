@@ -434,6 +434,7 @@
       "env-list-row-icon": "A row's icon.",
       "env-list-row-indicator": "The check of a chosen row.",
       "env-list-row-label": "The slot of a row's name.",
+      "env-list-row-start": "The slot of the content before a row's name in place of an icon, such as an Avatar.",
       "env-list-row-text": "The column with a row's label and description."
     },
     "Listbox": {
@@ -470,6 +471,7 @@
       "env-menu-item-end": "The end of an item, for a shortcut or a chevron.",
       "env-menu-item-label": "An item's label.",
       "env-menu-item-shortcut": "An item's keyboard shortcut.",
+      "env-menu-item-start": "The slot of the content before an item's label in place of an icon, such as an Avatar.",
       "env-menu-item-text": "The column with an item's label and description.",
       "env-menu-positioner": "The menu's positioner.",
       "env-menu-separator": "The line between groups.",
@@ -690,6 +692,8 @@
       "env-select": "The select field.",
       "env-select-control": "The outlined box that holds the button and the chevron.",
       "env-select-end": "The chevron's place at the end of the well.",
+      "env-select-group": "A group of options.",
+      "env-select-group-label": "A group's heading.",
       "env-select-icon": "The chevron.",
       "env-select-item": "One option.",
       "env-select-item-indicator": "The check of the chosen option.",
@@ -699,7 +703,8 @@
       "env-select-popup": "The popup with the options.",
       "env-select-sizer": "The labels of every option, hidden, which give the field its width without a visible label.",
       "env-select-trigger": "The button that shows the value and opens the list.",
-      "env-select-value": "The chosen option's label."
+      "env-select-value": "The chosen option's label.",
+      "env-select-value-start": "The slot of the chosen option's start content on the trigger."
     },
     "Sheet": {
       "env-sheet": "The sheet.",

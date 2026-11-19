@@ -205,6 +205,7 @@
     "SegmentedControlItem": "interface",
     "SegmentedControlProps": "interface",
     "Select": "function",
+    "SelectGroup": "interface",
     "SelectItem": "interface",
     "SelectOpenChangeDetails": "interface",
     "SelectProps": "interface",

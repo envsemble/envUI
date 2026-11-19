@@ -2973,6 +2973,11 @@
           "description": "An item's keyboard shortcut."
         },
         {
+          "class": "env-menu-item-start",
+          "description": "The slot of the content before an item's label in place of an icon, such as an Avatar.",
+          "slot": true
+        },
+        {
           "class": "env-menu-item-text",
           "description": "The column with an item's label and description."
         },
@@ -4284,7 +4289,6 @@
         }
       ],
       "uses": [
-        "Button",
         "Checkbox",
         "Code",
         "Field",
@@ -4644,6 +4648,14 @@
           "description": "The chevron's place at the end of the well."
         },
         {
+          "class": "env-select-group",
+          "description": "A group of options."
+        },
+        {
+          "class": "env-select-group-label",
+          "description": "A group's heading."
+        },
+        {
           "class": "env-select-icon",
           "description": "The chevron."
         },
@@ -4682,6 +4694,11 @@
         {
           "class": "env-select-value",
           "description": "The chosen option's label."
+        },
+        {
+          "class": "env-select-value-start",
+          "description": "The slot of the chosen option's start content on the trigger.",
+          "slot": true
         }
       ],
       "states": [
@@ -6342,6 +6359,11 @@
         {
           "class": "env-list-row-label",
           "description": "The slot of a row's name.",
+          "slot": true
+        },
+        {
+          "class": "env-list-row-start",
+          "description": "The slot of the content before a row's name in place of an icon, such as an Avatar.",
           "slot": true
         },
         {

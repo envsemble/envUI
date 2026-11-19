@@ -39,6 +39,11 @@ export interface CommandPaletteItem {
   description?: ReactNode;
   /** A decorative icon before the label. */
   icon?: ReactNode;
+  /**
+   * Content before the label in place of an icon, such as a person's Avatar among the results, at
+   * its own size rather than the icon's; it is hidden from assistive technology.
+   */
+  start?: ReactNode;
   /** A heading shows where the group changes between consecutive items. */
   group?: string;
   /** End content, such as a Kbd shortcut or a Badge. */
