@@ -55,7 +55,7 @@ test('the release notes checks find what is wrong', () => {
 });
 
 test('inline text links only to the web and to the site, and shows any other link as its words', () => {
-  const linkOf = (href) => inlinePieces(`See [the page](${href}).`)[1];
+  const linkOf = (href: string) => inlinePieces(`See [the page](${href}).`)[1];
   assert.equal(linkOf('https://developer.mozilla.org/').kind, 'link');
   assert.equal(linkOf('/docs/changelog').kind, 'link');
   for (const href of ['javascript:alert(1)', 'data:text/html,hi', '//example.com', 'mailto:a@b'])
