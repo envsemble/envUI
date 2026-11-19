@@ -8,11 +8,11 @@ import {
   readTokenOutline,
 } from '../../scripts/site/PartOutlines.ts';
 import {
-  inlinePieces,
   parseReleaseNotes,
   readReleaseNotes,
   releaseNotesProblems,
 } from '../../scripts/site/ReleaseNotes.ts';
+import { inlinePieces } from '../../apps/site/src/documentation/InlinePieces.ts';
 import { join } from 'node:path';
 import {
   libraryChangelogFile,
