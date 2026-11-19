@@ -353,6 +353,7 @@
     },
     "DropZone": {
       "env-drop-zone": "The area that takes dropped files.",
+      "env-drop-zone-content": "The slot of the content under the target, such as the chosen files.",
       "env-drop-zone-description": "The sentence about the accepted files.",
       "env-drop-zone-description-content": "The slot of that sentence.",
       "env-drop-zone-icon": "The round well of the icon.",

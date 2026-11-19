@@ -217,7 +217,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### DropZone
 
-- Parts: `env-drop-zone`, `env-drop-zone-description`, `env-drop-zone-description-content` (slot), `env-drop-zone-icon`, `env-drop-zone-icon-content` (slot), `env-drop-zone-label`, `env-drop-zone-label-content` (slot), `env-drop-zone-target`, `env-drop-zone-text`
+- Parts: `env-drop-zone`, `env-drop-zone-content` (slot), `env-drop-zone-description`, `env-drop-zone-description-content` (slot), `env-drop-zone-icon`, `env-drop-zone-icon-content` (slot), `env-drop-zone-label`, `env-drop-zone-label-content` (slot), `env-drop-zone-target`, `env-drop-zone-text`
 - States: `data-drag-over`; `data-invalid`; `data-pending`; `data-size` (`md`, `sm`)
 
 ### EmptyState

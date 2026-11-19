@@ -2252,6 +2252,11 @@
           "description": "The area that takes dropped files."
         },
         {
+          "class": "env-drop-zone-content",
+          "description": "The slot of the content under the target, such as the chosen files.",
+          "slot": true
+        },
+        {
           "class": "env-drop-zone-description",
           "description": "The sentence about the accepted files."
         },

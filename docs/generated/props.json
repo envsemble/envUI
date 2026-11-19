@@ -2954,6 +2954,12 @@
           "description": "Replaces the upload icon."
         },
         {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content inside the zone, under its target, such as the chosen files with their previews and Remove buttons, or a Browse button that opens the file picker through inputRef. Files dropped on it are taken too; it can hold controls, since it is beside the target button, not inside it."
+        },
+        {
           "name": "accept",
           "type": "string",
           "required": false,
