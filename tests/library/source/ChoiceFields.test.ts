@@ -116,3 +116,22 @@ test('a radio without a label takes its name and description from the List.Item 
   assert.equal(custom.attributes['aria-labelledby'], undefined);
   assert.ok(!elementsOf(group).some((element) => hasClass(element, 'env-radio-label')));
 });
+
+test('a slider takes content in its label and its shown value, and announces the formatted value', () => {
+  const slider = render(
+    h(Slider, {
+      label: h('span', null, h('svg', { 'aria-hidden': true }), 'Volume'),
+      defaultValue: 40,
+      formatValue: (value) => `${value} percent`,
+      renderValue: (value) => h('span', null, h('strong', null, value), '%'),
+    }),
+  );
+  const input = find(slider, (element) => element.attributes.type === 'range');
+  const label = find(slider, (element) => hasClass(element, 'env-slider-label'));
+  assert.equal(textOf(label), 'Volume');
+  assert.ok(find(label, (element) => element.tag === 'svg'));
+  assert.equal(input.attributes['aria-valuetext'], '40 percent');
+  const output = find(slider, (element) => element.tag === 'output');
+  assert.equal(textOf(output), '40%');
+  assert.ok(find(output, (element) => element.tag === 'strong'));
+});

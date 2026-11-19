@@ -7426,9 +7426,9 @@
       "props": [
         {
           "name": "label",
-          "type": "string",
+          "type": "ReactNode",
           "required": true,
-          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends in an ellipsis where the slider is too narrow for it."
+          "description": "The value's name, inside the slider at its start, such as Opacity: text, or any content, such as a volume icon beside the text. It names the slider, and ends in an ellipsis where the slider is too narrow for it."
         },
         {
           "name": "description",
@@ -7500,6 +7500,12 @@
           "type": "(value: number) => string",
           "required": false,
           "description": "The value as people read it at the slider's end and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
+        },
+        {
+          "name": "renderValue",
+          "type": "(value: number) => ReactNode",
+          "required": false,
+          "description": "What the slider's end shows for the value in place of formatValue's text, such as the number with its unit styled apart, or a swatch; formatValue, or the number in the locale, stays what assistive technology announces."
         },
         {
           "name": "locale",
