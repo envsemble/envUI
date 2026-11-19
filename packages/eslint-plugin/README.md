@@ -1,6 +1,6 @@
 # @envsemble/eslint-plugin-envui
 
-ESLint rules for applications built with envUI. Each reports what envUI already provides but the code builds by hand, and its message says what to write instead and how to import it. Every rule is an error. The [Stylelint config](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) does the same for style sheets.
+ESLint rules for applications built with envUI. Each reports what envUI already provides but the code builds by hand, and its message says what to write instead and how to import it. Every rule is an error, apart from `label-vocabulary`, a warning about wording. The [Stylelint config](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) does the same for style sheets.
 
 ## Install
 
@@ -59,7 +59,7 @@ A raw <svg width="24" height="24"> takes its size from the file: pass it to an i
 
 ### no-link-in-clickable-row
 
-A link-styled action, a raw `<a>`, a `Link` or a `Button` with `variant="text"`, inside a `List.Item`, `Table.Row` or `Card` that takes the click itself, with `href` or `onClick`. A link in a List.Item's `start`, `end` or `control` passes, since those slots sit above the row's target, such as an Avatar that opens the person's profile. An `interactive` row's `data-row-target` passes, and so do its other links, which stay clickable above that target. An `interactive` Card with a `data-row-target` inside takes the click too: its target passes, and so do links in its `meta`, `end` and `actions`, which sit above it.
+A link-styled action, a raw `<a>`, a `Link` or a `Button` with `variant="text"`, inside a `List.Item`, `Table.Row` or `Card` that takes the click itself, with `href` or `onClick`. A link in a List.Item's `start`, `end` or `control` passes, since those slots sit above the row's target, such as an Avatar that opens the person's profile. An `interactive` List.Item or Card passes: its `data-row-target` takes the click, and its other links stay clickable above that target.
 
 ```text
 A Button with variant="text" inside a clickable List.Item: the row takes the click. Move the action into its end slot as a Button, or into a Menu. When it goes where the row goes, mark it data-row-target instead.
@@ -67,10 +67,10 @@ A Button with variant="text" inside a clickable List.Item: the row takes the cli
 
 ### no-field-in-list-row
 
-A field with no `label`, `aria-label` or `aria-labelledby`, such as a `Select`, `Combobox`, `TextField`, `SearchField`, `Textarea`, `SegmentedControl`, `Slider`, a `RadioGroup` or a picker, in a `List.Item`'s `control` or `end`, or a `Radio` with none in its `end`. The row's label names only a `Switch`, a `Checkbox` or a `Radio` in its `control`, so a field there or in `end` needs its own name. A labelled field, such as a settings row that ends in `<Select label="Theme" />`, passes, as does a form in an overlay the row opens, such as a `Popover`, `Dialog`, `Sheet` or `Menu`.
+A field with no `label`, `aria-label` or `aria-labelledby`, such as a `Select`, `Combobox`, `TextField`, `SearchField`, `Textarea`, `SegmentedControl`, `Slider`, a `Radio`, a `RadioGroup` or a picker, in a `List.Item`'s `end`. The row's label names the control in its `control`, such as `<List.Item label="Theme" control={<Select items={themes} />} />`, and nothing names a field in `end`. A labelled field in `end` passes, as does a form in an overlay the row opens, such as a `Popover`, `Dialog`, `Sheet` or `Menu`.
 
 ```text
-A Select with no label in a List.Item's control: the row's label names only a Switch, a Checkbox or a Radio in its control, so nothing names this field. Give it a label, or an aria-label or aria-labelledby when its label shouldn't show.
+A Select with no label in a List.Item's end: the row's label names only the control in its control, so nothing names this field. Put it in control when it is the row's setting, or give it a label, or an aria-label or aria-labelledby when its label shouldn't show.
 ```
 
 ### label-vocabulary

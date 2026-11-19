@@ -38,7 +38,7 @@ export default function OpenFromCard() {
               </Link>
             }
             meta={<Badge>{state}</Badge>}
-            end={
+            headerEnd={
               <Menu.Root
                 aria-label={`Actions for ${name}`}
                 trigger={

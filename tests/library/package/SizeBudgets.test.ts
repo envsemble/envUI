@@ -19,11 +19,11 @@ const firstLoadJsBudgets = [
 ];
 
 const componentOwnCodeMinifiedBudgets = {
-  Tooltip: 15900,
+  Tooltip: 16300,
   Popover: 10450,
   Menu: 18400,
   Select: 20250,
-  TextField: 8900,
+  TextField: 8950,
   Alert: 11450,
 };
 

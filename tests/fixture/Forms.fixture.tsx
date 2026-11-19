@@ -208,6 +208,9 @@ export function LabelFirstFixture() {
       <Switch label="Dark mode" labelPlacement="start" />
       <Checkbox label="Remember me" labelPlacement="start" />
       <Switch label="Sync" />
+      <RadioGroup aria-label="Plan">
+        <Radio value="team" label="Team plan" labelPlacement="start" />
+      </RadioGroup>
     </>
   );
 }

@@ -78,8 +78,8 @@ export default function ScaffoldFixture() {
           landmarks={query.get('landmarks') !== 'off'}
           navigationForms={forms}
           navigation={given}
-          end={
-            query.has('end') ? (
+          aside={
+            query.has('aside') ? (
               <aside aria-label="Inspector" data-testid="inspector" className="fixture-inspector">
                 <p>Inspector</p>
                 <div style={{ blockSize: '60rem' }} />

@@ -719,7 +719,7 @@
     "Calendar": {
       "kind": "component",
       "source": "packages/ui/src/forms/Calendar.tsx",
-      "description": "A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, it is a group around the month's grid.",
+      "description": "A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, or by the List.Item whose control it is, it is a group around the month's grid.",
       "props": [
         {
           "name": "value",
@@ -1032,10 +1032,10 @@
           "description": "A short fact at the end of the title row, such as when the card was updated."
         },
         {
-          "name": "end",
+          "name": "headerEnd",
           "type": "ReactNode",
           "required": false,
-          "description": "Content at the end of the title row, after the meta, such as an overflow Menu or an Edit Button, placed as given and kept above the card's target."
+          "description": "Content at the end of the title row, after the meta, such as an overflow Menu or an Edit Button, placed as given."
         },
         {
           "name": "description",
@@ -1047,14 +1047,14 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit. For controls beside the title, use end."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit. For controls beside the title, use headerEnd."
         },
         {
           "name": "interactive",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The card opens something through a link or button inside, such as its title: it reacts to hover, keyboard focus on that target and presses. Mark the link or button `data-row-target` to stretch it over the card; the meta, end and actions stay above it and take their own clicks."
+          "description": "The card opens something through a link or button inside, such as its title: it reacts to hover, keyboard focus on that target and presses. Mark the link or button `data-row-target` to stretch it over the card; the other links, buttons and fields in the card, such as an author's link in the description or a Menu in headerEnd, stay clickable above it."
         },
         {
           "name": "render",
@@ -4262,7 +4262,7 @@
           "name": "control",
           "type": "ReactNode",
           "required": false,
-          "description": "The selection control the row is about, at the row's end: a Switch, a Checkbox or a Radio, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select or a SegmentedControl, takes a label, aria-label or aria-labelledby of its own."
+          "description": "The control of the setting the row is about, at the row's end: a Switch, a Checkbox, a Radio or a field, such as a Select or a SegmentedControl, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice."
         },
         {
           "name": "interactive",
@@ -4937,7 +4937,7 @@
           "name": "closeOnClick",
           "type": "boolean",
           "required": false,
-          "default": "true",
+          "default": "true, or the closeOnClick of the ThemeMenuRadioGroup around it",
           "description": "Close the menu after choosing."
         },
         {
@@ -6661,6 +6661,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "A short, muted line under the label that helps people choose, such as Only the people you invite. It is part of the option's label, so it is read with its name."
+        },
+        {
+          "name": "labelPlacement",
+          "type": "'end' | 'start'",
+          "required": false,
+          "default": "'end'",
+          "description": "Where the label sits beside the radio: end, after it, or start, before it, such as in an inline row whose label leads; the native label still names the radio."
         }
       ],
       "native": [
@@ -6685,7 +6692,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, name it with aria-label or aria-labelledby."
+          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, a List.Item whose control it is names it, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "value",
@@ -7258,7 +7265,7 @@
     "Scaffold": {
       "kind": "component",
       "source": "packages/ui/src/layout/Scaffold.tsx",
-      "description": "The invisible structure of an application's screen: a top bar region, a navigation region and the body, with an optional end region and bottom bar. It never paints. It shows one navigation form at a time by its own width: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
+      "description": "The invisible structure of an application's screen: a top bar region, a navigation region and the body, with an optional aside region and bottom bar. It never paints. It shows one navigation form at a time by its own width: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
       "props": [
         {
           "name": "topBar",
@@ -7267,7 +7274,7 @@
           "description": "The top bar region, above the body: usually a TopBar."
         },
         {
-          "name": "end",
+          "name": "aside",
           "type": "ReactNode",
           "required": false,
           "description": "A region at the end edge, beside the body and under the top bar, such as an inspector, at the width of its content and scrolling on its own. It stays in view as the rail does."
@@ -7276,7 +7283,7 @@
           "name": "bottomBar",
           "type": "ReactNode",
           "required": false,
-          "description": "A bar along the bottom of the body and the end region, such as a status bar, above a NavigationBar. It stays in view as the top bar does, and focus scrolls clear of it."
+          "description": "A bar along the bottom of the body and the aside region, such as a status bar, above a NavigationBar. It stays in view as the top bar does, and focus scrolls clear of it."
         },
         {
           "name": "navigation",
@@ -7518,8 +7525,8 @@
         {
           "name": "aria-label",
           "type": "string",
-          "required": true,
-          "description": "The group's accessible name, such as Work items; the control has no visible label."
+          "required": false,
+          "description": "The group's accessible name, such as Work items; the control has no visible label. Without it, a List.Item whose control it is names it, or name it with aria-labelledby."
         },
         {
           "name": "size",
@@ -7889,8 +7896,8 @@
         {
           "name": "label",
           "type": "ReactNode",
-          "required": true,
-          "description": "The value's name, inside the slider at its start, such as Opacity: text, or any content, such as a volume icon beside the text. It names the slider, and ends in an ellipsis where the slider is too narrow for it."
+          "required": false,
+          "description": "The value's name, inside the slider at its start, such as Opacity: text, or any content, such as a volume icon beside the text. It names the slider, and ends in an ellipsis where the slider is too narrow for it. Without it, a List.Item whose control it is names the slider, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "description",
@@ -8776,7 +8783,7 @@
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "The boundary's element, for its meaning or its place in the markup, such as render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class and attributes merge into it. A div by default."
+          "description": "The boundary's element, for its meaning or its place in the markup, such as render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class and attributes merge into its props, as on Text: classes join, styles merge, both event handlers run and both refs receive the node. A div by default."
         }
       ],
       "native": [
@@ -8822,7 +8829,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open. It applies to the three default choices; choices given as children set their own."
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open. It applies to the choices given as children too, unless one sets its own."
         },
         {
           "name": "children",

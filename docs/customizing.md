@@ -124,7 +124,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Card
 
-- Parts: `env-card`, `env-card-actions` (slot), `env-card-body`, `env-card-description`, `env-card-end` (slot), `env-card-footer`, `env-card-header`, `env-card-meta`, `env-card-title`
+- Parts: `env-card`, `env-card-actions` (slot), `env-card-body`, `env-card-description`, `env-card-footer`, `env-card-header`, `env-card-header-end` (slot), `env-card-meta`, `env-card-title`
 - States: `data-actions`; `data-background` (`page`); `data-emphasis` (`muted`) on `env-card-description`; `data-env-skeleton` on `env-card`, `env-card-description`, `env-card-header`, `env-card-meta`, `env-card-title`; `data-interactive`
 - Color properties: `--env-card-container`, `--env-card-content`, `--env-card-outline`
 
@@ -365,7 +365,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Radio
 
 - Parts: `env-radio`, `env-radio-control`, `env-radio-description`, `env-radio-description-content` (slot), `env-radio-input`, `env-radio-label` (slot)
-- States: `data-orientation` (`horizontal`, `vertical`)
+- States: `data-label-placement` (`start`); `data-orientation` (`horizontal`, `vertical`)
 - Color properties: `--env-radio-content`, `--env-radio-selected`
 
 ### RadioGroup
@@ -399,7 +399,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Scaffold
 
-- Parts: `env-scaffold`, `env-scaffold-bar`, `env-scaffold-body`, `env-scaffold-bottom-bar`, `env-scaffold-drawer`, `env-scaffold-end`, `env-scaffold-navigation`, `env-scaffold-rail`, `env-scaffold-skip-link`, `env-scaffold-skip-links`, `env-scaffold-top-bar`
+- Parts: `env-scaffold`, `env-scaffold-aside`, `env-scaffold-bar`, `env-scaffold-body`, `env-scaffold-bottom-bar`, `env-scaffold-drawer`, `env-scaffold-navigation`, `env-scaffold-rail`, `env-scaffold-skip-link`, `env-scaffold-skip-links`, `env-scaffold-top-bar`
 - States: `data-env-layout` (`scaffold`); `data-env-name`; `data-navigation-compact` (`bar`, `drawer`, `none`, `rail`); `data-navigation-expanded` (`bar`, `drawer`, `none`, `rail`); `data-navigation-form` (`bar`, `drawer`, `rail`) on `env-scaffold-bar`, `env-scaffold-drawer`, `env-scaffold-rail`; `data-navigation-large` (`bar`, `drawer`, `none`, `rail`); `data-navigation-medium` (`bar`, `drawer`, `none`, `rail`); `data-scroll` (`body`, `document`); `data-skip` (`navigation`) on `env-scaffold-skip-link`; `data-top-bar-span` (`body`, `full`)
 - `--env-scaffold-sticky-top`, to read: How far below the window's top sticky content in the body sticks: under the top bar where the document scrolls.
 

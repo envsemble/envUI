@@ -91,6 +91,7 @@ test('a label placed at the start leads its track or box, and still names and to
   for (const [role, name] of [
     ['switch', 'Dark mode'],
     ['checkbox', 'Remember me'],
+    ['radio', 'Team plan'],
   ] as const) {
     const control = page.getByRole(role, { name, exact: true });
     const root = control.element().closest('label')!;

@@ -36,6 +36,7 @@ import {
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { useFormReset } from '../../internal/field/useFormReset.js';
 import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';
+import { useRowControlNaming } from '../../internal/field/rowControl.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';
@@ -258,7 +259,19 @@ export function PickerField({
   onKeyDown,
   ...triggerProps
 }: PickerFieldOwnProps) {
-  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
+  const naming = useRowControlNaming({
+    label,
+    'aria-label': ariaLabel,
+    'aria-labelledby': labelledBy,
+    'aria-describedby': describedBy,
+  });
+  const metadata = useFieldMetadata(
+    suppliedId,
+    description,
+    error,
+    naming['aria-describedby'] ?? describedBy,
+    invalid,
+  );
   const { id } = metadata;
   const labelId = `${id}-label`;
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -267,7 +280,8 @@ export function PickerField({
   const popupRef = useRef<HTMLDivElement>(null);
   const [direction] = useDirection(triggerRef, open);
   const accessibleName: PickerName = {
-    'aria-labelledby': labelledBy ?? (label != null ? labelId : undefined),
+    'aria-labelledby':
+      labelledBy ?? naming['aria-labelledby'] ?? (label != null ? labelId : undefined),
     'aria-label': labelledBy == null && label == null ? ariaLabel : undefined,
   };
 

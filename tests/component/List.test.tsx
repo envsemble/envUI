@@ -378,6 +378,29 @@ test("a Switch or Checkbox without a label of its own takes the row's name, and 
   await expect.element(list.getByRole('switch')).toHaveAccessibleName('Mute alerts');
 });
 
+test("a field in a row's control, with no name of its own, is named and described by the row", async () => {
+  mount(rowControls);
+  const list = page.getByRole('list', { name: 'Row fields', exact: true });
+  const named = async (field: Locator, name: string, description: string) => {
+    await expect.element(field).toHaveAccessibleName(name);
+    await expect.element(field).toHaveAccessibleDescription(description);
+  };
+  await named(list.getByRole('combobox').nth(0), 'Theme', 'Follows the system until set.');
+  await named(list.getByRole('radiogroup').nth(0), 'Density', 'How tight the rows sit.');
+  await named(list.getByRole('slider'), 'Volume', 'Of the alert sound.');
+  await named(list.getByRole('textbox', { name: 'Port' }), 'Port', 'Between 1024 and 65535.');
+  await named(list.getByRole('textbox', { name: 'Notes' }), 'Notes', 'Shown to the team.');
+  await named(list.getByRole('combobox', { name: 'Owner' }), 'Owner', 'Who gets the alerts.');
+  await named(list.getByRole('group', { name: 'Plan' }), 'Plan', 'Billed monthly.');
+  await named(list.getByRole('combobox', { name: 'Starts' }), 'Starts', 'The first day.');
+  await named(list.getByRole('group', { name: 'Due' }), 'Due', 'The last day.');
+  await named(
+    list.getByRole('combobox', { name: 'Data region' }),
+    'Data region',
+    'Changes take a day.',
+  );
+});
+
 test("a link in an interactive row's description stays clickable above the row target", async () => {
   mount(fixture);
   const edits = page.getByRole('list', { name: 'Edits', exact: true });

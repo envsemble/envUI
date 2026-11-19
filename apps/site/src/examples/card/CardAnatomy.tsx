@@ -6,7 +6,7 @@ export default function CardAnatomy() {
     <Card
       title="Pricing research"
       meta="Updated yesterday"
-      end={<IconButton variant="text" icon={<IconMoreHoriz />} aria-label="More actions" />}
+      headerEnd={<IconButton variant="text" icon={<IconMoreHoriz />} aria-label="More actions" />}
       description="Interviews and survey results from twelve teams."
       actions={<Button>Open project</Button>}
       style={{ inlineSize: 'min(100%, 26rem)' }}

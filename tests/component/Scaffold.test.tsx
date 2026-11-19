@@ -177,7 +177,7 @@ describe('Scaffold', () => {
   });
 
   test('an end region sits beside the body under the top bar, and a bottom bar under both, as the body scrolls', async () => {
-    scaffold('width=60rem&end&status');
+    scaffold('width=60rem&aside&status');
     const frame = box(page.getByTestId('frame'));
     const topBar = box(element('.env-scaffold-top-bar'));
     const main = box(page.getByRole('main'));
@@ -195,7 +195,7 @@ describe('Scaffold', () => {
     body.scrollTo(0, 400);
     await expect.poll(() => body.scrollTop).toBe(400);
     expect(box(page.getByTestId('status-bar'))).toEqual(status);
-    expect(css(element('.env-scaffold-end'), 'overflow-y')).toBe('auto');
+    expect(css(element('.env-scaffold-aside'), 'overflow-y')).toBe('auto');
   });
 
   test('topBarSpan="full" puts the top bar across the width, above the navigation', () => {
@@ -286,11 +286,11 @@ describe('Scaffold document scroll', { tags: ['engines'] }, () => {
 describe('Scaffold document scroll, end region and bottom bar', { tags: ['engines'] }, () => {
   test('the end region and the bottom bar stay in view, the bottom bar above the bar, and focus scrolls clear of both', async () => {
     await page.viewport(1100, 700);
-    scaffold('width=60rem&scroll=document&end&status');
+    scaffold('width=60rem&scroll=document&aside&status');
     await scrollDocument(2000);
     const topBar = box(element('.env-scaffold-top-bar'));
     const status = box(page.getByTestId('status-bar'));
-    const end = box(element('.env-scaffold-end'));
+    const end = box(element('.env-scaffold-aside'));
     expect(status.y + status.height).toBeCloseTo(700, 0);
     expect(end.y).toBeCloseTo(topBar.height, 0);
     expect(end.y + end.height).toBeCloseTo(status.y, 0);

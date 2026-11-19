@@ -74,7 +74,7 @@ An `--env-*` name, used or set, that isn't one of envUI's tokens or public prope
 
 ### envui/no-contrast-breaking-pairs
 
-In one rule, a text color for a fill, such as `var(--env-color-fg-on-emphasis)`, on a background that isn't one of those fills; a `var(--env-color-fg-…)` token as a whole background in a rule that also sets `color`, the sign that text sits on it, unless it sets a mask, or a `var(--env-color-bg-…)` token as a whole `color`. A shape with no text that matches the text beside it, such as a status dot or a separator filled with `var(--env-color-fg-muted)`, passes.
+In one rule, a text color for a fill, such as `var(--env-color-fg-on-emphasis)`, on a background that isn't one of those fills; a `var(--env-color-fg-…)` token as a whole background in a rule that also sets a text property, `color`, `font…`, `line-height` or `text-…`, the sign that text sits on it, unless it sets a mask, or a `var(--env-color-bg-…)` token as a whole `color`. A shape with no text that matches the text beside it, such as a status dot or a separator filled with `var(--env-color-fg-muted)`, passes.
 
 ```text
 --env-color-fg-on-emphasis is made for the emphasis fills, not --env-color-bg-default: write one of the emphasis fills, such as var(--env-color-bg-accent-emphasis), or a text color made for --env-color-bg-default.

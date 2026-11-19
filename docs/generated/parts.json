@@ -949,17 +949,17 @@
           "description": "The sentence under the title."
         },
         {
-          "class": "env-card-end",
-          "description": "The slot at the end of the title row, after the meta, such as a Menu.",
-          "slot": true
-        },
-        {
           "class": "env-card-footer",
           "description": "The strip of actions."
         },
         {
           "class": "env-card-header",
           "description": "The row with the title and the meta."
+        },
+        {
+          "class": "env-card-header-end",
+          "description": "The slot at the end of the title row, after the meta, such as a Menu.",
+          "slot": true
         },
         {
           "class": "env-card-meta",
@@ -4377,6 +4377,15 @@
       ],
       "states": [
         {
+          "attribute": "data-label-placement",
+          "values": [
+            "start"
+          ],
+          "parts": [
+            "env-radio"
+          ]
+        },
+        {
           "attribute": "data-orientation",
           "values": [
             "horizontal",
@@ -4684,6 +4693,10 @@
           "description": "The scaffold: the top bar, navigation and body regions; it never paints."
         },
         {
+          "class": "env-scaffold-aside",
+          "description": "The aside region at the end edge beside the body, such as an inspector, which scrolls on its own."
+        },
+        {
           "class": "env-scaffold-bar",
           "description": "The slot of the navigation bar, at the bottom of a compact window."
         },
@@ -4693,15 +4706,11 @@
         },
         {
           "class": "env-scaffold-bottom-bar",
-          "description": "The bottom bar region under the body and the end region, such as a status bar."
+          "description": "The bottom bar region under the body and the aside region, such as a status bar."
         },
         {
           "class": "env-scaffold-drawer",
           "description": "The slot of the navigation drawer, at the start from expanded."
-        },
-        {
-          "class": "env-scaffold-end",
-          "description": "The end region beside the body, such as an inspector, which scrolls on its own."
         },
         {
           "class": "env-scaffold-navigation",

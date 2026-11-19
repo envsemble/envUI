@@ -1,15 +1,14 @@
 'use client';
 
 import {
-  cloneElement,
   createContext,
-  isValidElement,
   useContext,
   useMemo,
   type ComponentPropsWithRef,
   type ReactElement,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { renderElement } from '../internal/react/renderElement.js';
 import { outsideTheme } from './internal/outsideTheme.js';
 import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
@@ -94,7 +93,8 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
   /**
    * The boundary's element, for its meaning or its place in the markup, such as
    * render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class
-   * and attributes merge into it. A div by default.
+   * and attributes merge into its props, as on Text: classes join, styles merge, both event
+   * handlers run and both refs receive the node. A div by default.
    */
   render?: ReactElement;
 }
@@ -186,18 +186,7 @@ export function Theme({
     }),
     children,
   };
-  return (
-    <ThemeContext value={value}>
-      {isValidElement<{ className?: string }>(render) ? (
-        cloneElement(render, {
-          ...boundary,
-          className: classNames(boundary.className, render.props.className),
-        })
-      ) : (
-        <div {...boundary} />
-      )}
-    </ThemeContext>
-  );
+  return <ThemeContext value={value}>{renderElement('div', render, boundary)}</ThemeContext>;
 }
 
 /**

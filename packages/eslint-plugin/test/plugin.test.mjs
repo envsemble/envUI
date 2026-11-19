@@ -12,7 +12,7 @@ const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 const entries = [...elements.roles, ...elements.elements];
 const isName = (value) => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(value);
 
-test('the plugin names itself and turns every rule on as an error in the recommended config', () => {
+test('the plugin names itself and turns every rule on in the recommended config, the wording rule as a warning', () => {
   assert.deepEqual(plugin.meta, {
     name: manifest.name,
     version: manifest.version,
@@ -25,7 +25,7 @@ test('the plugin names itself and turns every rule on as an error in the recomme
     Object.keys(plugin.rules).map((name) => `envui/${name}`),
   );
   for (const [rule, severity] of Object.entries(recommended.rules))
-    assert.equal(severity, 'error', rule);
+    assert.equal(severity, rule === 'envui/label-vocabulary' ? 'warn' : 'error', rule);
 });
 
 test('the mapping table has unique entries that name envUI 1.0 components', () => {

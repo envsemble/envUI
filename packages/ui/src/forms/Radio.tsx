@@ -47,8 +47,8 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   ref?: Ref<HTMLFieldSetElement>;
   /**
    * The group's visible name, such as Visibility, as the fieldset's legend above the options. It
-   * names the group for assistive technology. Without it, name it with aria-label or
-   * aria-labelledby.
+   * names the group for assistive technology. Without it, a List.Item whose control it is names
+   * it, or name it with aria-label or aria-labelledby.
    */
   label?: ReactNode;
   /**
@@ -120,9 +120,10 @@ export function RadioGroup({
     onChange: onValueChange,
   });
   const ids = fieldMessageIds(id);
+  const naming = useRowControlNaming({ label, ...props });
   const describedBy =
     [
-      props['aria-describedby'],
+      naming['aria-describedby'] ?? props['aria-describedby'],
       description != null ? ids.description : undefined,
       error != null ? ids.error : undefined,
     ]
@@ -143,6 +144,7 @@ export function RadioGroup({
   const fieldset = (
     <fieldset
       {...props}
+      {...naming}
       ref={(node) => {
         fieldsetRef.current = node;
         setRef(ref, node);
@@ -225,6 +227,12 @@ export interface RadioProps extends Omit<
    * invite. It is part of the option's label, so it is read with its name.
    */
   description?: ReactNode;
+  /**
+   * Where the label sits beside the radio: end, after it, or start, before it, such as in an inline
+   * row whose label leads; the native label still names the radio.
+   * @default 'end'
+   */
+  labelPlacement?: 'end' | 'start';
 }
 
 /** One option of a RadioGroup: a native radio input with its label, and an optional description. */
@@ -233,6 +241,7 @@ export function Radio({
   value,
   label,
   description,
+  labelPlacement = 'end',
   className,
   style,
   onChange,
@@ -296,6 +305,7 @@ export function Radio({
       className={classNames('env-radio', className)}
       style={style}
       data-orientation={group.orientation}
+      data-label-placement={labelPlacement === 'start' ? 'start' : undefined}
     >
       <span className="env-radio-control">{radioInput}</span>
       {labelContent}
