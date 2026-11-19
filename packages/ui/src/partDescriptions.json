@@ -154,7 +154,6 @@
       "env-calendar-heatmap-corner": "The empty corner above the weekday labels.",
       "env-calendar-heatmap-day": "One day's cell, filled by its level.",
       "env-calendar-heatmap-grid": "The grid of days.",
-      "env-calendar-heatmap-legend": "The legend of levels.",
       "env-calendar-heatmap-month": "A month's label above the grid.",
       "env-calendar-heatmap-pad": "An empty cell outside the range.",
       "env-calendar-heatmap-scroll": "The region that scrolls the grid sideways.",
@@ -162,6 +161,9 @@
       "env-calendar-heatmap-tooltip": "The tooltip of a day.",
       "env-calendar-heatmap-tooltip-positioner": "The tooltip's positioner.",
       "env-calendar-heatmap-weekday": "A weekday's label beside the grid."
+    },
+    "CalendarHeatmapLegend": {
+      "env-calendar-heatmap-legend": "The legend of levels."
     },
     "Card": {
       "env-card": "The card's surface.",
@@ -189,9 +191,9 @@
     },
     "CodeBlock": {
       "env-code-block": "The block of code.",
-      "env-code-block-actions": "The slot of the content in the heading before the copy button.",
       "env-code-block-copy-status": "The announcement that the code was copied.",
       "env-code-block-header": "The row above the code: its label, such as a file name, and the copy button.",
+      "env-code-block-header-end": "The slot of the content at the end of the heading, before the copy button.",
       "env-code-block-token": "One highlighted piece of the source, in its syntax color."
     },
     "CodeDiff": {
@@ -283,10 +285,10 @@
       "env-composer-description": "The slot of the supporting text below the composer.",
       "env-composer-end": "The slot of the content in the action row before the send button.",
       "env-composer-footer": "The supporting text below the composer, which describes the field.",
+      "env-composer-header": "The slot of the content inside the composer above the input, such as attachments.",
       "env-composer-input": "The text input.",
       "env-composer-start": "The slot of the content at the start of the action row.",
-      "env-composer-surface": "The surface around the input and the footer.",
-      "env-composer-top": "The slot of the content inside the composer above the input, such as attachments."
+      "env-composer-surface": "The surface around the input and the footer."
     },
     "ConfirmButton": {
       "env-confirm-button": "The button that asks to confirm before acting.",
@@ -432,10 +434,10 @@
     },
     "List": {
       "env-list": "The list.",
-      "env-list-actions": "The slot of the content at the end of the title's line, such as an Add button.",
       "env-list-announcer": "The announcements of a reordered item.",
       "env-list-description": "The slot of the sentence under a list's title, in muted text.",
       "env-list-header": "The list's title and description above its rows.",
+      "env-list-header-end": "The slot of the content at the end of the title's line, such as an Add button.",
       "env-list-item": "One item.",
       "env-list-item-content": "The column with an item's label, description and more content.",
       "env-list-item-control": "The slot of the control at an item's end, which the item's label names.",
