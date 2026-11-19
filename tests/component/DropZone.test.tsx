@@ -187,3 +187,18 @@ test(
     await expect.poll(avatarSubmitted).toBe('mira.png');
   },
 );
+
+test('content inside the zone sits beside its target, takes drops and holds its own controls', async () => {
+  mount({ default: fixture.DropZoneContentFixture });
+  const target = page.getByRole('button', { name: 'Drop attachments here' });
+  const list = page.getByTestId('attachments');
+  expect(target.element().contains(list.element())).toBe(false);
+  expect(list.element().closest('.env-drop-zone-content')).not.toBeNull();
+  drop(list, filesTransfer([['brief.pdf', 'application/pdf']]));
+  await expect.poll(() => list.element().textContent).toContain('brief.pdf');
+  await page.getByRole('button', { name: 'Remove brief.pdf' }).click();
+  await expect.poll(() => list.element().textContent).toBe('');
+  await page.getByRole('button', { name: 'Browse' }).click();
+  await chooseInOpenedPicker([file('plan.png', 'image/png')]);
+  await expect.poll(() => list.element().textContent).toContain('plan.png');
+});

@@ -130,6 +130,7 @@
       "env-button-end-icon": "The slot of the icon after the label.",
       "env-button-icon": "The slot of an icon button's icon.",
       "env-button-label": "The slot of the label, the button's children.",
+      "env-button-start": "The slot of the content before the label at its own size, such as an Avatar.",
       "env-button-start-icon": "The slot of the icon before the label.",
       "env-button-spinner": "The spinner of a pending button."
     },
@@ -140,6 +141,7 @@
       "env-calendar": "The calendar of one month.",
       "env-calendar-day": "One day.",
       "env-calendar-day-mark": "The mark under a day, such as today's.",
+      "env-calendar-day-content": "The slot of a day's content from renderDay, in its mark.",
       "env-calendar-grid": "The grid of days.",
       "env-calendar-header": "The row with the month and the previous and next buttons.",
       "env-calendar-title": "The month and year.",
@@ -271,6 +273,8 @@
       "env-command-palette-list": "The list of commands.",
       "env-command-palette-positioner": "The palette's positioner.",
       "env-command-palette-search": "The search field, a ghost TextField around the search input.",
+      "env-command-palette-search-end": "The slot of the content after the search field, such as a mode switch.",
+      "env-command-palette-search-start": "The slot of the content before the search field, such as a scope chip.",
       "env-command-palette-status": "The EmptyState in place of the list, and the announcement of the number of results."
     },
     "Composer": {
@@ -367,6 +371,7 @@
     },
     "DropZone": {
       "env-drop-zone": "The area that takes dropped files.",
+      "env-drop-zone-content": "The slot of the content under the target, such as the chosen files.",
       "env-drop-zone-description": "The sentence about the accepted files.",
       "env-drop-zone-description-content": "The slot of that sentence.",
       "env-drop-zone-icon": "The round well of the icon.",
@@ -450,6 +455,7 @@
       "env-list-row-icon": "A row's icon.",
       "env-list-row-indicator": "The check of a chosen row.",
       "env-list-row-label": "The slot of a row's name.",
+      "env-list-row-start": "The slot of the content before a row's name in place of an icon, such as an Avatar.",
       "env-list-row-text": "The column with a row's label and description."
     },
     "Listbox": {
@@ -486,6 +492,7 @@
       "env-menu-item-end": "The end of an item, for a shortcut or a chevron.",
       "env-menu-item-label": "An item's label.",
       "env-menu-item-shortcut": "An item's keyboard shortcut.",
+      "env-menu-item-start": "The slot of the content before an item's label in place of an icon, such as an Avatar.",
       "env-menu-item-text": "The column with an item's label and description.",
       "env-menu-positioner": "The menu's positioner.",
       "env-menu-separator": "The line between groups.",
@@ -619,6 +626,7 @@
     },
     "PickerPopup": {
       "env-picker-popup": "The card DatePicker, TimePicker and MonthPicker open.",
+      "env-picker-popup-header": "The slot of the application's content above the body, such as presets.",
       "env-picker-popup-body": "The picker's content: a calendar, a time's wheels or a year of months.",
       "env-picker-popup-footer": "The row of actions under the body.",
       "env-picker-popup-footer-end": "The actions at the end of that row, such as Clear."
@@ -685,7 +693,8 @@
     "RichTextEditor": {
       "env-rich-text-editor": "The rich text editor.",
       "env-rich-text-editor-content": "The editable region.",
-      "env-rich-text-editor-control": "The well around the toolbar and the document."
+      "env-rich-text-editor-control": "The well around the toolbar and the document.",
+      "env-rich-text-editor-footer": "The slot of the content under the document, inside the well, such as a Send button."
     },
     "Scaffold": {
       "env-scaffold": "The scaffold: the top bar, navigation and body regions; it never paints.",
@@ -706,12 +715,15 @@
       "env-segmented-control-item-icon": "The slot of a segment's icon.",
       "env-segmented-control-thumb": "The raised thumb that travels to the chosen segment, hidden until it has measured it.",
       "env-segmented-control-item-count": "A segment's count.",
+      "env-segmented-control-item-end": "The slot of the content after a segment's label and count, such as a Badge.",
       "env-segmented-control-item-label": "A segment's label."
     },
     "Select": {
       "env-select": "The select field.",
       "env-select-control": "The outlined box that holds the button and the chevron.",
       "env-select-end": "The chevron's place at the end of the well.",
+      "env-select-group": "A group of options.",
+      "env-select-group-label": "A group's heading.",
       "env-select-icon": "The chevron.",
       "env-select-item": "One option.",
       "env-select-item-indicator": "The check of the chosen option.",
@@ -721,7 +733,8 @@
       "env-select-popup": "The popup with the options.",
       "env-select-sizer": "The labels of every option, hidden, which give the field its width without a visible label.",
       "env-select-trigger": "The button that shows the value and opens the list.",
-      "env-select-value": "The chosen option's label."
+      "env-select-value": "The chosen option's label.",
+      "env-select-value-start": "The slot of the chosen option's start content on the trigger."
     },
     "Sheet": {
       "env-sheet": "The sheet.",

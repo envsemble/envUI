@@ -28,6 +28,8 @@ function isNamed(opening) {
   );
 }
 
+const namedByTheRowAsItsControl = new Set(['Radio']);
+
 const fields = new Set([
   'Select',
   'RadioGroup',
@@ -58,7 +60,7 @@ export default {
     schema: [],
     messages: {
       field:
-        "A {{field}} with no label in a List.Item's {{slot}}: the row's label names only a Switch or a Checkbox, so nothing names this field. Give it a label, or an aria-label or aria-labelledby when its label shouldn't show.",
+        "A {{field}} with no label in a List.Item's {{slot}}: the row's label names only a Switch, a Checkbox or a Radio in its control, so nothing names this field. Give it a label, or an aria-label or aria-labelledby when its label shouldn't show.",
     },
   },
   create(context) {
@@ -101,8 +103,10 @@ export default {
           if (attribute.type !== 'JSXAttribute') continue;
           const slot = jsxName(attribute.name);
           if (slot !== 'control' && slot !== 'end') continue;
-          for (const { node: at, name } of fieldsIn(attribute.value, []))
+          for (const { node: at, name } of fieldsIn(attribute.value, [])) {
+            if (slot === 'control' && namedByTheRowAsItsControl.has(name)) continue;
             context.report({ node: at, messageId: 'field', data: { field: name, slot } });
+          }
         }
       },
     };

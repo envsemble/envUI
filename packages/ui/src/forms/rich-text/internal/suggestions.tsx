@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useImperativeHandle, useState, type Ref } from 'react';
+import { useEffect, useId, useImperativeHandle, useState, type ReactNode, type Ref } from 'react';
 import { ReactRenderer } from '@tiptap/react';
 import { exitSuggestion, type SuggestionOptions, type SuggestionProps } from '@tiptap/suggestion';
 import { PluginKey } from '@tiptap/pm/state';
@@ -8,7 +8,11 @@ import { richText as richTextMessages } from '../../../foundations/messages/rich
 import { useMessages } from '../../../internal/provider/EnvUIContext.js';
 import { Listbox } from './Listbox.js';
 import { useActiveDescendant } from '../../internal/useRovingFocus.js';
-import type { RichTextReference, RichTextReferenceSource } from '../types.js';
+import type {
+  RichTextReference,
+  RichTextReferenceSource,
+  RichTextSuggestionContent,
+} from '../types.js';
 import '../../../styles/Base.css';
 import '../../../styles/Prose.css';
 import '../../../styles/RichText.css';
@@ -21,8 +25,11 @@ interface MenuHandle {
   onKeyDown: (event: KeyboardEvent) => boolean;
 }
 
+type RowContent<I> = (item: I) => RichTextSuggestionContent & { icon?: ReactNode };
+
 type MenuProps<I extends SuggestionItem> = SuggestionProps<I> & {
   label: string | undefined;
+  rowContent: RowContent<I> | undefined;
   failed: boolean;
   pluginKey: PluginKey;
   ref?: Ref<MenuHandle>;
@@ -38,6 +45,7 @@ function SuggestionMenu<I extends SuggestionItem>({
   command,
   loading,
   label,
+  rowContent,
   failed,
   editor,
   pluginKey,
@@ -120,7 +128,7 @@ function SuggestionMenu<I extends SuggestionItem>({
       items={loading || failed ? [] : items}
       getKey={getKey}
       getOptionProps={listbox.getOptionProps}
-      renderItem={(item) => ({ label: item.label })}
+      renderItem={(item) => ({ ...rowContent?.(item), label: item.label })}
       empty={empty}
     />
   );
@@ -145,6 +153,7 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
   minQueryLength?: number;
   debounce?: number;
   allowSpaces?: boolean;
+  rowContent?: RowContent<I>;
   items: NonNullable<SuggestionOptions<I>['items']>;
 }): Omit<SuggestionOptions<I>, 'editor'> {
   let failed = false;
@@ -172,6 +181,7 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
       const menuProps = (props: SuggestionProps<I>): MenuProps<I> => ({
         ...props,
         label: source.label,
+        rowContent: source.rowContent,
         failed: props.loading ? false : failed,
         pluginKey,
       });
@@ -207,9 +217,15 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
   };
 }
 
-export function referenceSuggestion({ trigger, search, ...source }: RichTextReferenceSource) {
+export function referenceSuggestion({
+  trigger,
+  search,
+  renderSuggestion,
+  ...source
+}: RichTextReferenceSource) {
   return createSuggestionOptions<RichTextReference>({
     ...source,
+    rowContent: renderSuggestion,
     char: trigger,
     items: async (request) => [...(await search(request))],
   });

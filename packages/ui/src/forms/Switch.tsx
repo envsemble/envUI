@@ -30,6 +30,12 @@ export interface SwitchProps extends CheckedProps<boolean> {
    * switch's label, so it is read with its name.
    */
   description?: ReactNode;
+  /**
+   * Where the label sits beside the track: end, after it, or start, before it, as in an inline
+   * Dark mode switch whose label leads; the native label still names the switch.
+   * @default 'end'
+   */
+  labelPlacement?: 'end' | 'start';
   /** Whether a controlled switch is on; update it from onCheckedChange. */
   checked?: boolean;
   /** Whether an uncontrolled switch starts on; a native form reset returns it to this state. */
@@ -52,6 +58,7 @@ export function Switch({
   onChange,
   className,
   style,
+  labelPlacement = 'end',
   ...props
 }: SwitchProps) {
   const { inputRef, checkedState, handleChange } = useCheckedInput(
@@ -63,7 +70,11 @@ export function Switch({
   );
   const naming = useRowControlNaming({ label, ...props });
   return (
-    <label className={classNames('env-switch', className)} style={style}>
+    <label
+      className={classNames('env-switch', className)}
+      style={style}
+      data-label-placement={labelPlacement === 'start' ? 'start' : undefined}
+    >
       <input
         {...props}
         {...naming}

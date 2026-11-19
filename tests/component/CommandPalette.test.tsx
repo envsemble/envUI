@@ -252,3 +252,20 @@ test('default items show until people type, and choose like results', async () =
   await expect.poll(log).toBe('open suggested/Home');
   await isHidden(dialog);
 });
+
+test('a group heading takes content, options show start content, and the search row takes content at both ends', async () => {
+  mount({ default: fixture.PaletteContentFixture });
+  const dialog = page.getByRole('dialog', { name: 'Search people' });
+  await expect.element(dialog).toBeVisible();
+  const input = dialog.getByRole('combobox', { name: 'Search people' });
+  const scope = dialog.getByText('In: People');
+  const projects = dialog.getByRole('button', { name: 'Projects' });
+  expect(box(scope).x).toBeLessThan(box(input).x);
+  expect(box(projects).x).toBeGreaterThan(box(input).x);
+  const group = dialog.getByRole('group', { name: 'People 2' });
+  await expect.element(group).toBeVisible();
+  const headings = dialog.element().querySelectorAll('.env-command-palette-group-label');
+  expect(headings).toHaveLength(1);
+  const priya = group.getByRole('option', { name: 'Priya Shah' });
+  expect(priya.element().querySelector('.env-list-row-start .env-avatar')).not.toBeNull();
+});

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from '../../internal/control/ActionElement.js';
@@ -14,6 +14,7 @@ export type ButtonBaseProps = ButtonAppearanceProps &
     iconOnly?: boolean;
     icon?: ReactNode;
     fallbackVariant: ButtonVariant;
+    render?: ReactElement;
   };
 
 export function ButtonBase({
@@ -25,6 +26,7 @@ export function ButtonBase({
   iconOnly = false,
   icon,
   startIcon,
+  start,
   endIcon,
   end,
   pending = false,
@@ -39,6 +41,11 @@ export function ButtonBase({
     </Slot>
   ) : (
     <>
+      {start != null && (
+        <Slot className="env-button-start" element="span" layout="row" shrink="never" aria-hidden>
+          {start}
+        </Slot>
+      )}
       {startIcon != null && (
         <Slot className="env-button-start-icon" element="span" layout="row" shrink="never">
           <DecorativeIcon>{startIcon}</DecorativeIcon>

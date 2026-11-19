@@ -42,6 +42,9 @@
   .env-drop-zone-label {
     font-weight: var(--env-font-weight-medium);
   }
+  .env-drop-zone-content {
+    margin-block-start: var(--env-space-3);
+  }
   .env-drop-zone-description {
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);

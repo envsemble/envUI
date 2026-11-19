@@ -8,6 +8,7 @@ ruleTester.run('no-field-in-list-row', rule, {
     ...named('Selection controls in a row', [
       '<List.Item label="Sync" control={<Switch checked={on} />} />',
       '<List.Item label="Archive" control={<Checkbox />} />',
+      '<List.Item label="Team" description="10 seats" control={<Radio value="team" />} />',
       '<List.Item label="Report" end={<IconButton icon={<IconMore />} aria-label="More" />} />',
     ]),
     ...named("A form in an overlay a row's end opens", [
@@ -40,6 +41,10 @@ ruleTester.run('no-field-in-list-row', rule, {
       errors: [field('RadioGroup', 'control')],
     },
     {
+      code: '<List.Item label="Team" end={<Radio value="team" />} />',
+      errors: [field('Radio', 'end')],
+    },
+    {
       code: '<List.Item label="Port" control={on ? <TextField /> : null} />',
       errors: [field('TextField', 'control')],
     },
@@ -52,7 +57,7 @@ ruleTester.run('no-field-in-list-row', rule, {
       errors: [
         {
           message:
-            "A SegmentedControl with no label in a List.Item's control: the row's label names only a Switch or a Checkbox, so nothing names this field. Give it a label, or an aria-label or aria-labelledby when its label shouldn't show.",
+            "A SegmentedControl with no label in a List.Item's control: the row's label names only a Switch, a Checkbox or a Radio in its control, so nothing names this field. Give it a label, or an aria-label or aria-labelledby when its label shouldn't show.",
         },
       ],
     },

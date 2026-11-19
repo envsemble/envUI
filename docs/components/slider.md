@@ -33,6 +33,7 @@ examples:
     caption: As under the pointer, which shows the handle.
   SaveOnRelease: example
   SessionTimeout: example
+  IconsAndUnits: example
   NarrowSlider: example
 ---
 
@@ -75,6 +76,12 @@ examples:
 ### Steps
 
 ```tsx figure=SessionTimeout
+
+```
+
+### Icons and units
+
+```tsx figure=IconsAndUnits
 
 ```
 

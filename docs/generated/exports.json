@@ -33,6 +33,7 @@
     "ButtonTone": "type",
     "ButtonVariant": "type",
     "Calendar": "function",
+    "CalendarDayState": "interface",
     "CalendarHeatmap": "function",
     "CalendarHeatmapCell": "interface",
     "CalendarHeatmapDay": "interface",
@@ -208,6 +209,7 @@
     "SegmentedControlItem": "interface",
     "SegmentedControlProps": "interface",
     "Select": "function",
+    "SelectGroup": "interface",
     "SelectItem": "interface",
     "SelectOpenChangeDetails": "interface",
     "SelectProps": "interface",
@@ -367,6 +369,7 @@
     "RichTextReferenceSource": "interface",
     "RichTextRenderOptions": "interface",
     "RichTextSlashCommand": "interface",
+    "RichTextSuggestionContent": "interface",
     "createRichTextExtensions": "function"
   },
   "@envsemble/envui/theme-bootstrap": {

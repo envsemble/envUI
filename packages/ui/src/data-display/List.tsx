@@ -84,9 +84,9 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
   /** More content under the label and the description, such as a row of Badges, placed as given. */
   children?: ReactNode;
   /**
-   * The selection control the row is about, at the row's end: a Switch or a Checkbox, given no label
-   * of its own. The row's label names it and the row's description describes it, so it isn't
-   * labelled twice. A field, such as a Select or a SegmentedControl, takes a label, aria-label or
+   * The selection control the row is about, at the row's end: a Switch, a Checkbox or a Radio, given
+   * no label of its own. The row's label names it and the row's description describes it, so it
+   * isn't labelled twice. A field, such as a Select or a SegmentedControl, takes a label, aria-label or
    * aria-labelledby of its own.
    */
   control?: ReactNode;

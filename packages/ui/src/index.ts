@@ -38,7 +38,12 @@ export * from './forms/Radio.js';
 export * from './forms/SegmentedControl.js';
 export * from './forms/Select.js';
 export * from './forms/Combobox.js';
-export { Calendar, type CalendarProps, type Weekday } from './forms/Calendar.js';
+export {
+  Calendar,
+  type CalendarDayState,
+  type CalendarProps,
+  type Weekday,
+} from './forms/Calendar.js';
 export * from './forms/DatePicker.js';
 export * from './forms/TimePicker.js';
 export * from './forms/MonthPicker.js';

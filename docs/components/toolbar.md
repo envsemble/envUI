@@ -29,6 +29,7 @@ examples:
     motion: true
   DrawingTools: example
   ViewControls: example
+  LabelledControls: example
   ToolbarAnatomy: anatomy
 ---
 
@@ -45,6 +46,12 @@ examples:
 ### Over content
 
 ```tsx figure=ViewControls motion
+
+```
+
+### Labelled buttons and menus
+
+```tsx figure=LabelledControls
 
 ```
 

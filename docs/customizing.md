@@ -100,7 +100,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Button
 
-- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-end-icon` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start-icon` (slot)
+- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-end-icon` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start` (slot), `env-button-start-icon` (slot)
 - States: `data-full-width`; `data-pending`; `data-row-target`; `data-size` (`lg`, `md`, `sm`); `data-tone` (`accent`, `danger`); `data-underline`; `data-variant` (`ghost`, `outline`, `primary`, `secondary`, `text`)
 - Color properties: `--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected`, `--env-button-selected-content`
 
@@ -111,7 +111,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Calendar
 
-- Parts: `env-calendar`, `env-calendar-day`, `env-calendar-day-mark`, `env-calendar-grid`, `env-calendar-header`, `env-calendar-next`, `env-calendar-pad`, `env-calendar-previous`, `env-calendar-title`
+- Parts: `env-calendar`, `env-calendar-day`, `env-calendar-day-content` (slot), `env-calendar-day-mark`, `env-calendar-grid`, `env-calendar-header`, `env-calendar-next`, `env-calendar-pad`, `env-calendar-previous`, `env-calendar-title`
 - States: `data-date` on `env-calendar-day`
 
 ### CalendarHeatmap
@@ -128,6 +128,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Checkbox
 
 - Parts: `env-checkbox`, `env-checkbox-box`, `env-checkbox-description`, `env-checkbox-description-content` (slot), `env-checkbox-indicator`, `env-checkbox-input`, `env-checkbox-label`, `env-checkbox-label-content` (slot)
+- States: `data-label-placement` (`start`)
 - Color properties: `--env-checkbox-outline`, `--env-checkbox-selected`, `--env-checkbox-selected-content`
 
 ### Code
@@ -167,7 +168,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### CommandPalette
 
-- Parts: `env-command-palette`, `env-command-palette-close`, `env-command-palette-footer`, `env-command-palette-footer-content` (slot), `env-command-palette-group`, `env-command-palette-group-label`, `env-command-palette-header`, `env-command-palette-hint`, `env-command-palette-hint-label` (slot), `env-command-palette-input`, `env-command-palette-item`, `env-command-palette-list`, `env-command-palette-positioner`, `env-command-palette-search`, `env-command-palette-status`
+- Parts: `env-command-palette`, `env-command-palette-close`, `env-command-palette-footer`, `env-command-palette-footer-content` (slot), `env-command-palette-group`, `env-command-palette-group-label`, `env-command-palette-header`, `env-command-palette-hint`, `env-command-palette-hint-label` (slot), `env-command-palette-input`, `env-command-palette-item`, `env-command-palette-list`, `env-command-palette-positioner`, `env-command-palette-search`, `env-command-palette-search-end` (slot), `env-command-palette-search-start` (slot), `env-command-palette-status`
 - States: `data-empty` on `env-command-palette-status`; `data-ending-style`; `data-starting-style`
 
 ### Composer
@@ -218,7 +219,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### DropZone
 
-- Parts: `env-drop-zone`, `env-drop-zone-description`, `env-drop-zone-description-content` (slot), `env-drop-zone-icon`, `env-drop-zone-icon-content` (slot), `env-drop-zone-label`, `env-drop-zone-label-content` (slot), `env-drop-zone-target`, `env-drop-zone-text`
+- Parts: `env-drop-zone`, `env-drop-zone-content` (slot), `env-drop-zone-description`, `env-drop-zone-description-content` (slot), `env-drop-zone-icon`, `env-drop-zone-icon-content` (slot), `env-drop-zone-label`, `env-drop-zone-label-content` (slot), `env-drop-zone-target`, `env-drop-zone-text`
 - States: `data-drag-over`; `data-invalid`; `data-pending`; `data-size` (`md`, `sm`)
 
 ### EmptyState
@@ -276,7 +277,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Menu
 
-- Parts: `env-menu`, `env-menu-choice`, `env-menu-group`, `env-menu-group-label`, `env-menu-header`, `env-menu-item`, `env-menu-item-description`, `env-menu-item-end`, `env-menu-item-indicator`, `env-menu-item-indicator-slot`, `env-menu-item-label`, `env-menu-item-shortcut`, `env-menu-item-text`, `env-menu-positioner`, `env-menu-separator`, `env-menu-submenu-chevron`, `env-menu-submenu-trigger`
+- Parts: `env-menu`, `env-menu-choice`, `env-menu-group`, `env-menu-group-label`, `env-menu-header`, `env-menu-item`, `env-menu-item-description`, `env-menu-item-end`, `env-menu-item-indicator`, `env-menu-item-indicator-slot`, `env-menu-item-label`, `env-menu-item-shortcut`, `env-menu-item-start` (slot), `env-menu-item-text`, `env-menu-positioner`, `env-menu-separator`, `env-menu-submenu-chevron`, `env-menu-submenu-trigger`
 - States: `data-checked` on `env-menu-choice`; `data-disabled` on `env-menu-item`; `data-highlighted` on `env-menu-choice`, `env-menu-item`; `data-instant` (`group`); `data-popup-open` on `env-menu-choice`, `env-menu-item`; `data-tone` (`danger`, `neutral`) on `env-menu-item`
 - Color properties: `--env-menu-item-container`, `--env-menu-item-content`, `--env-menu-item-icon`
 
@@ -390,7 +391,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### RichTextEditor
 
-- Parts: `env-rich-text-editor`, `env-rich-text-editor-content`, `env-rich-text-editor-control`
+- Parts: `env-rich-text-editor`, `env-rich-text-editor-content`, `env-rich-text-editor-control`, `env-rich-text-editor-footer` (slot)
 - States: `data-disabled` on `env-rich-text-editor`, `env-rich-text-editor-control`; `data-invalid` on `env-rich-text-editor-control`; `data-readonly`
 
 ### Scaffold
@@ -401,13 +402,13 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### SegmentedControl
 
-- Parts: `env-segmented-control`, `env-segmented-control-item`, `env-segmented-control-item-count`, `env-segmented-control-item-icon` (slot), `env-segmented-control-item-label`, `env-segmented-control-thumb`
+- Parts: `env-segmented-control`, `env-segmented-control-item`, `env-segmented-control-item-count`, `env-segmented-control-item-end` (slot), `env-segmented-control-item-icon` (slot), `env-segmented-control-item-label`, `env-segmented-control-thumb`
 - States: `data-checked` on `env-segmented-control-item`; `data-disabled` on `env-segmented-control-item`; `data-full-width`; `data-placed` on `env-segmented-control-thumb`; `data-size` (`lg`, `md`, `sm`); `data-traveling` on `env-segmented-control-thumb`
 - Color properties: `--env-segmented-control-container`, `--env-segmented-control-outline`, `--env-segmented-control-content`, `--env-segmented-control-selected`, `--env-segmented-control-selected-content`
 
 ### Select
 
-- Parts: `env-select`, `env-select-control`, `env-select-end`, `env-select-icon`, `env-select-item`, `env-select-item-indicator`, `env-select-label`, `env-select-list`, `env-select-placeholder`, `env-select-popup`, `env-select-sizer`, `env-select-trigger`, `env-select-value`
+- Parts: `env-select`, `env-select-control`, `env-select-end`, `env-select-group`, `env-select-group-label`, `env-select-icon`, `env-select-item`, `env-select-item-indicator`, `env-select-label`, `env-select-list`, `env-select-placeholder`, `env-select-popup`, `env-select-sizer`, `env-select-trigger`, `env-select-value`, `env-select-value-start` (slot)
 - States: `data-disabled` on `env-select-item`; `data-highlighted` on `env-select-item`; `data-label-hidden`; `data-selected` on `env-select-item`
 - Color properties: `--env-select-container`, `--env-select-content`, `--env-select-outline`
 
@@ -437,6 +438,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Switch
 
 - Parts: `env-switch`, `env-switch-description`, `env-switch-description-content` (slot), `env-switch-input`, `env-switch-label`, `env-switch-label-content` (slot)
+- States: `data-label-placement` (`start`)
 - Color properties: `--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected`, `--env-switch-selected-content`
 
 ### Table
@@ -534,7 +536,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### ListRow
 
-- Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-icon`, `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-text`
+- Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-icon`, `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-start` (slot), `env-list-row-text`
 - States: `data-disabled`; `data-highlighted`; `data-popup-open`; `data-selected`
 - Used by: Combobox, CommandPalette, RichTextEditor, Select
 
@@ -556,7 +558,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### PickerPopup
 
-- Parts: `env-picker-popup`, `env-picker-popup-body`, `env-picker-popup-footer`, `env-picker-popup-footer-end`
+- Parts: `env-picker-popup`, `env-picker-popup-body`, `env-picker-popup-footer`, `env-picker-popup-footer-end`, `env-picker-popup-header` (slot)
 - Used by: DatePicker, MonthPicker, TimePicker
 
 ### Popup

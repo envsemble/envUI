@@ -110,6 +110,7 @@ function ComboboxOption<Item extends ComboboxItem>({
       }
       icon={startSlot ? <span className="env-combobox-start">{item.start}</span> : undefined}
       label={item.label}
+      end={item.end}
       description={
         item.description ? (
           <span id={descriptionId} aria-hidden="true">

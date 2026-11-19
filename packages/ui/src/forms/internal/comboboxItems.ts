@@ -10,6 +10,11 @@ export interface ComboboxItem {
   description?: string;
   /** Content before the label, such as an Avatar or an icon; it takes the size of its slot. */
   start?: ReactNode;
+  /**
+   * Content at the option's end in the list, such as a role Badge or a count, which keeps its
+   * size; it is read as part of the option's name.
+   */
+  end?: ReactNode;
   /** The option shows but can't be chosen. */
   disabled?: boolean;
   /** Reserved: an entry with an `items` array is a group, so an option has none. */

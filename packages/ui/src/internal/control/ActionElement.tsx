@@ -1,6 +1,7 @@
 'use client';
 
-import type { ComponentPropsWithRef, MouseEvent } from 'react';
+import type { ComponentPropsWithRef, MouseEvent, ReactElement } from 'react';
+import { renderElement } from '../react/renderElement.js';
 import { useLinkComponent } from '../provider/LinkComponentContext.js';
 import {
   resolveEmphasis,
@@ -48,8 +49,13 @@ export function ActionElement({
   disabled = false,
   pending = false,
   emphasis,
+  render,
   ...given
-}: ActionElementProps & { pending?: boolean; emphasis?: ActionEmphasis }) {
+}: ActionElementProps & {
+  pending?: boolean;
+  emphasis?: ActionEmphasis;
+  render?: ReactElement;
+}) {
   const defaults = useControlDefaults();
   let rest: typeof given & { [attribute: `data-${string}`]: string | undefined } = given;
   if (emphasis) {
@@ -89,5 +95,11 @@ export function ActionElement({
     );
   }
   const { type = 'button', ...buttonProps } = props;
+  if (render)
+    return renderElement('button', render, {
+      ...buttonProps,
+      'aria-disabled': disabled || buttonProps['aria-disabled'],
+      onClick: disabled ? blockActivationWhileWorkRuns : buttonProps.onClick,
+    });
   return <button {...buttonProps} type={type} disabled={disabled} />;
 }

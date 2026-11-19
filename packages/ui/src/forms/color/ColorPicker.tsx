@@ -78,6 +78,8 @@ export function ColorPicker({
   eyeDropper = true,
   copyable = true,
   swatches,
+  swatchesFirst = false,
+  fields = true,
   name,
   form,
   disabled = false,
@@ -134,6 +136,17 @@ export function ColorPicker({
     </Tooltip>
   );
 
+  const swatchList = swatches && swatches.length > 0 && (
+    <SwatchList
+      swatches={swatches}
+      value={color}
+      onChange={change}
+      alpha={alpha}
+      disabled={inactive}
+      label={messages.swatches}
+    />
+  );
+
   const describedByIds =
     [describedBy, description != null && `${id}-description`, error != null && `${id}-error`]
       .filter(Boolean)
@@ -160,6 +173,7 @@ export function ColorPicker({
             {label}
           </span>
         )}
+        {swatchesFirst && swatchList}
         <div className="env-color-picker-controls">
           <ColorArea value={color} onChange={change} disabled={inactive} label={label} />
           <div className="env-color-picker-sliders">
@@ -169,29 +183,22 @@ export function ColorPicker({
             )}
           </div>
         </div>
-        <ColorValues
-          color={color}
-          onChange={change}
-          formats={formats}
-          oneAtATimeFormat={format}
-          onFormatChange={setFormat}
-          together={together}
-          alpha={alpha}
-          copyable={copyable}
-          eyeDropperButton={eyeDropperButton}
-          disabled={disabled}
-          readOnly={readOnly}
-        />
-        {swatches && swatches.length > 0 && (
-          <SwatchList
-            swatches={swatches}
-            value={color}
+        {fields && (
+          <ColorValues
+            color={color}
             onChange={change}
+            formats={formats}
+            oneAtATimeFormat={format}
+            onFormatChange={setFormat}
+            together={together}
             alpha={alpha}
-            disabled={inactive}
-            label={messages.swatches}
+            copyable={copyable}
+            eyeDropperButton={eyeDropperButton}
+            disabled={disabled}
+            readOnly={readOnly}
           />
         )}
+        {!swatchesFirst && swatchList}
         {description != null && (
           <div id={`${id}-description`} className="env-color-picker-description">
             <Slot className="env-color-picker-description-content">{description}</Slot>

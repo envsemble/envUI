@@ -15,11 +15,12 @@ import {
   menuPopupInlineEndInset,
 } from '../internal/MenuPopup.js';
 import type { OpenChangeDetails } from '../internal/menuOpenChange.js';
-import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
+import { useMenuItemContent, type ItemContentProps, type ItemElementProps } from './MenuItem.js';
+import { classNames } from '../../internal/classNames.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
-export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'shortcut' | 'end'> {
+export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'shortcut'> {
   /** The label of the row that opens the submenu, which names the row. */
   label: ReactNode;
   /** The submenu's items: Menu.Item, Menu.Group, Menu.Separator and the other parts, nested submenus too. */
@@ -49,6 +50,11 @@ export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'short
   ref?: Ref<HTMLDivElement>;
   /** The submenu popup's inline style. */
   style?: CSSProperties;
+  /**
+   * Attributes of the row that opens the submenu, such as a className, a style, a ref or a data
+   * attribute; the submenu's own className, style and ref are its popup's.
+   */
+  triggerProps?: ItemElementProps & { className?: string };
 }
 
 const gapFromParentMenuEdge = 2;
@@ -61,7 +67,9 @@ const reasonsClosingOnlyTheSubmenu = new Set(['escape-key', 'list-navigation']);
 export function Submenu({
   label,
   icon,
+  start,
   description,
+  end,
   children,
   'aria-label': ariaLabel,
   disabled,
@@ -71,11 +79,18 @@ export function Submenu({
   className,
   ref,
   style,
+  triggerProps,
 }: SubmenuProps) {
   const trigger = useRef<HTMLDivElement>(null);
   const popup = useRef<HTMLDivElement | null>(null);
   const closeReason = useRef<string | null>(null);
-  const { content, accessibility } = useMenuItemContent({ icon, children: label, description });
+  const { content, accessibility } = useMenuItemContent({
+    icon,
+    start,
+    children: label,
+    description,
+    end,
+  });
   const textLabel = typeof label === 'string' ? label : undefined;
   const portal = usePortalContainer();
   const clearParentMenuEdge = () =>
@@ -103,8 +118,12 @@ export function Submenu({
       })}
     >
       <BaseMenu.SubmenuTrigger
-        ref={trigger}
-        className="env-menu-item env-menu-submenu-trigger"
+        {...triggerProps}
+        ref={(node: HTMLDivElement | null) => {
+          trigger.current = node;
+          setRef(triggerProps?.ref, node);
+        }}
+        className={classNames('env-menu-item env-menu-submenu-trigger', triggerProps?.className)}
         disabled={disabled}
         label={textLabel}
         {...accessibility}

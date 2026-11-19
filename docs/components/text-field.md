@@ -43,6 +43,7 @@ examples:
   SearchInToolbar: example
   FieldsBesideButtons: example
   PrefixAndSuffix: example
+  ContentAffixes: example
   IconAndEndAction: example
   TextFieldAnatomy: anatomy
   Validation: example
@@ -76,6 +77,12 @@ examples:
 ### Prefix and suffix
 
 ```tsx figure=PrefixAndSuffix
+
+```
+
+### Content in affixes and a search's end
+
+```tsx figure=ContentAffixes
 
 ```
 

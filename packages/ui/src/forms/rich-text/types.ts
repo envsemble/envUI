@@ -44,6 +44,13 @@ export interface RichTextReferenceSource {
   /** Let the query run on past spaces, such as for full names. */
   allowSpaces?: boolean;
   /**
+   * The content of a reference's row in the suggestion list beside its label, such as a person's
+   * Avatar before the name and e-mail address under it, or a project's icon. The label stays what
+   * the row shows as its name and what the inserted reference shows.
+   * @default the label alone
+   */
+  renderSuggestion?: (reference: RichTextReference) => RichTextSuggestionContent;
+  /**
    * Returns the references that match the text typed after the trigger, at once or as a promise,
    * such as from a search on a server. The signal aborts when the query changes or the menu closes;
    * a rejected promise shows Suggestions could not load.
@@ -52,6 +59,15 @@ export interface RichTextReferenceSource {
     query: string;
     signal: AbortSignal;
   }) => readonly RichTextReference[] | Promise<readonly RichTextReference[]>;
+}
+/** What a suggestion row shows beside its label. */
+export interface RichTextSuggestionContent {
+  /** Content before the label, such as an Avatar or an icon, at its own size; decorative. */
+  start?: ReactNode;
+  /** A muted second line under the label, such as an e-mail address. */
+  description?: ReactNode;
+  /** Content at the row's end, such as a count or a Badge. */
+  end?: ReactNode;
 }
 /** The click on a link: a native MouseEvent in RichTextEditor, a React mouse event in RichText. */
 export type RichTextLinkEvent = MouseEvent<HTMLAnchorElement> | globalThis.MouseEvent;
@@ -104,6 +120,10 @@ export interface RichTextSlashCommand {
   id: string;
   /** The command's name in the menu, which typing after / filters by. */
   label: string;
+  /** A decorative icon before the name in the menu. */
+  icon?: ReactNode;
+  /** A muted second line under the name in the menu, such as what the command inserts. */
+  description?: ReactNode;
   /** Runs the command on the Tiptap editor, once the typed / and query are removed. */
   run: (editor: Editor) => void;
 }
@@ -163,6 +183,17 @@ export interface RichTextEditorProps
    * @default every command, from heading to table
    */
   toolbar?: readonly RichTextCommand[] | false;
+  /**
+   * The application's own controls at the toolbar's end, after Undo, Redo and Attach files, such
+   * as Toolbar.Button or Toolbar.Item elements for Insert template or an AI action; they join the
+   * toolbar's arrow keys.
+   */
+  toolbarEnd?: ReactNode;
+  /**
+   * Content inside the editor's box, under the document, such as a comment box's Send button; a
+   * row at the box's end.
+   */
+  footer?: ReactNode;
   /**
    * Kinds of references people insert by typing a trigger, such as @ for people and # for topics,
    * each with its own lookup. Triggers must be unique, and the array must stay the same between

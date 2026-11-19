@@ -32,10 +32,11 @@ export interface SliderProps extends Omit<
   'defaultValue' | 'onChange' | 'children' | 'ref'
 > {
   /**
-   * The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends
-   * in an ellipsis where the slider is too narrow for it.
+   * The value's name, inside the slider at its start, such as Opacity: text, or any content, such
+   * as a volume icon beside the text. It names the slider, and ends in an ellipsis where the slider
+   * is too narrow for it.
    */
-  label: string;
+  label: ReactNode;
   /**
    * Lasting guidance under the slider, such as what the value applies to, linked to the slider as
    * its description.
@@ -82,6 +83,12 @@ export interface SliderProps extends Omit<
    * (value) => `${value}%`. Without it, the number shows in the locale.
    */
   formatValue?: (value: number) => string;
+  /**
+   * What the slider's end shows for the value in place of formatValue's text, such as the number
+   * with its unit styled apart, or a swatch; formatValue, or the number in the locale, stays what
+   * assistive technology announces.
+   */
+  renderValue?: (value: number) => ReactNode;
   /** The locale of the shown number: EnvUIProvider's, else the browser's. */
   locale?: string;
   /** Dim the slider; it can't be focused or moved, and forms leave it out. */
@@ -119,6 +126,7 @@ export function Slider({
   step = 1,
   largeStep = Math.max(step, Math.round((max - min) / 10 / step) * step),
   formatValue,
+  renderValue,
   locale,
   disabled = false,
   name,
@@ -153,7 +161,7 @@ export function Slider({
     function veilAtCurrentValue() {
       if (control.current) veilIndicatorUnderText(control.current);
     },
-    [current, label, formatValue],
+    [current, label, formatValue, renderValue],
   );
   useEffect(function veilOnResize() {
     const element = control.current;
@@ -255,7 +263,13 @@ export function Slider({
                 {label}
               </BaseSlider.Label>
               <BaseSlider.Value className="env-slider-value" render={<Text render={<output />} />}>
-                {(formatted, values) => (formatValue ? formatValue(values[0]) : formatted[0])}
+                {(formatted, values) =>
+                  renderValue
+                    ? renderValue(values[0])
+                    : formatValue
+                      ? formatValue(values[0])
+                      : formatted[0]
+                }
               </BaseSlider.Value>
             </Row>
           </BaseSlider.Control>

@@ -214,3 +214,27 @@ test('on a touch screen a full-width control wraps long labels instead, and a ta
     await commands.emulateTouch(false);
   }
 });
+
+test('a segment takes content in its label and at its end, or shows only its icon with its label in a tooltip', async () => {
+  mount({ default: fixture.SegmentContentFixture });
+  const group = page.getByRole('radiogroup', { name: 'View' });
+  const list = group.getByRole('radio', { name: 'List', exact: true });
+  const grid = group.getByRole('radio', { name: 'Grid', exact: true });
+  const review = group.getByRole('radio', { name: '● Review New', exact: true });
+  await expect.element(review).toBeVisible();
+  expect(review.element().classList.contains('fixture-review-segment')).toBe(true);
+  expect(review.element().querySelector('.env-segmented-control-item-end')?.textContent).toBe(
+    'New',
+  );
+  expect(list.element().querySelector('.env-segmented-control-item-label')).toBeNull();
+  expect(box(list).width).toBeLessThan(box(list).height + 1);
+  await grid.hover();
+  await expect.poll(tooltips).toEqual(['Grid']);
+  await mouse.move(0, 0);
+  await expect.poll(tooltips).toEqual([]);
+  (list.element() as HTMLElement).focus();
+  await keyboard.press('ArrowRight');
+  await expect.element(grid).toHaveFocus();
+  await expect.element(grid).toHaveAttribute('aria-checked', 'true');
+  await expect.poll(tooltips).toEqual(['Grid']);
+});

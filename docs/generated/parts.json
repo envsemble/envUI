@@ -603,6 +603,11 @@
           "description": "The spinner of a pending button."
         },
         {
+          "class": "env-button-start",
+          "description": "The slot of the content before the label at its own size, such as an Avatar.",
+          "slot": true
+        },
+        {
           "class": "env-button-start-icon",
           "description": "The slot of the icon before the label.",
           "slot": true
@@ -743,6 +748,11 @@
         {
           "class": "env-calendar-day",
           "description": "One day."
+        },
+        {
+          "class": "env-calendar-day-content",
+          "description": "The slot of a day's content from renderDay, in its mark.",
+          "slot": true
         },
         {
           "class": "env-calendar-day-mark",
@@ -1044,7 +1054,17 @@
           "slot": true
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-label-placement",
+          "values": [
+            "start"
+          ],
+          "parts": [
+            "env-checkbox"
+          ]
+        }
+      ],
       "uses": [
         "Icon"
       ],
@@ -1664,6 +1684,16 @@
         {
           "class": "env-command-palette-search",
           "description": "The search field, a ghost TextField around the search input."
+        },
+        {
+          "class": "env-command-palette-search-end",
+          "description": "The slot of the content after the search field, such as a mode switch.",
+          "slot": true
+        },
+        {
+          "class": "env-command-palette-search-start",
+          "description": "The slot of the content before the search field, such as a scope chip.",
+          "slot": true
         },
         {
           "class": "env-command-palette-status",
@@ -2368,6 +2398,11 @@
         {
           "class": "env-drop-zone",
           "description": "The area that takes dropped files."
+        },
+        {
+          "class": "env-drop-zone-content",
+          "description": "The slot of the content under the target, such as the chosen files.",
+          "slot": true
         },
         {
           "class": "env-drop-zone-description",
@@ -3108,6 +3143,11 @@
         {
           "class": "env-menu-item-shortcut",
           "description": "An item's keyboard shortcut."
+        },
+        {
+          "class": "env-menu-item-start",
+          "description": "The slot of the content before an item's label in place of an icon, such as an Avatar.",
+          "slot": true
         },
         {
           "class": "env-menu-item-text",
@@ -4536,7 +4576,6 @@
         }
       ],
       "uses": [
-        "Button",
         "Checkbox",
         "Code",
         "Field",
@@ -4561,6 +4600,11 @@
         {
           "class": "env-rich-text-editor-control",
           "description": "The well around the toolbar and the document."
+        },
+        {
+          "class": "env-rich-text-editor-footer",
+          "description": "The slot of the content under the document, inside the well, such as a Send button.",
+          "slot": true
         }
       ],
       "states": [
@@ -4794,6 +4838,11 @@
           "description": "A segment's count."
         },
         {
+          "class": "env-segmented-control-item-end",
+          "description": "The slot of the content after a segment's label and count, such as a Badge.",
+          "slot": true
+        },
+        {
           "class": "env-segmented-control-item-icon",
           "description": "The slot of a segment's icon.",
           "slot": true
@@ -4862,7 +4911,8 @@
         "Popup",
         "Skeleton",
         "Theme",
-        "Tooltip"
+        "Tooltip",
+        "VisuallyHidden"
       ],
       "colors": [
         {
@@ -4904,6 +4954,14 @@
           "description": "The chevron's place at the end of the well."
         },
         {
+          "class": "env-select-group",
+          "description": "A group of options."
+        },
+        {
+          "class": "env-select-group-label",
+          "description": "A group's heading."
+        },
+        {
           "class": "env-select-icon",
           "description": "The chevron."
         },
@@ -4942,6 +5000,11 @@
         {
           "class": "env-select-value",
           "description": "The chosen option's label."
+        },
+        {
+          "class": "env-select-value-start",
+          "description": "The slot of the chosen option's start content on the trigger.",
+          "slot": true
         }
       ],
       "states": [
@@ -5330,7 +5393,17 @@
           "slot": true
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-label-placement",
+          "values": [
+            "start"
+          ],
+          "parts": [
+            "env-switch"
+          ]
+        }
+      ],
       "colors": [
         {
           "property": "--env-switch-container",
@@ -6622,6 +6695,11 @@
           "slot": true
         },
         {
+          "class": "env-list-row-start",
+          "description": "The slot of the content before a row's name in place of an icon, such as an Avatar.",
+          "slot": true
+        },
+        {
           "class": "env-list-row-text",
           "description": "The column with a row's label and description."
         }
@@ -6751,6 +6829,11 @@
         {
           "class": "env-picker-popup-footer-end",
           "description": "The actions at the end of that row, such as Clear."
+        },
+        {
+          "class": "env-picker-popup-header",
+          "description": "The slot of the application's content above the body, such as presets.",
+          "slot": true
         }
       ],
       "states": [],

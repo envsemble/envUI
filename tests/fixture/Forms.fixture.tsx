@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Badge,
   Button,
   SearchField,
   TextField,
@@ -167,5 +168,41 @@ export default function FormsFixture() {
         <Textarea label="Ghost notes" variant="ghost" />
       </div>
     </section>
+  );
+}
+
+const statusDot = (color: string) => (
+  <span
+    data-testid={`dot-${color}`}
+    style={{ inlineSize: 8, blockSize: 8, borderRadius: 4, background: color }}
+  />
+);
+
+export function SelectContentFixture() {
+  return (
+    <Select
+      label="Status"
+      defaultValue="active"
+      items={[
+        {
+          label: 'Open',
+          items: [
+            { value: 'active', label: 'Active', start: statusDot('green'), end: <Badge>3</Badge> },
+            { value: 'paused', label: 'Paused', start: statusDot('orange') },
+          ],
+        },
+        { label: 'Closed', items: [{ value: 'done', label: 'Done' }] },
+      ]}
+    />
+  );
+}
+
+export function LabelFirstFixture() {
+  return (
+    <>
+      <Switch label="Dark mode" labelPlacement="start" />
+      <Checkbox label="Remember me" labelPlacement="start" />
+      <Switch label="Sync" />
+    </>
   );
 }

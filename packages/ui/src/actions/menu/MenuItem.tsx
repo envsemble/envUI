@@ -1,10 +1,18 @@
 'use client';
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
-import { useId, type AriaAttributes, type MouseEvent, type ReactNode } from 'react';
+import {
+  useId,
+  type AriaAttributes,
+  type HTMLAttributes,
+  type MouseEvent,
+  type ReactNode,
+  type Ref,
+} from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import { Kbd } from '../../content/Kbd.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import { useLinkComponent } from '../../internal/provider/LinkComponentContext.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 import '../../styles/Base.css';
@@ -13,6 +21,12 @@ import '../../styles/Menu.css';
 export interface ItemContentProps {
   /** A decorative icon before the label, such as Settings. */
   icon?: ReactNode;
+  /**
+   * Content before the label in place of an icon, such as an Avatar in an account switcher, at its
+   * own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from
+   * assistive technology, since the label names the item.
+   */
+  start?: ReactNode;
   /** The item's label, which names it. */
   children: ReactNode;
   /** A second, muted line; announced as the item's description. */
@@ -31,7 +45,7 @@ const endContentSeparateWordInName = ' ';
 
 /** Shared item layout: indicator, icon, label with optional description, end content, shortcut. */
 export function useMenuItemContent(
-  { icon, children, description, shortcut, end }: ItemContentProps,
+  { icon, start, children, description, shortcut, end }: ItemContentProps,
   indicator?: ReactNode,
 ) {
   const descriptionId = useId();
@@ -40,6 +54,17 @@ export function useMenuItemContent(
     <>
       {indicator}
       {icon != null && <DecorativeIcon>{icon}</DecorativeIcon>}
+      {start != null && (
+        <Slot
+          className="env-menu-item-start"
+          element="span"
+          layout="row"
+          shrink="never"
+          aria-hidden
+        >
+          {start}
+        </Slot>
+      )}
       <span className="env-menu-item-text">
         <span className="env-menu-item-label">{children}</span>
         {description != null && (
@@ -72,7 +97,20 @@ export function useMenuItemContent(
   };
 }
 
-interface ItemSharedProps extends ItemContentProps {
+/**
+ * The native attributes a menu item passes to its row element, such as style, id, a test id or an
+ * analytics data attribute.
+ */
+export interface ItemElementProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  'children' | 'onClick' | 'className' | 'aria-label' | 'aria-current'
+> {
+  /** The item's row element. */
+  ref?: Ref<HTMLElement>;
+  [attribute: `data-${string}`]: string | number | boolean | undefined;
+}
+
+interface ItemSharedProps extends ItemContentProps, ItemElementProps {
   /**
    * The item's tone: danger marks a destructive action, such as Delete, its label and icon in the
    * danger color; its row highlights as any other's.
@@ -116,13 +154,20 @@ export type ItemProps = ItemSharedProps &
         target?: string;
         /** The destination's relationship to the page, such as noopener, as on a native link. */
         rel?: string;
+        closeOnClick?: never;
       }
     | {
         href?: undefined;
-        /** The action, run when the item is chosen; the menu then closes. */
+        /** The action, run when the item is chosen; the menu then closes unless closeOnClick is false. */
         onClick?: (event: MouseEvent<HTMLElement>) => void;
         target?: never;
         rel?: never;
+        /**
+         * Close the menu once the action runs; false keeps it open, for an action people repeat,
+         * such as Zoom in.
+         * @default true
+         */
+        closeOnClick?: boolean;
       }
   );
 
@@ -135,6 +180,7 @@ const disabledDestinationFollowsNothing = (event: MouseEvent<HTMLElement>) =>
  */
 export function Item({
   icon,
+  start,
   children,
   description,
   shortcut,
@@ -144,26 +190,33 @@ export function Item({
   'aria-current': ariaCurrent,
   'aria-label': ariaLabel,
   className,
+  href,
+  onClick,
+  target,
+  rel,
+  closeOnClick = true,
   ...props
 }: ItemProps) {
   const LinkComponent = useLinkComponent();
   const { content, accessibility } = useMenuItemContent({
     icon,
+    start,
     children,
     description,
     shortcut,
     end,
   });
   const itemClassName = classNames('env-menu-item', className);
-  const followableDestination = props.href !== undefined && !disabled;
+  const followableDestination = href !== undefined && !disabled;
   if (followableDestination) {
     return (
       <BaseMenu.LinkItem
+        {...props}
         className={itemClassName}
         closeOnClick
-        onClick={props.onClick}
+        onClick={onClick}
         // eslint-disable-next-line react-hooks/static-components
-        render={<LinkComponent href={props.href} target={props.target} rel={props.rel} />}
+        render={<LinkComponent href={href} target={target} rel={rel} />}
         data-tone={tone}
         aria-current={ariaCurrent}
         aria-label={ariaLabel}
@@ -175,9 +228,11 @@ export function Item({
   }
   return (
     <BaseMenu.Item
+      {...props}
       className={itemClassName}
       disabled={disabled}
-      onClick={props.href === undefined ? props.onClick : disabledDestinationFollowsNothing}
+      closeOnClick={href === undefined ? closeOnClick : true}
+      onClick={href === undefined ? onClick : disabledDestinationFollowsNothing}
       data-tone={tone}
       aria-current={ariaCurrent}
       aria-label={ariaLabel}
