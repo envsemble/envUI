@@ -8491,7 +8491,9 @@
         "Toolbar.Group",
         "Toolbar.Separator",
         "Toolbar.Button",
-        "Toolbar.Link"
+        "Toolbar.Link",
+        "Toolbar.Item",
+        "Toolbar.Input"
       ],
       "entries": [
         "@envsemble/envui"
@@ -8586,6 +8588,51 @@
         "@envsemble/envui"
       ]
     },
+    "Toolbar.Input": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "A text input as one stop of a toolbar's arrow-key path, such as a font size: the arrow keys move its caret, and leave it for the next control at the text's ends. Name it with aria-label.",
+      "props": [
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The input to render, such as an input of the application's own; a native input by default. The toolbar's props and keyboard handling merge into its props."
+        }
+      ],
+      "native": [
+        "input"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Toolbar.Item": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "Any button-like control as one stop of a toolbar's arrow-key path, such as a labelled Button or a Menu's trigger: `<Menu.Root trigger={<Toolbar.Item render={<Button>Paragraph</Button>} />}>`.",
+      "props": [
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": true,
+          "description": "The control, which joins the toolbar's arrow-key path as one of its stops: a button with a visible label, such as <Button startIcon={<IconShare />}>Share</Button>, or the trigger of a Menu or another popup. The item's props, ref and keyboard handling merge into its props; a Button takes the toolbar's ghost variant unless it sets another."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The control can't be pressed, and leaves the arrow keys' path."
+        }
+      ],
+      "native": [
+        "button"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Toolbar.Link": {
       "kind": "component",
       "source": "packages/ui/src/actions/Toolbar.tsx",
@@ -8672,7 +8719,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "The controls: Toolbar.Button, Toolbar.Link, Toolbar.Group and Toolbar.Separator."
+          "description": "The controls: Toolbar.Button, Toolbar.Link, Toolbar.Item, Toolbar.Input, Toolbar.Group and Toolbar.Separator."
         }
       ],
       "native": [
