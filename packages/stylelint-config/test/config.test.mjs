@@ -186,6 +186,22 @@ test("spacing and radius lengths off envUI's scales are reported with the step t
   );
 });
 
+test('positioning offsets and hairline corrections are not spacing, so the scales leave them alone', async () => {
+  await passes(
+    [
+      '.a { position: absolute; inset-block-start: 3.5rem; inset-inline: 0.3rem auto; }',
+      '.b { margin-inline-start: -1px; margin-block: 1px 0; padding-block-end: 0.0625rem; }',
+      '.c { position: relative; top: -1px; inset-inline-end: 1px; }',
+    ].join('\n'),
+  );
+  assert.deepEqual(
+    (await lint('.a { inset-block-start: 24px; top: 2px; margin: -2px; }')).map(
+      ({ rule, text }) => `${rule} ${text}`,
+    ),
+    ['envui/no-px 24px', 'envui/no-px 2px', 'envui/no-off-scale-values -2px'],
+  );
+});
+
 test('lengths in units other than rem and px, alone or in a calculation, are not checked against the scales', async () => {
   await passes(
     '.a { margin-inline: calc(50% - 50vw); padding-inline: 1ch; margin-block: 0.5em; inset-block-start: 100dvh; }',

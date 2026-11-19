@@ -1,5 +1,5 @@
 import stylelint from 'stylelint';
-import { scaleProperty } from './no-off-scale-values.js';
+import { isHairline, offsetProperty, scaleProperty } from './no-off-scale-values.js';
 import { documentationUrl, numbers, propertyMatcher, reportInValue } from '../values.js';
 
 const {
@@ -39,8 +39,6 @@ const pxLengths = (value) =>
       unit === 'px' && !functions.some((name) => name === 'var' || name === 'env'),
   );
 
-const isHairline = ({ value }) => Math.abs(value) <= 1;
-
 function remValue(value) {
   let fixed = '';
   let last = 0;
@@ -66,7 +64,9 @@ const rule = (primary) => (root, result) => {
   root.walkDecls((declaration) => {
     const property = declaration.prop;
     if (isHairlineProperty(property) || scaleProperty.test(property)) return;
-    for (const length of pxLengths(declaration.value))
+    const offset = offsetProperty.test(property);
+    for (const length of pxLengths(declaration.value)) {
+      if (offset && isHairline(length)) continue;
       reportInValue({
         result,
         ruleName,
@@ -82,6 +82,7 @@ const rule = (primary) => (root, result) => {
               declaration.value = remValue(declaration.value);
             },
       });
+    }
   });
   root.walkAtRules(conditionRules, (atRule) => {
     const offset = 1 + atRule.name.length + (atRule.raws.afterName ?? ' ').length;

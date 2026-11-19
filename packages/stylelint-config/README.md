@@ -50,7 +50,7 @@ Literal z-index 999: use an envUI stacking token (--env-z-…) instead, such as 
 
 ### envui/no-px
 
-px outside hairline properties (border and outline widths, shadows, focus-ring offsets; exported as `hairlineProperties`) and outside `var()` fallbacks and `env()`. `--fix` writes rem at a 16px root, except for 1px or less.
+px outside hairline properties (border and outline widths, shadows, focus-ring offsets; exported as `hairlineProperties`) and outside `var()` fallbacks and `env()`. A position offset of 1px or less, in `inset*`, `top`, `right`, `bottom` or `left`, passes too, such as `top: -1px` to overlap a border. `--fix` writes rem at a 16px root, except for 1px or less.
 
 ```text
 24px: write 1.5rem instead, so the size follows the reader's font size; px is only for hairlines: border and outline widths, focus-ring offsets and shadow offsets.
@@ -58,7 +58,7 @@ px outside hairline properties (border and outline widths, shadows, focus-ring o
 
 ### envui/no-off-scale-values
 
-A rem or px length in `gap`, `padding*`, `margin*`, `inset*` or `border-*radius`; `0`, `auto`, other units, calculations with another unit or a token pass, and sizes such as `inline-size` aren't checked. A radius past the largest step points to `var(--env-radius-full)`.
+A rem or px length in `gap`, `padding*`, `margin*` or `border-*radius`; `0`, `auto`, a hairline of 1px or less, such as `margin: -1px` to overlap borders, other units, calculations with another unit or a token pass. Positions such as `inset*` and sizes such as `inline-size` aren't checked. A radius past the largest step points to `var(--env-radius-full)`.
 
 ```text
 0.5rem in gap: write var(--env-space-2) instead, envUI's spacing step of that size.
