@@ -74,28 +74,25 @@ test('a conversation is a polite log of articles with authors, status named in t
   assert.equal(textOf(buttons(messages[3])[0]), 'Retry');
 });
 
-test('a busy log reports it while a reply streams in', () => {
-  const list = (busy) =>
-    render(
-      h(
-        MessageList,
-        { 'aria-label': 'Pane conversation', busy, busyAuthor: 'Aurora' },
-        h(Message, { from: 'self' }, 'On a pane'),
-        h(Message, { from: 'other', author: 'Aurora' }, 'The summary'),
-      ),
-    );
-  const idle = list(false);
-  assert.equal(idle.attributes['aria-busy'], undefined);
-  assert.equal(byClass(idle, 'env-message-list-busy').length, 0);
-  const busy = list(true);
-  assert.equal(busy.attributes['aria-busy'], 'true');
-  assert.equal(busy.attributes['aria-live'], 'polite');
-  const [row] = byClass(busy, 'env-message-list-busy');
-  assert.equal(row.attributes['aria-hidden'], 'true');
-  assert.equal(textOf(row), 'AuroraWorking');
+test('a busy log reports it while a working reply streams in as its last message', () => {
+  const list = render(
+    h(
+      MessageList,
+      { 'aria-label': 'Pane conversation', 'aria-busy': true },
+      h(Message, { from: 'self' }, 'On a pane'),
+      h(Message, { from: 'other', author: 'Aurora', status: 'working' }, 'The summ'),
+    ),
+  );
+  assert.equal(list.attributes['aria-busy'], 'true');
+  assert.equal(list.attributes['aria-live'], 'polite');
+  const reply = list.children.filter((child) => child.tag === 'article').at(-1);
+  assert.equal(reply.attributes['data-status'], 'working');
+  assert.equal(textOf(reply), 'AuroraThe summWorking');
   assert.equal(
-    textOf(busy.children.filter((child) => child.tag === 'article').at(-1)),
-    'AuroraThe summary',
+    render(h(MessageList, { 'aria-label': 'Idle' }, h(Message, { from: 'self' }, 'Hi'))).attributes[
+      'aria-busy'
+    ],
+    undefined,
   );
 });
 

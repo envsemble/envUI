@@ -53,12 +53,17 @@ export default function Conversation() {
 
   return (
     <Column gap={5} style={{ blockSize: '24rem' }}>
-      <MessageList aria-label="Conversation with the assistant" busy={replying} follow>
-        {messages.map((entry) => (
+      <MessageList
+        aria-label="Conversation with the assistant"
+        aria-busy={replying || undefined}
+        follow
+      >
+        {messages.map((entry, index) => (
           <Message
             key={entry.id}
             from={entry.from}
             author={entry.from === 'other' ? 'Assistant' : undefined}
+            status={replying && index === messages.length - 1 ? 'working' : undefined}
           >
             {entry.text}
           </Message>

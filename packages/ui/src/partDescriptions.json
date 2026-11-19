@@ -515,12 +515,11 @@
       "env-message-header": "The row with the author and the meta.",
       "env-message-meta": "The slot of the time or another fact about the message.",
       "env-message-start": "The slot of the content beside the message at its inline start, such as the author's avatar.",
-      "env-message-status": "The sending or failed status.",
+      "env-message-status": "The sending, failed or working status.",
       "env-message-text": "Content given as plain text, which keeps its line breaks."
     },
     "MessageList": {
       "env-message-list": "The list of messages.",
-      "env-message-list-busy": "The row after the last message while busy: the busy author, a spinner and Working.",
       "env-message-list-jump": "The place of the Jump to latest button at the foot of a list that follows."
     },
     "Meter": {

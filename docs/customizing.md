@@ -296,7 +296,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### MessageList
 
-- Parts: `env-message-list`, `env-message-list-busy`, `env-message-list-jump`
+- Parts: `env-message-list`, `env-message-list-jump`
 - States: `data-follow`
 
 ### Meter

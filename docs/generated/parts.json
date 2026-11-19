@@ -3370,7 +3370,7 @@
         },
         {
           "class": "env-message-status",
-          "description": "The sending or failed status."
+          "description": "The sending, failed or working status."
         },
         {
           "class": "env-message-text",
@@ -3433,10 +3433,6 @@
         {
           "class": "env-message-list",
           "description": "The list of messages."
-        },
-        {
-          "class": "env-message-list-busy",
-          "description": "The row after the last message while busy: the busy author, a spinner and Working."
         },
         {
           "class": "env-message-list-jump",

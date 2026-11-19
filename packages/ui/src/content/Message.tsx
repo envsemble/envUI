@@ -61,7 +61,7 @@ export interface MessageProps
    * width of a message from someone else. A working message shows the reply streamed so far, or
    * only its status while it is empty.
    */
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 function present(node: ReactNode) {
@@ -165,23 +165,6 @@ export function Message(allProps: MessageProps) {
 
 export interface MessageListProps extends ComponentPropsWithRef<'div'> {
   /**
-   * A reply is on its way or streaming in: after the last message, where the reply will show, a
-   * row with the busy author, a quiet spinner and Working in the muted color; and the log reports
-   * aria-busy, so assistive technology can wait for the reply to finish instead of announcing
-   * every step.
-   */
-  busy?: boolean;
-  /** Who the reply on its way comes from, such as Agent, named on the busy row as a message's author. */
-  busyAuthor?: string;
-  /**
-   * The text beside the busy spinner, such as "Thinking". It overrides EnvUIProvider's
-   * `messages.message.working`. The busy row is hidden from assistive technology, which hears
-   * aria-busy on the log instead; for a row it reaches, such as one with a Stop button, render a
-   * Message with status working last instead.
-   * @default 'Working'
-   */
-  busyLabel?: string;
-  /**
    * The list scrolls by itself and follows the conversation: it fills the height its container
    * gives it, opens at the latest message and keeps the latest in view while the reader is at the
    * end. Once they scroll away and more arrives, a Jump to latest button shows at its foot, which
@@ -199,14 +182,12 @@ export interface MessageListProps extends ComponentPropsWithRef<'div'> {
 
 /**
  * The messages of a conversation in order, as a log: assistive technology politely announces
- * messages added anywhere in it and text that changes. Set busy while a reply is on its way or
- * streams in, and follow where the list scrolls by itself. Name it with aria-label or
- * aria-labelledby.
+ * messages added anywhere in it and text that changes. While a reply is on its way or streams in,
+ * set aria-busy, so assistive technology waits for it to finish instead of announcing every step,
+ * and show it as a Message with status working, last. Set follow where the list scrolls by itself.
+ * Name it with aria-label or aria-labelledby.
  */
 export function MessageList({
-  busy = false,
-  busyAuthor,
-  busyLabel,
   follow = false,
   jumpToLatestLabel,
   className,
@@ -217,7 +198,6 @@ export function MessageList({
     <Grid
       gap={5}
       aria-live="polite"
-      aria-busy={busy || undefined}
       tabIndex={follow ? 0 : undefined}
       {...props}
       role="log"
@@ -225,15 +205,6 @@ export function MessageList({
       data-follow={flag(follow)}
     >
       {children}
-      {busy && (
-        <Row wrap align="center" className="env-message-list-busy" aria-hidden="true">
-          {present(busyAuthor) && <span className="env-message-author">{busyAuthor}</span>}
-          <Row align="center" gap={1} className="env-message-status">
-            <Spinner size="sm" />
-            <MessageStatusLabel status="working" label={busyLabel} />
-          </Row>
-        </Row>
-      )}
       {follow && <MessageListFollow label={jumpToLatestLabel} />}
     </Grid>
   );

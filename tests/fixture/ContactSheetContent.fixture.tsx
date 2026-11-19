@@ -327,8 +327,9 @@ function Messages() {
           </MessageList>
         </Cell>
         <Cell caption="Busy list (a reply coming)" width="26rem">
-          <MessageList aria-label="Conversation" busy busyAuthor="Assistant">
+          <MessageList aria-label="Conversation" aria-busy>
             <Message from="self">Summarise the notes.</Message>
+            <Message from="other" author="Assistant" status="working" />
           </MessageList>
         </Cell>
         <Cell caption="Skeleton" width="26rem">

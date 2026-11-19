@@ -5398,7 +5398,7 @@
         {
           "name": "children",
           "type": "ReactNode",
-          "required": true,
+          "required": false,
           "description": "The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the width of a message from someone else. A working message shows the reply streamed so far, or only its status while it is empty."
         },
         {
@@ -5419,28 +5419,8 @@
     "MessageList": {
       "kind": "component",
       "source": "packages/ui/src/content/Message.tsx",
-      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. Set busy while a reply is on its way or streams in, and follow where the list scrolls by itself. Name it with aria-label or aria-labelledby.",
+      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. While a reply is on its way or streams in, set aria-busy, so assistive technology waits for it to finish instead of announcing every step, and show it as a Message with status working, last. Set follow where the list scrolls by itself. Name it with aria-label or aria-labelledby.",
       "props": [
-        {
-          "name": "busy",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "A reply is on its way or streaming in: after the last message, where the reply will show, a row with the busy author, a quiet spinner and Working in the muted color; and the log reports aria-busy, so assistive technology can wait for the reply to finish instead of announcing every step."
-        },
-        {
-          "name": "busyAuthor",
-          "type": "string",
-          "required": false,
-          "description": "Who the reply on its way comes from, such as Agent, named on the busy row as a message's author."
-        },
-        {
-          "name": "busyLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Working'",
-          "description": "The text beside the busy spinner, such as \"Thinking\". It overrides EnvUIProvider's `messages.message.working`. The busy row is hidden from assistive technology, which hears aria-busy on the log instead; for a row it reaches, such as one with a Stop button, render a Message with status working last instead."
-        },
         {
           "name": "follow",
           "type": "boolean",

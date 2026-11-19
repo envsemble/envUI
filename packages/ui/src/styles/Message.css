@@ -24,10 +24,6 @@
     block-size: 0;
     margin-block-start: calc(-1 * var(--env-space-5));
   }
-  .env-message-list-busy {
-    column-gap: var(--env-space-2);
-    font: var(--env-type-body-sm);
-  }
   .env-message {
     justify-items: start;
     margin: 0;
