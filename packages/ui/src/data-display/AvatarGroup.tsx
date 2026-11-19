@@ -22,6 +22,7 @@ import {
 import { Tooltip } from '../overlays/Tooltip.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
+import { nameWithBadge } from './internal/avatarName.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
@@ -42,7 +43,10 @@ export interface AvatarGroupPerson {
    * chooses one, never one that looks like its neighbour's.
    */
   hue?: AvatarHue;
-  /** A small mark at the avatar's bottom end, as for Avatar, such as a presence dot. */
+  /**
+   * A small mark at the avatar's bottom end, as for Avatar, such as a presence dot. Text, such as
+   * online, also follows the name in a pressable avatar's accessible name, as it shows there.
+   */
   badge?: ReactNode;
   /**
    * The tooltip of a pressable avatar, such as the name with a role or an e-mail address; the
@@ -332,7 +336,7 @@ function AvatarGroupItem({
       {person.href ? (
         <ActionElement
           href={person.href}
-          aria-label={person.name}
+          aria-label={nameWithBadge(person.name, person.badge)}
           className="env-avatar-group-item"
           style={style}
           onClick={onClick}
@@ -341,7 +345,7 @@ function AvatarGroupItem({
         </ActionElement>
       ) : (
         <ActionElement
-          aria-label={person.name}
+          aria-label={nameWithBadge(person.name, person.badge)}
           className="env-avatar-group-item"
           style={style}
           onClick={onClick}

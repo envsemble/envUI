@@ -151,10 +151,10 @@ test('pressable avatars are buttons and links named after each person, with name
   await expect.poll(() => document.body.dataset.avatarNavigatedTo).toBe('/people/sam');
 });
 
-test("a person's tooltip, hue and badge, the overflow tooltip and an account's description take the application's content", async () => {
+test("a person's tooltip, hue and badge, the overflow tooltip and an account's description take the application's content, and a badge's text follows the name", async () => {
   await commands.emulateMedia({ reducedMotion: 'reduce' });
   const group = byTestId('custom');
-  const alex = group.getByRole('button', { name: 'Alex Morgan' });
+  const alex = group.getByRole('button', { name: 'Alex Morgan, online', exact: true });
   const avatar = alex.element().querySelector('.env-avatar')!;
   expect(avatar.getAttribute('data-hue')).toBe('oat');
   expect(avatar.querySelector('.env-avatar-badge')?.textContent).toBe('online');
@@ -176,7 +176,7 @@ test("a person's tooltip, hue and badge, the overflow tooltip and an account's d
   await away();
 
   const account = byTestId('account');
-  await expect.element(account).toHaveAccessibleName('Alex Morgan');
+  await expect.element(account).toHaveAccessibleName('Alex Morgan, online');
   expect(account.element().querySelector('.env-avatar')?.getAttribute('data-hue')).toBe('sage');
   await pointAt(account);
   await expect.poll(() => document.querySelector('.env-tooltip strong')?.textContent).toBe('Owner');

@@ -327,7 +327,7 @@
           "name": "name",
           "type": "string",
           "required": true,
-          "description": "The person's name: shown in the tooltip, and the accessible name unless aria-label is set."
+          "description": "The person's name: shown in the tooltip, and the accessible name unless aria-label is set, followed by a badge's text, such as Alex Morgan, online."
         },
         {
           "name": "description",
@@ -363,7 +363,7 @@
           "name": "badge",
           "type": "ReactNode",
           "required": false,
-          "description": "A small mark at the avatar's bottom end, as for Avatar, such as a presence dot."
+          "description": "A small mark at the avatar's bottom end, as for Avatar, such as a presence dot. Text, such as online, also follows the name in the button's accessible name, as it shows on the button."
         },
         {
           "name": "size",
