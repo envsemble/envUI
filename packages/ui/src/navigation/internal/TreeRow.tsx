@@ -37,10 +37,10 @@ export function TreeRow({
   top,
   leaving,
 }: TreeRowProps) {
-  const { className, style, ...rowProps } = item.rowProps ?? {};
+  const { className, style, ...itemProps } = item.itemProps ?? {};
   return (
     <div
-      {...rowProps}
+      {...itemProps}
       id={leaving ? undefined : id}
       role="treeitem"
       aria-level={item.depth + 1}

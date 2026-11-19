@@ -6,6 +6,7 @@ import {
   useId,
   useRef,
   type ComponentPropsWithRef,
+  type ComponentPropsWithoutRef,
   type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
@@ -28,6 +29,7 @@ import { useTabCloseFocus } from './internal/useTabCloseFocus.js';
 import { useTabDrag } from './internal/useTabDrag.js';
 import { useTabStripScrolling } from './internal/useTabStripScrolling.js';
 import { flag } from '../internal/flag.js';
+import { useLabelText } from './internal/labelText.js';
 import '../styles/Base.css';
 import '../styles/DocumentTabs.css';
 
@@ -36,13 +38,17 @@ const dragImageOffsetFromPointerPx = 12;
 export interface DocumentTabsItem {
   /** The tab's value, a stable identifier, such as the document's path; value names the active one. */
   value: string;
-  /** The document's name, which names the tab and its close button. */
-  label: string;
   /**
-   * What the tab shows in place of the label, such as a dimmed folder before a duplicate file's
-   * name. The label still names the tab.
+   * The document's name, which names the tab and its close button: text, or content, such as a
+   * dimmed folder before a name two tabs share.
    */
-  content?: ReactNode;
+  label: ReactNode;
+  /**
+   * The name as plain text, for the tab's name and native tooltip, its close button's name and its
+   * context menu, where the label's text isn't it.
+   * @default the label when it is a string, else the label's rendered text
+   */
+  textValue?: string;
   /**
    * Content after the tab's name, such as a dot for unsaved changes or a status Badge. It keeps its
    * size and is left out of the tab's name, which the label gives.
@@ -50,7 +56,7 @@ export interface DocumentTabsItem {
   end?: ReactNode;
   /** Optional leading icon. */
   icon?: ReactNode;
-  /** The tab's native tooltip, such as the full path; the label by default. */
+  /** The tab's native tooltip, such as the full path; the label's text by default. */
   tooltip?: string;
   /** A preview tab shows its label in italics until it is pinned. */
   preview?: boolean;
@@ -60,7 +66,19 @@ export interface DocumentTabsItem {
    * @default true
    */
   closable?: boolean;
+  /**
+   * More props for the tab's element, the one that holds the tab and its close button, such as a
+   * className or data attributes for tests. Its class joins the tab's; its handlers run before the
+   * tab's own.
+   */
+  itemProps?: DocumentTabsItemElementProps;
 }
+
+/** What a document tab's itemProps can set on its element. */
+export type DocumentTabsItemElementProps = Omit<
+  ComponentPropsWithoutRef<'div'>,
+  'children' | 'id' | 'role' | 'title' | 'dangerouslySetInnerHTML' | `aria-${string}`
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
 
 export interface DocumentTabsProps extends Omit<
   ComponentPropsWithRef<'div'>,
@@ -104,7 +122,8 @@ export interface DocumentTabsProps extends Omit<
    */
   panelId?: string;
   /**
-   * The name of the context menu's item that closes a tab, and the tooltip of its close button.
+   * The name of the context menu's item that closes a tab, and the tooltip of its close button,
+   * from the tab's text value.
    * @default 'Close {label}', or EnvUIProvider's messages.documentTabs.close
    */
   closeLabel?: (label: string) => string;
@@ -323,7 +342,7 @@ export function DocumentTabs({
             }}
           >
             {dragged.icon != null && <DecorativeIcon>{dragged.icon}</DecorativeIcon>}
-            <span className="env-document-tabs-tab-label">{dragged.content ?? dragged.label}</span>
+            <span className="env-document-tabs-tab-label">{dragged.label}</span>
           </div>
         )}
       </BaseTabs.Root>
@@ -368,16 +387,33 @@ function DocumentTab({
   onPointerDown: (event: PointerEvent<HTMLDivElement>) => void;
 }) {
   const closable = item.closable !== false;
+  const labelElement = useRef<HTMLSpanElement>(null);
+  const name = useLabelText(item.label, item.textValue, labelElement);
+  const {
+    className,
+    onPointerDown: ownPointerDown,
+    onMouseDown: ownMouseDown,
+    onAuxClick: ownAuxClick,
+    ...itemProps
+  } = item.itemProps ?? {};
   return (
     <div
-      className="env-document-tabs-item"
+      {...itemProps}
+      className={classNames('env-document-tabs-item', className)}
       data-active={flag(active)}
       data-moving={moving ? 'pointer' : undefined}
       data-drop={drop}
-      onPointerDown={onPointerDown}
-      onMouseDown={preventMiddlePressAutoscroll}
+      onPointerDown={(event) => {
+        ownPointerDown?.(event);
+        if (!event.defaultPrevented) onPointerDown(event);
+      }}
+      onMouseDown={(event) => {
+        ownMouseDown?.(event);
+        preventMiddlePressAutoscroll(event);
+      }}
       onAuxClick={(event) => {
-        if (event.button !== middleButton) return;
+        ownAuxClick?.(event);
+        if (event.button !== middleButton || event.defaultPrevented) return;
         event.preventDefault();
         if (closable) onClose(item.value);
       }}
@@ -386,10 +422,10 @@ function DocumentTab({
         id={id}
         value={item.value}
         className="env-document-tabs-tab"
-        aria-label={item.label}
+        aria-label={name}
         aria-controls={active ? panelId : undefined}
         aria-keyshortcuts={closable ? 'Delete Backspace' : undefined}
-        title={item.tooltip ?? item.label}
+        title={item.tooltip ?? name}
         tabIndex={focusable ? 0 : -1}
         data-tab-id={item.value}
         data-preview={flag(item.preview)}
@@ -399,7 +435,9 @@ function DocumentTab({
         }}
       >
         {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
-        <span className="env-document-tabs-tab-label">{item.content ?? item.label}</span>
+        <span className="env-document-tabs-tab-label" ref={labelElement}>
+          {item.label}
+        </span>
         {item.end != null && (
           <Slot className="env-document-tabs-tab-end" element="span" layout="row" shrink="never">
             {item.end}
@@ -410,10 +448,10 @@ function DocumentTab({
         <IconButton
           variant="ghost"
           icon={<IconClose />}
-          aria-label={closeName(item.label)}
+          aria-label={closeName(name)}
           aria-hidden
           tabIndex={-1}
-          title={closeName(item.label)}
+          title={closeName(name)}
           className="env-document-tabs-close"
           onClick={() => onClose(item.value)}
         />

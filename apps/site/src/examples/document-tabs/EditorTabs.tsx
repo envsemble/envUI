@@ -16,15 +16,13 @@ const documents: DocumentTabsItem[] = [
   { value: 'welcome', label: 'Welcome', icon: <IconHome />, closable: false },
   {
     value: 'api/index.ts',
-    label: 'api/index.ts',
-    content: inFolder('api', 'index.ts'),
+    label: inFolder('api', 'index.ts'),
     icon: <IconDescription />,
     end: <Badge tone="danger" count={2} />,
   },
   {
     value: 'web/index.ts',
-    label: 'web/index.ts',
-    content: inFolder('web', 'index.ts'),
+    label: inFolder('web', 'index.ts'),
     icon: <IconDescription />,
   },
 ];

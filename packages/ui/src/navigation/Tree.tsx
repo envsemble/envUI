@@ -25,6 +25,7 @@ import {
   treeKeyAction,
   type TypedText,
 } from './internal/treeModel.js';
+import { labelText } from './internal/labelText.js';
 import { placeRows, TreeRow } from './internal/TreeRow.js';
 import { useTreeTransitions } from './internal/useTreeTransitions.js';
 import { useTreeViewport } from './internal/useTreeViewport.js';
@@ -47,12 +48,12 @@ export interface TreeItem {
   /**
    * The row's name: text, or content such as a name with its matched letters highlighted. It keeps
    * its room before the description and the end, and ends with an ellipsis only where the row is
-   * too narrow for it alone. Type-ahead matches it when it is a string.
+   * too narrow for it alone. Type-ahead matches its text.
    */
   label: ReactNode;
   /**
-   * The row's name as plain text, which type-ahead matches where `label` isn't a string.
-   * @default the label, when it is a string
+   * The row's name as plain text, which type-ahead matches, where the label's text isn't it.
+   * @default the label when it is a string, else the label's rendered text
    */
   textValue?: string;
   /** A decorative icon before the label, such as a folder or a document, at the control icon size. */
@@ -79,11 +80,11 @@ export interface TreeItem {
    * The row element's own props, such as a className, data attributes for its state, draggable and
    * drag handlers for moving files. The tree's role, id, ARIA attributes and title stay its own.
    */
-  rowProps?: TreeRowElementProps;
+  itemProps?: TreeItemElementProps;
 }
 
-/** What a Tree row's rowProps can set on the row element. */
-export type TreeRowElementProps = Omit<
+/** What a Tree row's itemProps can set on the row element. */
+export type TreeItemElementProps = Omit<
   ComponentPropsWithoutRef<'div'>,
   'children' | 'id' | 'role' | 'title' | 'dangerouslySetInnerHTML' | `aria-${string}`
 > & { [attribute: `data-${string}`]: string | number | boolean | undefined };
@@ -234,6 +235,14 @@ export function Tree<Item extends TreeItem>({
       pageRows,
       isRightToLeft(event.currentTarget),
       typeahead.current,
+      (item) =>
+        labelText(
+          item.label,
+          item.textValue,
+          document
+            .getElementById(rowElementId(treeId, item.value))
+            ?.querySelector('.env-tree-label'),
+        ),
     );
     if (!action) return;
     if (action.kind === 'move') activate(action.index);

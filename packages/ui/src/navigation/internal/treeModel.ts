@@ -50,15 +50,15 @@ function stillTypingAhead(typed: TypedText) {
   return performance.now() - typed.time <= typeaheadTimeout;
 }
 
-function typeaheadText(item: TreeItem) {
-  return item.textValue ?? (typeof item.label === 'string' ? item.label : '');
-}
+/** A row's text for type-ahead: its textValue, else its label's text. */
+export type TreeRowText = (item: TreeItem) => string;
 
 function findTypedRow(
   items: readonly TreeItem[],
   typed: TypedText,
   key: string,
   activeIndex: number,
+  rowText: TreeRowText,
 ) {
   const now = performance.now();
   typed.text = now - typed.time > typeaheadTimeout ? key : typed.text + key;
@@ -69,7 +69,7 @@ function findTypedRow(
   const start = repeated || query.length === 1 ? activeIndex + 1 : activeIndex;
   for (let offset = 0; offset < items.length; offset += 1) {
     const index = (start + offset) % items.length;
-    if (typeaheadText(items[index]).toLocaleLowerCase().startsWith(search)) return index;
+    if (rowText(items[index]).toLocaleLowerCase().startsWith(search)) return index;
   }
   return -1;
 }
@@ -103,12 +103,13 @@ export function treeKeyAction(
   pageRows: number,
   rtl: boolean,
   typed: TypedText,
+  rowText: TreeRowText,
 ): TreeKeyAction | null {
   const item = items[active];
   if (!item) return null;
   const move = (index: number): TreeKeyAction => ({ kind: 'move', index });
   const typedRow = (): TreeKeyAction => {
-    const index = findTypedRow(items, typed, key, active);
+    const index = findTypedRow(items, typed, key, active, rowText);
     return index === -1 ? { kind: 'stay' } : move(index);
   };
   switch (key) {
