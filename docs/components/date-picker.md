@@ -75,7 +75,7 @@ examples:
 6. **Calendar icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-```tsx figure=DatePickerPopupAnatomy open
+```tsx figure=DatePickerPopupAnatomy open width="21"
 
 ```
 

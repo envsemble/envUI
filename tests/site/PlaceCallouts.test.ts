@@ -59,3 +59,38 @@ test('a callout to a part thinner than its dot, such as a separator, points at i
   assert.ok(Number.isFinite(anchor.x) && Number.isFinite(anchor.y), JSON.stringify(anchor));
   assert.ok(anchor.x >= 100 && anchor.x <= 101, `${anchor.x} is on the separator`);
 });
+
+test('a badge stays whole inside the stage when its part reaches the stage edge', () => {
+  const part = (number, box) => ({
+    number,
+    element: number - 1,
+    text: false,
+    box,
+    corners: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
+    inline: false,
+    edge: true,
+    ownEdge: true,
+    region: false,
+    repeated: false,
+  });
+  const width = 240;
+  const height = 120;
+  const { callouts } = placement.placeCallouts({
+    width,
+    height,
+    rtl: false,
+    parts: [
+      part(1, { left: 20, top: 40, right: 120, bottom: 80 }),
+      part(2, { left: 140, top: 10, right: 230, bottom: 110 }),
+    ],
+    contains: [
+      [true, false],
+      [false, true],
+    ],
+    labels: [],
+  });
+  for (const { badge } of callouts) {
+    assert.ok(badge.x - 12 >= 0 && badge.x + 12 <= width, `badge at x ${badge.x}`);
+    assert.ok(badge.y - 12 >= 0 && badge.y + 12 <= height, `badge at y ${badge.y}`);
+  }
+});
