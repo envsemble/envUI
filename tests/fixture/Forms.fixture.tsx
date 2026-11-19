@@ -196,3 +196,13 @@ export function SelectContentFixture() {
     />
   );
 }
+
+export function LabelFirstFixture() {
+  return (
+    <>
+      <Switch label="Dark mode" labelPlacement="start" />
+      <Checkbox label="Remember me" labelPlacement="start" />
+      <Switch label="Sync" />
+    </>
+  );
+}

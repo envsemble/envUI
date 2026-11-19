@@ -1010,7 +1010,17 @@
           "slot": true
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-label-placement",
+          "values": [
+            "start"
+          ],
+          "parts": [
+            "env-checkbox"
+          ]
+        }
+      ],
       "uses": [
         "Icon"
       ],
@@ -5113,7 +5123,17 @@
           "slot": true
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-label-placement",
+          "values": [
+            "start"
+          ],
+          "parts": [
+            "env-switch"
+          ]
+        }
+      ],
       "colors": [
         {
           "property": "--env-switch-container",

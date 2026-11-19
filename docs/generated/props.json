@@ -1003,6 +1003,13 @@
           "description": "A short, muted line under the label, such as what the option changes. It is part of the checkbox's label, so it is read with its name."
         },
         {
+          "name": "labelPlacement",
+          "type": "'end' | 'start'",
+          "required": false,
+          "default": "'end'",
+          "description": "Where the label sits beside the box: end, after it, or start, before it, such as in an inline row whose label leads; the native label still names the checkbox."
+        },
+        {
           "name": "checked",
           "type": "boolean | 'mixed'",
           "required": false,
@@ -7703,6 +7710,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "A short, muted line under the label, such as what the option changes. It is part of the switch's label, so it is read with its name."
+        },
+        {
+          "name": "labelPlacement",
+          "type": "'end' | 'start'",
+          "required": false,
+          "default": "'end'",
+          "description": "Where the label sits beside the track: end, after it, or start, before it, as in an inline Dark mode switch whose label leads; the native label still names the switch."
         },
         {
           "name": "checked",

@@ -37,6 +37,9 @@
     color: var(--env-color-fg-default);
     cursor: pointer;
   }
+  .env-checkbox[data-label-placement='start'] {
+    flex-direction: row-reverse;
+  }
   .env-checkbox > span {
     min-inline-size: 0;
   }

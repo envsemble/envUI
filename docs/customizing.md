@@ -128,6 +128,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Checkbox
 
 - Parts: `env-checkbox`, `env-checkbox-box`, `env-checkbox-description`, `env-checkbox-description-content` (slot), `env-checkbox-indicator`, `env-checkbox-input`, `env-checkbox-label`, `env-checkbox-label-content` (slot)
+- States: `data-label-placement` (`start`)
 - Color properties: `--env-checkbox-outline`, `--env-checkbox-selected`, `--env-checkbox-selected-content`
 
 ### Code
@@ -434,6 +435,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Switch
 
 - Parts: `env-switch`, `env-switch-description`, `env-switch-description-content` (slot), `env-switch-input`, `env-switch-label`, `env-switch-label-content` (slot)
+- States: `data-label-placement` (`start`)
 - Color properties: `--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected`, `--env-switch-selected-content`
 
 ### Table
