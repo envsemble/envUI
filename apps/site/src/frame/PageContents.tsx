@@ -29,6 +29,11 @@ export function PageContents({
   );
 }
 
+const fewestListedSections = 3;
+
+export const contentsWorthListing = (items: readonly TableOfContentsItem[] | undefined) =>
+  items === undefined || items.length >= fewestListedSections;
+
 export const ContentsItems = createContext<readonly TableOfContentsItem[] | undefined>(undefined);
 
 export function CompactContents() {
