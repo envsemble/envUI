@@ -52,9 +52,9 @@ examples:
 ```
 
 1. **Root** (`env-panes`)
-2. **Pane** (`env-panes-pane`)
+2. **Pane** (`env-panes-pane:first-child`)
 3. **Resize handle** (`env-panes-resize-handle`)
-4. **Pane** (`env-panes-pane`)
+4. **Pane** (`env-panes-pane:last-child`)
 
 ## Behaviour
 

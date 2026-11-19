@@ -53,8 +53,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ## Components
 
-Generated from `docs/generated/parts.json` by `npm run docs:guides`.
-
 ### Accordion
 
 - Parts: `env-accordion`, `env-accordion-content`, `env-accordion-end` (slot), `env-accordion-header`, `env-accordion-indicator`, `env-accordion-indicator-content` (slot), `env-accordion-item`, `env-accordion-label` (slot), `env-accordion-panel`, `env-accordion-trigger`

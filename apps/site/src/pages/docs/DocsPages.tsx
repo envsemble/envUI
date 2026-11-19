@@ -19,7 +19,7 @@ import { GuideDocument, guideContents } from './GuideDocument';
 import { LoadedPart } from '../../loading/LoadedPart';
 import { useDocument } from '../PageContent';
 import { pageParts, partsOfPage } from '../PageParts';
-import { ChangelogSkeleton } from './ChangelogOutline';
+import { ChangelogSkeleton, releaseContents } from './ChangelogOutline';
 import { tokenContents, TokenReferenceSkeleton } from './TokenTables';
 import { ReleaseNotes } from './ReleaseNotes';
 import { AgentSetup, agentSetupContents } from './AgentSetup';
@@ -204,7 +204,8 @@ export function docsContents(
   page: RoutePage,
   whole: DocumentationEntry | undefined,
 ): TableOfContentsItem[] {
-  if (page.kind === 'docs-changelog') return [highlights, everyChange];
+  if (page.kind === 'docs-changelog')
+    return [highlights, { ...everyChange, children: releaseContents() }];
   if (page.kind === 'tokens') return tokenContents();
   if (!whole) return [];
   if (page.kind === 'guide') {

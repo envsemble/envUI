@@ -64,7 +64,7 @@ Use the motion tokens in the application's own animations, keeping only fades un
 
 ### Customize
 
-Generated from the token list by `npm run docs:guides`; values at the default 16 px root.
+Values at the default 16 px root.
 
 #### Motion
 

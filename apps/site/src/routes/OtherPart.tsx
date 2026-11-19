@@ -6,6 +6,7 @@ import { counterpartOf } from './Counterparts';
 import type { Area, RoutePage } from './SiteRoutes';
 import { flag } from '../shared/Attributes';
 import { useLinkComponent } from '@envui-internal/internal/provider/LinkComponentContext';
+import '@envui-internal/styles/SegmentedControl.css';
 
 export function otherPart(area: Area) {
   return area === 'docs'

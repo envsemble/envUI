@@ -354,15 +354,16 @@ function calloutsAlong(side: Side, items: Placed[], { geometry, reachOuter }: La
     const box = own ? part : fenced(part);
     const corners = own ? partCorners : square;
     const clamp = (value: number, low: number, high: number) =>
-      Math.min(Math.max(value, low + 2), Math.max(high - 2, low + 2));
+      high - low < 4 ? (low + high) / 2 : Math.min(Math.max(value, low + 2), high - 2);
+    const nearest = badgeDiameterPx / 2 + 2;
     const badge =
       side === 'top'
-        ? { x: at, y: reachOuter.top - badgeReachPx }
+        ? { x: at, y: Math.max(reachOuter.top - badgeReachPx, nearest) }
         : side === 'bottom'
-          ? { x: at, y: reachOuter.bottom + badgeReachPx }
+          ? { x: at, y: Math.min(reachOuter.bottom + badgeReachPx, geometry.height - nearest) }
           : side === 'left'
-            ? { x: reachOuter.left - badgeReachPx, y: at }
-            : { x: reachOuter.right + badgeReachPx, y: at };
+            ? { x: Math.max(reachOuter.left - badgeReachPx, nearest), y: at }
+            : { x: Math.min(reachOuter.right + badgeReachPx, geometry.width - nearest), y: at };
     const x = clamp(at, box.left, box.right);
     const y = clamp(at, box.top, box.bottom);
     const width = box.right - box.left;

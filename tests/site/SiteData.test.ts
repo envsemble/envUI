@@ -8,11 +8,11 @@ import {
   readTokenOutline,
 } from '../../scripts/site/PartOutlines.ts';
 import {
-  inlinePieces,
   parseReleaseNotes,
   readReleaseNotes,
   releaseNotesProblems,
 } from '../../scripts/site/ReleaseNotes.ts';
+import { inlinePieces } from '../../apps/site/src/documentation/InlinePieces.ts';
 import { join } from 'node:path';
 import {
   libraryChangelogFile,
@@ -52,6 +52,14 @@ test('the release notes checks find what is wrong', () => {
     { kind: 'link', href: '/docs/changelog#tokens', children: [{ kind: 'code', text: 'Row' }] },
     { kind: 'text', text: ' now' },
   ]);
+});
+
+test('inline text links only to the web and to the site, and shows any other link as its words', () => {
+  const linkOf = (href: string) => inlinePieces(`See [the page](${href}).`)[1];
+  assert.equal(linkOf('https://developer.mozilla.org/').kind, 'link');
+  assert.equal(linkOf('/docs/changelog').kind, 'link');
+  for (const href of ['javascript:alert(1)', 'data:text/html,hi', '//example.com', 'mailto:a@b'])
+    assert.deepEqual(linkOf(href), { kind: 'text', text: 'the page' }, href);
 });
 
 test("the changelog's outline heads each release as the changelog does, over the shape of its text", () => {

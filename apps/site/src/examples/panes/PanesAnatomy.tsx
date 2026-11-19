@@ -2,7 +2,14 @@ import { Column, List, Panes, Surface, Text } from '@envsemble/envui';
 
 export default function PanesAnatomy() {
   return (
-    <Panes.Root defaultWidth={16} style={{ inlineSize: 'min(100%, 38rem)', blockSize: '12rem' }}>
+    <Panes.Root
+      defaultWidth={16}
+      style={{
+        inlineSize: 'min(100%, 38rem)',
+        blockSize: '12rem',
+        '--env-panes-other-min': 'min(16rem, 60cqi)',
+      }}
+    >
       <Panes.Pane label="Inbox">
         <Surface radius="none" padding={2} style={{ minBlockSize: '100%' }}>
           <List.Root aria-label="Messages">

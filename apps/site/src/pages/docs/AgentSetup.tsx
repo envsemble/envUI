@@ -37,7 +37,7 @@ export function AgentSetup({ note, path = '' }: { note?: string; path?: string }
       <Surface
         background="muted"
         padding={1}
-        render={<Row gap={3} align="center" />}
+        render={<Row gap={2} align="center" />}
         className="docs-agent-prompt"
       >
         <AgentLogos className="docs-agent-logos" />

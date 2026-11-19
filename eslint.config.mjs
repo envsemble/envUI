@@ -68,6 +68,8 @@ const siteInternals = {
     'What a box paints, as dev mode decides it, which the fit centres a picture on.',
   'internal/motion/motionTokens':
     'How a motion token is read and eased, as the library’s own motion reads it.',
+  'styles/SegmentedControl.css':
+    'The look of the Design/Code switch, whose segments are links rather than the radios SegmentedControl renders.',
 };
 const siteInternalImports = {
   regex: String.raw`^@envui-internal/(?!(${Object.keys(siteInternals).join('|')})$)`,

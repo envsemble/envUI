@@ -457,7 +457,6 @@ body {
   isolation: isolate;
   overflow: hidden;
   container-type: inline-size;
-  padding-block: clamp(1.25rem, 2vw, 1.5rem);
 }
 .site-page-banner-content {
   position: relative;
@@ -515,6 +514,18 @@ body {
   display: block;
   block-size: 1.125rem;
   inline-size: auto;
+}
+@media (pointer: coarse) {
+  .site-footer-brand,
+  .site-footer-maker-logo {
+    position: relative;
+  }
+  .site-footer-brand::after,
+  .site-footer-maker-logo::after {
+    position: absolute;
+    inset: calc(50% - var(--env-control-height-touch) / 2) 0;
+    content: '';
+  }
 }
 :root[data-env-theme='dark'] .site-footer-maker-on-light,
 :root:not([data-env-theme='dark']) .site-footer-maker-on-dark {

@@ -58,7 +58,7 @@ examples:
 
 ## Anatomy
 
-```tsx figure=RichTextAnatomy
+```tsx figure=RichTextAnatomy width="21"
 
 ```
 

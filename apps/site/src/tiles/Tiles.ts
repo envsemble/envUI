@@ -21,7 +21,7 @@ export interface TileWindow {
   app?: { least?: number };
 }
 
-export const narrowGallery = '(width < 29rem)';
+export const narrowGallery = '(width < 29rem) and (not ((hover: none) or (pointer: coarse)))';
 
 export const preloadTile = (page: string) => tiles.preload(tilePath(page));
 

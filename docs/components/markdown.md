@@ -62,7 +62,7 @@ examples:
 
 ## Anatomy
 
-```tsx figure=MarkdownEditorAnatomy
+```tsx figure=MarkdownEditorAnatomy width="21"
 
 ```
 
