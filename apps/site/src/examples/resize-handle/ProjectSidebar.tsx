@@ -1,15 +1,24 @@
-import { useState } from 'react';
-import { Column, List, ResizeHandle, Row, Surface, Text } from '@envsemble/envui';
+import { useRef, useState } from 'react';
+import { Column, List, ResizeHandle, Row, Surface, Text, useContainerSize } from '@envsemble/envui';
+
+const halfOfRow = (rowPixels: number) => {
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return Math.min(Math.max(rowPixels / 2 / rem, 10), 20);
+};
 
 export default function ProjectSidebar() {
   const [width, setWidth] = useState(14);
+  const row = useRef<HTMLDivElement>(null);
+  const rowSize = useContainerSize(row);
+  const room = rowSize ? halfOfRow(rowSize.inlineSize) : 20;
+  const shown = Math.min(width, room);
   return (
-    <Row align="stretch" style={{ inlineSize: 'min(100%, 36rem)', blockSize: '16rem' }}>
+    <Row ref={row} align="stretch" style={{ inlineSize: 'min(100%, 36rem)', blockSize: '16rem' }}>
       <Surface
         id="projects"
         radius="none"
         padding={2}
-        style={{ inlineSize: `min(${width}rem, 50%)`, flex: 'none' }}
+        style={{ inlineSize: `${shown}rem`, flex: 'none' }}
       >
         <List.Root aria-label="Projects">
           <List.Item label="Website refresh" current />
@@ -21,7 +30,8 @@ export default function ProjectSidebar() {
         axis="inline"
         label="Resize the projects"
         aria-controls="projects"
-        value={width}
+        value={shown}
+        room={(handle) => halfOfRow(handle.parentElement?.clientWidth ?? 0)}
         min={10}
         max={20}
         unit="rem"
