@@ -80,7 +80,7 @@ export function ReorderableList({
   onKeyDown,
   children,
   ...props
-}: Omit<RootProps, 'title' | 'headingLevel' | 'description' | 'actions' | 'handlePlacement'> & {
+}: Omit<RootProps, 'title' | 'headingLevel' | 'description' | 'headerEnd' | 'handlePlacement'> & {
   onReorder: NonNullable<RootProps['onReorder']>;
 }) {
   const element = useRef<HTMLUListElement | null>(null);

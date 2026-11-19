@@ -42,7 +42,7 @@ export function renderList(
     headingLevel = 2,
     description,
     density = 'md',
-    actions,
+    headerEnd,
     onReorder,
     handlePlacement = 'start',
     skeleton = false,
@@ -108,11 +108,11 @@ export function renderList(
   return (
     <Column gap={3} className="env-list-section">
       <Column gap={1} className="env-list-header">
-        {actions != null ? (
+        {headerEnd != null ? (
           <Row wrap align="center" justify="between" gap={3}>
             {heading}
-            <Slot className="env-list-actions" layout="row" shrink="never">
-              {actions}
+            <Slot className="env-list-header-end" layout="row" shrink="never">
+              {headerEnd}
             </Slot>
           </Row>
         ) : (
