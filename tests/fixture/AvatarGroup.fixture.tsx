@@ -86,6 +86,7 @@ export default function AvatarGroupFixture({ theme }: { theme: ColorScheme }) {
         name="Alex Morgan"
         description={<strong>Owner</strong>}
         hue="sage"
+        fallback="person"
         badge="online"
       />
       <output data-testid="pressed">{pressed}</output>
