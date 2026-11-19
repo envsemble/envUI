@@ -3356,6 +3356,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "How to correct the value. Without children, the browser's validation message shows."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "the error icon",
+          "description": "The icon before the message, decorative, so hide an icon of your own from assistive technology, or null for none, such as for a compact error beside a control."
         }
       ],
       "native": [
