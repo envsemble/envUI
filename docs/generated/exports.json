@@ -173,6 +173,7 @@
     "PickerOpenChangeReason": "type",
     "Placeholder": "type",
     "Popover": "function",
+    "PopoverAnchor": "type",
     "PopoverOpenChangeDetails": "interface",
     "PopoverOpenChangeReason": "type",
     "PopoverProps": "interface",

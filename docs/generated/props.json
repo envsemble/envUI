@@ -3605,6 +3605,13 @@
           "description": "The element that opens the card on hover and keyboard focus; it receives the ref. Text, such as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; give it tabIndex={0}, so keyboard focus reaches it, which envUI reports while developing. A link or another control keeps its own look."
         },
         {
+          "name": "hoverDetail",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether a text trigger takes the quiet dotted underline, env-hover-detail, that says it shows more on hover or focus. False leaves its class alone, for text styled its own way, such as"
+        },
+        {
           "name": "children",
           "type": "ReactNode",
           "required": true,
@@ -5942,8 +5949,15 @@
         {
           "name": "trigger",
           "type": "ReactElement",
-          "required": true,
-          "description": "The control that opens and closes the popover, such as a Button or an IconButton. It must take a ref and props: it receives the press handler, aria-haspopup and aria-expanded."
+          "required": false,
+          "description": "The control that opens and closes the popover, such as a Button or an IconButton. It must take a ref and props: it receives the press handler, aria-haspopup and aria-expanded. Leave it out for a popover the application opens with open, beside its anchor."
+        },
+        {
+          "name": "anchor",
+          "type": "PopoverAnchor",
+          "required": false,
+          "default": "the trigger",
+          "description": "What the popover opens beside where that isn't its trigger, such as a table cell, a word in the text or a range of selected text: an element, its ref, or a virtual element with a getBoundingClientRect."
         },
         {
           "name": "title",
@@ -8787,6 +8801,13 @@
           "type": "string",
           "required": false,
           "description": "Class of the tooltip's popup, beside env-tooltip."
+        },
+        {
+          "name": "hoverDetail",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether a text trigger takes the quiet dotted underline, env-hover-detail, that says it shows more on hover or focus. False leaves its class alone, for text styled its own way, such as"
         },
         {
           "name": "side",
