@@ -1,14 +1,15 @@
 'use client';
 
 import {
+  cloneElement,
   createContext,
+  isValidElement,
   useContext,
   useMemo,
   type ComponentPropsWithRef,
   type ReactElement,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { renderElement } from '../internal/react/renderElement.js';
 import { outsideTheme } from './internal/outsideTheme.js';
 import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
@@ -172,21 +173,29 @@ export function Theme({
     [theme, contrast, scale, selection, corners],
   );
   const boundaryTakesRootLook = themeFromRootAttribute in props;
+  const boundary = {
+    ...props,
+    className,
+    ...(!boundaryTakesRootLook && {
+      className: classNames('env-theme', className),
+      'data-env-theme': theme,
+      'data-env-contrast': contrast === 'system' ? undefined : contrast,
+      'data-env-scale': scale,
+      'data-env-selection': selection,
+      'data-env-corners': corners,
+    }),
+    children,
+  };
   return (
     <ThemeContext value={value}>
-      {renderElement('div', render, {
-        ...props,
-        className,
-        ...(!boundaryTakesRootLook && {
-          className: classNames('env-theme', className),
-          'data-env-theme': theme,
-          'data-env-contrast': contrast === 'system' ? undefined : contrast,
-          'data-env-scale': scale,
-          'data-env-selection': selection,
-          'data-env-corners': corners,
-        }),
-        children,
-      })}
+      {isValidElement<{ className?: string }>(render) ? (
+        cloneElement(render, {
+          ...boundary,
+          className: classNames(boundary.className, render.props.className),
+        })
+      ) : (
+        <div {...boundary} />
+      )}
     </ThemeContext>
   );
 }
