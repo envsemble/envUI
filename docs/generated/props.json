@@ -2037,13 +2037,13 @@
         },
         {
           "name": "confirmLabel",
-          "type": "string",
+          "type": "ReactNode",
           "required": true,
-          "description": "The confirm button's label: a verb that names the consequence, such as Delete project."
+          "description": "The confirm button's label: a verb that names the consequence, such as Delete project. Like a Button's content, it can hold more, such as a Kbd of its shortcut."
         },
         {
           "name": "cancelLabel",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
           "default": "'Cancel', or EnvUIProvider's messages.confirmDialog.cancel",
           "description": "The cancel button's label."
@@ -2592,8 +2592,8 @@
         {
           "name": "title",
           "type": "ReactNode",
-          "required": true,
-          "description": "The dialog's heading and accessible name, such as “Delete project?”."
+          "required": false,
+          "description": "The dialog's heading and accessible name, such as “Delete project?”. Without one, such as for an image viewer or a search dialog its field names, name the dialog with aria-label or aria-labelledby."
         },
         {
           "name": "description",
@@ -2611,14 +2611,39 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The dialog's own actions, after the built-in close button, with the primary action last. They close the dialog only where they are DialogClose or set open to false. While the dialog is pending, the last one shows it, where it is a Button that sets no pending of its own."
+          "description": "The dialog's own actions, after the built-in close button, with the primary action last. They close the dialog only where they are DialogClose or set open to false. While the dialog is pending, the last one shows it, where it is a Button that sets no pending of its own; another component reads it with useDialogPending."
+        },
+        {
+          "name": "actionsStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the start of the actions' row, which takes the room the actions leave, such as a destructive Delete, a Learn more link or a Don't show again checkbox."
+        },
+        {
+          "name": "closeButton",
+          "type": "'actions' | 'heading' | 'none'",
+          "required": false,
+          "default": "'actions'",
+          "description": "Where the built-in close button is: actions, a secondary button that starts the actions; heading, an IconButton with a cross at the end of the heading, as on a Sheet; or none, for a dialog that places its own DialogClose."
         },
         {
           "name": "closeLabel",
           "type": "string",
           "required": false,
           "default": "'Close', or EnvUIProvider's messages.dialog.close",
-          "description": "The label of the built-in close button that starts the actions, such as Cancel."
+          "description": "The label of the built-in close button, such as Cancel, or its name in the heading."
+        },
+        {
+          "name": "headerStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the title in the heading's row, such as a back button."
+        },
+        {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the heading's row, before a close button there, such as a Menu of more actions or an Open full page button."
         },
         {
           "name": "placement",
@@ -7174,7 +7199,25 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Actions at the end of the content, such as Apply, with the primary action last. While the sheet is pending, the last one shows it, where it is a Button that sets no pending of its own."
+          "description": "Actions at the end of the content, such as Apply, with the primary action last. While the sheet is pending, the last one shows it, where it is a Button that sets no pending of its own; another component reads it with useDialogPending."
+        },
+        {
+          "name": "actionsStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the start of the actions' row, which takes the room the actions leave, such as a Reset button or a Learn more link."
+        },
+        {
+          "name": "headerStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the title in the heading's row, such as a back button."
+        },
+        {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the heading's row, before the close button, such as a Menu of more actions or an Open full page button."
         },
         {
           "name": "closeButton",
@@ -9058,6 +9101,15 @@
       "source": "packages/ui/src/foundations/useContainerSize.ts",
       "description": "The size of an element, kept up to date as it changes: its inline and block size in CSS pixels, along its writing mode, from a ResizeObserver. It is undefined on the server and until the element is measured, which happens before the browser paints it; an element that stops being rendered, such as one in a hidden tab panel, keeps its last size until it shows again. Pass a ref object, read once the element mounts, or the element itself, such as one kept in state by a callback ref. Prefer a container query (`@container`) where only styles change. const panel = useRef<HTMLDivElement>(null); const size = useContainerSize(panel); const narrow = size !== undefined && size.inlineSize < 640;",
       "signature": "<T extends Element>(target: RefObject<T | null> | T | null, options?: ContainerSizeOptions): ContainerSize | undefined",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useDialogPending": {
+      "kind": "function",
+      "source": "packages/ui/src/overlays/Dialog.tsx",
+      "description": "Whether the Dialog or Sheet around it is pending, for an action component of the application's own, such as a Button wrapped for analytics, to show the work its press started.",
+      "signature": "(): boolean",
       "entries": [
         "@envsemble/envui"
       ]

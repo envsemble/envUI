@@ -69,13 +69,16 @@ export interface ConfirmDialogProps extends Omit<
    * confirms as the confirm button does, through onConfirm. Hold no form here; use Dialog for one.
    */
   children?: ReactNode;
-  /** The confirm button's label: a verb that names the consequence, such as Delete project. */
-  confirmLabel: string;
+  /**
+   * The confirm button's label: a verb that names the consequence, such as Delete project. Like a
+   * Button's content, it can hold more, such as a Kbd of its shortcut.
+   */
+  confirmLabel: ReactNode;
   /**
    * The cancel button's label.
    * @default 'Cancel', or EnvUIProvider's messages.confirmDialog.cancel
    */
-  cancelLabel?: string;
+  cancelLabel?: ReactNode;
   /**
    * danger for an action that deletes or ends something: the confirm button is a danger one and
    * focus starts on Cancel, so a hurried Enter doesn't confirm. neutral starts focus on the confirm

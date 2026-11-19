@@ -22,6 +22,7 @@ avoidWhen:
 components:
   - Dialog
   - DialogClose
+  - useDialogPending
 examples:
   ProjectDetails:
     role: overview
@@ -31,6 +32,7 @@ examples:
   DialogAnatomy: anatomy
   RenameProject: example
   UnsavedChanges: example
+  EditMember: example
 ---
 
 # Dialog
@@ -73,5 +75,11 @@ examples:
 ### Closing actions
 
 ```tsx figure=UnsavedChanges motion
+
+```
+
+### Actions at the start
+
+```tsx figure=EditMember
 
 ```

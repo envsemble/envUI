@@ -317,10 +317,13 @@
     "Dialog": {
       "env-dialog": "The dialog.",
       "env-dialog-actions": "The row of actions at the bottom.",
+      "env-dialog-actions-start": "The slot of the content at the start of the actions' row.",
       "env-dialog-backdrop": "The backdrop behind a modal dialog.",
       "env-dialog-content": "The dialog's content between the header and the actions.",
       "env-dialog-description": "The sentence under the title.",
       "env-dialog-header": "The row with the title and the close button.",
+      "env-dialog-header-start": "The slot of the content before the title.",
+      "env-dialog-header-end": "The slot of the content at the end of the title's row, before a close button.",
       "env-dialog-heading": "The column with the title and the description.",
       "env-dialog-positioner": "The positioner that centres the dialog.",
       "env-dialog-surface": "The dialog's surface.",

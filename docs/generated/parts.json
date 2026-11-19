@@ -1974,6 +1974,11 @@
           "description": "The row of actions at the bottom."
         },
         {
+          "class": "env-dialog-actions-start",
+          "description": "The slot of the content at the start of the actions' row.",
+          "slot": true
+        },
+        {
           "class": "env-dialog-backdrop",
           "description": "The backdrop behind a modal dialog."
         },
@@ -1988,6 +1993,16 @@
         {
           "class": "env-dialog-header",
           "description": "The row with the title and the close button."
+        },
+        {
+          "class": "env-dialog-header-end",
+          "description": "The slot of the content at the end of the title's row, before a close button.",
+          "slot": true
+        },
+        {
+          "class": "env-dialog-header-start",
+          "description": "The slot of the content before the title.",
+          "slot": true
         },
         {
           "class": "env-dialog-heading",
@@ -2066,6 +2081,8 @@
       ],
       "uses": [
         "Button",
+        "Icon",
+        "IconButton",
         "Overlay",
         "Skeleton",
         "Surface",

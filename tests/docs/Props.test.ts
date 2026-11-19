@@ -21,7 +21,7 @@ test('props carry readable types, defaults from destructuring and their TSDoc', 
   assert.equal(button.variant.default, "'primary'");
   assert.equal(button.pending.type, 'boolean');
   assert.match(button.pending.description, /spinner/);
-  assert.equal(props('Dialog').title.required, true);
+  assert.equal(props('ConfirmDialog').title.required, true);
   assert.match(props('Dialog').closeLabel.default, /^'Close'/);
 });
 
