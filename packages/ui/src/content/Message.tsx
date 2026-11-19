@@ -113,11 +113,7 @@ export function Message(allProps: MessageProps) {
           {hasStart && <Slot className="env-message-start">{start}</Slot>}
           {(hasAuthor || hasMeta) && (
             <Row render={<header />} wrap className="env-message-header">
-              {hasAuthor && (
-                <Slot className="env-message-author" element="span">
-                  {author}
-                </Slot>
-              )}
+              {hasAuthor && <span className="env-message-author">{author}</span>}
               {hasMeta && (
                 <Slot className="env-message-meta" element="span">
                   {meta}
@@ -223,11 +219,7 @@ export function MessageList({
       {children}
       {busy && (
         <Row wrap align="center" className="env-message-list-busy" aria-hidden="true">
-          {present(busyAuthor) && (
-            <Slot className="env-message-author" element="span">
-              {busyAuthor}
-            </Slot>
-          )}
+          {present(busyAuthor) && <span className="env-message-author">{busyAuthor}</span>}
           <Row align="center" gap={1} className="env-message-status">
             <Spinner size="sm" />
             <MessageStatusLabel status="working" label={busyLabel} />

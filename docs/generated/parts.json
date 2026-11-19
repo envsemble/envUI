@@ -2177,8 +2177,7 @@
         },
         {
           "class": "env-disclosure-panel",
-          "description": "The panel it shows.",
-          "slot": true
+          "description": "The panel it shows."
         },
         {
           "class": "env-disclosure-title",
@@ -2194,6 +2193,15 @@
           ],
           "parts": [
             "env-disclosure"
+          ]
+        },
+        {
+          "attribute": "data-layout",
+          "values": [
+            "flow"
+          ],
+          "parts": [
+            "env-disclosure-panel"
           ]
         }
       ],
@@ -3234,8 +3242,7 @@
         },
         {
           "class": "env-message-author",
-          "description": "The author's name.",
-          "slot": true
+          "description": "The author's name."
         },
         {
           "class": "env-message-content",

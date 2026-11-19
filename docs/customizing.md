@@ -208,8 +208,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Disclosure
 
-- Parts: `env-disclosure`, `env-disclosure-indicator`, `env-disclosure-panel` (slot), `env-disclosure-title` (slot)
-- States: `data-indicator` (`end`)
+- Parts: `env-disclosure`, `env-disclosure-indicator`, `env-disclosure-panel`, `env-disclosure-title` (slot)
+- States: `data-indicator` (`end`); `data-layout` (`flow`) on `env-disclosure-panel`
 
 ### DocumentTabs
 
@@ -287,7 +287,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Message
 
-- Parts: `env-message`, `env-message-actions` (slot), `env-message-author` (slot), `env-message-content` (slot), `env-message-header`, `env-message-meta` (slot), `env-message-start` (slot), `env-message-status`, `env-message-text`
+- Parts: `env-message`, `env-message-actions` (slot), `env-message-author`, `env-message-content` (slot), `env-message-header`, `env-message-meta` (slot), `env-message-start` (slot), `env-message-status`, `env-message-text`
 - States: `data-env-skeleton` on `env-message`, `env-message-author`, `env-message-header`, `env-message-meta`; `data-from` (`other`, `self`); `data-start`; `data-status` (`failed`, `sending`)
 
 ### MessageList

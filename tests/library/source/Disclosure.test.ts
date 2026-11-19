@@ -30,9 +30,9 @@ test('the chevron can follow the summary, and a flow panel places the details as
     ['env-disclosure-title', 'env-icon env-disclosure-indicator'],
   );
   assert.ok(hasClass(panel, 'env-disclosure-panel'));
-  assert.equal(panel.attributes['data-env-slot'], 'flow');
+  assert.equal(panel.attributes['data-layout'], 'flow');
   assert.equal(panel.children[0], 'Two more ');
   const stacked = firstElement(renderToStaticMarkup(h(Disclosure, { title: 'Details' }, 'Body')));
   assert.equal(stacked.attributes['data-indicator'], undefined);
-  assert.equal(childElements(stacked)[1].attributes['data-env-slot'], undefined);
+  assert.equal(childElements(stacked)[1].attributes['data-layout'], undefined);
 });

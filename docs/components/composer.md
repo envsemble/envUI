@@ -85,8 +85,8 @@ examples:
 
 ### Keyboard
 
-| Key                                                                            | Action                                                              |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| <kbd>Enter</kbd> in the field                                                  | Sends the message, unless it is blank, pending or running.          |
-| <kbd>Shift</kbd>+<kbd>Enter</kbd> in the field                                 | Starts a new line.                                                  |
-| <kbd>Ctrl</kbd>+<kbd>Enter</kbd> or <kbd>⌘</kbd>+<kbd>Enter</kbd> in the field | With sendKey mod-enter, sends the message; Enter starts a new line. |
+| Key                                                                            | Action                                                                                |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| <kbd>Enter</kbd> in the field                                                  | Sends the message, unless it is blank, pending or running.                            |
+| <kbd>Shift</kbd>+<kbd>Enter</kbd> in the field                                 | Starts a new line.                                                                    |
+| <kbd>Ctrl</kbd>+<kbd>Enter</kbd> or <kbd>⌘</kbd>+<kbd>Enter</kbd> in the field | In a composer that sends with a modifier, sends the message; Enter starts a new line. |

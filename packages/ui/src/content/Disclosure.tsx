@@ -106,7 +106,9 @@ export function Disclosure({
         {indicatorPosition === 'end' && indicator}
       </summary>
       {panelLayout === 'flow' ? (
-        <Slot className="env-disclosure-panel">{children}</Slot>
+        <div className="env-disclosure-panel" data-layout="flow">
+          {children}
+        </div>
       ) : (
         <Column gap={2} className="env-disclosure-panel">
           {children}
