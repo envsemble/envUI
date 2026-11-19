@@ -66,6 +66,7 @@ const reasonsClosingOnlyTheSubmenu = new Set(['escape-key', 'list-navigation']);
  */
 export function Submenu({
   label,
+  textValue,
   icon,
   start,
   description,
@@ -88,8 +89,10 @@ export function Submenu({
     icon,
     start,
     children: label,
+    textValue,
     description,
     end,
+    'aria-describedby': triggerProps?.['aria-describedby'],
   });
   const textLabel = typeof label === 'string' ? label : undefined;
   const portal = usePortalContainer();
@@ -125,7 +128,6 @@ export function Submenu({
         }}
         className={classNames('env-menu-item env-menu-submenu-trigger', triggerProps?.className)}
         disabled={disabled}
-        label={textLabel}
         {...accessibility}
       >
         {content}

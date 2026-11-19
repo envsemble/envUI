@@ -29,6 +29,12 @@ export interface ItemContentProps {
   start?: ReactNode;
   /** The item's label, which names it. */
   children: ReactNode;
+  /**
+   * The label as plain text, which typing a letter in the open menu matches, where children isn't a
+   * string, such as a label with a Badge or emphasis inside.
+   * @default children, when it is a string
+   */
+  textValue?: string;
   /** A second, muted line; announced as the item's description. */
   description?: ReactNode;
   /**
@@ -45,7 +51,16 @@ const endContentSeparateWordInName = ' ';
 
 /** Shared item layout: indicator, icon, label with optional description, end content, shortcut. */
 export function useMenuItemContent(
-  { icon, start, children, description, shortcut, end }: ItemContentProps,
+  {
+    icon,
+    start,
+    children,
+    textValue,
+    description,
+    shortcut,
+    end,
+    'aria-describedby': ownDescribedBy,
+  }: ItemContentProps & { 'aria-describedby'?: string },
   indicator?: ReactNode,
 ) {
   const descriptionId = useId();
@@ -88,10 +103,14 @@ export function useMenuItemContent(
       )}
     </>
   );
+  const describedBy = [ownDescribedBy, description != null ? descriptionId : undefined]
+    .filter(Boolean)
+    .join(' ');
   return {
     content,
     accessibility: {
-      'aria-describedby': description != null ? descriptionId : undefined,
+      label: typeof children === 'string' ? children : textValue,
+      'aria-describedby': describedBy || undefined,
       'aria-keyshortcuts': keyShortcuts(chords),
     },
   };
@@ -182,9 +201,11 @@ export function Item({
   icon,
   start,
   children,
+  textValue,
   description,
   shortcut,
   end,
+  'aria-describedby': ariaDescribedBy,
   tone = 'neutral',
   disabled,
   'aria-current': ariaCurrent,
@@ -202,9 +223,11 @@ export function Item({
     icon,
     start,
     children,
+    textValue,
     description,
     shortcut,
     end,
+    'aria-describedby': ariaDescribedBy,
   });
   const itemClassName = classNames('env-menu-item', className);
   const followableDestination = href !== undefined && !disabled;

@@ -4621,6 +4621,13 @@
           "description": "The item's label, which names it."
         },
         {
+          "name": "textValue",
+          "type": "string",
+          "required": false,
+          "default": "children, when it is a string",
+          "description": "The label as plain text, which typing a letter in the open menu matches, where children isn't a string, such as a label with a Badge or emphasis inside."
+        },
+        {
           "name": "description",
           "type": "ReactNode",
           "required": false,
@@ -4750,6 +4757,13 @@
           "type": "ReactNode",
           "required": true,
           "description": "The item's label, which names it."
+        },
+        {
+          "name": "textValue",
+          "type": "string",
+          "required": false,
+          "default": "children, when it is a string",
+          "description": "The label as plain text, which typing a letter in the open menu matches, where children isn't a string, such as a label with a Badge or emphasis inside."
         },
         {
           "name": "description",
@@ -4918,6 +4932,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "A decorative icon before the label, such as Settings."
+        },
+        {
+          "name": "textValue",
+          "type": "string",
+          "required": false,
+          "default": "children, when it is a string",
+          "description": "The label as plain text, which typing a letter in the open menu matches, where children isn't a string, such as a label with a Badge or emphasis inside."
         },
         {
           "name": "description",
@@ -5119,6 +5140,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "A decorative icon before the label, such as Settings."
+        },
+        {
+          "name": "textValue",
+          "type": "string",
+          "required": false,
+          "default": "children, when it is a string",
+          "description": "The label as plain text, which typing a letter in the open menu matches, where children isn't a string, such as a label with a Badge or emphasis inside."
         },
         {
           "name": "description",

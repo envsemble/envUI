@@ -213,14 +213,33 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
 
 export function AccountSwitcherFixture() {
   return (
-    <Menu.Root aria-label="Switch account" trigger={<Button>Switch account</Button>}>
-      <Menu.Item start={<Avatar name="Alex Morgan" size="sm" />} description="alex@example.com">
-        Alex Morgan
-      </Menu.Item>
-      <Menu.Item start={<Avatar name="Priya Shah" size="sm" />}>Priya Shah</Menu.Item>
-      <Menu.Item icon={<IconAdd />}>Add account</Menu.Item>
-      <Menu.Item>Sign out</Menu.Item>
-    </Menu.Root>
+    <>
+      <Menu.Root aria-label="Switch account" trigger={<Button>Switch account</Button>}>
+        <Menu.Item icon={<IconAdd />}>Add account</Menu.Item>
+        <Menu.Item start={<Avatar name="Alex Morgan" size="sm" />} description="alex@example.com">
+          Alex Morgan
+        </Menu.Item>
+        <Menu.Item start={<Avatar name="Priya Shah" size="sm" />}>Priya Shah</Menu.Item>
+        <Menu.RadioGroup label="Workspaces" defaultValue="northwind">
+          <Menu.RadioItem value="nimbus">Nimbus</Menu.RadioItem>
+          <Menu.RadioItem
+            value="northwind"
+            start={<Avatar name="Northwind" size="sm" />}
+            description="team@northwind.example.com"
+            aria-describedby="shared-note"
+          >
+            Northwind
+          </Menu.RadioItem>
+        </Menu.RadioGroup>
+        <Menu.CheckboxItem>Show offline</Menu.CheckboxItem>
+        <Menu.CheckboxItem start={<Avatar name="Sam Lee" size="sm" />} textValue="Sam Lee">
+          <strong>Sam</strong> Lee
+        </Menu.CheckboxItem>
+        <Menu.Item aria-describedby="sign-out-note">Sign out</Menu.Item>
+      </Menu.Root>
+      <p id="shared-note">Shared account</p>
+      <p id="sign-out-note">Signs out of every account</p>
+    </>
   );
 }
 

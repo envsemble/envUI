@@ -651,6 +651,37 @@ test('a start slot shows an Avatar at its own size, and every label of the menu 
   expect(box(icon).width).toBeCloseTo(16, 0);
 });
 
+test("typing in a menu matches its items' labels, past an Avatar's initials at their start", async () => {
+  mount({ default: menus.AccountSwitcherFixture });
+  const trigger = page.getByRole('button', { name: 'Switch account' });
+  const menu = page.getByRole('menu', { name: 'Switch account' });
+  for (const [typed, role, name] of [
+    ['al', 'menuitem', 'Alex Morgan'],
+    ['no', 'menuitemradio', 'Northwind'],
+    ['sa', 'menuitemcheckbox', 'Sam Lee'],
+  ] as const) {
+    await trigger.click();
+    await settled(menu);
+    await keyboard.type(typed);
+    await expect.element(menu.getByRole(role, { name, exact: true })).toHaveFocus();
+    await keyboard.press('Escape');
+    await isGone(menu);
+  }
+});
+
+test("a menu item's own aria-describedby stays beside its description", async () => {
+  mount({ default: menus.AccountSwitcherFixture });
+  await page.getByRole('button', { name: 'Switch account' }).click();
+  const menu = page.getByRole('menu', { name: 'Switch account' });
+  await settled(menu);
+  await expect
+    .element(menu.getByRole('menuitemradio', { name: 'Northwind' }))
+    .toHaveAccessibleDescription('Shared account team@northwind.example.com');
+  await expect
+    .element(menu.getByRole('menuitem', { name: 'Sign out' }))
+    .toHaveAccessibleDescription('Signs out of every account');
+});
+
 test('menu items take native attributes, a submenu row takes its own and end content, and an action can keep the menu open', async () => {
   mount({ default: menus.ItemAttributesFixture });
   await page.getByRole('button', { name: 'View' }).click();

@@ -118,12 +118,14 @@ export function RadioItem({
   icon,
   start,
   children,
+  textValue,
   description,
   end,
+  'aria-describedby': ariaDescribedBy,
   ...props
 }: RadioItemProps) {
   const { content, accessibility } = useMenuItemContent(
-    { icon, start, children, description, end },
+    { icon, start, children, textValue, description, end, 'aria-describedby': ariaDescribedBy },
     <CheckIndicator kind="radio" />,
   );
   return (
@@ -173,13 +175,24 @@ export function CheckboxItem({
   icon,
   start,
   children,
+  textValue,
   description,
   shortcut,
   end,
+  'aria-describedby': ariaDescribedBy,
   ...props
 }: CheckboxItemProps) {
   const { content, accessibility } = useMenuItemContent(
-    { icon, start, children, description, shortcut, end },
+    {
+      icon,
+      start,
+      children,
+      textValue,
+      description,
+      shortcut,
+      end,
+      'aria-describedby': ariaDescribedBy,
+    },
     <CheckIndicator kind="checkbox" />,
   );
   return (
