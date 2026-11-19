@@ -15,12 +15,22 @@
           "description": "The panel's content, in muted text lined up with the title."
         },
         {
+          "class": "env-accordion-end",
+          "description": "The slot of the content beside an item's heading, outside its button, such as a switch.",
+          "slot": true
+        },
+        {
           "class": "env-accordion-header",
           "description": "An item's heading, which holds its button."
         },
         {
           "class": "env-accordion-indicator",
           "description": "The plus that becomes a minus while the item is open."
+        },
+        {
+          "class": "env-accordion-indicator-content",
+          "description": "The slot of an application's own indicator in place of the plus and minus.",
+          "slot": true
         },
         {
           "class": "env-accordion-item",
@@ -60,6 +70,16 @@
           "values": [],
           "parts": [
             "env-accordion"
+          ]
+        },
+        {
+          "attribute": "data-indicator",
+          "values": [
+            "end",
+            "none"
+          ],
+          "parts": [
+            "env-accordion-item"
           ]
         },
         {
@@ -224,12 +244,22 @@
           "description": "The avatar: an image, initials or a figure in a circle."
         },
         {
+          "class": "env-avatar-badge",
+          "description": "The slot of the small mark at the avatar's bottom end, such as a presence dot.",
+          "slot": true
+        },
+        {
           "class": "env-avatar-check",
           "description": "The check at the bottom end of a chosen avatar."
         },
         {
           "class": "env-avatar-fallback",
           "description": "What shows without an image: initials or a figure."
+        },
+        {
+          "class": "env-avatar-fallback-content",
+          "description": "The slot of an application's own fallback, such as a bot's icon.",
+          "slot": true
         },
         {
           "class": "env-avatar-fallback-initials",
@@ -418,6 +448,11 @@
         {
           "class": "env-badge-label",
           "description": "The badge's text, or its count."
+        },
+        {
+          "class": "env-badge-start",
+          "description": "The slot of the content before a label, in place of its icon.",
+          "slot": true
         }
       ],
       "states": [
@@ -1046,6 +1081,11 @@
         {
           "class": "env-code-block",
           "description": "The block of code."
+        },
+        {
+          "class": "env-code-block-actions",
+          "description": "The slot of the content in the heading before the copy button.",
+          "slot": true
         },
         {
           "class": "env-code-block-copy-status",
@@ -1689,6 +1729,11 @@
           "slot": true
         },
         {
+          "class": "env-composer-end",
+          "description": "The slot of the content in the action row before the send button.",
+          "slot": true
+        },
+        {
           "class": "env-composer-footer",
           "description": "The supporting text below the composer, which describes the field."
         },
@@ -1704,11 +1749,25 @@
         {
           "class": "env-composer-surface",
           "description": "The surface around the input and the footer."
+        },
+        {
+          "class": "env-composer-top",
+          "description": "The slot of the content inside the composer above the input, such as attachments.",
+          "slot": true
         }
       ],
       "states": [
         {
           "attribute": "data-disabled",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-composer"
+          ]
+        },
+        {
+          "attribute": "data-end",
           "values": [
             ""
           ],
@@ -1727,6 +1786,15 @@
         },
         {
           "attribute": "data-start",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-composer"
+          ]
+        },
+        {
+          "attribute": "data-top",
           "values": [
             ""
           ],
@@ -2143,7 +2211,26 @@
           "slot": true
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-indicator",
+          "values": [
+            "end"
+          ],
+          "parts": [
+            "env-disclosure"
+          ]
+        },
+        {
+          "attribute": "data-layout",
+          "values": [
+            "flow"
+          ],
+          "parts": [
+            "env-disclosure-panel"
+          ]
+        }
+      ],
       "uses": [
         "Icon"
       ]
@@ -2722,6 +2809,11 @@
           "description": "The list."
         },
         {
+          "class": "env-list-actions",
+          "description": "The slot of the content at the end of the title's line, such as an Add button.",
+          "slot": true
+        },
+        {
           "class": "env-list-announcer",
           "description": "The announcements of a reordered item."
         },
@@ -2829,6 +2921,15 @@
           ],
           "parts": [
             "env-list-item"
+          ]
+        },
+        {
+          "attribute": "data-placement",
+          "values": [
+            "end"
+          ],
+          "parts": [
+            "env-list-item-handle"
           ]
         },
         {
@@ -3194,6 +3295,11 @@
           "slot": true
         },
         {
+          "class": "env-message-start",
+          "description": "The slot of the content beside the message at its inline start, such as the author's avatar.",
+          "slot": true
+        },
+        {
           "class": "env-message-status",
           "description": "The sending or failed status."
         },
@@ -3218,6 +3324,15 @@
           "values": [
             "other",
             "self"
+          ],
+          "parts": [
+            "env-message"
+          ]
+        },
+        {
+          "attribute": "data-start",
+          "values": [
+            ""
           ],
           "parts": [
             "env-message"
@@ -3305,7 +3420,17 @@
           "description": "The value as text."
         }
       ],
-      "states": []
+      "states": [
+        {
+          "attribute": "data-layout",
+          "values": [
+            "inline"
+          ],
+          "parts": [
+            "env-meter"
+          ]
+        }
+      ]
     },
     "MonthPicker": {
       "root": "env-month-picker",
@@ -5263,12 +5388,25 @@
           "description": "The handle that resizes a column."
         },
         {
+          "class": "env-table-foot",
+          "description": "The foot, with summary rows such as totals, on the header's band."
+        },
+        {
           "class": "env-table-head",
           "description": "The head."
         },
         {
           "class": "env-table-header-cell",
           "description": "A column header."
+        },
+        {
+          "class": "env-table-header-content",
+          "description": "The row of a column header with content at its end: its label or sort button, then that content."
+        },
+        {
+          "class": "env-table-header-end",
+          "description": "The slot of the content at a column header's end, outside its sort button.",
+          "slot": true
         },
         {
           "class": "env-table-header-label",

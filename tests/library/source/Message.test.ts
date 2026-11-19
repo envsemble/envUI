@@ -121,3 +121,55 @@ test('actions without a variant or size of their own are small ghost buttons', (
     assert.equal(button.attributes['data-size'], 'sm');
   }
 });
+
+test('author, status and busy content take any content, and start takes a column beside the message', () => {
+  const avatar = h('span', { 'data-avatar': '' }, 'A');
+  const message = render(
+    h(
+      Message,
+      {
+        from: 'other',
+        start: avatar,
+        author: h(
+          'a',
+          { href: '/people/aurora' },
+          'Aurora',
+          h('span', { 'data-badge': '' }, 'Bot'),
+        ),
+        meta: '09:41',
+        status: 'failed',
+        statusLabel: h('span', null, 'Not sent. ', h('a', { href: '#retry' }, 'Try again')),
+        actions: h(Button, null, 'Copy'),
+        style: { color: 'red' },
+      },
+      'Ping',
+    ),
+  );
+  assert.equal(message.attributes['data-start'], '');
+  assert.match(message.attributes.style, /color:red/);
+  assert.match(message.attributes.style, /--_message-rows:4/);
+  const [start] = message.children.filter((child) => typeof child !== 'string');
+  assert.ok(hasClass(start, 'env-message-start'));
+  assert.equal(textOf(start), 'A');
+  const [author] = byClass(message, 'env-message-author');
+  assert.equal(elementsOf(author).filter((element) => element.tag === 'a').length, 1);
+  assert.equal(textOf(author), 'AuroraBot');
+  const [status] = byClass(message, 'env-message-status');
+  assert.equal(elementsOf(status).find((element) => element.tag === 'a').attributes.href, '#retry');
+  const plain = render(h(Message, { from: 'other', author: 'Aurora' }, 'Hi'));
+  assert.equal(plain.attributes['data-start'], undefined);
+  assert.equal(plain.attributes.style, undefined);
+
+  const busy = render(
+    h(MessageList, {
+      'aria-label': 'Conversation',
+      busy: true,
+      busyAuthor: h('strong', null, 'Aurora'),
+      busyLabel: h('em', null, 'Running tests…'),
+    }),
+  );
+  const [row] = byClass(busy, 'env-message-list-busy');
+  assert.equal(row.attributes['aria-hidden'], 'true');
+  assert.equal(textOf(row), 'AuroraRunning tests…');
+  assert.ok(elementsOf(row).some((element) => element.tag === 'em'));
+});

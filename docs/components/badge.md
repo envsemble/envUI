@@ -49,6 +49,7 @@ examples:
     caption: 'DiffStat: the size of a change.'
   Emphasis: variants
   Tones: variants
+  WithContent: example
   BadgeAnatomy: anatomy
   LongState: example
 ---
@@ -78,6 +79,12 @@ examples:
 5. **Warning**
 6. **Danger**
 7. **Done**
+
+### Content in a badge
+
+```tsx figure=WithContent
+
+```
 
 ## Anatomy
 

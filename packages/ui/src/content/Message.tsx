@@ -1,4 +1,4 @@
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import type { ComponentPropsWithRef, CSSProperties, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
@@ -23,10 +23,16 @@ export interface MessageProps
    */
   from: 'self' | 'other';
   /**
-   * Who wrote the message, such as a name, shown above it at weight 500. Leave it out where the
-   * conversation makes it clear, such as on your own messages in a conversation with one person.
+   * Who wrote the message, such as a name, shown above it at weight 500, or content such as a link
+   * to their profile with a Bot or Owner Badge. Leave it out where the conversation makes it
+   * clear, such as on your own messages in a conversation with one person.
    */
-  author?: string;
+  author?: ReactNode;
+  /**
+   * Content beside the message, at its inline start, placed as given, such as the author's Avatar
+   * or an assistant's mark, in a column of its own beside the header and the content.
+   */
+  start?: ReactNode;
   /** Supporting facts beside the author, in the muted color, such as the time or a RelativeTime. */
   meta?: ReactNode;
   /**
@@ -42,11 +48,11 @@ export interface MessageProps
    */
   status?: MessageStatus;
   /**
-   * The text beside the status icon, such as "Could not deliver". It overrides EnvUIProvider's
-   * `messages.message.sending` and `.failed`.
+   * The content beside the status icon, such as "Could not deliver" or a sentence with a Try again
+   * link. It overrides EnvUIProvider's `messages.message.sending` and `.failed`.
    * @default 'Sending' or 'Not sent'
    */
-  statusLabel?: string;
+  statusLabel?: ReactNode;
   /**
    * The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the
    * width of a message from someone else.
@@ -67,17 +73,25 @@ export function Message(allProps: MessageProps) {
   const {
     from,
     author,
+    start,
     meta,
     actions,
     status,
     statusLabel,
     skeleton = false,
     className,
+    style,
     children,
     ...props
   } = allProps;
   const hasAuthor = present(author) || given(allProps, 'author');
   const hasMeta = present(meta) || given(allProps, 'meta');
+  const hasStart = present(start);
+  const rowsBesideStart =
+    Number(hasAuthor || hasMeta) + 1 + Number(status != null) + Number(present(actions));
+  const styleWithRowsBesideStart: CSSProperties | undefined = hasStart
+    ? { ...style, '--_message-rows': String(rowsBesideStart) }
+    : style;
   return (
     <Grid
       gap={2}
@@ -88,12 +102,15 @@ export function Message(allProps: MessageProps) {
           className={classNames('env-message', className)}
           data-from={from}
           data-status={status}
+          data-start={flag(hasStart)}
+          style={styleWithRowsBesideStart}
         />
       }
     >
       {inSkeleton(
         skeleton,
         <>
+          {hasStart && <Slot className="env-message-start">{start}</Slot>}
           {(hasAuthor || hasMeta) && (
             <Row render={<header />} wrap className="env-message-header">
               {hasAuthor && <span className="env-message-author">{author}</span>}
@@ -144,14 +161,18 @@ export interface MessageListProps extends ComponentPropsWithRef<'div'> {
    * every step.
    */
   busy?: boolean;
-  /** Who the reply on its way comes from, such as Agent, named on the busy row as a message's author. */
-  busyAuthor?: string;
   /**
-   * The text beside the busy spinner, such as "Thinking". It overrides EnvUIProvider's
-   * `messages.message.working`.
+   * Who the reply on its way comes from, such as Agent or the agent's name with its Avatar, named
+   * on the busy row as a message's author.
+   */
+  busyAuthor?: ReactNode;
+  /**
+   * The content beside the busy spinner, such as "Thinking" or the current step, Running tests….
+   * It overrides EnvUIProvider's `messages.message.working`. The busy row is hidden from
+   * assistive technology, which hears aria-busy on the log instead.
    * @default 'Working'
    */
-  busyLabel?: string;
+  busyLabel?: ReactNode;
   /**
    * The list scrolls by itself and follows the conversation: it fills the height its container
    * gives it, opens at the latest message and keeps the latest in view while the reader is at the

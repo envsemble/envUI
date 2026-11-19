@@ -1,6 +1,12 @@
 'use client';
 
-import { useCallback, useContext, useSyncExternalStore, type ComponentPropsWithRef } from 'react';
+import {
+  useCallback,
+  useContext,
+  useSyncExternalStore,
+  type ComponentPropsWithRef,
+  type ReactNode,
+} from 'react';
 import { Tooltip } from '../overlays/Tooltip.js';
 import { TooltipNestingContext } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
@@ -36,8 +42,14 @@ export interface RelativeTimeProps
    * Show the date and time in a tooltip on hover, such as "Oct 14, 2026, 9:41 AM", in the
    * reader's time zone and the locale. Turn it off where the exact moment shows nearby. Inside an
    * application's own Tooltip, that one describes the time instead.
+   * @default true
    */
   tooltip?: boolean;
+  /**
+   * The tooltip's content from the moment, such as the time with its time zone, in UTC, or "Edited
+   * by Alex Morgan at 9:41"; the date and time in the locale by default.
+   */
+  formatTooltip?: (date: Date) => ReactNode;
 }
 
 /**
@@ -51,6 +63,7 @@ export function RelativeTime({
   format = 'long',
   nowLabel: ownNowLabel,
   tooltip = true,
+  formatTooltip,
   className,
   ...props
 }: RelativeTimeProps) {
@@ -86,7 +99,11 @@ export function RelativeTime({
   );
   if (!withTooltip) return element;
   return (
-    <Tooltip content={<DateAndTimeFormattedOnlyWhenShown time={time} locale={locale} />}>
+    <Tooltip
+      content={
+        <DateAndTimeFormattedOnlyWhenShown time={time} locale={locale} format={formatTooltip} />
+      }
+    >
       {element}
     </Tooltip>
   );
@@ -95,9 +112,11 @@ export function RelativeTime({
 function DateAndTimeFormattedOnlyWhenShown({
   time,
   locale,
+  format,
 }: {
   time: number;
   locale: RelativeTimeOptions['locale'];
+  format: RelativeTimeProps['formatTooltip'];
 }) {
-  return dateTimeFormatter(locale).format(time);
+  return format ? format(new Date(time)) : dateTimeFormatter(locale).format(time);
 }

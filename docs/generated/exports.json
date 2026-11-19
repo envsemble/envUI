@@ -331,6 +331,7 @@
   },
   "@envsemble/envui/diff": {
     "CodeDiff": "function",
+    "CodeDiffAnnotation": "interface",
     "CodeDiffProps": "interface",
     "countDiffLines": "function"
   },
@@ -338,6 +339,8 @@
     "Markdown": "function",
     "MarkdownCommand": "type",
     "MarkdownEditor": "function",
+    "MarkdownEditorActions": "interface",
+    "MarkdownEditorMode": "type",
     "MarkdownEditorProps": "interface",
     "MarkdownLink": "interface",
     "MarkdownLinkProps": "interface",

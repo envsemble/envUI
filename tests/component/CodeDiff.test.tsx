@@ -42,3 +42,18 @@ test('a code diff keeps its expanded lines and shows no spinner as the theme swi
   }
   observer.disconnect();
 });
+
+test("a code diff places the header's end and line notes, and split sets the sides side by side at any width", async () => {
+  mount(fixture);
+  const diff = page.getByTestId('annotated').element().querySelector('.env-code-diff')!;
+  await expect.poll(() => diff.hasAttribute('aria-busy')).toBe(false);
+  await expect
+    .element(page.getByTestId('annotated').getByRole('button', { name: 'View file' }))
+    .toBeVisible();
+  await expect.poll(() => diff.querySelector('.fixture-annotation')?.textContent).toBe('Why zero?');
+  await expect
+    .poll(() =>
+      host(diff)?.shadowRoot?.querySelector('[data-diff-type]')?.getAttribute('data-diff-type'),
+    )
+    .toBe('split');
+});

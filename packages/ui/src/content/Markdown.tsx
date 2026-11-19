@@ -54,6 +54,14 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   remarkPlugins?: Options['remarkPlugins'];
   /** rehype plugins, such as heading ids; envUI adds none of its own. */
   rehypePlugins?: Options['rehypePlugins'];
+  /**
+   * Keeps raw HTML in the Markdown, such as details, sub, sup or an img with a width, for trusted
+   * content such as the application's own docs or a README. Only rehype-raw in rehypePlugins
+   * renders it, so give a sanitizer with it, such as rehype-sanitize. Without it, raw HTML is
+   * dropped, apart from kbd around plain text.
+   * @default false
+   */
+  allowHtml?: boolean;
 }
 
 interface HastNode {
@@ -246,6 +254,7 @@ export function Markdown({
   components: componentOverrides,
   remarkPlugins,
   rehypePlugins,
+  allowHtml = false,
   className,
   ...props
 }: MarkdownProps) {
@@ -277,8 +286,10 @@ export function Markdown({
     () =>
       preParsedTree
         ? []
-        : [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropRawHtmlBeforeAnyRehypePlugin],
-    [preParsedTree, remarkPlugins],
+        : allowHtml
+          ? [...markdownPlugins, ...(remarkPlugins ?? [])]
+          : [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropRawHtmlBeforeAnyRehypePlugin],
+    [preParsedTree, remarkPlugins, allowHtml],
   );
   return (
     <div {...props} className={classNames('env-markdown', 'env-prose', className)}>
@@ -287,7 +298,7 @@ export function Markdown({
           remarkPlugins={mergedRemarkPlugins}
           rehypePlugins={mergedRehypePlugins}
           components={mergedComponents}
-          skipHtml
+          skipHtml={!allowHtml}
         >
           {preParsedTree ? emptySourceThePreParsedTreeReplaces : children}
         </ReactMarkdown>

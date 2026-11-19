@@ -27,19 +27,30 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'ul'>, 'title'>, S
    */
   description?: ReactNode;
   /**
+   * Content at the end of the title's line, outside the heading, such as an Add Button, a Manage
+   * link or a count, placed as given; it wraps below the title when it doesn't fit beside it.
+   */
+  actions?: ReactNode;
+  /**
    * How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text.
    * @default 'md'
    */
   density?: RowDensity;
   /**
-   * Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it, by
-   * pressing it or by keyboard, and the list calls this with the row's index and the index it is
-   * dropped at. The application moves the item in its own state; nothing moves until it does. The
+   * Makes the rows reorderable: each row gets a drag handle, at its start unless handlePlacement
+   * puts it at its end, moved by dragging it, by pressing it or by keyboard, and the list calls
+   * this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The
    * rows are the list's children, directly or in arrays and fragments: List.Item elements, or
    * elements of a row component that passes the props it doesn't use on to its List.Item, such as
    * `function SlideRow({ slide, ...props }) { return <List.Item {...props} label={slide} />; }`.
    */
   onReorder?: (from: number, to: number) => void;
+  /**
+   * Where each row's drag handle sits in a list with onReorder: at the row's start, before its
+   * start content, or at its end, after its end content and its control.
+   * @default 'start'
+   */
+  handlePlacement?: 'start' | 'end';
 }
 
 /**
@@ -81,7 +92,9 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
   control?: ReactNode;
   /**
    * The row opens something through a link or button inside: it reacts to hover, keyboard focus
-   * inside it and presses. Mark that link or button `data-row-target` to stretch it over the row.
+   * inside it and presses. Mark that link or button `data-row-target` to stretch it over the row;
+   * the other links, buttons and fields in the row, such as an author's link in the description,
+   * stay clickable above it.
    * @default false
    */
   interactive?: boolean;

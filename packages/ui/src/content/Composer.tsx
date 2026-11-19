@@ -73,6 +73,22 @@ interface ComposerOptions {
   maxRows?: number;
   /** Content at the start of the action row, such as an attach button or the name of a model. */
   start?: ReactNode;
+  /**
+   * Content in the action row just before the send button, such as a voice button, a model picker
+   * or a token count; the field then takes a row of its own above the action row.
+   */
+  end?: ReactNode;
+  /**
+   * Content inside the composer above the field, such as attachment chips, a quoted reply or
+   * context pills, placed as given.
+   */
+  top?: ReactNode;
+  /**
+   * The key that sends: enter, where Shift+Enter starts a new line, or mod-enter, Ctrl+Enter or
+   * ⌘+Enter, where Enter starts a new line, for prompts that mostly take several lines.
+   * @default 'enter'
+   */
+  sendKey?: 'enter' | 'mod-enter';
   /** Supporting text below the composer, such as a note on attachments; it describes the field. */
   description?: ReactNode;
 }
@@ -135,7 +151,8 @@ function useContentHeightWithoutFieldSizing(
 /**
  * The message field of a conversation: a multiline field on a raised surface that grows with its
  * text up to maxRows, with a send button at the end that becomes a stop button while running.
- * Enter submits, Shift+Enter starts a new line and an input method's composition never submits.
+ * Enter submits, or with sendKey mod-enter Ctrl+Enter or ⌘+Enter; Shift+Enter starts a new line and
+ * an input method's composition never submits.
  * Without onSend, Enter and the send button submit the field's form.
  */
 export function Composer({
@@ -151,6 +168,9 @@ export function Composer({
   minRows = 1,
   maxRows = 8,
   start,
+  end,
+  top,
+  sendKey = 'enter',
   description,
   disabled = false,
   enterKeyHint,
@@ -207,6 +227,8 @@ export function Composer({
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     onKeyDown?.(event);
     if (event.defaultPrevented || event.key !== 'Enter' || event.shiftKey || !canSend) return;
+    const withModifier = event.ctrlKey || event.metaKey;
+    if (sendKey === 'mod-enter' && (!withModifier || event.altKey)) return;
     const confirmsComposition =
       event.nativeEvent.isComposing || event.keyCode === imeProcessKeyCode;
     if (confirmsComposition) return;
@@ -216,7 +238,7 @@ export function Composer({
   }
 
   const unavailableButFocusable = running ? !onStop : blank || busy || !canSend;
-  const touchKeyboardEnterLabel = canSend ? 'send' : undefined;
+  const touchKeyboardEnterLabel = canSend && sendKey === 'enter' ? 'send' : undefined;
   const actionLabel = running ? (stopLabel ?? messages.stop) : (sendLabel ?? messages.send);
 
   return (
@@ -231,6 +253,8 @@ export function Composer({
       data-running={flag(running)}
       data-disabled={flag(disabled)}
       data-start={flag(start != null)}
+      data-end={flag(end != null)}
+      data-top={flag(top != null)}
     >
       <div
         className="env-composer-surface"
@@ -240,6 +264,7 @@ export function Composer({
           inputRef.current?.focus();
         }}
       >
+        {top != null && <Slot className="env-composer-top">{top}</Slot>}
         <TextareaControl
           bare
           {...props}
@@ -268,6 +293,11 @@ export function Composer({
         {start != null && (
           <Slot className="env-composer-start" layout="row">
             {start}
+          </Slot>
+        )}
+        {end != null && (
+          <Slot className="env-composer-end" layout="row">
+            {end}
           </Slot>
         )}
         <IconButton

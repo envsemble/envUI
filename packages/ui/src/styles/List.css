@@ -92,6 +92,9 @@
     cursor: grab;
     touch-action: none;
   }
+  .env-list-item-handle[data-placement='end'] {
+    margin-inline: 0 calc(-1 * var(--env-space-3));
+  }
   .env-list[data-reordering] .env-list-item-handle {
     cursor: grabbing;
   }
@@ -181,6 +184,22 @@
     content: '';
     position: absolute;
     inset: 0;
+  }
+  .env-list
+    > .env-list-item[data-interactive]:has([data-row-target])
+    :where(
+      a[href],
+      button,
+      input,
+      select,
+      textarea,
+      summary,
+      label,
+      [tabindex],
+      [contenteditable]
+    ):where(:not([data-row-target], [data-row-target] *)) {
+    position: relative;
+    z-index: var(--env-z-raised);
   }
   .env-list > .env-list-item[data-interactive]:has([data-row-target]:focus-visible) {
     --_list-item-focus-ring: 0.125rem;

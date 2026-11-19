@@ -206,3 +206,24 @@ test('explicit thresholds color days of 0, and two levels color their only step 
   assert.equal(level(two, '2026-05-04'), '1');
   assert.equal(day(two, '2026-05-04').attributes.style, '--_calendar-heatmap-mix:100%');
 });
+
+test('legend false leaves the legend out, and its ends take any content', () => {
+  const data = year.slice(-30);
+  assert.equal(
+    byClass(render({ data, 'aria-label': 'Deploys', legend: false }), 'env-calendar-heatmap-legend')
+      .length,
+    0,
+  );
+  const [legend] = byClass(
+    render({
+      data,
+      'aria-label': 'Deploys',
+      lessLabel: '0',
+      moreLabel: h('strong', null, '20+ deploys'),
+    }),
+    'env-calendar-heatmap-legend',
+  );
+  assert.equal(legend.attributes['aria-hidden'], 'true');
+  assert.match(textOf(legend), /^0.*20\+ deploys$/);
+  assert.ok(elementsOf(legend).some((element) => element.tag === 'strong'));
+});

@@ -80,7 +80,7 @@ export function ReorderableList({
   onKeyDown,
   children,
   ...props
-}: Omit<RootProps, 'title' | 'headingLevel' | 'description'> & {
+}: Omit<RootProps, 'title' | 'headingLevel' | 'description' | 'actions' | 'handlePlacement'> & {
   onReorder: NonNullable<RootProps['onReorder']>;
 }) {
   const element = useRef<HTMLUListElement | null>(null);
@@ -133,7 +133,13 @@ export function ReorderableList({
   );
 }
 
-export function ListReorderHandle({ textValue }: { textValue?: string }) {
+export function ListReorderHandle({
+  textValue,
+  placement,
+}: {
+  textValue?: string;
+  placement?: 'end';
+}) {
   const reorder = useContext(ReorderContext);
   const messages = useMessages('list', listMessages);
   const button = useRef<HTMLButtonElement | null>(null);
@@ -168,6 +174,7 @@ export function ListReorderHandle({ textValue }: { textValue?: string }) {
       aria-describedby={instructionsId}
       aria-pressed={notLiftedUntilTheReorderLiftsIt}
       data-label={text}
+      data-placement={placement}
       className="env-list-item-handle"
       onClick={(event) => {
         const each = row();

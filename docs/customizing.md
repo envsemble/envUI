@@ -57,8 +57,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Accordion
 
-- Parts: `env-accordion`, `env-accordion-content`, `env-accordion-header`, `env-accordion-indicator`, `env-accordion-item`, `env-accordion-label` (slot), `env-accordion-panel`, `env-accordion-trigger`
-- States: `data-disabled` on `env-accordion-trigger`; `data-ending-style` on `env-accordion-panel`; `data-env-skeleton`; `data-interactive` on `env-accordion-trigger`; `data-panel-open` on `env-accordion-trigger`; `data-starting-style` on `env-accordion-panel`
+- Parts: `env-accordion`, `env-accordion-content`, `env-accordion-end` (slot), `env-accordion-header`, `env-accordion-indicator`, `env-accordion-indicator-content` (slot), `env-accordion-item`, `env-accordion-label` (slot), `env-accordion-panel`, `env-accordion-trigger`
+- States: `data-disabled` on `env-accordion-trigger`; `data-ending-style` on `env-accordion-panel`; `data-env-skeleton`; `data-indicator` (`end`, `none`) on `env-accordion-item`; `data-interactive` on `env-accordion-trigger`; `data-panel-open` on `env-accordion-trigger`; `data-starting-style` on `env-accordion-panel`
 
 ### Alert
 
@@ -73,7 +73,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Avatar
 
-- Parts: `env-avatar`, `env-avatar-check`, `env-avatar-fallback`, `env-avatar-fallback-initials`, `env-avatar-fallback-person`, `env-avatar-image`, `env-avatar-person`, `env-avatar-person-background`, `env-avatar-person-figure`
+- Parts: `env-avatar`, `env-avatar-badge` (slot), `env-avatar-check`, `env-avatar-fallback`, `env-avatar-fallback-content` (slot), `env-avatar-fallback-initials`, `env-avatar-fallback-person`, `env-avatar-image`, `env-avatar-person`, `env-avatar-person-background`, `env-avatar-person-figure`
 - States: `data-hue` (`blush`, `butter`, `oat`, `orchid`, `periwinkle`, `powder`, `sage`, `seafoam`); `data-selected`; `data-size` (`lg`, `md`, `sm`, `xl`)
 - Color properties: `--env-avatar-container`, `--env-avatar-content`
 - `--env-avatar-dense`, to set: 1 on a container, such as a dense list, gives the avatars and groups in it fills at half their chroma, so their initials keep their contrast, as a table cell and a small AvatarGroup do.
@@ -89,7 +89,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Badge
 
-- Parts: `env-badge`, `env-badge-count-label`, `env-badge-label`
+- Parts: `env-badge`, `env-badge-count-label`, `env-badge-label`, `env-badge-start` (slot)
 - States: `data-count`; `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`); `data-variant` (`outline`, `soft`, `solid`)
 - Color properties: `--env-badge-container`, `--env-badge-content`, `--env-badge-outline`
 
@@ -136,7 +136,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### CodeBlock
 
-- Parts: `env-code-block`, `env-code-block-copy-status`, `env-code-block-header`, `env-code-block-token`
+- Parts: `env-code-block`, `env-code-block-actions` (slot), `env-code-block-copy-status`, `env-code-block-header`, `env-code-block-token`
 - States: `data-wrap`
 
 ### CodeDiff
@@ -172,8 +172,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Composer
 
-- Parts: `env-composer`, `env-composer-action`, `env-composer-description` (slot), `env-composer-footer`, `env-composer-input`, `env-composer-start` (slot), `env-composer-surface`
-- States: `data-disabled`; `data-running`; `data-start`
+- Parts: `env-composer`, `env-composer-action`, `env-composer-description` (slot), `env-composer-end` (slot), `env-composer-footer`, `env-composer-input`, `env-composer-start` (slot), `env-composer-surface`, `env-composer-top` (slot)
+- States: `data-disabled`; `data-end`; `data-running`; `data-start`; `data-top`
 
 ### ConfirmButton
 
@@ -209,6 +209,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Disclosure
 
 - Parts: `env-disclosure`, `env-disclosure-indicator`, `env-disclosure-panel`, `env-disclosure-title` (slot)
+- States: `data-indicator` (`end`); `data-layout` (`flow`) on `env-disclosure-panel`
 
 ### DocumentTabs
 
@@ -261,8 +262,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### List
 
-- Parts: `env-list`, `env-list-announcer`, `env-list-description` (slot), `env-list-header`, `env-list-item`, `env-list-item-content`, `env-list-item-control` (slot), `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot), `env-list-section`, `env-list-title`
-- States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-env-skeleton` on `env-list`, `env-list-item-description`; `data-interactive` on `env-list-item`; `data-label` on `env-list-item-handle`; `data-moving` (`keyboard`, `pointer`) on `env-list-item`; `data-reorderable`; `data-reordering`; `data-selected` on `env-list-item`; `data-start` on `env-list-item`
+- Parts: `env-list`, `env-list-actions` (slot), `env-list-announcer`, `env-list-description` (slot), `env-list-header`, `env-list-item`, `env-list-item-content`, `env-list-item-control` (slot), `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot), `env-list-section`, `env-list-title`
+- States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-env-skeleton` on `env-list`, `env-list-item-description`; `data-interactive` on `env-list-item`; `data-label` on `env-list-item-handle`; `data-moving` (`keyboard`, `pointer`) on `env-list-item`; `data-placement` (`end`) on `env-list-item-handle`; `data-reorderable`; `data-reordering`; `data-selected` on `env-list-item`; `data-start` on `env-list-item`
 - Color properties: `--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected`, `--env-list-item-selected-content`
 
 ### Markdown
@@ -286,8 +287,8 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Message
 
-- Parts: `env-message`, `env-message-actions` (slot), `env-message-author`, `env-message-content` (slot), `env-message-header`, `env-message-meta` (slot), `env-message-status`, `env-message-text`
-- States: `data-env-skeleton` on `env-message`, `env-message-author`, `env-message-header`, `env-message-meta`; `data-from` (`other`, `self`); `data-status` (`failed`, `sending`)
+- Parts: `env-message`, `env-message-actions` (slot), `env-message-author`, `env-message-content` (slot), `env-message-header`, `env-message-meta` (slot), `env-message-start` (slot), `env-message-status`, `env-message-text`
+- States: `data-env-skeleton` on `env-message`, `env-message-author`, `env-message-header`, `env-message-meta`; `data-from` (`other`, `self`); `data-start`; `data-status` (`failed`, `sending`)
 
 ### MessageList
 
@@ -297,6 +298,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Meter
 
 - Parts: `env-meter`, `env-meter-header`, `env-meter-indicator`, `env-meter-label`, `env-meter-track`, `env-meter-value`
+- States: `data-layout` (`inline`)
 
 ### MonthPicker
 
@@ -439,7 +441,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Table
 
-- Parts: `env-table`, `env-table-body`, `env-table-caption`, `env-table-cell`, `env-table-cell-content` (slot), `env-table-cell-label`, `env-table-column-resize-handle`, `env-table-head`, `env-table-header-cell`, `env-table-header-label`, `env-table-region`, `env-table-row`, `env-table-sort-button`
+- Parts: `env-table`, `env-table-body`, `env-table-caption`, `env-table-cell`, `env-table-cell-content` (slot), `env-table-cell-label`, `env-table-column-resize-handle`, `env-table-foot`, `env-table-head`, `env-table-header-cell`, `env-table-header-content`, `env-table-header-end` (slot), `env-table-header-label`, `env-table-region`, `env-table-row`, `env-table-sort-button`
 - States: `data-align` (`end`, `start`) on `env-table-cell`, `env-table-header-cell`; `data-density` (`lg`, `md`, `sm`, `xs`); `data-fixed-layout`; `data-interactive` on `env-table-row`; `data-labelled` on `env-table-cell`; `data-narrow-layout` (`stack`) on `env-table-region`; `data-nowrap` on `env-table-cell`, `env-table-header-cell`; `data-numeric` on `env-table-cell`, `env-table-header-cell`; `data-plain` on `env-table-region`; `data-resizable` on `env-table-header-cell`; `data-resizing` on `env-table`, `env-table-column-resize-handle`; `data-sortable` on `env-table-header-cell`; `data-stacked` on `env-table-region`; `data-sticky-header` on `env-table-region`
 
 ### TableOfContents

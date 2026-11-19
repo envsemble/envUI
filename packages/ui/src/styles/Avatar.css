@@ -121,6 +121,15 @@
     inline-size: 75%;
     block-size: 75%;
   }
+  .env-avatar-badge {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    z-index: var(--env-z-raised);
+  }
+  .env-avatar[data-selected] .env-avatar-badge {
+    inset-block: 0 auto;
+  }
   @media (forced-colors: active) {
     .env-avatar[data-selected] {
       outline: 2px solid Highlight;
