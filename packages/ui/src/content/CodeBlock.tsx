@@ -11,8 +11,9 @@ export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   label?: ReactNode;
   /**
    * The label as plain text, which names the code for assistive technology where label isn't a
-   * string.
-   * @default the label's text
+   * string; without it, such a label leaves the code the generic name of its language, such as
+   * Plain text code or TypeScript code, from messages.codeBlock.label.
+   * @default the label, when it is a string
    */
   textValue?: string;
   /**

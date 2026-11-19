@@ -1151,8 +1151,8 @@
           "name": "textValue",
           "type": "string",
           "required": false,
-          "default": "the label's text",
-          "description": "The label as plain text, which names the code for assistive technology where label isn't a string."
+          "default": "the label, when it is a string",
+          "description": "The label as plain text, which names the code for assistive technology where label isn't a string; without it, such a label leaves the code the generic name of its language, such as Plain text code or TypeScript code, from messages.codeBlock.label."
         },
         {
           "name": "actions",
@@ -3868,8 +3868,8 @@
           "name": "textValue",
           "type": "string",
           "required": false,
-          "default": "the label's text",
-          "description": "The label as plain text, which names the code for assistive technology where label isn't a string."
+          "default": "the label, when it is a string",
+          "description": "The label as plain text, which names the code for assistive technology where label isn't a string; without it, such a label leaves the code the generic name of its language, such as Plain text code or TypeScript code, from messages.codeBlock.label."
         },
         {
           "name": "actions",
@@ -4433,7 +4433,7 @@
           "name": "toolbarEnd",
           "type": "ReactNode | ((actions: MarkdownEditorActions) => ReactNode)",
           "required": false,
-          "description": "The editor's own toolbar buttons after Undo and Redo, as Toolbar.Buttons, such as a mention, an emoji, an image or an AI rewrite; or a function that receives the editor's actions, such as insert to put text at the selection, and returns them."
+          "description": "The editor's own toolbar buttons after Undo and Redo, as Toolbar.Buttons, such as a mention, an emoji, an image or an AI rewrite; or a function that receives the editor's actions, such as insert to put text at the selection, and returns them. They show only with the toolbar: with toolbar false, they don't render."
         },
         {
           "name": "preview",
@@ -7066,7 +7066,7 @@
           "name": "toolbarEnd",
           "type": "ReactNode",
           "required": false,
-          "description": "The application's own controls at the toolbar's end, after Undo, Redo and Attach files, such as Toolbar.Button or Toolbar.Item elements for Insert template or an AI action; they join the toolbar's arrow keys."
+          "description": "The application's own controls at the toolbar's end, after Undo, Redo and Attach files, such as Toolbar.Button or Toolbar.Item elements for Insert template or an AI action; they join the toolbar's arrow keys. They show only with the toolbar: with toolbar false, they don't render."
         },
         {
           "name": "footer",

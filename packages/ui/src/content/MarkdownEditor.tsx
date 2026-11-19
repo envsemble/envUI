@@ -74,7 +74,8 @@ export interface MarkdownEditorProps extends Omit<
   /**
    * The editor's own toolbar buttons after Undo and Redo, as Toolbar.Buttons, such as a mention,
    * an emoji, an image or an AI rewrite; or a function that receives the editor's actions, such as
-   * insert to put text at the selection, and returns them.
+   * insert to put text at the selection, and returns them. They show only with the toolbar: with
+   * toolbar false, they don't render.
    */
   toolbarEnd?: ReactNode | ((actions: MarkdownEditorActions) => ReactNode);
   /**

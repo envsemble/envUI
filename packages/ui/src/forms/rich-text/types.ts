@@ -186,7 +186,7 @@ export interface RichTextEditorProps
   /**
    * The application's own controls at the toolbar's end, after Undo, Redo and Attach files, such
    * as Toolbar.Button or Toolbar.Item elements for Insert template or an AI action; they join the
-   * toolbar's arrow keys.
+   * toolbar's arrow keys. They show only with the toolbar: with toolbar false, they don't render.
    */
   toolbarEnd?: ReactNode;
   /**
