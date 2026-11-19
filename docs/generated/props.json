@@ -5499,6 +5499,12 @@
           "required": false,
           "default": "true",
           "description": "In a Scaffold, moves focus to the title of a level 1 header when the page changes: as a new page's header mounts after the Scaffold first showed, not as a title changes. People using a screen reader then hear the new page, and the next Tab starts from it. Focus moved there shows no ring, and focus in a field or an open overlay stays where it is. False leaves focus to the application."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "More rows under the toolbar, placed as given, such as a progress strip or an inline Alert. They stay in the header, so they stick with it."
         }
       ],
       "native": [

@@ -64,6 +64,16 @@ export default function PageHeaderFixture() {
           }
         />
       </section>
+      <section aria-label="Extra rows" className="fixture-section">
+        <PageHeader
+          data-testid="extra"
+          title="Import"
+          headingLevel={2}
+          toolbar={<Button variant="secondary">Filter</Button>}
+        >
+          <div data-testid="extra-row">Importing 3 of 12 files</div>
+        </PageHeader>
+      </section>
       <div className="fixture-scaffold-frame" data-testid="frame">
         <Scaffold scroll="body" landmarks={false}>
           <Page

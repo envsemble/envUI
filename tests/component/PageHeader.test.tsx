@@ -123,3 +123,11 @@ test(
     await expect.element(destination('Archive')).toHaveFocus();
   },
 );
+
+test('children render under the toolbar, inside the header', () => {
+  const header = page.getByTestId('extra');
+  const row = header.getByTestId('extra-row');
+  expect(row.element().parentElement).toBe(header.element());
+  const toolbar = header.getByRole('button', { name: 'Filter' });
+  expect(box(row).y).toBeGreaterThanOrEqual(box(toolbar).y + box(toolbar).height);
+});
