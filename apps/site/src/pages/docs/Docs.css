@@ -120,6 +120,10 @@
   gap: var(--env-space-1) var(--env-space-2);
   font-weight: var(--env-font-weight-medium);
 }
+.docs-prop-description-list {
+  margin: var(--env-space-1) 0 0;
+  padding-inline-start: var(--env-space-5);
+}
 .docs-prop-default {
   display: block;
   margin-block-start: var(--env-space-1);
