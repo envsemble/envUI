@@ -37,8 +37,6 @@ examples:
 
 ### Tabs of an editor
 
-A tab's `content` takes the place of its label, such as a dimmed folder before a name two tabs share, and its `end` (`env-document-tabs-tab-end`) holds a status, such as a count of errors; the label still names the tab. A tab whose `closable` is false stays open, and `contextMenu` adds the application's own items after the built-in ones.
-
 ```tsx figure=EditorTabs
 
 ```

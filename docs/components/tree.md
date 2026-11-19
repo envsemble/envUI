@@ -74,8 +74,6 @@ examples:
 
 ### Content in a name
 
-A row's label takes content, such as the letters a search matched in bold; its `textValue` gives type-ahead the plain name.
-
 ```tsx figure=MatchedLetters
 
 ```
