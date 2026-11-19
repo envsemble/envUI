@@ -686,6 +686,7 @@
       "env-segmented-control-item-icon": "The slot of a segment's icon.",
       "env-segmented-control-thumb": "The raised thumb that travels to the chosen segment, hidden until it has measured it.",
       "env-segmented-control-item-count": "A segment's count.",
+      "env-segmented-control-item-end": "The slot of the content after a segment's label and count, such as a Badge.",
       "env-segmented-control-item-label": "A segment's label."
     },
     "Select": {

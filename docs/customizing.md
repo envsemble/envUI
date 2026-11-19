@@ -398,7 +398,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### SegmentedControl
 
-- Parts: `env-segmented-control`, `env-segmented-control-item`, `env-segmented-control-item-count`, `env-segmented-control-item-icon` (slot), `env-segmented-control-item-label`, `env-segmented-control-thumb`
+- Parts: `env-segmented-control`, `env-segmented-control-item`, `env-segmented-control-item-count`, `env-segmented-control-item-end` (slot), `env-segmented-control-item-icon` (slot), `env-segmented-control-item-label`, `env-segmented-control-thumb`
 - States: `data-checked` on `env-segmented-control-item`; `data-disabled` on `env-segmented-control-item`; `data-full-width`; `data-placed` on `env-segmented-control-thumb`; `data-size` (`lg`, `md`, `sm`); `data-traveling` on `env-segmented-control-thumb`
 - Color properties: `--env-segmented-control-container`, `--env-segmented-control-outline`, `--env-segmented-control-content`, `--env-segmented-control-selected`, `--env-segmented-control-selected-content`
 

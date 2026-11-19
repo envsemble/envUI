@@ -28,6 +28,7 @@ components:
 examples:
   WorkItems: overview
   SmallToolbar: example
+  IconOnlyAndBadge: example
   SegmentedControlAnatomy: anatomy
   FullWidthScope: example
 ---
@@ -41,6 +42,12 @@ examples:
 <!-- specimen: Sizes -->
 
 ```tsx figure=SmallToolbar
+
+```
+
+### Icon-only segments and badges
+
+```tsx figure=IconOnlyAndBadge
 
 ```
 

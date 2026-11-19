@@ -4538,6 +4538,11 @@
           "description": "A segment's count."
         },
         {
+          "class": "env-segmented-control-item-end",
+          "description": "The slot of the content after a segment's label and count, such as a Badge.",
+          "slot": true
+        },
+        {
           "class": "env-segmented-control-item-icon",
           "description": "The slot of a segment's icon.",
           "slot": true
@@ -4606,7 +4611,8 @@
         "Popup",
         "Skeleton",
         "Theme",
-        "Tooltip"
+        "Tooltip",
+        "VisuallyHidden"
       ],
       "colors": [
         {
