@@ -271,6 +271,7 @@
     "TreeActionDetails": "interface",
     "TreeItem": "interface",
     "TreeProps": "interface",
+    "TreeRowElementProps": "type",
     "VisuallyHidden": "function",
     "VisuallyHiddenProps": "interface",
     "Weekday": "type",
