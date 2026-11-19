@@ -1,9 +1,16 @@
 import releases from 'virtual:envui-changelog-outline';
+import type { TableOfContentsItem } from '@envsemble/envui';
 import { LongPartSkeleton, placeholderText } from '../../loading/Skeletons';
 import { recordedSize } from '../../loading/RecordedSizes';
-import { PageMarkdown } from '../../markdown/PageMarkdown';
+import { markdownHeadings, PageMarkdown } from '../../markdown/PageMarkdown';
 
 const changelogPath = '../packages/ui/CHANGELOG.md';
+
+export const releaseContents = (): TableOfContentsItem[] =>
+  markdownHeadings(releases.map(({ heading }) => heading).join('\n\n')).map(({ id, text }) => ({
+    id,
+    label: text.split(' — ')[0]!,
+  }));
 
 const skeletonLines = 16;
 

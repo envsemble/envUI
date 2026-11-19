@@ -168,9 +168,9 @@ const linksOf = (list) =>
 
 const repeated = (values) => values.filter((value, index) => values.indexOf(value) !== index);
 
-const fewestListedSections = 3;
+const fewestListedEntries = 3;
 
-test("a page's contents list its own sections, each once, at addresses of their own, and every page of the Docs with three sections or more has them, the others none", async () => {
+test("a page's contents list its own sections, each once, at addresses of their own, and every page of the Docs with three sections or more has them, and none lists fewer than three entries", async () => {
   for (const { path, area } of allPages) {
     const elements = elementsOf(await pageRoot(path));
     const column = elements.find((element) => hasClass(element, 'site-page-column'));
@@ -182,9 +182,12 @@ test("a page's contents list its own sections, each once, at addresses of their 
     const contents = elements.filter(
       (element) => element.tag === 'nav' && element.attributes['aria-label'] === 'On this page',
     );
-    const listed = sections.length >= fewestListedSections;
-    if (area === 'docs') assert.equal(contents.length > 0, listed, `${path} lists its contents`);
-    if (!listed) assert.deepEqual(contents, [], `${path} has too few sections to list`);
+    if (area === 'docs' && sections.length >= fewestListedEntries)
+      assert.ok(contents.length > 0, `${path} lists its contents`);
+    for (const navigation of contents) {
+      const entries = elementsOf(navigation).filter(({ tag }) => tag === 'a').length;
+      assert.ok(entries >= fewestListedEntries, `${path} lists ${entries} entries`);
+    }
     for (const navigation of contents) {
       const lists = elementsOf(navigation).filter(({ tag }) => tag === 'ol' || tag === 'ul');
       const hrefs = elementsOf(navigation)

@@ -29,10 +29,13 @@ export function PageContents({
   );
 }
 
-const fewestListedSections = 3;
+const fewestListedEntries = 3;
+
+const entriesIn = (items: readonly TableOfContentsItem[]): number =>
+  items.reduce((count, item) => count + 1 + entriesIn(item.children ?? []), 0);
 
 export const contentsWorthListing = (items: readonly TableOfContentsItem[] | undefined) =>
-  items === undefined || items.length >= fewestListedSections;
+  items === undefined || entriesIn(items) >= fewestListedEntries;
 
 export const ContentsItems = createContext<readonly TableOfContentsItem[] | undefined>(undefined);
 
