@@ -41,6 +41,7 @@ import { useComboboxSelection, type ComboboxSelection } from './internal/useComb
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { useRowControlNaming } from '../internal/field/rowControl.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
 
@@ -297,8 +298,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
 
   const hasChips = isMultiple && selectedValues.length > 0;
   const fieldPlaceholder = hasChips ? undefined : placeholder;
-  const describedByIds =
-    [hasChips && selectionId, metadata['aria-describedby']].filter(Boolean).join(' ') || undefined;
+  const describedByIds = idRefs(hasChips && selectionId, metadata['aria-describedby']);
   const showClear = clearable && !disabled && !readOnly;
   const clearShown = showClear && selectedValues.length > 0;
   const showStart = singleItem?.start != null && inputText === singleItem.label && !isMultiple;

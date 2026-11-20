@@ -41,6 +41,7 @@ import {
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { ownName, useStandIn, useTriggerName } from './internal/tooltipTriggerName.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/Tooltip.css';
 
@@ -337,7 +338,7 @@ function TooltipTrigger({
     useContext(TooltipDescribesContext) && ownWords !== undefined && !repeatsOwnName;
   const describedBy =
     open && describes && (!isDisabled || standsIn)
-      ? [trigger['aria-describedby'], popupId].filter(Boolean).join(' ')
+      ? idRefs(trigger['aria-describedby'], popupId)
       : trigger['aria-describedby'];
   const freshRootPerTriggerElement = isDisabled ? 'disabled' : 'enabled';
   return (

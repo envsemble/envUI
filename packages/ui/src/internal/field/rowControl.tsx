@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, type ReactNode } from 'react';
+import { idRefs } from '../dom/idRefs.js';
 
 interface RowControlIds {
   labelId: string;
@@ -33,7 +34,6 @@ export function useRowControlNaming(own: OwnNaming): {
   if (named || !row) return {};
   return {
     'aria-labelledby': row.labelId,
-    'aria-describedby':
-      [row.descriptionId, own['aria-describedby']].filter(Boolean).join(' ') || undefined,
+    'aria-describedby': idRefs(row.descriptionId, own['aria-describedby']),
   };
 }

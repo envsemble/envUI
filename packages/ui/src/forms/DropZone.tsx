@@ -24,6 +24,7 @@ import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { flag } from '../internal/flag.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';
 
@@ -180,9 +181,7 @@ export function DropZone({
     setDragging(false);
   }
 
-  const visibleTextIds = [`${id}-label`, description != null && `${id}-description`]
-    .filter(Boolean)
-    .join(' ');
+  const visibleTextIds = idRefs(`${id}-label`, description != null && `${id}-description`);
 
   const target = (
     <ActionElement
@@ -230,10 +229,10 @@ export function DropZone({
     : {
         role: 'group',
         'aria-labelledby': `${id}-label`,
-        'aria-describedby':
-          [description != null && `${id}-description`, error != null && `${id}-error`]
-            .filter(Boolean)
-            .join(' ') || undefined,
+        'aria-describedby': idRefs(
+          description != null && `${id}-description`,
+          error != null && `${id}-error`,
+        ),
       };
   return (
     <Field.Root

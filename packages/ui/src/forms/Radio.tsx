@@ -17,6 +17,7 @@ import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/Radio.css';
 
@@ -121,14 +122,11 @@ export function RadioGroup({
   });
   const ids = fieldMessageIds(id);
   const naming = useRowControlNaming({ label, ...props });
-  const describedBy =
-    [
-      naming['aria-describedby'] ?? props['aria-describedby'],
-      description != null ? ids.description : undefined,
-      error != null ? ids.error : undefined,
-    ]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const describedBy = idRefs(
+    naming['aria-describedby'] ?? props['aria-describedby'],
+    description != null ? ids.description : undefined,
+    error != null ? ids.error : undefined,
+  );
   useFormReset(
     fieldsetRef,
     function applyReset() {

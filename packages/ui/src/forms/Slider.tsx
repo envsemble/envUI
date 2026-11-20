@@ -25,6 +25,7 @@ import { useRowControlNaming } from '../internal/field/rowControl.js';
 import { followDrag, followOverdrag } from './internal/sliderDrag.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
 import { flag } from '../internal/flag.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/Slider.css';
 
@@ -210,14 +211,11 @@ export function Slider({
     return followDrag(element, element.closest<HTMLElement>('.env-slider') ?? element);
   }, []);
   const ticks = tickCount(min, max, step, largeStep);
-  const describedByIds =
-    [
-      naming['aria-describedby'] ?? describedBy,
-      description != null ? fieldMessageIds(id).description : undefined,
-      error != null ? fieldMessageIds(id).error : undefined,
-    ]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const describedByIds = idRefs(
+    naming['aria-describedby'] ?? describedBy,
+    description != null ? fieldMessageIds(id).description : undefined,
+    error != null ? fieldMessageIds(id).error : undefined,
+  );
   const inactiveGroupExemptFromContrast = disabled || undefined;
   return (
     <DirectionProvider direction={directionScope.direction}>

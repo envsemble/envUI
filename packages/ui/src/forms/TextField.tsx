@@ -12,6 +12,7 @@ import {
   type TextFieldAppearanceProps,
   type TextFieldDecorationProps,
 } from '../internal/field/FieldFrame.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 
 /** A text field's look: outline or ghost. */
 export type { FieldVariant as TextFieldVariant } from '../internal/field/FieldFrame.js';
@@ -102,14 +103,11 @@ export function TextField({
     rejected.current = null;
   };
   const { id } = metadata;
-  const describedByIds =
-    [
-      prefix != null && `${id}-prefix`,
-      suffix != null && `${id}-suffix`,
-      metadata['aria-describedby'],
-    ]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const describedByIds = idRefs(
+    prefix != null && `${id}-prefix`,
+    suffix != null && `${id}-suffix`,
+    metadata['aria-describedby'],
+  );
   return (
     <FieldFrame
       id={id}

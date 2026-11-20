@@ -25,6 +25,7 @@ import { composer as composerMessages } from '../foundations/messages/composer.j
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { TextareaControl } from '../internal/field/TextareaControl.js';
 import { flag } from '../internal/flag.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/Composer.css';
 
@@ -275,11 +276,7 @@ export function Composer({
           value={text}
           disabled={disabled}
           enterKeyHint={enterKeyHint ?? touchKeyboardEnterLabel}
-          aria-describedby={
-            [describedBy, description != null ? descriptionId : undefined]
-              .filter(Boolean)
-              .join(' ') || undefined
-          }
+          aria-describedby={idRefs(describedBy, description != null ? descriptionId : undefined)}
           className="env-composer-input"
           onChange={(event) => {
             onChange?.(event);

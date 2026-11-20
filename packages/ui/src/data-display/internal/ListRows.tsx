@@ -23,6 +23,7 @@ import { flag } from '../../internal/flag.js';
 import { rowAttributes } from '../../internal/layout/primitiveAttributes.js';
 import { RowControlProvider } from '../../internal/field/rowControl.js';
 import type { ItemProps, RootProps } from '../List.js';
+import { idRefs } from '../../internal/dom/idRefs.js';
 
 export interface ListIds {
   title?: string;
@@ -61,8 +62,7 @@ export function renderList(
           ...ownProps,
           'aria-labelledby':
             ownProps['aria-labelledby'] ?? (ownProps['aria-label'] == null ? titleId : undefined),
-          'aria-describedby':
-            [descriptionId, ownProps['aria-describedby']].filter(Boolean).join(' ') || undefined,
+          'aria-describedby': idRefs(descriptionId, ownProps['aria-describedby']),
         };
   const list = onReorder ? (
     <ReorderableList

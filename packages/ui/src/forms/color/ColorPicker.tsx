@@ -28,6 +28,7 @@ import { useColorState, useFormResetOf } from './internal/useColorState.js';
 import { formatColor, sameColor, toColor, type ColorFormat } from './internal/colorValue.js';
 import { flag } from '../../internal/flag.js';
 import { Slot } from '../../internal/layout/Slot.js';
+import { idRefs } from '../../internal/dom/idRefs.js';
 import '../../styles/Base.css';
 import '../../styles/ColorPicker.css';
 
@@ -146,10 +147,11 @@ export function ColorPicker({
     />
   );
 
-  const describedByIds =
-    [describedBy, description != null && `${id}-description`, error != null && `${id}-error`]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const describedByIds = idRefs(
+    describedBy,
+    description != null && `${id}-description`,
+    error != null && `${id}-error`,
+  );
 
   return (
     <ColorLocale>
