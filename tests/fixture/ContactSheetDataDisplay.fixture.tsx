@@ -5,7 +5,6 @@ import {
   AvatarGroup,
   Badge,
   Button,
-  CalendarHeatmap,
   DescriptionList,
   Graphic,
   IconButton,
@@ -14,7 +13,6 @@ import {
   Meter,
   RelativeTime,
   Table,
-  type CalendarHeatmapDay,
 } from '@envsemble/envui';
 import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconDescription } from '@envsemble/envui/icons/Description';
@@ -182,40 +180,6 @@ function Badges() {
           </Cell>
         </Strip>
       ))}
-    </Section>
-  );
-}
-
-const heatmap: CalendarHeatmapDay[] = Array.from({ length: 140 }, (_, index) => ({
-  date: new Date(Date.UTC(2026, 5, 1) + index * 86_400_000).toISOString().slice(0, 10),
-  value: Math.round((Math.sin(index / 4) + 1) * 3 + (index % 7 === 3 ? 4 : 0)),
-}));
-
-function Heatmaps() {
-  return (
-    <Section name="CalendarHeatmap">
-      <Strip>
-        {(['primary', 'neutral', 'accent', 'success', 'warning', 'danger', 'done'] as const).map(
-          (tone) => (
-            <Cell key={tone} caption={`${tone}, 4 levels`}>
-              <CalendarHeatmap
-                aria-label={`Edits, ${tone}`}
-                data={heatmap}
-                levels={4}
-                weekStart={1}
-                tone={tone}
-              />
-            </Cell>
-          ),
-        )}
-        <Cell
-          caption="Day hovered"
-          force="hover"
-          target="[data-date='2026-08-05'], [role=gridcell]:nth-of-type(20)"
-        >
-          <CalendarHeatmap aria-label="Edits" data={heatmap} levels={4} weekStart={1} />
-        </Cell>
-      </Strip>
     </Section>
   );
 }
@@ -541,7 +505,6 @@ export function DataDisplaySheet() {
       <Numbers />
       <Avatars />
       <Badges />
-      <Heatmaps />
       <Descriptions />
       <Graphics />
       <Lists />

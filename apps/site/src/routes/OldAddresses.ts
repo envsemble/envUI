@@ -75,6 +75,11 @@ const foldedPages: Record<string, { page: string; section?: string }> = {
   'components/bar': { page: 'components/navigation-drawer' },
   'components/rail': { page: 'components/navigation-drawer' },
   'components/page-header': { page: 'components/page' },
+  'components/calendar-heatmap': {
+    page: 'components/tooltip',
+    section: 'details-of-each-day-in-a-grid',
+  },
+  'components/heatmap': { page: 'components/tooltip', section: 'details-of-each-day-in-a-grid' },
   'components/rating': { page: 'components/meter', section: 'a-score-in-stars' },
   'patterns/feature-cards': { page: 'components/card', section: 'feature-card' },
   'patterns/search-trigger': {
@@ -159,7 +164,6 @@ const renamedPages: Partial<Record<string, string>> = {
   'components/file-dropzone': 'components/drop-zone',
   'components/disclosures': 'components/disclosure',
   'components/notices': 'components/alert',
-  'components/heatmap': 'components/calendar-heatmap',
   'components/rows': 'components/list',
   'components/split-view': 'components/panes',
   'components/split-pane': 'components/panes',

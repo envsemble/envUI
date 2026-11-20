@@ -33,7 +33,7 @@ import {
 import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
 import { Markdown, MarkdownEditor } from '@envsemble/envui/markdown';
 import { defaultMessages } from '@envsemble/envui/messages';
-import { AvatarGroup, CalendarHeatmap, Message, MessageList, RelativeTime } from '@envsemble/envui';
+import { AvatarGroup, Message, MessageList, RelativeTime } from '@envsemble/envui';
 import { useMessages } from '../../packages/ui/src/internal/provider/EnvUIContext.js';
 import { common } from '../../packages/ui/src/foundations/messages/common.js';
 
@@ -149,12 +149,6 @@ export default function MessagesFixture() {
               Not delivered
             </Message>
           </MessageList>
-          <CalendarHeatmap
-            aria-label="Activity"
-            data={[{ date: '2026-10-14', value: 2 }]}
-            startDate="2026-10-12"
-            endDate="2026-10-18"
-          />
           <RelativeTime
             value={Date.UTC(2026, 9, 14, 9, 0, 0)}
             now={Date.UTC(2026, 9, 14, 9, 0, 10)}

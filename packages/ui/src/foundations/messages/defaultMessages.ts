@@ -3,7 +3,6 @@ import { alert } from './alert.js';
 import { avatarGroup } from './avatarGroup.js';
 import { breadcrumbs } from './breadcrumbs.js';
 import { calendar } from './calendar.js';
-import { calendarHeatmap } from './calendarHeatmap.js';
 import { codeBlock } from './codeBlock.js';
 import { codeDiff } from './codeDiff.js';
 import { colorPicker } from './colorPicker.js';
@@ -52,7 +51,6 @@ export const defaultMessages = {
   avatarGroup,
   breadcrumbs,
   calendar,
-  calendarHeatmap,
   codeBlock,
   codeDiff,
   colorPicker,

@@ -96,27 +96,6 @@ test('public components hydrate server output without recoverable errors', async
   await split.focus();
   await page.keyboard.press('ArrowLeft');
   await expect(split).toHaveAttribute('aria-valuetext', '23.5 rem');
-  const activity = page.getByRole('grid', { name: 'Hydrated activity' });
-  await expect(activity.getByRole('gridcell')).toHaveCount(31);
-  const [peakName, nextName] = await page.evaluate(() => {
-    const date = new Intl.DateTimeFormat(undefined, {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      timeZone: 'UTC',
-    });
-    const number = new Intl.NumberFormat();
-    return [
-      `${date.format(Date.UTC(2026, 2, 9))}: ${number.format(1200)}`,
-      `${date.format(Date.UTC(2026, 2, 16))}: ${number.format(7)}`,
-    ];
-  });
-  const peak = activity.getByRole('gridcell', { name: peakName, exact: true });
-  await peak.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(activity.getByRole('gridcell', { name: nextName, exact: true })).toBeFocused();
-  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(nextName);
   const color = page
     .getByRole('group', { name: 'Hydrated color', exact: true })
     .getByRole('textbox', { name: 'Hex' });

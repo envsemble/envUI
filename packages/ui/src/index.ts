@@ -88,7 +88,6 @@ export {
   type RelativeTimeValue,
 } from './data-display/formatRelativeTime.js';
 export * as DescriptionList from './data-display/DescriptionList.js';
-export * from './data-display/CalendarHeatmap.js';
 export * from './data-display/Meter.js';
 
 export * from './content/Disclosure.js';

@@ -82,7 +82,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'DropZone',
     'Alert',
     'Badge',
-    'CalendarHeatmap',
     'Menu',
     'ContextMenu',
     'Menubar',

@@ -82,7 +82,7 @@ test("the named components' props come first, pass-through props last, as many a
   const prop = (title, owner, namesProp = false) => result('prop', title, { owner, namesProp });
   const groups = search.groupResults(
     [
-      prop('startDate', 'CalendarHeatmap', true),
+      prop('startIcon', 'Button', true),
       prop('className', 'DatePicker', true),
       prop('value', 'DatePicker', true),
       prop('min', 'DatePicker.Field', true),

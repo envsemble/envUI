@@ -112,16 +112,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - Parts: `env-calendar`, `env-calendar-day`, `env-calendar-day-content` (slot), `env-calendar-day-mark`, `env-calendar-grid`, `env-calendar-header`, `env-calendar-next`, `env-calendar-pad`, `env-calendar-previous`, `env-calendar-title`
 - States: `data-date` on `env-calendar-day`
 
-### CalendarHeatmap
-
-- Parts: `env-calendar-heatmap`, `env-calendar-heatmap-corner`, `env-calendar-heatmap-day`, `env-calendar-heatmap-grid`, `env-calendar-heatmap-month`, `env-calendar-heatmap-pad`, `env-calendar-heatmap-scroll`, `env-calendar-heatmap-swatch`, `env-calendar-heatmap-tooltip`, `env-calendar-heatmap-tooltip-positioner`, `env-calendar-heatmap-weekday`
-- States: `data-closed` on `env-calendar-heatmap-tooltip-positioner`; `data-date` on `env-calendar-heatmap-day`; `data-day` on `env-calendar-heatmap-day`; `data-level` on `env-calendar-heatmap-day`, `env-calendar-heatmap-swatch`; `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`)
-
-### CalendarHeatmapLegend
-
-- Parts: `env-calendar-heatmap-legend`
-- States: `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`)
-
 ### Card
 
 - Parts: `env-card`, `env-card-actions` (slot), `env-card-body`, `env-card-description`, `env-card-end` (slot), `env-card-footer`, `env-card-header`, `env-card-meta`, `env-card-title`
@@ -562,7 +552,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - `--env-popup-opacity`, to set: How much of a frosted popup's fill covers what is behind it.
 - `--env-popup-blur`, to set: How much a frosted popup blurs what shows through it.
 - `--env-popup-shadow`, to set: The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid.
-- Used by: Breadcrumbs, CalendarHeatmap, CalendarHeatmapLegend, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
+- Used by: Breadcrumbs, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
 
 ### Prose
 
@@ -572,7 +562,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Skeleton
 
 - Parts: `env-skeleton-content`, `env-skeleton-status`
-- Used by: Accordion, Alert, Breadcrumbs, CalendarHeatmap, CalendarHeatmapLegend, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
+- Used by: Accordion, Alert, Breadcrumbs, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
 
 ### TimeList
 

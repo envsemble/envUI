@@ -89,8 +89,6 @@ test('no English default is left under a provider that sets every message', asyn
     '⟦avatarGroup.more⟧',
     '⟦message.sending⟧',
     '⟦message.failed⟧',
-    '⟦calendarHeatmap.less⟧',
-    '⟦calendarHeatmap.more⟧',
     '⟦relativeTime.now⟧',
     '⟦alert.dismiss⟧',
     '⟦common.loading⟧',

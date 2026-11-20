@@ -59,7 +59,6 @@
     "library/rules/StyleImports.test.ts",
     "library/rules/composition/Analysis.ts",
     "library/source/AvatarGroup.test.ts",
-    "library/source/CalendarHeatmap.test.ts",
     "library/source/Card.test.ts",
     "library/source/ChoiceFields.test.ts",
     "library/source/ColorPicker.test.ts",

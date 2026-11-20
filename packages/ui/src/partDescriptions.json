@@ -149,22 +149,6 @@
       "env-calendar-pad": "An empty cell before the first day or after the last.",
       "env-calendar-previous": "The button for the previous month."
     },
-    "CalendarHeatmap": {
-      "env-calendar-heatmap": "The heatmap of days over months.",
-      "env-calendar-heatmap-corner": "The empty corner above the weekday labels.",
-      "env-calendar-heatmap-day": "One day's cell, filled by its level.",
-      "env-calendar-heatmap-grid": "The grid of days.",
-      "env-calendar-heatmap-month": "A month's label above the grid.",
-      "env-calendar-heatmap-pad": "An empty cell outside the range.",
-      "env-calendar-heatmap-scroll": "The region that scrolls the grid sideways.",
-      "env-calendar-heatmap-swatch": "One level's swatch in the legend.",
-      "env-calendar-heatmap-tooltip": "The tooltip of a day.",
-      "env-calendar-heatmap-tooltip-positioner": "The tooltip's positioner.",
-      "env-calendar-heatmap-weekday": "A weekday's label beside the grid."
-    },
-    "CalendarHeatmapLegend": {
-      "env-calendar-heatmap-legend": "The legend of levels."
-    },
     "Card": {
       "env-card": "The card's surface.",
       "env-card-body": "The card's content above the footer.",

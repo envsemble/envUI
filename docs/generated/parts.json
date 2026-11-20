@@ -797,141 +797,6 @@
         "IconButton"
       ]
     },
-    "CalendarHeatmap": {
-      "root": "env-calendar-heatmap",
-      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
-      "parts": [
-        {
-          "class": "env-calendar-heatmap",
-          "description": "The heatmap of days over months."
-        },
-        {
-          "class": "env-calendar-heatmap-corner",
-          "description": "The empty corner above the weekday labels."
-        },
-        {
-          "class": "env-calendar-heatmap-day",
-          "description": "One day's cell, filled by its level."
-        },
-        {
-          "class": "env-calendar-heatmap-grid",
-          "description": "The grid of days."
-        },
-        {
-          "class": "env-calendar-heatmap-month",
-          "description": "A month's label above the grid."
-        },
-        {
-          "class": "env-calendar-heatmap-pad",
-          "description": "An empty cell outside the range."
-        },
-        {
-          "class": "env-calendar-heatmap-scroll",
-          "description": "The region that scrolls the grid sideways."
-        },
-        {
-          "class": "env-calendar-heatmap-swatch",
-          "description": "One level's swatch in the legend."
-        },
-        {
-          "class": "env-calendar-heatmap-tooltip",
-          "description": "The tooltip of a day."
-        },
-        {
-          "class": "env-calendar-heatmap-tooltip-positioner",
-          "description": "The tooltip's positioner."
-        },
-        {
-          "class": "env-calendar-heatmap-weekday",
-          "description": "A weekday's label beside the grid."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-closed",
-          "values": [],
-          "parts": [
-            "env-calendar-heatmap-tooltip-positioner"
-          ]
-        },
-        {
-          "attribute": "data-date",
-          "values": [],
-          "parts": [
-            "env-calendar-heatmap-day"
-          ]
-        },
-        {
-          "attribute": "data-day",
-          "values": [],
-          "parts": [
-            "env-calendar-heatmap-day"
-          ]
-        },
-        {
-          "attribute": "data-level",
-          "values": [],
-          "parts": [
-            "env-calendar-heatmap-day",
-            "env-calendar-heatmap-swatch"
-          ]
-        },
-        {
-          "attribute": "data-tone",
-          "values": [
-            "accent",
-            "danger",
-            "done",
-            "neutral",
-            "primary",
-            "success",
-            "warning"
-          ],
-          "parts": [
-            "env-calendar-heatmap"
-          ]
-        }
-      ],
-      "uses": [
-        "Popup",
-        "Skeleton",
-        "Theme",
-        "Tooltip"
-      ]
-    },
-    "CalendarHeatmapLegend": {
-      "root": "env-calendar-heatmap-legend",
-      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
-      "parts": [
-        {
-          "class": "env-calendar-heatmap-legend",
-          "description": "The legend of levels."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-tone",
-          "values": [
-            "accent",
-            "danger",
-            "done",
-            "neutral",
-            "primary",
-            "success",
-            "warning"
-          ],
-          "parts": [
-            "env-calendar-heatmap-legend"
-          ]
-        }
-      ],
-      "uses": [
-        "Popup",
-        "Skeleton",
-        "Theme",
-        "Tooltip"
-      ]
-    },
     "Card": {
       "root": "env-card",
       "source": "packages/ui/src/layout/Card.tsx",
@@ -6877,8 +6742,6 @@
       ],
       "usedBy": [
         "Breadcrumbs",
-        "CalendarHeatmap",
-        "CalendarHeatmapLegend",
         "ColorPickerButton",
         "Combobox",
         "CopyButton",
@@ -6930,8 +6793,6 @@
         "Accordion",
         "Alert",
         "Breadcrumbs",
-        "CalendarHeatmap",
-        "CalendarHeatmapLegend",
         "Card",
         "ColorPickerButton",
         "Combobox",
