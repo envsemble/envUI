@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
-import { classNames } from '../../internal/classNames.js';
-import { flag } from '../../internal/flag.js';
-import { Slot } from '../../internal/layout/Slot.js';
-import { IconChevronRight } from '../../icons/ChevronRight.js';
-import type { TreeItem } from '../Tree.js';
+import { classNames } from '../../../internal/classNames.js';
+import { flag } from '../../../internal/flag.js';
+import { Slot } from '../../../internal/layout/Slot.js';
+import { IconChevronRight } from '../../../icons/ChevronRight.js';
+import type { TreeItem } from '../../Tree.js';
 import type { TreeMotion } from './treeModel.js';
-import '../../styles/Base.css';
-import '../../styles/Tree.css';
+import '../../../styles/Base.css';
+import '../../../styles/Tree.css';
 
 export interface TreeRowProps {
   item: TreeItem;

@@ -1,10 +1,10 @@
 'use client';
 
 import { useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react';
-import type { TreeItem } from '../Tree.js';
+import type { TreeItem } from '../../Tree.js';
 import { treeMotion, type TreeMotion } from './treeModel.js';
-import '../../styles/Base.css';
-import '../../styles/Tree.css';
+import '../../../styles/Base.css';
+import '../../../styles/Tree.css';
 
 const noRowsArriving: ReadonlySet<string> = new Set();
 

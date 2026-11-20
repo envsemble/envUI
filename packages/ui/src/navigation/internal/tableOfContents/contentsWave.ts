@@ -1,4 +1,4 @@
-import { roundToHundredth } from '../../internal/dom/lengths.js';
+import { roundToHundredth } from '../../../internal/dom/lengths.js';
 
 const swellReachInEntries = 2.5;
 const bulgeRoundnessAboveBell = 3;

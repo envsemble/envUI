@@ -1,4 +1,4 @@
-import { reducedMotionQuery } from '../../internal/motion/reducedMotion.js';
+import { reducedMotionQuery } from '../../../internal/motion/reducedMotion.js';
 
 const rolesThatHandleScrollKeys = [
   'tree',

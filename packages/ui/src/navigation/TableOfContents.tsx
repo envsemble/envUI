@@ -19,10 +19,14 @@ import {
   readingPosition,
   flatten,
   type TableOfContentsItem,
-} from './internal/contentsOutline.js';
-import { focusSection, readSections, rememberScroll } from './internal/sectionScroll.js';
-import { useContentsHeadings } from './internal/useContentsHeadings.js';
-import { createWaveDrawer } from './internal/waveDrawer.js';
+} from './internal/tableOfContents/contentsOutline.js';
+import {
+  focusSection,
+  readSections,
+  rememberScroll,
+} from './internal/tableOfContents/sectionScroll.js';
+import { useContentsHeadings } from './internal/tableOfContents/useContentsHeadings.js';
+import { createWaveDrawer } from './internal/tableOfContents/waveDrawer.js';
 import { prefersReducedMotion, reducedMotionQuery } from '../internal/motion/reducedMotion.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
@@ -30,7 +34,7 @@ import { useLatest } from '../internal/useLatest.js';
 import '../styles/Base.css';
 import '../styles/TableOfContents.css';
 
-export type { TableOfContentsItem } from './internal/contentsOutline.js';
+export type { TableOfContentsItem } from './internal/tableOfContents/contentsOutline.js';
 
 export interface TableOfContentsProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /**

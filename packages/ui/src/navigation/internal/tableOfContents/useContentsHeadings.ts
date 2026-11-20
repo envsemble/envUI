@@ -1,8 +1,8 @@
 'use client';
 
 import { useLayoutEffect, useState, type RefObject } from 'react';
-import type { HeadingLevel } from '../../foundations/headingLevel.js';
-import { useLatest } from '../../internal/useLatest.js';
+import type { HeadingLevel } from '../../../foundations/headingLevel.js';
+import { useLatest } from '../../../internal/useLatest.js';
 import {
   outline,
   slug,

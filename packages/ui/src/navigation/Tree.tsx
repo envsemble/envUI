@@ -24,11 +24,11 @@ import {
   siblingPositions,
   treeKeyAction,
   type TypedText,
-} from './internal/treeModel.js';
+} from './internal/tree/treeModel.js';
 import { labelText } from './internal/labelText.js';
-import { placeRows, TreeRow } from './internal/TreeRow.js';
-import { useTreeTransitions } from './internal/useTreeTransitions.js';
-import { useTreeViewport } from './internal/useTreeViewport.js';
+import { placeRows, TreeRow } from './internal/tree/TreeRow.js';
+import { useTreeTransitions } from './internal/tree/useTreeTransitions.js';
+import { useTreeViewport } from './internal/tree/useTreeViewport.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Tree.css';

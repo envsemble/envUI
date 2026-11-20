@@ -11,7 +11,7 @@ const { Scaffold, Panes, Page, resolveNavigationForms } = await importSource('Sc
   "export * from './packages/ui/src/layout/Scaffold.tsx';",
   "export * as Panes from './packages/ui/src/layout/Panes.tsx';",
   "export * from './packages/ui/src/layout/Page.tsx';",
-  "export { resolveNavigationForms } from './packages/ui/src/layout/internal/navigationForms.ts';",
+  "export { resolveNavigationForms } from './packages/ui/src/layout/internal/scaffold/navigationForms.ts';",
 ]);
 
 const styles = join(repositoryRoot, 'packages/ui/src/styles');

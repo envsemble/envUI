@@ -1,7 +1,7 @@
 {
   "$comment": "The architecture tests/library/rules/Composition.test.ts enforces. Paths are relative to packages/ui/src; stylesheets are relative to packages/ui/src/styles.",
   "layers": {
-    "$comment": "Imports go down this list or stay in their layer. A module's layer is entries for the package's entry points, read from its exports, else its entry under modules, else the longest matching entry under directories. A module of a family's folder that renders another component, or serves one that does, is listed as composites, and one of a composites folder that renders none as base, so a base control cannot import a composite; every other module takes its directory's layer. Any other module listed with a layer its directory doesn't give it takes { layer, reason }. Which modules may import a family's internal/ folder is ESLint's rule, in eslint.config.mjs.",
+    "$comment": "Imports go down this list or stay in their layer. A module's layer is entries for the package's entry points, read from its exports, else its entry under modules, else for a module of a component's internal folder (<family>/internal/<component>/) that component's layer, else the longest matching entry under directories. A module of a family's folder that renders another component, or serves one that does, is listed as composites, and one of a composites folder that renders none as base, so a base control cannot import a composite; every other module takes its directory's layer. Any other module listed with a layer its directory doesn't give it takes { layer, reason }. Which modules may import a family's internal/ folder is ESLint's rule, in eslint.config.mjs.",
     "order": ["internal", "foundations", "base", "composites", "entries"],
     "directories": {
       "internal/": "internal",
@@ -95,10 +95,6 @@
       "navigation/NavigationBar.tsx": "composites",
       "navigation/Pagination.tsx": "composites",
       "navigation/Tree.tsx": "composites",
-      "navigation/internal/TreeRow.tsx": "composites",
-      "navigation/internal/treeModel.ts": "composites",
-      "navigation/internal/useTreeTransitions.ts": "composites",
-      "navigation/internal/useTreeViewport.ts": "composites",
       "internal/popup/PopupSurface.tsx": {
         "layer": "foundations",
         "reason": "It reads Theme and the skeleton."
@@ -169,7 +165,7 @@
       "forms/Switch.tsx": ["input"],
       "forms/SegmentedControl.tsx": ["button"],
       "navigation/Tree.tsx": ["role=\"tree\""],
-      "navigation/internal/TreeRow.tsx": ["role=\"treeitem\""],
+      "navigation/internal/tree/TreeRow.tsx": ["role=\"treeitem\""],
       "forms/Calendar.tsx": ["role=\"grid\""],
       "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
       "forms/internal/FileInput.tsx": ["input"],
@@ -199,7 +195,7 @@
     }
   },
   "classes": {
-    "$comment": "Every module is a component named after its file, owning the classes that start with env-<file name in kebab case> and the stylesheet of the same name. An entry below adds classes (prefixes), stylesheets and other modules to a component; slots are classes another module may emit inside the component when it imports one of the component's modules. A class belongs to the component with the longest matching prefix. A stylesheet listed for a component holds that component's own rules, never rules that restyle another component.",
+    "$comment": "Every module is a component named after its file, except that a module of <family>/internal/<component>/ belongs to the component of <family>/<Component>.tsx. A component owns the classes that start with env-<file name in kebab case> and the stylesheet of the same name. An entry below adds classes (prefixes), stylesheets and other modules to a component; slots are classes another module may emit inside the component when it imports one of the component's modules. A class belongs to the component with the longest matching prefix. A stylesheet listed for a component holds that component's own rules, never rules that restyle another component.",
     "shared": {
       "env-theme": "The theme boundary, which every popup and provider sets.",
       "env-text": "The text style helper.",
@@ -243,13 +239,6 @@
       },
       "Spinner": {
         "modules": ["feedback/internal/SpinnerLabel.tsx", "internal/control/SpinnerArc.tsx"]
-      },
-      "Scaffold": {
-        "modules": [
-          "layout/internal/useScrollKeys.ts",
-          "layout/internal/scaffoldFocus.ts",
-          "layout/internal/useNavigationFocusHandoff.ts"
-        ]
       },
       "List": {
         "modules": [
@@ -344,14 +333,6 @@
         ]
       },
       "Breadcrumbs": {},
-      "DocumentTabs": {
-        "modules": [
-          "navigation/internal/tabStrip.ts",
-          "navigation/internal/useTabCloseFocus.ts",
-          "navigation/internal/useTabDrag.ts",
-          "navigation/internal/useTabStripScrolling.ts"
-        ]
-      },
       "NavigationBar": {
         "classes": ["env-navigation-bar"]
       },
@@ -375,21 +356,6 @@
       },
       "Message": {
         "modules": ["content/internal/MessageListFollow.tsx"]
-      },
-      "TableOfContents": {
-        "modules": [
-          "navigation/internal/sectionScroll.ts",
-          "navigation/internal/useContentsHeadings.ts",
-          "navigation/internal/waveDrawer.ts"
-        ]
-      },
-      "Tree": {
-        "modules": [
-          "navigation/internal/TreeRow.tsx",
-          "navigation/internal/treeModel.ts",
-          "navigation/internal/useTreeTransitions.ts",
-          "navigation/internal/useTreeViewport.ts"
-        ]
       },
       "PopupSurface": {
         "classes": ["env-popup"],

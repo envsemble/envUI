@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { optionModule } from '../../internal/react/useOptionModule.js';
+import { optionModule } from '../../../internal/react/useOptionModule.js';
 import type { createScrollKeys, ScrollKey } from './scrollKeys.js';
 
 const scrollKeysModule = optionModule(() => import('./scrollKeys.js'));

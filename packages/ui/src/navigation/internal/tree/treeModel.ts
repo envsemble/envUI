@@ -1,5 +1,5 @@
-import { typeaheadTimeout } from '../../internal/typeahead.js';
-import type { TreeItem } from '../Tree.js';
+import { typeaheadTimeout } from '../../../internal/typeahead.js';
+import type { TreeItem } from '../../Tree.js';
 
 /**
  * A row expanding or collapsing: the rows it reveals or hides, which grow or shrink as one group

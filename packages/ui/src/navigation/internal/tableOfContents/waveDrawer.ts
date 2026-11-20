@@ -2,7 +2,7 @@ import {
   easingFunction,
   motionDuration,
   motionEasing,
-} from '../../internal/motion/motionTokens.js';
+} from '../../../internal/motion/motionTokens.js';
 import {
   glideAt,
   glideStep,
@@ -12,8 +12,8 @@ import {
   type Glide,
   type WaveLayout,
 } from './contentsWave.js';
-import '../../styles/Base.css';
-import '../../styles/TableOfContents.css';
+import '../../../styles/Base.css';
+import '../../../styles/TableOfContents.css';
 
 const largestStepFollowedWithoutGlideInEntries = 0.2;
 

@@ -1,5 +1,5 @@
-import type { WindowClass } from '../../foundations/windowClasses.js';
-import type { ScaffoldForms, ScaffoldNavigation, ScaffoldNavigationForm } from '../Scaffold.js';
+import type { WindowClass } from '../../../foundations/windowClasses.js';
+import type { ScaffoldForms, ScaffoldNavigation, ScaffoldNavigationForm } from '../../Scaffold.js';
 
 const windowClassesSmallestFirst = ['compact', 'medium', 'expanded', 'large'] as const;
 

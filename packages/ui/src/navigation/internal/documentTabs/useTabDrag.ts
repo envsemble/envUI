@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react';
-import { isRightToLeft } from '../../internal/dom/direction.js';
-import { dragThreshold } from '../../internal/dom/lengths.js';
-import { useLatest } from '../../internal/useLatest.js';
+import { isRightToLeft } from '../../../internal/dom/direction.js';
+import { dragThreshold } from '../../../internal/dom/lengths.js';
+import { useLatest } from '../../../internal/useLatest.js';
 import { moveValue, tabElement } from './tabStrip.js';
 
 const edgeScrollZonePx = 24;

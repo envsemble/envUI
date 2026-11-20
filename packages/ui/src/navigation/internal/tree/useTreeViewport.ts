@@ -1,10 +1,10 @@
 'use client';
 
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
-import type { RowDensity } from '../../foundations/Theme.js';
-import { remPixels } from '../../internal/dom/lengths.js';
-import '../../styles/Base.css';
-import '../../styles/Tree.css';
+import type { RowDensity } from '../../../foundations/Theme.js';
+import { remPixels } from '../../../internal/dom/lengths.js';
+import '../../../styles/Base.css';
+import '../../../styles/Tree.css';
 
 const overscanRows = 8;
 const rowsBeforeViewportIsMeasured = 24;

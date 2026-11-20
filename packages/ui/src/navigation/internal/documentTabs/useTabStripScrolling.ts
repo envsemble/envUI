@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, type RefObject } from 'react';
 import { tabElement } from './tabStrip.js';
-import { useStripWheel } from '../../internal/dom/useStripWheel.js';
+import { useStripWheel } from '../../../internal/dom/useStripWheel.js';
 
 /**
  * How a strip of document tabs scrolls: the active tab scrolls whole into view within the strip,
