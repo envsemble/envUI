@@ -4135,7 +4135,11 @@
         },
         {
           "class": "env-radio-label",
-          "description": "The slot of a radio's label.",
+          "description": "The label, with the description under it."
+        },
+        {
+          "class": "env-radio-label-content",
+          "description": "The slot of the label.",
           "slot": true
         }
       ],

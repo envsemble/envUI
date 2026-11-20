@@ -341,7 +341,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Radio
 
-- Parts: `env-radio`, `env-radio-control`, `env-radio-description`, `env-radio-description-content` (slot), `env-radio-input`, `env-radio-label` (slot)
+- Parts: `env-radio`, `env-radio-control`, `env-radio-description`, `env-radio-description-content` (slot), `env-radio-input`, `env-radio-label`, `env-radio-label-content` (slot)
 - States: `data-label-placement` (`start`); `data-orientation` (`horizontal`, `vertical`)
 - Color properties: `--env-radio-content`, `--env-radio-selected`
 

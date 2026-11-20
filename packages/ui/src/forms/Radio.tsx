@@ -287,8 +287,8 @@ export function Radio({
     />
   );
   const labelContent = label != null && (
-    <span>
-      <Slot className="env-radio-label" element="span">
+    <span className="env-radio-label">
+      <Slot className="env-radio-label-content" element="span">
         {label}
       </Slot>
       {description != null && (
