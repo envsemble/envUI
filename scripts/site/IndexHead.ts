@@ -1,12 +1,11 @@
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import type { Plugin } from 'vite';
-import { createFirstPaintStyle, headScript } from './display/HeadScripts.ts';
-import { siteDescription } from './routes/SiteDescription.ts';
+import { siteDescription } from '../../apps/site/src/routes/SiteDescription.ts';
+import { librarySourceDirectory } from '../RepositoryPaths.ts';
+import { createFirstPaintStyle, headScript } from './HeadScripts.ts';
 
-const tokensFile = fileURLToPath(
-  new URL('../../../packages/ui/src/generated/Tokens.css', import.meta.url),
-);
+const tokensFile = resolve(librarySourceDirectory, 'generated/Tokens.css');
 
 export function indexHeadPlugins(): Plugin[] {
   return [
