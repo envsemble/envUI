@@ -12,6 +12,7 @@ import {
 import { contextTokens, duplicateTokens } from '../../../scripts/build/tokens/TokenSources.ts';
 import { withoutRepeatedValues } from '../../../scripts/build/tokens/TokensCss.ts';
 import { buildTokens } from '../../../scripts/build/BuildTokens.ts';
+import { baseUiPositionerProperties } from '../../../scripts/lint/BaseUiProperties.ts';
 import { partsFile, repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
 const library = join(repositoryRoot, 'packages/ui');
@@ -289,14 +290,6 @@ test('a typography token that aliases another reads the parts the other declares
   assert.equal(resolved('text.caption')['font-size'], '0.875rem');
   assert.deepEqual(resolved('text.caption'), resolved('text.label'));
 });
-
-const baseUiPositionerProperties = [
-  '--anchor-height',
-  '--anchor-width',
-  '--available-height',
-  '--available-width',
-  '--transform-origin',
-];
 
 const applicationColorProperties = Object.values(
   JSON.parse(readFileSync(partsFile, 'utf8')).components,

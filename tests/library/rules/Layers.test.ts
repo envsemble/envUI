@@ -90,30 +90,3 @@ test('every style sheet is imported once and puts its rules in a layer of env', 
     assert.deepEqual(statements, [{ prelude: '@layer env.components', block: true }], file);
   }
 });
-
-test("the library's custom properties take the --env- prefix", async () => {
-  const setByBaseUiReadByEnvUI = new Set([
-    '--anchor-height',
-    '--anchor-width',
-    '--available-height',
-    '--available-width',
-    '--transform-origin',
-    '--drawer-swipe-movement-x',
-    '--drawer-swipe-movement-y',
-    '--accordion-panel-height',
-    '--collapsible-panel-height',
-    '--active-tab-left',
-    '--active-tab-top',
-    '--active-tab-width',
-    '--active-tab-height',
-  ]);
-  const problems: string[] = [];
-  for (const file of await readdir(styles)) {
-    if (!file.endsWith('.css')) continue;
-    const css = (await readFile(join(styles, file), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
-    for (const [name] of css.matchAll(/(?<![\w-])--[a-z][\w-]*/g))
-      if (!name.startsWith('--env-') && !setByBaseUiReadByEnvUI.has(name))
-        problems.push(`${name} in ${file}`);
-  }
-  assert.deepEqual([...new Set(problems)], []);
-});

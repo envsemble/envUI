@@ -76,7 +76,7 @@ export const pathRules: { paths: string[]; needs?: Need[]; browserTests?: string
       'stylelint.config.mjs',
       'stylelint-suppressions.json',
       'packages/stylelint-config/**',
-      'scripts/lint/{NoStyleSheetComments,SlotContent,FontWeightFromToken,Selectors}.ts',
+      'scripts/lint/{NoStyleSheetComments,SlotContent,FontWeightFromToken,Selectors,BaseUiProperties}.ts',
     ],
     needs: ['css'],
   },
