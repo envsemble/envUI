@@ -7,7 +7,7 @@ import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const testsDirectory = join(repositoryRoot, 'tests');
 const projectsOfTheirOwn = ['component', 'fixture', 'types'];
-const untypedAtMost = 59;
+const untypedAtMost = 58;
 
 const configFile = join(testsDirectory, 'tsconfig.json');
 const { config } = ts.parseConfigFileTextToJson(configFile, readFileSync(configFile, 'utf8'));

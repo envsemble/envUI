@@ -1,13 +1,14 @@
 import { registerHooks } from 'node:module';
 import ts from 'typescript';
 
-function exportNames(source, url) {
+function exportNames(source: string, url: string) {
   const file = ts.createSourceFile(url, source, ts.ScriptTarget.Latest, false, ts.ScriptKind.JS);
   const names: string[] = [];
-  const exported = (node) =>
-    node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword);
-  const isDefault = (node) =>
-    node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.DefaultKeyword);
+  const hasModifier = (node: ts.Node, kind: ts.SyntaxKind) =>
+    ts.canHaveModifiers(node) &&
+    Boolean(ts.getModifiers(node)?.some((modifier) => modifier.kind === kind));
+  const exported = (node: ts.Node) => hasModifier(node, ts.SyntaxKind.ExportKeyword);
+  const isDefault = (node: ts.Node) => hasModifier(node, ts.SyntaxKind.DefaultKeyword);
   for (const statement of file.statements) {
     if (ts.isExportDeclaration(statement)) {
       if (!statement.exportClause)
@@ -23,7 +24,7 @@ function exportNames(source, url) {
       (ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement)) &&
       exported(statement)
     )
-      names.push(isDefault(statement) ? 'default' : statement.name.text);
+      names.push(isDefault(statement) || !statement.name ? 'default' : statement.name.text);
   }
   return names;
 }

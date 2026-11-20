@@ -49,7 +49,6 @@
     "library/package/PackageResolution.test.ts",
     "library/package/Theme.test.ts",
     "library/package/ThemeBootstrap.test.ts",
-    "library/package/rsc/ClientReferences.ts",
     "library/package/rsc/Render.ts",
     "library/package/rsc/ServerRender.ts",
     "library/rules/Composition.test.ts",
