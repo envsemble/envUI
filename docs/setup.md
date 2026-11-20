@@ -124,14 +124,12 @@ One provider themes the document; a second passes `applyToDocument={false}`. To 
 
 #### Keep it in the browser
 
-`@envsemble/envui/theme-storage` keeps the preference in localStorage, for an application without a server of its own: spread what `useStoredThemePreference` returns on the provider, and put `createStoredThemeBootstrapScript` in the head in place of `createThemeBootstrapScript`, with the same storage options. A choice made in another tab applies in every tab.
+`@envsemble/envui/theme-storage` keeps the preference in localStorage, for an application without a server of its own: spread what `useStoredThemePreference` returns on the provider, and put `createStoredThemeBootstrapScript` in the head in place of `createThemeBootstrapScript`, with the same storage options, such as `export const themeStorage = { storageKey: 'app-theme' }` beside `theme` in `theme.ts`, so the head's script imports them without the application. A choice made in another tab applies in every tab.
 
 ```tsx
 import { ThemePreferenceProvider, ThemeToggle } from '@envsemble/envui';
 import { useStoredThemePreference } from '@envsemble/envui/theme-storage';
-import { theme } from './theme';
-
-export const themeStorage = { storageKey: 'app-theme' };
+import { theme, themeStorage } from './theme';
 
 function App() {
   const storedTheme = useStoredThemePreference(themeStorage);
@@ -145,8 +143,7 @@ function App() {
 
 ```ts
 import { createStoredThemeBootstrapScript } from '@envsemble/envui/theme-storage';
-import { theme } from './src/theme';
-import { themeStorage } from './src/App';
+import { theme, themeStorage } from './src/theme';
 
 const themeBootstrap = {
   name: 'theme-bootstrap',
