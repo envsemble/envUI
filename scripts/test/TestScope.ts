@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { browserTestFile, browserTestPaths, isComponentTest } from './BrowserTests.ts';
 import { fixtureUse, importsOf } from './FixtureImports.ts';
+import { compileGlobs } from './Globs.ts';
 import { partsFile, repositoryPath, repositoryRoot } from '../RepositoryPaths.ts';
 import { baseBranch, git, mergeBase as mergeBaseOf } from '../Git.ts';
 
@@ -169,8 +170,8 @@ export const pathRules: { paths: string[]; needs?: Need[]; browserTests?: string
   { paths: ['apps/site/src/**'], browserTests: ['LiveDevelopment'] },
 ];
 
-const rulesOf = (path: string) =>
-  pathRules.filter((rule) => rule.paths.some((glob) => posix.matchesGlob(path, glob)));
+const compiledPathRules = pathRules.map((rule) => ({ ...rule, matches: compileGlobs(rule.paths) }));
+const rulesOf = (path: string) => compiledPathRules.filter((rule) => rule.matches(path));
 
 const fastTierHelperTestLimit = 8;
 export const fixtureBudget = 6;

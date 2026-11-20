@@ -1,15 +1,20 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { join, posix } from 'node:path';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import { burnInFiles, chooseJobs, jobRules } from '../../scripts/test/ChooseJobs.ts';
 import { pathRules } from '../../scripts/test/TestScope.ts';
 import { browserTestPaths } from '../../scripts/test/BrowserTests.ts';
+import { compileGlob, compileGlobs } from '../../scripts/test/Globs.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import { inScratchFolder } from '../support/ScratchFolder.ts';
 
 const jobs = (...paths: string[]) => chooseJobs(paths).jobs;
+const compiledPathRules = pathRules.map((rule) => ({
+  ...rule,
+  matches: compileGlobs(rule.paths),
+}));
 
 test('a site change skips the library browser tests, and a library change runs the smoke too', () => {
   assert.deepEqual(jobs('apps/site/src/App.tsx'), { library: false, site: true });
@@ -50,13 +55,14 @@ test('tooling, a path no rule names and a full run run everything', () => {
 
 test('every tracked file is placed by a rule, and every rule places a tracked file', () => {
   const files = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split('\n').filter(Boolean);
-  const unplaced = files.filter(
-    (file) => !jobRules.some((rule) => rule.paths.some((glob) => posix.matchesGlob(file, glob))),
+  const placed = compileGlobs(jobRules.flatMap((rule) => rule.paths));
+  assert.deepEqual(
+    files.filter((file) => !placed(file)),
+    [],
   );
-  assert.deepEqual(unplaced, []);
   const unused = jobRules
     .flatMap((rule) => rule.paths)
-    .filter((glob) => !files.some((file) => posix.matchesGlob(file, glob)));
+    .filter((glob) => !files.some(compileGlob(glob)));
   assert.deepEqual(unused, []);
 });
 
@@ -72,8 +78,8 @@ test('CI runs the browser job of every spec the check tiers run for a file', () 
       : /^(?:packages\/ui\/src|tests\/(?:fixture|component|browser\/library))\//.test(file)
         ? ['Button']
         : [];
-    const ruled = pathRules
-      .filter((rule) => rule.paths.some((glob) => posix.matchesGlob(file, glob)))
+    const ruled = compiledPathRules
+      .filter((rule) => rule.matches(file))
       .flatMap((rule) => rule.browserTests ?? []);
     const chosen = jobs(file);
     for (const spec of [...named, ...ruled])

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
-import { posix } from 'node:path';
 import { parseArgs } from 'node:util';
+import { compileGlobs } from './Globs.ts';
 
 export type Job = 'library' | 'site';
 
@@ -76,12 +76,14 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
   },
 ];
 
+const compiledJobRules = jobRules.map((rule) => ({ ...rule, matches: compileGlobs(rule.paths) }));
+
 export function chooseJobs(paths: readonly string[] | undefined) {
   const jobs = { library: false, site: false };
   const reasons: string[] = [];
   if (!paths) return { jobs: { library: true, site: true }, reasons: ['a full run'] };
   for (const path of paths) {
-    const rule = jobRules.find((each) => each.paths.some((glob) => posix.matchesGlob(path, glob)));
+    const rule = compiledJobRules.find((each) => each.matches(path));
     const runs: Job[] = !rule || rule.jobs === 'all' ? ['library', 'site'] : rule.jobs;
     for (const job of runs)
       if (!jobs[job]) {
