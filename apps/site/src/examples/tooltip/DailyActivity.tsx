@@ -107,7 +107,7 @@ export default function DailyActivity() {
               {Array.from({ length: weeks }, (_, week) => {
                 const day = days[week * 7 + row]!;
                 return (
-                  <Tooltip key={week} content={day.name} hoverDetail={false}>
+                  <Tooltip key={week} content={day.name} underline={false}>
                     <span
                       role="gridcell"
                       aria-label={day.name}
