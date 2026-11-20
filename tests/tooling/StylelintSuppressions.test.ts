@@ -4,7 +4,7 @@ import { join, sep } from 'node:path';
 import { test } from 'node:test';
 import stylelint from 'stylelint';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
-import { styleSheets } from '../../scripts/test/Checks.ts';
+import { styleSheets } from '../../scripts/test/StaticChecks.ts';
 
 const suppressionsFile = 'stylelint-suppressions.json';
 const recordAgain = `Record the lower counts with \`npm run lint:css -- --suppress\` while \`npm run lint:css\` passes, and commit ${suppressionsFile}.`;

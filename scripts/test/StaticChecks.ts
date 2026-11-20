@@ -107,7 +107,7 @@ if (import.meta.main) {
   const [name, ...rest] = process.argv.slice(2);
   if (!name || !(name in checks)) {
     console.error(
-      `Usage: node scripts/test/Checks.ts <check> [arguments], the check one of ${Object.keys(checks).join(', ')}. lint, lint:css and format:check pass their arguments on to their tool; docs:check takes --base <ref>.`,
+      `Usage: node scripts/test/StaticChecks.ts <check> [arguments], the check one of ${Object.keys(checks).join(', ')}. lint, lint:css and format:check pass their arguments on to their tool; docs:check takes --base <ref>.`,
     );
     process.exit(2);
   }

@@ -9,7 +9,7 @@ import {
   type TaskResult,
 } from './TestTasks.ts';
 import { red, yellow } from '../Terminal.ts';
-import { checks, generateDocumentation } from './Checks.ts';
+import { checks, generateDocumentation } from './StaticChecks.ts';
 import { unitTestFiles } from './TestScope.ts';
 import { defaultPorts } from './CheckoutMarker.ts';
 

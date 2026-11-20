@@ -1,15 +1,8 @@
 import { parseArgs } from 'node:util';
-import { checks, generateDocumentation } from './Checks.ts';
-import { isComponentTest } from './FixtureImports.ts';
-import {
-  changedFiles,
-  selectScope,
-  serversFor,
-  specFile,
-  specNeeds,
-  unitTestFiles,
-} from './TestScope.ts';
-import { bin, parallel, series, summary, task, type Task } from './TestTasks.ts';
+import { planCheck } from './CheckPlan.ts';
+import { generateDocumentation } from './StaticChecks.ts';
+import { changedFiles, serversFor, specFile } from './TestScope.ts';
+import { bin, parallel, series, summary, task } from './TestTasks.ts';
 import { bold, dim, red, yellow } from '../Terminal.ts';
 
 const started = performance.now();
@@ -42,28 +35,17 @@ if (!paths.length) {
   process.exit(0);
 }
 
-const scope = selectScope(paths, { affected });
-const windowsCommandLineRoomForPaths = 24_000;
-const tooLong = (paths: readonly string[]) =>
-  paths.reduce((length, path) => length + path.length + 1, 0) > windowsCommandLineRoomForPaths;
-if (tooLong(scope.lint)) scope.whole.lint = true;
-if (tooLong(scope.css)) scope.whole.css = true;
-if (tooLong(scope.format)) scope.whole.format = true;
-const { built: builtUnitTests, fast: fastUnitTests } = unitTestFiles();
-if (paths.some((path) => builtUnitTests.includes(path))) scope.build.library = true;
-
-const needs = new Map([...scope.specs.keys()].map((name) => [name, specNeeds(name)]));
-const live = [...needs].filter(([, need]) => need.live).map(([name]) => name);
-const browserSpecs = [...needs]
-  .filter(([, need]) => !need.live && (affected || !need.library))
-  .map(([name]) => name);
-const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpecs.includes(name));
-const componentTests = browserSpecs.filter((name) => isComponentTest(specFile(name)));
-const playwrightSpecs = browserSpecs.filter((name) => !componentTests.includes(name));
-const builds = {
-  library: affected && scope.build.library,
-  site: [...needs].some(([name, need]) => need.site && playwrightSpecs.includes(name)),
-};
+const {
+  scope,
+  staticTasks,
+  unitTests,
+  browserSpecs,
+  componentTests,
+  playwrightSpecs,
+  live,
+  deferred,
+  builds,
+} = planCheck(paths, { affected, base: baseOption });
 
 const list = (items: string[]) =>
   items.length > 6
@@ -76,7 +58,7 @@ console.log(
 console.log(`  typecheck: ${scope.typecheck ? 'yes, incrementally' : 'no TypeScript changed'}`);
 if (scope.generated.size) console.log(`  generated files: ${[...scope.generated].join(', ')}`);
 console.log(
-  `  unit tests: ${fastUnitTests.length} files${builds.library ? `, and ${builtUnitTests.length} on the library build` : ''}`,
+  `  unit tests: ${unitTests.fast.length} files${builds.library ? `, and ${unitTests.built.length} on the library build` : ''}`,
 );
 const shown = affected ? [...browserSpecs, ...live] : browserSpecs;
 if (shown.length)
@@ -105,31 +87,6 @@ const unmatched = scope.unmatched.filter((path) => !scope.helpers.has(path));
 if (unmatched.length) console.log(dim(`  no spec for ${list(unmatched)}; verify covers it`));
 console.log('');
 if (dryRun) process.exit(0);
-
-const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
-const staticTasks: Task[] = [
-  ...(scope.whole.lint ? checks.lint() : scope.lint.length ? checks.lint(scope.lint) : []),
-  ...(scope.whole.lint || scope.lint.length ? checks['lint:unused']() : []),
-  ...(scope.whole.css
-    ? checks['lint:css']()
-    : scope.css.length
-      ? checks['lint:css'](scope.css)
-      : []),
-  ...(scope.whole.format
-    ? checks['format:check']()
-    : scope.format.length
-      ? checks['format:check'](scope.format)
-      : []),
-  ...(scope.typecheck ? checks.typecheck() : []),
-  ...(scope.generated.has('tokens') ? checks['tokens:check']() : []),
-  ...(scope.generated.has('docs') ? checks['docs:check'](baseOption) : []),
-  ...(scope.generated.has('icons') ? checks['icons:check']() : []),
-];
-staticTasks.push(
-  task('unit tests', [...bin.node, '--test', ...fastUnitTests], {
-    detail: `${fastUnitTests.length} files`,
-  }),
-);
 
 await series([generateDocumentation]);
 
@@ -187,9 +144,9 @@ if (!affected) {
     ...catalogueBuilds,
     builds.library &&
       series([
-        task('build:library', node('scripts/build/BuildLibrary.ts')),
-        task('unit tests on the build', [...bin.node, '--test', ...builtUnitTests], {
-          detail: `${builtUnitTests.length} files`,
+        task('build:library', [...bin.node, 'scripts/build/BuildLibrary.ts']),
+        task('unit tests on the build', [...bin.node, '--test', ...unitTests.built], {
+          detail: `${unitTests.built.length} files`,
         }),
       ]),
   ]);
