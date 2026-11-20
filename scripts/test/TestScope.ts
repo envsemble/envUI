@@ -34,7 +34,6 @@ export const aliases: Record<string, string[]> = {
   accessibleName: ['Tooltip'],
   DialogParts: ['Dialog', 'Skeleton'],
   skeleton: ['Skeleton'],
-  Listbox: ['Select', 'Combobox'],
   ListRow: ['List'],
 };
 
@@ -160,7 +159,6 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     needs: ['library'],
   },
   { paths: ['packages/ui/src/foundations/messages/**'], specs: ['Messages'] },
-  { paths: ['packages/ui/src/dev.ts', 'packages/ui/src/dev/**'], specs: ['DevMode'] },
   { paths: ['apps/site/src/**'], specs: ['LiveDevelopment'] },
 ];
 

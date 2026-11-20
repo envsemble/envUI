@@ -11,9 +11,6 @@
       "prefix": "env-connected-rows",
       "root": "env-connected-rows"
     },
-    "EditorChrome": {
-      "prefix": "env-editor"
-    },
     "HoverDetail": {
       "prefix": "env-hover-detail",
       "root": "env-hover-detail"
@@ -21,10 +18,6 @@
     "ListRow": {
       "prefix": "env-list-row",
       "root": "env-list-row"
-    },
-    "Listbox": {
-      "prefix": "env-listbox",
-      "root": "env-listbox"
     },
     "LoadingBar": {
       "prefix": "env-loading-bar",
@@ -382,10 +375,6 @@
       "env-drop-zone-target": "The target that takes the drop and opens the file picker.",
       "env-drop-zone-text": "The column with the label and the description."
     },
-    "EditorChrome": {
-      "env-editor-status": "The editor's status line, such as a character count.",
-      "env-editor-toolbar": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which wrap onto more rows where they are wider than the editor."
-    },
     "EmptyState": {
       "env-empty-state": "The empty state, centred in the region it fills.",
       "env-empty-state-actions": "The slot of the actions, a row that wraps.",
@@ -458,11 +447,6 @@
       "env-list-row-start": "The slot of the content before a row's name, such as an icon or an Avatar.",
       "env-list-row-text": "The column with a row's label and description."
     },
-    "Listbox": {
-      "env-listbox": "A list of options in a popup.",
-      "env-listbox-empty": "The message when there are no options.",
-      "env-listbox-options": "The options."
-    },
     "LoadingBar": {
       "env-loading-bar": "The loading bar.",
       "env-loading-bar-contained": "A loading bar inside a region rather than the frame.",
@@ -471,13 +455,6 @@
     "Markdown": {
       "env-markdown": "The rendered Markdown.",
       "env-markdown-table": "The region that scrolls a wide table."
-    },
-    "MarkdownEditor": {
-      "env-markdown-editor": "The Markdown editor.",
-      "env-markdown-editor-write": "The text area for writing.",
-      "env-markdown-editor-input": "The text area that shows the Markdown source as text.",
-      "env-markdown-editor-views": "The view switch, with the source and the preview under it.",
-      "env-markdown-editor-view": "The source or the preview, the one the view switch shows."
     },
     "Menu": {
       "env-menu": "The menu's popup.",
@@ -678,22 +655,6 @@
     },
     "ResizeHandle": {
       "env-resize-handle": "The handle: an invisible track that the pointer drags, with a grip of three dots at its middle and a line along it under the pointer, while dragged and with keyboard focus."
-    },
-    "RichText": {
-      "env-rich-text": "The rendered rich text.",
-      "env-rich-text-document": "The editable document.",
-      "env-rich-text-reference": "A reference to a person or an item.",
-      "env-rich-text-suggestions": "The list of suggestions while typing a reference.",
-      "env-rich-text-suggestions-positioner": "The suggestions' positioner.",
-      "env-rich-text-task": "A task item.",
-      "env-rich-text-task-check": "A task's checkbox.",
-      "env-rich-text-task-content": "A task's text."
-    },
-    "RichTextEditor": {
-      "env-rich-text-editor": "The rich text editor.",
-      "env-rich-text-editor-content": "The editable region.",
-      "env-rich-text-editor-control": "The well around the toolbar and the document.",
-      "env-rich-text-editor-footer": "The slot of the content under the document, inside the well, such as a Send button."
     },
     "Scaffold": {
       "env-scaffold": "The scaffold: the top bar, navigation and body regions; it never paints.",

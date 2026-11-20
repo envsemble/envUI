@@ -22,7 +22,7 @@ import { readProps } from '../../scripts/docs/PageStructure.ts';
 const undocumentedExports = [];
 
 const publicModules =
-  /^(?:react|@envsemble\/envui(?:\/(?:code|markdown|diff|rich-text|color|icons\/[A-Za-z\d]+))?)$/;
+  /^(?:react|@envsemble\/envui(?:\/(?:code|markdown|diff|color|icons\/[A-Za-z\d]+))?)$/;
 
 function moduleSpecifiers(source) {
   const file = ts.createSourceFile('Example.tsx', source, ts.ScriptTarget.Latest, true);
@@ -224,7 +224,7 @@ function envuiImports(source) {
   for (const statement of file.statements) {
     if (!ts.isImportDeclaration(statement) || statement.importClause?.isTypeOnly) continue;
     const from = ts.isStringLiteral(statement.moduleSpecifier) && statement.moduleSpecifier.text;
-    if (!from || !/^@envsemble\/envui(?:\/(?:code|markdown|diff|rich-text))?$/.test(from)) continue;
+    if (!from || !/^@envsemble\/envui(?:\/(?:code|markdown|diff))?$/.test(from)) continue;
     const bindings = statement.importClause?.namedBindings;
     if (bindings && ts.isNamedImports(bindings))
       for (const element of bindings.elements)

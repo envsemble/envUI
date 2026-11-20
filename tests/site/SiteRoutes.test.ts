@@ -56,13 +56,16 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'contributing/library-development': 'overview',
     changelog: 'docs/changelog',
     'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
-    'dev-mode': 'docs/dev-mode',
-    'dev-mode?section=opening-it': 'docs/dev-mode?section=opening-it',
+    'dev-mode': 'docs',
+    'dev-mode?section=opening-it': 'docs?section=opening-it',
+    'docs/dev-mode': 'docs',
     'components/bar': 'components/navigation-drawer',
     'components/rail/props': 'docs/components/navigation-drawer',
     'components/drawer': 'components/navigation-drawer',
     'components/page-header?section=sticky': 'components/page?section=sticky',
     'docs/components/page-header': 'docs/components/page',
+    'components/rich-text': 'components/markdown',
+    'docs/components/rich-text': 'docs/components/markdown',
     'patterns/feature-cards': 'components/card?section=feature-card',
     'docs/patterns/feature-cards': 'docs/components/card',
     'patterns/search-trigger':
@@ -83,7 +86,7 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'components/loading': 'docs',
     'components/skeleton': 'docs',
     'components/empty-state': 'components/empty-state',
-    'overview/get-started?document=dev-mode-overview': 'docs/dev-mode',
+    'overview/get-started?document=dev-mode-overview': 'docs',
     'overview/get-started?document=agent-skills': 'docs?section=coding-agents',
     'overview/get-started?document=full-changelog': 'docs/changelog',
     'get-started/scale?section=density': 'foundations/spacing?section=density',
@@ -109,13 +112,7 @@ test("each page of a subject leads to its page in the other part, and a page wit
     assert.equal(counterpartOf(page), undefined, page.path);
     assert.equal(otherPartRoute(page, 'catalogue'), 'docs', page.path);
   }
-  for (const path of [
-    'docs',
-    'docs/dev-mode',
-    'docs/changelog',
-    'docs/tokens',
-    'docs/components/field',
-  ])
+  for (const path of ['docs', 'docs/changelog', 'docs/tokens', 'docs/components/field'])
     assert.equal(otherPartRoute(findPage(path), 'docs'), 'overview', path);
   assert.equal(otherPartRoute(undefined, 'docs'), 'overview');
   assert.equal(otherPartRoute(undefined, 'catalogue'), 'docs');

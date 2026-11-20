@@ -2,7 +2,7 @@
   "$comment": "The architecture tests/library/rules/Composition.test.ts enforces. Paths are relative to packages/ui/src; stylesheets are relative to packages/ui/src/styles.",
   "layers": {
     "$comment": "Imports go down this list or stay in their layer. A module's layer is entries for the package's entry points, read from its exports, else its entry under modules, else the longest matching entry under directories. A module of a family's folder that renders another component, or serves one that does, is listed as composites, and one of a composites folder that renders none as base, so a base control cannot import a composite; every other module takes its directory's layer. Any other module listed with a layer its directory doesn't give it takes { layer, reason }. Which modules may import a family's internal/ folder is ESLint's rule, in eslint.config.mjs.",
-    "order": ["internal", "foundations", "base", "composites", "shell", "entries"],
+    "order": ["internal", "foundations", "base", "composites", "entries"],
     "directories": {
       "internal/": "internal",
       "foundations/": "foundations",
@@ -16,11 +16,8 @@
       "data-display/": "base",
       "overlays/": "base",
       "layout/": "composites",
-      "content/internal/markdown/": "composites",
       "forms/color/": "composites",
-      "forms/rich-text/": "composites",
-      "actions/menu/": "composites",
-      "dev/": "shell"
+      "actions/menu/": "composites"
     },
     "modules": {
       "icons/index.ts": {
@@ -93,15 +90,6 @@
       "forms/internal/PickerField.tsx": "composites",
       "forms/internal/MonthGrid.tsx": "composites",
       "forms/DropZone.tsx": "composites",
-      "content/MarkdownEditor.tsx": "composites",
-      "internal/editor/EditorToolbar.tsx": {
-        "layer": "composites",
-        "reason": "It renders Toolbar."
-      },
-      "internal/editor/LinkDialog.tsx": {
-        "layer": "composites",
-        "reason": "It renders Dialog and Button."
-      },
       "forms/SearchField.tsx": "composites",
       "forms/Select.tsx": "composites",
       "navigation/Breadcrumbs.tsx": "composites",
@@ -140,14 +128,6 @@
       "internal/field/FieldFrame.tsx": {
         "layer": "base",
         "reason": "It renders Field."
-      },
-      "internal/editor/EditorStatus.tsx": {
-        "layer": "foundations",
-        "reason": "It renders Text."
-      },
-      "internal/editor/editorCommands.ts": {
-        "layer": "foundations",
-        "reason": "It gives each command its Icon."
       },
       "internal/dialog/DialogParts.tsx": {
         "layer": "foundations",
@@ -197,13 +177,11 @@
       "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
       "data-display/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "forms/internal/FileInput.tsx": ["input"],
-      "forms/rich-text/internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
       "forms/color/ColorPickerButton.tsx": ["button"],
       "forms/color/internal/ColorArea.tsx": ["input"],
       "forms/color/internal/ColorFields.tsx": ["input"],
       "forms/color/internal/ColorSlider.tsx": ["input"],
       "forms/color/internal/SwatchList.tsx": ["role=\"listbox\"", "role=\"option\""],
-      "dev/ui/Frame.tsx": ["role=\"slider\""],
       "overlays/Tooltip.tsx": [
         "role=\"button\"",
         "role=\"link\"",
@@ -228,44 +206,17 @@
     "$comment": "Every module is a component named after its file, owning the classes that start with env-<file name in kebab case> and the stylesheet of the same name. An entry below adds classes (prefixes), stylesheets and other modules to a component; slots are classes another module may emit inside the component when it imports one of the component's modules. A class belongs to the component with the longest matching prefix. A stylesheet listed for a component holds that component's own rules, never rules that restyle another component.",
     "shared": {
       "env-theme": "The theme boundary, which every popup and provider sets.",
-      "env-window": "The theme boundary's container name, which dialogs, sheets and menus query when nothing nearer applies.",
       "env-text": "The text style helper.",
       "env-surface": "The surface helper, which components render through Surface.",
       "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List.",
       "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of List.",
       "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size.",
-      "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document.",
+      "env-prose": "The prose typography (Prose.css) of Markdown.",
       "env-skeleton-content": "A skeleton's inert content without a box, which every component that takes skeleton renders inside its busy root (Skeleton.css).",
       "env-skeleton-status": "The visually hidden status beside a skeleton list (Skeleton.css).",
       "env-hover-detail": "The dotted underline (HoverDetail.css) of text that shows more on hover or focus, which HoverCard and Tooltip give a text trigger."
     },
     "components": {
-      "dev": {
-        "classes": ["env-dev"],
-        "modules": [
-          "dev/api.ts",
-          "dev/install.tsx",
-          "dev/measure.ts",
-          "dev/model.ts",
-          "dev/parts.ts",
-          "dev/queries.ts",
-          "dev/readout.ts",
-          "dev/ui/DevMode.tsx",
-          "dev/ui/Frame.tsx",
-          "dev/ui/Inspector.tsx",
-          "dev/ui/Legend.tsx",
-          "dev/ui/NodeHints.tsx",
-          "dev/ui/PerformancePanel.tsx",
-          "dev/ui/Plane.tsx",
-          "dev/ui/View3D.tsx",
-          "dev/ui/ViewToolbar.tsx",
-          "dev/ui/surfaces.ts",
-          "dev/ui/useLivePage.ts",
-          "dev/ui/useViewWheel.ts",
-          "dev/units.ts",
-          "dev/usedTokens.ts"
-        ]
-      },
       "Button": {
         "classes": ["env-icon-button"],
         "modules": ["actions/internal/ButtonBase.tsx"]
@@ -391,24 +342,6 @@
         "styles": ["TextField.css"],
         "slots": ["env-text-field-input", "env-text-field-start", "env-text-field-end"]
       },
-      "MarkdownEditor": {
-        "modules": [
-          "content/internal/markdown/markdownFormatting.ts",
-          "content/internal/markdown/markdownHistory.ts",
-          "content/internal/markdown/MarkdownPreview.tsx",
-          "content/internal/markdown/useMarkdownEditing.ts"
-        ],
-        "classes": ["env-markdown-editor-input"]
-      },
-      "Editor": {
-        "modules": [
-          "internal/editor/editorCommands.ts",
-          "internal/editor/EditorToolbar.tsx",
-          "internal/editor/EditorStatus.tsx",
-          "internal/editor/LinkDialog.tsx"
-        ],
-        "styles": ["Editor.css"]
-      },
       "Theme": {
         "modules": ["foundations/themeBootstrap.ts"],
         "styles": ["TokensHandwritten.css"]
@@ -464,23 +397,6 @@
           "navigation/internal/useTreeViewport.ts"
         ]
       },
-      "RichText": {
-        "modules": [
-          "forms/rich-text/RichTextEditor.tsx",
-          "forms/rich-text/internal/Reference.tsx",
-          "forms/rich-text/internal/referenceAttributes.ts",
-          "forms/rich-text/internal/referenceExtension.ts",
-          "forms/rich-text/internal/suggestions.tsx",
-          "forms/rich-text/internal/taskItem.tsx",
-          "forms/rich-text/internal/commands.ts",
-          "forms/rich-text/internal/useDocumentAttributes.ts",
-          "forms/rich-text/internal/useLinksAndUploads.ts",
-          "forms/rich-text/internal/useRichTextDocument.ts",
-          "forms/rich-text/internal/useRichTextExtensions.ts",
-          "forms/rich-text/extensions.ts",
-          "forms/rich-text/types.ts"
-        ]
-      },
       "PopupSurface": {
         "classes": ["env-popup"],
         "styles": ["Popup.css"]
@@ -518,7 +434,7 @@
       "index.css": "Imports every stylesheet.",
       "Base.css": "The layer order, the reset, the tokens, the theme boundary and the shared surface, icon and motion rules every component builds on.",
       "ConnectedRows.css": "Shared connected-row corners.",
-      "Prose.css": "The prose typography Markdown and the rich-text components share.",
+      "Prose.css": "The prose typography of Markdown.",
       "Motion.css": "The keyframes several components share.",
       "Skeleton.css": "The skeleton state every component that paints a container takes, by element and data-env-skeleton.",
       "Reset.css": "The margin of a themed document's body and the box-sizing reset inside every theme boundary.",
@@ -593,11 +509,6 @@
           "stylesheet": "Code.css",
           "classes": ["env-spinner"],
           "note": "A code diff pads its loading state."
-        },
-        {
-          "stylesheet": "Editor.css",
-          "classes": ["env-toolbar", "env-toolbar-group"],
-          "note": "An editor's formatting toolbar wraps its groups onto more rows, and offsets the row and its first group so the separator a wrapped row starts with lies outside its clip."
         },
         {
           "stylesheet": "Composer.css",

@@ -3077,46 +3077,6 @@
         "Prose"
       ]
     },
-    "MarkdownEditor": {
-      "root": "env-markdown-editor",
-      "source": "packages/ui/src/content/MarkdownEditor.tsx",
-      "parts": [
-        {
-          "class": "env-markdown-editor",
-          "description": "The Markdown editor."
-        },
-        {
-          "class": "env-markdown-editor-input",
-          "description": "The text area that shows the Markdown source as text."
-        },
-        {
-          "class": "env-markdown-editor-view",
-          "description": "The source or the preview, the one the view switch shows."
-        },
-        {
-          "class": "env-markdown-editor-views",
-          "description": "The view switch, with the source and the preview under it."
-        },
-        {
-          "class": "env-markdown-editor-write",
-          "description": "The text area for writing."
-        }
-      ],
-      "states": [],
-      "uses": [
-        "Button",
-        "Dialog",
-        "EditorChrome",
-        "Field",
-        "Icon",
-        "Markdown",
-        "SegmentedControl",
-        "Text",
-        "TextField",
-        "Textarea",
-        "Toolbar"
-      ]
-    },
     "Menu": {
       "root": "env-menu",
       "source": "packages/ui/src/actions/menu/Menu.tsx",
@@ -4548,140 +4508,6 @@
             "env-resize-handle"
           ]
         }
-      ]
-    },
-    "RichText": {
-      "root": "env-rich-text",
-      "source": "packages/ui/src/forms/rich-text/RichText.tsx",
-      "parts": [
-        {
-          "class": "env-rich-text",
-          "description": "The rendered rich text."
-        },
-        {
-          "class": "env-rich-text-document",
-          "description": "The editable document."
-        },
-        {
-          "class": "env-rich-text-reference",
-          "description": "A reference to a person or an item."
-        },
-        {
-          "class": "env-rich-text-suggestions",
-          "description": "The list of suggestions while typing a reference."
-        },
-        {
-          "class": "env-rich-text-suggestions-positioner",
-          "description": "The suggestions' positioner."
-        },
-        {
-          "class": "env-rich-text-task",
-          "description": "A task item."
-        },
-        {
-          "class": "env-rich-text-task-check",
-          "description": "A task's checkbox."
-        },
-        {
-          "class": "env-rich-text-task-content",
-          "description": "A task's text."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-checked",
-          "values": [
-            "false",
-            "true"
-          ],
-          "parts": [
-            "env-rich-text-task"
-          ]
-        },
-        {
-          "attribute": "data-reference-id",
-          "values": [],
-          "parts": [
-            "env-rich-text-reference"
-          ]
-        }
-      ],
-      "uses": [
-        "Checkbox",
-        "Code",
-        "Field",
-        "Icon",
-        "Link",
-        "Prose",
-        "TextField"
-      ]
-    },
-    "RichTextEditor": {
-      "root": "env-rich-text-editor",
-      "source": "packages/ui/src/forms/rich-text/RichTextEditor.tsx",
-      "parts": [
-        {
-          "class": "env-rich-text-editor",
-          "description": "The rich text editor."
-        },
-        {
-          "class": "env-rich-text-editor-content",
-          "description": "The editable region."
-        },
-        {
-          "class": "env-rich-text-editor-control",
-          "description": "The well around the toolbar and the document."
-        },
-        {
-          "class": "env-rich-text-editor-footer",
-          "description": "The slot of the content under the document, inside the well, such as a Send button.",
-          "slot": true
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-disabled",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-rich-text-editor",
-            "env-rich-text-editor-control"
-          ]
-        },
-        {
-          "attribute": "data-invalid",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-rich-text-editor-control"
-          ]
-        },
-        {
-          "attribute": "data-readonly",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-rich-text-editor"
-          ]
-        }
-      ],
-      "uses": [
-        "Button",
-        "Checkbox",
-        "Dialog",
-        "EditorChrome",
-        "Field",
-        "Icon",
-        "ListRow",
-        "Listbox",
-        "Prose",
-        "RichText",
-        "Text",
-        "TextField",
-        "Toolbar"
       ]
     },
     "Scaffold": {
@@ -6663,24 +6489,6 @@
         "List"
       ]
     },
-    "EditorChrome": {
-      "root": null,
-      "parts": [
-        {
-          "class": "env-editor-status",
-          "description": "The editor's status line, such as a character count."
-        },
-        {
-          "class": "env-editor-toolbar",
-          "description": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which wrap onto more rows where they are wider than the editor."
-        }
-      ],
-      "states": [],
-      "usedBy": [
-        "MarkdownEditor",
-        "RichTextEditor"
-      ]
-    },
     "HoverDetail": {
       "root": "env-hover-detail",
       "parts": [
@@ -6764,29 +6572,7 @@
       "usedBy": [
         "Combobox",
         "CommandPalette",
-        "RichTextEditor",
         "Select"
-      ]
-    },
-    "Listbox": {
-      "root": "env-listbox",
-      "parts": [
-        {
-          "class": "env-listbox",
-          "description": "A list of options in a popup."
-        },
-        {
-          "class": "env-listbox-empty",
-          "description": "The message when there are no options."
-        },
-        {
-          "class": "env-listbox-options",
-          "description": "The options."
-        }
-      ],
-      "states": [],
-      "usedBy": [
-        "RichTextEditor"
       ]
     },
     "LoadingBar": {
@@ -6973,9 +6759,7 @@
       ],
       "states": [],
       "usedBy": [
-        "Markdown",
-        "RichText",
-        "RichTextEditor"
+        "Markdown"
       ]
     },
     "Skeleton": {

@@ -62,13 +62,6 @@ const privacy = (
             pane&apos;s width in a cookie of the application&apos;s own site.
           </Text>
         </li>
-        <li>
-          <Text>
-            <strong>Dev mode</strong>, which runs only while an application is being developed,
-            keeps its panel&apos;s settings in local storage and reads envUI&apos;s list of parts
-            from the application&apos;s own development server.
-          </Text>
-        </li>
       </Points>
     </Section>
     <Section title="This site">

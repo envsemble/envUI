@@ -65,7 +65,6 @@
     "library/source/ColorPicker.test.ts",
     "library/source/DatePicker.test.ts",
     "library/source/Destinations.test.ts",
-    "library/source/DevMode.test.ts",
     "library/source/DropZone.test.ts",
     "library/source/Field.test.ts",
     "library/source/Graphic.test.ts",

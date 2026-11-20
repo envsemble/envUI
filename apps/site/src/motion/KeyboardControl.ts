@@ -1,8 +1,7 @@
 import type { PointerSelection } from './pointer/VirtualSelection';
-import type { StageEditors } from './pointer/StageEditors';
 import { focusMark, focusWithinMark, mark } from './pointer/PointerStates';
 import { chainOf, textFields, type Modifiers } from './pointer/PointerTargets';
-import { keyboardFocused, lendSelection } from './BrowserStandIns';
+import { keyboardFocused } from './BrowserStandIns';
 
 const modifierFlags: Record<string, keyof Modifiers> = {
   Alt: 'altKey',
@@ -34,7 +33,6 @@ export class KeyboardControl {
   constructor(
     private readonly scope: Element,
     private readonly selection: PointerSelection,
-    private readonly editors: StageEditors,
   ) {}
 
   get modifiers(): Modifiers {
@@ -57,12 +55,8 @@ export class KeyboardControl {
   }
 
   type(selector: string, text: string | null) {
-    const field = this.scope.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector);
-    if (!field) return;
-    if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) {
-      this.typeInEditor(field, text);
-      return;
-    }
+    const field = this.scope.querySelector(selector);
+    if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return;
     this.focus(field);
     const keyboard = this.keyboard(text ?? 'Backspace');
     if (!field.dispatchEvent(new KeyboardEvent('keydown', keyboard))) return;
@@ -78,25 +72,6 @@ export class KeyboardControl {
       }),
     );
     field.dispatchEvent(new KeyboardEvent('keyup', keyboard));
-  }
-
-  private typeInEditor(element: Element, text: string | null) {
-    const found = this.editors.use(element);
-    if (!found) return;
-    const { editor, content } = found;
-    this.focus(content);
-    const keyboard = this.keyboard(text ?? 'Backspace');
-    if (content.dispatchEvent(new KeyboardEvent('keydown', keyboard))) {
-      const { view } = editor;
-      const { from, to } = view.state.selection;
-      if (text === null) view.dispatch(view.state.tr.delete(from === to ? from - 1 : from, to));
-      else {
-        const insert = () => view.state.tr.insertText(text, from, to);
-        if (!view.someProp('handleTextInput', (handle) => handle(view, from, to, text, insert)))
-          view.dispatch(insert());
-      }
-    }
-    content.dispatchEvent(new KeyboardEvent('keyup', keyboard));
   }
 
   private keyboard(key: string) {
@@ -138,10 +113,7 @@ export class KeyboardControl {
 
   key(key: string, selector?: string) {
     const target = this.keyTarget(selector);
-    let allowed = true;
-    lendSelection(this.editors.use(target) ? this.scope : undefined, () => {
-      allowed = target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
-    });
+    const allowed = target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
     if (allowed && key === 'Tab' && target === this.focused) {
       this.focus(null);
       target.dispatchEvent(new FocusEvent('blur'));

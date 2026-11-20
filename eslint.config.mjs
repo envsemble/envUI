@@ -30,8 +30,6 @@ const otherFamiliesInternals = (family) => ({
   message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/.`,
 });
 
-const privateFolders = { 'content/internal/markdown': ['content/MarkdownEditor.tsx'] };
-
 const confusingBrowserGlobals = [
   'close',
   'closed',
@@ -64,8 +62,7 @@ const siteInternals = {
     'The pre-rendered page’s Markdown trees, handed to the library’s components before they hydrate.',
   'internal/provider/LinkComponentContext':
     'The link component an application gives the library, which the site’s own links follow.',
-  'internal/dom/paints':
-    'What a box paints, as dev mode decides it, which the fit centres a picture on.',
+  'internal/dom/paints': 'What a box paints, which the fit centres a picture on.',
   'internal/motion/motionTokens':
     'How a motion token is read and eased, as the library’s own motion reads it.',
   'styles/SegmentedControl.css':
@@ -251,31 +248,6 @@ export default defineConfig(
     files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
     rules: { 'no-restricted-imports': ['error', { patterns: [otherFamiliesInternals(family)] }] },
   })),
-  ...Object.entries(privateFolders).map(([folder, allowed]) => {
-    const [family, ...rest] = folder.split('/');
-    const name = rest.at(-1);
-    return {
-      files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
-      ignores: [
-        `packages/ui/src/${folder}/**`,
-        ...allowed.map((module) => `packages/ui/src/${module}`),
-      ],
-      rules: {
-        'no-restricted-imports': [
-          'error',
-          {
-            patterns: [
-              otherFamiliesInternals(family),
-              {
-                regex: String.raw`(^|/)${rest.join('/')}(/|$)|^\./${name}(/|$)`,
-                message: `${folder}/ is private to ${allowed.join(', ')}: build on its public API (eslint.config.mjs, privateFolders).`,
-              },
-            ],
-          },
-        ],
-      },
-    };
-  }),
   {
     files: ['apps/site/src/**/*.{ts,tsx}'],
     ignores: ['apps/site/src/examples/**'],

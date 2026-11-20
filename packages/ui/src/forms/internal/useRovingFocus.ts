@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  useCallback,
-  useId,
-  useRef,
-  type KeyboardEvent as ReactKeyboardEvent,
-  type MouseEvent as ReactMouseEvent,
-} from 'react';
+import { useCallback, useRef, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useEnvUI, type Direction } from '../../internal/provider/EnvUIContext.js';
 import { computedDirection } from '../../internal/dom/direction.js';
 import { typeaheadTimeout } from '../../internal/typeahead.js';
@@ -152,74 +146,6 @@ export function useRovingFocus<Item>(options: RovingOptions<Item>) {
         ref: (element: HTMLElement | null) => {
           if (element) elements.current.set(key, element);
           else elements.current.delete(key);
-        },
-      };
-    },
-  };
-}
-
-export type ListKeyPress = Pick<
-  KeyboardEvent,
-  'key' | 'ctrlKey' | 'metaKey' | 'defaultPrevented' | 'preventDefault'
->;
-
-const keepFocusInTheInput = (event: ReactMouseEvent) => event.preventDefault();
-
-function firstOnDownLastOnUpWithoutAnActiveOption<Item>(
-  roving: RovingOptions<Item>,
-  event: ListKeyPress,
-) {
-  if (event.key === 'ArrowDown')
-    return keyboardTarget(roving, roving.items.length - 1, { ...event, key: 'Home' }, 'ltr');
-  if (event.key === 'ArrowUp') return keyboardTarget(roving, 0, { ...event, key: 'End' }, 'ltr');
-  return undefined;
-}
-
-export function useActiveDescendant<Item>(
-  options: Omit<RovingOptions<Item>, 'orientation' | 'columns' | 'columnMajor' | 'typeahead'> & {
-    onSelect(item: Item): void;
-  },
-) {
-  const prefix = useId();
-  const { items, getKey, activeKey, onActiveKeyChange, onSelect } = options;
-  const roving = { ...options, orientation: 'vertical' as const };
-  const idOf = (key: string) => `${prefix}-${key.replace(/\s+/g, '-')}`;
-  const activeIndex = items.findIndex((item) => getKey(item) === activeKey);
-  return {
-    getInputProps: () => ({
-      'aria-activedescendant': activeIndex === -1 ? undefined : idOf(activeKey as string),
-      onKeyDown: (event: ListKeyPress) => {
-        if (event.defaultPrevented || items.length === 0) return;
-        if (event.key === 'Enter') {
-          if (activeIndex === -1) return;
-          event.preventDefault();
-          onSelect(items[activeIndex]);
-          return;
-        }
-        const caretKeysStayWithTheInput = event.key === 'Home' || event.key === 'End';
-        if (caretKeysStayWithTheInput) return;
-        const next =
-          activeIndex !== -1
-            ? keyboardTarget(roving, activeIndex, event, 'ltr')
-            : firstOnDownLastOnUpWithoutAnActiveOption(roving, event);
-        if (next === undefined) return;
-        event.preventDefault();
-        onActiveKeyChange(getKey(items[next]));
-      },
-    }),
-    getOptionProps: (item: Item) => {
-      const key = getKey(item);
-      return {
-        id: idOf(key),
-        'aria-selected': key === activeKey,
-        'aria-disabled': options.isDisabled?.(item) || undefined,
-        'data-highlighted': flag(key === activeKey),
-        onPointerMove: () => {
-          if (key !== activeKey && !options.isDisabled?.(item)) onActiveKeyChange(key);
-        },
-        onMouseDown: keepFocusInTheInput,
-        onClick: () => {
-          if (!options.isDisabled?.(item)) onSelect(item);
         },
       };
     },

@@ -246,7 +246,7 @@ export default {
         [slotRuleName]: true,
         'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] },
         'selector-class-pattern': [
-          '^(?:env(?:-[a-z0-9]+)+|ProseMirror(?:-[a-z]+)?|contains-task-list|task-list-item|footnotes|is-editor-empty|selectedCell|tableWrapper)$',
+          '^(?:env(?:-[a-z0-9]+)+|contains-task-list|task-list-item|footnotes)$',
           { message: (name) => `Class "${name}": library classes are env-<component>-<part>.` },
         ],
         'custom-property-pattern': [

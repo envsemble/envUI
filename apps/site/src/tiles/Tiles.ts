@@ -31,7 +31,6 @@ export const tileOf = (page: string) =>
 const memberTiles = moduleRegistry(import.meta.glob<TileModule>('/src/tiles/members/*.tsx'));
 
 const shownByPageTile: Readonly<Record<string, string>> = {
-  RichTextEditor: 'rich-text',
   CodeBlock: 'code',
   HighlightedCodeBlock: 'code',
 };

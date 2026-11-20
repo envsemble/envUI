@@ -17,11 +17,8 @@ import { datePicker } from './datePicker.js';
 import { dialog } from './dialog.js';
 import { diffStat } from './diffStat.js';
 import { documentTabs } from './documentTabs.js';
-import { editor } from './editor.js';
-import { linkDialog } from './linkDialog.js';
 import { list } from './list.js';
 import { markdown } from './markdown.js';
-import { markdownEditor } from './markdownEditor.js';
 import { message } from './message.js';
 import { monthPicker } from './monthPicker.js';
 import { navigation } from './navigation.js';
@@ -30,7 +27,6 @@ import { pagination } from './pagination.js';
 import { panes } from './panes.js';
 import { rating } from './rating.js';
 import { relativeTime } from './relativeTime.js';
-import { richText } from './richText.js';
 import { scaffold } from './scaffold.js';
 import { searchField } from './searchField.js';
 import { table } from './table.js';
@@ -68,11 +64,8 @@ export const defaultMessages = {
   dialog,
   diffStat,
   documentTabs,
-  editor,
-  linkDialog,
   list,
   markdown,
-  markdownEditor,
   message,
   monthPicker,
   navigation,
@@ -81,7 +74,6 @@ export const defaultMessages = {
   panes,
   rating,
   relativeTime,
-  richText,
   scaffold,
   searchField,
   table,

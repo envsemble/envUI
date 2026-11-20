@@ -111,54 +111,6 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
   assert.match(ssr.customIcon, /aria-label="Custom star"/);
 });
 
-test('packed rich text statically renders the shared Markdown schema and reference marks, and a finished task read-only rather than disabled', async () => {
-  const formattedSource =
-    '## Heading\n\n**Bold** *italic* ~~strike~~ `code` [guide](/guide)\n\n- [x] Done\n- [ ] Open\n\n> Quote\n\n| Name | State |\n| --- | --- |\n| One | Ready |\n\n```js\nconst value = 1;\n```';
-  const result = await consumer.runScript(
-    'RichTextConsumer.mjs',
-    `
-    import { createElement as h } from 'react';
-    import { renderToStaticMarkup } from 'react-dom/server';
-    import { RichText, RichTextEditor, createRichTextExtensions } from '@envsemble/envui/rich-text';
-    import { MarkdownManager } from '@tiptap/markdown';
-    const extensions = createRichTextExtensions();
-    const manager = new MarkdownManager({ extensions, marked: extensions.find(extension => extension.name === 'markdown').options.marked });
-    const formatted = manager.parse(${JSON.stringify(formattedSource)});
-    const formattedRoundtrip = manager.parse(manager.serialize(formatted));
-    const attrs = { id: 'file:[stable] "id" 🗂', label: 'Brackets [and] "quotes" & 🗂', href: '/files/stable', kind: 'arbitrary', mentionSuggestionChar: '#' };
-    const document = { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Before ' }, { type: 'envReference', attrs, marks: [{ type: 'bold' }] }, { type: 'text', text: ' after' }] }] };
-    const markdown = manager.serialize(document);
-    const roundtrip = manager.parse(markdown);
-    const html = renderToStaticMarkup(h(RichText, { onReferenceClick: () => {} }, markdown));
-    const unsafe = renderToStaticMarkup(h(RichText, {}, '[Unsafe](javascript:alert(1)) ![No](data:image/svg+xml,bad)'));
-    const literalHtml = renderToStaticMarkup(h(RichText, {}, '<strong>raw HTML</strong>'));
-    const unknown = renderToStaticMarkup(h(RichText, {}, '[reference id="ok" label="Usable" marks="%5B%7B%22type%22%3A%22unknown%22%7D%5D"]'));
-    const task = renderToStaticMarkup(h(RichText, {}, '- [x] Complete task'));
-    const editor = renderToStaticMarkup(h(RichTextEditor, { label: 'SSR editor', defaultValue: markdown, name: 'source' }));
-    console.log(JSON.stringify({ markdown, roundtrip, html, unsafe, literalHtml, unknown, task, editor, formatted, formattedRoundtrip, module: import.meta.resolve('@envsemble/envui/rich-text') }));
-  `,
-  );
-  const atom = result.roundtrip.content[0].content.find((node) => node.type === 'envReference');
-  assert.equal(atom.attrs.id, 'file:[stable] "id" 🗂');
-  assert.equal(atom.attrs.label, 'Brackets [and] "quotes" & 🗂');
-  assert.equal(atom.attrs.kind, 'arbitrary');
-  assert.equal(atom.attrs.mentionSuggestionChar, '#');
-  assert.deepEqual(atom.marks, [{ type: 'bold' }]);
-  assert.deepEqual(
-    result.formattedRoundtrip,
-    result.formatted,
-    'Supported headings/marks/tasklists/quotes/tables/code must retain their schema on Markdown roundtrip.',
-  );
-  assert.match(result.html, /<strong><a[^>]*href="\/files\/stable"/);
-  assert.doesNotMatch(result.unsafe, /href="javascript:|src="data:/);
-  assert.match(result.literalHtml, /&lt;strong&gt;raw HTML&lt;\/strong&gt;/);
-  assert.match(result.unknown, /Usable/);
-  assert.match(result.task, /aria-readonly="true"/);
-  assert.doesNotMatch(result.task, /disabled/);
-  assert.match(result.editor, /name="source"/);
-  assert.match(result.module, /\/dist\/rich-text\.js$/);
-});
-
 test('avatar groups, relative times, copy buttons and pagination render on a server and type their contracts', async () => {
   const display = await consumer.runScript(
     'DisplayConsumer.mjs',

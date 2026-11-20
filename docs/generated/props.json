@@ -537,7 +537,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+          "description": "A name for this node, such as \"filters\" or \"summary\", for the application's styles and tests to find it by; it renders as `data-env-name`. A component's part class names its node instead."
         },
         {
           "name": "container",
@@ -1681,7 +1681,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+          "description": "A name for this node, such as \"filters\" or \"summary\", for the application's styles and tests to find it by; it renders as `data-env-name`. A component's part class names its node instead."
         },
         {
           "name": "container",
@@ -3863,7 +3863,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+          "description": "A name for this node, such as \"filters\" or \"summary\", for the application's styles and tests to find it by; it renders as `data-env-name`. A component's part class names its node instead."
         },
         {
           "name": "container",
@@ -4430,159 +4430,6 @@
       ],
       "native": [
         "div"
-      ],
-      "entries": [
-        "@envsemble/envui/markdown"
-      ]
-    },
-    "MarkdownEditor": {
-      "kind": "component",
-      "source": "packages/ui/src/content/MarkdownEditor.tsx",
-      "description": "Native Markdown source editing, shared formatting history, and optional preview. Its toolbar, views and status come from EnvUIProvider's messages: markdownEditor, editor and linkDialog.",
-      "props": [
-        {
-          "name": "ref",
-          "type": "Ref<HTMLTextAreaElement>",
-          "required": false,
-          "description": "The native text area of the source, so that a form library can register it and focus it."
-        },
-        {
-          "name": "editorRef",
-          "type": "Ref<MarkdownEditorHandle>",
-          "required": false,
-          "description": "Gives the editor's commands, such as editorRef.current.insert to put text at the selection, for the application's own controls: toolbar buttons, an emoji picker or a file drop."
-        },
-        {
-          "name": "value",
-          "type": "string",
-          "required": false,
-          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
-        },
-        {
-          "name": "defaultValue",
-          "type": "string",
-          "required": false,
-          "default": "''",
-          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": false,
-          "description": "Receives the whole source after typing, formatting, undo or redo."
-        },
-        {
-          "name": "toolbar",
-          "type": "readonly MarkdownCommand[] | false",
-          "required": false,
-          "default": "['heading', 'bold', 'italic', 'inline-code', 'bullet-list', 'numbered-list', 'quote', 'code-block', 'link']",
-          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
-        },
-        {
-          "name": "toolbarEnd",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The editor's own toolbar buttons after Undo and Redo, as Toolbar.Buttons, such as a mention, an emoji, an image or an AI rewrite, which edit the source through editorRef. They show only with the toolbar: with toolbar false, they don't render."
-        },
-        {
-          "name": "preview",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Show the Write and Preview switch above the source. Preview uses the same public Markdown renderer."
-        },
-        {
-          "name": "viewSwitch",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Show the built-in Write and Preview switch of an editor with a preview. Turn it off to switch the view with the application's own control, through mode and onModeChange."
-        },
-        {
-          "name": "mode",
-          "type": "'write' | 'preview'",
-          "required": false,
-          "description": "The view of a controlled editor with a preview: write or preview."
-        },
-        {
-          "name": "defaultMode",
-          "type": "'write' | 'preview'",
-          "required": false,
-          "default": "'write'",
-          "description": "The view an uncontrolled editor with a preview opens in."
-        },
-        {
-          "name": "onModeChange",
-          "type": "(mode: MarkdownEditorMode) => void",
-          "required": false,
-          "description": "Receives the view as people switch it, or as the editor shows the source to edit it."
-        },
-        {
-          "name": "previewProps",
-          "type": "Omit<MarkdownProps, 'children' | keyof ComponentPropsWithRef<'div'>>",
-          "required": false,
-          "description": "Options of the Markdown that renders the preview, so it matches what the application publishes, such as headingOffset, renderLink, components or remarkPlugins: every option Markdown takes besides its source and its element's props. Give components and plugins that keep their identity across renders, such as module constants, since a new one renders the preview again."
-        },
-        {
-          "name": "pickLink",
-          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
-          "required": false,
-          "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
-        },
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "Styles of the field's root element, such as its width in a row."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "The field's class, on its root element, beside env-field, env-text-field and env-textarea."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
-        },
-        {
-          "name": "rows",
-          "type": "number",
-          "required": false,
-          "default": "8",
-          "description": "The lines the field shows: with fixed sizing, its height in rows, which resizes down to them or to 7.5 rem, whichever is less; with content sizing, the lines it starts at and shrinks back to. Without rows, both start at 7.5 rem."
-        },
-        {
-          "name": "variant",
-          "type": "'outline' | 'ghost'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The field's look, as TextField's: outline or ghost."
-        },
-        {
-          "name": "error",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
-        },
-        {
-          "name": "sizing",
-          "type": "'fixed' | 'content'",
-          "required": false,
-          "default": "'fixed'",
-          "description": "How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom edge, by dragging it or with the arrow keys; content grows and shrinks with the text."
-        }
-      ],
-      "native": [
-        "textarea"
       ],
       "entries": [
         "@envsemble/envui/markdown"
@@ -5942,7 +5789,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"settings\", which dev mode and the docs show; it renders as `data-env-name`."
+          "description": "A name for this node, such as \"settings\", for the application's styles and tests to find it by; it renders as `data-env-name`."
         },
         {
           "name": "render",
@@ -6427,7 +6274,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"inbox\", which dev mode and the docs show; it renders as `data-env-name`."
+          "description": "A name for this node, such as \"inbox\", for the application's styles and tests to find it by; it renders as `data-env-name`."
         },
         {
           "name": "children",
@@ -6962,236 +6809,6 @@
         "@envsemble/envui"
       ]
     },
-    "RichText": {
-      "kind": "component",
-      "source": "packages/ui/src/forms/rich-text/RichText.tsx",
-      "description": "Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it shows what RichTextEditor wrote, references included, with envUI's links, code and checkboxes. It renders on the server too.",
-      "props": [
-        {
-          "name": "children",
-          "type": "string",
-          "required": true,
-          "description": "The Markdown to show, such as what RichTextEditor saved."
-        },
-        {
-          "name": "extensions",
-          "type": "AnyExtension[]",
-          "required": false,
-          "default": "[]",
-          "description": "Tiptap extensions added to the shared schema, such as a custom mark. They must parse and write Markdown, and the array must stay the same between renders, such as at module scope; a new array starts a new editing session. Pass the same extensions to RichText."
-        },
-        {
-          "name": "renderReference",
-          "type": "(reference: RichTextReference, context: { readOnly: boolean; selected: boolean }) => ReactNode",
-          "required": false,
-          "default": "the trigger and the label, such as #Launch",
-          "description": "Renders a reference's content, such as an avatar beside the name; it receives whether the document is read-only and whether the reference is selected."
-        },
-        {
-          "name": "onReferenceClick",
-          "type": "(reference: RichTextReference, event: MouseEvent<HTMLElement>) => void",
-          "required": false,
-          "description": "Called when people activate a reference, with the reference and the event, such as to open the record. A reference with an href is a link, which the editor never follows while it is editable; without an href, this makes the reference a button."
-        },
-        {
-          "name": "onLinkClick",
-          "type": "(href: string, event: RichTextLinkEvent) => void",
-          "required": false,
-          "description": "Called when people activate a link in the document, with its href and the event: a native MouseEvent in the editor, a React mouse event in RichText. The editor never follows links while editable; call preventDefault to keep RichText or a read-only editor from following it."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui/rich-text"
-      ]
-    },
-    "RichTextEditor": {
-      "kind": "component",
-      "source": "packages/ui/src/forms/rich-text/RichTextEditor.tsx",
-      "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
-      "props": [
-        {
-          "name": "editorRef",
-          "type": "Ref<RichTextEditorHandle>",
-          "required": false,
-          "description": "Gives the Tiptap editor, as editorRef.current.editor, for commands."
-        },
-        {
-          "name": "value",
-          "type": "string",
-          "required": false,
-          "description": "The Markdown of a controlled editor; update it from onValueChange. A new value from outside, such as another draft, replaces the document and keeps the caret where it can."
-        },
-        {
-          "name": "defaultValue",
-          "type": "string",
-          "required": false,
-          "default": "''",
-          "description": "The Markdown an uncontrolled editor starts with, and returns to when its form resets."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(markdown: string) => void",
-          "required": false,
-          "description": "Receives the document as Markdown after every edit, normalized by the editor's schema, so it can differ from the Markdown it was given, such as * for _ around italics."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "required": false,
-          "description": "Submits the Markdown with a native form under this name, through a hidden input."
-        },
-        {
-          "name": "form",
-          "type": "string",
-          "required": false,
-          "description": "The ID of the form the hidden input belongs to, where the editor sits outside it."
-        },
-        {
-          "name": "placeholder",
-          "type": "string",
-          "required": false,
-          "description": "Text shown in an empty document, such as what to write."
-        },
-        {
-          "name": "disabled",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Makes the editor unavailable: it cannot be edited or focused, the toolbar is disabled, its value is left out of form submission and it takes the shared disabled opacity."
-        },
-        {
-          "name": "readOnly",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the document without editing it: the toolbar is disabled and the document cannot be focused, but its links and references can, and the form still submits its value."
-        },
-        {
-          "name": "toolbar",
-          "type": "readonly RichTextCommand[] | false",
-          "required": false,
-          "default": "every command, from heading to table",
-          "description": "The toolbar's commands, in order, or false for no toolbar; Undo and Redo, and Attach files with onUpload, follow them."
-        },
-        {
-          "name": "toolbarEnd",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The application's own controls at the toolbar's end, after Undo, Redo and Attach files, such as Toolbar.Button or Toolbar.Item elements for Insert template or an AI action; they join the toolbar's arrow keys. They show only with the toolbar: with toolbar false, they don't render."
-        },
-        {
-          "name": "footer",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content inside the editor's box, under the document, such as a comment box's Send button; a row at the box's end."
-        },
-        {
-          "name": "references",
-          "type": "readonly RichTextReferenceSource[]",
-          "required": false,
-          "default": "[]",
-          "description": "Kinds of references people insert by typing a trigger, such as @ for people and # for topics, each with its own lookup. Triggers must be unique, and the array must stay the same between renders, such as at module scope."
-        },
-        {
-          "name": "slashCommands",
-          "type": "boolean | readonly RichTextSlashCommand[]",
-          "required": false,
-          "default": "false",
-          "description": "Typing / opens a menu of block commands: true offers heading, the lists, quote, code block and table; an array adds the application's commands after them. A / reference source can't be used beside it."
-        },
-        {
-          "name": "pickLink",
-          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
-          "required": false,
-          "description": "Opens the application's own link picker for Insert link, with the selected text, instead of the built-in dialog. Return the link, null to cancel, or a promise of either. A selection becomes a link to its href; at the caret, the label is inserted as the link's text."
-        },
-        {
-          "name": "onUpload",
-          "type": "(file: File, request: { signal: AbortSignal }) => RichTextAttachment | null | Promise<RichTextAttachment | null>",
-          "required": false,
-          "description": "Uploads a file people chose with Attach files, which shows in the toolbar only with this. Return where it lives as an attachment, null to skip it, or a promise of either; the signal aborts when the editor becomes read-only or disabled, or when a controlled value changes."
-        },
-        {
-          "name": "accept",
-          "type": "string",
-          "required": false,
-          "description": "The file types Attach files offers, as in a file input's accept, such as \"image/*,.pdf\"."
-        },
-        {
-          "name": "multiple",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Lets people choose several files at once with Attach files."
-        },
-        {
-          "name": "variant",
-          "type": "'outline' | 'ghost'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it."
-        },
-        {
-          "name": "minRows",
-          "type": "number",
-          "required": false,
-          "description": "Lines of text the document is tall enough for while it holds fewer, such as 2 for a short note in a card; it grows with its text. Without it the document is at least 10 rem tall."
-        },
-        {
-          "name": "extensions",
-          "type": "AnyExtension[]",
-          "required": false,
-          "default": "[]",
-          "description": "Tiptap extensions added to the shared schema, such as a custom mark. They must parse and write Markdown, and the array must stay the same between renders, such as at module scope; a new array starts a new editing session. Pass the same extensions to RichText."
-        },
-        {
-          "name": "renderReference",
-          "type": "(reference: RichTextReference, context: { readOnly: boolean; selected: boolean }) => ReactNode",
-          "required": false,
-          "default": "the trigger and the label, such as #Launch",
-          "description": "Renders a reference's content, such as an avatar beside the name; it receives whether the document is read-only and whether the reference is selected."
-        },
-        {
-          "name": "onReferenceClick",
-          "type": "(reference: RichTextReference, event: MouseEvent<HTMLElement>) => void",
-          "required": false,
-          "description": "Called when people activate a reference, with the reference and the event, such as to open the record. A reference with an href is a link, which the editor never follows while it is editable; without an href, this makes the reference a button."
-        },
-        {
-          "name": "onLinkClick",
-          "type": "(href: string, event: RichTextLinkEvent) => void",
-          "required": false,
-          "description": "Called when people activate a link in the document, with its href and the event: a native MouseEvent in the editor, a React mouse event in RichText. The editor never follows links while editable; call preventDefault to keep RichText or a read-only editor from following it."
-        },
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
-        },
-        {
-          "name": "error",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui/rich-text"
-      ]
-    },
     "Row": {
       "kind": "component",
       "source": "packages/ui/src/layout/Layout.tsx",
@@ -7240,7 +6857,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+          "description": "A name for this node, such as \"filters\" or \"summary\", for the application's styles and tests to find it by; it renders as `data-env-name`. A component's part class names its node instead."
         },
         {
           "name": "container",
@@ -7350,7 +6967,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"app\", which dev mode and the docs show; it renders as `data-env-name`."
+          "description": "A name for this node, such as \"app\", for the application's styles and tests to find it by; it renders as `data-env-name`."
         },
         {
           "name": "children",
@@ -9710,15 +9327,6 @@
         "@envsemble/envui/diff"
       ]
     },
-    "createRichTextExtensions": {
-      "kind": "function",
-      "source": "packages/ui/src/forms/rich-text/extensions.ts",
-      "description": "The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists, tables, safe links and images, Markdown with raw HTML kept as text, a placeholder and references. options.extensions are added after them, for other Tiptap integrations that need the same schema.",
-      "signature": "(options?: RichTextRenderOptions & { placeholder?: string; }): AnyExtension[]",
-      "entries": [
-        "@envsemble/envui/rich-text"
-      ]
-    },
     "createThemeBootstrapScript": {
       "kind": "function",
       "source": "packages/ui/src/foundations/themeBootstrap.ts",
@@ -9746,15 +9354,6 @@
       "signature": "(value: RelativeTimeValue, options?: RelativeTimeOptions): string",
       "entries": [
         "@envsemble/envui"
-      ]
-    },
-    "installDevMode": {
-      "kind": "function",
-      "source": "packages/ui/src/dev/install.tsx",
-      "description": "Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a button in the corner and Alt+Shift+D, which open the page in a new tab with the 3D view and the inspector over the whole window. Closing that tab ends dev mode; the page it came from stays as it was. Load it in development only, so production builds contain none of it: if (import.meta.env.DEV) { void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode()); } Calling it again returns the dev mode already installed, until it is uninstalled.",
-      "signature": "(options?: DevModeOptions): DevModeHandle",
-      "entries": [
-        "@envsemble/envui/dev"
       ]
     },
     "isPlaceholder": {

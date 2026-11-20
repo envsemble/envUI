@@ -13,7 +13,7 @@ export interface SkeletonProps {
 }
 
 /**
- * The attributes of a skeleton's root: data-env-skeleton, which the styles and dev mode follow,
+ * The attributes of a skeleton's root: data-env-skeleton, which the styles follow,
  * and aria-busy, so assistive technology hears one busy region. Its content, not the root, is
  * inert: inSkeleton wraps it.
  */
@@ -23,7 +23,7 @@ export interface SkeletonAttributes {
 }
 
 /** The class of a skeleton's inert content wrapper, which inSkeleton renders without a box. */
-export const skeletonContentClass = 'env-skeleton-content';
+const skeletonContentClass = 'env-skeleton-content';
 
 /** Marks a skeleton's root: busy, and followed by the skeleton's styles. */
 export function skeletonAttributes(skeleton: boolean | undefined): SkeletonAttributes {

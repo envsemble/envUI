@@ -25,8 +25,8 @@ export interface PageProps extends ComponentPropsWithRef<'div'> {
    */
   gutter?: boolean;
   /**
-   * A name for this node, such as "settings", which dev mode and the docs show; it renders as
-   * `data-env-name`.
+   * A name for this node, such as "settings", for the application's styles and tests to find it by; it
+   * renders as `data-env-name`.
    */
   name?: string;
   /**

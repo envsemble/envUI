@@ -118,8 +118,8 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    */
   landmarks?: boolean;
   /**
-   * A name for this node, such as "app", which dev mode and the docs show; it renders as
-   * `data-env-name`.
+   * A name for this node, such as "app", for the application's styles and tests to find it by; it
+   * renders as `data-env-name`.
    */
   name?: string;
   /** The body: the page's main content, usually a Page or Panes. */

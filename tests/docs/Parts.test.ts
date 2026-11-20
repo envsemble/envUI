@@ -98,10 +98,10 @@ test('shared anatomy lists the components that render it', () => {
 });
 
 test('a state set through a class name held in a variable is on that part', () => {
-  assert.deepEqual(state(component('RichText'), 'data-reference-id'), {
-    attribute: 'data-reference-id',
-    values: [],
-    parts: ['env-rich-text-reference'],
+  assert.deepEqual(state(component('Menu'), 'data-tone'), {
+    attribute: 'data-tone',
+    values: ['danger', 'neutral'],
+    parts: ['env-menu-item'],
   });
 });
 

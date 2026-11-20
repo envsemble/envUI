@@ -187,10 +187,6 @@ test('a server component imports envUI and renders it on the server', () => {
   assert.ok(result.bootstrapContrastScript.includes('r.setAttribute("data-env-contrast","high")'));
   assert.equal(result.relativeTime, '3 hours ago');
   assert.deepEqual(result.diffLines, { result: { additions: 2, deletions: 1 } });
-  assert.ok(
-    result.richTextExtensions.result?.includes('envReference'),
-    result.richTextExtensions.error,
-  );
   for (const [entry, survey] of Object.entries(result.surveys)) {
     assert.deepEqual(survey.failed, [], `${entry}: every server component renders on the server`);
     assert.ok(survey.client.length > 0, `${entry} has client components`);

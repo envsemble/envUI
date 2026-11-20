@@ -20,7 +20,7 @@ export function useSkeleton(): boolean {
  * Puts every skeleton's pulse in step: each root runs its own animation, started when it
  * rendered, so their start times are moved to the document timeline's start.
  */
-export function alignPulses() {
+function alignPulses() {
   if (typeof document === 'undefined' || typeof document.getAnimations !== 'function') return;
   for (const animation of document.getAnimations()) {
     const target = (animation.effect as KeyframeEffect | null)?.target;

@@ -274,10 +274,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 - Parts: `env-markdown`, `env-markdown-table`
 
-### MarkdownEditor
-
-- Parts: `env-markdown-editor`, `env-markdown-editor-input`, `env-markdown-editor-view`, `env-markdown-editor-views`, `env-markdown-editor-write`
-
 ### Menu
 
 - Parts: `env-menu`, `env-menu-choice`, `env-menu-group`, `env-menu-group-label`, `env-menu-header`, `env-menu-item`, `env-menu-item-description`, `env-menu-item-end`, `env-menu-item-indicator`, `env-menu-item-indicator-slot`, `env-menu-item-label`, `env-menu-item-shortcut`, `env-menu-item-start` (slot), `env-menu-item-text`, `env-menu-positioner`, `env-menu-separator`, `env-menu-submenu-chevron`, `env-menu-submenu-trigger`
@@ -386,16 +382,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 - Parts: `env-resize-handle`
 - States: `data-axis` (`block`, `inline`); `data-grip`; `data-resizing`
-
-### RichText
-
-- Parts: `env-rich-text`, `env-rich-text-document`, `env-rich-text-reference`, `env-rich-text-suggestions`, `env-rich-text-suggestions-positioner`, `env-rich-text-task`, `env-rich-text-task-check`, `env-rich-text-task-content`
-- States: `data-checked` (`false`, `true`) on `env-rich-text-task`; `data-reference-id` on `env-rich-text-reference`
-
-### RichTextEditor
-
-- Parts: `env-rich-text-editor`, `env-rich-text-editor-content`, `env-rich-text-editor-control`, `env-rich-text-editor-footer` (slot)
-- States: `data-disabled` on `env-rich-text-editor`, `env-rich-text-editor-control`; `data-invalid` on `env-rich-text-editor-control`; `data-readonly`
 
 ### Scaffold
 
@@ -527,11 +513,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-interactive` on `env-connected-row`; `data-reorderable`; `data-selected` on `env-connected-row`; `data-start` on `env-connected-row`
 - Used by: List
 
-### EditorChrome
-
-- Parts: `env-editor-status`, `env-editor-toolbar`
-- Used by: MarkdownEditor, RichTextEditor
-
 ### HoverDetail
 
 - Parts: `env-hover-detail`
@@ -541,12 +522,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 - Parts: `env-list-row`, `env-list-row-description`, `env-list-row-end` (slot), `env-list-row-indicator`, `env-list-row-label` (slot), `env-list-row-start` (slot), `env-list-row-text`
 - States: `data-disabled`; `data-highlighted`; `data-popup-open`; `data-selected`
-- Used by: Combobox, CommandPalette, RichTextEditor, Select
-
-### Listbox
-
-- Parts: `env-listbox`, `env-listbox-empty`, `env-listbox-options`
-- Used by: RichTextEditor
+- Used by: Combobox, CommandPalette, Select
 
 ### LoadingBar
 
@@ -576,7 +552,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Prose
 
 - Parts: `env-prose`
-- Used by: Markdown, RichText, RichTextEditor
+- Used by: Markdown
 
 ### Skeleton
 

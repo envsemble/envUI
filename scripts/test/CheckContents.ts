@@ -7,7 +7,7 @@ const only = onlyIndex === -1 ? undefined : args.splice(onlyIndex, 2)[1].split('
 const site = (args[0] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 const window = { width: 1440, height: 1000 };
 const parts =
-  /\/src\/(examples|specimens|figures\/dev-mode)\/|\/src\/pages\/(TokenReference|Changelog)\.tsx|\/ColorPalette\.tsx|\/IconCatalogue\.tsx/;
+  /\/src\/(examples|specimens)\/|\/src\/pages\/(TokenReference|Changelog)\.tsx|\/ColorPalette\.tsx|\/IconCatalogue\.tsx/;
 const pagesCheckedAtOnce = 4;
 
 async function routes(browser: Browser) {

@@ -35,10 +35,6 @@ test('a default that names a private value shows the value, or nothing', () => {
   );
   assert.equal(props('Rating').formatLabel.default, "'{value} out of {max} stars'");
   assert.equal(
-    props('MarkdownEditor').toolbar.default,
-    "['heading', 'bold', 'italic', 'inline-code', 'bullet-list', 'numbered-list', 'quote', 'code-block', 'link']",
-  );
-  assert.equal(
     props('CalendarHeatmap').formatValue.default,
     "the number format of EnvUIProvider's locale, or else the browser's",
   );

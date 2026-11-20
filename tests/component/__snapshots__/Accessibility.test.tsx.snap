@@ -95,8 +95,6 @@ exports[`default-colors has no new accessibility violations 1`] = `{}`;
 
 exports[`description-list has no new accessibility violations 1`] = `{}`;
 
-exports[`dev-mode has no new accessibility violations 1`] = `{}`;
-
 exports[`dialog has no new accessibility violations 1`] = `{}`;
 
 exports[`direction has no new accessibility violations 1`] = `
@@ -147,8 +145,6 @@ exports[`layout-check has no new accessibility violations 1`] = `{}`;
 exports[`list has no new accessibility violations 1`] = `{}`;
 
 exports[`markdown has no new accessibility violations 1`] = `{}`;
-
-exports[`markdown-editor has no new accessibility violations 1`] = `{}`;
 
 exports[`menu has no new accessibility violations 1`] = `{}`;
 

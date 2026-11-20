@@ -251,7 +251,6 @@ Components with state, effects or context carry `'use client'`; components that 
 - `@envsemble/envui/icons/<Name>` for each icon, `Icon<Name>`.
 - `@envsemble/envui/messages` for `defaultMessages`.
 - `@envsemble/envui/theme-bootstrap` for `defineTheme` and `createThemeBootstrapScript`.
-- `@envsemble/envui/dev` for [dev mode](dev-mode.md), behind a development check.
 - `@envsemble/envui/assets/*` for raw assets, such as the Geist font file.
 
 These entry points need libraries the application installs itself, at these versions or later ones of the same major:
@@ -266,12 +265,6 @@ These entry points need libraries the application installs itself, at these vers
 
   ```sh
   npm install shiki@^4.5.0 @shikijs/langs@^4.5.0 react-markdown@^10.1.0 remark-gfm@^4.0.1
-  ```
-
-- `@envsemble/envui/rich-text`:
-
-  ```sh
-  npm install @tiptap/core@^3.31.4 @tiptap/extension-image@^3.31.4 @tiptap/extension-list@^3.31.4 @tiptap/extension-mention@^3.31.4 @tiptap/extension-placeholder@^3.31.4 @tiptap/extension-table@^3.31.4 @tiptap/markdown@^3.31.4 @tiptap/pm@^3.31.4 @tiptap/react@^3.31.4 @tiptap/starter-kit@^3.31.4 @tiptap/static-renderer@^3.31.4 @tiptap/suggestion@^3.31.4 marked@^17.0.6 shiki@^4.5.0 @shikijs/langs@^4.5.0
   ```
 
 - `@envsemble/envui/diff`:

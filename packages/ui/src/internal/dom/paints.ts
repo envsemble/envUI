@@ -5,7 +5,7 @@ const paintsNothing = (color: string) =>
 
 /**
  * What an element paints: a background, a border or a shadow. A border of a transparent color
- * paints nothing, though it takes room. The site's fit measures what a picture paints by it too.
+ * paints nothing, though it takes room. The site's fit measures what a picture paints by it.
  */
 export function paintsOf(style: CSSStyleDeclaration): string[] {
   const paints: string[] = [];

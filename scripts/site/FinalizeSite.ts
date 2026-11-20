@@ -1,7 +1,6 @@
 import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { collectCatalogueNotices } from '../build/DependencyNotices.ts';
-import { checkDevModeChunks } from './SiteDevMode.ts';
 import { writeModuleFiles } from './SiteModuleFiles.ts';
 import { libraryPackageFile, repositoryRoot } from '../RepositoryPaths.ts';
 
@@ -12,7 +11,6 @@ await copyFile(
   resolve(repositoryRoot, 'apps/site/hosting/_headers'),
   resolve(siteDirectory, '_headers'),
 );
-await checkDevModeChunks(siteDirectory);
 if (!(await writeModuleFiles(siteDirectory)))
   console.log(
     "dist/site is already finalised: module-files.json stays as written from Vite's manifest, which is gone. Run npm run build:site to build the site again.",

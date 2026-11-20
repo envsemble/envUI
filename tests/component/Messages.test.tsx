@@ -76,12 +76,6 @@ test('no English default is left under a provider that sets every message', asyn
     'markdown.table',
     'markdown.taskDone',
     'markdown.taskOpen',
-    'markdownEditor.views',
-    'markdownEditor.write',
-    'markdownEditor.preview',
-    'markdownEditor.toolbar',
-    'editor.bold',
-    'editor.undo',
   ])
     expect(found).toContain(`⟦${key}⟧`);
   for (const marked of [

@@ -7,7 +7,7 @@ import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
 function styleSheets() {
   const sheets: { file: string; css: string }[] = [];
-  for (const directory of ['packages/ui/src/styles', 'packages/ui/src/dev/ui', 'apps/site/src'])
+  for (const directory of ['packages/ui/src/styles', 'apps/site/src'])
     for (const name of readdirSync(join(repositoryRoot, directory), {
       recursive: true,
       encoding: 'utf8',
