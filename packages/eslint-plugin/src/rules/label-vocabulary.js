@@ -46,7 +46,7 @@ export default {
     type: 'suggestion',
     docs: {
       description: "Disallow words in labels that envUI's vocabulary replaces",
-      recommended: true,
+      recommended: false,
       url: documentationUrl('label-vocabulary'),
     },
     schema: [

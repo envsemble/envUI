@@ -66,8 +66,10 @@ export interface DocumentTabsItem {
   closable?: boolean;
   /**
    * More props for the tab's element, the one that holds the tab and its close button, such as a
-   * className or data attributes for tests. Its class joins the tab's; its handlers run before the
-   * tab's own.
+   * className or data attributes for tests. Its class joins the tab's. Its onPointerDown,
+   * onMouseDown and onAuxClick run before the tab's own, where preventDefault in onPointerDown or
+   * onAuxClick stops the tab's drag or middle-click close; its other handlers run after the tab's
+   * own, on the element around the tab.
    */
   itemProps?: DocumentTabsItemElementProps;
 }
