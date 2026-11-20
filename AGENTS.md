@@ -41,8 +41,7 @@ Generated, never edited by hand: `packages/ui/src/generated/`, `packages/ui/toke
 - **A design value apps line up with is a system token.**
 - **Slots render through Slot**, which places what it holds and never styles it.
 - **What belongs in envUI:** a variant, slot or component every application needs, built on envUI's primitives and tokens. Routing, authorization, validation and persistence stay in the application.
-- **Props:** a boolean defaults to false, unless it turns off a feature shown by default; then it is named after the feature and defaults to true. A controlled value goes through `internal/react/useControllableState.ts`, where `null` is a controlled none. A prop that overrides a string is named after its key, `<x>Label`.
-- **State attributes keep one meaning:** `data-active` what shows, `data-current` the page's destination, `data-selected` what is chosen, `data-highlighted` the list's cursor.
+- **Props:** a controlled value goes through `internal/react/useControllableState.ts`, where `null` is a controlled none. A prop that overrides a string is named after its key, `<x>Label`.
 - **Colors:** change one by choosing another grade for its role, then `npm run test:contrast`; record a pair that leaves or loosens in `tests/contrast/PairHistory.ts`. Motion takes the motion tokens, and movement only under `prefers-reduced-motion: no-preference`.
 - **A fact lives on the page that owns it.** When an integration finds a gap, fix the library or that page rather than adding a guide.
 - **Don't change `.github/workflows`** or the required checks, or start CI runs, without asking.
