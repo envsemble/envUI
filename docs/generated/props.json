@@ -4353,6 +4353,13 @@
           "description": "Receives safe hrefs and native anchor props. Retain a real anchor destination."
         },
         {
+          "name": "allowLinkSchemes",
+          "type": "readonly string[]",
+          "required": false,
+          "default": "[]",
+          "description": "Schemes a link may take beside the safe ones, such as `['vscode']` for links that open the editor, or the application's own. A link keeps a relative destination or an http, https, mailto, irc, ircs or xmpp one either way; one with another scheme renders as plain text."
+        },
+        {
           "name": "codeCopyable",
           "type": "boolean",
           "required": false,
@@ -4470,9 +4477,9 @@
         },
         {
           "name": "previewProps",
-          "type": "Pick<MarkdownProps, | 'headingOffset' | 'renderLink' | 'codeCopyable' | 'components' | 'remarkPlugins' | 'rehypePlugins' | 'allowHtml'>",
+          "type": "Pick<MarkdownProps, | 'headingOffset' | 'renderLink' | 'allowLinkSchemes' | 'codeCopyable' | 'components' | 'remarkPlugins' | 'rehypePlugins' | 'allowHtml'>",
           "required": false,
-          "description": "Options of the Markdown that renders the preview, so it matches what the application publishes: headingOffset, renderLink, codeCopyable, components, remarkPlugins, rehypePlugins and allowHtml. Give components and plugins that keep their identity across renders, such as module constants, since a new one renders the preview again."
+          "description": "Options of the Markdown that renders the preview, so it matches what the application publishes: headingOffset, renderLink, allowLinkSchemes, codeCopyable, components, remarkPlugins, rehypePlugins and allowHtml. Give components and plugins that keep their identity across renders, such as module constants, since a new one renders the preview again."
         },
         {
           "name": "pickLink",

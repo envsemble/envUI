@@ -141,6 +141,28 @@ test('Markdown accepts component overrides and remark and rehype plugins, and st
   assert.ok(!elements.some((element) => 'onclick' in element.attributes || element.tag === 'b'));
 });
 
+test("links keep only safe schemes, and the application's own with allowLinkSchemes, without images taking them", () => {
+  const source = [
+    '[Open](vscode://file/src/App.tsx) [Ticket](Tracker:42) [Run](javascript:alert(1))',
+    '[Site](https://example.com) [Page](/docs) ![Logo](vscode://file/logo.png)',
+  ].join('\n\n');
+  const hrefs = (props) =>
+    render(source, props)
+      .filter((element) => element.tag === 'a')
+      .map((element) => element.attributes.href);
+  assert.deepEqual(hrefs({}), ['https://example.com', '/docs']);
+  assert.deepEqual(hrefs({ allowLinkSchemes: ['vscode', 'tracker:'] }), [
+    'vscode://file/src/App.tsx',
+    'Tracker:42',
+    'https://example.com',
+    '/docs',
+  ]);
+  const images = render(source, { allowLinkSchemes: ['vscode'] }).filter(
+    (element) => element.tag === 'img',
+  );
+  assert.deepEqual(images, []);
+});
+
 test('allowHtml keeps raw HTML for the rehype plugins, which a sanitizing rehype-raw then renders', () => {
   const source = 'H<sub>2</sub>O\n\n<details>More</details>';
   const kept = render(source, { allowHtml: true, rehypePlugins: [rehypeRawStandIn] });

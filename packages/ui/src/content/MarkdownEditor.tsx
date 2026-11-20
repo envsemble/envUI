@@ -100,14 +100,15 @@ export interface MarkdownEditorProps extends Omit<
   onModeChange?: (mode: MarkdownEditorMode) => void;
   /**
    * Options of the Markdown that renders the preview, so it matches what the application
-   * publishes: headingOffset, renderLink, codeCopyable, components, remarkPlugins, rehypePlugins
-   * and allowHtml. Give components and plugins that keep their identity across renders, such as
+   * publishes: headingOffset, renderLink, allowLinkSchemes, codeCopyable, components,
+   * remarkPlugins, rehypePlugins and allowHtml. Give components and plugins that keep their identity across renders, such as
    * module constants, since a new one renders the preview again.
    */
   previewProps?: Pick<
     import('./Markdown.js').MarkdownProps,
     | 'headingOffset'
     | 'renderLink'
+    | 'allowLinkSchemes'
     | 'codeCopyable'
     | 'components'
     | 'remarkPlugins'

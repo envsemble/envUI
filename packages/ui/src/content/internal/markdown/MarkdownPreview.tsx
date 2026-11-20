@@ -7,6 +7,7 @@ import { Text } from '../../../foundations/Text.js';
 const previewOptionNames = [
   'headingOffset',
   'renderLink',
+  'allowLinkSchemes',
   'codeCopyable',
   'components',
   'remarkPlugins',
