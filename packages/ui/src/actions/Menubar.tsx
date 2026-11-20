@@ -23,10 +23,8 @@ import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
 import { setRef } from '../internal/react/setRef.js';
 import { MenuPopup, menuParts } from './internal/MenuPopup.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { flag } from '../internal/flag.js';
 import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';

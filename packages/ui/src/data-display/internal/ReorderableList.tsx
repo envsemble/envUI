@@ -23,7 +23,7 @@ import { useFormatters } from '../../internal/provider/useFormatters.js';
 import { useHydrated } from '../../internal/react/useHydrated.js';
 import { useReorder, type Announcement, type ReorderHandlers } from './useReorder.js';
 import type { RootProps } from '../List.js';
-import { usePortalContainer } from '../../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../../internal/provider/PortalContainerContext.js';
 import { reportInDevelopment } from '../../internal/developmentReport.js';
 import '../../styles/Base.css';
 import '../../styles/List.css';

@@ -11,10 +11,8 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/popup/PopupSurface.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import { Grid } from '../layout/Layout.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/trigger/hoverDetail.js';

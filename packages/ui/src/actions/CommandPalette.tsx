@@ -23,11 +23,8 @@ import { Spinner } from '../feedback/Spinner.js';
 import { DialogBackdrop, OverlayTheme } from '../internal/dialog/DialogParts.js';
 import type { DialogOpenChangeReason } from '../overlays/Dialog.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
-import {
-  containedModal,
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedModal, containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { CommandPaletteFooter } from './internal/CommandPaletteFooter.js';
 import {
   CommandPaletteOptions,

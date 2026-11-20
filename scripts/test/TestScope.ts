@@ -16,6 +16,7 @@ export const aliases: Record<string, string[]> = {
   useResize: ['Panes'],
   PopupSurface: ['PopupSurface', 'PortalContainer'],
   PortalContainerContext: ['PortalContainer'],
+  containedOverlays: ['PortalContainer'],
   useDirection: ['Direction'],
   Theme: ['ThemePreference', 'ThemeContrast', 'WindowClasses'],
   Popup: ['WindowClasses', 'PopupSurface'],

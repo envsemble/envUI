@@ -23,11 +23,8 @@ import {
   type TextFieldDecorationProps,
 } from '../internal/field/FieldFrame.js';
 import { PopupSurface } from '../internal/popup/PopupSurface.js';
-import {
-  containedModal,
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedModal, containedOpenChange } from '../internal/popup/containedOverlays.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
 import { ListRow } from '../internal/popup/ListRow.js';

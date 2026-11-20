@@ -18,10 +18,8 @@ import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { Alert } from '../feedback/Alert.js';
 import { DialogClose, type DialogFocusTarget, type DialogOpenChangeDetails } from './Dialog.js';
 import {

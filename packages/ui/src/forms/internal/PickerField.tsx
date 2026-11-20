@@ -17,10 +17,8 @@ import { setRef } from '../../internal/react/setRef.js';
 import { useHydrated } from '../../internal/react/useHydrated.js';
 import { useControllableState } from '../../internal/react/useControllableState.js';
 import { useDirection } from '../../internal/provider/useDirection.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../../internal/popup/containedOverlays.js';
 import type { OverlayOpenChangeReason } from '../../internal/popup/overlayOpenChangeReason.js';
 import type { PopoverOpenChangeReason } from '../../overlays/Popover.js';
 import { IconButton } from '../../actions/Button.js';

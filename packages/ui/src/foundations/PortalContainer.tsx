@@ -3,7 +3,7 @@
 // @client-module
 
 import { useMemo, type ReactNode } from 'react';
-import { PortalContainerContext } from '../internal/popup/PortalContainerContext.js';
+import { PortalContainerContext } from '../internal/provider/PortalContainerContext.js';
 
 export interface PortalContainerProps {
   /**

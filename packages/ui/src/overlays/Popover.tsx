@@ -11,10 +11,8 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/popup/PopupSurface.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
