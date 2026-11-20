@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo, type Ref } from 'react';
 import { mergeRefs } from './setRef.js';
 
