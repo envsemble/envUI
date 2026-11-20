@@ -1,42 +1,32 @@
-import { useRef, useState } from 'react';
-import { ResizeHandle, Row, Surface, Text, useContainerSize } from '@envsemble/envui';
-
-const halfOfRow = (rowPixels: number) => {
-  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  return Math.min(Math.max(rowPixels / 2 / rem, 8), 16);
-};
+import { useState } from 'react';
+import { CodeBlock, Column, ResizeHandle, Text } from '@envsemble/envui';
 
 export default function ResizeHandleAnatomy() {
-  const [width, setWidth] = useState(12);
-  const row = useRef<HTMLDivElement>(null);
-  const rowSize = useContainerSize(row);
-  const room = rowSize ? halfOfRow(rowSize.inlineSize) : 16;
-  const shown = Math.min(width, room);
+  const [height, setHeight] = useState(5);
   return (
-    <Row ref={row} align="stretch" style={{ inlineSize: 'min(100%, 28rem)', blockSize: '8rem' }}>
-      <Surface
-        id="files"
-        radius="none"
-        padding={3}
-        style={{ inlineSize: `${shown}rem`, flex: 'none' }}
-      >
-        <Text>Files</Text>
-      </Surface>
+    <Column style={{ inlineSize: 'min(100%, 28rem)', blockSize: '11rem' }}>
+      <Column padding={3} style={{ flex: 1, minBlockSize: 0 }}>
+        <Text>Deploy to staging</Text>
+      </Column>
       <ResizeHandle
-        axis="inline"
-        label="Resize the files"
-        aria-controls="files"
-        value={shown}
-        room={(handle) => halfOfRow(handle.parentElement?.clientWidth ?? 0)}
-        min={8}
-        max={16}
+        axis="block"
+        reverse
+        label="Resize the logs"
+        aria-controls="anatomy-logs"
+        value={height}
+        min={3}
+        max={8}
         unit="rem"
         step={1}
-        onChange={setWidth}
+        onChange={setHeight}
       />
-      <Surface radius="none" padding={3} background="page" style={{ flex: 1 }}>
-        <Text>Preview</Text>
-      </Surface>
-    </Row>
+      <CodeBlock
+        id="anatomy-logs"
+        label="Logs"
+        style={{ blockSize: `${height}rem`, flex: 'none', overflow: 'auto' }}
+      >
+        {'Building the site\nRunning 214 tests'}
+      </CodeBlock>
+    </Column>
   );
 }

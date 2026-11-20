@@ -30,7 +30,7 @@ avoidWhen:
     use: Scaffold
   - text: The application's bar across every page, with its name and account menu.
     use: TopBar
-  - text: Two panes side by side, such as a list and its detail.
+  - text: Two panes side by side, such as a document and its details.
     use: Panes
 components:
   - Page
