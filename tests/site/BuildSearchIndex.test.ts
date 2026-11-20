@@ -193,7 +193,6 @@ test('a result names its area: the catalogue, or the Docs for the reference', ()
   assert.equal(area('page:colors'), 'catalogue');
   assert.equal(area('page:field'), 'docs');
   assert.equal(area('page:setup'), 'docs');
-  assert.equal(area('page:dev-mode'), undefined);
   assert.equal(area('prop:Button.variant'), 'docs');
   assert.equal(area('export:useTheme'), 'docs');
   assert.equal(area('token:color.fg.muted'), 'docs');

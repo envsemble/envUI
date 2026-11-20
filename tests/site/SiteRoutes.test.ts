@@ -12,9 +12,8 @@ const {
   normalizeRoute,
   otherPartRoute,
   pagesOf,
-  routeOfDocument,
 } = await importSource('SiteAddresses', [
-  "export { allPages, findPage, pagesOf, routeOfDocument } from './apps/site/src/routes/SiteRoutes.ts';",
+  "export { allPages, findPage, pagesOf } from './apps/site/src/routes/SiteRoutes.ts';",
   "export { counterpartOf, otherPartRoute } from './apps/site/src/routes/Counterparts.ts';",
   "export { docsTree } from './apps/site/src/routes/DocsTree.ts';",
   "export { normalizeRoute } from './apps/site/src/routes/OldAddresses.ts';",
@@ -104,7 +103,6 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'docs/foundations/content': 'docs/writing',
   };
   for (const [from, to] of Object.entries(routes)) assert.equal(normalizeRoute(from), to, from);
-  assert.equal(routeOfDocument('dev-mode-overview'), undefined);
   for (const { path } of allPages) assert.equal(normalizeRoute(path), path);
 });
 

@@ -13,12 +13,12 @@ const paints = await importSource('Paints', 'packages/ui/src/internal/dom/paints
 const box = (left, top, right, bottom) => ({ left, top, right, bottom });
 
 test('a picture is fitted by its kind, and only a cropped tile that has shown plays drawn out', () => {
-  assert.deepEqual(kinds.fitKindOf({ tile: true }, 'own'), { scale: 'own', tile: true });
-  const drawing = kinds.fitKindOf({ tile: true, window: { width: 8 } }, 'own');
+  assert.deepEqual(kinds.fitKindOf({ tile: true }, true), { scale: 'own', tile: true });
+  const drawing = kinds.fitKindOf({ tile: true, window: { width: 8 } }, true);
   assert.deepEqual(drawing, { scale: 'window', tile: true });
-  assert.deepEqual(kinds.fitKindOf(undefined, undefined), { scale: 'content', tile: false });
-  assert.equal(kinds.fitKindOf({ tile: true }, 'own'), kinds.fitKindOf({ tile: true }, 'own'));
-  const tile = kinds.fitKindOf({ tile: true }, 'own');
+  assert.deepEqual(kinds.fitKindOf(undefined, false), { scale: 'content', tile: false });
+  assert.equal(kinds.fitKindOf({ tile: true }, true), kinds.fitKindOf({ tile: true }, true));
+  const tile = kinds.fitKindOf({ tile: true }, true);
   const playing = { playing: true, shown: true };
   assert.equal(kinds.fitModeOf(tile, false, playing), 'playing');
   assert.equal(kinds.fitModeOf(tile, false, { playing: true, shown: false }), 'resting');

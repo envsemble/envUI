@@ -69,10 +69,6 @@ export function tilePictureOf(
   };
 }
 
-export type TileFrame = 'own';
-
-export function frameOf(id?: string): TileFrame | undefined {
-  return groupedPages.some((page) => page.document.id === id && page.section === 'Components')
-    ? 'own'
-    : undefined;
+export function ownsFrame(id?: string): boolean {
+  return groupedPages.some((page) => page.document.id === id && page.section === 'Components');
 }
