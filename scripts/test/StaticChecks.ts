@@ -1,4 +1,5 @@
 import { baseOption } from '../Git.ts';
+import { unitTestFiles } from './TestScope.ts';
 import { bin, series, task, type Task } from './TestTasks.ts';
 
 const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
@@ -99,6 +100,14 @@ export const checks = {
   'icons:check': (): Task[] => [
     task('icons:check', node('scripts/build/GenerateIcons.ts', '--check')),
   ],
+  unit: (options: readonly string[] = []): Task[] => {
+    const { fast, built } = unitTestFiles();
+    return [
+      task('unit tests', [...bin.node, '--test', ...options, ...fast, ...built], {
+        detail: `${fast.length + built.length} files`,
+      }),
+    ];
+  },
 };
 
 type Check = keyof typeof checks;
@@ -107,7 +116,7 @@ if (import.meta.main) {
   const [name, ...rest] = process.argv.slice(2);
   if (!name || !(name in checks)) {
     console.error(
-      `Usage: node scripts/test/StaticChecks.ts <check> [arguments], the check one of ${Object.keys(checks).join(', ')}. lint, lint:css and format:check pass their arguments on to their tool; docs:check takes --base <ref>.`,
+      `Usage: node scripts/test/StaticChecks.ts <check> [arguments], the check one of ${Object.keys(checks).join(', ')}. lint, lint:css and format:check pass their arguments on to their tool, unit its options to node --test; docs:check takes --base <ref>.`,
     );
     process.exit(2);
   }
@@ -117,9 +126,11 @@ if (import.meta.main) {
       ? [generateDocumentation, ...checks.typecheck()]
       : check === 'docs:check'
         ? checks['docs:check'](baseOption())
-        : checks[check]().map((item) =>
-            rest.length ? { ...item, run: [...item.run, ...rest] } : item,
-          );
+        : check === 'unit'
+          ? checks.unit(rest)
+          : checks[check]().map((item) =>
+              rest.length ? { ...item, run: [...item.run, ...rest] } : item,
+            );
   const results = await series(tasks.map((item) => ({ ...item, stream: true })));
   process.exit(results.every((result) => result.ok) && results.length === tasks.length ? 0 : 1);
 }

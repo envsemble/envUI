@@ -1,3 +1,5 @@
+'use client';
+
 import { isValidElement, useLayoutEffect, useState, type ReactNode, type RefObject } from 'react';
 
 const collapsed = (text: string) => text.replace(/\s+/g, ' ').trim();

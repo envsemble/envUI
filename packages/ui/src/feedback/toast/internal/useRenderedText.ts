@@ -1,3 +1,5 @@
+'use client';
+
 import { useLayoutEffect, useState, type RefObject } from 'react';
 
 /** The text the element renders, followed as it changes, while reads is true. */
