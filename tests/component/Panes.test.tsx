@@ -76,51 +76,41 @@ test('the handle starts from the width that shows, where the room allows less th
 });
 
 test(
-  'the handle resizes the pane by keyboard and pointer, in rem, and remembers it',
+  'the handle resizes the pane by keyboard and pointer, in rem, and a double click returns it to its default',
   { tags: ['engines'] },
   async () => {
-    const forget = () => {
-      for (const name of ['fixture-panes', 'fixture-kept'])
-        document.cookie = `${name}=; max-age=0; path=/`;
-    };
-    forget();
-    try {
-      const fixtureMount = panes('width=60rem&persist=fixture-panes');
-      await expect.element(handle()).toHaveAttribute('aria-valuetext', '22.5 rem');
-      await expect.element(handle()).toHaveAttribute('aria-orientation', 'vertical');
-      await expect.element(handle()).toHaveAttribute('aria-controls', list().element().id);
-      focus(handle());
-      await keyboard.press('ArrowRight');
-      await expect.element(handle()).toHaveAttribute('aria-valuetext', '23.5 rem');
-      await keyboard.press('Shift+ArrowLeft');
-      await expect.element(handle()).toHaveAttribute('aria-valuetext', '18.5 rem');
-      await expect.element(handle()).toHaveAttribute('aria-valuenow', '18.5');
-      expect(box(list()).width).toBeCloseTo(18.5 * 16, 0);
-      const edge = box(handle());
-      const x = edge.x + edge.width / 2;
-      const y = edge.y + edge.height / 2;
-      await mouse.move(x, y);
-      await mouse.down();
-      await mouse.move(x + 16, y);
-      await mouse.move(x + 32, y);
-      await mouse.up();
-      await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
-      await expect.poll(() => page.getByTestId('sizes').element().textContent).toContain('20.5!');
-      expect(document.cookie).toContain('fixture-panes=20.5');
-      fixtureMount.remount();
-      await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
-      panes('width=60rem&persist=fixture-kept&kept=30');
-      await expect.element(handle()).toHaveAttribute('aria-valuetext', '30 rem');
-      await handle().dblClick();
-      await expect.element(handle()).toHaveAttribute('aria-valuetext', '22.5 rem');
-      panes('width=60rem&persist=fixture-panes');
-      await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
-      await handle().dblClick();
-      await expect.element(handle()).toHaveAttribute('aria-valuetext', '22.5 rem');
-      expect(document.cookie).not.toContain('fixture-panes=');
-    } finally {
-      forget();
-    }
+    panes('width=60rem');
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '22.5 rem');
+    await expect.element(handle()).toHaveAttribute('aria-orientation', 'vertical');
+    await expect.element(handle()).toHaveAttribute('aria-controls', list().element().id);
+    focus(handle());
+    await keyboard.press('ArrowRight');
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '23.5 rem');
+    await keyboard.press('Shift+ArrowLeft');
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '18.5 rem');
+    await expect.element(handle()).toHaveAttribute('aria-valuenow', '18.5');
+    expect(box(list()).width).toBeCloseTo(18.5 * 16, 0);
+    const edge = box(handle());
+    const x = edge.x + edge.width / 2;
+    const y = edge.y + edge.height / 2;
+    await mouse.move(x, y);
+    await mouse.down();
+    await mouse.move(x + 16, y);
+    await mouse.move(x + 32, y);
+    await mouse.up();
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
+    await expect.poll(() => page.getByTestId('sizes').element().textContent).toContain('20.5!');
+    await handle().dblClick();
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '22.5 rem');
+    await expect.poll(() => page.getByTestId('sizes').element().textContent).toMatch(/ 22\.5!$/);
+
+    panes('width=60rem&size=30');
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '30 rem');
+    focus(handle());
+    await keyboard.press('ArrowLeft');
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '29 rem');
+    await handle().dblClick();
+    await expect.element(handle()).toHaveAttribute('aria-valuetext', '30 rem');
   },
 );
 
@@ -158,20 +148,15 @@ test(
   },
 );
 
-test('a disabled handle neither moves nor resets on a double click, and keeps the kept width', async () => {
-  document.cookie = 'fixture-disabled=20.5; path=/';
-  try {
-    panes('width=60rem&persist=fixture-disabled&disabled');
-    await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
-    await expect.element(handle()).toHaveAttribute('aria-disabled', 'true');
-    handle()
-      .element()
-      .dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
-    await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
-    expect(document.cookie).toContain('fixture-disabled=20.5');
-  } finally {
-    document.cookie = 'fixture-disabled=; max-age=0; path=/';
-  }
+test('a disabled handle neither moves nor resets on a double click', async () => {
+  panes('width=60rem&size=20.5&disabled');
+  await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
+  await expect.element(handle()).toHaveAttribute('aria-disabled', 'true');
+  handle()
+    .element()
+    .dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+  await expect.element(handle()).toHaveAttribute('aria-valuetext', '20.5 rem');
+  expect(page.getByTestId('sizes').element().textContent).toBe('');
 });
 
 test(

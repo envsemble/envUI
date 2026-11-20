@@ -18,7 +18,6 @@ import {
   Tree,
   Menubar,
   Panes,
-  readPanesWidth,
   TopBar,
   Menu,
   Table,
@@ -234,15 +233,7 @@ export function HydrationApp() {
           <Panes.ResizeHandle label="Hydrated split" />
           <Panes.Pane label="Hydrated supporting">Hydrated supporting pane</Panes.Pane>
         </Panes.Root>
-        <Panes.Root
-          sized="end"
-          stackBelow="medium"
-          persist="hydrated-kept-panes"
-          persistedWidth={readPanesWidth(
-            'theme=dark; hydrated-kept-panes=30',
-            'hydrated-kept-panes',
-          )}
-        >
+        <Panes.Root sized="end" stackBelow="medium" defaultWidth={30}>
           <Panes.Pane label="Hydrated kept main">Kept main pane</Panes.Pane>
           <Panes.ResizeHandle label="Hydrated kept split" />
           <Panes.Pane label="Hydrated kept supporting">Kept supporting pane</Panes.Pane>

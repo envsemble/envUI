@@ -5,10 +5,8 @@ import {
   cloneElement,
   createContext,
   isValidElement,
-  useCallback,
   useContext,
   useId,
-  useLayoutEffect,
   useMemo,
   type ReactElement,
   type ComponentPropsWithRef,
@@ -18,7 +16,6 @@ import { panes } from '../foundations/messages/panes.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
-import { readPanesWidth, writePanesWidth } from './panesSize.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { remPixels, roundToHundredth } from '../internal/dom/lengths.js';
 import { useResizableWidth } from '../internal/resize/useResizableWidth.js';
@@ -47,8 +44,9 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
   /** The sized pane's width in rem, for Panes the application controls with onWidthChange. */
   width?: number;
   /**
-   * The sized pane's width in rem until people choose one with Panes.ResizeHandle, or one is kept
-   * under `persist`, and the width a double click on the handle returns it to.
+   * The sized pane's width in rem until people choose one with Panes.ResizeHandle, and the width a
+   * double click on the handle returns it to. To keep the width people choose, store what
+   * onWidthChange receives and pass it back here.
    * @default 22.5
    */
   defaultWidth?: number;
@@ -67,19 +65,6 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * @default 40
    */
   maxWidth?: number;
-  /**
-   * Keeps the width people choose in a cookie of this name, for Panes the application doesn't
-   * control; a double click on the handle forgets it and returns to `defaultWidth`. Read it on the
-   * server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's
-   * markup has it and nothing moves as the page hydrates. Without that, the kept width applies
-   * after the first render.
-   */
-  persist?: string;
-  /**
-   * The width kept under `persist`, in rem, as the server read it from the request's cookies with
-   * `readPanesWidth`: the first render uses it, on the server and in the browser alike.
-   */
-  persistedWidth?: number;
   /**
    * A name for this node, such as "inbox", for the application's styles and tests to find it by; it
    * renders as `data-env-name`.
@@ -159,8 +144,6 @@ function Root({
   onWidthChange,
   minWidth = 16,
   maxWidth = 40,
-  persist,
-  persistedWidth,
   name,
   className,
   style,
@@ -168,29 +151,16 @@ function Root({
   ...props
 }: RootProps) {
   const sizeText = useMessages('panes', panes).size;
-  const keep = useCallback(
-    (kept: number | undefined) => {
-      if (persist) writePanesWidth(persist, kept);
-    },
-    [persist],
-  );
   const resize = useResizableWidth({
     width,
     defaultWidth,
     onWidthChange,
     minWidth,
     maxWidth,
-    keptWidth: persistedWidth,
-    keep,
     room: widestSizedPaneRem,
     reverse: sized === 'end',
     widthText: (size) => sizeText({ size }),
   });
-  const { restore } = resize;
-  useLayoutEffect(() => {
-    const kept = persist ? readPanesWidth(document.cookie, persist) : undefined;
-    if (kept !== undefined) restore(kept);
-  }, [persist, restore]);
   const fallbackId = `${useId()}-sized`;
   const paneAt: number[] = [];
   const given: ReactElement<PaneProps>[] = [];
