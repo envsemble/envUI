@@ -27,7 +27,7 @@ describe('DocumentTabs', () => {
     const retrospective = strip.getByRole('tab', { name: 'Retrospective.md', exact: true });
     await expect.element(roadmap).toHaveAttribute('aria-selected', 'true');
     await expect.element(roadmap).toHaveAttribute('tabindex', '0');
-    await expect.element(roadmap).toHaveAttribute('data-tab-id', 'plans/roadmap.md');
+    await expect.element(roadmap).toHaveAttribute('data-value', 'plans/roadmap.md');
     await expect.element(roadmap).toHaveAttribute('aria-controls', 'document-panel-light');
     await expect.element(decisions).toHaveAttribute('tabindex', '-1');
     await expect.element(retrospective).toHaveAttribute('data-preview', '');
@@ -244,7 +244,7 @@ describe('DocumentTabs', () => {
       expect(selected()).toEqual(before);
       await page.elementLocator(first!).click();
       await expect.element(page.elementLocator(first!)).toHaveAttribute('aria-selected', 'true');
-      await expect.poll(reorderLog).toBe(`select ${first!.dataset.tabId}`);
+      await expect.poll(reorderLog).toBe(`select ${first!.dataset.value}`);
     },
   );
 

@@ -9,22 +9,22 @@ test(
   { tags: ['once'] },
   async () => {
     const errors = collectErrors();
-    await commands.failModule('PictureNotice');
+    await commands.failModule('ContainedToastRoot');
     try {
       const mounted = mount(fixture);
       const layer = page.getByTestId('layer');
       await expect.poll(() => shown(layer.getByRole('menu', { name: 'Actions' }))).toBe(true);
-      await commands.moduleRequested('PictureNotice');
+      await commands.moduleRequested('ContainedToastRoot');
       await nextFrames();
       expect(layer.element().querySelectorAll('.env-toast')).toHaveLength(0);
-      await commands.releaseModule('PictureNotice');
+      await commands.releaseModule('ContainedToastRoot');
       mounted.remount();
       await expect
         .poll(() => shown(page.getByTestId('layer').getByText('Changes saved.')))
         .toBe(true);
       expect(errors).toEqual([]);
     } finally {
-      await commands.unrouteModule('PictureNotice');
+      await commands.unrouteModule('ContainedToastRoot');
     }
   },
 );

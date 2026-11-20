@@ -99,6 +99,13 @@ export function containedModal<Modal>(value: PortalContainerValue, modal: Modal)
   return value.contained ? false : modal;
 }
 
+export function containedFocus<Target>(
+  value: PortalContainerValue,
+  target: Target,
+): Target | false {
+  return value.contained ? false : target;
+}
+
 /**
  * The style a contained popup adds to its popup element: it sizes to its content within the
  * container's width, rather than to the room the window leaves beside its anchor.

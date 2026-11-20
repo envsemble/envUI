@@ -5,21 +5,21 @@ import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import {
   inSkeleton,
   skeletonAttributes,
   type SkeletonProps,
 } from '../internal/skeleton/skeleton.js';
-import {
-  destinationKey,
-  DestinationItem,
-  useNavigationMessages,
-  type DestinationClasses,
-} from './internal/DestinationItem.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { navigation } from '../foundations/messages/navigation.js';
+import { DestinationItem, type DestinationClasses } from './internal/DestinationItem.js';
+import { destinationKey } from './internal/destinationModel.js';
 import type { Destination } from './destinations.js';
 import type { NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
+import '../styles/NavigationDestinations.css';
 import '../styles/NavigationRail.css';
 
 const railClasses: DestinationClasses = {
@@ -84,12 +84,12 @@ export function NavigationRail({
   className,
   ...props
 }: NavigationRailProps) {
-  const messages = useNavigationMessages();
+  const messages = useMessages('navigation', navigation);
   return (
     <Column
       render={<nav />}
       {...props}
-      aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
+      aria-label={landmarkLabel(label, labelledBy, messages.label)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-rail', className)}

@@ -43,6 +43,14 @@ function lineIndex(text) {
   };
 }
 const baseName = (module) => posix.basename(module).replace(/\.tsx?$/, '');
+const componentFolder = /^(?<family>(?:[^/]+\/)+)internal\/(?<folder>[a-z][A-Za-z0-9]*)\//;
+const folderComponent = (module) => {
+  const match = componentFolder.exec(module);
+  if (match === null) return undefined;
+  const { family, folder } = match.groups;
+  const name = folder[0].toUpperCase() + folder.slice(1);
+  return { name, module: `${family}${name}.tsx` };
+};
 
 const classPattern = /(?<![\w-])env-[a-z0-9]+(?:(?:--?|__)[a-z0-9]+)*-?/g;
 const classToken = (match) => (match.endsWith('-') ? `${match}*` : match);
@@ -116,10 +124,15 @@ function readLayers(library) {
       typeof entry === 'string' ? entry : entry.layer,
     ]),
   );
+  const defaultLayer = (module) => {
+    const owner = folderComponent(module)?.module;
+    if (owner === undefined || !library.moduleSet.has(owner)) return directoryLayer(module);
+    return layeredModules[owner] ?? directoryLayer(owner);
+  };
   const components = new Set(['base', 'composites']);
   for (const [module, entry] of Object.entries(listed)) {
     const own = layeredModules[module];
-    const folder = directoryLayer(module);
+    const folder = defaultLayer(module);
     if (own === folder && typeof entry === 'string')
       problems.push(
         `${rulesFile} layers.modules puts ${module} in ${own}, its directory's layer already: remove it.`,
@@ -147,7 +160,7 @@ function readLayers(library) {
   const layerOf = (module) => {
     if (entryPoints.has(module)) return 'entries';
     if (Object.hasOwn(layeredModules, module)) return layeredModules[module];
-    return directoryLayer(module);
+    return defaultLayer(module);
   };
   for (const module of modules)
     if (layerOf(module) === undefined)
@@ -242,9 +255,14 @@ function readComponents(library, layerOf) {
   const components = new Map();
   const componentOf = new Map();
   const ownStyles = (name) => new Set(stylesheets.includes(`${name}.css`) ? [`${name}.css`] : []);
+  const ownModules = [];
+  const folderModules = [];
   for (const module of modules) {
     if (layerOf(module) === 'entries' || module.startsWith(generatedIcons) || isMessages(module))
       continue;
+    (folderComponent(module) === undefined ? ownModules : folderModules).push(module);
+  }
+  for (const module of ownModules) {
     const name = baseName(module);
     if (components.has(name)) {
       problems.push(
@@ -258,6 +276,18 @@ function readComponents(library, layerOf) {
       styles: ownStyles(name),
       slots: new Set(),
     });
+    componentOf.set(module, name);
+  }
+  for (const module of folderModules) {
+    const { name, module: owner } = folderComponent(module);
+    const component = componentOf.get(owner) === name ? components.get(name) : undefined;
+    if (component === undefined) {
+      problems.push(
+        `${module} sits in the internal folder of ${name}, but ${owner} doesn't exist: name the folder after the component it serves.`,
+      );
+      continue;
+    }
+    component.modules.add(module);
     componentOf.set(module, name);
   }
   for (const module of planned) {

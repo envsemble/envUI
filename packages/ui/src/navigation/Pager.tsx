@@ -10,11 +10,12 @@ import {
 } from 'react';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { Row } from '../layout/Layout.js';
 import { mergeRefs } from '../internal/react/setRef.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { useLinkComponent } from '../internal/provider/LinkComponentContext.js';
-import { useEnvUI, useMessages } from '../internal/provider/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { pager } from '../foundations/messages/pager.js';
 import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
@@ -61,8 +62,7 @@ function PagerLink({
   ...props
 }: LinkProps & { direction: 'previous' | 'next' }) {
   const LinkComponent = useLinkComponent();
-  const captionWithoutMergingNamespace =
-    (useEnvUI().messages.pager?.[direction] as string | undefined) ?? pager[direction];
+  const caption = useMessages('pager', pager)[direction];
   const isPrevious = direction === 'previous';
   const symbol = icon != null ? <DecorativeIcon>{icon}</DecorativeIcon> : null;
 
@@ -75,9 +75,7 @@ function PagerLink({
     >
       {isPrevious && symbol}
       <span className="env-pager-link-copy">
-        {label !== null && (
-          <span className="env-pager-link-label">{label ?? captionWithoutMergingNamespace}</span>
-        )}
+        {label !== null && <span className="env-pager-link-label">{label ?? caption}</span>}
         <span className="env-pager-link-title">{children}</span>
       </span>
       {!isPrevious && symbol}
@@ -139,7 +137,7 @@ function Root({ children, className, 'aria-label': ariaLabel, ref, ...props }: R
         <nav
           {...props}
           ref={mergeRefs(element, ref)}
-          aria-label={ariaLabel ?? messages.label}
+          aria-label={landmarkLabel(ariaLabel, props['aria-labelledby'], messages.label)}
           className={classNames('env-pager', className)}
         />
       }

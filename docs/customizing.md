@@ -199,7 +199,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### DocumentTabs
 
 - Parts: `env-document-tabs`, `env-document-tabs-close`, `env-document-tabs-drag-image`, `env-document-tabs-end` (slot), `env-document-tabs-item`, `env-document-tabs-list`, `env-document-tabs-panel`, `env-document-tabs-panel-content` (slot), `env-document-tabs-strip`, `env-document-tabs-tab`, `env-document-tabs-tab-end` (slot), `env-document-tabs-tab-label`
-- States: `data-active` on `env-document-tabs-item`; `data-drop` (`after`, `before`) on `env-document-tabs-item`; `data-first-active`; `data-moving` (`pointer`) on `env-document-tabs-item`; `data-preview` on `env-document-tabs-tab`; `data-reordering` on `env-document-tabs-list`; `data-tab-id` on `env-document-tabs-tab`
+- States: `data-active` on `env-document-tabs-item`; `data-drop` (`after`, `before`) on `env-document-tabs-item`; `data-first-active`; `data-moving` (`pointer`) on `env-document-tabs-item`; `data-preview` on `env-document-tabs-tab`; `data-reordering` on `env-document-tabs-list`; `data-value` on `env-document-tabs-tab`
 
 ### DropZone
 
@@ -502,8 +502,8 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### LoadingBar
 
-- Parts: `env-loading-bar`, `env-loading-bar-contained`, `env-loading-bar-indicator`
-- States: `data-state` (`finishing`, `running`) on `env-loading-bar`, `env-loading-bar-contained`
+- Parts: `env-loading-bar`, `env-loading-bar-indicator`
+- States: `data-state` (`finishing`, `running`)
 - Used by: TopBar
 
 ### Overlay
@@ -533,7 +533,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Skeleton
 
 - Parts: `env-skeleton-content`, `env-skeleton-status`
-- Used by: Accordion, Alert, Breadcrumbs, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
+- Used by: Accordion, Alert, Breadcrumbs, Card, ColorPickerButton, Combobox, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
 
 ### TimeList
 

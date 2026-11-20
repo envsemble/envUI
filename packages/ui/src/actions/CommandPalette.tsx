@@ -9,17 +9,19 @@ import { FieldFrame } from '../internal/field/FieldFrame.js';
 import type { ListItemElementProps } from '../internal/popup/listEntries.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
-import { useTheme } from '../foundations/Theme.js';
 import { IconSearch } from '../icons/Search.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from './Button.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { Spinner } from '../feedback/Spinner.js';
-import { DialogBackdrop, OverlayTheme } from '../internal/dialog/DialogParts.js';
+import { ModalLayer } from '../internal/dialog/ModalLayer.js';
 import type { DialogOpenChangeReason } from '../overlays/Dialog.js';
-import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
-import { containedModal, containedOpenChange } from '../internal/popup/containedOverlays.js';
+import {
+  containedFocus,
+  containedModal,
+  containedOpenChange,
+} from '../internal/popup/containedOverlays.js';
 import { CommandPaletteFooter } from './internal/CommandPaletteFooter.js';
 import {
   CommandPaletteOptions,
@@ -201,7 +203,6 @@ export function CommandPalette({
   className,
   ...popupProps
 }: CommandPaletteProps) {
-  const theme = useTheme();
   const portal = usePortalContainer();
   const locale = useLocale();
   const dialogMessages = useMessages('dialog', dialog);
@@ -231,107 +232,100 @@ export function CommandPalette({
       modal={containedModal(portal, true)}
     >
       <BaseDialog.Portal container={portal.container}>
-        <OverlayTheme {...theme}>
-          <ResetControlDefaults>
-            <DialogBackdrop />
-            <div className="env-command-palette-positioner">
-              <BaseDialog.Popup
-                {...popupProps}
-                render={<Column padding={2} />}
-                className={classNames('env-command-palette', className)}
-                aria-label={label}
-                initialFocus={portal.contained ? false : input}
-                {...(portal.contained && { finalFocus: false })}
+        <ModalLayer backdrop={{}}>
+          <div className="env-command-palette-positioner">
+            <BaseDialog.Popup
+              {...popupProps}
+              render={<Column padding={2} />}
+              className={classNames('env-command-palette', className)}
+              aria-label={label}
+              initialFocus={containedFocus(portal, input)}
+              {...(portal.contained && { finalFocus: false })}
+            >
+              <BaseAutocomplete.Root
+                open
+                inline
+                items={grouped ? (sections as unknown as SectionsBaseUiTakesAsItsGroups) : items}
+                filter={null}
+                autoHighlight="always"
+                keepHighlight
+                locale={locale}
+                itemToStringValue={(item: CommandPaletteItem) => textOf(item, list.current)}
+                value={inputValue}
+                onValueChange={(next, details) => {
+                  const optionChosen = details.reason === 'item-press';
+                  if (optionChosen) return;
+                  onInputValueChange(next);
+                }}
+                onItemHighlighted={(item: CommandPaletteItem | undefined, details) =>
+                  keys.onHighlight(item, details.index)
+                }
               >
-                <BaseAutocomplete.Root
-                  open
-                  inline
-                  items={grouped ? (sections as unknown as SectionsBaseUiTakesAsItsGroups) : items}
-                  filter={null}
-                  autoHighlight="always"
-                  keepHighlight
-                  locale={locale}
-                  itemToStringValue={(item: CommandPaletteItem) => textOf(item, list.current)}
-                  value={inputValue}
-                  onValueChange={(next, details) => {
-                    const optionChosen = details.reason === 'item-press';
-                    if (optionChosen) return;
-                    onInputValueChange(next);
-                  }}
-                  onItemHighlighted={(item: CommandPaletteItem | undefined, details) =>
-                    keys.onHighlight(item, details.index)
-                  }
-                >
-                  <Row align="center" gap={2} className="env-command-palette-header">
-                    {searchStart != null && (
-                      <Slot
-                        className="env-command-palette-search-start"
-                        layout="row"
-                        shrink="never"
-                      >
-                        {searchStart}
-                      </Slot>
-                    )}
-                    <FieldFrame
+                <Row align="center" gap={2} className="env-command-palette-header">
+                  {searchStart != null && (
+                    <Slot className="env-command-palette-search-start" layout="row" shrink="never">
+                      {searchStart}
+                    </Slot>
+                  )}
+                  <FieldFrame
+                    id={searchId}
+                    controlBox
+                    variant="ghost"
+                    size="lg"
+                    startIcon={<IconSearch />}
+                    endAction={loading ? <Spinner size="sm" /> : undefined}
+                    className="env-command-palette-search"
+                  >
+                    <BaseAutocomplete.Input
+                      ref={input}
                       id={searchId}
-                      controlBox
-                      variant="ghost"
-                      size="lg"
-                      startIcon={<IconSearch />}
-                      endAction={loading ? <Spinner size="sm" /> : undefined}
-                      className="env-command-palette-search"
-                    >
-                      <BaseAutocomplete.Input
-                        ref={input}
-                        id={searchId}
-                        className="env-text-field-input env-command-palette-input"
-                        aria-label={label}
-                        autoComplete="off"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        placeholder={placeholder}
-                        onKeyDown={keys.onKeyDown}
-                      />
-                    </FieldFrame>
-                    {searchEnd != null && (
-                      <Slot className="env-command-palette-search-end" layout="row" shrink="never">
-                        {searchEnd}
-                      </Slot>
-                    )}
-                    <BaseDialog.Close
-                      render={
-                        <IconButton
-                          variant="ghost"
-                          icon={<IconClose />}
-                          aria-label={dialogMessages.close}
-                          className="env-command-palette-close"
-                        />
-                      }
+                      className="env-text-field-input env-command-palette-input"
+                      aria-label={label}
+                      autoComplete="off"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      placeholder={placeholder}
+                      onKeyDown={keys.onKeyDown}
                     />
-                  </Row>
-                  <CommandPaletteOptions
-                    grouped={grouped}
-                    label={label}
-                    loading={loading}
-                    empty={empty}
-                    listRef={list}
-                    onAct={act}
+                  </FieldFrame>
+                  {searchEnd != null && (
+                    <Slot className="env-command-palette-search-end" layout="row" shrink="never">
+                      {searchEnd}
+                    </Slot>
+                  )}
+                  <BaseDialog.Close
+                    render={
+                      <IconButton
+                        variant="ghost"
+                        icon={<IconClose />}
+                        aria-label={dialogMessages.close}
+                        className="env-command-palette-close"
+                      />
+                    }
                   />
-                  <CommandPaletteStatus
-                    count={items.length}
-                    query={query}
-                    loading={loading}
-                    loadingLabel={loadingLabel}
-                    emptyLabel={emptyLabel}
-                    emptyDescription={emptyDescription}
-                    emptyIcon={emptyIcon}
-                  />
-                </BaseAutocomplete.Root>
-                <CommandPaletteFooter hints={hints} footer={footer} empty={empty} />
-              </BaseDialog.Popup>
-            </div>
-          </ResetControlDefaults>
-        </OverlayTheme>
+                </Row>
+                <CommandPaletteOptions
+                  grouped={grouped}
+                  label={label}
+                  loading={loading}
+                  empty={empty}
+                  listRef={list}
+                  onAct={act}
+                />
+                <CommandPaletteStatus
+                  count={items.length}
+                  query={query}
+                  loading={loading}
+                  loadingLabel={loadingLabel}
+                  emptyLabel={emptyLabel}
+                  emptyDescription={emptyDescription}
+                  emptyIcon={emptyIcon}
+                />
+              </BaseAutocomplete.Root>
+              <CommandPaletteFooter hints={hints} footer={footer} empty={empty} />
+            </BaseDialog.Popup>
+          </div>
+        </ModalLayer>
       </BaseDialog.Portal>
     </BaseDialog.Root>
   );

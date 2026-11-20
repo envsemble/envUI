@@ -13,6 +13,7 @@ import { Tooltip } from '../overlays/Tooltip.js';
 import { IconChevronLeft } from '../icons/ChevronLeft.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { Row } from '../layout/Layout.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
@@ -227,7 +228,7 @@ export function Pagination({
       render={
         <nav
           {...props}
-          aria-label={label ?? messages.label}
+          aria-label={landmarkLabel(label, props['aria-labelledby'], messages.label)}
           className={classNames('env-pagination', className)}
           data-size={size}
         />

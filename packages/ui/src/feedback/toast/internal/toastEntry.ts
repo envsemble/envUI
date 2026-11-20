@@ -8,6 +8,12 @@ export type ToastEntry = ToastNotification & {
   placement: ToastPlacement;
 };
 
+export type ToastObject = BaseToast.Root.ToastObject<ToastEntry>;
+
+export function entrySetByController(toastObject: ToastObject) {
+  return toastObject.data!;
+}
+
 /** A notification's text before it renders: its textValue, else its message when that is a string. */
 export const toastText = (entry: ToastNotification) =>
   givenLabelText(entry.message, entry.textValue);
@@ -19,12 +25,15 @@ export type ToastDelivery = Pick<
   ReturnType<typeof BaseToast.useToastManager<ToastEntry>>,
   'add' | 'close'
 >;
+
+export type ToastPauseReason = 'hidden' | 'window' | 'viewport' | 'hover' | 'focus';
+
 export type ToastTimer = {
   durationMs: number;
   remainingMs: number;
   startedAt: number;
   handle?: ReturnType<typeof setTimeout>;
-  pauseReasons: Set<string>;
+  pauseReasons: Set<ToastPauseReason>;
 };
 
 export const toastPlacements: readonly ToastPlacement[] = ['bottom-end', 'top-center'];

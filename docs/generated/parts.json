@@ -1585,9 +1585,7 @@
         "Kbd",
         "ListRow",
         "Overlay",
-        "Skeleton",
         "Spinner",
-        "Surface",
         "TextField",
         "Theme"
       ]
@@ -2206,7 +2204,7 @@
           ]
         },
         {
-          "attribute": "data-tab-id",
+          "attribute": "data-value",
           "values": [],
           "parts": [
             "env-document-tabs-tab"
@@ -3391,9 +3389,7 @@
         },
         {
           "attribute": "data-dot",
-          "values": [
-            ""
-          ],
+          "values": [],
           "parts": [
             "env-navigation-bar-count"
           ]
@@ -6350,10 +6346,6 @@
           "description": "The loading bar."
         },
         {
-          "class": "env-loading-bar-contained",
-          "description": "A loading bar inside a region rather than the frame."
-        },
-        {
           "class": "env-loading-bar-indicator",
           "description": "The moving part of the bar."
         }
@@ -6366,8 +6358,7 @@
             "running"
           ],
           "parts": [
-            "env-loading-bar",
-            "env-loading-bar-contained"
+            "env-loading-bar"
           ]
         }
       ],
@@ -6547,7 +6538,6 @@
         "Card",
         "ColorPickerButton",
         "Combobox",
-        "CommandPalette",
         "ConfirmDialog",
         "CopyButton",
         "DatePicker",

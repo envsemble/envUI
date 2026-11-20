@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useEffect,
   useId,
   useState,
   type ComponentPropsWithRef,
@@ -15,12 +14,12 @@ import type { WindowClass } from '../foundations/windowClasses.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useMergedRefs } from '../internal/react/useMergedRefs.js';
-import { useScrollKeys } from './internal/useScrollKeys.js';
-import { resolveNavigationForms } from './internal/navigationForms.js';
-import { focusRegion } from './internal/scaffoldFocus.js';
-import { useNavigationFocusHandoff } from './internal/useNavigationFocusHandoff.js';
-import { ScaffoldPagesContext, useScaffoldPages } from './internal/PageTitleFocus.js';
-import { observeResize } from '../internal/dom/observeResize.js';
+import { useScrollKeys } from './internal/scaffold/useScrollKeys.js';
+import { resolveNavigationForms } from './internal/scaffold/navigationForms.js';
+import { focusRegion } from './internal/scaffold/scaffoldFocus.js';
+import { useNavigationFocusHandoff } from './internal/scaffold/useNavigationFocusHandoff.js';
+import { useBarSizes } from './internal/scaffold/useBarSizes.js';
+import { ScaffoldPagesContext, useScaffoldPages } from './internal/scaffoldPages.js';
 import '../styles/Base.css';
 import '../styles/Scaffold.css';
 
@@ -172,45 +171,7 @@ export function Scaffold({
   const hasBar = shown.has('bar');
   const hasBottomBar = bottomBar != null;
 
-  useEffect(
-    function publishBarSizesCssCannotKnow() {
-      if (!root || (!hasTopBar && !hasBar && !hasBottomBar)) return;
-      const html = root.ownerDocument.documentElement;
-      const topBarRegion = root.querySelector<HTMLElement>(':scope > .env-scaffold-top-bar');
-      const barSlot = root.querySelector<HTMLElement>(
-        ':scope > .env-scaffold-navigation > .env-scaffold-bar',
-      );
-      const bottomBarRegion = root.querySelector<HTMLElement>(':scope > .env-scaffold-bottom-bar');
-      const publish = () => {
-        const top = topBarRegion?.offsetHeight ?? 0;
-        const bar = barSlot?.offsetHeight ?? 0;
-        root.style.setProperty('--_scaffold-top-bar-size', `${top}px`);
-        root.style.setProperty('--_scaffold-bar-size', `${bar}px`);
-        root.style.setProperty(
-          '--_scaffold-bottom-size',
-          `${bar + (bottomBarRegion?.offsetHeight ?? 0)}px`,
-        );
-        const documentScrollPaddingKeepsFocusClearOfBars = scroll === 'document';
-        if (!documentScrollPaddingKeepsFocusClearOfBars) return;
-        html.style.setProperty('--_scaffold-scroll-top', `${top}px`);
-        html.style.setProperty(
-          '--_scaffold-scroll-bottom',
-          `${bar + (bottomBarRegion?.offsetHeight ?? 0)}px`,
-        );
-      };
-      publish();
-      const stopObserving = observeResize([topBarRegion, barSlot, bottomBarRegion], publish);
-      return () => {
-        stopObserving();
-        root.style.removeProperty('--_scaffold-top-bar-size');
-        root.style.removeProperty('--_scaffold-bar-size');
-        root.style.removeProperty('--_scaffold-bottom-size');
-        html.style.removeProperty('--_scaffold-scroll-top');
-        html.style.removeProperty('--_scaffold-scroll-bottom');
-      };
-    },
-    [root, scroll, hasTopBar, hasBar, hasBottomBar],
-  );
+  useBarSizes(root, scroll, { hasTopBar, hasBar, hasBottomBar });
   useNavigationFocusHandoff(root, hasNavigation, navigationId);
   const slotThatCssShowsAtItsWidth = (form: ScaffoldNavigationForm) =>
     shown.has(form) ? (

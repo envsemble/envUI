@@ -5,33 +5,40 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
   type ComponentPropsWithRef,
   type MouseEvent,
+  type ReactNode,
   type RefObject,
 } from 'react';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { tableOfContents } from '../foundations/messages/tableOfContents.js';
+import { flatten } from './internal/tableOfContents/contentsOutline.js';
+import { focusSection, rememberScroll } from './internal/tableOfContents/sectionScroll.js';
+import { useContentsHeadings } from './internal/tableOfContents/useContentsHeadings.js';
 import {
-  currentSection,
-  readingPosition,
-  flatten,
-  type TableOfContentsItem,
-} from './internal/contentsOutline.js';
-import { focusSection, readSections, rememberScroll } from './internal/sectionScroll.js';
-import { useContentsHeadings } from './internal/useContentsHeadings.js';
-import { createWaveDrawer } from './internal/waveDrawer.js';
-import { prefersReducedMotion, reducedMotionQuery } from '../internal/motion/reducedMotion.js';
+  scrollPauseThatEndsLinkScrollMs,
+  useReadingPlace,
+  type ChosenByLink,
+} from './internal/tableOfContents/useReadingPlace.js';
+import { prefersReducedMotion } from '../internal/motion/reducedMotion.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
 import { useLatest } from '../internal/react/useLatest.js';
-import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/TableOfContents.css';
 
-export type { TableOfContentsItem } from './internal/contentsOutline.js';
+/** One entry of a table of contents: a section of the page, and the sections nested in it. */
+export interface TableOfContentsItem {
+  /** The id of the element the entry leads to: a heading, or any section of the page with an id. */
+  id: string;
+  /** The entry's text, such as the heading's words or a shorter name for a section. */
+  label: ReactNode;
+  /** The sections nested under this one, such as a heading's subsections. */
+  children?: readonly TableOfContentsItem[];
+}
 
 export interface TableOfContentsProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /**
@@ -71,9 +78,7 @@ export interface TableOfContentsProps extends Omit<ComponentPropsWithRef<'nav'>,
 
 const defaultLevels: readonly HeadingLevel[] = [2, 3];
 
-const scrollPauseThatEndsLinkScrollMs = 150;
-
-interface ListProps {
+interface ContentsListProps {
   items: readonly TableOfContentsItem[];
   current: string | undefined;
   passed: ReadonlySet<string>;
@@ -81,7 +86,7 @@ interface ListProps {
   onNavigate: (event: MouseEvent<HTMLAnchorElement>, id: string) => void;
 }
 
-function List({ items, current, passed, depth, onNavigate }: ListProps) {
+function ContentsList({ items, current, passed, depth, onNavigate }: ContentsListProps) {
   return (
     <ol
       className="env-table-of-contents-list"
@@ -99,7 +104,7 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
             {item.label}
           </ActionElement>
           {item.children && item.children.length > 0 && (
-            <List
+            <ContentsList
               items={item.children}
               current={current}
               passed={passed}
@@ -131,118 +136,13 @@ export function TableOfContents({
   const root = useRef<HTMLDivElement>(null);
   const shape = useRef<SVGSVGElement>(null);
   const items = useContentsHeadings({ givenItems, container, levels, filter, own: root });
-  const [current, setCurrent] = useState<string>();
-  const chosenByLink = useRef<{ id: string; settled: boolean } | null>(null);
-  const settle = useRef(0);
+  const chosenByLink = useRef<ChosenByLink | null>(null);
   const scrollFrame = useRef(0);
   const latestOnNavigate = useLatest(onNavigate);
-  const measureOnNextFrame = useRef<() => void>(() => {});
-  const settleLater = useCallback((delay: number) => {
-    clearTimeout(settle.current);
-    const choice = chosenByLink.current;
-    if (!choice) return;
-    settle.current = window.setTimeout(() => {
-      choice.settled = true;
-      measureOnNextFrame.current();
-    }, delay);
-  }, []);
-  useEffect(
-    () => () => {
-      clearTimeout(settle.current);
-      cancelAnimationFrame(scrollFrame.current);
-    },
-    [],
-  );
+  useEffect(() => () => cancelAnimationFrame(scrollFrame.current), []);
   const flat = useMemo(() => flatten(items), [items]);
   const ids = flat.map((entry) => entry.id).join('\n');
-
-  useEffect(
-    function trackCurrentSectionAndDrawReadersPlace() {
-      if (ids === '') {
-        setCurrent(undefined);
-        return;
-      }
-      const sectionIds = ids.split('\n');
-      const first = document.getElementById(sectionIds[0]);
-      const doc = first?.ownerDocument ?? document;
-      let frame = 0;
-
-      const drawer = createWaveDrawer(
-        () => root.current,
-        () => shape.current,
-        reducedMotionQuery(),
-      );
-      const update = () => {
-        frame = 0;
-        const choice = chosenByLink.current;
-        if (choice?.settled) {
-          setCurrent(choice.id);
-          drawer.wave(sectionIds.indexOf(choice.id));
-          return;
-        }
-        const elements = sectionIds
-          .map((id) => doc.getElementById(id))
-          .filter((element): element is HTMLElement => element !== null);
-        if (elements.length === 0) {
-          setCurrent(undefined);
-          drawer.wave(null);
-          return;
-        }
-        const { sections, view } = readSections(elements, doc);
-        let next = currentSection(sections, view);
-        let position = readingPosition(sections, view);
-        if (choice) {
-          const chosenIndex = sectionIds.indexOf(choice.id);
-          if (position > chosenIndex) position = chosenIndex;
-          if (next && sectionIds.indexOf(next) > chosenIndex) next = choice.id;
-        }
-        setCurrent(next);
-        drawer.wave(position);
-      };
-      const schedule = () => {
-        if (frame === 0) frame = requestAnimationFrame(update);
-      };
-      const onScroll = (event: Event) => {
-        const target = event.target;
-        const sectionLookedUpAfresh = doc.getElementById(sectionIds[0]);
-        const movesNoSection =
-          target instanceof Element &&
-          sectionLookedUpAfresh &&
-          !target.contains(sectionLookedUpAfresh);
-        if (movesNoSection) return;
-        const choice = chosenByLink.current;
-        const scrollALinkStarted = choice && !choice.settled;
-        if (scrollALinkStarted) {
-          settleLater(scrollPauseThatEndsLinkScrollMs);
-          schedule();
-          return;
-        }
-        chosenByLink.current = null;
-        schedule();
-      };
-      const onResize = () => schedule();
-      measureOnNextFrame.current = schedule;
-      schedule();
-      doc.addEventListener('scroll', onScroll, { capture: true, passive: true });
-      window.addEventListener('resize', onResize);
-      const stopResizes = observeResize(first?.parentElement, onResize);
-      const body = root.current;
-      const stopEntriesMovedByWrapOrFont = observeResize(body, drawer.remeasure);
-      body?.addEventListener('pointerover', drawer.onPointerOver);
-      body?.addEventListener('pointerleave', drawer.onPointerLeave);
-      return () => {
-        cancelAnimationFrame(frame);
-        drawer.stop();
-        doc.removeEventListener('scroll', onScroll, { capture: true });
-        window.removeEventListener('resize', onResize);
-        stopResizes();
-        stopEntriesMovedByWrapOrFont();
-        body?.removeEventListener('pointerover', drawer.onPointerOver);
-        body?.removeEventListener('pointerleave', drawer.onPointerLeave);
-      };
-    },
-    [ids, settleLater],
-  );
+  const { current, settleLater } = useReadingPlace({ ids, root, shape, chosenByLink });
 
   const navigate = useCallback(
     (event: MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -285,7 +185,7 @@ export function TableOfContents({
   return (
     <nav
       {...props}
-      aria-label={label ?? messages.label}
+      aria-label={landmarkLabel(label, props['aria-labelledby'], messages.label)}
       className={classNames('env-table-of-contents', className)}
       hidden={items.length === 0 ? true : props.hidden}
     >
@@ -298,7 +198,13 @@ export function TableOfContents({
         >
           <path />
         </svg>
-        <List items={items} current={current} passed={passed} depth={0} onNavigate={navigate} />
+        <ContentsList
+          items={items}
+          current={current}
+          passed={passed}
+          depth={0}
+          onNavigate={navigate}
+        />
       </div>
     </nav>
   );

@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { panes } from '../foundations/messages/panes.js';
 import { classNames } from '../internal/classNames.js';
+import { panesOtherMinRem, panesSizeRem } from '../internal/sizeTokens.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
@@ -126,14 +127,12 @@ function usePanes(part: string) {
   return context;
 }
 
-const fallbackOtherPaneMinWidthRem = 16;
-
 function widestSizedPaneRem(handle: HTMLElement) {
   const root = handle.parentElement;
   if (!root) return Infinity;
   const other =
     Number.parseFloat(getComputedStyle(root).getPropertyValue('--env-panes-other-min')) ||
-    fallbackOtherPaneMinWidthRem;
+    panesOtherMinRem;
   return roundToHundredth(root.clientWidth / remPixels(handle) - other);
 }
 
@@ -141,7 +140,7 @@ function Root({
   sized = 'start',
   stackBelow,
   width,
-  defaultWidth = 22.5,
+  defaultWidth = panesSizeRem,
   onWidthChange,
   minWidth = 16,
   maxWidth = 40,

@@ -8,10 +8,15 @@ import { Column, Row } from '../../layout/Layout.js';
 import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { SymbolIconFill } from '../../internal/icon/SymbolIconFill.js';
-import { navigation, type NavigationMessages } from '../../foundations/messages/navigation.js';
+import { navigation } from '../../foundations/messages/navigation.js';
 import { flag } from '../../internal/flag.js';
 import type { NavigationDrawerDestination } from '../destinations.js';
-import { givenLabelText } from '../../internal/text/labelText.js';
+import {
+  countedName,
+  destinationCurrent,
+  destinationText,
+  shownCount,
+} from './destinationModel.js';
 
 /**
  * The part classes of a form's destinations, which each form writes out as literals: an indicator
@@ -25,66 +30,39 @@ export interface DestinationClasses {
   count: string;
 }
 
-/** A run of destinations of one group, in the list's order: NavigationDrawer's sections. */
-export interface DestinationSection<Item> {
-  /** The group's heading, or undefined for destinations outside any group. */
-  group: string | undefined;
-  items: Item[];
-}
-
-/**
- * The list's destinations in runs of one group, in their order: a new section starts wherever
- * `group` differs from the destination before.
- */
-export function destinationSections<Item extends { group?: string }>(
-  destinations: readonly Item[],
-): DestinationSection<Item>[] {
-  const sections: DestinationSection<Item>[] = [];
-  for (const destination of destinations) {
-    const last = sections.at(-1);
-    if (last && last.group === destination.group) last.items.push(destination);
-    else sections.push({ group: destination.group, items: [destination] });
-  }
-  return sections;
-}
-
-/** A destination's name as text: its textValue, else its label, which is then a string. */
-export const destinationText = (destination: NavigationDrawerDestination) =>
-  givenLabelText(destination.label, destination.textValue) ?? '';
-
-/** A destination's key: its id, else its address, else its name, which the list keeps unique. */
-export const destinationKey = (destination: NavigationDrawerDestination) =>
-  destination.id ?? destination.href ?? destinationText(destination);
-
-/** Whether a destination nested under these, at any depth, is the current one. */
-export function holdsCurrent(
-  children: readonly NavigationDrawerDestination[] | undefined,
-): boolean {
-  return children?.some((child) => child.current === true || holdsCurrent(child.children)) ?? false;
-}
-
-/** The count as it shows: nothing for none or a dot, and 999+ above 999. */
-export function shownCount(count: number | true | undefined): string | undefined {
-  if (typeof count !== 'number' || !Number.isFinite(count) || count <= 0) return undefined;
-  return count > 999 ? '999+' : String(Math.floor(count));
-}
-
-/**
- * The name of an item with a count, such as Inbox, 3 new, or with a dot, such as Activity, new;
- * undefined where its label names it.
- */
-export function countedName(
-  label: string,
-  count: number | true | undefined,
-  messages: NavigationMessages,
-): string | undefined {
-  if (count === true) return messages.itemNew({ label });
+function DestinationCount({
+  className,
+  count,
+}: {
+  className: string;
+  count: number | true | undefined;
+}) {
   const shown = shownCount(count);
-  return shown === undefined ? undefined : messages.itemCount({ label, count: shown });
+  const dot = count === true;
+  if (shown === undefined && !dot) return null;
+  return (
+    <span className={className} aria-hidden="true" data-dot={flag(dot)}>
+      {shown}
+    </span>
+  );
 }
 
-/** The navigation messages, with the application's overrides. */
-export const useNavigationMessages = () => useMessages('navigation', navigation);
+export function DestinationIndicator({
+  classes,
+  icon,
+  count,
+}: {
+  classes: DestinationClasses;
+  icon: ReactNode;
+  count: number | true | undefined;
+}) {
+  return (
+    <span className={classes.indicator}>
+      {icon}
+      <DestinationCount className={classes.count} count={count} />
+    </span>
+  );
+}
 
 export interface DestinationItemProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
   classes: DestinationClasses;
@@ -120,23 +98,16 @@ export function DestinationItem({
   end,
   ...tooltipTriggerProps
 }: DestinationItemProps) {
-  const messages = useNavigationMessages();
-  const { label, icon, count, current = false, disabled = false, href, onClick } = destination;
-  const inside = topLevel && !current && holdsCurrent(destination.children);
-  const marked = current || inside;
-  const shown = shownCount(count);
-  const dot = count === true;
+  const messages = useMessages('navigation', navigation);
+  const { label, icon, count, disabled = false, href, onClick } = destination;
+  const current = destinationCurrent(destination, topLevel);
+  const marked = current !== undefined;
   const icons =
     icon == null ? null : (
       <SymbolIconFill selected={marked}>
         <DecorativeIcon>{icon}</DecorativeIcon>
       </SymbolIconFill>
     );
-  const countBadge = (shown !== undefined || dot) && (
-    <span className={classes.count} aria-hidden="true" data-dot={flag(dot)}>
-      {shown}
-    </span>
-  );
   const control =
     href !== undefined ? (
       <ActionElement href={href} onClick={onClick} disabled={disabled} />
@@ -153,10 +124,10 @@ export function DestinationItem({
     className: classNames(classes.item, itemClassName),
     'data-current': flag(marked),
     'data-disabled': flag(disabled),
-    'aria-current': current ? ('page' as const) : inside ? ('true' as const) : undefined,
+    'aria-current': current,
     'aria-label': countedName(destinationText(destination), count, messages),
   };
-  const spaceBetweenLabelAndCount = shown !== undefined && ' ';
+  const spaceBetweenLabelAndCount = shownCount(count) !== undefined && ' ';
   return classes.indicator === undefined ? (
     <Row {...shared} align="center" gap={3}>
       {icons}
@@ -165,17 +136,14 @@ export function DestinationItem({
       </span>
       {badge}
       {spaceBetweenLabelAndCount}
-      {countBadge}
+      <DestinationCount className={classes.count} count={count} />
       {end}
     </Row>
   ) : (
     <Column {...shared} align="center" gap={1}>
       <span className={classes.label}>{label}</span>
       {spaceBetweenLabelAndCount}
-      <span className={classes.indicator}>
-        {icons}
-        {countBadge}
-      </span>
+      <DestinationIndicator classes={classes} icon={icons} count={count} />
     </Column>
   );
 }

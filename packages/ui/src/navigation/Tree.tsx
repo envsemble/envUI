@@ -19,10 +19,10 @@ import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { ContextMenu } from '../actions/ContextMenu.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
-import { rowElementId, siblingPositions, treeKeyAction } from './internal/treeModel.js';
-import { placeRows, TreeRow } from './internal/TreeRow.js';
-import { useTreeTransitions } from './internal/useTreeTransitions.js';
-import { useTreeViewport } from './internal/useTreeViewport.js';
+import { rowElementId, siblingPositions, treeKeyAction } from './internal/tree/treeModel.js';
+import { placeRows, TreeRow } from './internal/tree/TreeRow.js';
+import { useTreeTransitions } from './internal/tree/useTreeTransitions.js';
+import { useTreeViewport } from './internal/tree/useTreeViewport.js';
 import { flag } from '../internal/flag.js';
 import { chainHandlers } from '../internal/react/chainHandlers.js';
 import type { TypedText } from '../internal/typeahead.js';
@@ -151,7 +151,7 @@ export interface TreeProps<Item extends TreeItem> extends Omit<
 export function Tree<Item extends TreeItem>({
   items,
   'aria-label': label,
-  value: selectedId = null,
+  value: selectedValue = null,
   onAction,
   onExpandedChange,
   contextMenu,
@@ -171,12 +171,12 @@ export function Tree<Item extends TreeItem>({
   const messages = useMessages('tree', treeMessages);
   const treeId = useId().replace(/[^A-Za-z0-9-]/g, '');
   const container = useRef<HTMLDivElement>(null);
-  const [activeId, setActiveId] = useState<string | null>(selectedId);
+  const [activeValue, setActiveValue] = useState<string | null>(selectedValue);
   const [focusVisible, setFocusVisible] = useState(false);
   const pointerFocus = useRef(false);
   const typeahead = useRef<TypedText>({ text: '', at: 0 });
 
-  const indexById = useMemo(() => {
+  const indexByValue = useMemo(() => {
     const map = new Map<string, number>();
     items.forEach((item, index) => map.set(item.value, index));
     return map;
@@ -185,8 +185,8 @@ export function Tree<Item extends TreeItem>({
   const { rowsElement, arriving, motion, moving } = useTreeTransitions(items);
 
   const fallbackActiveIndex = useRef(0);
-  const selectedIndex = selectedId === null ? undefined : indexById.get(selectedId);
-  let activeIndex = activeId === null ? -1 : (indexById.get(activeId) ?? -1);
+  const selectedIndex = selectedValue === null ? undefined : indexByValue.get(selectedValue);
+  let activeIndex = activeValue === null ? -1 : (indexByValue.get(activeValue) ?? -1);
   if (activeIndex === -1 && items.length > 0)
     activeIndex = selectedIndex ?? Math.min(fallbackActiveIndex.current, items.length - 1);
   fallbackActiveIndex.current = Math.max(activeIndex, 0);
@@ -198,18 +198,18 @@ export function Tree<Item extends TreeItem>({
     count: items.length,
     activeIndex,
     selectedIndex,
-    selectedId,
+    selectedValue,
   });
 
   useEffect(() => {
-    if (selectedId !== null) setActiveId(selectedId);
-  }, [selectedId]);
+    if (selectedValue !== null) setActiveValue(selectedValue);
+  }, [selectedValue]);
 
   function activate(index: number) {
     const at = Math.max(0, Math.min(items.length - 1, index));
     const item = items[at];
     if (!item) return;
-    setActiveId(item.value);
+    setActiveValue(item.value);
     scrollToIndex(at);
   }
 
@@ -251,14 +251,14 @@ export function Tree<Item extends TreeItem>({
 
   function rowFromEvent(event: MouseEvent<HTMLElement>) {
     const row = (event.target as Element).closest<HTMLElement>('.env-tree-item');
-    const index = row?.dataset.id === undefined ? undefined : indexById.get(row.dataset.id);
+    const index = row?.dataset.id === undefined ? undefined : indexByValue.get(row.dataset.id);
     return index === undefined ? undefined : items[index];
   }
 
   function onRowClick(event: MouseEvent<HTMLElement>) {
     const item = rowFromEvent(event);
     if (!item) return;
-    setActiveId(item.value);
+    setActiveValue(item.value);
     if ((event.target as Element).closest('.env-tree-chevron') && item.expandable) {
       setExpanded(item, !item.expanded);
       return;
@@ -279,7 +279,7 @@ export function Tree<Item extends TreeItem>({
       id={rowElementId(treeId, item.value)}
       position={positions[index]}
       setSize={sizes[index]}
-      selected={item.value === selectedId}
+      selected={item.value === selectedValue}
       highlighted={index === activeIndex}
       arriving={arriving.has(item.value)}
       top={top}
@@ -320,7 +320,7 @@ export function Tree<Item extends TreeItem>({
       onContextMenu={(event) => {
         ownContextMenu?.(event);
         const item = rowFromEvent(event);
-        if (item) setActiveId(item.value);
+        if (item) setActiveValue(item.value);
       }}
     >
       <div
@@ -342,8 +342,8 @@ export function Tree<Item extends TreeItem>({
     <ContextMenu
       aria-label={contextMenuLabel ?? messages.contextMenu}
       content={(target) => {
-        const id = target?.closest<HTMLElement>('.env-tree-item')?.dataset.id;
-        const index = id === undefined ? undefined : indexById.get(id);
+        const value = target?.closest<HTMLElement>('.env-tree-item')?.dataset.id;
+        const index = value === undefined ? undefined : indexByValue.get(value);
         return contextMenu(index === undefined ? null : items[index]);
       }}
     >

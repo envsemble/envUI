@@ -5,25 +5,29 @@ import type { ComponentPropsWithRef, ReactElement, ReactNode, RefObject } from '
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
-import { Button, IconButton } from '../actions/Button.js';
-import { IconClose } from '../icons/Close.js';
+import { Button } from '../actions/Button.js';
 import type { ButtonProps, ButtonVariant } from '../actions/Button.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
-import { useTheme } from '../foundations/Theme.js';
+import { ModalLayer } from '../internal/dialog/ModalLayer.js';
 import {
   DialogActions,
-  DialogBackdrop,
   DialogContent,
   DialogHeader,
-  DialogPendingContext,
   DialogSurface,
-  OverlayTheme,
-} from '../internal/dialog/DialogParts.js';
-import { withPendingAction } from './internal/DialogPendingAction.js';
-import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
+} from './internal/dialog/DialogParts.js';
+import { DialogHeadingClose } from './internal/dialog/DialogHeadingClose.js';
+import {
+  DialogPendingContext,
+  pendingOpenChange,
+  withPendingAction,
+} from './internal/dialog/dialogPending.js';
 import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
-import { containedModal, containedOpenChange } from '../internal/popup/containedOverlays.js';
+import {
+  containedFocus,
+  containedModal,
+  containedOpenChange,
+} from '../internal/popup/containedOverlays.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { flag } from '../internal/flag.js';
@@ -241,7 +245,6 @@ export function Dialog({
   className,
   ...popupProps
 }: DialogProps) {
-  const theme = useTheme();
   const messages = useMessages('dialog', dialog);
   const closeLabel = ownCloseLabel ?? messages.close;
   const closesInActions = closeButton && closeButtonPlacement === 'actions';
@@ -250,65 +253,60 @@ export function Dialog({
     <BaseDialog.Root
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={containedOpenChange(portal, null, (next, eventDetails) => {
-        if (!next && pending) eventDetails.cancel();
-        else onOpenChange?.(next, { reason: eventDetails.reason });
-      })}
+      onOpenChange={containedOpenChange(
+        portal,
+        null,
+        pendingOpenChange(pending, (next, eventDetails) =>
+          onOpenChange?.(next, { reason: eventDetails.reason }),
+        ),
+      )}
       modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}
     >
       {trigger && <BaseDialog.Trigger render={trigger} />}
       <BaseDialog.Portal container={portal.container}>
-        <OverlayTheme {...theme}>
-          <ResetControlDefaults>
-            {modal && <DialogBackdrop />}
-            <div className="env-dialog-positioner" data-placement={placement}>
-              <BaseDialog.Popup
-                render={<DialogSurface radius="xl" />}
-                {...popupProps}
-                className={classNames('env-dialog', className)}
-                data-placement={placement}
-                data-width={width}
-                aria-busy={pending || skeleton || undefined}
-                data-env-skeleton={flag(skeleton)}
-                initialFocus={portal.contained ? false : initialFocus}
-                finalFocus={portal.contained ? false : finalFocus}
-              >
-                <DialogPendingContext.Provider value={pending}>
-                  <DialogContent skeleton={skeleton}>
-                    <DialogHeader
-                      title={title}
-                      description={description}
-                      start={headerStart}
-                      end={headerEnd}
-                      close={
-                        closeButton && closeButtonPlacement === 'heading' ? (
-                          <BaseDialog.Close
-                            render={
-                              <IconButton
-                                variant="ghost"
-                                icon={<IconClose />}
-                                aria-label={closeLabel}
-                                disabled={pending}
-                              />
-                            }
-                          />
-                        ) : undefined
-                      }
-                    />
-                    {children}
-                    {(closesInActions || actions != null || actionsStart != null) && (
-                      <DialogActions start={actionsStart}>
-                        {closesInActions && <DialogClose>{closeLabel}</DialogClose>}
-                        {withPendingAction(actions, pending)}
-                      </DialogActions>
-                    )}
-                  </DialogContent>
-                </DialogPendingContext.Provider>
-              </BaseDialog.Popup>
-            </div>
-          </ResetControlDefaults>
-        </OverlayTheme>
+        <ModalLayer backdrop={modal && {}}>
+          <div className="env-dialog-positioner" data-placement={placement}>
+            <BaseDialog.Popup
+              render={<DialogSurface radius="xl" />}
+              {...popupProps}
+              className={classNames('env-dialog', className)}
+              data-placement={placement}
+              data-width={width}
+              aria-busy={pending || skeleton || undefined}
+              data-env-skeleton={flag(skeleton)}
+              initialFocus={containedFocus(portal, initialFocus)}
+              finalFocus={containedFocus(portal, finalFocus)}
+            >
+              <DialogPendingContext.Provider value={pending}>
+                <DialogContent skeleton={skeleton}>
+                  <DialogHeader
+                    title={title}
+                    description={description}
+                    start={headerStart}
+                    end={headerEnd}
+                    close={
+                      closeButton && closeButtonPlacement === 'heading' ? (
+                        <DialogHeadingClose
+                          Close={BaseDialog.Close}
+                          label={closeLabel}
+                          pending={pending}
+                        />
+                      ) : undefined
+                    }
+                  />
+                  {children}
+                  {(closesInActions || actions != null || actionsStart != null) && (
+                    <DialogActions start={actionsStart}>
+                      {closesInActions && <DialogClose>{closeLabel}</DialogClose>}
+                      {withPendingAction(actions, pending)}
+                    </DialogActions>
+                  )}
+                </DialogContent>
+              </DialogPendingContext.Provider>
+            </BaseDialog.Popup>
+          </div>
+        </ModalLayer>
       </BaseDialog.Portal>
     </BaseDialog.Root>
   );

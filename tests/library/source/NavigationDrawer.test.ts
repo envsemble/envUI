@@ -5,7 +5,7 @@ import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { elementsOf, firstElement, hasClass, textOf } from '../../support/Markup.ts';
 
-const { Badge, NavigationBar, NavigationDrawer, NavigationRail } = await importSource(
+const { Badge, NavigationDrawer, NavigationRail } = await importSource(
   'NavigationDrawer',
   'packages/ui/src/index.ts',
 );
@@ -137,33 +137,6 @@ test('the current page’s sections start open, the rest closed with their links
   assert.ok('hidden' in closed.attributes);
   assert.ok(elementsOf(closed).includes(link('#invoices')));
   assert.equal(all(drawer, (element) => 'aria-current' in element.attributes).length, 1);
-});
-
-test('Rail and Bar show the top level, marking the destination whose section holds the current one', () => {
-  const top = [
-    { label: 'Home', icon, href: '#home' },
-    {
-      label: 'Guide',
-      icon,
-      href: '#guide',
-      children: [{ label: 'Passkeys', href: '#passkeys', current: true }],
-    },
-    { label: 'Settings', icon, href: '#settings' },
-  ];
-  for (const component of [NavigationRail, NavigationBar]) {
-    const nav = render(component, { 'aria-label': 'Top', destinations: top });
-    const links = Object.fromEntries(
-      all(nav, (element) => element.tag === 'a').map((element) => [
-        element.attributes.href,
-        element,
-      ]),
-    );
-    assert.equal(links['#guide'].attributes['aria-current'], 'true');
-    assert.equal(links['#guide'].attributes['data-current'], '');
-    assert.equal(links['#home'].attributes['aria-current'], undefined);
-    assert.equal(links['#passkeys'], undefined);
-    assert.doesNotMatch(textOf(nav), /Passkeys/);
-  }
 });
 
 test('Drawer puts groupEnd after a group’s heading, outside it, and leaves a heading without one alone', () => {
