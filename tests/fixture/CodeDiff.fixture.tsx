@@ -29,6 +29,9 @@ export default function CodeDiffFixture() {
           )}
         />
       </div>
+      <div data-testid="auto" style={{ inlineSize: '60rem' }}>
+        <CodeDiff before={longBefore} after={longAfter} filename="auto.ts" />
+      </div>
     </Column>
   );
 }
