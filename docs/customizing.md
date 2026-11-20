@@ -502,8 +502,8 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### LoadingBar
 
-- Parts: `env-loading-bar`, `env-loading-bar-contained`, `env-loading-bar-indicator`
-- States: `data-state` (`finishing`, `running`) on `env-loading-bar`, `env-loading-bar-contained`
+- Parts: `env-loading-bar`, `env-loading-bar-indicator`
+- States: `data-state` (`finishing`, `running`)
 - Used by: TopBar
 
 ### Overlay

@@ -422,7 +422,6 @@
     },
     "LoadingBar": {
       "env-loading-bar": "The loading bar.",
-      "env-loading-bar-contained": "A loading bar inside a region rather than the frame.",
       "env-loading-bar-indicator": "The moving part of the bar."
     },
     "Markdown": {

@@ -160,7 +160,6 @@ export function TopBar({
       <LoadingBar
         active={loading}
         label={loadingLabel ?? messages.loading}
-        contained
         className="env-top-bar-loading-bar"
       />
     </Row>

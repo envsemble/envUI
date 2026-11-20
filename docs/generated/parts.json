@@ -6342,10 +6342,6 @@
           "description": "The loading bar."
         },
         {
-          "class": "env-loading-bar-contained",
-          "description": "A loading bar inside a region rather than the frame."
-        },
-        {
           "class": "env-loading-bar-indicator",
           "description": "The moving part of the bar."
         }
@@ -6358,8 +6354,7 @@
             "running"
           ],
           "parts": [
-            "env-loading-bar",
-            "env-loading-bar-contained"
+            "env-loading-bar"
           ]
         }
       ],
