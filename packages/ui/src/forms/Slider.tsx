@@ -14,7 +14,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
 import { Text } from '../foundations/Text.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useLocale } from '../internal/provider/EnvUIContext.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
@@ -261,10 +261,7 @@ export function Slider({
               <BaseSlider.Indicator className="env-slider-indicator" />
               <BaseSlider.Thumb
                 className="env-slider-thumb"
-                inputRef={(node: HTMLInputElement | null) => {
-                  input.current = node;
-                  setRef(ref, node);
-                }}
+                inputRef={mergeRefs(input, ref)}
                 {...thumbName}
                 aria-describedby={describedByIds}
                 getAriaValueText={(formatted, number) =>

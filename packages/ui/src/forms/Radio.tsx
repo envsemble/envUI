@@ -11,7 +11,7 @@ import type {
 import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
@@ -145,10 +145,7 @@ export function RadioGroup({
     <fieldset
       {...props}
       {...naming}
-      ref={(node) => {
-        fieldsetRef.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(fieldsetRef, ref)}
       disabled={disabled}
       aria-describedby={describedBy}
       data-orientation={orientation}
@@ -268,10 +265,7 @@ export function Radio({
     <input
       {...props}
       {...naming}
-      ref={(node) => {
-        inputRef.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(inputRef, ref)}
       type="radio"
       className="env-radio-input"
       value={value}

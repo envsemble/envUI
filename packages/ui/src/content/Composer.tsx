@@ -18,7 +18,7 @@ import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
@@ -268,10 +268,7 @@ export function Composer({
         <TextareaControl
           bare
           {...props}
-          ref={(node) => {
-            inputRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(inputRef, ref)}
           id={id}
           form={form}
           rows={rows}

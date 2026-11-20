@@ -11,7 +11,7 @@ import {
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { useLinkComponent } from '../internal/provider/LinkComponentContext.js';
 import { useEnvUI, useMessages } from '../internal/provider/EnvUIContext.js';
@@ -139,10 +139,7 @@ function Root({ children, className, 'aria-label': ariaLabel, ref, ...props }: R
       render={
         <nav
           {...props}
-          ref={(node: HTMLElement | null) => {
-            element.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(element, ref)}
           aria-label={ariaLabel ?? messages.label}
           className={classNames('env-pager', className)}
         />

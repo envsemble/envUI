@@ -16,7 +16,6 @@ import { IconColorize } from '../../icons/Colorize.js';
 import * as Field from '../Field.js';
 import { classNames } from '../../internal/classNames.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
-import { setRef } from '../../internal/react/setRef.js';
 import { ColorArea } from './internal/ColorArea.js';
 import { ColorLocale } from './internal/ColorLocale.js';
 import { ColorSlider } from './internal/ColorSlider.js';
@@ -156,7 +155,7 @@ export function ColorPicker({
     <ColorLocale>
       <div
         {...props}
-        ref={(element) => setRef(ref, element)}
+        ref={ref}
         id={id}
         role="group"
         aria-labelledby={visibleLabel ? `${id}-label` : undefined}

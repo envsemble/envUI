@@ -3,7 +3,7 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { useRef, type CSSProperties, type ReactNode, type Ref } from 'react';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
-import { setRef } from '../../internal/react/setRef.js';
+import { mergeRefs } from '../../internal/react/setRef.js';
 import {
   containedOpenChange,
   usePortalContainer,
@@ -121,10 +121,7 @@ export function Submenu({
     >
       <BaseMenu.SubmenuTrigger
         {...triggerProps}
-        ref={(node: HTMLDivElement | null) => {
-          trigger.current = node;
-          setRef(triggerProps?.ref, node);
-        }}
+        ref={mergeRefs(trigger, triggerProps?.ref)}
         className={classNames('env-menu-item env-menu-submenu-trigger', triggerProps?.className)}
         disabled={disabled}
         {...accessibility}
@@ -144,10 +141,7 @@ export function Submenu({
         trigger={trigger}
         finalFocus={returnFocusToOpeningRowIfStillThere}
         className={className}
-        popupRef={(node: HTMLDivElement | null) => {
-          popup.current = node;
-          setRef(ref, node);
-        }}
+        popupRef={mergeRefs(popup, ref)}
         popupProps={{ style }}
       >
         {children}

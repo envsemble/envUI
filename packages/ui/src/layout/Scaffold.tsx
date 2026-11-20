@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useCallback,
   useEffect,
   useId,
   useState,
@@ -15,7 +14,7 @@ import { scaffold } from '../foundations/messages/scaffold.js';
 import type { WindowClass } from '../foundations/windowClasses.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import { setRef } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
 import { resolveNavigationForms } from './internal/navigationForms.js';
 import { focusRegion } from './internal/scaffoldFocus.js';
@@ -159,20 +158,8 @@ export function Scaffold({
   const mainId = bodyId ?? (landmarks ? 'main' : `${id}-body`);
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   const [body, setBody] = useState<HTMLElement | null>(null);
-  const attachRoot = useCallback(
-    (node: HTMLDivElement | null) => {
-      setRoot(node);
-      setRef(ref, node);
-    },
-    [ref],
-  );
-  const attachBody = useCallback(
-    (node: HTMLElement | null) => {
-      setBody(node);
-      setRef(bodyRef, node);
-    },
-    [bodyRef],
-  );
+  const attachRoot = useMergedRefs(setRoot, ref);
+  const attachBody = useMergedRefs(setBody, bodyRef);
   const pages = useScaffoldPages();
   const bodyScrollsInsteadOfDocument = scroll === 'body';
   useScrollKeys(bodyScrollsInsteadOfDocument ? root : null, body);

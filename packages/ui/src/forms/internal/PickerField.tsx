@@ -13,7 +13,7 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import { setRef } from '../../internal/react/setRef.js';
+import { mergeRefs } from '../../internal/react/setRef.js';
 import { useHydrated } from '../../internal/react/useHydrated.js';
 import { useControllableState } from '../../internal/react/useControllableState.js';
 import { useDirection } from '../../internal/provider/useDirection.js';
@@ -349,10 +349,7 @@ export function PickerField({
       >
         <BasePopover.Trigger
           {...triggerProps}
-          ref={(node: HTMLButtonElement | null) => {
-            triggerRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(triggerRef, ref)}
           id={id}
           role="combobox"
           {...accessibleName}

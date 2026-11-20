@@ -17,7 +17,7 @@ import { Column } from '../layout/Layout.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
-import { setRef } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/provider/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { useTheme } from '../foundations/Theme.js';
@@ -329,13 +329,7 @@ export function Sheet({
     [shown, provided],
   );
   const popup = useRef<HTMLDivElement | null>(null);
-  const attachPopup = useCallback(
-    (element: HTMLDivElement | null) => {
-      popup.current = element;
-      return setRef(ref, element);
-    },
-    [ref],
-  );
+  const attachPopup = useMergedRefs(popup, ref);
   const focusSheetItselfOnTouch = useCallback(
     (interaction: string) =>
       interaction === 'touch' ? (popup.current ?? firstTabbableElement) : firstTabbableElement,

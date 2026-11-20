@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import {
   useCheckedInput,
   type CheckedProps,
@@ -85,10 +85,7 @@ export function Checkbox({
           {...props}
           {...naming}
           type="checkbox"
-          ref={(node) => {
-            inputRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(inputRef, ref)}
           className="env-checkbox-input"
           checked={checkedState === true}
           aria-checked={checkedState === 'mixed' ? 'mixed' : checkedState}

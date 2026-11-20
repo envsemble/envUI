@@ -18,7 +18,7 @@ import { IconDragIndicator } from '../../icons/DragIndicator.js';
 import { classNames } from '../../internal/classNames.js';
 import { Grid } from '../../layout/Layout.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
-import { setRef } from '../../internal/react/setRef.js';
+import { useMergedRefs } from '../../internal/react/useMergedRefs.js';
 import { useFormatters } from '../../internal/provider/useFormatters.js';
 import { useHydrated } from '../../internal/react/useHydrated.js';
 import { useReorder, type Announcement, type ReorderHandlers } from './useReorder.js';
@@ -96,13 +96,7 @@ export function ReorderableList({
       { key: instructionsId },
     );
   });
-  const forward = useCallback(
-    (node: HTMLUListElement | null) => {
-      element.current = node;
-      setRef(ref, node);
-    },
-    [ref],
-  );
+  const forward = useMergedRefs(element, ref);
   return (
     <ReorderContext value={reorder}>
       <Grid

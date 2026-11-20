@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ComponentPropsWithRef, type SyntheticEvent } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useResize, type ResizeOptions } from '../internal/resize/useResize.js';
 import { useLatest } from '../internal/useLatest.js';
 import { flag } from '../internal/flag.js';
@@ -106,10 +106,7 @@ export function ResizeHandle({
       onLostPointerCapture={first(props.onLostPointerCapture, onLostPointerCapture)}
       onKeyDown={first(props.onKeyDown, onKeyDown)}
       onFocus={first(props.onFocus, onFocus)}
-      ref={(node) => {
-        element.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(element, ref)}
       aria-label={label}
       data-grip={flag(grip)}
       className={classNames('env-resize-handle', className)}

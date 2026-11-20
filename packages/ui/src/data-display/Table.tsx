@@ -3,7 +3,6 @@
 import {
   createContext,
   memo,
-  useCallback,
   useContext,
   useId,
   useLayoutEffect,
@@ -17,7 +16,8 @@ import { classNames } from '../internal/classNames.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { remLength } from '../internal/dom/lengths.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
 import { useStackedReport } from '../internal/react/useStackedReport.js';
 import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
@@ -213,13 +213,7 @@ function Root({
     ...ownRegionProps
   } = regionProps ?? {};
   const stackBelowStyle = stack ? { '--_table-stack-below': remLength(stackBelow) } : undefined;
-  const setRegion = useCallback(
-    (node: HTMLDivElement | null) => {
-      region.current = node;
-      setRef(ownRegionRef, node);
-    },
-    [ownRegionRef],
-  );
+  const setRegion = useMergedRefs(region, ownRegionRef);
 
   return (
     <div
@@ -243,10 +237,7 @@ function Root({
           role={stack ? 'table' : undefined}
           aria-labelledby={stack && caption != null ? captionId : undefined}
           {...props}
-          ref={(node) => {
-            table.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(table, ref)}
           aria-label={caption == null ? label : undefined}
           className={classNames('env-table', className)}
           data-density={density}
@@ -450,13 +441,7 @@ function HeaderCell({
   const section = useContext(TableSectionContext);
   const id = useId();
   const cell = useRef<HTMLTableCellElement>(null);
-  const setCell = useCallback(
-    (node: HTMLTableCellElement | null) => {
-      cell.current = node;
-      setRef(ref, node);
-    },
-    [ref],
-  );
+  const setCell = useMergedRefs(cell, ref);
   const column = useEndColumnIndex(cell, section === 'head' && columns?.resizable === true);
   const resize = useOptionModule(
     columnResizeLoadedOnlyByResizableTables,

@@ -12,7 +12,7 @@ import {
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { IconButton } from '../actions/Button.js';
@@ -428,10 +428,7 @@ function ComboboxInput({
   return (
     <BaseCombobox.Input
       {...inputProps}
-      ref={(node: HTMLInputElement | null) => {
-        inputRef.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(inputRef, ref)}
       onPointerDown={(event) => {
         inputProps.onPointerDown?.(event);
         pressIsFocusingInput.current =

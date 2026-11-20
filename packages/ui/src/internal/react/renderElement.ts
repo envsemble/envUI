@@ -7,24 +7,11 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../classNames.js';
-import { setRef } from './setRef.js';
+import { mergeRefs } from './setRef.js';
 
 type Props = Record<string, unknown> & { className?: string; style?: CSSProperties };
 
 const eventHandlerPropName = /^on[A-Z]/;
-
-function refSettingBoth<T>(first: Ref<T> | undefined, second: Ref<T> | undefined): Ref<T> {
-  return (node: T | null) => {
-    const cleanups = [setRef(first, node), setRef(second, node)];
-    return () => {
-      [first, second].forEach((ref, index) => {
-        const cleanup = cleanups[index];
-        if (typeof cleanup === 'function') cleanup();
-        else setRef(ref, null);
-      });
-    };
-  };
-}
 
 /**
  * Renders a component's props onto the element its `render` prop gives, or onto a `tag` of its own,
@@ -56,6 +43,6 @@ export function renderElement(tag: string, render: ReactElement | undefined, pro
     ...merged,
     className: classNames(props.className, own.className) || undefined,
     style: props.style || own.style ? { ...props.style, ...own.style } : undefined,
-    ...(ref !== undefined && { ref: ownRef ? refSettingBoth(ref, ownRef) : ref }),
+    ...(ref !== undefined && { ref: ownRef ? mergeRefs(ref, ownRef) : ref }),
   });
 }

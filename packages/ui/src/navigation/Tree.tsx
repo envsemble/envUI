@@ -13,7 +13,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
@@ -295,10 +295,7 @@ export function Tree<Item extends TreeItem>({
   const tree = (
     <div
       {...props}
-      ref={(node: HTMLDivElement | null) => {
-        container.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(container, ref)}
       role="tree"
       aria-label={label}
       aria-activedescendant={activeItem ? rowElementId(treeId, activeItem.value) : undefined}

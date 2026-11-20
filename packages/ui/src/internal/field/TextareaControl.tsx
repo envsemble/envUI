@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useRef, type Ref, type TextareaHTMLAttributes } from 'react';
+import { useRef, type Ref, type TextareaHTMLAttributes } from 'react';
 import { classNames } from '../classNames.js';
-import { setRef } from '../react/setRef.js';
+import { useMergedRefs } from '../react/useMergedRefs.js';
 import { TextareaResizeEdge } from './TextareaResizeEdge.js';
 import { flag } from '../flag.js';
 import '../../styles/Base.css';
@@ -43,13 +43,7 @@ export function TextareaControl({
   ...props
 }: TextareaControlProps & TextareaControlOwnProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const attachInput = useCallback(
-    (input: HTMLTextAreaElement | null) => {
-      inputRef.current = input;
-      setRef(ref, input);
-    },
-    [ref],
-  );
+  const attachInput = useMergedRefs(inputRef, ref);
   if (bare)
     return (
       <textarea {...props} ref={attachInput} rows={rows} style={style} className={className} />
