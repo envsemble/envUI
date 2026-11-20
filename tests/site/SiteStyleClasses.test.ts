@@ -3,7 +3,6 @@ import { readFileSync } from 'node:fs';
 import { glob } from 'node:fs/promises';
 import { test } from 'node:test';
 import postcss from 'postcss';
-import selectorParser from 'postcss-selector-parser';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const siteFiles = async (pattern: string) => {
@@ -14,15 +13,11 @@ const siteFiles = async (pattern: string) => {
 
 const classesOf = (css: string) => {
   const classes = new Set<string>();
-  const collect = selectorParser((selectors) =>
-    selectors.walkClasses((node) => {
-      classes.add(node.value);
-    }),
-  );
   postcss.parse(css).walkRules((rule) => {
     if (rule.parent?.type === 'atrule' && /keyframes$/.test((rule.parent as postcss.AtRule).name))
       return;
-    collect.processSync(rule.selector);
+    const selector = rule.selector.replace(/"[^"]*"|'[^']*'/g, '');
+    for (const [, name] of selector.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) classes.add(name);
   });
   return classes;
 };
