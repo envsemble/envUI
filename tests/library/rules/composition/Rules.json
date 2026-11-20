@@ -334,13 +334,15 @@
       },
       "Breadcrumbs": {},
       "NavigationBar": {
-        "classes": ["env-navigation-bar"]
+        "classes": ["env-navigation-bar"],
+        "styles": ["NavigationDestinations.css"]
       },
       "NavigationDrawer": {
         "classes": ["env-navigation-drawer"]
       },
       "NavigationRail": {
-        "classes": ["env-navigation-rail"]
+        "classes": ["env-navigation-rail"],
+        "styles": ["NavigationDestinations.css"]
       },
       "Menu": {
         "modules": [

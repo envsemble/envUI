@@ -14,6 +14,7 @@ import type { Destination } from './destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
+import '../styles/NavigationDestinations.css';
 import '../styles/NavigationRail.css';
 
 const railClasses: DestinationClasses = {
