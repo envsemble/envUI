@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/envui",
-  "version": "3.0.0",
+  "version": "2.1.0",
   "description": "A React design system for B2B SaaS products and AI developer tools, documented for people and coding agents",
   "homepage": "https://github.com/envsemble/envUI#readme",
   "bugs": {
