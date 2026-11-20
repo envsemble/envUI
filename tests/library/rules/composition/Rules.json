@@ -338,6 +338,7 @@
       },
       "ThemePreference": {
         "modules": [
+          "foundations/ThemePreferenceProvider.tsx",
           "foundations/internal/ThemePreferenceContext.ts",
           "foundations/themeStorage.ts",
           "foundations/useStoredThemePreference.ts"

@@ -25,6 +25,7 @@ export const aliases: Record<string, string[]> = {
   themeStorage: ['ThemePreference'],
   'theme-storage': ['ThemePreference'],
   useStoredThemePreference: ['ThemePreference'],
+  ThemePreferenceProvider: ['ThemePreference'],
   Avatar: ['AvatarGroup'],
   Icon: ['Graphic', 'Button', 'IconButton', 'Skeleton'],
   TimeList: ['DatePicker', 'TimePicker', 'ForcedColors'],

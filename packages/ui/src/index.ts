@@ -7,7 +7,7 @@ export * from './foundations/PortalContainer.js';
 export { placeholders, isPlaceholder, type Placeholder } from './foundations/placeholders.js';
 export { useSkeleton } from './foundations/SkeletonScope.js';
 export * from './foundations/Icon.js';
-export * from './foundations/ThemePreference.js';
+export * from './foundations/ThemePreferenceProvider.js';
 export * from './foundations/ThemeToggle.js';
 export {
   createThemeBootstrapScript,
