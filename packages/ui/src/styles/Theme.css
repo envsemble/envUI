@@ -1,4 +1,11 @@
 .env-theme {
+  font-family: var(--env-font-family);
+  font-weight: var(--env-font-weight-body);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
   min-inline-size: 0;
   overflow-wrap: break-word;
   -webkit-tap-highlight-color: transparent;

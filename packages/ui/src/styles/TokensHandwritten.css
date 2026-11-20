@@ -1,12 +1,4 @@
 .env-theme {
-  font-family: var(--env-font-family);
-  font-weight: var(--env-font-weight-body);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  background: var(--env-color-bg-page);
-  color: var(--env-color-fg-default);
-
   --env-viewport-gutter: clamp(0.75rem, 2vw, 1rem);
   --env-type-display: var(--env-font-weight-medium) clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1
     var(--env-font-family);
