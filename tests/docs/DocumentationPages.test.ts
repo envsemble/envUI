@@ -4,16 +4,16 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { marked } from 'marked';
 import ts from 'typescript';
+import { optionTable } from '../../apps/site/src/documentation/CatalogueContent.ts';
 import {
-  longParagraphs,
-  optionTable,
-  paragraphLength,
   catalogueInlineCode,
+  catalogueProse,
   catalogueStructure,
   catalogueText,
+  longParagraphs,
+  paragraphLength,
   technicalText,
-  withoutCodeColumns,
-} from '../../apps/site/src/documentation/CatalogueContent.ts';
+} from '../../scripts/docs/validation/CatalogueWording.ts';
 import { examplesDirectory, specimensDirectory } from '../../scripts/RepositoryPaths.ts';
 import { isPropsTable } from '../../scripts/docs/MarkdownBlocks.ts';
 import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
@@ -303,14 +303,12 @@ test("a page's Overview doesn't open by saying its summary again", () => {
   );
 });
 
-function catalogueMarkdown(document) {
-  return withoutCodeColumns(
-    document.markdown
-      .replace(/\n## Changelog\n[\s\S]*$/, '\n')
-      .replace(/\n## Compose\n[\s\S]*?(?=\n## |$)/, '\n')
-      .replace(/\n### (?:envUI provides|You provide)\n[\s\S]*?(?=\n#{2,3} |$)/g, '\n'),
-  );
-}
+const catalogueMarkdown = (document) =>
+  catalogueProse(document)
+    .flatMap(({ blocks }) =>
+      blocks.flatMap((block) => (block.kind === 'markdown' ? [block.markdown] : [])),
+    )
+    .join('\n');
 
 test('a page of the catalogue links nowhere in the Docs', () => {
   const links = sectioned
