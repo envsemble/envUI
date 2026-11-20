@@ -72,12 +72,12 @@ export default defineConfig({
       },
     ],
     maxWorkers: workers,
+    api: { port: checkoutPort(componentTestsPortOffset) },
     sequence: { sequencer: ShardByDuration },
     testTimeout: 30_000,
     expect: { poll: { timeout: 8_000 } },
     browser: {
       enabled: true,
-      api: { port: checkoutPort(componentTestsPortOffset) },
       headless: true,
       provider: playwright({ actionTimeout: 8_000, contextOptions }),
       commands,
