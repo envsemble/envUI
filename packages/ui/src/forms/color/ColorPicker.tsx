@@ -24,8 +24,9 @@ import { ColorValues } from './internal/ColorValues.js';
 import { SwatchList } from './internal/SwatchList.js';
 import { useEyeDropper } from './internal/useEyeDropper.js';
 import type { ColorPickerValueProps } from './internal/colorPickerValueProps.js';
-import { ColorChangeContext } from './internal/colorChange.js';
-import { useColorState, useFormResetOf } from './internal/useColorState.js';
+import { ColorChangeContext } from './internal/ColorChangeContext.js';
+import { useColorFollowingValue } from './internal/useColorFollowingValue.js';
+import { useFormReset } from '../../internal/field/useFormReset.js';
 import { formatColor, sameColor, toColor, type ColorFormat } from './internal/colorValue.js';
 import { flag } from '../../internal/flag.js';
 import { Slot } from '../../internal/layout/Slot.js';
@@ -98,9 +99,9 @@ export function ColorPicker({
   const together = formats.length > 1 && ownFormats !== undefined;
   const [chosenFormat, setFormat] = useState(formats[0]);
   const format = formats.includes(chosenFormat) ? chosenFormat : formats[0];
-  const { color, setOwn, reset, controlled } = useColorState(value, defaultValue, alpha);
+  const { color, setOwn, reset, controlled } = useColorFollowingValue(value, defaultValue, alpha);
   const inputRef = useRef<HTMLInputElement>(null);
-  const resetting = useFormResetOf(
+  const resetting = useFormReset(
     inputRef,
     () => {
       if (!controlled) reset();

@@ -3,8 +3,8 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactNode } from 'react';
 import { useColorSwatch } from '@react-aria/color';
 import { classNames } from '../../internal/classNames.js';
-import { ColorLocale, displayColor } from './internal/ColorLocale.js';
-import { toColor, type ColorFormat, type ColorValue } from './internal/colorValue.js';
+import { ColorLocale } from './internal/ColorLocale.js';
+import { displayColor, toColor, type ColorFormat, type ColorValue } from './internal/colorValue.js';
 import { flag } from '../../internal/flag.js';
 import { Slot } from '../../internal/layout/Slot.js';
 import '../../styles/Base.css';

@@ -67,6 +67,11 @@ export function formatColor(color: Color, format: ColorFormat): string {
   return translucent ? `hsla(${channels.join(', ')}, ${alpha})` : `hsl(${channels.join(', ')})`;
 }
 
+export function displayColor(color: Color, format: ColorFormat) {
+  const text = formatColor(color, format);
+  return format === 'hex' ? text.toUpperCase() : text;
+}
+
 export function sameColor(a: Color, b: Color) {
   return a.toString('hexa') === b.toString('hexa');
 }

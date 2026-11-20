@@ -412,7 +412,7 @@
           "forms/color/internal/ColorValues.tsx",
           "forms/color/internal/SwatchList.tsx",
           "forms/color/internal/colorValue.ts",
-          "forms/color/internal/useColorState.ts",
+          "forms/color/internal/useColorFollowingValue.ts",
           "forms/color/internal/useEyeDropper.ts"
         ]
       },
