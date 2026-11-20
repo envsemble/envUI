@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
+import { cloneElement, isValidElement, useId, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../classNames.js';
 import { flag } from '../flag.js';
 import { Slot } from '../layout/Slot.js';
@@ -30,6 +30,7 @@ export interface ListRowProps {
   end?: ReactNode;
   /** A class of the owner's, such as env-select-item, beside env-list-row. */
   className?: string;
+  descriptionInName?: boolean;
 }
 
 /**
@@ -46,8 +47,11 @@ export function ListRow({
   description,
   end,
   className,
+  descriptionInName = false,
 }: ListRowProps) {
+  const descriptionId = useId();
   const own = isValidElement(render) ? (render.props as { className?: string }) : {};
+  const describes = description != null && !descriptionInName;
   const children = (
     <>
       {indicator != null && <span className="env-list-row-indicator">{indicator}</span>}
@@ -60,7 +64,17 @@ export function ListRow({
         <Slot className="env-list-row-label" element="span">
           {label}
         </Slot>
-        {description != null && <span className="env-list-row-description">{description}</span>}
+        {description != null && (
+          <span className="env-list-row-description">
+            {describes ? (
+              <span id={descriptionId} aria-hidden="true">
+                {description}
+              </span>
+            ) : (
+              description
+            )}
+          </span>
+        )}
       </span>
       {end != null && (
         <Slot className="env-list-row-end" element="span" layout="row" shrink="never">
@@ -74,6 +88,7 @@ export function ListRow({
     {
       className: classNames('env-list-row', className, own.className),
       'data-indicator': flag(indicator != null),
+      ...(describes && { 'aria-describedby': descriptionId }),
       children,
     } as { className: string; children: ReactNode },
   );

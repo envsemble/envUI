@@ -1,11 +1,9 @@
 'use client';
 
 import {
-  useId,
   useRef,
   type ButtonHTMLAttributes,
   type ComponentProps,
-  type ComponentPropsWithoutRef,
   type CSSProperties,
   type ReactNode,
   type Ref,
@@ -29,6 +27,7 @@ import {
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
 import { ListRow } from '../internal/list/ListRow.js';
+import { flattenGroups, isGroup, type ListItemElementProps } from '../internal/list/listEntries.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
@@ -64,10 +63,7 @@ export interface SelectItem {
   items?: never;
 }
 /** What a Select option's itemProps can set on its option element. */
-export type SelectItemElementProps = Omit<
-  ComponentPropsWithoutRef<'div'>,
-  'children' | 'id' | 'role' | 'tabIndex' | 'dangerouslySetInnerHTML' | `aria-${string}`
-> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
+export type SelectItemElementProps = ListItemElementProps;
 /** Options of a Select under a heading, which also names the group for assistive technology. */
 export interface SelectGroup {
   /** The group's heading: text, or content such as an icon or a count beside the group's name. */
@@ -164,7 +160,6 @@ const popupParts = {
 };
 
 function SelectOption({ item }: { item: SelectItem }) {
-  const descriptionId = useId();
   return (
     <ListRow
       render={
@@ -173,7 +168,6 @@ function SelectOption({ item }: { item: SelectItem }) {
           value={item.value}
           label={item.label}
           disabled={item.disabled}
-          aria-describedby={item.description ? descriptionId : undefined}
         />
       }
       className="env-select-item"
@@ -185,24 +179,8 @@ function SelectOption({ item }: { item: SelectItem }) {
         </BaseSelect.ItemIndicator>
       }
       label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}
-      description={
-        item.description ? (
-          <span id={descriptionId} aria-hidden="true">
-            {item.description}
-          </span>
-        ) : undefined
-      }
+      description={item.description || undefined}
     />
-  );
-}
-
-function isGroup(entry: SelectItem | SelectGroup): entry is SelectGroup {
-  return Array.isArray(entry.items);
-}
-
-function optionsOf(items: readonly SelectItem[] | readonly SelectGroup[]) {
-  return items.flatMap((entry: SelectItem | SelectGroup) =>
-    isGroup(entry) ? entry.items : [entry],
   );
 }
 
@@ -277,7 +255,7 @@ export function Select({
   style,
   ...triggerProps
 }: SelectProps) {
-  const options = optionsOf(items);
+  const options = flattenGroups(items);
   const { naming, metadata } = useFieldControl({
     ...triggerProps,
     id: suppliedId,

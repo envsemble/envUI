@@ -4,6 +4,7 @@ import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import type { MouseEvent, ReactNode, Ref } from 'react';
 import { Grid } from '../../layout/Layout.js';
 import { ListRow, shownLabelText } from '../../internal/list/ListRow.js';
+import { isGroup } from '../../internal/list/listEntries.js';
 import type { CommandPaletteGroup, CommandPaletteItem } from '../CommandPalette.js';
 import '../../styles/Base.css';
 import '../../styles/CommandPalette.css';
@@ -16,14 +17,12 @@ export interface CommandPaletteSection {
 
 export type SectionsBaseUiTakesAsItsGroups = readonly CommandPaletteItem[];
 
-function isGroup(entry: CommandPaletteItem | CommandPaletteGroup): entry is CommandPaletteGroup {
-  return Array.isArray(entry.items);
-}
-
 export function sectionsOf(
   entries: readonly CommandPaletteItem[] | readonly CommandPaletteGroup[],
 ): CommandPaletteSection[] {
-  const groups = entries.filter(isGroup);
+  const groups = (entries as readonly (CommandPaletteItem | CommandPaletteGroup)[]).filter(
+    isGroup<CommandPaletteItem, CommandPaletteGroup>,
+  );
   if (groups.length === 0)
     return entries.length === 0
       ? []
@@ -65,6 +64,7 @@ export function CommandPaletteOptions({
       label={item.label}
       description={item.description}
       end={item.end}
+      descriptionInName
       render={
         <BaseAutocomplete.Item
           {...item.itemProps}
