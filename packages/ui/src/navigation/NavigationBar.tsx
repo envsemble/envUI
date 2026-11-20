@@ -4,6 +4,7 @@ import type { ComponentPropsWithRef } from 'react';
 import { Column, Row } from '../layout/Layout.js';
 import { Badge } from '../data-display/Badge.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
@@ -133,7 +134,7 @@ export function NavigationBar({
   return (
     <nav
       {...props}
-      aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
+      aria-label={landmarkLabel(label, labelledBy, messages.label)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-bar', className)}

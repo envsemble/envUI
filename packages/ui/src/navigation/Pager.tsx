@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { Row } from '../layout/Layout.js';
 import { setRef } from '../internal/react/setRef.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
@@ -140,7 +141,7 @@ function Root({ children, className, 'aria-label': ariaLabel, ref, ...props }: R
             element.current = node;
             setRef(ref, node);
           }}
-          aria-label={ariaLabel ?? messages.label}
+          aria-label={landmarkLabel(ariaLabel, props['aria-labelledby'], messages.label)}
           className={classNames('env-pager', className)}
         />
       }

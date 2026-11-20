@@ -14,6 +14,7 @@ import {
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { Row } from '../layout/Layout.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
@@ -156,7 +157,7 @@ export function Breadcrumbs({
   return (
     <nav
       {...props}
-      aria-label={label ?? messages.label}
+      aria-label={landmarkLabel(label, props['aria-labelledby'], messages.label)}
       className={classNames('env-breadcrumbs', className)}
       data-nowrap={flag(!wrap)}
     >

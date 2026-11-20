@@ -12,6 +12,7 @@ import {
 } from 'react';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { tableOfContents } from '../foundations/messages/tableOfContents.js';
 import { flatten } from './internal/tableOfContents/contentsOutline.js';
@@ -184,7 +185,7 @@ export function TableOfContents({
   return (
     <nav
       {...props}
-      aria-label={label ?? messages.label}
+      aria-label={landmarkLabel(label, props['aria-labelledby'], messages.label)}
       className={classNames('env-table-of-contents', className)}
       hidden={items.length === 0 ? true : props.hidden}
     >

@@ -5,6 +5,7 @@ import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { navigation } from '../foundations/messages/navigation.js';
@@ -84,7 +85,7 @@ export function NavigationRail({
     <Column
       render={<nav />}
       {...props}
-      aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
+      aria-label={landmarkLabel(label, labelledBy, messages.label)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-rail', className)}

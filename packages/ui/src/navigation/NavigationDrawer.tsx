@@ -4,6 +4,7 @@ import { useMemo, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { navigation } from '../foundations/messages/navigation.js';
 import { ResizeHandle } from '../layout/ResizeHandle.js';
@@ -209,7 +210,7 @@ export function NavigationDrawer({
     <Column
       render={<nav />}
       {...props}
-      aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
+      aria-label={landmarkLabel(label, labelledBy, messages.label)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-drawer', className)}
