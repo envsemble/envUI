@@ -13,7 +13,7 @@ const {
   monthFirstDay,
   parseDay,
   formatDay,
-} = await importSource('CalendarDays', 'packages/ui/src/internal/time/calendarDays.ts');
+} = await importSource('CalendarDays', 'packages/ui/src/forms/internal/calendarDays.ts');
 
 test('the step is a whole number of minutes from 1 to 60, 15 by default', () => {
   assert.equal(minuteStepOf(undefined), 15);

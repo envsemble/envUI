@@ -4,7 +4,7 @@ import { useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { mergeRefs } from '../internal/react/setRef.js';
 import { useResize, type ResizeOptions } from '../internal/resize/useResize.js';
-import { useLatest } from '../internal/useLatest.js';
+import { useLatest } from '../internal/react/useLatest.js';
 import { flag } from '../internal/flag.js';
 import { chainHandlers } from '../internal/react/chainHandlers.js';
 import '../styles/Base.css';

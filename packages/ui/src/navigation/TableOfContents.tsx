@@ -26,7 +26,7 @@ import { createWaveDrawer } from './internal/waveDrawer.js';
 import { prefersReducedMotion, reducedMotionQuery } from '../internal/motion/reducedMotion.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
-import { useLatest } from '../internal/useLatest.js';
+import { useLatest } from '../internal/react/useLatest.js';
 import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/TableOfContents.css';

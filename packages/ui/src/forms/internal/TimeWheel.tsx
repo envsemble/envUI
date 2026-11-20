@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, type KeyboardEvent } from 'react';
-import { matchTyped } from '../../internal/time/calendarDays.js';
+import { matchTyped } from './calendarDays.js';
 import { typeAhead } from '../../internal/typeahead.js';
 import { isRightToLeft } from '../../internal/dom/direction.js';
 import { flag } from '../../internal/flag.js';

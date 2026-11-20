@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { HeadingLevel } from '../../foundations/headingLevel.js';
-import { useLatest } from '../../internal/useLatest.js';
+import { useLatest } from '../../internal/react/useLatest.js';
 import {
   outline,
   slug,

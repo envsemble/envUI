@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
-import { useLatest } from '../../internal/useLatest.js';
+import { useLatest } from '../../internal/react/useLatest.js';
 import {
   centredRow,
   nearestAvailable,

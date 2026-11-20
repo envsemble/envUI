@@ -186,6 +186,44 @@ function readImports({ problems, modules, moduleSet, sources }) {
   return imports;
 }
 
+const topLevelInternal = 'internal/';
+const familyOf = (module) => (module.includes('/') ? module.split('/')[0] : module);
+
+const iconGenerator = 'scripts/build/GenerateIcons.ts';
+
+function modulesTheGeneratedIconsImport(moduleSet) {
+  const written = readFileSync(iconGenerator, 'utf8').matchAll(/from '\.\.\/([^']+)\.js'/g);
+  return [...written]
+    .map(([, target]) => [`${target}.ts`, `${target}.tsx`].find((module) => moduleSet.has(module)))
+    .filter((module) => module !== undefined);
+}
+
+function familiesUsingTopLevelInternals(imports, moduleSet) {
+  const importers = new Map();
+  for (const [module, targets] of imports)
+    for (const target of targets.keys())
+      importers.set(target, [...(importers.get(target) ?? []), module]);
+  for (const target of modulesTheGeneratedIconsImport(moduleSet))
+    importers.set(target, [...(importers.get(target) ?? []), generatedIcons]);
+  const families = new Map();
+  for (const module of imports.keys()) {
+    if (!module.startsWith(topLevelInternal)) continue;
+    const found = new Set();
+    const seen = new Set([module]);
+    const queue = [module];
+    while (queue.length > 0)
+      for (const importer of importers.get(queue.shift()) ?? []) {
+        if (!importer.startsWith(topLevelInternal)) found.add(familyOf(importer));
+        else if (!seen.has(importer)) {
+          seen.add(importer);
+          queue.push(importer);
+        }
+      }
+    families.set(module, found);
+  }
+  return families;
+}
+
 function importFindingsOf(imports, { rank, layerOf }) {
   const findings = new Map();
   for (const [module, targets] of imports)
@@ -473,6 +511,7 @@ export function analyze() {
   return {
     problems: library.problems,
     layers: layers.order,
+    topLevelInternalFamilies: familiesUsingTopLevelInternals(imports, library.moduleSet),
     ownership: {
       ...componentMap,
       ownerOf: (token) => ownership.ownerOf(token, 'a test'),

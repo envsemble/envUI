@@ -15,7 +15,7 @@ import {
   now,
   parseMonth,
   toUtcDate,
-} from '../internal/time/calendarDays.js';
+} from './internal/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 

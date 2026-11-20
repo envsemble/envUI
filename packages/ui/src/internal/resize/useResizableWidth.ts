@@ -5,7 +5,7 @@ import type { ResizeOptions } from './useResize.js';
 import { useFormatters } from '../provider/useFormatters.js';
 import { remPixels, roundToHundredth } from '../dom/lengths.js';
 import type { ResizeDetails } from './resizeDetails.js';
-import { useLatest } from '../useLatest.js';
+import { useLatest } from '../react/useLatest.js';
 
 const finiteOrUndefined = (value: number | undefined) =>
   value !== undefined && Number.isFinite(value) ? value : undefined;

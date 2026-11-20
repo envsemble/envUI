@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { subscribeFormReset } from '../../../internal/field/subscribeFormReset.js';
 import { sameColor, toColor, type ColorValue } from './colorValue.js';
-import { useLatest } from '../../../internal/useLatest.js';
+import { useLatest } from '../../../internal/react/useLatest.js';
 
 export function useColorState(
   value: ColorValue | undefined,

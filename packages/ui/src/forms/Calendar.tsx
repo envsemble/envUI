@@ -24,13 +24,13 @@ import {
   parseDay,
   toUtcDate,
   type Weekday,
-} from '../internal/time/calendarDays.js';
+} from './internal/calendarDays.js';
 import { useActiveCell } from './internal/useActiveCell.js';
 import { useRowControlNaming } from '../internal/field/rowControl.js';
 import '../styles/Base.css';
 import '../styles/Calendar.css';
 
-export type { Weekday } from '../internal/time/calendarDays.js';
+export type { Weekday } from './internal/calendarDays.js';
 
 /** What a calendar's renderDay receives about the day beside its date. */
 export interface CalendarDayState {

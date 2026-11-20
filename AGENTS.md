@@ -24,7 +24,7 @@ Don't run `verify`, `test:browser`, `test:a11y` or `test:visual` as a routine st
 
 | Path                                         | Holds                                                                                                                        |
 | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `packages/ui/src/<family>/`                  | Components, in the family of their page's category; `internal/` for what one family uses, the top-level `internal/` for two  |
+| `packages/ui/src/<family>/`                  | Components, in the family of their page's category, with what only that family uses in its `internal/`                       |
 | `packages/ui/src/styles/<Name>.css`          | Each component's style sheet, one flat folder                                                                                |
 | `packages/ui/src/foundations/messages/`      | Every built-in string, one namespace per component or family                                                                 |
 | `packages/ui/src/partDescriptions.json`      | What the part contract can't derive: each part's and property's description, the color properties                            |

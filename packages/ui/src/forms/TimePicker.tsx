@@ -7,7 +7,7 @@ import { IconSchedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
 import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
-import { formatTime, now, parseTime, toUtcDate } from '../internal/time/calendarDays.js';
+import { formatTime, now, parseTime, toUtcDate } from './internal/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 import '../styles/TimePicker.css';

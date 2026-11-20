@@ -10,7 +10,7 @@ import {
   rulesFile,
 } from './composition/Analysis.ts';
 
-const { problems, layers, findings } = analyze();
+const { problems, layers, findings, topLevelInternalFamilies } = analyze();
 const exceptions = JSON.parse(readFileSync(exceptionsFile, 'utf8'));
 const source = (path, sites) => `packages/ui/src/${path}:${sites.join(', ')}`;
 const times = (count) => (count === 1 ? 'once' : `${count} times`);
@@ -61,6 +61,21 @@ test('imports go down the layers', () => {
         `Move what both need into a lower layer, or correct the layer in ${rulesFile} if it is wrong: a component of a family's folder that renders a composite is a composite, listed under layers.modules.`,
     }),
   );
+});
+
+test('a module of the top-level internal/ serves two families or more', () => {
+  const misplaced = [...topLevelInternalFamilies].flatMap(([module, families]) => {
+    if (families.size >= 2) return [];
+    const [family] = families;
+    return family === undefined
+      ? [
+          `packages/ui/src/${module}: nothing in the library imports it. Delete it, or move it to what uses it.`,
+        ]
+      : [
+          `packages/ui/src/${module} serves only ${family}, directly or through other internal modules: move it to ${family}/internal/. The top-level internal/ holds what two families or more share.`,
+        ];
+  });
+  assertNoChanges(misplaced);
 });
 
 test('raw interactive HTML stays in leaf controls and internals', () => {

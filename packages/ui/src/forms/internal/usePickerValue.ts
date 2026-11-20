@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { dateFormat, withHourCycle } from '../../internal/time/calendarDays.js';
+import { dateFormat, withHourCycle } from './calendarDays.js';
 import { useResolvedLocale } from '../../internal/provider/useFormatters.js';
 import { useControllableState } from '../../internal/react/useControllableState.js';
 

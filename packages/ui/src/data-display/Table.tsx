@@ -18,7 +18,7 @@ import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { remLength } from '../internal/dom/lengths.js';
 import { mergeRefs } from '../internal/react/setRef.js';
 import { useMergedRefs } from '../internal/react/useMergedRefs.js';
-import { useStackedReport } from '../internal/react/useStackedReport.js';
+import { useStackedReport } from './internal/useStackedReport.js';
 import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconUnfoldMore } from '../icons/UnfoldMore.js';
