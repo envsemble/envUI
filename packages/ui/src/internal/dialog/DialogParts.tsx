@@ -8,7 +8,7 @@ import { Slot } from '../layout/Slot.js';
 import { Surface, type SurfaceProps } from '../../layout/Surface.js';
 import { Theme, type ThemeProps } from '../../foundations/Theme.js';
 import { SkeletonScope } from '../skeleton/SkeletonScope.js';
-import { usePortalContainer } from '../popup/PortalContainerContext.js';
+import { usePortalContainer } from '../provider/PortalContainerContext.js';
 import { useModalPresence } from './useModalPresence.js';
 import '../../styles/Base.css';
 import '../../styles/Dialog.css';

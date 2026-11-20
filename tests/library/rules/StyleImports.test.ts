@@ -184,7 +184,7 @@ test('a module that renders a class brings the style sheets that style it', () =
     module.startsWith('dev/') ||
     [
       'foundations/themeStorage.ts',
-      'foundations/internal/themeRoot.ts',
+      'internal/theme/themeRoot.ts',
       'foundations/internal/storedPreference.ts',
       'content/internal/useCodeContrast.ts',
     ].includes(module);

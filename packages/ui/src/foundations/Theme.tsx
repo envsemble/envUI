@@ -12,6 +12,7 @@ import { renderElement } from '../internal/react/renderElement.js';
 import { outsideTheme } from './internal/outsideTheme.js';
 import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import { explicitContrasts, isOneOf, themeScales } from '../internal/theme/themeRoot.js';
 import '../styles/Base.css';
 
 /** A color scheme. */
@@ -157,15 +158,10 @@ export function Theme({
   const contrastAttribute = writtenAttributes['data-env-contrast'];
   const contrast =
     ownContrast ??
-    (contrastAttribute === 'high' || contrastAttribute === 'standard'
-      ? contrastAttribute
-      : inherited.contrast);
+    (isOneOf(explicitContrasts, contrastAttribute) ? contrastAttribute : inherited.contrast);
   const scaleAttribute = writtenAttributes['data-env-scale'];
   const scale =
-    ownScale ??
-    (scaleAttribute === 'comfortable' || scaleAttribute === 'compact' || scaleAttribute === 'system'
-      ? scaleAttribute
-      : inherited.scale);
+    ownScale ?? (isOneOf(themeScales, scaleAttribute) ? scaleAttribute : inherited.scale);
   const selection = ownSelection ?? inherited.selection;
   const corners = ownCorners ?? inherited.corners;
   const value = useMemo(

@@ -1,5 +1,5 @@
 import type { ThemeContrast, ThemeCorners, ThemeScale, ThemeSelection } from './Theme.js';
-import { themeBootstrapScript } from './internal/themeRoot.js';
+import { themeBootstrapScript } from '../internal/theme/themeRoot.js';
 
 /** A theme preference: an explicit theme or the operating system's. */
 export type ThemePreference = 'light' | 'dark' | 'system';

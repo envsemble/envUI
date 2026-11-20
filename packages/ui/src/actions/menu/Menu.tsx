@@ -4,11 +4,8 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { useRef, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import type { PopupSide } from '../../internal/popup/PopupSurface.js';
-import {
-  containedModal,
-  containedOpenChange,
-  usePortalContainer,
-} from '../../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../../internal/provider/PortalContainerContext.js';
+import { containedModal, containedOpenChange } from '../../internal/popup/containedOverlays.js';
 import type { SkeletonProps } from '../../internal/skeleton/skeleton.js';
 import { withDisplayName } from '../../internal/react/withDisplayName.js';
 import { markTriggerOwner } from '../../internal/trigger/triggerOwner.js';

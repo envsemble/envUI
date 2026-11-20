@@ -18,11 +18,8 @@ import { classNames } from '../classNames.js';
 import { ResetControlDefaults } from '../control/ControlDefaults.js';
 import { useEnvUI, type Direction } from '../provider/EnvUIContext.js';
 import { setRef } from '../react/setRef.js';
-import {
-  containedCollisionAvoidance,
-  containedPopupStyle,
-  usePortalContainer,
-} from './PortalContainerContext.js';
+import { usePortalContainer } from '../provider/PortalContainerContext.js';
+import { containedCollisionAvoidance, containedPopupStyle } from './containedOverlays.js';
 import { inSkeleton, skeletonAttributes } from '../skeleton/skeleton.js';
 import { computedDirection } from '../dom/direction.js';
 import {

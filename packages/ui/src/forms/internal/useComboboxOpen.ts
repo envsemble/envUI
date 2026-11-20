@@ -2,11 +2,8 @@
 
 import type { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useCallback, type RefObject } from 'react';
-import {
-  containedOpenChange,
-  useKeepPageVisible,
-  usePortalContainer,
-} from '../../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../../internal/provider/PortalContainerContext.js';
+import { containedOpenChange, useKeepPageVisible } from '../../internal/popup/containedOverlays.js';
 import { useControllableState } from '../../internal/react/useControllableState.js';
 import type { ComboboxOpenChangeDetails, ComboboxProps } from '../Combobox.js';
 

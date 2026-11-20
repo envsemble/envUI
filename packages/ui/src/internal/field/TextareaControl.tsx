@@ -3,7 +3,7 @@
 import { useRef, type Ref, type TextareaHTMLAttributes } from 'react';
 import { classNames } from '../classNames.js';
 import { useMergedRefs } from '../react/useMergedRefs.js';
-import { TextareaResizeEdge } from './TextareaResizeEdge.js';
+import { TextareaResizeHandle } from './TextareaResizeHandle.js';
 import { flag } from '../flag.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
@@ -63,7 +63,7 @@ export function TextareaControl({
         style={sizingStyle}
         className={classNames('env-text-field-input', className)}
       />
-      <TextareaResizeEdge
+      <TextareaResizeHandle
         inputRef={inputRef}
         inputId={props.id}
         sizing={sizing}

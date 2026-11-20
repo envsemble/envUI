@@ -35,11 +35,8 @@ import { withPendingAction } from './internal/DialogPendingAction.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import { ResizeHandle } from '../layout/ResizeHandle.js';
 import { useResizableWidth, widthInRem } from '../internal/resize/useResizableWidth.js';
-import {
-  containedModal,
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedModal, containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { computedDirection } from '../internal/dom/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';

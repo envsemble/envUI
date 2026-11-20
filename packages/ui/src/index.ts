@@ -8,7 +8,7 @@ export * from './foundations/PortalContainer.js';
 export * from './foundations/placeholders.js';
 export * from './foundations/useSkeleton.js';
 export * from './foundations/Icon.js';
-export * from './foundations/ThemePreference.js';
+export * from './foundations/ThemePreferenceProvider.js';
 export * from './foundations/ThemeToggle.js';
 export * from './foundations/themeBootstrap.js';
 export * from './foundations/ThemeMenuRadioGroup.js';

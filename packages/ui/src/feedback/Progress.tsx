@@ -9,6 +9,7 @@ import type { RangeBarProps } from '../internal/rangeBarProps.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Meter.css';
+import '../styles/Progress.css';
 
 export interface ProgressProps extends RangeBarProps {
   /**

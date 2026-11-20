@@ -7,7 +7,7 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { themePreference } from './messages/themePreference.js';
 import { IconDarkMode } from '../icons/DarkMode.js';
 import { IconLightMode } from '../icons/LightMode.js';
-import { useThemePreference } from './ThemePreference.js';
+import { useThemePreference } from './ThemePreferenceProvider.js';
 import '../styles/Base.css';
 import '../styles/ThemeToggle.css';
 

@@ -5,6 +5,7 @@ import { Slot } from '../../internal/layout/Slot.js';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
 import type { TreeItem } from '../Tree.js';
 import type { TreeMotion } from './treeModel.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import '../../styles/Base.css';
 import '../../styles/Tree.css';
 
@@ -67,11 +68,7 @@ export function TreeRow({
           </span>
         )}
       </span>
-      {item.icon != null && (
-        <span className="env-icon env-tree-icon" aria-hidden="true">
-          {item.icon}
-        </span>
-      )}
+      {item.icon != null && <DecorativeIcon className="env-tree-icon">{item.icon}</DecorativeIcon>}
       <span className="env-tree-label">{item.label}</span>
       {item.description != null && (
         <>

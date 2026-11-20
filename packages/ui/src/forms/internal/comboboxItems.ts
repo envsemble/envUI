@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { ListItemElementProps } from '../../internal/list/listEntries.js';
+import type { ListItemElementProps } from '../../internal/popup/listEntries.js';
 
 /** One option of a Combobox. */
 export interface ComboboxItem {

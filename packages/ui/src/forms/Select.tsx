@@ -19,15 +19,16 @@ import {
   type FieldDecorationProps,
 } from '../internal/field/fieldProps.js';
 import { PopupSurface } from '../internal/popup/PopupSurface.js';
-import {
-  containedModal,
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedModal, containedOpenChange } from '../internal/popup/containedOverlays.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
-import { ListRow } from '../internal/list/ListRow.js';
-import { flattenGroups, isGroup, type ListItemElementProps } from '../internal/list/listEntries.js';
+import { ListRow } from '../internal/popup/ListRow.js';
+import {
+  flattenGroups,
+  isGroup,
+  type ListItemElementProps,
+} from '../internal/popup/listEntries.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';

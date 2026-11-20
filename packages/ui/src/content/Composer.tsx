@@ -24,6 +24,7 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { TextareaControl } from '../internal/field/TextareaControl.js';
+import { supportsFieldSizing } from '../internal/field/fieldSizing.js';
 import { flag } from '../internal/flag.js';
 import { idRefs } from '../internal/dom/idRefs.js';
 import { observeResize } from '../internal/dom/observeResize.js';
@@ -112,9 +113,6 @@ export type ComposerProps = ComposerOptions &
   >;
 
 const imeProcessKeyCode = 229;
-
-const supportsFieldSizing = (input: HTMLTextAreaElement) =>
-  input.ownerDocument.defaultView?.CSS?.supports('field-sizing', 'content');
 
 function useContentHeightWithoutFieldSizing(
   inputRef: RefObject<HTMLTextAreaElement | null>,

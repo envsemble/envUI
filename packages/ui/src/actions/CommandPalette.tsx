@@ -6,7 +6,7 @@ import { useId, useRef, type ComponentPropsWithRef, type ReactNode } from 'react
 import { classNames } from '../internal/classNames.js';
 import { Column, Row } from '../layout/Layout.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
-import type { ListItemElementProps } from '../internal/list/listEntries.js';
+import type { ListItemElementProps } from '../internal/popup/listEntries.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { useTheme } from '../foundations/Theme.js';
@@ -18,11 +18,8 @@ import { Spinner } from '../feedback/Spinner.js';
 import { DialogBackdrop, OverlayTheme } from '../internal/dialog/DialogParts.js';
 import type { DialogOpenChangeReason } from '../overlays/Dialog.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
-import {
-  containedModal,
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedModal, containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { CommandPaletteFooter } from './internal/CommandPaletteFooter.js';
 import {
   CommandPaletteOptions,

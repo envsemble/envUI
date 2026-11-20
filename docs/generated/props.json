@@ -8197,7 +8197,7 @@
     },
     "ThemePreferenceProvider": {
       "kind": "component",
-      "source": "packages/ui/src/foundations/ThemePreference.tsx",
+      "source": "packages/ui/src/foundations/ThemePreferenceProvider.tsx",
       "description": "Themes the application by the theme preference, which the application keeps where it chooses, following the system's theme for a system preference, and themes the document root.",
       "props": [
         {
@@ -9196,7 +9196,7 @@
     },
     "useThemePreference": {
       "kind": "function",
-      "source": "packages/ui/src/foundations/ThemePreference.tsx",
+      "source": "packages/ui/src/foundations/ThemePreferenceProvider.tsx",
       "description": "The theme preference from the nearest ThemePreferenceProvider.",
       "signature": "(): ThemePreferenceValue",
       "entries": [

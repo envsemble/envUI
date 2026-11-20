@@ -23,7 +23,7 @@ import { IconHelp } from '@envsemble/envui/icons/Help';
 import { IconUndo } from '@envsemble/envui/icons/Undo';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { PopupSurface } from '../../packages/ui/src/internal/popup/PopupSurface.js';
-import { ListRow } from '../../packages/ui/src/internal/list/ListRow.js';
+import { ListRow } from '../../packages/ui/src/internal/popup/ListRow.js';
 import { ResizeHandle } from '../../packages/ui/src/layout/ResizeHandle.js';
 import { useCopy } from '../../packages/ui/src/internal/react/useCopy.js';
 

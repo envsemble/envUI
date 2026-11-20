@@ -42,7 +42,7 @@
 @import './Radio.css';
 @import './Field.css';
 @import './TextField.css';
-@import './TextareaResizeEdge.css';
+@import './TextareaResizeHandle.css';
 @import './ColorPicker.css';
 @import './Select.css';
 @import './Combobox.css';
@@ -65,6 +65,7 @@
 @import './Tooltip.css';
 @import './HoverDetail.css';
 @import './Meter.css';
+@import './Progress.css';
 @import './AvatarGroup.css';
 @import './Graphic.css';
 @import './RelativeTime.css';

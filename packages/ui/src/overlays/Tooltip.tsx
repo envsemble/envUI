@@ -34,10 +34,8 @@ import {
   tooltipDelay,
 } from '../internal/popup/TooltipPopup.js';
 import { accessibleName } from './internal/accessibleName.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { ownName, useStandIn, useTriggerName } from './internal/tooltipTriggerName.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';

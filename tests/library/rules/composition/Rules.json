@@ -46,7 +46,7 @@
       "content/internal/CodeBlockFrame.tsx": "composites",
       "data-display/List.tsx": "composites",
       "data-display/internal/ReorderableList.tsx": "composites",
-      "data-display/internal/ListRows.tsx": "composites",
+      "data-display/internal/listMarkup.tsx": "composites",
       "data-display/internal/ListNaming.tsx": "composites",
       "content/Markdown.tsx": "composites",
       "content/Message.tsx": "composites",
@@ -254,7 +254,7 @@
       "List": {
         "modules": [
           "data-display/internal/ReorderableList.tsx",
-          "data-display/internal/ListRows.tsx"
+          "data-display/internal/listMarkup.tsx"
         ]
       },
       "Table": {
@@ -328,7 +328,7 @@
           "forms/TextField.tsx",
           "forms/Textarea.tsx",
           "internal/field/TextareaControl.tsx",
-          "internal/field/TextareaResizeEdge.tsx"
+          "internal/field/TextareaResizeHandle.tsx"
         ],
         "classes": ["env-text-field"],
         "styles": ["TextField.css"],
@@ -340,6 +340,7 @@
       },
       "ThemePreference": {
         "modules": [
+          "foundations/ThemePreferenceProvider.tsx",
           "foundations/internal/ThemePreferenceContext.ts",
           "foundations/themeStorage.ts",
           "foundations/useStoredThemePreference.ts"

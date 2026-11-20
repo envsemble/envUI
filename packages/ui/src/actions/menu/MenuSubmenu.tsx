@@ -4,15 +4,14 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { useRef, type CSSProperties, type ReactNode, type Ref } from 'react';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
 import { mergeRefs } from '../../internal/react/setRef.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../../internal/popup/containedOverlays.js';
 import { MenuPopup, menuParts, menuPopupInset } from './internal/MenuPopup.js';
 import type { OpenChangeDetails } from './internal/menuOpenChange.js';
 import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
 import type { TriggerProps } from './internal/menuTriggerProps.js';
 import { classNames } from '../../internal/classNames.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
@@ -122,9 +121,9 @@ export function Submenu({
         {...accessibility}
       >
         {content}
-        <span className="env-icon env-menu-submenu-chevron" aria-hidden="true">
+        <DecorativeIcon className="env-menu-submenu-chevron">
           <IconChevronRight />
-        </span>
+        </DecorativeIcon>
       </BaseMenu.SubmenuTrigger>
       <MenuPopup
         parts={menuParts}

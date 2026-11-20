@@ -16,10 +16,8 @@ import {
 import { mergeRefs } from '../../internal/react/setRef.js';
 import { useHydrated } from '../../internal/react/useHydrated.js';
 import { useDirection } from '../../internal/provider/useDirection.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../../internal/popup/containedOverlays.js';
 import { Button, IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
 import {
@@ -38,6 +36,7 @@ import { useFieldControl } from '../../internal/field/useFieldControl.js';
 import { flag } from '../../internal/flag.js';
 import { classNames } from '../../internal/classNames.js';
 import type { Picker, PickerOpenChangeDetails, PickerOpenChangeReason } from './usePicker.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';
 
@@ -349,9 +348,7 @@ export function PickerField({
               }}
             />
           )}
-          <span className="env-icon env-date-picker-icon" aria-hidden="true">
-            {icon}
-          </span>
+          <DecorativeIcon className="env-date-picker-icon">{icon}</DecorativeIcon>
         </span>
         <PickerNativeInput
           ref={nativeRef}

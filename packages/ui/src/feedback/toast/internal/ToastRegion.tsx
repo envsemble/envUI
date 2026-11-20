@@ -11,7 +11,7 @@ import { useDirection } from '../../../internal/provider/useDirection.js';
 import type { ToastController } from './useToastController.js';
 import { toastActions, toastText, type ToastEntry } from './toastEntry.js';
 import type { ToastAction, ToastPlacement } from '../toastTypes.js';
-import { usePortalContainer } from '../../../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../../../internal/provider/PortalContainerContext.js';
 import { useModalOpen } from '../../../internal/dialog/useModalPresence.js';
 import { Button, IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';

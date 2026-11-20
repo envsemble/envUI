@@ -1,7 +1,33 @@
 'use client';
 
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { observeResize } from '../../internal/dom/observeResize.js';
 import { useLatest } from '../../internal/react/useLatest.js';
+
+export function useStackingAsTheContainerQueryLaidItOut(
+  region: RefObject<HTMLElement | null>,
+  table: RefObject<HTMLElement | null>,
+  enabled: boolean,
+  stackBelow: string | number,
+) {
+  const [stacked, setStacked] = useState(false);
+  useLayoutEffect(() => {
+    const element = region.current;
+    const grid = table.current;
+    if (!enabled || !element || !grid) {
+      setStacked(false);
+      return;
+    }
+    const read = () => {
+      const hiddenRegionLaysNothingOut = element.getClientRects().length === 0;
+      if (hiddenRegionLaysNothingOut) return;
+      setStacked(getComputedStyle(grid).getPropertyValue('--_table-stacked').trim() === '1');
+    };
+    read();
+    return observeResize([element, grid], read);
+  }, [region, table, enabled, stackBelow]);
+  return enabled && stacked;
+}
 
 /**
  * Reports whether a layout stacks to its handler before paint, so an application can show the

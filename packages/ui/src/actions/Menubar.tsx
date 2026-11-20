@@ -24,10 +24,8 @@ import { Row } from '../layout/Layout.js';
 import { mergeRefs } from '../internal/react/setRef.js';
 import { useMergedRefs } from '../internal/react/useMergedRefs.js';
 import { MenuPopup, menuParts } from './menu/internal/MenuPopup.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { flag } from '../internal/flag.js';
 import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';

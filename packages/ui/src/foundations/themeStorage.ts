@@ -1,5 +1,5 @@
 import type { ThemeDefinition, ThemePreference } from './themeBootstrap.js';
-import { themeBootstrapScript } from './internal/themeRoot.js';
+import { themeBootstrapScript } from '../internal/theme/themeRoot.js';
 import { defaultThemeStorageKey } from './internal/storedPreference.js';
 
 /** Where the browser keeps the theme preference: the same for the hook and the head script. */

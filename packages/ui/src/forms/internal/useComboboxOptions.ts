@@ -2,7 +2,7 @@
 
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useLayoutEffect, useMemo, useRef } from 'react';
-import { flattenGroups } from '../../internal/list/listEntries.js';
+import { flattenGroups } from '../../internal/popup/listEntries.js';
 import { type ComboboxFilter, type ComboboxGroup, type ComboboxItem } from './comboboxItems.js';
 
 type GroupsBaseUiCannotTellFromGenericItems<Item extends ComboboxItem> = Parameters<

@@ -7,7 +7,7 @@ import { Grid, Row } from '../layout/Layout.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useHydrated } from '../internal/react/useHydrated.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import { useResolvedLocale } from '../internal/provider/useFormatters.js';
+import { useResolvedLocale } from '../internal/provider/locale.js';
 import { calendar as calendarMessages } from '../foundations/messages/calendar.js';
 import { IconButton } from '../actions/Button.js';
 import { IconChevronLeft } from '../icons/ChevronLeft.js';

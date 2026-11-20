@@ -1,0 +1,52 @@
+@layer env.components {
+  .env-progress[data-indeterminate] .env-progress-indicator {
+    inline-size: 40%;
+    --_progress-sweep-duration: calc(var(--env-motion-duration-slow) * 5);
+    animation: env-progress-indeterminate var(--_progress-sweep-duration) linear infinite;
+  }
+  .env-progress[data-indeterminate]:dir(rtl) .env-progress-indicator {
+    animation-name: env-progress-indeterminate-rtl;
+  }
+  @keyframes env-progress-indeterminate {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(250%);
+    }
+  }
+  @keyframes env-progress-indeterminate-rtl {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(-250%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-progress[data-indeterminate] .env-progress-indicator {
+      --_progress-indeterminate-stripe: color-mix(
+        in srgb,
+        var(--env-color-bg-primary-emphasis) 55%,
+        transparent
+      );
+      inline-size: 100%;
+      animation: none;
+      background: repeating-linear-gradient(
+        -45deg,
+        var(--_progress-indeterminate-stripe) 0 var(--env-space-1),
+        transparent var(--env-space-1) calc(2 * var(--env-space-1))
+      );
+    }
+  }
+  @media (forced-colors: active) and (prefers-reduced-motion: reduce) {
+    .env-progress[data-indeterminate] .env-progress-indicator {
+      forced-color-adjust: none;
+      background: repeating-linear-gradient(
+        -45deg,
+        Highlight 0 var(--env-space-1),
+        Canvas var(--env-space-1) calc(2 * var(--env-space-1))
+      );
+    }
+  }
+}

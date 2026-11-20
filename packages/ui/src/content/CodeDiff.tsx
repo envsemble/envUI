@@ -4,7 +4,6 @@ import { parseDiffFromFile, preloadHighlighter, registerCustomTheme } from '@pie
 import { File, FileDiff } from '@pierre/diffs/react';
 import {
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -31,9 +30,9 @@ import { IconRefresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import { pixelsOf, remPixels } from '../internal/dom/lengths.js';
+import { remPixels } from '../internal/dom/lengths.js';
+import { useContainerSize } from '../foundations/useContainerSize.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
-import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Code.css';
 
@@ -338,24 +337,14 @@ function useWideEnoughToSplitBeforePaint(
   rootRef: RefObject<HTMLDivElement | null>,
   measure: boolean,
 ) {
-  const [wide, setWide] = useState(false);
-  useLayoutEffect(() => {
-    const root = rootRef.current;
-    if (!root || !measure) {
-      setWide(false);
-      return;
-    }
-    const rem = remPixels(root);
-    const style = getComputedStyle(root);
-    setWide(
-      root.clientWidth - pixelsOf(style.paddingLeft) - pixelsOf(style.paddingRight) >=
-        splitFromOwnWidthRem * rem,
-    );
-    return observeResize(root, ([entry]) => {
-      if (entry) setWide(entry.contentRect.width >= splitFromOwnWidthRem * rem);
-    });
-  }, [rootRef, measure]);
-  return wide;
+  const size = useContainerSize(measure ? rootRef : null);
+  const root = rootRef.current;
+  return (
+    measure &&
+    size !== undefined &&
+    root !== null &&
+    size.inlineSize >= splitFromOwnWidthRem * remPixels(root)
+  );
 }
 
 function languageOf(filename: string) {

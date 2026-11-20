@@ -3,8 +3,8 @@
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import type { MouseEvent, ReactNode, Ref } from 'react';
 import { Grid } from '../../layout/Layout.js';
-import { ListRow, listRowLabel } from '../../internal/list/ListRow.js';
-import { isGroup } from '../../internal/list/listEntries.js';
+import { ListRow, listRowLabel } from '../../internal/popup/ListRow.js';
+import { isGroup } from '../../internal/popup/listEntries.js';
 import { givenLabelText, labelText } from '../../internal/text/labelText.js';
 import type { CommandPaletteGroup, CommandPaletteItem } from '../CommandPalette.js';
 import '../../styles/Base.css';

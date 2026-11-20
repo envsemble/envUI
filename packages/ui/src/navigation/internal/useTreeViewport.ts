@@ -2,7 +2,7 @@
 
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import type { RowDensity } from '../../foundations/Theme.js';
-import { defaultRemPixels, remPixels } from '../../internal/dom/lengths.js';
+import { browserDefaultRemPixels, remPixels } from '../../internal/dom/lengths.js';
 import { observeResize } from '../../internal/dom/observeResize.js';
 import '../../styles/Base.css';
 import '../../styles/Tree.css';
@@ -52,7 +52,7 @@ export function useTreeViewport({
 }: TreeViewportOptions): TreeViewport {
   const [scrollTop, setScrollTop] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(0);
-  const [rowHeight, setRowHeight] = useState(comfortableRowRem[density] * defaultRemPixels);
+  const [rowHeight, setRowHeight] = useState(comfortableRowRem[density] * browserDefaultRemPixels);
   const revealedSelection = useRef<string | null>(null);
 
   const hasItems = count > 0;

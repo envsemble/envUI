@@ -5,12 +5,9 @@ import {
   memo,
   useContext,
   useId,
-  useLayoutEffect,
   useRef,
-  useState,
   type ComponentPropsWithRef,
   type ReactNode,
-  type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import type { RowDensity } from '../foundations/Theme.js';
@@ -18,7 +15,10 @@ import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { remLength } from '../internal/dom/lengths.js';
 import { mergeRefs } from '../internal/react/setRef.js';
 import { useMergedRefs } from '../internal/react/useMergedRefs.js';
-import { useStackedReport } from './internal/useStackedReport.js';
+import {
+  useStackedReport,
+  useStackingAsTheContainerQueryLaidItOut,
+} from './internal/tableStacking.js';
 import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconUnfoldMore } from '../icons/UnfoldMore.js';
@@ -36,7 +36,6 @@ import { table as tableMessages } from '../foundations/messages/table.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { flag } from '../internal/flag.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Table.css';
 
@@ -136,31 +135,6 @@ export interface RootProps
 const columnResizeLoadedOnlyByResizableTables = optionModule(
   () => import('./internal/ColumnResizeHandle.js'),
 );
-
-function useStackingAsTheContainerQueryLaidItOut(
-  region: RefObject<HTMLElement | null>,
-  table: RefObject<HTMLElement | null>,
-  enabled: boolean,
-  stackBelow: string | number,
-) {
-  const [stacked, setStacked] = useState(false);
-  useLayoutEffect(() => {
-    const element = region.current;
-    const grid = table.current;
-    if (!enabled || !element || !grid) {
-      setStacked(false);
-      return;
-    }
-    const read = () => {
-      const hiddenRegionLaysNothingOut = element.getClientRects().length === 0;
-      if (hiddenRegionLaysNothingOut) return;
-      setStacked(getComputedStyle(grid).getPropertyValue('--_table-stacked').trim() === '1');
-    };
-    read();
-    return observeResize([element, grid], read);
-  }, [region, table, enabled, stackBelow]);
-  return enabled && stacked;
-}
 
 const defaultStackBelowRegionWidth = '36rem';
 const keyboardScrollTabStop = 0;
@@ -453,22 +427,25 @@ function HeaderCell({
   const nextSort = sortDirection === 'ascending' ? 'descending' : 'ascending';
   const controlsAddTheirActionToTheHeadersName = sortable || Boolean(handle);
   const hasEnd = end != null;
+  const labelWrapped = controlsAddTheirActionToTheHeadersName || hasEnd;
   const ownLabel = props['aria-label'];
-  const nameIds =
-    props['aria-labelledby'] ?? (ownLabel !== undefined ? `${id}-name` : `${id}-label`);
-  const label =
-    controlsAddTheirActionToTheHeadersName || hasEnd ? (
-      <span id={`${id}-label`} className="env-table-header-label">
-        {children}
-      </span>
-    ) : (
-      children
-    );
+  const labelId = `${id}-label`;
+  const ownLabelId = `${id}-name`;
+  const sortWordsId = `${id}-sort`;
+  const resizeWordId = `${id}-resize`;
+  const nameIds = props['aria-labelledby'] ?? (ownLabel !== undefined ? ownLabelId : labelId);
+  const label = labelWrapped ? (
+    <span id={labelId} className="env-table-header-label">
+      {children}
+    </span>
+  ) : (
+    children
+  );
   const sortButton = () => (
     <ActionElement
       className="env-table-sort-button"
       aria-label={sortLabel}
-      aria-labelledby={sortLabel === undefined ? `${nameIds} ${id}-sort` : undefined}
+      aria-labelledby={sortLabel === undefined ? `${nameIds} ${sortWordsId}` : undefined}
       onClick={() => onSortChange?.(nextSort)}
     >
       {label}
@@ -479,11 +456,7 @@ function HeaderCell({
     <th
       role={stack ? (scope === 'row' ? 'rowheader' : 'columnheader') : undefined}
       aria-sort={sortable ? (sortDirection ?? 'none') : sortDirection}
-      aria-labelledby={
-        (controlsAddTheirActionToTheHeadersName || hasEnd) && props['aria-label'] === undefined
-          ? `${id}-label`
-          : undefined
-      }
+      aria-labelledby={labelWrapped && ownLabel === undefined ? labelId : undefined}
       {...props}
       ref={setCell}
       scope={scope}
@@ -504,13 +477,13 @@ function HeaderCell({
       ) : (
         label
       )}
-      {controlsAddTheirActionToTheHeadersName && nameIds === `${id}-name` && (
-        <span id={`${id}-name`} hidden>
+      {controlsAddTheirActionToTheHeadersName && nameIds === ownLabelId && (
+        <span id={ownLabelId} hidden>
           {ownLabel}
         </span>
       )}
       {sortable && sortLabel === undefined && (
-        <span id={`${id}-sort`} hidden>
+        <span id={sortWordsId} hidden>
           {nextSort === 'descending' ? messages.sortDescending : messages.sortAscending}
         </span>
       )}
@@ -519,11 +492,11 @@ function HeaderCell({
           column={column}
           columns={columns}
           label={resizeLabel}
-          labelledBy={`${id}-resize ${nameIds}`}
+          labelledBy={`${resizeWordId} ${nameIds}`}
         />
       )}
       {handle && resizeLabel === undefined && (
-        <span id={`${id}-resize`} hidden>
+        <span id={resizeWordId} hidden>
           {messages.resize}
         </span>
       )}

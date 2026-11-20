@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { I18nProvider } from '@react-aria/i18n';
-import { useResolvedLocale } from '../../../internal/provider/useFormatters.js';
+import { useResolvedLocale } from '../../../internal/provider/locale.js';
 
 export function ColorLocale({ children }: { children: ReactNode }) {
   const locale = useResolvedLocale();

@@ -1,10 +1,10 @@
 /** A rem in pixels where the root's font size can't be read, as on the server: the browsers' default. */
-export const defaultRemPixels = 16;
+export const browserDefaultRemPixels = 16;
 
 /** The root's font size in pixels, what a rem is, in the document of `element` or else this one. */
 export function remPixels(element?: Element) {
   const root = (element?.ownerDocument ?? document).documentElement;
-  return Number.parseFloat(getComputedStyle(root).fontSize) || defaultRemPixels;
+  return Number.parseFloat(getComputedStyle(root).fontSize) || browserDefaultRemPixels;
 }
 
 /**
