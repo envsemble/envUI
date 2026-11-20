@@ -291,7 +291,7 @@ export default defineConfig(
   },
   ...siteFolderOrder,
   {
-    ...envui.configs.recommended,
+    ...envui.configs.strict,
     files: ['apps/site/src/examples/**/*.{ts,tsx}'],
   },
 );

@@ -70,7 +70,7 @@ npm install --save-exact @envsemble/envui@{{version}}
 npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@{{version}} @envsemble/stylelint-config-envui@{{version}}
 ```
 
-Each lint package's README says how to turn it on.
+Each lint package's README says how to turn it on. The ESLint plugin's `configs.recommended` reports envUI used wrongly; `configs.strict` also holds the application to envUI's components in place of plain HTML and to the words of its [writing guide](writing.md).
 
 ## Styles
 

@@ -1,6 +1,6 @@
 # @envsemble/eslint-plugin-envui
 
-ESLint rules for applications built with envUI. Each reports what envUI already provides but the code builds by hand, and its message says what to write instead and how to import it. Every rule is an error, apart from `label-vocabulary`, a warning about wording. The [Stylelint config](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) does the same for style sheets.
+ESLint rules for applications built with envUI. Each reports what envUI already provides but the code builds by hand, and its message says what to write instead and how to import it. The [Stylelint config](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) does the same for style sheets.
 
 ## Install
 
@@ -20,10 +20,12 @@ import envui from '@envsemble/eslint-plugin-envui';
 export default defineConfig(envui.configs.recommended);
 ```
 
-`configs.recommended` turns every rule on for `**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}`. TypeScript needs a parser such as typescript-eslint's; the rules need no type information. Code that draws its own controls on purpose, such as a canvas editor or an adapter for another library, turns a rule off by file:
+`configs.recommended` turns on, as errors, the rules that report envUI used wrongly, for `**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}`. TypeScript needs a parser such as typescript-eslint's; the rules need no type information.
+
+`configs.strict` is `configs.recommended` with the [strict rules](#strict-rules), which set the application's own policy: envUI's components in place of plain HTML, and the words of envUI's writing guide. Use it in place of `configs.recommended` for an application that takes both. Code that draws its own controls on purpose, such as a canvas editor or an adapter for another library, turns a rule off by file:
 
 ```js
-export default defineConfig(envui.configs.recommended, {
+export default defineConfig(envui.configs.strict, {
   files: ['src/editor/**'],
   rules: { 'envui/no-html-elements': 'off' },
 });
@@ -32,14 +34,6 @@ export default defineConfig(envui.configs.recommended, {
 `settings.envui.reexportModules` lists the application's modules that re-export envUI under envUI's names, such as `path.resolve(import.meta.dirname, 'src/ui')` or `'@/components/ui'`; names imported from them count as envUI's.
 
 ## Rules
-
-### no-html-elements
-
-A raw element or widget role that envUI has a component for, from the table in [`src/data/elements.json`](src/data/elements.json). A raw `<button>` with a written `type`, a text label and only attributes Button passes on is fixed to `Button`. What a part renders through `render`, Base UI's components (`@base-ui/react`) and a link adapter's own `<a>` pass. Options: `allow` (entries by id or element) and `renderProps` (default `['render']`).
-
-```text
-Use envUI's TextField instead of a raw <input type="email">: import { TextField } from '@envsemble/envui'. TextField takes the same type.
-```
 
 ### no-raw-colors
 
@@ -71,6 +65,16 @@ A field with no `label`, `aria-label` or `aria-labelledby`, such as a `Select`, 
 
 ```text
 A Select with no label in a List.Item's end: the row's label names only the control in its control, so nothing names this field. Put it in control when it is the row's setting, or give it a label, or an aria-label or aria-labelledby when its label shouldn't show.
+```
+
+## Strict rules
+
+### no-html-elements
+
+A raw element or widget role that envUI has a component for, from the table in [`src/data/elements.json`](src/data/elements.json). A raw `<button>` with a written `type`, a text label and only attributes Button passes on is fixed to `Button`. What a part renders through `render`, Base UI's components (`@base-ui/react`) and a link adapter's own `<a>` pass. Options: `allow` (entries by id or element) and `renderProps` (default `['render']`).
+
+```text
+Use envUI's TextField instead of a raw <input type="email">: import { TextField } from '@envsemble/envui'. TextField takes the same type.
 ```
 
 ### label-vocabulary

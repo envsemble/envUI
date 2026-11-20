@@ -12,20 +12,26 @@ const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 const entries = [...elements.roles, ...elements.elements];
 const isName = (value) => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(value);
 
-test('the plugin names itself and turns every rule on in the recommended config, the wording rule as a warning', () => {
+test('the plugin names itself; the recommended config turns on the rules about using envUI, and strict adds the ones that set application policy', () => {
   assert.deepEqual(plugin.meta, {
     name: manifest.name,
     version: manifest.version,
     namespace: 'envui',
   });
-  const { recommended } = plugin.configs;
+  const { recommended, strict } = plugin.configs;
   assert.equal(recommended.plugins.envui, plugin);
+  const policy = ['envui/label-vocabulary', 'envui/no-html-elements'];
+  const all = Object.keys(plugin.rules).map((name) => `envui/${name}`);
   assert.deepEqual(
     Object.keys(recommended.rules).sort(),
-    Object.keys(plugin.rules).map((name) => `envui/${name}`),
+    all.filter((rule) => !policy.includes(rule)),
   );
-  for (const [rule, severity] of Object.entries(recommended.rules))
-    assert.equal(severity, rule === 'envui/label-vocabulary' ? 'warn' : 'error', rule);
+  assert.deepEqual({ ...strict, name: recommended.name, rules: recommended.rules }, recommended);
+  assert.equal(strict.name, 'envui/strict');
+  assert.deepEqual(Object.keys(strict.rules).sort(), all);
+  for (const config of [recommended, strict])
+    for (const [rule, severity] of Object.entries(config.rules))
+      assert.equal(severity, 'error', rule);
 });
 
 test('the mapping table has unique entries that name envUI 1.0 components', () => {

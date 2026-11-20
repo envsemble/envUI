@@ -15,7 +15,7 @@ aliases:
 
 # Writing
 
-Sentence case everywhere, and no full stop on a label, button, title, tab or menu item. An ellipsis (…) ends an action that asks for more before it acts, such as a button that opens a dialog: "Rename…". Name a button by its verb and object, "Export report", and a link by its destination. `envui/label-vocabulary` reports in a label each word the table below replaces.
+Sentence case everywhere, and no full stop on a label, button, title, tab or menu item. An ellipsis (…) ends an action that asks for more before it acts, such as a button that opens a dialog: "Rename…". Name a button by its verb and object, "Export report", and a link by its destination. `envui/label-vocabulary`, in the ESLint plugin's `configs.strict`, reports in a label each word the table below replaces.
 
 ## Buttons and actions
 
