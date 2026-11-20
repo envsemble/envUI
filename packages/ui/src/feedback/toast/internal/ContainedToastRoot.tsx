@@ -19,7 +19,7 @@ function longestTransitionSeconds(item: HTMLElement | null) {
     : 0;
 }
 
-export function PictureNotice({
+export function ContainedToastRoot({
   id,
   tone,
   limited,

@@ -62,7 +62,10 @@
       "overlays/Dialog.tsx": "composites",
       "overlays/Sheet.tsx": "composites",
       "feedback/internal/AlertDismiss.tsx": "composites",
-      "feedback/toast/internal/PictureNotice.tsx": "composites",
+      "feedback/toast/internal/ContainedToastRoot.tsx": "composites",
+      "feedback/toast/internal/ContainedToast.tsx": "composites",
+      "feedback/toast/internal/LiveToast.tsx": "composites",
+      "feedback/toast/internal/ToastButtons.tsx": "composites",
       "feedback/toast/internal/ToastBody.tsx": "composites",
       "feedback/toast/internal/toastEntry.ts": "composites",
       "feedback/toast/ToastProvider.tsx": "composites",
@@ -292,7 +295,10 @@
           "feedback/toast/useToast.ts",
           "feedback/toast/internal/useToastController.ts",
           "feedback/toast/internal/useToastGlide.ts",
-          "feedback/toast/internal/PictureNotice.tsx"
+          "feedback/toast/internal/ContainedToastRoot.tsx",
+          "feedback/toast/internal/ContainedToast.tsx",
+          "feedback/toast/internal/LiveToast.tsx",
+          "feedback/toast/internal/ToastButtons.tsx"
         ]
       },
       "ChoiceControl": {
