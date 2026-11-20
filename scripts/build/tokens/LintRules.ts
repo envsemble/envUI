@@ -34,7 +34,7 @@ const highContrastRule: LintRule<
         });
     for (const id of dark)
       if (!light.has(id))
-        report({ message: `${id} has no light value: add it to base/contrast-high.tokens.json.` });
+        report({ message: `${id} has no light value: add it to base/light-contrast-high.tokens.json.` });
     for (const [id, target] of Object.entries(options.pointers))
       if (target.startsWith('contrast-high.') && !light.has(target))
         report({ message: `${id} points at ${target}, which no scheme defines.` });
