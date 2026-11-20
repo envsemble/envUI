@@ -2,7 +2,6 @@
 
 import { mergeProps } from '@base-ui/react/merge-props';
 import {
-  useLayoutEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -11,7 +10,6 @@ import {
   type MouseEvent,
   type ReactElement,
   type ReactNode,
-  type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
@@ -21,6 +19,7 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { flag } from '../internal/flag.js';
+import { useCutShort } from '../internal/popup/useCutShort.js';
 import '../styles/Base.css';
 import '../styles/Breadcrumbs.css';
 
@@ -67,24 +66,9 @@ export interface BreadcrumbsProps extends Omit<ComponentPropsWithRef<'nav'>, 'ch
   className?: string;
 }
 
-function useTruncated(element: RefObject<HTMLElement | null>) {
-  const [truncated, setTruncated] = useState(false);
-  useLayoutEffect(() => {
-    const node = element.current;
-    if (!node) return;
-    const measure = () => setTruncated(node.scrollWidth > node.clientWidth);
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [element]);
-  return truncated;
-}
-
 function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
   const label = useRef<HTMLSpanElement>(null);
-  const truncated = useTruncated(label);
+  const cut = useCutShort(label);
   const [focused, setFocused] = useState(false);
   const content = (
     <span className="env-breadcrumbs-label" ref={label}>
@@ -94,7 +78,7 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
   const keepsFocusUntilBlurEvenOnceItFits = focused;
   const { className: ownClassName, ...ownProps } = item.itemProps ?? {};
   const focusableToShowInFull = mergeProps(ownProps as HTMLAttributes<HTMLSpanElement>, {
-    tabIndex: truncated || keepsFocusUntilBlurEvenOnceItFits ? 0 : ownProps.tabIndex,
+    tabIndex: cut || keepsFocusUntilBlurEvenOnceItFits ? 0 : ownProps.tabIndex,
     onFocus: () => setFocused(true),
     onBlur: () => setFocused(false),
   });
@@ -138,7 +122,7 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
     );
   }
   return (
-    <CutLabelTooltip cut={truncated} label={item.label} side="bottom">
+    <CutLabelTooltip cut={cut} label={item.label} side="bottom">
       {crumb}
     </CutLabelTooltip>
   );

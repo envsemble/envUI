@@ -5,14 +5,12 @@ import {
   useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ComponentPropsWithRef,
   type ReactElement,
   type ReactNode,
-  type RefObject,
 } from 'react';
 import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
@@ -38,6 +36,7 @@ import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
 import { rendersContent } from '../internal/react/rendersContent.js';
+import { useCutShort } from '../internal/popup/useCutShort.js';
 import '../styles/Base.css';
 import '../styles/NavigationDrawer.css';
 
@@ -146,23 +145,6 @@ export interface NavigationDrawerProps
   resizeLabel?: string;
 }
 
-function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
-  const [cut, setCut] = useState(false);
-  useLayoutEffect(() => {
-    const element = ref.current;
-    if (!oneLine || !element) {
-      setCut(false);
-      return;
-    }
-    const measure = () => setCut(element.scrollWidth > element.clientWidth);
-    if (typeof ResizeObserver === 'undefined') return measure();
-    const firstMeasuresOnceLaidOutNotAtMount = new ResizeObserver(measure);
-    firstMeasuresOnceLaidOutNotAtMount.observe(element);
-    return () => firstMeasuresOnceLaidOutNotAtMount.disconnect();
-  }, [ref, oneLine]);
-  return cut;
-}
-
 interface DrawerState {
   oneLine: boolean;
   groupEnd: ((group: string) => ReactNode) | undefined;
@@ -182,7 +164,7 @@ function DrawerControl({
   as?: (item: ReactElement) => ReactElement;
 }) {
   const label = useRef<HTMLSpanElement>(null);
-  const cut = useCut(label, oneLine);
+  const cut = useCutShort(label, oneLine);
   const destinationItem = (
     <DestinationItem
       classes={drawerClasses}
@@ -325,7 +307,7 @@ function Section({
 }) {
   const headingId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
-  const cut = useCut(heading, state.oneLine);
+  const cut = useCutShort(heading, state.oneLine);
   const Heading = `h${level}` as const;
   const end = state.groupEnd?.(group);
   const headingElement = (
