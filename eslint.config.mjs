@@ -30,6 +30,22 @@ const otherFamiliesInternals = (family) => ({
   message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/.`,
 });
 
+const providerLocale = {
+  regex: String.raw`(^|/)EnvUIContext\.js$`,
+  importNames: ['useLocale'],
+  message:
+    'Format in useResolvedLocale (src/internal/provider/locale.ts), which keeps the server’s locale until hydration. The provider’s own locale is for a module that hands it to a library that handles hydration itself, listed in providerLocaleReaders in eslint.config.mjs.',
+};
+const providerLocaleReaders = [
+  'foundations/EnvUIProvider.tsx',
+  'internal/provider/locale.ts',
+  'data-display/Meter.tsx',
+  'feedback/Progress.tsx',
+  'forms/Slider.tsx',
+  'forms/Combobox.tsx',
+  'actions/CommandPalette.tsx',
+].map((path) => `packages/ui/src/${path}`);
+
 const confusingBrowserGlobals = [
   'close',
   'closed',
@@ -259,8 +275,34 @@ export default defineConfig(
   },
   ...families.map((family) => ({
     files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
-    rules: { 'no-restricted-imports': ['error', { patterns: [otherFamiliesInternals(family)] }] },
+    ignores: providerLocaleReaders,
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [otherFamiliesInternals(family), providerLocale] },
+      ],
+    },
   })),
+  ...families.flatMap((family) => {
+    const readers = providerLocaleReaders.filter((path) =>
+      path.startsWith(`packages/ui/src/${family}/`),
+    );
+    return readers.length
+      ? [
+          {
+            files: readers,
+            rules: {
+              'no-restricted-imports': ['error', { patterns: [otherFamiliesInternals(family)] }],
+            },
+          },
+        ]
+      : [];
+  }),
+  {
+    files: ['packages/ui/src/internal/**/*.{ts,tsx}'],
+    ignores: providerLocaleReaders,
+    rules: { 'no-restricted-imports': ['error', { patterns: [providerLocale] }] },
+  },
   {
     files: ['apps/site/src/**/*.{ts,tsx}'],
     ignores: ['apps/site/src/examples/**'],

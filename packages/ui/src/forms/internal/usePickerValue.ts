@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { dateFormat, withHourCycle } from '../../internal/time/calendarDays.js';
-import { useResolvedLocale } from '../../internal/provider/useFormatters.js';
+import { useResolvedLocale } from '../../internal/provider/locale.js';
 import { useControllableState } from '../../internal/react/useControllableState.js';
 
 export function usePickerValue({
