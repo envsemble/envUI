@@ -6,7 +6,7 @@ import { importSource } from '../../support/ImportSource.ts';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { elementsOf, firstElement, hasClass, textOf } from '../../support/Markup.ts';
-import { declarations } from '../../support/CssDeclarations.ts';
+import { declarations } from '../../support/StyleSheets.ts';
 import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const { Button, IconButton, Message, MessageList } = await importSource(

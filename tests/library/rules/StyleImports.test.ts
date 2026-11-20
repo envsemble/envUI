@@ -12,6 +12,7 @@ import {
   readLibraryModule,
   resolveImport,
 } from '../../support/LibraryModules.ts';
+import { withoutComments } from '../../../scripts/site/CssComments.ts';
 
 const styleSheet = (name) => readFileSync(join(styleSheetsDirectory, name), 'utf8');
 
@@ -229,7 +230,7 @@ test('style sheets whose rules tie come in index.css order in every bundle', () 
 });
 
 test("Skeleton.css's rules win their ties whatever the order", () => {
-  const css = styleSheet('Skeleton.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  const css = withoutComments(styleSheet('Skeleton.css'));
   const selectors = [
     ...css.matchAll(/(?:^|[;{}])\s*([^;{}@]*\[data-env-skeleton\][^;{}]*)\{/g),
   ].map(([, selector]) => selector.replace(/\s+/g, ' ').trim());

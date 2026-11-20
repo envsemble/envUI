@@ -1,11 +1,6 @@
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
 import { test } from 'node:test';
-import { declarations } from '../../support/CssDeclarations.ts';
-import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
-
-const styles = styleSheetsDirectory;
+import { declarations, libraryStyleSheets } from '../../support/StyleSheets.ts';
 
 const layout =
   /^(?:margin|padding|inline-size|block-size|width|height|(?:min|max)-(?:inline-size|block-size|width|height)|gap|row-gap|column-gap|flex(?:-[a-z]+)?|grid(?:-[a-z]+)*|display|position|inset(?:-[a-z]+)*|top|right|bottom|left|font|font-size|font-weight|font-family|letter-spacing|word-spacing|line-height|white-space|border-(?:[a-z]+-)*width|aspect-ratio)(?:-[a-z]+)*$/;
@@ -21,14 +16,12 @@ const stateReadsThatMoveNothing = new Set([
 
 const isState = (selector: string) =>
   /:(?:hover|focus-within)\b/.test(selector.replace(/:not\([^)]*\)/g, ''));
-const sheets = readdirSync(styles).filter(
-  (file) => file.endsWith('.css') && !file.startsWith('Tokens'),
-);
+const sheets = libraryStyleSheets().filter(({ name }) => !name.startsWith('Tokens'));
 
 test('no hover or focus-within rule sets a layout property', () => {
   const found: string[] = [];
-  for (const file of sheets)
-    for (const { selector, prop } of declarations(readFileSync(join(styles, file), 'utf8')))
+  for (const { name: file, text } of sheets)
+    for (const { selector, prop } of declarations(text))
       if (
         isState(selector) &&
         !layoutChangesOnFocusOnPurpose.has(`${file} ${selector}`) &&
@@ -40,8 +33,8 @@ test('no hover or focus-within rule sets a layout property', () => {
 
 test('no custom property set on hover or with focus inside reaches a layout property', () => {
   const found: string[] = [];
-  for (const file of sheets) {
-    const sheet = declarations(readFileSync(join(styles, file), 'utf8'));
+  for (const { name: file, text } of sheets) {
+    const sheet = declarations(text);
     const custom = sheet.filter(({ prop }) => prop.startsWith('--'));
     const changing = new Set(
       custom.filter(({ selector }) => isState(selector)).map(({ prop }) => prop),

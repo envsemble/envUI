@@ -1,3 +1,5 @@
+import { withoutComments } from '../../site/CssComments.ts';
+
 interface CssDeclaration {
   property: string;
   value: string;
@@ -22,7 +24,7 @@ export function cssDeclarations(css: string) {
       });
     text = '';
   };
-  for (const character of css.replace(/\/\*[\s\S]*?\*\//g, '')) {
+  for (const character of withoutComments(css)) {
     if (quote) {
       if (character === quote) quote = null;
       text += character;

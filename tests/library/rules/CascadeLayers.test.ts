@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { declarations } from '../../support/CssDeclarations.ts';
+import { declarations } from '../../support/StyleSheets.ts';
 import { librarySourceDirectory, styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const sheets = [styleSheetsDirectory, join(librarySourceDirectory, 'generated')];

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { declarations } from '../../support/CssDeclarations.ts';
+import { declarations } from '../../support/StyleSheets.ts';
 import {
   repositoryPath,
   repositoryRoot,

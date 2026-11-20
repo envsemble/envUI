@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { build } from 'esbuild';
 import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
+import { shippedStyleSheet } from '../../support/StyleSheets.ts';
+import { withoutComments } from '../../../scripts/site/CssComments.ts';
 
 const styles = styleSheetsDirectory;
 const layerOrder = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env.utilities'];
@@ -13,7 +14,7 @@ function topLevel(css: string) {
   let depth = 0;
   let text = '';
   let quote = null;
-  for (const character of css.replace(/\/\*[\s\S]*?\*\//g, '')) {
+  for (const character of withoutComments(css)) {
     if (quote) {
       if (character === quote) quote = null;
     } else if (character === '"' || character === "'") quote = character;
@@ -36,23 +37,8 @@ function topLevel(css: string) {
   return statements.filter(({ prelude }) => prelude);
 }
 
-async function bundled() {
-  const result = await build({
-    entryPoints: [join(styles, 'index.css')],
-    bundle: true,
-    write: false,
-    loader: { '.woff2': 'file', '.svg': 'file' },
-    assetNames: 'assets/[name]',
-    outfile: join(styles, 'out.css'),
-    logLevel: 'silent',
-  });
-  const sheet = result.outputFiles.find((file) => file.path.endsWith('.css'));
-  assert.ok(sheet, 'esbuild writes the style sheet');
-  return sheet.text;
-}
-
 test('the shipped style sheet puts every rule in a cascade layer of env, in order', async () => {
-  const statements = topLevel(await bundled());
+  const statements = topLevel(await shippedStyleSheet());
   assert.deepEqual(statements[0], { prelude: `@layer ${layerOrder.join(', ')}`, block: false });
   const rules = statements.slice(1).filter(({ prelude }) => prelude !== '@font-face');
   assert.equal(statements.length - rules.length, 2, 'One font face besides the layer order');

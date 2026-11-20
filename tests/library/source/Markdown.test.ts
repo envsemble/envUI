@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
-import { declarations } from '../../support/CssDeclarations.ts';
+import { declarations } from '../../support/StyleSheets.ts';
 import { elementsOf, firstElement, hasClass, textOf } from '../../support/Markup.ts';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
