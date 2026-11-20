@@ -8498,6 +8498,12 @@
           "description": "Leaves out the headings it returns false for, without `items`, such as an example's own."
         },
         {
+          "name": "onNavigate",
+          "type": "(id: string, event: MouseEvent<HTMLAnchorElement>) => void",
+          "required": false,
+          "description": "Called when people follow a link, with its section's id and the click, before envUI scrolls the section into view and focuses it. Each link is an `#id` link through LinkProvider's link component, so the application's router, or else the browser, changes the address. Call preventDefault to make the jump yourself, without envUI's scroll or the address change."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,

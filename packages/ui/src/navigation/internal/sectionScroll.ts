@@ -55,3 +55,18 @@ export function focusSection(element: HTMLElement) {
   if (element.tabIndex < 0 && !element.hasAttribute('tabindex')) element.tabIndex = -1;
   element.focus({ preventScroll: true });
 }
+
+/**
+ * Remembers how far every box around an element has scrolled, and returns what scrolls them back,
+ * so a smooth scroll can start from there after the browser jumped to a fragment.
+ */
+export function rememberScroll(element: HTMLElement): () => void {
+  const positions: [Element, number, number][] = [];
+  for (let node = element.parentElement; node; node = node.parentElement)
+    positions.push([node, node.scrollLeft, node.scrollTop]);
+  return () => {
+    for (const [node, left, top] of positions)
+      if (node.scrollLeft !== left || node.scrollTop !== top)
+        node.scrollTo({ left, top, behavior: 'instant' });
+  };
+}
