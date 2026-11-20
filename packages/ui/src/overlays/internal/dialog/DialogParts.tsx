@@ -1,38 +1,14 @@
 'use client';
 
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
-import { createContext, type ComponentPropsWithRef, type ReactNode } from 'react';
-import { classNames } from '../classNames.js';
-import { Column, Grid, Row } from '../../layout/Layout.js';
-import { Slot } from '../layout/Slot.js';
-import { Surface, type SurfaceProps } from '../../layout/Surface.js';
-import { Theme, type ThemeProps } from '../../foundations/Theme.js';
-import { SkeletonScope } from '../../foundations/SkeletonScope.js';
-import { usePortalContainer } from '../popup/PortalContainerContext.js';
-import { useModalPresence } from './useModalPresence.js';
-import '../../styles/Base.css';
-import '../../styles/Dialog.css';
-
-/**
- * The theme boundary in a modal surface's portal. It has no box and is no container, so it starts
- * no stacking context: the backdrop and the surface's positioner keep their own layers, under what
- * opens over them, and the positioner, fixed over the viewport, is the env-window container.
- */
-export function OverlayTheme({ className, ...props }: ThemeProps) {
-  return <Theme {...props} className={classNames('env-overlay-theme', className)} />;
-}
-
-/**
- * The backdrop behind a modal surface, which fades in and out. A modal opened from inside another,
- * such as a Dialog from a Sheet, has one of its own over the one below. While it is mounted the
- * surface counts as open in its portal container, so toasts there wait until it has closed.
- */
-export function DialogBackdrop({ className }: { className?: string }) {
-  useModalPresence(usePortalContainer().container);
-  return (
-    <BaseDialog.Backdrop forceRender className={classNames('env-dialog-backdrop', className)} />
-  );
-}
+import type { ComponentPropsWithRef, ReactNode } from 'react';
+import { classNames } from '../../../internal/classNames.js';
+import { Column, Grid, Row } from '../../../layout/Layout.js';
+import { Slot } from '../../../internal/layout/Slot.js';
+import { Surface, type SurfaceProps } from '../../../layout/Surface.js';
+import { SkeletonScope } from '../../../foundations/SkeletonScope.js';
+import '../../../styles/Base.css';
+import '../../../styles/Dialog.css';
 
 /**
  * The raised surface of a dialog or a sheet, for its popup's render: the body text and the
@@ -101,12 +77,6 @@ export function DialogHeader({
     </Grid>
   );
 }
-
-/**
- * Whether the work a dialog or a sheet started is pending, which its DialogClose buttons read to
- * turn off, as the built-in close button does.
- */
-export const DialogPendingContext = createContext(false);
 
 /**
  * The row of a dialog's actions at its end, with the primary action last, and the application's

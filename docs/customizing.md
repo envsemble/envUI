@@ -533,7 +533,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Skeleton
 
 - Parts: `env-skeleton-content`, `env-skeleton-status`
-- Used by: Accordion, Alert, Breadcrumbs, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
+- Used by: Accordion, Alert, Breadcrumbs, Card, ColorPickerButton, Combobox, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
 
 ### TimeList
 

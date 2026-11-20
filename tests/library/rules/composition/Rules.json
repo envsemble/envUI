@@ -61,7 +61,6 @@
       "overlays/ConfirmDialog.tsx": "composites",
       "overlays/Dialog.tsx": "composites",
       "overlays/Sheet.tsx": "composites",
-      "overlays/internal/DialogPendingAction.tsx": "composites",
       "feedback/internal/AlertDismiss.tsx": "composites",
       "feedback/toast/internal/PictureNotice.tsx": "composites",
       "feedback/toast/internal/ToastBody.tsx": "composites",
@@ -122,9 +121,9 @@
         "layer": "base",
         "reason": "It renders Field."
       },
-      "internal/dialog/DialogParts.tsx": {
+      "internal/dialog/ModalLayer.tsx": {
         "layer": "foundations",
-        "reason": "It renders Surface and reads Theme."
+        "reason": "It renders Theme."
       }
     }
   },
@@ -260,11 +259,7 @@
         ]
       },
       "Dialog": {
-        "modules": [
-          "internal/dialog/DialogParts.tsx",
-          "overlays/internal/DialogPendingAction.tsx",
-          "overlays/ConfirmDialog.tsx"
-        ],
+        "modules": ["internal/dialog/ModalLayer.tsx", "overlays/ConfirmDialog.tsx"],
         "classes": ["env-overlay-theme"]
       },
       "Progress": {

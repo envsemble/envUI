@@ -1,12 +1,29 @@
 import {
   Children,
   cloneElement,
+  createContext,
   Fragment,
   isValidElement,
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { Button, type ButtonProps } from '../../actions/Button.js';
+import { Button, type ButtonProps } from '../../../actions/Button.js';
+
+/**
+ * Whether the work a dialog or a sheet started is pending, which its DialogClose buttons read to
+ * turn off, as the built-in close button does.
+ */
+export const DialogPendingContext = createContext(false);
+
+export function pendingOpenChange<Details extends { cancel: () => void }>(
+  pending: boolean,
+  handle: (next: boolean, details: Details) => void,
+) {
+  return (next: boolean, details: Details) => {
+    if (!next && pending) details.cancel();
+    else handle(next, details);
+  };
+}
 
 /**
  * A dialog's or a sheet's own actions, with the primary action, the last, pending while the dialog

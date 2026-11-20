@@ -1585,9 +1585,7 @@
         "Kbd",
         "ListRow",
         "Overlay",
-        "Skeleton",
         "Spinner",
-        "Surface",
         "TextField",
         "Theme"
       ]
@@ -6541,7 +6539,6 @@
         "Card",
         "ColorPickerButton",
         "Combobox",
-        "CommandPalette",
         "ConfirmDialog",
         "CopyButton",
         "DatePicker",
