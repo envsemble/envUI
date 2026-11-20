@@ -5,7 +5,7 @@ import { timePicker as timePickerMessages } from '../foundations/messages/timePi
 import { Button } from '../actions/Button.js';
 import { IconSchedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
-import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
+import { TimeList, timeListInitialFocus } from './internal/TimeList.js';
 import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
 import { formatTime, now, parseTime, toUtcDate } from '../internal/time/calendarDays.js';
 import '../styles/Base.css';
@@ -131,7 +131,7 @@ export function TimePicker({
       icon={<IconSchedule />}
       rootClassName="env-date-picker env-time-picker"
       popupClassName="env-time-picker-popup"
-      initialFocus={timeListFirstColumn}
+      initialFocus={timeListInitialFocus}
       popupStart={
         <Button
           variant="text"

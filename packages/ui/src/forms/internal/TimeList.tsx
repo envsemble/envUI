@@ -15,7 +15,7 @@ import {
   withHourCycle,
 } from '../../internal/time/calendarDays.js';
 import { TimeWheel } from './TimeWheel.js';
-import type { Entry, Part } from './timeWheelRows.js';
+import type { TimeWheelEntry, TimeWheelPart } from './timeWheelRows.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 import '../../styles/DatePicker.css';
@@ -34,7 +34,7 @@ export interface TimeListProps extends Omit<
   hourCycle?: 'h12' | 'h23';
 }
 
-export function timeListFirstColumn(root: ParentNode | null | undefined): HTMLElement | null {
+export function timeListInitialFocus(root: ParentNode | null | undefined): HTMLElement | null {
   return root?.querySelector<HTMLElement>('.env-time-list-column') ?? null;
 }
 
@@ -70,7 +70,7 @@ export function TimeList({
   const clock = useMemo(() => {
     const format = dateFormat(shownLocale, withHourCycle({ timeStyle: 'short' }, hourCycle));
     const cycle = format.resolvedOptions().hourCycle;
-    const partOf = (minutes: number, type: Part) =>
+    const partOf = (minutes: number, type: TimeWheelPart) =>
       format.formatToParts(toUtcDate(0, minutes)).find((part) => part.type === type)?.value ?? '';
     const hour12 = cycle === 'h11' || cycle === 'h12';
     const order = [
@@ -78,7 +78,7 @@ export function TimeList({
         format
           .formatToParts(toUtcDate(0, 13 * 60))
           .map((part) => part.type)
-          .filter((type): type is Part => ['hour', 'minute', 'dayPeriod'].includes(type)),
+          .filter((type): type is TimeWheelPart => ['hour', 'minute', 'dayPeriod'].includes(type)),
       ),
     ];
     return {
@@ -97,7 +97,7 @@ export function TimeList({
   const basePeriod = baseHour < 12 ? 0 : 1;
 
   const hours = clock.hour12
-    ? Array.from({ length: 12 }, (_, hour): Entry => {
+    ? Array.from({ length: 12 }, (_, hour): TimeWheelEntry => {
         const hour24 = basePeriod * 12 + hour;
         const shown = clock.cycle === 'h11' ? hour : hour || 12;
         return {
@@ -107,21 +107,21 @@ export function TimeList({
           keys: [String(shown), pad(shown)],
         };
       })
-    : Array.from({ length: 24 }, (_, hour): Entry => ({
+    : Array.from({ length: 24 }, (_, hour): TimeWheelEntry => ({
         value: hour,
         label: clock.hourLabel(hour),
         disabled: !anyMinuteWithinBounds(hour * 60, hour * 60 + 59, min, max),
         keys: [pad(hour), String(hour)],
       }));
   const minutes = minuteSteps(step, value === undefined ? undefined : baseMinute).map(
-    (minute): Entry => ({
+    (minute): TimeWheelEntry => ({
       value: minute,
       label: clock.minuteLabel(minute),
       disabled: !anyMinuteWithinBounds(baseHour * 60 + minute, baseHour * 60 + minute, min, max),
       keys: [pad(minute)],
     }),
   );
-  const periods = [0, 1].map((period): Entry => ({
+  const periods = [0, 1].map((period): TimeWheelEntry => ({
     value: period,
     label: clock.periodLabels[period],
     disabled: !anyMinuteWithinBounds(period * 720, period * 720 + 719, min, max),
@@ -129,8 +129,8 @@ export function TimeList({
   }));
 
   const columns: Record<
-    Part,
-    { label: string; entries: Entry[]; current: number; compose: (v: number) => number }
+    TimeWheelPart,
+    { label: string; entries: TimeWheelEntry[]; current: number; compose: (v: number) => number }
   > = {
     hour: {
       label: messages.hours,

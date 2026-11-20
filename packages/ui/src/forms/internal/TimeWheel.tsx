@@ -11,9 +11,9 @@ import {
   copiesToScrollOnInBothDirections,
   nearestAvailable,
   shownRowsAsTimeListCssSetsThem,
-  wrap,
-  type Entry,
-  type Part,
+  wrapIndex,
+  type TimeWheelEntry,
+  type TimeWheelPart,
 } from './timeWheelRows.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
@@ -22,9 +22,9 @@ const pageRows = 5;
 
 interface TimeWheelProps {
   ref: (node: HTMLDivElement | null) => void;
-  part: Part;
+  part: TimeWheelPart;
   label: string;
-  entries: Entry[];
+  entries: TimeWheelEntry[];
   current: number;
   onChoose: (value: number) => void;
   onSideways: (direction: -1 | 1) => void;
@@ -71,7 +71,7 @@ export function TimeWheel({
   const { centred, scrollToRow } = turning;
 
   function step(index: number, direction: 1 | -1) {
-    const next = keysWrapAround ? wrap(index, count) : Math.min(Math.max(index, 0), count - 1);
+    const next = keysWrapAround ? wrapIndex(index, count) : Math.min(Math.max(index, 0), count - 1);
     const available = nearestAvailable(entries, next, keysWrapAround, direction);
     if (available !== -1 && available !== currentIndex) onChoose(entries[available].value);
   }

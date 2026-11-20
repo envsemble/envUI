@@ -13,7 +13,8 @@ import { Button } from '../actions/Button.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { IconCalendarClock } from '../icons/CalendarClock.js';
 import { IconCalendarMonth } from '../icons/CalendarMonth.js';
-import { Calendar, calendarActiveDay, type CalendarProps } from './Calendar.js';
+import { Calendar, type CalendarProps } from './Calendar.js';
+import { calendarInitialFocus } from './internal/pickerFocus.js';
 import {
   type FieldProps,
   type FieldSizeProps,
@@ -331,7 +332,7 @@ export function DatePicker({
       display={display}
       icon={withTime ? <IconCalendarClock /> : <IconCalendarMonth />}
       rootClassName="env-date-picker"
-      initialFocus={calendarActiveDay}
+      initialFocus={calendarInitialFocus}
       popupStart={
         <Button
           variant="text"

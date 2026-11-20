@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useMemo, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
+import { useId, useMemo, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { Slot } from '../internal/layout/Slot.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
@@ -26,6 +26,7 @@ import {
   type Weekday,
 } from '../internal/time/calendarDays.js';
 import { useActiveCell } from './internal/useActiveCell.js';
+import { keepFocusWhereItWas } from './internal/pickerFocus.js';
 import { useRowControlNaming } from '../internal/field/RowControl.js';
 import '../styles/Base.css';
 import '../styles/Calendar.css';
@@ -93,24 +94,12 @@ export interface CalendarProps extends Omit<
   nextMonthLabel?: string;
 }
 
-/**
- * The day of a calendar that holds its tab stop, the day focus goes to as the calendar opens in a
- * popup, such as DatePicker's.
- */
-export function calendarActiveDay(root: ParentNode | null | undefined): HTMLElement | null {
-  return root?.querySelector<HTMLElement>('.env-calendar-day[tabindex="0"]') ?? null;
-}
-
 const weeksThatFitAnyMonth = 6;
 
 const firstSundayAfterEpoch = 3;
 
 function unavailableButFocusable(available: boolean) {
   return !available || undefined;
-}
-
-function keepFocusWhereItWas(event: MouseEvent) {
-  event.preventDefault();
 }
 
 function firstGraphemes(text: string, count: number) {

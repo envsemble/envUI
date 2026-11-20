@@ -8,8 +8,8 @@ import {
   nearestAvailable,
   topOf,
   wheelMetrics,
-  wrap,
-  type Entry,
+  wrapIndex,
+  type TimeWheelEntry,
 } from './timeWheelRows.js';
 
 const turnEasingTimeConstantMs = 90;
@@ -32,7 +32,7 @@ export function useTimeWheelTurn({
 }: {
   wheelRef: RefObject<HTMLDivElement | null>;
   dragRef: RefObject<{ moved: boolean } | null>;
-  entries: readonly Entry[];
+  entries: readonly TimeWheelEntry[];
   currentIndex: number;
   onChoose: (value: number) => void;
   loop: boolean;
@@ -108,7 +108,7 @@ export function useTimeWheelTurn({
     const wheel = wheelRef.current;
     if (!loop || !wheel) return index;
     const at = heading(wheel);
-    const base = at - wrap(at, count);
+    const base = at - wrapIndex(at, count);
     return [base - count, base, base + count]
       .map((start) => start + index)
       .reduce((best, candidate) =>
@@ -124,7 +124,7 @@ export function useTimeWheelTurn({
       if (sameEntriesSoTurnRatherThanJump) {
         const wheel = wheelRef.current;
         const at = wheel ? heading(wheel) : undefined;
-        if (at !== undefined && wrap(at, count) === currentIndex) return;
+        if (at !== undefined && wrapIndex(at, count) === currentIndex) return;
         scrollToRow(nearestRow(currentIndex), true);
       } else scrollToRow(middleCopy * count + currentIndex, false);
     },
@@ -154,7 +154,7 @@ export function useTimeWheelTurn({
 
   function recentre(wheel: HTMLDivElement, at: number) {
     if (!loop || !nearEnds(at)) return at;
-    const moved = middleCopy * count + wrap(at, count);
+    const moved = middleCopy * count + wrapIndex(at, count);
     shiftRows(wheel, moved - at);
     return moved;
   }
@@ -170,7 +170,7 @@ export function useTimeWheelTurn({
     ownTurnTarget.current = null;
     const { entries: rows, currentIndex: chosen, onChoose: choose } = latestRender.current;
     const at = recentre(wheel, centredRow(wheel, loop));
-    const index = loop ? wrap(at, count) : Math.min(Math.max(at, 0), count - 1);
+    const index = loop ? wrapIndex(at, count) : Math.min(Math.max(at, 0), count - 1);
     const available = nearestAvailable(rows, index, loop, 0);
     if (available === -1) return;
     if (available !== index) {
@@ -201,7 +201,7 @@ export function useTimeWheelTurn({
   function turnTo(wheel: HTMLDivElement, next: number) {
     if (!loop) next = Math.min(Math.max(next, 0), count - 1);
     else if (nearEnds(next)) {
-      const shift = middleCopy * count + wrap(next, count) - next;
+      const shift = middleCopy * count + wrapIndex(next, count) - next;
       shiftRows(wheel, shift);
       next += shift;
     }

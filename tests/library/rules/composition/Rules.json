@@ -409,6 +409,9 @@
           "forms/color/internal/useEyeDropper.ts"
         ]
       },
+      "Calendar": {
+        "modules": ["forms/internal/pickerFocus.ts"]
+      },
       "DatePicker": {
         "modules": [
           "forms/internal/PickerField.tsx",
