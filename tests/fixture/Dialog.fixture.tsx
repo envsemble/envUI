@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Theme, Dialog, Button, TextField, Select, Sheet, Text } from '@envsemble/envui';
-import { dialogOptions } from './SelectOptions.fixture.js';
+import { dialogOptions } from './SelectOptions.js';
 
 function DarkDialog() {
   const [open, setOpen] = useState(false);

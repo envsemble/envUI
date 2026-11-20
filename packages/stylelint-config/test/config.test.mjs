@@ -7,7 +7,7 @@ import { lint, message, passes } from './Lint.mjs';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 const colorValues = JSON.parse(
-  readFileSync(new URL('../../../tests/lint/ColorValues.json', import.meta.url), 'utf8'),
+  readFileSync(new URL('../../../tests/support/ColorValues.json', import.meta.url), 'utf8'),
 );
 
 const isApplicationOrMistypedExampleName = (name) =>

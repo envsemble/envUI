@@ -9,7 +9,7 @@ const raw = (color, property) => ({
 });
 
 const colorValues = JSON.parse(
-  readFileSync(new URL('../../../tests/lint/ColorValues.json', import.meta.url), 'utf8'),
+  readFileSync(new URL('../../../tests/support/ColorValues.json', import.meta.url), 'utf8'),
 );
 const inlineColor = (value) => `<div style={{ color: ${JSON.stringify(value)} }} />`;
 

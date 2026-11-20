@@ -6,8 +6,10 @@ import react from '@vitejs/plugin-react';
 import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 import { commands } from './support/Commands.ts';
 import { ShardByDuration } from './support/ShardByDuration.ts';
+import { checkoutPort } from '../../scripts/DevServers.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
+const componentTestsPortOffset = 3;
 const workers = process.env.ENVUI_WORKERS ? Number(process.env.ENVUI_WORKERS) : undefined;
 const viewport = { width: 1440, height: 1000 };
 const contextOptions = { locale: 'en-US', timezoneId: 'UTC' };
@@ -75,6 +77,7 @@ export default defineConfig({
     expect: { poll: { timeout: 8_000 } },
     browser: {
       enabled: true,
+      api: { port: checkoutPort(componentTestsPortOffset) },
       headless: true,
       provider: playwright({ actionTimeout: 8_000, contextOptions }),
       commands,

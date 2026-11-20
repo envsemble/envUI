@@ -15,24 +15,24 @@ For agents and people changing envUI. Applications built with envUI read the doc
 | `npm run generate`                 | After changing a source of a generated file                                                      |
 | `npm run changeset`                | For a change people using envUI notice                                                           |
 
-Don't run `verify`, `test:browser`, `test:a11y` or `test:visual` as a routine step. Beside another checkout's tests, set `ENVUI_SITE_PORT`, `ENVUI_SITE_BUILD_PORT` and `ENVUI_FIXTURE_PORT`, and pass Vitest `--api.port`; `ENVUI_WORKERS` sets the workers.
+Don't run `verify`, `test:browser`, `test:a11y` or `test:visual` as a routine step. `ENVUI_WORKERS` sets the workers.
 
 ## Where things are
 
-| Path                                         | Holds                                                                                                                        |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `packages/ui/src/<family>/`                  | Components, in the family of their page's category; `internal/` for what one family uses, the top-level `internal/` for two  |
-| `packages/ui/src/styles/<Name>.css`          | Each component's style sheet, one flat folder                                                                                |
-| `packages/ui/src/foundations/messages/`      | Every built-in string, one namespace per component or family                                                                 |
-| `packages/ui/src/partDescriptions.json`      | What the part contract can't derive: each part's and property's description, the color properties                            |
-| `packages/ui/tokens/`                        | The DTCG tokens and `envui.resolver.json`; `TokensHandwritten.css` and `handwritten.json` for what DTCG can't hold           |
-| `tests/library/rules/composition/`           | Each module's layer and each class's owner                                                                                   |
-| `docs/`                                      | The pages the package ships and the site shows; [contributing/pages.md](contributing/pages.md) says how to write one         |
-| `apps/site/src/`                             | The site: `examples/<page>/`, `specimens/`, `tiles/`, `figures/`, `fit/`, `motion/`, `pages/`, `routes/`, `search/` and more |
-| `apps/site/hosting/SKILL.md`                 | The setup skill the site serves                                                                                              |
-| `packages/eslint-plugin`, `stylelint-config` | The lint packages, each with its README and tests                                                                            |
-| `scripts/`                                   | Build, docs, site, test and release scripts                                                                                  |
-| `tests/`                                     | Unit tests by area (`library/`, `site/`, `docs/`, `tooling/`, `lint/`), `component/` with `fixture/`, `browser/` specs       |
+| Path                                         | Holds                                                                                                                                    |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/ui/src/<family>/`                  | Components, in the family of their page's category; `internal/` for what one family uses, the top-level `internal/` for two              |
+| `packages/ui/src/styles/<Name>.css`          | Each component's style sheet, one flat folder                                                                                            |
+| `packages/ui/src/foundations/messages/`      | Every built-in string, one namespace per component or family                                                                             |
+| `packages/ui/src/partDescriptions.json`      | What the part contract can't derive: each part's and property's description, the color properties                                        |
+| `packages/ui/tokens/`                        | The DTCG tokens and `envui.resolver.json`; `TokensHandwritten.css` and `handwritten.json` for what DTCG can't hold                       |
+| `tests/library/rules/composition/`           | Each module's layer and each class's owner                                                                                               |
+| `docs/`                                      | The pages the package ships and the site shows; [contributing/pages.md](contributing/pages.md) says how to write one                     |
+| `apps/site/src/`                             | The site: `examples/<page>/`, `specimens/`, `tiles/`, `figures/`, `fit/`, `motion/`, `pages/`, `routes/`, `search/` and more             |
+| `apps/site/hosting/SKILL.md`                 | The setup skill the site serves                                                                                                          |
+| `packages/eslint-plugin`, `stylelint-config` | The lint packages, each with its README and tests                                                                                        |
+| `scripts/`                                   | Build, docs, site, test and release scripts                                                                                              |
+| `tests/`                                     | Unit tests by area, helpers in `support/`; `component/` with `fixture/`; Playwright in `browser/`, `accessibility/`, `visual/`; `types/` |
 
 Generated, never edited by hand: `packages/ui/src/generated/`, `packages/ui/tokens/palette.tokens.json`, `packages/ui/src/icons/`, `docs/generated/`, the tables under the guides' generated headings, `apps/site/src/generated/` and the lint packages' copied `src/data/`, `tokens.js` and `colorPolicy.js`.
 
@@ -51,7 +51,7 @@ Generated, never edited by hand: `packages/ui/src/generated/`, `packages/ui/toke
 
 ## Tests
 
-- Take the first kind that can see it: a unit test in Node, then a component test (`tests/component/<Name>.test.tsx` with `tests/fixture/<Name>.fixture.tsx`, mounted with `mount` and driven by the real mouse and keys), then a Playwright spec, which is the site's alone.
+- Take the first kind that can see it: a unit test in Node, then a component test (`tests/component/<Name>.test.tsx` with `tests/fixture/<Name>.fixture.tsx`, mounted with `mount` and driven by the real mouse and keys), then a Playwright spec, for a whole page: the site's, or the library's build hydrating.
 - Add a test for the public contract (keyboard, focus, ARIA, behaviour, types, tokens) or a bug that happened; test a behaviour once. Don't test what TypeScript, the visual baseline or the contrast gate already see.
 - No fixed sleeps: wait for a condition, or stop the page's timers (`stopTimers`, `passTime`). Tag a test `engines` when it depends on the engine, and `once` when it holds only for a fresh page (a module's first load, a report made once a page); every other test passes run again in the same page, as the burn-in runs it.
 - A fixture is its file's default export: `themes = true` mounts it per theme, `mount = 'standalone'` or `'root'` gives it the page.

@@ -16,7 +16,7 @@ import {
 } from '@envsemble/envui';
 import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
 import { people } from './Combobox.fixture.js';
-import { dialogOptions } from './SelectOptions.fixture.js';
+import { dialogOptions } from './SelectOptions.js';
 
 export const mount = 'standalone';
 

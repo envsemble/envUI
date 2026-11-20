@@ -332,5 +332,5 @@ test('each checkout has its own identity and ports', () => {
   assert.notEqual(checkoutId('/a/checkout'), checkoutId('/another/checkout'));
   const id = checkoutId('/a/checkout');
   assert.equal(checkoutPort(1, id), checkoutPort(0, id) + 1);
-  assert.ok(checkoutPort(0, id) >= 20000 && checkoutPort(1, id) < 38001);
+  assert.ok(checkoutPort(0, id) >= 20000 && checkoutPort(3, id) < 56000);
 });

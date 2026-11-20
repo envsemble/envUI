@@ -59,8 +59,10 @@ async function probe(port: number, id = checkoutId()) {
   }
 }
 
+const portsEachCheckout = 4;
+
 export function checkoutPort(offset: number, id = checkoutId()) {
-  return 20000 + (parseInt(id.slice(0, 8), 16) % 9000) * 2 + offset;
+  return 20000 + (parseInt(id.slice(0, 8), 16) % 9000) * portsEachCheckout + offset;
 }
 
 export async function resolveServers(

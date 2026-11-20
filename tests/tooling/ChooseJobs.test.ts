@@ -14,7 +14,7 @@ const jobs = (...paths: string[]) => chooseJobs(paths).jobs;
 test('a site change skips the library browser tests, and a library change runs the smoke too', () => {
   assert.deepEqual(jobs('apps/site/src/App.tsx'), { library: false, site: true });
   assert.deepEqual(jobs('docs/components/button.md'), { library: false, site: true });
-  assert.deepEqual(jobs('packages/ui/src/components/button/Button.tsx'), {
+  assert.deepEqual(jobs('packages/ui/src/actions/Button.tsx'), {
     library: true,
     site: true,
   });
