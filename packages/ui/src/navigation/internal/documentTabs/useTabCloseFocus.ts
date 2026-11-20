@@ -1,7 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
-import { focusedTabId, tabElement } from './tabStrip.js';
+import { focusedTabValue, tabElement } from './tabStrip.js';
 
 /**
  * Closing the focused tab moves focus to the tab that becomes active, however it closed: its
@@ -15,7 +15,7 @@ export function useTabCloseFocus(
   items: readonly { value: string }[],
   activeOrFirstTab: string | null,
 ) {
-  const focusedTab = focusedTabId(list.current);
+  const focusedTab = focusedTabValue(list.current);
   const focusedTabClosed = focusedTab !== null && !items.some((item) => item.value === focusedTab);
   const menuOpenedInside = useRef(false);
   const [closedFromMenu, setClosedFromMenu] = useState(false);

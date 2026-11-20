@@ -109,7 +109,7 @@ function DocumentTabStrip() {
             key={caption}
             caption={`Budget: ${caption}`}
             force={force}
-            target="[data-tab-id='budget.md']"
+            target="[data-value='budget.md']"
             width="34rem"
           >
             <Documents />

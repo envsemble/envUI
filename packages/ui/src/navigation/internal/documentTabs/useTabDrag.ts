@@ -11,7 +11,7 @@ const edgeScrollStepPx = 8;
 
 /** A tab being dragged: its value, the gap it would drop into, and where the pointer is. */
 export interface TabDrag {
-  id: string;
+  value: string;
   /** The gap the tab would drop into: 0 before the first tab, the count of tabs after the last. */
   gap: number;
   x: number;
@@ -33,19 +33,19 @@ export function useTabDrag({
 }: {
   list: RefObject<HTMLElement | null>;
   items: readonly { value: string }[];
-  onReorder: ((ids: string[]) => void) | undefined;
+  onReorder: ((values: string[]) => void) | undefined;
 }) {
   const [drag, setDrag] = useState<TabDrag | null>(null);
   const latest = useLatest({ items, onReorder });
 
-  function onItemPointerDown(event: ReactPointerEvent<HTMLElement>, id: string) {
+  function onItemPointerDown(event: ReactPointerEvent<HTMLElement>, value: string) {
     const strip = list.current;
     if (!onReorder || !strip || event.button !== 0 || event.pointerType === 'touch') return;
     if ((event.target as Element).closest('.env-document-tabs-close')) return;
-    const tab = tabElement(strip, id);
+    const tab = tabElement(strip, value);
     if (tab && !tab.contains(strip.ownerDocument.activeElement)) event.preventDefault();
     const startX = event.clientX;
-    const startIndex = items.findIndex((item) => item.value === id);
+    const startIndex = items.findIndex((item) => item.value === value);
     let moved = false;
     let gap = startIndex;
     const view = strip.ownerDocument.defaultView ?? window;
@@ -59,7 +59,7 @@ export function useTabDrag({
       if (move.clientX < box.left + edgeScrollZonePx) strip.scrollLeft -= edgeScrollStepPx;
       else if (move.clientX > box.right - edgeScrollZonePx) strip.scrollLeft += edgeScrollStepPx;
       gap = nearestGap(strip, latest.current.items, move.clientX) ?? gap;
-      setDrag({ id, gap, x: move.clientX, y: move.clientY });
+      setDrag({ value, gap, x: move.clientX, y: move.clientY });
     };
     const stop = () => {
       view.removeEventListener('pointermove', onMove);
@@ -98,7 +98,7 @@ export function useTabDrag({
       reorder?.(
         moveValue(
           current.map((item) => item.value),
-          id,
+          value,
           index,
         ),
       );

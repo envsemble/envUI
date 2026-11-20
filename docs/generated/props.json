@@ -2959,19 +2959,19 @@
         },
         {
           "name": "onClose",
-          "type": "(id: string) => void",
+          "type": "(value: string) => void",
           "required": true,
           "description": "Called from a tab's close button, a middle click, Delete or Backspace on the focused tab, and Close in the tab's context menu."
         },
         {
           "name": "onPin",
-          "type": "(id: string) => void",
+          "type": "(value: string) => void",
           "required": false,
           "description": "Called when a tab is double-clicked, typically to keep a preview tab open."
         },
         {
           "name": "onReorder",
-          "type": "(ids: string[]) => void",
+          "type": "(values: string[]) => void",
           "required": false,
           "description": "Called with every tab's value in the new order when a tab is dragged to another place with a mouse or pen, or moved with Move left or Move right in its context menu, which also reach the keyboard and touch. Without it, the tabs keep their order."
         },

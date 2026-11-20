@@ -2206,7 +2206,7 @@
           ]
         },
         {
-          "attribute": "data-tab-id",
+          "attribute": "data-value",
           "values": [],
           "parts": [
             "env-document-tabs-tab"
@@ -3391,9 +3391,7 @@
         },
         {
           "attribute": "data-dot",
-          "values": [
-            ""
-          ],
+          "values": [],
           "parts": [
             "env-navigation-bar-count"
           ]

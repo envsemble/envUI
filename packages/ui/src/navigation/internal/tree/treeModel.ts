@@ -32,9 +32,9 @@ export function treeMotion<Item extends TreeItem>(
   return { kind: count > 0 ? 'open' : 'close', start, rows: longer.slice(start, start + size) };
 }
 
-/** A row id safe for id references, whatever characters the item id contains. */
-export function rowElementId(treeId: string, itemId: string) {
-  return `${treeId}-row-${itemId.replace(
+/** A row id safe for id references, whatever characters the item's value contains. */
+export function rowElementId(treeId: string, value: string) {
+  return `${treeId}-row-${value.replace(
     /[^A-Za-z0-9-]/g,
     (character) => `_${character.codePointAt(0)!.toString(16)}_`,
   )}`;

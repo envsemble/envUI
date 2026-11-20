@@ -19,7 +19,7 @@ export interface TreeViewportOptions {
   activeIndex: number;
   /** The selected row's index, undefined while it is not among the rows. */
   selectedIndex: number | undefined;
-  selectedId: string | null;
+  selectedValue: string | null;
 }
 
 export interface TreeViewport {
@@ -48,7 +48,7 @@ export function useTreeViewport({
   count,
   activeIndex,
   selectedIndex,
-  selectedId,
+  selectedValue,
 }: TreeViewportOptions): TreeViewport {
   const [scrollTop, setScrollTop] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(0);
@@ -89,12 +89,16 @@ export function useTreeViewport({
   );
 
   useLayoutEffect(() => {
-    if (selectedId === null || selectedId === revealedSelection.current || viewportHeight === 0)
+    if (
+      selectedValue === null ||
+      selectedValue === revealedSelection.current ||
+      viewportHeight === 0
+    )
       return;
     if (selectedIndex === undefined) return;
-    revealedSelection.current = selectedId;
+    revealedSelection.current = selectedValue;
     scrollToIndex(selectedIndex, 'center');
-  }, [selectedId, selectedIndex, scrollToIndex, viewportHeight]);
+  }, [selectedValue, selectedIndex, scrollToIndex, viewportHeight]);
 
   const first = Math.max(0, Math.floor(scrollTop / rowHeight) - overscanRows);
   const shownHeight = viewportHeight || rowsBeforeViewportIsMeasured * rowHeight;
