@@ -6,12 +6,10 @@ import { Slot } from '../internal/layout/Slot.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import {
-  destinationKey,
-  DestinationItem,
-  useNavigationMessages,
-  type DestinationClasses,
-} from './internal/DestinationItem.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { navigation } from '../foundations/messages/navigation.js';
+import { DestinationItem, type DestinationClasses } from './internal/DestinationItem.js';
+import { destinationKey } from './internal/destinationModel.js';
 import type { Destination } from './destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
@@ -80,7 +78,7 @@ export function NavigationRail({
   className,
   ...props
 }: NavigationRailProps) {
-  const messages = useNavigationMessages();
+  const messages = useMessages('navigation', navigation);
   return (
     <Column
       render={<nav />}

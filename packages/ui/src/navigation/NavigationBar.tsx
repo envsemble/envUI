@@ -11,16 +11,21 @@ import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { Tooltip } from '../overlays/Tooltip.js';
 import { IconMoreHoriz } from '../icons/MoreHoriz.js';
 import * as Menu from '../actions/menu/Menu.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { navigation } from '../foundations/messages/navigation.js';
+import {
+  DestinationIndicator,
+  DestinationItem,
+  type DestinationClasses,
+} from './internal/DestinationItem.js';
 import {
   countedName,
+  destinationCurrent,
   destinationKey,
-  DestinationItem,
   destinationText,
   holdsCurrent,
   shownCount,
-  useNavigationMessages,
-  type DestinationClasses,
-} from './internal/DestinationItem.js';
+} from './internal/destinationModel.js';
 import type { Destination } from './destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
@@ -82,7 +87,7 @@ export function NavigationBar({
   className,
   ...props
 }: NavigationBarProps) {
-  const messages = useNavigationMessages();
+  const messages = useMessages('navigation', navigation);
   const overflow = destinations.length > mostDestinationsShownBeforeMore;
   const shown = overflow
     ? destinations.slice(0, mostDestinationsShownBeforeMore - 1)
@@ -94,11 +99,11 @@ export function NavigationBar({
   );
   const restShown = shownCount(restCount);
   const restDot = restShown === undefined && rest.some(({ count }) => count === true);
+  const restCountShown = restDot ? true : restCount;
   const restCurrent = rest.some(
     (destination) => destination.current === true || holdsCurrent(destination.children),
   );
-  const restName =
-    countedName(messages.more, restDot ? true : restCount, messages) ?? messages.more;
+  const restName = countedName(messages.more, restCountShown, messages) ?? messages.more;
   const moreState = {
     'data-current': flag(restCurrent),
     'aria-label': restCurrent ? messages.moreCurrent({ name: restName }) : restName,
@@ -113,16 +118,15 @@ export function NavigationBar({
     >
       <span className="env-navigation-bar-label">{messages.more}</span>
       {restShown !== undefined && ' '}
-      <span className="env-navigation-bar-indicator">
-        <DecorativeIcon>
-          <IconMoreHoriz />
-        </DecorativeIcon>
-        {(restShown !== undefined || restDot) && (
-          <span className="env-navigation-bar-count" aria-hidden="true" data-dot={flag(restDot)}>
-            {restShown}
-          </span>
-        )}
-      </span>
+      <DestinationIndicator
+        classes={barClasses}
+        icon={
+          <DecorativeIcon>
+            <IconMoreHoriz />
+          </DecorativeIcon>
+        }
+        count={restCountShown}
+      />
     </Column>
   );
   return (
@@ -170,7 +174,6 @@ export function NavigationBar({
                 {rest.map((destination) => {
                   const count = shownCount(destination.count);
                   const dot = destination.count === true;
-                  const inside = !destination.current && holdsCurrent(destination.children);
                   const {
                     className: itemClassName,
                     target,
@@ -182,11 +185,7 @@ export function NavigationBar({
                     className: itemClassName,
                     textValue: destinationText(destination),
                     icon: destination.icon,
-                    'aria-current': destination.current
-                      ? ('page' as const)
-                      : inside
-                        ? ('true' as const)
-                        : undefined,
+                    'aria-current': destinationCurrent(destination, true),
                     'aria-label': countedName(
                       destinationText(destination),
                       destination.count,
