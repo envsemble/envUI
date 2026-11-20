@@ -1,19 +1,11 @@
 import type { ScrollView, SectionPosition } from './contentsOutline.js';
 import { pixelsOf } from '../../internal/dom/lengths.js';
+import { verticalScrollerOf } from '../../internal/dom/verticalScrollerOf.js';
 
 function scrollerOf(element: Element): HTMLElement | null {
+  const scroller = verticalScrollerOf(element);
   const document = element.ownerDocument;
-  for (
-    let node = element.parentElement;
-    node && node !== document.body && node !== document.documentElement;
-    node = node.parentElement
-  ) {
-    const { overflowY } = getComputedStyle(node);
-    if (/(auto|scroll|overlay)/.test(overflowY) && node.scrollHeight > node.clientHeight) {
-      return node;
-    }
-  }
-  return null;
+  return scroller === document.body || scroller === document.documentElement ? null : scroller;
 }
 
 /**

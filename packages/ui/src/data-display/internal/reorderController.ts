@@ -8,9 +8,9 @@ import {
   pointerTarget,
   rowOffset,
   rowsOf,
-  verticalScrollerOf,
   type Move,
 } from './reorderGeometry.js';
+import { verticalScrollerOf } from '../../internal/dom/verticalScrollerOf.js';
 
 type AnnouncementValues = { label: string; position: string; count: string };
 
@@ -223,7 +223,8 @@ export function createReorder(read: () => ReorderOptions, announce: (text: strin
       const handle = event.currentTarget;
       const current = start(row, handle, label, 'pointer');
       if (!current) return;
-      const scroller = verticalScrollerOf(row);
+      const scroller =
+        verticalScrollerOf(row) ?? document.scrollingElement ?? document.documentElement;
       current.pointer = {
         id: event.pointerId,
         startY: event.clientY,
