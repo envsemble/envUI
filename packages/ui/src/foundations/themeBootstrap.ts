@@ -1,4 +1,14 @@
 import type { ThemeContrast, ThemeCorners, ThemeScale, ThemeSelection } from './Theme.js';
+import {
+  explicitContrasts,
+  explicitScales,
+  isOneOf,
+  ownSource,
+  rootAttributes,
+  sourceAttributes,
+  themeCorners,
+  themeSelections,
+} from '../internal/theme/themeRoot.js';
 
 /** A theme preference: an explicit theme or the operating system's. */
 export type ThemePreference = 'light' | 'dark' | 'system';
@@ -43,31 +53,7 @@ export function defineTheme(definition: ThemeDefinition = {}): Readonly<ThemeDef
   return Object.freeze({ ...definition });
 }
 
-/**
- * Marks a root `data-env-contrast` that envUI wrote, the bootstrap script or a
- * ThemePreferenceProvider, so that any provider, including one mounted later, replaces or removes
- * it as its own rather than leaving it as one the page set. The marker holds the value written,
- * `envui:high`, so a contrast the page wrote over envUI's no longer matches it and stays. The marker
- * lives on the root with the contrast, and goes with it.
- */
-export const contrastSourceAttribute = 'data-env-contrast-source';
-export const ownContrastSource = (contrast: string) => `envui:${contrast}`;
-/**
- * Marks a root `data-env-scale` that envUI wrote, as contrastSourceAttribute marks a contrast: the
- * marker holds the value written, `envui:compact`, so a scale the page wrote over envUI's stays.
- */
-export const scaleSourceAttribute = 'data-env-scale-source';
-export const ownScaleSource = (scale: string) => `envui:${scale}`;
-
-export const lookAttributes = {
-  selection: 'data-env-selection',
-  corners: 'data-env-corners',
-} as const;
-
-const lookValues: Record<keyof typeof lookAttributes, readonly string[]> = {
-  selection: ['neutral', 'accent'],
-  corners: ['sharp', 'rounded', 'round'],
-};
+const lookValues = { selection: themeSelections, corners: themeCorners };
 
 const setAttribute = (name: string, value: string) =>
   `r.setAttribute(${JSON.stringify(name)},${JSON.stringify(value)});`;
@@ -96,21 +82,19 @@ export function createThemeBootstrapScript(
 
 export function themeBootstrapScript(theme: ThemeDefinition, setPreferenceVariable: string) {
   const { contrast = 'system', scale = 'system' } = theme;
-  const writeContrast =
-    contrast === 'high' || contrast === 'standard'
-      ? setAttribute('data-env-contrast', contrast) +
-        setAttribute(contrastSourceAttribute, ownContrastSource(contrast))
-      : '';
-  const writeScale =
-    scale === 'compact' || scale === 'comfortable'
-      ? setAttribute('data-env-scale', scale) +
-        setAttribute(scaleSourceAttribute, ownScaleSource(scale))
-      : '';
-  const writeLook = (Object.keys(lookAttributes) as (keyof typeof lookAttributes)[])
+  const writeContrast = isOneOf(explicitContrasts, contrast)
+    ? setAttribute(rootAttributes.contrast, contrast) +
+      setAttribute(sourceAttributes.contrast, ownSource(contrast))
+    : '';
+  const writeScale = isOneOf(explicitScales, scale)
+    ? setAttribute(rootAttributes.scale, scale) +
+      setAttribute(sourceAttributes.scale, ownSource(scale))
+    : '';
+  const writeLook = (Object.keys(lookValues) as (keyof typeof lookValues)[])
     .map((setting) => {
       const value = theme[setting];
-      return value !== undefined && lookValues[setting].includes(value)
-        ? setAttribute(lookAttributes[setting], value)
+      return isOneOf(lookValues[setting], value)
+        ? setAttribute(rootAttributes[setting], value)
         : '';
     })
     .join('');

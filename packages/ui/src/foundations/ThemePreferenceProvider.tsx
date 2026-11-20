@@ -14,15 +14,16 @@ import {
 import { outsideTheme } from './internal/outsideTheme.js';
 import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ColorScheme } from './Theme.js';
+import type { ThemeDefinition, ThemePreference } from './themeBootstrap.js';
 import {
-  contrastSourceAttribute,
-  lookAttributes,
-  ownContrastSource,
-  ownScaleSource,
-  scaleSourceAttribute,
-  type ThemeDefinition,
-  type ThemePreference,
-} from './themeBootstrap.js';
+  explicitContrasts,
+  isOneOf,
+  ownSource,
+  rootAttributes,
+  sourceAttributes,
+  themeScales,
+  type OwnedRootSetting,
+} from '../internal/theme/themeRoot.js';
 import {
   ThemePreferenceContext,
   type ThemePreferenceValue,
@@ -81,30 +82,17 @@ interface DocumentWrites {
 
 const documentProviders = new Map<symbol, DocumentWrites>();
 
-function releaseContrast(root: HTMLElement) {
-  const marker = root.getAttribute(contrastSourceAttribute);
+function release(root: HTMLElement, setting: OwnedRootSetting) {
+  const marker = root.getAttribute(sourceAttributes[setting]);
   if (marker === null) return;
-  const contrast = root.dataset.envContrast;
-  if (contrast === undefined || marker !== ownContrastSource(contrast)) {
-    root.removeAttribute(contrastSourceAttribute);
+  const value = root.getAttribute(rootAttributes[setting]);
+  if (value === null || marker !== ownSource(value)) {
+    root.removeAttribute(sourceAttributes[setting]);
     return;
   }
-  for (const writes of documentProviders.values()) if (writes.contrast === contrast) return;
-  delete root.dataset.envContrast;
-  root.removeAttribute(contrastSourceAttribute);
-}
-
-function releaseScale(root: HTMLElement) {
-  const marker = root.getAttribute(scaleSourceAttribute);
-  if (marker === null) return;
-  const scale = root.dataset.envScale;
-  if (scale === undefined || marker !== ownScaleSource(scale)) {
-    root.removeAttribute(scaleSourceAttribute);
-    return;
-  }
-  for (const writes of documentProviders.values()) if (writes.scale === scale) return;
-  delete root.dataset.envScale;
-  root.removeAttribute(scaleSourceAttribute);
+  for (const writes of documentProviders.values()) if (writes[setting] === value) return;
+  root.removeAttribute(rootAttributes[setting]);
+  root.removeAttribute(sourceAttributes[setting]);
 }
 
 function releaseLook(root: HTMLElement, look: Record<string, string> | undefined) {
@@ -117,30 +105,27 @@ function subscribeToRoot(change: () => void) {
   observer.observe(document.documentElement, {
     attributes: true,
     attributeFilter: [
-      'data-env-scale',
-      'data-env-contrast',
-      scaleSourceAttribute,
-      contrastSourceAttribute,
+      rootAttributes.scale,
+      rootAttributes.contrast,
+      sourceAttributes.scale,
+      sourceAttributes.contrast,
     ],
   });
   return () => observer.disconnect();
 }
 
-function readPageScale(): ThemeScale | undefined {
+function readPageSetting<Value extends string>(
+  setting: OwnedRootSetting,
+  values: readonly Value[],
+): Value | undefined {
   const root = document.documentElement;
-  const scale = root.dataset.envScale;
-  if (scale !== 'comfortable' && scale !== 'compact' && scale !== 'system') return undefined;
-  return root.getAttribute(scaleSourceAttribute) === ownScaleSource(scale) ? undefined : scale;
+  const value = root.getAttribute(rootAttributes[setting]);
+  if (!isOneOf(values, value)) return undefined;
+  return root.getAttribute(sourceAttributes[setting]) === ownSource(value) ? undefined : value;
 }
 
-function readPageContrast(): Exclude<ThemeContrast, 'system'> | undefined {
-  const root = document.documentElement;
-  const contrast = root.dataset.envContrast;
-  if (contrast !== 'high' && contrast !== 'standard') return undefined;
-  return root.getAttribute(contrastSourceAttribute) === ownContrastSource(contrast)
-    ? undefined
-    : contrast;
-}
+const readPageScale = () => readPageSetting('scale', themeScales);
+const readPageContrast = () => readPageSetting('contrast', explicitContrasts);
 
 const onServer = () => undefined;
 
@@ -249,8 +234,8 @@ export function ThemePreferenceProvider({
         documentProviders.delete(provider);
         const root = document.documentElement;
         root.removeAttribute(switchingAttribute);
-        releaseContrast(root);
-        releaseScale(root);
+        release(root, 'contrast');
+        release(root, 'scale');
         releaseLook(root, look);
       };
     },
@@ -274,17 +259,17 @@ export function ThemePreferenceProvider({
         contrast: contrastToWrite,
       });
       if (contrastToWrite) {
-        root.dataset.envContrast = contrastToWrite;
-        root.setAttribute(contrastSourceAttribute, ownContrastSource(contrastToWrite));
-      } else releaseContrast(root);
+        root.setAttribute(rootAttributes.contrast, contrastToWrite);
+        root.setAttribute(sourceAttributes.contrast, ownSource(contrastToWrite));
+      } else release(root, 'contrast');
       documentProviders.set(provider, { ...documentProviders.get(provider), scale: ownScale });
       if (ownScale) {
-        root.dataset.envScale = ownScale;
-        root.setAttribute(scaleSourceAttribute, ownScaleSource(ownScale));
-      } else releaseScale(root);
+        root.setAttribute(rootAttributes.scale, ownScale);
+        root.setAttribute(sourceAttributes.scale, ownSource(ownScale));
+      } else release(root, 'scale');
       const look = {
-        [lookAttributes.selection]: selection,
-        [lookAttributes.corners]: corners,
+        [rootAttributes.selection]: selection,
+        [rootAttributes.corners]: corners,
       };
       for (const [attribute, value] of Object.entries(look)) root.setAttribute(attribute, value);
       documentProviders.set(provider, { ...documentProviders.get(provider), look });

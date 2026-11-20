@@ -3,6 +3,7 @@ import {
   type ThemeDefinition,
   type ThemePreference,
 } from './themeBootstrap.js';
+import { isOneOf, themePreferences } from '../internal/theme/themeRoot.js';
 
 /** Where the browser keeps the theme preference: the same for the hook and the head script. */
 export interface ThemeStorageOptions {
@@ -21,7 +22,7 @@ export interface ThemeStorageOptions {
 export const defaultThemeStorageKey = 'env-theme';
 
 export const isThemePreference = (value: unknown): value is ThemePreference =>
-  value === 'light' || value === 'dark' || value === 'system';
+  isOneOf(themePreferences, value);
 
 /**
  * Inline script for the document head of an application that keeps the theme preference with

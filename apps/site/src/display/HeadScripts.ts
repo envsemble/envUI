@@ -1,10 +1,8 @@
 // eslint-disable-next-line no-restricted-imports
 import {
-  contrastSourceAttribute,
-  ownContrastSource,
-  ownScaleSource,
-  scaleSourceAttribute,
-} from '../../../../packages/ui/src/foundations/themeBootstrap.ts';
+  ownSource,
+  sourceAttributes,
+} from '../../../../packages/ui/src/internal/theme/themeRoot.ts';
 // eslint-disable-next-line no-restricted-imports
 import { createStoredThemeBootstrapScript } from '../../../../packages/ui/src/foundations/themeStorage.ts';
 import {
@@ -38,11 +36,10 @@ function createStorageMigrationScript() {
 function createDisplayBootstrapScript() {
   const contrastKey = JSON.stringify(displayStorageKeys.contrast);
   const scaleKey = JSON.stringify(displayStorageKeys.scale);
-  const contrastSource = JSON.stringify(contrastSourceAttribute);
-  const scaleSource = JSON.stringify(scaleSourceAttribute);
-  const contrastSourcePrefix = JSON.stringify(ownContrastSource(''));
-  const scaleSourcePrefix = JSON.stringify(ownScaleSource(''));
-  return `(function(){var r=document.documentElement;try{var c=localStorage.getItem(${contrastKey}),q=new URLSearchParams(location.search).get("scale"),s=q==="compact"||q==="comfortable"||q==="system"?q:localStorage.getItem(${scaleKey});if(c==="high"||c==="standard"){r.setAttribute("data-env-contrast",c);r.setAttribute(${contrastSource},${contrastSourcePrefix}+c)}if(s==="compact"||s==="comfortable"){r.setAttribute("data-env-scale",s);r.setAttribute(${scaleSource},${scaleSourcePrefix}+s)}}catch(e){}})();`;
+  const contrastSource = JSON.stringify(sourceAttributes.contrast);
+  const scaleSource = JSON.stringify(sourceAttributes.scale);
+  const sourcePrefix = JSON.stringify(ownSource(''));
+  return `(function(){var r=document.documentElement;try{var c=localStorage.getItem(${contrastKey}),q=new URLSearchParams(location.search).get("scale"),s=q==="compact"||q==="comfortable"||q==="system"?q:localStorage.getItem(${scaleKey});if(c==="high"||c==="standard"){r.setAttribute("data-env-contrast",c);r.setAttribute(${contrastSource},${sourcePrefix}+c)}if(s==="compact"||s==="comfortable"){r.setAttribute("data-env-scale",s);r.setAttribute(${scaleSource},${sourcePrefix}+s)}}catch(e){}})();`;
 }
 
 function createSiteBootstrapScript() {
