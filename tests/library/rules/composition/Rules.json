@@ -54,6 +54,8 @@
       "data-display/RelativeTime.tsx": "composites",
       "feedback/Alert.tsx": "composites",
       "actions/CommandPalette.tsx": "composites",
+      "actions/ContextMenu.tsx": "composites",
+      "actions/Menubar.tsx": "composites",
       "actions/internal/CommandPaletteFooter.tsx": "composites",
       "actions/internal/CommandPaletteOptions.tsx": "composites",
       "actions/internal/CommandPaletteStatus.tsx": "composites",
@@ -364,7 +366,9 @@
       "Menu": {
         "modules": [
           "actions/ContextMenu.tsx",
-          "actions/internal/MenuPopup.tsx",
+          "actions/menu/internal/MenuPopup.tsx",
+          "actions/menu/internal/menuOpenChange.ts",
+          "actions/menu/internal/menuTriggerProps.ts",
           "actions/menu/MenuItem.tsx",
           "actions/menu/MenuSubmenu.tsx",
           "actions/menu/MenuChoices.tsx"

@@ -16,8 +16,8 @@ import {
   type Ref,
   type TouchEvent,
 } from 'react';
-import { MenuPopup, menuParts } from './internal/MenuPopup.js';
-import type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
+import { MenuPopup, menuParts } from './menu/internal/MenuPopup.js';
+import type { OpenChangeDetails, OpenChangeReason } from './menu/internal/menuOpenChange.js';
 import {
   containedOpenChange,
   usePortalContainer,

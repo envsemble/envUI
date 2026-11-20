@@ -12,17 +12,17 @@ import {
 import type { SkeletonProps } from '../../internal/skeleton.js';
 import { withDisplayName } from '../../internal/react/withDisplayName.js';
 import { markTriggerOwner } from '../../internal/trigger/triggerOwner.js';
-import { MenuPopup, menuParts } from '../internal/MenuPopup.js';
-import type { OpenChangeDetails } from '../internal/menuOpenChange.js';
+import { MenuPopup, menuParts } from './internal/MenuPopup.js';
+import type { OpenChangeDetails } from './internal/menuOpenChange.js';
 import { Item } from './MenuItem.js';
 import { Submenu } from './MenuSubmenu.js';
 import { CheckboxItem, Group, RadioGroup, RadioItem } from './MenuChoices.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
-export type { OpenChangeDetails, OpenChangeReason } from '../internal/menuOpenChange.js';
+export type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
 export type { ItemProps, ItemElementProps } from './MenuItem.js';
-export type { TriggerProps } from '../internal/menuTriggerProps.js';
+export type { TriggerProps } from './internal/menuTriggerProps.js';
 export type { SubmenuProps } from './MenuSubmenu.js';
 export type {
   CheckboxItemProps,
