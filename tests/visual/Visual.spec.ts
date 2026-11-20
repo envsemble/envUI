@@ -1,5 +1,5 @@
-import { existsSync, readdirSync, rmSync, type Dirent } from 'node:fs';
-import { join, posix } from 'node:path';
+import { existsSync, readdirSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   test,
@@ -16,143 +16,16 @@ import {
   emulateContrast,
   themesFor,
   type CatalogueTheme,
-  type ThemeName,
 } from '../browser/support/CatalogueThemes';
+import { densityShots, exampleShots, openLists, stageOf, surfaceShots } from './VisualShots';
 import { groupedPages } from '../../apps/site/src/routes/SiteRoutes';
 import { displayStorageKeys } from '../../apps/site/src/display/DisplayStorage';
 
-const densityShots = [
-  { section: 'sizes', theme: 'light' },
-  { section: 'form', theme: 'light' },
-  { section: 'desktop', theme: 'light' },
-  { section: 'desktop', theme: 'dark' },
-] as const;
-const surfaceShots = ['light', 'dark'];
-const exampleShots = [
-  { name: 'table-parts', page: 'table', example: 'WorkItemsWithParts' },
-].flatMap((shot) => (['light', 'dark'] as const).map((theme) => ({ ...shot, theme })));
 const frozenTime = new Date('2026-03-04T10:00:00Z');
 const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
 const stateMatrices: Record<string, string[]> = {
   button: ['Button'],
 };
-
-interface OpenList {
-  name: string;
-  themes: readonly ThemeName[];
-  page: string;
-  example: string;
-  trigger?: (page: Page) => Locator;
-  key?: string;
-  open?: (page: Page, trigger: ElementHandle) => Promise<void>;
-  popup: (page: Page) => Locator;
-  count?: number;
-  highlighted?: string;
-  focusesHighlighted?: boolean;
-  maxDiffPixels?: number;
-  withTrigger: boolean;
-}
-
-const stageOf = (page: Page) => page.getByTestId('layout-check-root');
-
-async function focusFromKeyboard(page: Page, trigger: ElementHandle) {
-  await trigger.focus();
-  await page.keyboard.press('Shift+Tab');
-  await page.keyboard.press('Tab');
-}
-
-const openLists: OpenList[] = [
-  {
-    name: 'select',
-    themes: ['light', 'dark', 'light-hc'],
-    page: 'select',
-    example: 'ProjectVisibility',
-    trigger: (page) => stageOf(page).getByRole('combobox', { name: 'Visibility', exact: true }),
-    key: 'Space',
-    popup: (page) => page.getByRole('listbox'),
-    highlighted: 'Team',
-    focusesHighlighted: true,
-    withTrigger: true,
-  },
-  {
-    name: 'select-small',
-    themes: ['light'],
-    page: 'select',
-    example: 'SmallToolbar',
-    trigger: (page) => stageOf(page).getByRole('combobox', { name: 'Zoom', exact: true }),
-    key: 'Space',
-    popup: (page) => page.getByRole('listbox'),
-    highlighted: '100%',
-    focusesHighlighted: true,
-    withTrigger: true,
-  },
-  {
-    name: 'combobox',
-    themes: ['light'],
-    page: 'combobox',
-    example: 'ChooseOwner',
-    trigger: (page) => stageOf(page).getByRole('combobox', { name: 'Owner', exact: true }),
-    key: 'ArrowDown',
-    popup: (page) => page.getByRole('listbox'),
-    highlighted: 'Alex Morgan',
-    maxDiffPixels: 16,
-    withTrigger: true,
-  },
-  {
-    name: 'menu',
-    themes: ['light', 'dark', 'light-hc'],
-    page: 'menu',
-    example: 'IconsAndShortcuts',
-    trigger: (page) => stageOf(page).getByRole('button', { name: 'More actions', exact: true }),
-    key: 'ArrowDown',
-    popup: (page) => page.getByRole('menu', { name: 'Report actions', exact: true }),
-    highlighted: 'Rename',
-    focusesHighlighted: true,
-    withTrigger: true,
-  },
-  {
-    name: 'menu-choices',
-    themes: ['light'],
-    page: 'menu',
-    example: 'Choices',
-    trigger: (page) => stageOf(page).getByRole('button', { name: 'View', exact: true }),
-    key: 'ArrowDown',
-    popup: (page) => page.getByRole('menu', { name: 'View options', exact: true }),
-    highlighted: 'Name',
-    focusesHighlighted: true,
-    withTrigger: true,
-  },
-  {
-    name: 'command-palette',
-    themes: ['light'],
-    page: 'command-palette',
-    example: 'GoToDocument',
-    trigger: (page) => stageOf(page).getByRole('button', { name: 'Search', exact: true }),
-    key: 'Enter',
-    popup: (page) => page.getByRole('dialog', { name: 'Go to document', exact: true }),
-    highlighted: 'Roadmap.md',
-    withTrigger: false,
-  },
-  {
-    name: 'tooltip',
-    themes: ['light', 'dark'],
-    page: 'tooltip',
-    example: 'IconActions',
-    trigger: (page) => stageOf(page).getByRole('button', { name: 'Refresh members', exact: true }),
-    open: focusFromKeyboard,
-    popup: (page) => page.locator('.env-tooltip', { hasText: 'Refresh members' }),
-    withTrigger: true,
-  },
-  {
-    name: 'toasts',
-    themes: ['light', 'dark'],
-    page: 'toast',
-    example: 'Tones',
-    popup: (page) => page.locator('.env-toast'),
-    count: 4,
-    withTrigger: false,
-  },
-];
 
 test.skip(
   process.env.ENVUI_VISUAL !== 'docker',
@@ -514,42 +387,4 @@ test.describe('open lists', () => {
       });
     }
   }
-});
-
-// eslint-disable-next-line no-empty-pattern
-test('every snapshot folder belongs to a catalogue page, a density section, a surface, an example or an open list', async ({}, testInfo) => {
-  const pages = new Set(groupedPages.map(({ document }) => document.id));
-  const density = new Set(densityShots.map(({ section, theme }) => `${theme}-${section}.png`));
-  const open = new Set(
-    openLists.flatMap((list) => list.themes.map((theme) => `${theme}-${list.name}.png`)),
-  );
-  const surfaces = new Set(surfaceShots.map((theme) => `${theme}-rows.png`));
-  const examples = new Set(exampleShots.map(({ name, theme }) => `${theme}-${name}.png`));
-  const stale = (folder: string, belongs: (entry: Dirent) => boolean) =>
-    existsSync(join(snapshots, folder))
-      ? readdirSync(join(snapshots, folder), { withFileTypes: true })
-          .filter((entry) => !belongs(entry))
-          .map((entry) => posix.join(folder, entry.name))
-      : [];
-  const unused = [
-    ...stale(
-      '',
-      (entry) =>
-        entry.isDirectory() &&
-        ['catalogue', 'density', 'examples', 'open', 'surfaces'].includes(entry.name),
-    ),
-    ...stale('catalogue', (entry) => entry.isDirectory() && pages.has(entry.name)),
-    ...stale('density', (entry) => entry.isFile() && density.has(entry.name)),
-    ...stale('open', (entry) => entry.isFile() && open.has(entry.name)),
-    ...stale('surfaces', (entry) => entry.isFile() && surfaces.has(entry.name)),
-    ...stale('examples', (entry) => entry.isFile() && examples.has(entry.name)),
-  ];
-  if (updating(testInfo)) {
-    for (const path of unused) rmSync(join(snapshots, path), { recursive: true });
-    return;
-  }
-  expect(
-    unused,
-    'Snapshots of pages or sections that no longer exist; run `npm run test:visual:update`',
-  ).toEqual([]);
 });

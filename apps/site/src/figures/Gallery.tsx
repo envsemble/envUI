@@ -7,7 +7,7 @@ import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/usePlaying';
 import { TileStage } from './TileStage';
 import { useNear } from './useNear';
-import { frameOf, tilePictureOf, type TilePicture } from '../tiles/TilePictures';
+import { ownsFrame, tilePictureOf, type TilePicture } from '../tiles/TilePictures';
 import { preloadTile } from '../tiles/Tiles';
 
 export interface GalleryGroup {
@@ -34,7 +34,7 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
           near={near}
           playing={playing || autoplay}
           className="catalogue-tile-stage catalogue-gallery-stage"
-          frame={frameOf(page.document?.id)}
+          ownFrame={ownsFrame(page.document?.id)}
         />
       </div>
       <Row align="center" justify="between" gap={2} className="catalogue-gallery-meta">

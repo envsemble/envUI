@@ -13,5 +13,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["site/IndexHead.ts", "site/HeadScripts.ts"]
 }

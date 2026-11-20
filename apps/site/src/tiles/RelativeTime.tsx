@@ -6,11 +6,11 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const now = Date.UTC(2026, 9, 14, 9, 41, 30);
-const minute = 60_000;
+const minuteMs = 60_000;
 
 const events = [
   { label: 'Saved', at: now - 20_000 },
-  { label: 'Shared', at: now - 2 * 24 * 60 * minute },
+  { label: 'Shared', at: now - 2 * 24 * 60 * minuteMs },
 ];
 
 const script: PointerStep[] = [
@@ -49,7 +49,7 @@ function Events({ narrow }: { narrow: boolean }) {
           <Text>
             <RelativeTime
               value={at}
-              now={now + (later ? minute : 0)}
+              now={now + (later ? minuteMs : 0)}
               format={narrow ? 'short' : 'long'}
             />
           </Text>

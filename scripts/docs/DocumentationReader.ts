@@ -206,6 +206,10 @@ function readEntry(
     );
   else if (!structured && !indexSummary)
     throw new Error(`Invalid documentation index entry: ${text}`);
+  if (!structured && /^```tsx\s+figure=/m.test(markdown))
+    throw new Error(
+      `${path} places a figure; only component and foundation pages place figures, so show a guide's code in a plain \`tsx\` fence.`,
+    );
   checkNamedExports(path, frontmatter, props?.exports);
   const document: DocumentRecord = {
     id,

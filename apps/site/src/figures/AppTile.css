@@ -77,11 +77,3 @@
     block-size: 1.25rem;
   }
 }
-
-.catalogue-app-ruler {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0;
-  visibility: hidden;
-  pointer-events: none;
-}

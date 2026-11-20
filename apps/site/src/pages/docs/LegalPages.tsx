@@ -72,14 +72,12 @@ const privacy = (
           <Text>
             Your display settings, the theme, contrast, scale and motion, and the width of the
             navigation are kept in your browser&apos;s local storage, so the site looks the same
-            next time. Some examples keep their own state there too, such as a drawer&apos;s width.
+            next time. Some examples keep their own state there too, such as a drawer&apos;s or a
+            pane&apos;s width.
           </Text>
         </li>
         <li>
-          <Text>
-            One example, a resizable pane, keeps its width in a cookie of this site once you resize
-            it. The site sets no other cookies.
-          </Text>
+          <Text>The site sets no cookies.</Text>
         </li>
         <li>
           <Text>

@@ -7,6 +7,7 @@ import {
   type GroupedDocument,
 } from './PageModel';
 import { docsRoute, homeRoute, routeHref } from './Address';
+import { docsOnlyComponents, unlistedDocuments } from '../documentation/DocumentPlaces';
 
 export type Area = 'catalogue' | 'docs';
 
@@ -43,10 +44,6 @@ interface GroupedPage {
   section: 'Foundations' | 'Components';
   path: string;
 }
-
-const docsOnlyComponents = new Set(['field']);
-
-const unlistedDocuments = new Set(['index']);
 
 export const groupedPages: GroupedPage[] = [
   ...foundations.map((document) => ({
@@ -259,13 +256,7 @@ export function routeOfDocument(
   }
   if (id === 'index' || id === docsRoute) return `${docsRoute}${query}`;
   if (id === 'overview') return homeRoute;
-  const sitePagesSearchNames: Record<string, string> = {
-    foundations: 'foundations',
-    components: 'components',
-    tokens: 'docs/tokens',
-    'full-changelog': 'docs/changelog',
-  };
-  if (Object.hasOwn(sitePagesSearchNames, id)) return `${sitePagesSearchNames[id]}${query}`;
+  if (allPages.some((page) => page.path === id && !page.document)) return `${id}${query}`;
   const page = allPages.find((entry) => entry.document?.id === id && entry.kind === 'guide');
   return page && `${page.path}${query}`;
 }

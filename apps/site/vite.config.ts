@@ -8,7 +8,7 @@ import { cssCommentsPlugin } from '../../scripts/site/CssComments.ts';
 import { pagePreloadsPlugin } from '../../scripts/site/PagePreloads.ts';
 import { agentFilesPlugin } from '../../scripts/site/SiteAgentFiles.ts';
 import { siteDataPlugins } from '../../scripts/site/SiteData.ts';
-import { indexHeadPlugins } from './src/IndexHead.ts';
+import { indexHeadPlugins } from '../../scripts/site/IndexHead.ts';
 
 const iconList = fileURLToPath(new URL('../../packages/ui/src/icons/index.ts', import.meta.url));
 const libraryInternals = fileURLToPath(new URL('../../packages/ui/src', import.meta.url));

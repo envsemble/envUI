@@ -14,6 +14,8 @@ const oldDocuments: Record<string, string> = {
   'get-started': docsRoute,
   'dev-mode-overview': docsRoute,
   changelog: 'docs/changelog',
+  'full-changelog': 'docs/changelog',
+  tokens: 'docs/tokens',
   codemods: docsRoute,
   migration: docsRoute,
   'agent-skills': codingAgents,
@@ -57,7 +59,9 @@ function overviewView({ path, search, section, rest }: OldAddress) {
   return undefined;
 }
 
-const movedPages: Record<string, string> = {
+const codingAgentsAddresses = ['docs/agent-skills', 'docs/agent-tooling'];
+
+const movedAddresses: Record<string, string> = {
   'docs/setup': docsRoute,
   'docs/codemods': docsRoute,
   'docs/migration': docsRoute,
@@ -67,12 +71,12 @@ const movedPages: Record<string, string> = {
   'dev-mode': docsRoute,
   'docs/dev-mode': docsRoute,
   'foundations/tokens': 'docs/tokens',
-  'docs/foundations/scale': 'docs/foundations/spacing',
   'docs/customizing-colors': 'docs/customizing',
   'templates/app-frame': docsRoute,
 };
 
-const foldedPages: Record<string, { page: string; section?: string }> = {
+/** @internal */
+export const formerPages: Record<string, { page: string; section?: string }> = {
   'components/bar': { page: 'components/navigation-drawer' },
   'components/rail': { page: 'components/navigation-drawer' },
   'components/page-header': { page: 'components/page' },
@@ -96,19 +100,58 @@ const foldedPages: Record<string, { page: string; section?: string }> = {
     page: 'components/command-palette',
     section: 'opening-it-the-button-and-the-shortcut',
   },
+  'components/text': { page: 'foundations/typography' },
+  'components/notes': { page: 'components/disclosure' },
+  'components/icon-buttons': { page: 'components/button' },
+  'components/buttons': { page: 'components/button' },
+  'components/close-button': { page: 'components/button' },
+  'components/badges': { page: 'components/badge' },
+  'components/chips': { page: 'components/badge' },
+  'components/tables': { page: 'components/table' },
+  'components/toasts': { page: 'components/toast' },
+  'components/dialogs': { page: 'components/dialog' },
+  'components/meters': { page: 'components/meter' },
+  'components/messages': { page: 'components/message' },
+  'components/cards': { page: 'components/card' },
+  'components/keyboard': { page: 'components/kbd' },
+  'components/layout': { page: 'components/column' },
+  'components/stack': { page: 'components/column' },
+  'components/markdown-editor': { page: 'components/markdown' },
+  'components/input': { page: 'components/text-field' },
+  'components/textarea': { page: 'components/text-field' },
+  'components/fields': { page: 'components/text-field' },
+  'components/date-time-field': { page: 'components/date-picker' },
+  'components/file-dropzone': { page: 'components/drop-zone' },
+  'components/disclosures': { page: 'components/disclosure' },
+  'components/notices': { page: 'components/alert' },
+  'components/rows': { page: 'components/list' },
+  'components/split-view': { page: 'components/panes' },
+  'components/split-pane': { page: 'components/panes' },
+  'components/list-detail': { page: 'components/panes' },
+  'components/tabs': { page: 'components/segmented-control' },
+  'components/panel-dock': { page: 'components/sheet' },
+  'components/splitter': { page: 'components/resize-handle' },
+  'components/app-shell': { page: 'components/scaffold' },
+  'components/sidebar': { page: 'components/navigation-drawer' },
+  'components/drawer': { page: 'components/navigation-drawer' },
+  'components/navigation': { page: 'components/navigation-drawer' },
+  'components/nav-list': { page: 'components/navigation-drawer' },
+  'components/direction-links': { page: 'components/pager' },
+  'foundations/motion': { page: 'foundations/accessibility' },
+  'foundations/scale': { page: 'foundations/spacing' },
 };
 
 const apiSection = (section: string | null) => section?.startsWith('props-') ?? false;
 
-function foldedPage({ path, search, section, rest }: OldAddress) {
-  const [, area, id, view] =
-    /^(?:docs\/)?(components|patterns)\/([^/]+)(?:\/(.+))?$/.exec(path) ?? [];
-  const folded = area && foldedPages[`${area}/${id}`];
-  if (!folded) return undefined;
-  if (path.startsWith('docs/') || view === 'props' || apiSection(section))
-    return `docs/${folded.page}${rest()}`;
-  if (!section && folded.section) search.set('section', folded.section);
-  return `${folded.page}${rest()}`;
+function formerPage(address: OldAddress) {
+  const { path, search, section, rest } = address;
+  const [, docs, former, view] =
+    /^(docs\/)?((?:components|patterns|foundations)\/[^/]+)(?:\/(.+))?$/.exec(path) ?? [];
+  if (!former || !Object.hasOwn(formerPages, former)) return undefined;
+  const { page, section: placed } = formerPages[former]!;
+  if (docs || view === 'props' || apiSection(section)) return `docs/${page}${rest()}`;
+  if (!section && placed) search.set('section', placed);
+  return pageView(view ? `${page}/${view}` : page, address);
 }
 
 const patternIds = [
@@ -145,48 +188,6 @@ function mergedPage({ path, rest }: OldAddress) {
   return undefined;
 }
 
-const renamedPages: Partial<Record<string, string>> = {
-  'components/text': 'foundations/typography',
-  'components/notes': 'components/disclosure',
-  'components/icon-buttons': 'components/button',
-  'components/buttons': 'components/button',
-  'components/close-button': 'components/button',
-  'components/badges': 'components/badge',
-  'components/chips': 'components/badge',
-  'components/tables': 'components/table',
-  'components/toasts': 'components/toast',
-  'components/dialogs': 'components/dialog',
-  'components/meters': 'components/meter',
-  'components/messages': 'components/message',
-  'components/cards': 'components/card',
-  'components/keyboard': 'components/kbd',
-  'components/layout': 'components/column',
-  'components/stack': 'components/column',
-  'components/markdown-editor': 'components/markdown',
-  'components/input': 'components/text-field',
-  'components/textarea': 'components/text-field',
-  'components/fields': 'components/text-field',
-  'components/date-time-field': 'components/date-picker',
-  'components/file-dropzone': 'components/drop-zone',
-  'components/disclosures': 'components/disclosure',
-  'components/notices': 'components/alert',
-  'components/rows': 'components/list',
-  'components/split-view': 'components/panes',
-  'components/split-pane': 'components/panes',
-  'components/list-detail': 'components/panes',
-  'components/tabs': 'components/segmented-control',
-  'components/panel-dock': 'components/sheet',
-  'components/splitter': 'components/resize-handle',
-  'components/app-shell': 'components/scaffold',
-  'components/sidebar': 'components/navigation-drawer',
-  'components/drawer': 'components/navigation-drawer',
-  'components/navigation': 'components/navigation-drawer',
-  'components/nav-list': 'components/navigation-drawer',
-  'components/direction-links': 'components/pager',
-  'foundations/motion': 'foundations/accessibility',
-  'foundations/scale': 'foundations/spacing',
-};
-
 function pageView(path: string, { section, rest }: OldAddress) {
   const [area, id, view] = path.split('/');
   const grouped = (area === 'components' || area === 'foundations') && groupedPageOf(id ?? '');
@@ -215,26 +216,22 @@ export function normalizeRoute(route: string): string {
   if (!path) return `${homeRoute}${address.rest()}`;
   const opened = overviewView(address);
   if (opened !== undefined) return opened;
-  if (path === 'docs/agent-skills' || path === 'docs/agent-tooling') return codingAgents;
-  if (Object.hasOwn(movedPages, path)) return `${movedPages[path]}${address.rest()}`;
-  const moved = foldedPage(address) ?? mergedPage(address);
+  if (codingAgentsAddresses.includes(path)) return codingAgents;
+  if (Object.hasOwn(movedAddresses, path)) return `${movedAddresses[path]}${address.rest()}`;
+  const moved = formerPage(address) ?? mergedPage(address);
   if (moved !== undefined) return moved;
   if (findPage(path)) return `${path}${address.rest()}`;
-  const [area, id, ...view] = path.split('/');
-  const renamed = renamedPages[`${area}/${id}`];
-  return pageView(renamed ? [renamed, ...view].join('/') : path, address);
+  return pageView(path, address);
 }
 
 export const oldPaths = [
-  ...Object.keys(movedPages),
-  'docs/agent-skills',
-  'docs/agent-tooling',
-  ...Object.keys(foldedPages).flatMap((path) => [path, `docs/${path}`]),
+  ...Object.keys(movedAddresses),
+  ...codingAgentsAddresses,
+  ...Object.keys(formerPages).flatMap((path) => [path, `docs/${path}`]),
   ...componentPatterns.map((slug) => `components/${slug}`),
   'patterns',
   'docs/patterns',
   ...patternIds.flatMap((id) => [`patterns/${id}`, `docs/patterns/${id}`]),
-  ...Object.keys(renamedPages),
   'foundations/composition',
   'docs/foundations/composition',
   'foundations/content',

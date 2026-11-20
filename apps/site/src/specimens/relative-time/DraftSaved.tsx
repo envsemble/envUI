@@ -5,7 +5,7 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
-const minute = 60_000;
+const minuteMs = 60_000;
 
 const script: PointerStep[] = [
   { wait: 300 },
@@ -39,14 +39,14 @@ function Draft({ now, savedAt, onSave }: { now: number; savedAt: number; onSave:
 
 function Saving() {
   const [start] = useState(() => Date.now());
-  const [clock, setClock] = useState({ now: start, savedAt: start - 20 * minute, round: 0 });
+  const [clock, setClock] = useState({ now: start, savedAt: start - 20 * minuteMs, round: 0 });
   usePointer(script, {
     onCue: (cue) =>
       setClock((current) =>
         cue === 'minute'
-          ? { ...current, now: current.now + minute }
+          ? { ...current, now: current.now + minuteMs }
           : cue === 'again'
-            ? { now: start, savedAt: start - 20 * minute, round: current.round + 1 }
+            ? { now: start, savedAt: start - 20 * minuteMs, round: current.round + 1 }
             : current,
       ),
   });

@@ -20,9 +20,20 @@ const {
 
 const hexColor = '/#[\\da-f]{3,8}\\b/i';
 
-const sitePrefixed = '^(?:site|catalogue|docs|env)-[a-z0-9]+(?:-[a-z0-9]+)*$';
+const siteAreas = ['catalogue', 'docs'];
 
-const siteCustomProperty = '^(?:(?:site|catalogue|docs|env)-|_)[a-z0-9]+(?:-[a-z0-9]+)*$';
+const siteNames = (areas) => {
+  const prefixes = ['site', ...areas, 'env'].join('|');
+  const prefixed = (name) =>
+    `Class or property "${name}": the site's names start site- when both areas use them, ${areas.map((area) => `${area}-`).join(' or ')} when only ${areas.length > 1 ? 'one area does' : `the ${areas[0]} area does`}.`;
+  return {
+    'selector-class-pattern': [`^(?:${prefixes})-[a-z0-9]+(?:-[a-z0-9]+)*$`, { message: prefixed }],
+    'custom-property-pattern': [
+      `^(?:(?:${prefixes})-|_)[a-z0-9]+(?:-[a-z0-9]+)*$`,
+      { message: prefixed },
+    ],
+  };
+};
 
 const textRelativeProperties = [
   'font',
@@ -271,13 +282,11 @@ export default {
         'unit-disallowed-list': unitRule(['px'], { px: hairlineProperties }),
       },
     },
-    {
-      files: siteStyleSheets,
-      rules: {
-        'selector-class-pattern': sitePrefixed,
-        'custom-property-pattern': siteCustomProperty,
-      },
-    },
+    { files: siteStyleSheets, rules: siteNames(siteAreas) },
+    ...siteAreas.map((area) => ({
+      files: [`apps/site/src/pages/${area}/**/*.css`],
+      rules: siteNames([area]),
+    })),
     {
       files: testStyleSheetsStandingInForAnApplication,
       rules: {

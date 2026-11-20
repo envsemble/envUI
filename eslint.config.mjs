@@ -62,7 +62,6 @@ const siteInternals = {
     'The pre-rendered page’s Markdown trees, handed to the library’s components before they hydrate.',
   'internal/provider/LinkComponentContext':
     'The link component an application gives the library, which the site’s own links follow.',
-  'internal/dom/paints': 'What a box paints, which the fit centres a picture on.',
   'internal/motion/motionTokens':
     'How a motion token is read and eased, as the library’s own motion reads it.',
   'styles/SegmentedControl.css':

@@ -141,10 +141,6 @@
   }
 }
 
-.catalogue-motion-subject .catalogue-appearance-area {
-  background: none;
-}
-
 .catalogue-row-density {
   --site-row-padding: var(--env-row-padding-block-md);
   --_row-paddings-of-five-rows: 10;

@@ -84,8 +84,13 @@ export async function renderNotFound(): Promise<RenderedPage> {
   };
 }
 
-export const oldAddresses = oldPaths.flatMap((path) => {
+export const oldAddresses = oldPaths.map((path) => {
   const route = normalizeRoute(path);
-  if (findPage(path) || !findPage(route.split('?')[0])) return [];
-  return [{ from: `/${path}`, to: routeHref(route) }];
+  if (findPage(path))
+    throw new Error(`/${path} is a page again: take it out of routes/OldAddresses.ts.`);
+  if (!findPage(route.split('?')[0]))
+    throw new Error(
+      `/${path} leads to /${route}, which is no page: point it at the page that took its place in routes/OldAddresses.ts.`,
+    );
+  return { from: `/${path}`, to: routeHref(route) };
 });
