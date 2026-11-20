@@ -4,7 +4,7 @@ import { burnInFiles } from './ChooseJobs.ts';
 import { readDurations } from './ComponentShards.ts';
 import { isComponentTest } from './FixtureImports.ts';
 import { serversFor, specNeeds } from './TestScope.ts';
-import { bin } from './TestTasks.ts';
+import { bin, componentTestCommand, playwrightCommand } from './TestTasks.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 import { median } from '../measure/Median.ts';
 
@@ -34,11 +34,11 @@ const run = (command: string[], env: Record<string, string> = {}, required = fal
   failed = true;
 };
 
-const componentTests = files.filter(isComponentTest);
+const componentTestFiles = files.filter(isComponentTest);
 const componentBudgetSeconds = 6 * 60;
 const durations = readDurations();
 const typical = median(Object.values(durations));
-const componentSeconds = componentTests.reduce(
+const componentSeconds = componentTestFiles.reduce(
   (sum, file) => sum + (durations[file] ?? typical),
   0,
 );
@@ -48,7 +48,7 @@ const componentRuns = Math.max(
 );
 if (componentRuns < runs)
   console.log(
-    `The ${componentTests.length} component test files take about ${Math.round(componentSeconds)} s a run, so they run ${componentRuns} times, not ${runs}.`,
+    `The ${componentTestFiles.length} component test files take about ${Math.round(componentSeconds)} s a run, so they run ${componentRuns} times, not ${runs}.`,
   );
 const specs = files
   .filter((file) => !isComponentTest(file))
@@ -57,20 +57,16 @@ const specs = files
 const live = specs.filter((spec) => spec.needs.live);
 const others = specs.filter((spec) => !spec.needs.live);
 
-if (componentTests.length)
-  run([
-    ...bin.vitest,
-    'run',
-    '--config',
-    'tests/component/vitest.config.ts',
-    '--project=chromium*',
-    '--tags-filter=!a11y',
-    '--passWithNoTests',
-    '--retry=0',
-    `--repeats=${componentRuns - 1}`,
-    ...(values['api.port'] ? [`--api.port=${values['api.port']}`] : []),
-    ...componentTests,
-  ]);
+if (componentTestFiles.length)
+  run(
+    componentTestCommand('chromium', [
+      '--passWithNoTests',
+      '--retry=0',
+      `--repeats=${componentRuns - 1}`,
+      ...(values['api.port'] ? [`--api.port=${values['api.port']}`] : []),
+      ...componentTestFiles,
+    ]),
+  );
 
 if (others.some((spec) => spec.needs.site)) run([...bin.npm, 'run', '-s', 'build:site'], {}, true);
 if (others.some((spec) => spec.needs.library)) {
@@ -83,15 +79,10 @@ if (others.some((spec) => spec.needs.library)) {
 }
 const playwright = (group: typeof specs, project: string, options: string[] = []) =>
   run(
-    [
-      ...bin.playwright,
-      'test',
-      `--project=${project}`,
-      ...options,
-      '--retries=0',
-      `--repeat-each=${runs}`,
-      ...group.map((spec) => spec.file),
-    ],
+    playwrightCommand(
+      [project],
+      [...options, '--retries=0', `--repeat-each=${runs}`, ...group.map((spec) => spec.file)],
+    ),
     { ENVUI_SERVERS: serversFor(group.map((spec) => spec.name)).join(',') || 'none' },
   );
 if (others.length) playwright(others, 'chromium');

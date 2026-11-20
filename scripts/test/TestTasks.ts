@@ -27,6 +27,33 @@ export const bin = {
   ],
 };
 
+const componentTestRuns = {
+  chromium: ['--project=chromium*', '--tags-filter=!a11y'],
+  engines: ['--project=firefox', '--project=webkit', '--tags-filter=engines'],
+  firefox: ['--project=firefox', '--tags-filter=engines'],
+  webkit: ['--project=webkit', '--tags-filter=engines'],
+  a11y: ['--project=chromium', '--tags-filter=a11y'],
+};
+
+export const componentTestCommand = (
+  run: keyof typeof componentTestRuns,
+  args: readonly string[] = [],
+) => [
+  ...bin.vitest,
+  'run',
+  '--config',
+  'tests/component/vitest.config.ts',
+  ...componentTestRuns[run],
+  ...args,
+];
+
+export const playwrightCommand = (projects: readonly string[], args: readonly string[] = []) => [
+  ...bin.playwright,
+  'test',
+  ...projects.map((project) => `--project=${project}`),
+  ...args,
+];
+
 export interface Task {
   name: string;
   run: string[];

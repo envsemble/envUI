@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { serversFor } from './TestScope.ts';
 import { specPaths } from './FixtureImports.ts';
-import { bin } from './TestTasks.ts';
+import { bin, componentTestCommand, playwrightCommand } from './TestTasks.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const [suite, ...argv] = process.argv.slice(2);
@@ -52,15 +52,15 @@ const folder = `tests/browser/${suite}/`;
 const shardIndex = shard?.split('/')[0];
 const playwrightShard = suite === 'library' ? undefined : shard;
 const playwrightRuns = suite !== 'library' || !shard || shardIndex === '1';
-const playwright = [
-  ...bin.playwright,
-  'test',
-  `--project=${browser}`,
-  ...(playwrightShard ? [`--shard=${playwrightShard}`] : []),
-  ...(playwrightShard || suite === 'library' ? ['--pass-with-no-tests'] : []),
-  ...(retries ? [`--retries=${retries}`] : []),
-  folder,
-];
+const playwright = playwrightCommand(
+  [browser],
+  [
+    ...(playwrightShard ? [`--shard=${playwrightShard}`] : []),
+    ...(playwrightShard || suite === 'library' ? ['--pass-with-no-tests'] : []),
+    ...(retries ? [`--retries=${retries}`] : []),
+    folder,
+  ],
+);
 
 if (options.build && suite === 'site') run([...bin.npm, 'run', '-s', 'build:site']);
 if (options.build && suite === 'library' && browser === 'chromium' && playwrightRuns) {
@@ -77,17 +77,11 @@ if (options.build && suite === 'library' && browser === 'chromium' && playwright
 
 if (suite === 'library')
   run(
-    [
-      ...bin.vitest,
-      'run',
-      '--config',
-      'tests/component/vitest.config.ts',
-      `--project=${browser === 'chromium' ? 'chromium*' : browser}`,
-      `--tags-filter=${browser === 'chromium' ? '!a11y' : 'engines'}`,
+    componentTestCommand(browser as 'chromium' | 'firefox' | 'webkit', [
       ...vitestPassed,
       ...(shard ? [`--shard=${shard}`, '--passWithNoTests'] : []),
       ...(retries ? [`--retry=${retries}`] : []),
-    ],
+    ]),
     {},
     false,
   );

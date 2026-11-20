@@ -2,7 +2,15 @@ import { parseArgs } from 'node:util';
 import { planCheck } from './CheckPlan.ts';
 import { generateDocumentation } from './StaticChecks.ts';
 import { changedFiles, serversFor, specFile } from './TestScope.ts';
-import { bin, parallel, series, summary, task } from './TestTasks.ts';
+import {
+  bin,
+  componentTestCommand,
+  parallel,
+  playwrightCommand,
+  series,
+  summary,
+  task,
+} from './TestTasks.ts';
 import { bold, dim, red, yellow } from '../Terminal.ts';
 
 const started = performance.now();
@@ -93,15 +101,12 @@ await series([generateDocumentation]);
 const browserTask = (names: string[], projects: string[], label: string) =>
   task(
     label,
-    [
-      ...bin.playwright,
-      'test',
-      ...projects.map((project) => `--project=${project}`),
+    playwrightCommand(projects, [
       ...(projects.includes('live-development') ? ['--no-deps'] : []),
       '--reporter=dot',
       ...(affected ? ['--retries=1'] : ['--max-failures=5']),
       ...names.map((name) => specFile(name)),
-    ],
+    ]),
     {
       env: { ENVUI_SERVERS: serversFor(names).join(',') || 'none' },
       detail: `${names.length} specs`,
@@ -110,18 +115,11 @@ const browserTask = (names: string[], projects: string[], label: string) =>
 const componentTask = (names: string[], engines: boolean) =>
   task(
     engines ? 'component (Firefox, WebKit)' : 'component (Chromium)',
-    [
-      ...bin.vitest,
-      'run',
-      '--config',
-      'tests/component/vitest.config.ts',
+    componentTestCommand(engines ? 'engines' : 'chromium', [
       '--reporter=dot',
-      ...(engines
-        ? ['--project=firefox', '--project=webkit', '--tags-filter=engines']
-        : ['--project=chromium*', '--tags-filter=!a11y']),
       ...(affected ? ['--retry=1'] : ['--bail=5']),
       ...names.map((name) => specFile(name)),
-    ],
+    ]),
     { detail: `${names.length} files` },
   );
 const npmScript = (name: string) => series([task(name, [...bin.npm, 'run', '-s', name])]);

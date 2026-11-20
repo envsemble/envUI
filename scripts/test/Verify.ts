@@ -1,8 +1,10 @@
 import { availableParallelism } from 'node:os';
 import {
   bin,
+  componentTestCommand,
   dockerRunning,
   parallel,
+  playwrightCommand,
   series,
   summary,
   task,
@@ -66,14 +68,46 @@ const [phase1, built] = await Promise.all([
 ]);
 if ((failed(phase1) || failed(built)) && !keepGoing) finish();
 
-const suites = [
-  { name: 'library (Chromium)', weight: 5, run: ['library', '--browser=chromium'] },
-  { name: 'library (Firefox)', weight: 2, run: ['library', '--browser=firefox'] },
-  { name: 'library (WebKit)', weight: 2, run: ['library', '--browser=webkit'] },
-  { name: 'site', weight: 1, run: ['site'] },
-  { name: 'accessibility (site)', weight: 1 },
-  { name: 'accessibility (fixtures)', weight: 1 },
-  ...(skipVisual ? [] : [{ name: 'visual baseline (Docker)', weight: 3 }]),
+const playwrightOptions = (folder: string) => [
+  '--reporter=dot',
+  '--retries=1',
+  `--output=test-results/${folder}`,
+];
+const browserSuite =
+  (...args: string[]) =>
+  (folder: string) => [
+    ...node('scripts/test/TestBrowser.ts', ...args, '--no-build'),
+    ...playwrightOptions(folder),
+  ];
+const suites: { name: string; weight: number; run: (folder: string) => string[] }[] = [
+  { name: 'library (Chromium)', weight: 5, run: browserSuite('library', '--browser=chromium') },
+  { name: 'library (Firefox)', weight: 2, run: browserSuite('library', '--browser=firefox') },
+  { name: 'library (WebKit)', weight: 2, run: browserSuite('library', '--browser=webkit') },
+  { name: 'site', weight: 1, run: browserSuite('site') },
+  {
+    name: 'accessibility (site)',
+    weight: 1,
+    run: (folder) => playwrightCommand(['a11y'], playwrightOptions(folder)),
+  },
+  {
+    name: 'accessibility (fixtures)',
+    weight: 1,
+    run: () => componentTestCommand('a11y', ['--reporter=dot']),
+  },
+  ...(skipVisual
+    ? []
+    : [
+        {
+          name: 'visual baseline (Docker)',
+          weight: 3,
+          run: (folder: string) =>
+            node(
+              'scripts/test/VisualTests.ts',
+              '--reporter=dot',
+              `--output=test-results/${folder}`,
+            ),
+        },
+      ]),
 ];
 const configured = process.env.ENVUI_WORKERS;
 const totalWorkers = configured
@@ -93,51 +127,14 @@ const ports = (index: number) => ({
     Number(process.env.ENVUI_SITE_BUILD_PORT || defaultPorts.siteBuild) + 10 * index,
   ),
 });
-const playwrightOptions = (folder: string) => [
-  '--reporter=dot',
-  '--retries=1',
-  `--output=test-results/${folder}`,
-];
 const phase2 = await parallel(
   suites.map((suite, index) => {
     const workers = workersOf(suite.weight);
-    const env = { ...ports(index), ENVUI_WORKERS: String(workers) };
-    const detail = `${workers} workers`;
     const folder = suite.name.replace(/\W+/g, '-').replace(/-$/, '').toLowerCase();
-    if (suite.run)
-      return task(
-        suite.name,
-        [
-          ...node('scripts/test/TestBrowser.ts', ...suite.run, '--no-build'),
-          ...playwrightOptions(folder),
-        ],
-        { env, detail },
-      );
-    if (suite.name === 'accessibility (site)')
-      return task(
-        suite.name,
-        [...bin.playwright, 'test', '--project=a11y', ...playwrightOptions(folder)],
-        { env, detail },
-      );
-    if (suite.name === 'accessibility (fixtures)')
-      return task(
-        suite.name,
-        [
-          ...bin.vitest,
-          'run',
-          '--config',
-          'tests/component/vitest.config.ts',
-          '--project=chromium',
-          '--tags-filter=a11y',
-          '--reporter=dot',
-        ],
-        { env, detail },
-      );
-    return task(
-      suite.name,
-      node('scripts/test/VisualTests.ts', '--reporter=dot', `--output=test-results/${folder}`),
-      { env, detail },
-    );
+    return task(suite.name, suite.run(folder), {
+      env: { ...ports(index), ENVUI_WORKERS: String(workers) },
+      detail: `${workers} workers`,
+    });
   }),
 );
 if (failed(phase2) && !keepGoing) finish();
@@ -145,13 +142,10 @@ if (failed(phase2) && !keepGoing) finish();
 await series([
   task(
     'live development',
-    [
-      ...bin.playwright,
-      'test',
-      '--project=live-development',
-      '--no-deps',
-      ...playwrightOptions('live-development'),
-    ],
+    playwrightCommand(
+      ['live-development'],
+      ['--no-deps', ...playwrightOptions('live-development')],
+    ),
     { env: { ENVUI_SERVERS: 'site' } },
   ),
 ]);

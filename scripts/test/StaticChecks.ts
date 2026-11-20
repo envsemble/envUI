@@ -1,6 +1,13 @@
 import { baseOption } from '../Git.ts';
 import { unitTestFiles } from './TestScope.ts';
-import { bin, series, task, type Task } from './TestTasks.ts';
+import {
+  bin,
+  componentTestCommand,
+  playwrightCommand,
+  series,
+  task,
+  type Task,
+} from './TestTasks.ts';
 
 const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
 
@@ -100,6 +107,17 @@ export const checks = {
   'icons:check': (): Task[] => [
     task('icons:check', node('scripts/build/GenerateIcons.ts', '--check')),
   ],
+  component: (): Task[] => [task('component (Chromium)', componentTestCommand('chromium'))],
+  'component:engines': (): Task[] => [
+    task('component (Firefox, WebKit)', componentTestCommand('engines')),
+  ],
+  a11y: ({ update = false } = {}): Task[] => [
+    task(
+      'accessibility (site)',
+      playwrightCommand(['a11y'], update ? ['--update-snapshots=changed'] : []),
+    ),
+    task('accessibility (fixtures)', componentTestCommand('a11y', update ? ['--update'] : [])),
+  ],
   unit: (options: readonly string[] = []): Task[] => {
     const { fast, built } = unitTestFiles();
     return [
@@ -116,7 +134,7 @@ if (import.meta.main) {
   const [name, ...rest] = process.argv.slice(2);
   if (!name || !(name in checks)) {
     console.error(
-      `Usage: node scripts/test/StaticChecks.ts <check> [arguments], the check one of ${Object.keys(checks).join(', ')}. lint, lint:css and format:check pass their arguments on to their tool, unit its options to node --test; docs:check takes --base <ref>.`,
+      `Usage: node scripts/test/StaticChecks.ts <check> [arguments], the check one of ${Object.keys(checks).join(', ')}. lint, lint:css, format:check, component and component:engines pass their arguments on to their tool, unit its options to node --test; docs:check takes --base <ref>, a11y --update.`,
     );
     process.exit(2);
   }
@@ -128,9 +146,11 @@ if (import.meta.main) {
         ? checks['docs:check'](baseOption())
         : check === 'unit'
           ? checks.unit(rest)
-          : checks[check]().map((item) =>
-              rest.length ? { ...item, run: [...item.run, ...rest] } : item,
-            );
+          : check === 'a11y'
+            ? checks.a11y({ update: rest.includes('--update') })
+            : checks[check]().map((item) =>
+                rest.length ? { ...item, run: [...item.run, ...rest] } : item,
+              );
   const results = await series(tasks.map((item) => ({ ...item, stream: true })));
   process.exit(results.every((result) => result.ok) && results.length === tasks.length ? 0 : 1);
 }
