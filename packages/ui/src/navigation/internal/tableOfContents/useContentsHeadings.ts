@@ -3,13 +3,8 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { HeadingLevel } from '../../../foundations/headingLevel.js';
 import { useLatest } from '../../../internal/useLatest.js';
-import {
-  outline,
-  slug,
-  uniqueId,
-  type HeadingEntry,
-  type TableOfContentsItem,
-} from './contentsOutline.js';
+import type { TableOfContentsItem } from '../../TableOfContents.js';
+import { outline, slug, uniqueId, type HeadingEntry } from './contentsOutline.js';
 
 function resolveContainer(container: RefObject<HTMLElement | null> | string | undefined) {
   if (typeof document === 'undefined') return null;

@@ -1,4 +1,4 @@
-import type { ScrollView, SectionPosition } from './contentsOutline.js';
+import type { ScrollView, SectionPosition } from './readingPosition.js';
 
 function scrollerOf(element: Element): HTMLElement | null {
   const document = element.ownerDocument;
