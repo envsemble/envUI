@@ -79,8 +79,6 @@ export function ListRow({
   );
 }
 
-export function shownLabelText(row: Element) {
-  return row
-    .querySelector(':scope > .env-list-row-text > .env-list-row-label')
-    ?.textContent?.trim();
+export function listRowLabel(row: Element) {
+  return row.querySelector(':scope > .env-list-row-text > .env-list-row-label');
 }

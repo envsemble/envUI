@@ -20,13 +20,13 @@ import type { RowDensity } from '../foundations/Theme.js';
 import { ContextMenu } from '../actions/ContextMenu.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
 import { rowElementId, siblingPositions, treeKeyAction } from './internal/treeModel.js';
-import { labelText } from './internal/labelText.js';
 import { placeRows, TreeRow } from './internal/TreeRow.js';
 import { useTreeTransitions } from './internal/useTreeTransitions.js';
 import { useTreeViewport } from './internal/useTreeViewport.js';
 import { flag } from '../internal/flag.js';
 import { chainHandlers } from '../internal/react/chainHandlers.js';
 import type { TypedText } from '../internal/typeahead.js';
+import { labelText } from '../internal/text/labelText.js';
 import '../styles/Base.css';
 import '../styles/Tree.css';
 

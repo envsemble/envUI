@@ -29,7 +29,7 @@ import { useTabCloseFocus } from './internal/useTabCloseFocus.js';
 import { useTabDrag } from './internal/useTabDrag.js';
 import { useTabStripScrolling } from './internal/useTabStripScrolling.js';
 import { flag } from '../internal/flag.js';
-import { useLabelText } from './internal/labelText.js';
+import { useLabelText } from './internal/useLabelText.js';
 import { rendersContent } from '../internal/react/rendersContent.js';
 import { chainHandlers } from '../internal/react/chainHandlers.js';
 import '../styles/Base.css';

@@ -10,6 +10,7 @@ import {
   type HeadingEntry,
   type TableOfContentsItem,
 } from './contentsOutline.js';
+import { collapseWhitespace } from '../../internal/text/labelText.js';
 
 function resolveContainer(container: RefObject<HTMLElement | null> | string | undefined) {
   if (typeof document === 'undefined') return null;
@@ -21,7 +22,7 @@ function resolveContainer(container: RefObject<HTMLElement | null> | string | un
 function headingText(heading: HTMLElement): string {
   const copy = heading.cloneNode(true) as HTMLElement;
   for (const hidden of copy.querySelectorAll('[aria-hidden="true"]')) hidden.remove();
-  return (copy.textContent ?? '').replace(/\s+/g, ' ').trim();
+  return collapseWhitespace(copy.textContent ?? '');
 }
 
 function readHeadings(

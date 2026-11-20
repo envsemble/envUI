@@ -25,6 +25,7 @@ import { useReorder, type Announcement, type ReorderHandlers } from './useReorde
 import type { RootProps } from '../List.js';
 import { usePortalContainer } from '../../internal/popup/PortalContainerContext.js';
 import { reportInDevelopment } from '../../internal/developmentReport.js';
+import { collapseWhitespace, followRenderedText } from '../../internal/text/labelText.js';
 import '../../styles/Base.css';
 import '../../styles/List.css';
 import '../../styles/ConnectedRows.css';
@@ -58,8 +59,7 @@ function rowOf(list: HTMLElement, element: EventTarget | null) {
 
 const labelOf = (row: HTMLElement) =>
   row.querySelector(':scope > .env-list-item-handle')?.getAttribute('data-label') ??
-  row.textContent?.trim() ??
-  '';
+  collapseWhitespace(row.textContent ?? '');
 
 function reportOfRowsWithoutHandle(list: HTMLUListElement | null) {
   const bare = Array.from(list?.children ?? []).filter(
@@ -145,11 +145,7 @@ export function ListReorderHandle({
         ?.closest('li')
         ?.querySelector(':scope > .env-list-item-content > .env-list-item-label');
       if (!content) return;
-      const read = () => setLabelShownAsText(content.textContent?.trim() ?? '');
-      read();
-      const observer = new MutationObserver(read);
-      observer.observe(content, { childList: true, characterData: true, subtree: true });
-      return () => observer.disconnect();
+      return followRenderedText(content, setLabelShownAsText);
     },
     [textValue, reorder],
   );

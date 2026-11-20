@@ -24,6 +24,7 @@ import { rowAttributes } from '../../internal/layout/primitiveAttributes.js';
 import { RowControlProvider } from '../../internal/field/rowControl.js';
 import type { ItemProps, RootProps } from '../List.js';
 import { idRefs } from '../../internal/dom/idRefs.js';
+import { givenLabelText } from '../../internal/text/labelText.js';
 
 export interface ListIds {
   title?: string;
@@ -203,9 +204,7 @@ export function renderItem(props: ItemProps, ids?: ListIds) {
   const shownDescription = mark(description);
   const shownChildren = mark(children);
   const hasStart = start != null || reorderable;
-  const text =
-    textValue ??
-    (typeof label === 'string' || typeof label === 'number' ? String(label) : undefined);
+  const text = givenLabelText(label, textValue);
   return (
     <li
       {...rowLayoutOnTheLiSavingARenderPerRow}
