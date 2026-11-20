@@ -14,6 +14,8 @@ const oldDocuments: Record<string, string> = {
   'get-started': docsRoute,
   'dev-mode-overview': docsRoute,
   changelog: 'docs/changelog',
+  'full-changelog': 'docs/changelog',
+  tokens: 'docs/tokens',
   codemods: docsRoute,
   migration: docsRoute,
   'agent-skills': codingAgents,
