@@ -140,9 +140,6 @@
     min-inline-size: 0;
   }
   @media (pointer: coarse) {
-    .env-command-palette-item {
-      min-block-size: var(--env-control-height-touch);
-    }
     .env-command-palette-item .env-list-row-end:has(> :is(.env-kbd, .env-kbd-combination)),
     .env-command-palette-hint,
     .env-command-palette-footer:not(:has(.env-command-palette-footer-content)) {

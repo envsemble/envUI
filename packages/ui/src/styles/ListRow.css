@@ -109,6 +109,12 @@
     gap: var(--env-space-1);
   }
 
+  @media (pointer: coarse) {
+    .env-list-row {
+      min-block-size: var(--env-control-height-touch);
+    }
+  }
+
   @media (forced-colors: active) {
     .env-list-row:is([data-highlighted], [data-popup-open]),
     .env-list-row[data-selected]:is([data-highlighted], [data-popup-open]) {
