@@ -8,7 +8,7 @@ const popups = await importSource('FitResting', 'apps/site/src/fit/FitResting.ts
 const screen = await importSource('FitScreen', 'apps/site/src/fit/FitScreen.ts');
 const device = await importSource('DeviceFit', 'apps/site/src/fit/standalone/DeviceFit.ts');
 const room = await importSource('OverlayRoom', 'apps/site/src/fit/standalone/OverlayRoom.ts');
-const paints = await importSource('Paints', 'packages/ui/src/internal/dom/paints.ts');
+const paints = await importSource('PaintedBoxes', 'apps/site/src/fit/PaintedBoxes.ts');
 
 const box = (left, top, right, bottom) => ({ left, top, right, bottom });
 

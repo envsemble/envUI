@@ -1,4 +1,3 @@
-import { paintsOf } from '@envui-internal/internal/dom/paints';
 import type { Box } from './FitGeometry';
 import { pixelTolerance } from '../shared/Remeasure';
 
@@ -34,6 +33,25 @@ export function settling(element: Element, canvas: Element) {
 }
 
 export const pictures = /^(img|svg|canvas|video|input|textarea|select|hr)$/i;
+
+const paintsNothing = (color: string) =>
+  color === 'transparent' || /^rgba\([^)]*,\s*0\s*\)$/.test(color) || /\/\s*0%?\s*\)$/.test(color);
+
+/** @internal */
+export function paintsOf(style: CSSStyleDeclaration): string[] {
+  const paints: string[] = [];
+  if (!paintsNothing(style.backgroundColor)) paints.push(`background ${style.backgroundColor}`);
+  if (style.backgroundImage !== 'none') paints.push('a background image');
+  const sides = (['top', 'right', 'bottom', 'left'] as const).filter(
+    (side) =>
+      (parseFloat(style.getPropertyValue(`border-${side}-width`)) || 0) > 0 &&
+      !['none', 'hidden'].includes(style.getPropertyValue(`border-${side}-style`)) &&
+      !paintsNothing(style.getPropertyValue(`border-${side}-color`)),
+  );
+  if (sides.length) paints.push(`a border (${sides.join(', ')})`);
+  if (style.boxShadow !== 'none') paints.push('a shadow');
+  return paints;
+}
 
 function paints(element: Element, style: CSSStyleDeclaration) {
   if (pictures.test(element.localName) || paintsOf(style).length) return true;
