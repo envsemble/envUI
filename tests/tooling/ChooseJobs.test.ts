@@ -6,7 +6,7 @@ import { join, posix } from 'node:path';
 import { test } from 'node:test';
 import { burnInFiles, chooseJobs, jobRules } from '../../scripts/test/ChooseJobs.ts';
 import { pathRules } from '../../scripts/test/TestScope.ts';
-import { specPaths } from '../../scripts/test/FixtureImports.ts';
+import { browserTestPaths } from '../../scripts/test/BrowserTests.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const jobs = (...paths: string[]) => chooseJobs(paths).jobs;
@@ -62,7 +62,7 @@ test('every tracked file is placed by a rule, and every rule places a tracked fi
 
 test('CI runs the browser job of every spec the check tiers run for a file', () => {
   const files = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split('\n').filter(Boolean);
-  const specs = specPaths(repositoryRoot);
+  const specs = browserTestPaths(repositoryRoot);
   const jobOf = (spec: string) =>
     specs.get(spec)?.startsWith('tests/browser/site/') ? 'site' : 'library';
   const missed: string[] = [];
@@ -74,7 +74,7 @@ test('CI runs the browser job of every spec the check tiers run for a file', () 
         : [];
     const ruled = pathRules
       .filter((rule) => rule.paths.some((glob) => posix.matchesGlob(file, glob)))
-      .flatMap((rule) => rule.specs ?? []);
+      .flatMap((rule) => rule.browserTests ?? []);
     const chosen = jobs(file);
     for (const spec of [...named, ...ruled])
       if (spec !== 'LiveDevelopment' && !chosen[jobOf(spec)])

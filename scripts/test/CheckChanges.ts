@@ -1,7 +1,8 @@
 import { parseArgs } from 'node:util';
 import { planCheck } from './CheckPlan.ts';
 import { generateDocumentation } from './StaticChecks.ts';
-import { changedFiles, serversFor, specFile } from './TestScope.ts';
+import { browserTestFile } from './BrowserTests.ts';
+import { changedFiles, serversFor } from './TestScope.ts';
 import {
   bin,
   componentTestCommand,
@@ -47,7 +48,7 @@ const {
   scope,
   staticTasks,
   unitTests,
-  browserSpecs,
+  browserTests,
   componentTests,
   playwrightSpecs,
   live,
@@ -68,11 +69,13 @@ if (scope.generated.size) console.log(`  generated files: ${[...scope.generated]
 console.log(
   `  unit tests: ${unitTests.fast.length} files${builds.library ? `, and ${unitTests.built.length} on the library build` : ''}`,
 );
-const shown = affected ? [...browserSpecs, ...live] : browserSpecs;
+const shown = affected ? [...browserTests, ...live] : browserTests;
 if (shown.length)
   console.log(
     `  browser specs in ${affected ? 'Chromium, and their @engines tests in Firefox and WebKit' : 'Chromium'}:\n${shown
-      .map((name) => `    ${name} ${dim(`← ${[...(scope.specs.get(name) ?? [])].join('; ')}`)}`)
+      .map(
+        (name) => `    ${name} ${dim(`← ${[...(scope.browserTests.get(name) ?? [])].join('; ')}`)}`,
+      )
       .join('\n')}`,
   );
 else console.log('  browser specs: none for this change');
@@ -87,7 +90,7 @@ if (deferred.length)
     ),
   );
 for (const [helper, users] of scope.helpers)
-  if (!users.some((name) => scope.specs.has(name)) && users.length)
+  if (!users.some((name) => scope.browserTests.has(name)) && users.length)
     console.log(dim(`  ${helper}: ${users.length} specs import it; check:affected runs them`));
 for (const [path, count] of scope.widelyUsed)
   console.log(dim(`  ${path}: ${count} specs' fixtures use it; check:affected runs them all`));
@@ -105,7 +108,7 @@ const browserTask = (names: string[], projects: string[], label: string) =>
       ...(projects.includes('live-development') ? ['--no-deps'] : []),
       '--reporter=dot',
       ...(affected ? ['--retries=1'] : ['--max-failures=5']),
-      ...names.map((name) => specFile(name)),
+      ...names.map((name) => browserTestFile(name)),
     ]),
     {
       env: { ENVUI_SERVERS: serversFor(names).join(',') || 'none' },
@@ -118,7 +121,7 @@ const componentTask = (names: string[], engines: boolean) =>
     componentTestCommand(engines ? 'engines' : 'chromium', [
       '--reporter=dot',
       ...(affected ? ['--retry=1'] : ['--bail=5']),
-      ...names.map((name) => specFile(name)),
+      ...names.map((name) => browserTestFile(name)),
     ]),
     { detail: `${names.length} files` },
   );

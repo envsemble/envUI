@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { serversFor } from './TestScope.ts';
-import { specPaths } from './FixtureImports.ts';
+import { browserTestPaths } from './BrowserTests.ts';
 import { bin, componentTestCommand, playwrightCommand } from './TestTasks.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
@@ -85,7 +85,7 @@ if (suite === 'library')
     {},
     false,
   );
-const specs = [...specPaths(repositoryRoot)]
+const specs = [...browserTestPaths(repositoryRoot)]
   .filter(([, path]) => path.startsWith(folder))
   .map(([name]) => name);
 if (playwrightRuns)

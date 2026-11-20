@@ -1,6 +1,6 @@
 import { checks } from './StaticChecks.ts';
-import { isComponentTest } from './FixtureImports.ts';
-import { selectScope, specFile, specNeeds, unitTestFiles } from './TestScope.ts';
+import { browserTestFile, isComponentTest } from './BrowserTests.ts';
+import { browserTestNeeds, selectScope, unitTestFiles } from './TestScope.ts';
 import { bin, task, type Task } from './TestTasks.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
@@ -25,14 +25,18 @@ export function planCheck(
   const unitTests = unitTestFiles(root);
   if (paths.some((path) => unitTests.built.includes(path))) scope.build.library = true;
 
-  const needs = new Map([...scope.specs.keys()].map((name) => [name, specNeeds(name, root)]));
+  const needs = new Map(
+    [...scope.browserTests.keys()].map((name) => [name, browserTestNeeds(name, root)]),
+  );
   const live = [...needs].filter(([, need]) => need.live).map(([name]) => name);
-  const browserSpecs = [...needs]
+  const browserTests = [...needs]
     .filter(([, need]) => !need.live && (affected || !need.library))
     .map(([name]) => name);
-  const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpecs.includes(name));
-  const componentTests = browserSpecs.filter((name) => isComponentTest(specFile(name, root)));
-  const playwrightSpecs = browserSpecs.filter((name) => !componentTests.includes(name));
+  const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserTests.includes(name));
+  const componentTests = browserTests.filter((name) =>
+    isComponentTest(browserTestFile(name, root)),
+  );
+  const playwrightSpecs = browserTests.filter((name) => !componentTests.includes(name));
   const builds = {
     library: affected && scope.build.library,
     site: [...needs].some(([name, need]) => need.site && playwrightSpecs.includes(name)),
@@ -64,7 +68,7 @@ export function planCheck(
     scope,
     staticTasks,
     unitTests,
-    browserSpecs,
+    browserTests,
     componentTests,
     playwrightSpecs,
     live,

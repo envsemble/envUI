@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import {
-  aliases,
+  testsByModuleName,
   changedFiles,
   fixtureBudget,
   mergeChanges,
@@ -21,16 +21,16 @@ import {
   pathRules,
   selectScope,
   serversFor,
-  specFile,
-  specNeeds,
-  specsFor,
+  browserTestNeeds,
+  browserTestsFor,
   unitTestFiles,
 } from '../../scripts/test/TestScope.ts';
 import { checkoutId, checkoutPort } from '../../scripts/test/CheckoutMarker.ts';
+import { browserTestFile } from '../../scripts/test/BrowserTests.ts';
 import { fixtureUse, importsOf } from '../../scripts/test/FixtureImports.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-const specs = (...paths) => [...specsFor(paths).specs.keys()].sort();
+const specs = (...paths) => [...browserTestsFor(paths).browserTests.keys()].sort();
 
 test('diff parsing reads statuses, renames and untracked files', () => {
   const entries = parseNameStatus(
@@ -107,7 +107,9 @@ test('a file runs the specs whose fixtures use it, and a fixture the specs that 
 });
 
 test('a file many fixtures use runs the most specific few, and says how many use it', () => {
-  const { specs: some, widelyUsed } = specsFor(['packages/ui/src/internal/classNames.ts']);
+  const { browserTests: some, widelyUsed } = browserTestsFor([
+    'packages/ui/src/internal/classNames.ts',
+  ]);
   assert.equal(some.size, 6);
   assert.ok(widelyUsed.get('packages/ui/src/internal/classNames.ts') > 6);
   assert.deepEqual(specs('packages/ui/src/actions/Button.tsx'), ['Button']);
@@ -115,13 +117,18 @@ test('a file many fixtures use runs the most specific few, and says how many use
 
 test('the affected tier runs every spec a file or helper concerns', () => {
   const path = 'packages/ui/src/internal/classNames.ts';
-  const fast = specsFor([path]);
-  const affected = specsFor([path], { affected: true });
+  const fast = browserTestsFor([path]);
+  const affected = browserTestsFor([path], { affected: true });
   assert.equal(affected.widelyUsed.size, 0);
-  assert.equal(affected.specs.size, fast.widelyUsed.get(path));
-  const helper = specsFor(['tests/browser/support/Servers.ts'], { affected: true });
-  assert.equal(helper.specs.size, helper.helpers.get('tests/browser/support/Servers.ts').length);
-  assert.ok(helper.specs.size > globSync('tests/browser/{library,site}/*.spec.ts').length / 2);
+  assert.equal(affected.browserTests.size, fast.widelyUsed.get(path));
+  const helper = browserTestsFor(['tests/browser/support/Servers.ts'], { affected: true });
+  assert.equal(
+    helper.browserTests.size,
+    helper.helpers.get('tests/browser/support/Servers.ts').length,
+  );
+  assert.ok(
+    helper.browserTests.size > globSync('tests/browser/{library,site}/*.spec.ts').length / 2,
+  );
 });
 
 test('imports are read from the syntax, types, comments and strings left out', () => {
@@ -207,10 +214,10 @@ test("a fixture's specs follow what its imports mean, however they are written",
 
 test('every path a rule names exists, and every spec it runs', () => {
   const skipped = (name) => name === 'node_modules' || name === '.git' || name === 'dist';
-  for (const { paths, specs: names = [] } of pathRules) {
+  for (const { paths, browserTests: names = [] } of pathRules) {
     for (const glob of paths)
       assert.ok(globSync(glob, { exclude: skipped }).length, `${glob} names no file`);
-    for (const name of names) assert.ok(existsSync(specFile(name)), `no spec ${name}`);
+    for (const name of names) assert.ok(existsSync(browserTestFile(name)), `no spec ${name}`);
   }
 });
 
@@ -221,7 +228,9 @@ test('a shared file runs the shared set, and a file no fixture uses runs no spec
     'Scale',
     'ThemeContrast',
   ]);
-  const { specs: none, unmatched } = specsFor(['packages/ui/src/foundations/headingLevel.ts']);
+  const { browserTests: none, unmatched } = browserTestsFor([
+    'packages/ui/src/foundations/headingLevel.ts',
+  ]);
   assert.equal(none.size, 0);
   assert.deepEqual(unmatched, ['packages/ui/src/foundations/headingLevel.ts']);
 });
@@ -240,13 +249,13 @@ test('every alias names a file and specs that exist, and adds what the imports m
   };
   const found = fixtureUse(repositoryRoot);
   const redundant: string[] = [];
-  for (const [name, targets] of Object.entries(aliases)) {
+  for (const [name, targets] of Object.entries(testsByModuleName)) {
     assert.ok(
       files.some((file) => named(file).includes(name)),
       `the alias ${name} names no file`,
     );
     for (const target of targets)
-      assert.ok(existsSync(specFile(target)), `${name}: no spec ${target}`);
+      assert.ok(existsSync(browserTestFile(target)), `${name}: no spec ${target}`);
     const modules = files
       .filter(
         (file) =>
@@ -259,13 +268,17 @@ test('every alias names a file and specs that exist, and adds what the imports m
     const imported = new Set(modules.flatMap((path) => found(path).slice(0, fixtureBudget)));
     if (modules.length && targets.every((target) => imported.has(target))) redundant.push(name);
   }
-  assert.deepEqual(redundant, [], 'The imports find these aliases’ specs: remove the aliases.');
+  assert.deepEqual(
+    redundant,
+    [],
+    'The imports find these aliases’ specs: remove the testsByModuleName.',
+  );
 });
 
 test("a spec is in the library's or the site's folder, or a component test", () => {
-  assert.equal(specFile('Hydration'), 'tests/browser/library/Hydration.spec.ts');
-  assert.equal(specFile('Button'), 'tests/component/Button.test.tsx');
-  assert.equal(specFile('SiteSmoke'), 'tests/browser/site/SiteSmoke.spec.ts');
+  assert.equal(browserTestFile('Hydration'), 'tests/browser/library/Hydration.spec.ts');
+  assert.equal(browserTestFile('Button'), 'tests/component/Button.test.tsx');
+  assert.equal(browserTestFile('SiteSmoke'), 'tests/browser/site/SiteSmoke.spec.ts');
 });
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
@@ -275,20 +288,22 @@ test('a changed spec runs itself, and a changed helper the specs that import it'
 });
 
 test('a module of the documentation generator runs the specs of the site', () => {
-  assert.ok([...selectScope(['scripts/docs/PageReader.ts']).specs.keys()].includes('SiteSmoke'));
+  assert.ok(
+    [...selectScope(['scripts/docs/PageReader.ts']).browserTests.keys()].includes('SiteSmoke'),
+  );
 });
 
 test('the site runs its specs and live development, with the builds they open', () => {
   const scope = selectScope(['apps/site/src/main.tsx']);
-  assert.deepEqual([...scope.specs.keys()].sort(), [
+  assert.deepEqual([...scope.browserTests.keys()].sort(), [
     'LiveDevelopment',
     'SiteFailures',
     'SitePrerender',
     'SiteSmoke',
   ]);
   assert.equal(scope.build.site, true);
-  assert.equal(specNeeds('LiveDevelopment').live, true);
-  assert.equal(specNeeds('Hydration').library, true);
+  assert.equal(browserTestNeeds('LiveDevelopment').live, true);
+  assert.equal(browserTestNeeds('Hydration').library, true);
   assert.equal(selectScope(['tests/browser/library/Hydration.spec.ts']).build.library, true);
 });
 

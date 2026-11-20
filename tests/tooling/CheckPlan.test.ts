@@ -22,7 +22,7 @@ test('a site spec goes to Playwright and opens the site build', () => {
 test('a spec on the library build waits for check:affected, which builds the library for it', () => {
   const check = planCheck(['tests/browser/library/Hydration.spec.ts']);
   assert.deepEqual(check.deferred, ['Hydration']);
-  assert.deepEqual(check.browserSpecs, []);
+  assert.deepEqual(check.browserTests, []);
   assert.equal(check.builds.library, false);
   const affected = planCheck(['tests/browser/library/Hydration.spec.ts'], { affected: true });
   assert.deepEqual(affected.deferred, []);
@@ -33,7 +33,7 @@ test('a spec on the library build waits for check:affected, which builds the lib
 test('live development runs apart from the other browser specs', () => {
   const plan = planCheck(['tests/browser/site/LiveDevelopment.spec.ts'], { affected: true });
   assert.deepEqual(plan.live, ['LiveDevelopment']);
-  assert.ok(!plan.browserSpecs.includes('LiveDevelopment'));
+  assert.ok(!plan.browserTests.includes('LiveDevelopment'));
 });
 
 test('a unit test on the library build opens the build in check:affected', () => {

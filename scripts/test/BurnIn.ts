@@ -2,8 +2,8 @@ import { spawnSync } from 'node:child_process';
 import { parseArgs } from 'node:util';
 import { burnInFiles } from './ChooseJobs.ts';
 import { readDurations } from './ComponentShards.ts';
-import { isComponentTest } from './FixtureImports.ts';
-import { serversFor, specNeeds } from './TestScope.ts';
+import { isComponentTest } from './BrowserTests.ts';
+import { serversFor, browserTestNeeds } from './TestScope.ts';
 import { bin, componentTestCommand, playwrightCommand } from './TestTasks.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 import { median } from '../measure/Median.ts';
@@ -53,7 +53,7 @@ if (componentRuns < runs)
 const specs = files
   .filter((file) => !isComponentTest(file))
   .map((file) => ({ file, name: file.replace(/^.*\/|\.spec\.ts$/g, '') }))
-  .map((spec) => ({ ...spec, needs: specNeeds(spec.name) }));
+  .map((spec) => ({ ...spec, needs: browserTestNeeds(spec.name) }));
 const live = specs.filter((spec) => spec.needs.live);
 const others = specs.filter((spec) => !spec.needs.live);
 
