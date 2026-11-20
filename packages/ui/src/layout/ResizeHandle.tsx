@@ -10,6 +10,8 @@ import { chainHandlers } from '../internal/react/chainHandlers.js';
 import '../styles/Base.css';
 import '../styles/ResizeHandle.css';
 
+export type { ResizeDetails } from '../internal/resize/resizeDetails.js';
+
 export type ResizeHandleProps = ResizeOptions &
   Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'children' | 'role' | 'tabIndex'> & {
     /** The handle's name, which says what it resizes, such as Resize the project list. */

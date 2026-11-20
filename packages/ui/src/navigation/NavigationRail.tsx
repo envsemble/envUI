@@ -5,7 +5,11 @@ import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import {
   destinationKey,
   DestinationItem,
@@ -13,7 +17,7 @@ import {
   type DestinationClasses,
 } from './internal/DestinationItem.js';
 import type { Destination } from './destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import type { NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationRail.css';
@@ -89,7 +93,7 @@ export function NavigationRail({
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-rail', className)}
-      data-background={backgroundAttribute(background)}
+      data-background={background}
       data-label-hidden={flag(!visibleLabel)}
       align="center"
       gap={4}

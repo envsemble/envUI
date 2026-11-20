@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { createRequire } from 'node:module';
+import { relative, resolve, sep } from 'node:path';
+import { libraryEntryPoints } from '../../../scripts/docs/LibraryEntryPoints.ts';
 import {
   analyze,
   exceptionsFile,
@@ -76,6 +78,31 @@ test('a module of the top-level internal/ serves two families or more', () => {
         ];
   });
   assertNoChanges(misplaced);
+});
+
+test('an entry point re-exports public modules whole, so what a public module exports is public', () => {
+  const ts = createRequire(import.meta.url)('typescript');
+  const library = resolve('packages/ui/src');
+  const wrong = libraryEntryPoints().flatMap(({ file }) => {
+    const entry = relative(library, file).split(sep).join('/');
+    const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest);
+    return source.statements.flatMap((statement) => {
+      const text = statement.getText(source).replace(/\s+/g, ' ');
+      if (!ts.isExportDeclaration(statement) || !statement.moduleSpecifier)
+        return [`${entry}: ${text} is not an export * of a public module.`];
+      const named = statement.exportClause && !ts.isNamespaceExport(statement.exportClause);
+      if (named)
+        return [
+          `${entry}: ${text} names what it exports. Write export * from the module, and move what the module exports for the library's own use into an internal/ module.`,
+        ];
+      if (/(^|\/)internal\//.test(statement.moduleSpecifier.text))
+        return [
+          `${entry}: ${text} exports an internal module. Re-export the type from the public module it belongs to.`,
+        ];
+      return [];
+    });
+  });
+  assertNoChanges(wrong);
 });
 
 test('raw interactive HTML stays in leaf controls and internals', () => {

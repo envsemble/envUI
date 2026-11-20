@@ -4,7 +4,7 @@ import {
   ownContrastSource,
   ownScaleSource,
   scaleSourceAttribute,
-} from '../../../../packages/ui/src/foundations/themeBootstrap.ts';
+} from '../../../../packages/ui/src/foundations/internal/themeRoot.ts';
 // eslint-disable-next-line no-restricted-imports
 import { createStoredThemeBootstrapScript } from '../../../../packages/ui/src/foundations/themeStorage.ts';
 import {

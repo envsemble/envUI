@@ -23,7 +23,11 @@ import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconUnfoldMore } from '../icons/UnfoldMore.js';
 import { useEndColumnIndex, useTableColumns, type TableColumns } from './internal/tableColumns.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { optionModule, useOptionModule } from '../internal/react/useOptionModule.js';
 import { ActionElement } from '../internal/control/ActionElement.js';

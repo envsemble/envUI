@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { SkeletonScope } from '../foundations/SkeletonScope.js';
-import '../styles/Base.css';
-import '../styles/Skeleton.css';
+import { SkeletonScope } from './SkeletonScope.js';
+import '../../styles/Base.css';
+import '../../styles/Skeleton.css';
 
 export interface SkeletonProps {
   /**

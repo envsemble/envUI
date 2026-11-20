@@ -93,14 +93,6 @@ export interface CalendarProps extends Omit<
   nextMonthLabel?: string;
 }
 
-/**
- * The day of a calendar that holds its tab stop, the day focus goes to as the calendar opens in a
- * popup, such as DatePicker's.
- */
-export function calendarActiveDay(root: ParentNode | null | undefined): HTMLElement | null {
-  return root?.querySelector<HTMLElement>('.env-calendar-day[tabindex="0"]') ?? null;
-}
-
 const weeksThatFitAnyMonth = 6;
 
 const firstSundayAfterEpoch = 3;

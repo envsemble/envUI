@@ -72,6 +72,7 @@
       "feedback/toast/useToast.ts": "composites",
       "feedback/toast/internal/useToastController.ts": "composites",
       "feedback/toast/internal/useToastGlide.ts": "composites",
+      "feedback/toast/internal/ToastManagerContext.ts": "composites",
       "forms/Calendar.tsx": "composites",
       "forms/Combobox.tsx": "composites",
       "forms/internal/autoHighlightAlways.ts": "composites",
@@ -102,10 +103,6 @@
       "internal/popup/PopupSurface.tsx": {
         "layer": "foundations",
         "reason": "It reads Theme and the skeleton."
-      },
-      "internal/skeleton.tsx": {
-        "layer": "foundations",
-        "reason": "It reads SkeletonScope."
       },
       "internal/popup/TooltipPopup.tsx": {
         "layer": "foundations",
@@ -408,6 +405,9 @@
           "forms/color/internal/useColorState.ts",
           "forms/color/internal/useEyeDropper.ts"
         ]
+      },
+      "Calendar": {
+        "modules": ["forms/internal/pickerFocus.ts"]
       },
       "DatePicker": {
         "modules": [

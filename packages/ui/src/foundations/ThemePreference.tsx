@@ -14,15 +14,14 @@ import {
 import { outsideTheme } from './internal/outsideTheme.js';
 import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ColorScheme } from './Theme.js';
+import type { ThemeDefinition, ThemePreference } from './themeBootstrap.js';
 import {
   contrastSourceAttribute,
   lookAttributes,
   ownContrastSource,
   ownScaleSource,
   scaleSourceAttribute,
-  type ThemeDefinition,
-  type ThemePreference,
-} from './themeBootstrap.js';
+} from './internal/themeRoot.js';
 import {
   ThemePreferenceContext,
   type ThemePreferenceValue,

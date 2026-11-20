@@ -2,11 +2,8 @@
 
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import type { ThemePreference } from './themeBootstrap.js';
-import {
-  defaultThemeStorageKey,
-  isThemePreference,
-  type ThemeStorageOptions,
-} from './themeStorage.js';
+import type { ThemeStorageOptions } from './themeStorage.js';
+import { defaultThemeStorageKey, isThemePreference } from './internal/storedPreference.js';
 
 /** What useStoredThemePreference returns, to spread on ThemePreferenceProvider. */
 export interface StoredThemePreference {

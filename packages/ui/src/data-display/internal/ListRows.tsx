@@ -9,7 +9,7 @@ import {
 import { classNames } from '../../internal/classNames.js';
 import { Column, Grid, Row } from '../../layout/Layout.js';
 import { Slot } from '../../internal/layout/Slot.js';
-import { SkeletonStatus } from '../../foundations/SkeletonScope.js';
+import { SkeletonStatus } from '../../internal/skeleton/SkeletonScope.js';
 import { Text } from '../../foundations/Text.js';
 import {
   inSkeleton,
@@ -17,7 +17,7 @@ import {
   given,
   skeletonAttributes,
   skeletonListAttributes,
-} from '../../internal/skeleton.js';
+} from '../../internal/skeleton/skeleton.js';
 import { ListReorderHandle, ReorderableList } from './ReorderableList.js';
 import { flag } from '../../internal/flag.js';
 import { rowAttributes } from '../../internal/layout/primitiveAttributes.js';

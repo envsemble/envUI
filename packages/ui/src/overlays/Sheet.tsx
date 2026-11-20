@@ -1,6 +1,6 @@
 'use client';
 
-import type { SkeletonProps } from '../internal/skeleton.js';
+import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { Drawer as BaseDrawer } from '@base-ui/react/drawer';
 import {
   useCallback,

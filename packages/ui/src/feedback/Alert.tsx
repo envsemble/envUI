@@ -4,7 +4,12 @@ import { Grid } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { AlertDismiss } from './internal/AlertDismiss.js';
-import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  given,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import { IconCheckCircle } from '../icons/CheckCircle.js';
 import { IconError } from '../icons/Error.js';
 import { IconInfo } from '../icons/Info.js';

@@ -183,8 +183,9 @@ test('a module that renders a class brings the style sheets that style it', () =
   const rendersNothing = (module) =>
     module.startsWith('dev/') ||
     [
-      'foundations/themeBootstrap.ts',
       'foundations/themeStorage.ts',
+      'foundations/internal/themeRoot.ts',
+      'foundations/internal/storedPreference.ts',
       'content/internal/useCodeContrast.ts',
     ].includes(module);
   const base = [...styleSheet('Base.css').matchAll(/^@import '\.\/([\w.]+)'/gm)].map(

@@ -1,5 +1,5 @@
-import { roundToHundredth } from '../../internal/dom/lengths.js';
-import { observeResize } from '../../internal/dom/observeResize.js';
+import { roundToHundredth } from '../dom/lengths.js';
+import { observeResize } from '../dom/observeResize.js';
 import '../../styles/Base.css';
 import '../../styles/Skeleton.css';
 

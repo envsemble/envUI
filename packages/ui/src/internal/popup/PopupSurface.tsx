@@ -23,7 +23,7 @@ import {
   containedPopupStyle,
   usePortalContainer,
 } from './PortalContainerContext.js';
-import { inSkeleton, skeletonAttributes } from '../skeleton.js';
+import { inSkeleton, skeletonAttributes } from '../skeleton/skeleton.js';
 import { computedDirection } from '../dom/direction.js';
 import {
   closingFocusState,

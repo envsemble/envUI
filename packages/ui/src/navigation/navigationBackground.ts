@@ -5,8 +5,3 @@
  * surface's color.
  */
 export type NavigationBackground = 'default' | 'page';
-
-/** The data attribute a navigation form or a top bar renders for its background. */
-export function backgroundAttribute(background: NavigationBackground) {
-  return background;
-}

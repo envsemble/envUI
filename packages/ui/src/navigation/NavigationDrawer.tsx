@@ -21,7 +21,11 @@ import { useLatest } from '../internal/react/useLatest.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { ResizeHandle } from '../layout/ResizeHandle.js';
 import { containerWidth, useResizableWidth } from '../internal/resize/useResizableWidth.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import {
   destinationKey,
   DestinationItem,
@@ -31,7 +35,7 @@ import {
   type DestinationClasses,
 } from './internal/DestinationItem.js';
 import type { NavigationDrawerDestination } from './destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import type { NavigationBackground } from './navigationBackground.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
@@ -497,7 +501,7 @@ export function NavigationDrawer({
             }
           : style
       }
-      data-background={backgroundAttribute(background)}
+      data-background={background}
       data-resizable={flag(resizable)}
       align="stretch"
       gap={3}

@@ -11,7 +11,7 @@ import { Column, Row, type SpaceStep } from './Layout.js';
 import { Surface } from './Surface.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
-import { given, type SkeletonProps } from '../internal/skeleton.js';
+import { given, type SkeletonProps } from '../internal/skeleton/skeleton.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
 import { rendersContent } from '../internal/react/rendersContent.js';

@@ -8,7 +8,12 @@ import { Spinner } from '../feedback/Spinner.js';
 import { IconError } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
 import { MessageListFollow } from './internal/MessageListFollow.js';
-import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  given,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import { flag } from '../internal/flag.js';
 import { rendersContent } from '../internal/react/rendersContent.js';
 import '../styles/Base.css';

@@ -1,8 +1,6 @@
-import {
-  themeBootstrapScript,
-  type ThemeDefinition,
-  type ThemePreference,
-} from './themeBootstrap.js';
+import type { ThemeDefinition, ThemePreference } from './themeBootstrap.js';
+import { themeBootstrapScript } from './internal/themeRoot.js';
+import { defaultThemeStorageKey } from './internal/storedPreference.js';
 
 /** Where the browser keeps the theme preference: the same for the hook and the head script. */
 export interface ThemeStorageOptions {
@@ -17,11 +15,6 @@ export interface ThemeStorageOptions {
    */
   defaultPreference?: ThemePreference;
 }
-
-export const defaultThemeStorageKey = 'env-theme';
-
-export const isThemePreference = (value: unknown): value is ThemePreference =>
-  value === 'light' || value === 'dark' || value === 'system';
 
 /**
  * Inline script for the document head of an application that keeps the theme preference with

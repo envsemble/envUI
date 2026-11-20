@@ -1,10 +1,8 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { useContext } from 'react';
 import type { ToastManager } from './toastTypes.js';
-
-/** The manager of the nearest ToastProvider. */
-export const ToastManagerContext = createContext<ToastManager | null>(null);
+import { ToastManagerContext } from './internal/ToastManagerContext.js';
 
 /**
  * Shows and dismisses notifications through the nearest ToastProvider: show, dismiss and clear.
