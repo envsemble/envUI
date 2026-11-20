@@ -448,9 +448,6 @@
           "$value": "{contrast-high.color.fg.link.pressed}"
         }
       },
-      "rating-star": {
-        "$value": "{contrast-high.color.fg.rating-star}"
-      },
       "avatar": {
         "powder": {
           "$value": "{contrast-high.color.fg.avatar.powder}"

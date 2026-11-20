@@ -24,7 +24,6 @@ import {
   Composer,
   Message,
   MessageList,
-  CalendarHeatmap,
   Combobox,
   RelativeTime,
   AvatarGroup,
@@ -245,16 +244,6 @@ export function HydrationApp() {
           onFilesAccepted={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
         />
         <p>{files}</p>
-        <CalendarHeatmap
-          aria-label="Hydrated activity"
-          data={[
-            { date: '2026-03-02', value: 3 },
-            { date: '2026-03-09', value: 1200 },
-            { date: '2026-03-16', value: 7 },
-          ]}
-          startDate="2026-03-01"
-          endDate="2026-03-31"
-        />
         <RelativeTime
           data-testid="hydrated-relative-time"
           value="2026-10-16T12:00:00Z"

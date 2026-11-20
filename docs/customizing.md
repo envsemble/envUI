@@ -64,11 +64,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - States: `data-env-skeleton` on `env-alert`, `env-alert-message`, `env-alert-title`; `data-tone` (`danger`, `info`, `success`, `warning`)
 - Color properties: `--env-alert-container`, `--env-alert-content`, `--env-alert-outline`, `--env-alert-icon`
 
-### AnimatedNumber
-
-- Parts: `env-animated-number`, `env-animated-number-previous`, `env-animated-number-value`
-- States: `data-direction` (`down`, `up`) on `env-animated-number-previous`, `env-animated-number-value`; `data-value` on `env-animated-number-previous`
-
 ### Avatar
 
 - Parts: `env-avatar`, `env-avatar-badge` (slot), `env-avatar-check`, `env-avatar-fallback`, `env-avatar-fallback-content` (slot), `env-avatar-fallback-initials`, `env-avatar-fallback-person`, `env-avatar-image`, `env-avatar-person`, `env-avatar-person-background`, `env-avatar-person-figure`
@@ -111,16 +106,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 - Parts: `env-calendar`, `env-calendar-day`, `env-calendar-day-content` (slot), `env-calendar-day-mark`, `env-calendar-grid`, `env-calendar-header`, `env-calendar-next`, `env-calendar-pad`, `env-calendar-previous`, `env-calendar-title`
 - States: `data-date` on `env-calendar-day`
-
-### CalendarHeatmap
-
-- Parts: `env-calendar-heatmap`, `env-calendar-heatmap-corner`, `env-calendar-heatmap-day`, `env-calendar-heatmap-grid`, `env-calendar-heatmap-month`, `env-calendar-heatmap-pad`, `env-calendar-heatmap-scroll`, `env-calendar-heatmap-swatch`, `env-calendar-heatmap-tooltip`, `env-calendar-heatmap-tooltip-positioner`, `env-calendar-heatmap-weekday`
-- States: `data-closed` on `env-calendar-heatmap-tooltip-positioner`; `data-date` on `env-calendar-heatmap-day`; `data-day` on `env-calendar-heatmap-day`; `data-level` on `env-calendar-heatmap-day`, `env-calendar-heatmap-swatch`; `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`)
-
-### CalendarHeatmapLegend
-
-- Parts: `env-calendar-heatmap-legend`
-- States: `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`)
 
 ### Card
 
@@ -205,10 +190,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 - Parts: `env-dialog`, `env-dialog-actions`, `env-dialog-actions-start` (slot), `env-dialog-backdrop`, `env-dialog-content`, `env-dialog-description`, `env-dialog-header`, `env-dialog-header-end` (slot), `env-dialog-header-start` (slot), `env-dialog-heading`, `env-dialog-positioner`, `env-dialog-surface`, `env-dialog-title`
 - States: `data-ending-style` on `env-dialog`, `env-dialog-backdrop`; `data-env-skeleton`; `data-placement` (`center`, `top`) on `env-dialog`, `env-dialog-positioner`; `data-starting-style` on `env-dialog`, `env-dialog-backdrop`; `data-tone` (`danger`, `neutral`); `data-width` (`lg`, `md`)
-
-### DiffStat
-
-- Parts: `env-diff-stat`, `env-diff-stat-additions`, `env-diff-stat-deletions`, `env-diff-stat-label`
 
 ### Disclosure
 
@@ -368,11 +349,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 - Parts: `env-radio-group`, `env-radio-group-description`, `env-radio-group-description-content` (slot), `env-radio-group-error`, `env-radio-group-label` (slot)
 - States: `data-orientation` (`horizontal`, `vertical`)
-
-### Rating
-
-- Parts: `env-rating`, `env-rating-star`, `env-rating-star-half`, `env-rating-stars`, `env-rating-value`
-- States: `data-fill` (`full`, `half`) on `env-rating-star`
 
 ### RelativeTime
 
@@ -547,7 +523,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - `--env-popup-opacity`, to set: How much of a frosted popup's fill covers what is behind it.
 - `--env-popup-blur`, to set: How much a frosted popup blurs what shows through it.
 - `--env-popup-shadow`, to set: The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid.
-- Used by: Breadcrumbs, CalendarHeatmap, CalendarHeatmapLegend, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
+- Used by: Breadcrumbs, ColorPickerButton, Combobox, CopyButton, DatePicker, HoverCard, Menu, Menubar, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, TimePicker, Tooltip
 
 ### Prose
 
@@ -557,7 +533,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Skeleton
 
 - Parts: `env-skeleton-content`, `env-skeleton-status`
-- Used by: Accordion, Alert, Breadcrumbs, CalendarHeatmap, CalendarHeatmapLegend, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
+- Used by: Accordion, Alert, Breadcrumbs, Card, ColorPickerButton, Combobox, CommandPalette, ConfirmDialog, CopyButton, DatePicker, Dialog, HoverCard, List, Menu, Menubar, Message, MessageList, MonthPicker, NavigationBar, NavigationDrawer, NavigationRail, Popover, RelativeTime, SegmentedControl, Select, Sheet, Surface, Table, TimePicker, Tooltip, TopBar
 
 ### TimeList
 

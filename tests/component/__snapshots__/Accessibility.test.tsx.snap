@@ -37,8 +37,6 @@ exports[`button-counts has no new accessibility violations 1`] = `{}`;
 
 exports[`button-group has no new accessibility violations 1`] = `{}`;
 
-exports[`calendar-heatmap has no new accessibility violations 1`] = `{}`;
-
 exports[`card has no new accessibility violations 1`] = `{}`;
 
 exports[`choice-controls has no new accessibility violations 1`] = `{}`;

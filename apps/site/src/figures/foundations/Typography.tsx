@@ -11,6 +11,7 @@ import {
 } from '@envsemble/envui';
 import { useTimeline } from '../../motion/Timeline';
 import { WidthSweep } from '../../motion/WidthSweep';
+import ChangingNumber from '../../examples/typography/ChangingNumber';
 import type { FoundationFigureEntry } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
@@ -223,6 +224,14 @@ function MeasureFigure() {
   );
 }
 
+function ChangingNumberFigure({ caption }: { caption?: string }) {
+  return (
+    <FoundationFrame label="A number that changes" caption={caption}>
+      <ChangingNumber />
+    </FoundationFrame>
+  );
+}
+
 export const typographyFigures: Record<string, FoundationFigureEntry> = {
   Screen: { render: ScreenFigure, wide: true },
   Styles: { render: StylesFigure, wide: true },
@@ -230,4 +239,5 @@ export const typographyFigures: Record<string, FoundationFigureEntry> = {
   Hierarchy: { render: HierarchyFigure },
   TextSize: { render: TextSizeFigure },
   Measure: { render: MeasureFigure, wide: true },
+  ChangingNumber: { render: ChangingNumberFigure },
 };

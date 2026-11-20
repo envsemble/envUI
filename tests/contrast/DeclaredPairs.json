@@ -6929,20 +6929,6 @@
         "high": 4.5
       }
     },
-    "heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-page": {
-      "kind": "distinct",
-      "minimum": {
-        "standard": 0.03,
-        "high": 0.04
-      }
-    },
-    "heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-recessed": {
-      "kind": "distinct",
-      "minimum": {
-        "standard": 0.03,
-        "high": 0.04
-      }
-    },
     "popup-row-highlight on popup-frosted over --env-color-bg-default": {
       "kind": "difference",
       "minimum": {
@@ -7305,7 +7291,9 @@
     "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis-pressed",
     "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis",
     "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-hover",
-    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-pressed"
+    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-pressed",
+    "heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-page",
+    "heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-recessed"
   ],
   "renamed": [
     "--color-action-strip on --color-bg-muted",

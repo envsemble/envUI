@@ -72,11 +72,6 @@
       "env-alert-row": "The row of the title and message with the actions at its end, which wraps them below where it runs out of room.",
       "env-alert-title": "The alert's title."
     },
-    "AnimatedNumber": {
-      "env-animated-number": "The number, which animates when its value changes.",
-      "env-animated-number-value": "The digits as they change.",
-      "env-animated-number-previous": "The value it changed from, while it leaves; hidden from assistive technology, its text drawn from data-value."
-    },
     "Avatar": {
       "env-avatar": "The avatar: an image, initials or a figure in a circle.",
       "env-avatar-badge": "The slot of the small mark at the avatar's bottom end, such as a presence dot.",
@@ -140,22 +135,6 @@
       "env-calendar-next": "The button for the next month.",
       "env-calendar-pad": "An empty cell before the first day or after the last.",
       "env-calendar-previous": "The button for the previous month."
-    },
-    "CalendarHeatmap": {
-      "env-calendar-heatmap": "The heatmap of days over months.",
-      "env-calendar-heatmap-corner": "The empty corner above the weekday labels.",
-      "env-calendar-heatmap-day": "One day's cell, filled by its level.",
-      "env-calendar-heatmap-grid": "The grid of days.",
-      "env-calendar-heatmap-month": "A month's label above the grid.",
-      "env-calendar-heatmap-pad": "An empty cell outside the range.",
-      "env-calendar-heatmap-scroll": "The region that scrolls the grid sideways.",
-      "env-calendar-heatmap-swatch": "One level's swatch in the legend.",
-      "env-calendar-heatmap-tooltip": "The tooltip of a day.",
-      "env-calendar-heatmap-tooltip-positioner": "The tooltip's positioner.",
-      "env-calendar-heatmap-weekday": "A weekday's label beside the grid."
-    },
-    "CalendarHeatmapLegend": {
-      "env-calendar-heatmap-legend": "The legend of levels."
     },
     "Card": {
       "env-card": "The card's surface.",
@@ -336,12 +315,6 @@
       "env-dialog-positioner": "The positioner that centres the dialog.",
       "env-dialog-surface": "The dialog's surface.",
       "env-dialog-title": "The title."
-    },
-    "DiffStat": {
-      "env-diff-stat": "The count of added and removed lines.",
-      "env-diff-stat-additions": "The added lines.",
-      "env-diff-stat-deletions": "The removed lines.",
-      "env-diff-stat-label": "The label for assistive technology."
     },
     "Disclosure": {
       "env-disclosure": "The disclosure: a summary that shows and hides a panel.",
@@ -642,13 +615,6 @@
       "env-radio-group-description-content": "The slot of the description.",
       "env-radio-group-error": "The error under the options.",
       "env-radio-group-label": "The slot of the group's label, in its legend."
-    },
-    "Rating": {
-      "env-rating": "The rating.",
-      "env-rating-star": "One star.",
-      "env-rating-star-half": "The filled half of a half star.",
-      "env-rating-stars": "The row of stars.",
-      "env-rating-value": "The rating as text."
     },
     "RelativeTime": {
       "env-relative-time": "A time relative to now, with the exact time in a tooltip."

@@ -197,44 +197,6 @@
         }
       ]
     },
-    "AnimatedNumber": {
-      "root": "env-animated-number",
-      "source": "packages/ui/src/data-display/AnimatedNumber.tsx",
-      "parts": [
-        {
-          "class": "env-animated-number",
-          "description": "The number, which animates when its value changes."
-        },
-        {
-          "class": "env-animated-number-previous",
-          "description": "The value it changed from, while it leaves; hidden from assistive technology, its text drawn from data-value."
-        },
-        {
-          "class": "env-animated-number-value",
-          "description": "The digits as they change."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-direction",
-          "values": [
-            "down",
-            "up"
-          ],
-          "parts": [
-            "env-animated-number-previous",
-            "env-animated-number-value"
-          ]
-        },
-        {
-          "attribute": "data-value",
-          "values": [],
-          "parts": [
-            "env-animated-number-previous"
-          ]
-        }
-      ]
-    },
     "Avatar": {
       "root": "env-avatar",
       "source": "packages/ui/src/data-display/Avatar.tsx",
@@ -790,141 +752,6 @@
       "uses": [
         "Icon",
         "IconButton"
-      ]
-    },
-    "CalendarHeatmap": {
-      "root": "env-calendar-heatmap",
-      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
-      "parts": [
-        {
-          "class": "env-calendar-heatmap",
-          "description": "The heatmap of days over months."
-        },
-        {
-          "class": "env-calendar-heatmap-corner",
-          "description": "The empty corner above the weekday labels."
-        },
-        {
-          "class": "env-calendar-heatmap-day",
-          "description": "One day's cell, filled by its level."
-        },
-        {
-          "class": "env-calendar-heatmap-grid",
-          "description": "The grid of days."
-        },
-        {
-          "class": "env-calendar-heatmap-month",
-          "description": "A month's label above the grid."
-        },
-        {
-          "class": "env-calendar-heatmap-pad",
-          "description": "An empty cell outside the range."
-        },
-        {
-          "class": "env-calendar-heatmap-scroll",
-          "description": "The region that scrolls the grid sideways."
-        },
-        {
-          "class": "env-calendar-heatmap-swatch",
-          "description": "One level's swatch in the legend."
-        },
-        {
-          "class": "env-calendar-heatmap-tooltip",
-          "description": "The tooltip of a day."
-        },
-        {
-          "class": "env-calendar-heatmap-tooltip-positioner",
-          "description": "The tooltip's positioner."
-        },
-        {
-          "class": "env-calendar-heatmap-weekday",
-          "description": "A weekday's label beside the grid."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-closed",
-          "values": [],
-          "parts": [
-            "env-calendar-heatmap-tooltip-positioner"
-          ]
-        },
-        {
-          "attribute": "data-date",
-          "values": [],
-          "parts": [
-            "env-calendar-heatmap-day"
-          ]
-        },
-        {
-          "attribute": "data-day",
-          "values": [],
-          "parts": [
-            "env-calendar-heatmap-day"
-          ]
-        },
-        {
-          "attribute": "data-level",
-          "values": [],
-          "parts": [
-            "env-calendar-heatmap-day",
-            "env-calendar-heatmap-swatch"
-          ]
-        },
-        {
-          "attribute": "data-tone",
-          "values": [
-            "accent",
-            "danger",
-            "done",
-            "neutral",
-            "primary",
-            "success",
-            "warning"
-          ],
-          "parts": [
-            "env-calendar-heatmap"
-          ]
-        }
-      ],
-      "uses": [
-        "Popup",
-        "Skeleton",
-        "Theme",
-        "Tooltip"
-      ]
-    },
-    "CalendarHeatmapLegend": {
-      "root": "env-calendar-heatmap-legend",
-      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
-      "parts": [
-        {
-          "class": "env-calendar-heatmap-legend",
-          "description": "The legend of levels."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-tone",
-          "values": [
-            "accent",
-            "danger",
-            "done",
-            "neutral",
-            "primary",
-            "success",
-            "warning"
-          ],
-          "parts": [
-            "env-calendar-heatmap-legend"
-          ]
-        }
-      ],
-      "uses": [
-        "Popup",
-        "Skeleton",
-        "Theme",
-        "Tooltip"
       ]
     },
     "Card": {
@@ -2219,29 +2046,6 @@
         "Surface",
         "Theme"
       ]
-    },
-    "DiffStat": {
-      "root": "env-diff-stat",
-      "source": "packages/ui/src/data-display/DiffStat.tsx",
-      "parts": [
-        {
-          "class": "env-diff-stat",
-          "description": "The count of added and removed lines."
-        },
-        {
-          "class": "env-diff-stat-additions",
-          "description": "The added lines."
-        },
-        {
-          "class": "env-diff-stat-deletions",
-          "description": "The removed lines."
-        },
-        {
-          "class": "env-diff-stat-label",
-          "description": "The label for assistive technology."
-        }
-      ],
-      "states": []
     },
     "Disclosure": {
       "root": "env-disclosure",
@@ -4406,47 +4210,6 @@
           ],
           "parts": [
             "env-radio-group"
-          ]
-        }
-      ],
-      "uses": [
-        "Icon"
-      ]
-    },
-    "Rating": {
-      "root": "env-rating",
-      "source": "packages/ui/src/data-display/Rating.tsx",
-      "parts": [
-        {
-          "class": "env-rating",
-          "description": "The rating."
-        },
-        {
-          "class": "env-rating-star",
-          "description": "One star."
-        },
-        {
-          "class": "env-rating-star-half",
-          "description": "The filled half of a half star."
-        },
-        {
-          "class": "env-rating-stars",
-          "description": "The row of stars."
-        },
-        {
-          "class": "env-rating-value",
-          "description": "The rating as text."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-fill",
-          "values": [
-            "full",
-            "half"
-          ],
-          "parts": [
-            "env-rating-star"
           ]
         }
       ],
@@ -6728,8 +6491,6 @@
       ],
       "usedBy": [
         "Breadcrumbs",
-        "CalendarHeatmap",
-        "CalendarHeatmapLegend",
         "ColorPickerButton",
         "Combobox",
         "CopyButton",
@@ -6779,8 +6540,6 @@
         "Accordion",
         "Alert",
         "Breadcrumbs",
-        "CalendarHeatmap",
-        "CalendarHeatmapLegend",
         "Card",
         "ColorPickerButton",
         "Combobox",

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   Alert,
-  AnimatedNumber,
   Avatar,
   Badge,
   NavigationBar,
@@ -135,7 +134,7 @@ export default function SkeletonFixture() {
           </Table.Root>
           <div data-testid="raw">Raw text in a div</div>
           <Text data-testid="inline-blocks">
-            Press <Kbd data-testid="kbd">K</Kbd> to open <AnimatedNumber value={42} /> projects.
+            Press <Kbd data-testid="kbd">K</Kbd> to open 42 projects.
           </Text>
           <Text data-testid="multi-line" style={{ inlineSize: '12rem' }}>
             A paragraph long enough to wrap onto several lines in its narrow column.

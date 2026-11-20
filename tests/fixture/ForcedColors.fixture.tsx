@@ -12,7 +12,6 @@ import {
   Pagination,
   Radio,
   RadioGroup,
-  Rating,
   SegmentedControl,
   Select,
   Switch,
@@ -184,7 +183,6 @@ export default function ForcedColorsFixture() {
           { value: 'b', label: 'Other.md' },
         ]}
       />
-      <Rating value={3} />
       <TableOfContents
         aria-label="Sections"
         items={[

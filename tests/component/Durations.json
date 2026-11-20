@@ -7,7 +7,6 @@
     "tests/component/Breadcrumbs.test.tsx": 1,
     "tests/component/Button.test.tsx": 2.4,
     "tests/component/ButtonGroup.test.tsx": 0.2,
-    "tests/component/CalendarHeatmap.test.tsx": 6.3,
     "tests/component/CascadeLayers.test.tsx": 0.9,
     "tests/component/Checkbox.test.tsx": 0.6,
     "tests/component/CodeBlock.test.tsx": 0.3,

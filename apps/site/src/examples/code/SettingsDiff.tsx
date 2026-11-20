@@ -1,5 +1,5 @@
-import { Column, DiffStat, Row, Text } from '@envsemble/envui';
-import { CodeDiff, countDiffLines } from '@envsemble/envui/diff';
+import { Column, Text } from '@envsemble/envui';
+import { CodeDiff } from '@envsemble/envui/diff';
 
 const saved = `{
   "theme": "light",
@@ -16,15 +16,11 @@ const draft = `{
 `;
 
 export default function SettingsDiff() {
-  const { additions, deletions } = countDiffLines(saved, draft, 'settings.json');
   return (
     <Column gap={3} style={{ inlineSize: '100%' }}>
-      <Row align="center" gap={2}>
-        <Text render={<h3 />} variant="title">
-          Unsaved changes
-        </Text>
-        <DiffStat additions={additions} deletions={deletions} />
-      </Row>
+      <Text render={<h3 />} variant="title">
+        Unsaved changes
+      </Text>
       <CodeDiff filename="settings.json" before={saved} after={draft} />
     </Column>
   );

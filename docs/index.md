@@ -71,9 +71,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Avatar](components/avatar.md)
 - [Graphic](components/graphic.md)
 - [Meter](components/meter.md)
-- [Rating](components/rating.md)
-- [CalendarHeatmap](components/calendar-heatmap.md)
-- [AnimatedNumber](components/animated-number.md)
 - [RelativeTime](components/relative-time.md)
 
 ## Text & content

@@ -75,22 +75,18 @@ export * from './navigation/Pagination.js';
 
 export * as List from './data-display/List.js';
 export * from './data-display/Badge.js';
-export * from './data-display/DiffStat.js';
 export * as Table from './data-display/Table.js';
 export * from './data-display/Avatar.js';
 export * from './data-display/AvatarButton.js';
 export * from './data-display/AvatarGroup.js';
 export * from './data-display/Graphic.js';
-export * from './data-display/AnimatedNumber.js';
 export * from './data-display/RelativeTime.js';
 export {
   formatRelativeTime,
   type RelativeTimeOptions,
   type RelativeTimeValue,
 } from './data-display/formatRelativeTime.js';
-export * from './data-display/Rating.js';
 export * as DescriptionList from './data-display/DescriptionList.js';
-export * from './data-display/CalendarHeatmap.js';
 export * from './data-display/Meter.js';
 
 export * from './content/Disclosure.js';

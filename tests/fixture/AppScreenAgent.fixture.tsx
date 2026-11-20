@@ -8,7 +8,6 @@ import {
   Composer,
   CopyButton,
   Dialog,
-  DiffStat,
   IconButton,
   Kbd,
   List,
@@ -171,12 +170,9 @@ function Conversation() {
               I added up to three retries with exponential backoff for 5xx responses, and a
               10-second timeout on every attempt. All 50 runs pass now; the whole suite is running.
             </Text>
-            <Row align="center" gap={2}>
-              <Text variant="body-sm" emphasis="muted">
-                1 file changed
-              </Text>
-              <DiffStat additions={additions} deletions={deletions} />
-            </Row>
+            <Text variant="body-sm" emphasis="muted">
+              1 file changed, {additions} lines added and {deletions} removed
+            </Text>
             <CodeDiff
               filename="src/webhooks/deliver.ts"
               language="ts"

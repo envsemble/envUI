@@ -33,11 +33,6 @@ test('a default that names a private value shows the value, or nothing', () => {
     props('DocumentTabs').closeLabel.default,
     "'Close {label}', or EnvUIProvider's messages.documentTabs.close",
   );
-  assert.equal(props('Rating').formatLabel.default, "'{value} out of {max} stars'");
-  assert.equal(
-    props('CalendarHeatmap').formatValue.default,
-    "the number format of EnvUIProvider's locale, or else the browser's",
-  );
   for (const [name, entry] of Object.entries(exports))
     for (const prop of entry.props ?? [])
       if (

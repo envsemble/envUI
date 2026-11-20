@@ -1,22 +1,17 @@
 import {
-  AnimatedNumber,
   Avatar,
   AvatarButton,
   AvatarGroup,
   Badge,
   Button,
-  CalendarHeatmap,
   DescriptionList,
-  DiffStat,
   Graphic,
   IconButton,
   Link,
   List,
   Meter,
-  Rating,
   RelativeTime,
   Table,
-  type CalendarHeatmapDay,
 } from '@envsemble/envui';
 import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconDescription } from '@envsemble/envui/icons/Description';
@@ -56,29 +51,6 @@ const wide =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 64"><rect width="160" height="64" fill="#1d4ed8"/>' +
       '<circle cx="32" cy="32" r="18" fill="#fbbf24"/></svg>',
   );
-
-function Numbers() {
-  return (
-    <Section name="AnimatedNumber">
-      <Strip>
-        <Cell caption="Integer">
-          <AnimatedNumber value={1284} />
-        </Cell>
-        <Cell caption="Formatted">
-          <AnimatedNumber value={0.732} formatValue={(value) => `${(value * 100).toFixed(1)}%`} />
-        </Cell>
-        <Cell caption="In a heading">
-          <span style={{ fontSize: '2rem' }}>
-            <AnimatedNumber
-              value={48210}
-              formatValue={(value) => `$${value.toLocaleString('en-US')}`}
-            />
-          </span>
-        </Cell>
-      </Strip>
-    </Section>
-  );
-}
 
 function Avatars() {
   return (
@@ -161,7 +133,7 @@ const badgeTones = [
 
 function Badges() {
   return (
-    <Section name="Badge and DiffStat">
+    <Section name="Badge">
       {(['soft', 'solid', 'outline'] as const).map((variant) => (
         <Strip key={variant} label={variant} middle>
           {badgeTones.map((tone) => (
@@ -184,51 +156,6 @@ function Badges() {
           </Cell>
         </Strip>
       ))}
-      <Strip label="DiffStat">
-        <Cell caption="Both">
-          <DiffStat additions={128} deletions={14} />
-        </Cell>
-        <Cell caption="Additions only">
-          <DiffStat additions={40} deletions={0} />
-        </Cell>
-        <Cell caption="Deletions only">
-          <DiffStat additions={0} deletions={9} />
-        </Cell>
-      </Strip>
-    </Section>
-  );
-}
-
-const heatmap: CalendarHeatmapDay[] = Array.from({ length: 140 }, (_, index) => ({
-  date: new Date(Date.UTC(2026, 5, 1) + index * 86_400_000).toISOString().slice(0, 10),
-  value: Math.round((Math.sin(index / 4) + 1) * 3 + (index % 7 === 3 ? 4 : 0)),
-}));
-
-function Heatmaps() {
-  return (
-    <Section name="CalendarHeatmap">
-      <Strip>
-        {(['primary', 'neutral', 'accent', 'success', 'warning', 'danger', 'done'] as const).map(
-          (tone) => (
-            <Cell key={tone} caption={`${tone}, 4 levels`}>
-              <CalendarHeatmap
-                aria-label={`Edits, ${tone}`}
-                data={heatmap}
-                levels={4}
-                weekStart={1}
-                tone={tone}
-              />
-            </Cell>
-          ),
-        )}
-        <Cell
-          caption="Day hovered"
-          force="hover"
-          target="[data-date='2026-08-05'], [role=gridcell]:nth-of-type(20)"
-        >
-          <CalendarHeatmap aria-label="Edits" data={heatmap} levels={4} weekStart={1} />
-        </Cell>
-      </Strip>
     </Section>
   );
 }
@@ -401,7 +328,7 @@ function Lists() {
 
 function Measures() {
   return (
-    <Section name="Meter, Rating, RelativeTime">
+    <Section name="Meter, RelativeTime">
       <Strip label="Meter">
         {[0, 35, 80, 100].map((value) => (
           <Cell key={value} caption={`${value}%`} width="12rem">
@@ -410,19 +337,6 @@ function Measures() {
         ))}
         <Cell caption="Value text" width="12rem">
           <Meter label="Seats" value={9} max={12} valueText="9 of 12" />
-        </Cell>
-      </Strip>
-      <Strip label="Rating">
-        {[0, 2.5, 4, 5].map((value) => (
-          <Cell key={value} caption={`${value} of 5`}>
-            <Rating value={value} />
-          </Cell>
-        ))}
-        <Cell caption="Value shown">
-          <Rating value={4.3} showValue />
-        </Cell>
-        <Cell caption="Out of 10">
-          <Rating value={7} max={10} />
         </Cell>
       </Strip>
       <Strip label="RelativeTime">
@@ -564,10 +478,8 @@ function Tables() {
 export function DataDisplaySheet() {
   return (
     <>
-      <Numbers />
       <Avatars />
       <Badges />
-      <Heatmaps />
       <Descriptions />
       <Graphics />
       <Lists />

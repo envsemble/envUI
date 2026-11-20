@@ -1,12 +1,4 @@
-import {
-  AnimatedNumber,
-  Badge,
-  Button,
-  DiffStat,
-  Theme,
-  type ColorScheme,
-  Row,
-} from '@envsemble/envui';
+import { Badge, Button, Theme, type ColorScheme, Row } from '@envsemble/envui';
 
 export const themes = true;
 
@@ -26,15 +18,13 @@ export default function ButtonCountsFixture({ theme }: { theme: ColorScheme }) {
       <Row wrap align="center" gap={4}>
         {variants.map((variant) => (
           <Button key={variant} {...emphasis[variant]}>
-            {variant} <Badge count={7} /> <Badge tone="success">New</Badge>{' '}
-            <DiffStat additions={3} deletions={1} />
+            {variant} <Badge count={7} /> <Badge tone="success">New</Badge>
           </Button>
         ))}
       </Row>
       <Button data-testid={`show-tasks-${theme}`}>
-        Show <AnimatedNumber value={33} /> tasks
+        Show <strong data-testid="tasks-count">33</strong> tasks
       </Button>
-      <DiffStat additions={12} deletions={3} data-testid={`diff-stat-${theme}`} />
       <Badge count={7} data-testid={`badge-${theme}`} />
       <Row>
         <div>

@@ -3,7 +3,6 @@ import { alert } from './alert.js';
 import { avatarGroup } from './avatarGroup.js';
 import { breadcrumbs } from './breadcrumbs.js';
 import { calendar } from './calendar.js';
-import { calendarHeatmap } from './calendarHeatmap.js';
 import { codeBlock } from './codeBlock.js';
 import { codeDiff } from './codeDiff.js';
 import { colorPicker } from './colorPicker.js';
@@ -15,7 +14,6 @@ import { confirmDialog } from './confirmDialog.js';
 import { copyButton } from './copyButton.js';
 import { datePicker } from './datePicker.js';
 import { dialog } from './dialog.js';
-import { diffStat } from './diffStat.js';
 import { documentTabs } from './documentTabs.js';
 import { list } from './list.js';
 import { markdown } from './markdown.js';
@@ -25,7 +23,6 @@ import { navigation } from './navigation.js';
 import { pager } from './pager.js';
 import { pagination } from './pagination.js';
 import { panes } from './panes.js';
-import { rating } from './rating.js';
 import { relativeTime } from './relativeTime.js';
 import { scaffold } from './scaffold.js';
 import { searchField } from './searchField.js';
@@ -50,7 +47,6 @@ export const defaultMessages = {
   avatarGroup,
   breadcrumbs,
   calendar,
-  calendarHeatmap,
   codeBlock,
   codeDiff,
   colorPicker,
@@ -62,7 +58,6 @@ export const defaultMessages = {
   copyButton,
   datePicker,
   dialog,
-  diffStat,
   documentTabs,
   list,
   markdown,
@@ -72,7 +67,6 @@ export const defaultMessages = {
   pager,
   pagination,
   panes,
-  rating,
   relativeTime,
   scaffold,
   searchField,

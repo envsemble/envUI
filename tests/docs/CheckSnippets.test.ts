@@ -56,7 +56,7 @@ test('it reports where a snippet disagrees with envUI, and nothing a fragment as
       '<Button variant="bogus">Save</Button>\n<Button frobnicate>Save</Button>\n<Tree aria-label="Files" items={rows} />',
     ),
     snippet(
-      "import { NotAThing } from '@envsemble/envui';\n<Accordion.Rooot />\n<EnvUIProvider messages={{ calendarHeatmap: { lesss: 'Quieter' } }}>…</EnvUIProvider>",
+      "import { NotAThing } from '@envsemble/envui';\n<Accordion.Rooot />\n<EnvUIProvider messages={{ avatarGroup: { mor: 'Others' } }}>…</EnvUIProvider>",
     ),
     snippet('<LoadingBar>\n  <App />\n</LoadingBar>'),
     snippet("toast.show({ messag: 'Saved' });", 'ts'),

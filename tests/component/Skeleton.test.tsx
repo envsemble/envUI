@@ -113,9 +113,6 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   await expect.poll(() => status.textContent).toBe('Loading: Owners loading');
 
   expect(style('[data-testid="kbd"]', 'text-decoration-line')).toBe('line-through');
-  expect(
-    style('[data-testid="inline-blocks"] .env-animated-number-value', 'text-decoration-line'),
-  ).toBe('line-through');
   const multi = byTestId('multi-line');
   expect(box(multi).height / Number.parseFloat(css(multi, 'line-height'))).toBeGreaterThanOrEqual(
     2,

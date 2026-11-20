@@ -241,32 +241,6 @@
         "@envsemble/envui"
       ]
     },
-    "AnimatedNumber": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/AnimatedNumber.tsx",
-      "description": "A number within text that rolls to its new value when it changes: up when it grows and down when it shrinks, so a count updated by other controls is noticed. The text is always the current value.",
-      "props": [
-        {
-          "name": "value",
-          "type": "number",
-          "required": true,
-          "description": "The number to show; when it changes, the new value rolls in, up as it grows, down as it shrinks."
-        },
-        {
-          "name": "formatValue",
-          "type": "(value: number) => string",
-          "required": false,
-          "default": "the number format of EnvUIProvider's locale, or else the browser's",
-          "description": "Writes the value as text, such as a currency."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Avatar": {
       "kind": "component",
       "source": "packages/ui/src/data-display/Avatar.tsx",
@@ -791,180 +765,6 @@
           "required": false,
           "default": "'Next month', or EnvUIProvider's messages.calendar.nextMonth",
           "description": "Accessible name of the next month button."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "CalendarHeatmap": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
-      "description": "A calendar of daily values with weeks as columns and weekdays as rows, colored in steps of a tone. Each day names its date and value, shows them in a tooltip on hover and focus, and the grid is one tab stop that the arrow keys move through.",
-      "props": [
-        {
-          "name": "data",
-          "type": "readonly CalendarHeatmapDay[]",
-          "required": true,
-          "description": "Values by day; days without an entry count as 0."
-        },
-        {
-          "name": "startDate",
-          "type": "string",
-          "required": false,
-          "description": "The first day shown, as YYYY-MM-DD; the earliest day in data by default."
-        },
-        {
-          "name": "endDate",
-          "type": "string",
-          "required": false,
-          "description": "The last day shown, as YYYY-MM-DD; the latest day in data by default."
-        },
-        {
-          "name": "levels",
-          "type": "number",
-          "required": false,
-          "default": "5",
-          "description": "Color steps including the empty step, 2 to 10; 5 by default."
-        },
-        {
-          "name": "maxValue",
-          "type": "number",
-          "required": false,
-          "description": "The value that takes the strongest color; the largest value shown by default."
-        },
-        {
-          "name": "thresholds",
-          "type": "readonly number[]",
-          "required": false,
-          "description": "The lowest value of each color step above the empty one, in ascending order, such as quantiles of the data to color by rank. Up to nine; they replace levels and maxValue. A day below the first threshold shows as empty, and a first threshold of 0 or less colors days of 0 too."
-        },
-        {
-          "name": "weekStart",
-          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
-          "required": false,
-          "default": "the locale's, or Monday where the browser cannot tell",
-          "description": "The first day of each week column, from 0 for Sunday to 6 for Saturday, as on Calendar."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
-          "required": false,
-          "default": "'primary'",
-          "description": "The tone the colors are mixed from: primary by default."
-        },
-        {
-          "name": "formatValue",
-          "type": "(value: number) => string",
-          "required": false,
-          "default": "the number format of EnvUIProvider's locale, or else the browser's",
-          "description": "Text for a value."
-        },
-        {
-          "name": "formatDate",
-          "type": "(date: string) => string",
-          "required": false,
-          "default": "the weekday, day, month and year in the locale, such as Tue 14 Oct 2025",
-          "description": "Text for a day's date, in its accessible name and the default tooltip."
-        },
-        {
-          "name": "renderTooltip",
-          "type": "(day: CalendarHeatmapCell) => ReactNode",
-          "required": false,
-          "description": "Tooltip content for a day; the date and value by default."
-        },
-        {
-          "name": "monthLabels",
-          "type": "readonly string[]",
-          "required": false,
-          "default": "the locale's short month names, from Intl",
-          "description": "Twelve month names above the weeks, from January."
-        },
-        {
-          "name": "weekdayLabels",
-          "type": "readonly string[]",
-          "required": false,
-          "default": "the locale's short weekday names, from Intl",
-          "description": "Seven weekday names beside the rows, from Sunday."
-        },
-        {
-          "name": "legend",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "The legend of color steps under the grid; turn it off in a compact card, where the application explains the colors itself, or to place a CalendarHeatmapLegend elsewhere, such as beside a heading."
-        },
-        {
-          "name": "lessLabel",
-          "type": "ReactNode",
-          "required": false,
-          "default": "'Less'",
-          "description": "Legend content before the lightest color, such as 0. It overrides EnvUIProvider's `messages.calendarHeatmap.less`."
-        },
-        {
-          "name": "moreLabel",
-          "type": "ReactNode",
-          "required": false,
-          "default": "'More'",
-          "description": "Legend content after the strongest color, such as 20+ deploys. It overrides EnvUIProvider's `messages.calendarHeatmap.more`."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`aria-labelledby` is not set",
-          "description": "Names the grid of days, such as \"Deployments in the last year\"; this or aria-labelledby."
-        },
-        {
-          "name": "aria-labelledby",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`aria-label` is not set",
-          "description": "The id of visible text that names the grid of days, such as a heading; this or aria-label."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "CalendarHeatmapLegend": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
-      "description": "A CalendarHeatmap's legend of color steps on its own, for the application to place, such as beside the heading above a heatmap with legend false. Give it the heatmap's levels and tone. Like the built-in legend, it is hidden from assistive technology, since each day names its value.",
-      "props": [
-        {
-          "name": "levels",
-          "type": "number",
-          "required": false,
-          "default": "5",
-          "description": "The heatmap's color steps including the empty step, 2 to 10: its levels, or one more than the number of its thresholds."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
-          "required": false,
-          "default": "'primary'",
-          "description": "The heatmap's tone, which the colors are mixed from."
-        },
-        {
-          "name": "lessLabel",
-          "type": "ReactNode",
-          "required": false,
-          "default": "'Less'",
-          "description": "Content before the lightest color, such as 0. It overrides EnvUIProvider's `messages.calendarHeatmap.less`."
-        },
-        {
-          "name": "moreLabel",
-          "type": "ReactNode",
-          "required": false,
-          "default": "'More'",
-          "description": "Content after the strongest color, such as 20+ deploys. It overrides EnvUIProvider's `messages.calendarHeatmap.more`."
         }
       ],
       "native": [
@@ -3065,38 +2865,6 @@
       ],
       "native": [
         "button"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "DiffStat": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/DiffStat.tsx",
-      "description": "The size of a change as one compact pill, such as +12 −3: additions in the success tone and deletions in the danger tone, on a counter badge's quiet fill.",
-      "props": [
-        {
-          "name": "additions",
-          "type": "number",
-          "required": true,
-          "description": "Lines or items added, shown as +12 in the success tone, in the locale's digits; left out where it is 0 and deletions aren't."
-        },
-        {
-          "name": "deletions",
-          "type": "number",
-          "required": true,
-          "description": "Lines or items removed, shown as −3 in the danger tone, in the locale's digits; left out where it is 0 and additions aren't."
-        },
-        {
-          "name": "formatLabel",
-          "type": "(additions: number, deletions: number) => string",
-          "required": false,
-          "default": "'{additions} added lines and {deletions} removed lines'",
-          "description": "Full meaning for assistive technology. It overrides EnvUIProvider's `messages.diffStat.label`."
-        }
-      ],
-      "native": [
-        "span"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6601,46 +6369,6 @@
         "@envsemble/envui"
       ]
     },
-    "Rating": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/Rating.tsx",
-      "description": "A read-only rating, such as a review score: stars filled to the value in half steps in their own gold, with an optional number before them, named once for assistive technology as an image, such as \"4.5 out of 5 stars\". It shows a rating; it does not ask for one.",
-      "props": [
-        {
-          "name": "value",
-          "type": "number",
-          "required": true,
-          "description": "The rating, from 0 to max, such as 4.5. It shows rounded to the nearest half star, kept within 0 and max; a value that is not a number, such as NaN, shows no stars filled."
-        },
-        {
-          "name": "max",
-          "type": "number",
-          "required": false,
-          "default": "5",
-          "description": "How many stars the scale has, as a whole number, such as 10. A fraction rounds to the nearest whole star; a value below 1 or not a number shows 5 stars."
-        },
-        {
-          "name": "showValue",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the rating as a number before the stars, such as 4.5, in tabular digits and the locale's number format, such as 4,5 in German. The number is the rounded value the stars show, and it is hidden from assistive technology, since the stars' name already says it."
-        },
-        {
-          "name": "formatLabel",
-          "type": "(value: number, max: number) => string",
-          "required": false,
-          "default": "'{value} out of {max} stars'",
-          "description": "Writes the accessible name of the stars from the shown value, rounded to a half star, and the number of stars. It overrides EnvUIProvider's `messages.rating.label`, which receives both as text in the locale's number format."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "RelativeTime": {
       "kind": "component",
       "source": "packages/ui/src/data-display/RelativeTime.tsx",
@@ -9341,7 +9069,7 @@
     "countDiffLines": {
       "kind": "function",
       "source": "packages/ui/src/content/countDiffLines.ts",
-      "description": "How many lines a change adds and removes, as a DiffStat shows them.",
+      "description": "How many lines a change adds and removes, such as for the size of a change beside its file's name.",
       "signature": "(before: string, after: string, filename?: string): { additions: number; deletions: number; }",
       "entries": [
         "@envsemble/envui/diff"

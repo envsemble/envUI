@@ -40,9 +40,6 @@
       "actions/Link.tsx": "composites",
       "actions/Toolbar.tsx": "composites",
       "data-display/AvatarGroup.tsx": "composites",
-      "data-display/CalendarHeatmap.tsx": "composites",
-      "data-display/internal/calendarHeatmapModel.ts": "composites",
-      "data-display/internal/useHeatmapLabels.ts": "composites",
       "layout/Card.tsx": "base",
       "content/CodeBlock.tsx": "composites",
       "content/HighlightedCodeBlock.tsx": "composites",
@@ -140,7 +137,7 @@
     "modules": []
   },
   "interactive": {
-    "$comment": "Raw interactive HTML. An <input type=\"hidden\"> and an element that is both aria-hidden and out of the tab order are not interactive. Widget roles count as interactive too; Tree, Calendar and CalendarHeatmap implement patterns no Base UI part covers, so they are the leaf controls for theirs.",
+    "$comment": "Raw interactive HTML. An <input type=\"hidden\"> and an element that is both aria-hidden and out of the tab order are not interactive. Widget roles count as interactive too; Tree and Calendar implement patterns no Base UI part covers, so they are the leaf controls for theirs.",
     "elements": ["button", "a", "input", "textarea", "select"],
     "roles": [
       "button",
@@ -175,7 +172,6 @@
       "navigation/internal/TreeRow.tsx": ["role=\"treeitem\""],
       "forms/Calendar.tsx": ["role=\"grid\""],
       "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
-      "data-display/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "forms/internal/FileInput.tsx": ["input"],
       "forms/color/ColorPickerButton.tsx": ["button"],
       "forms/color/internal/ColorArea.tsx": ["input"],
@@ -226,12 +222,6 @@
       },
       "Link": {
         "styles": ["Button.css"]
-      },
-      "AnimatedNumber": {
-        "styles": ["Text.css"]
-      },
-      "Badge": {
-        "modules": ["data-display/DiffStat.tsx"]
       },
       "Code": {
         "modules": [
