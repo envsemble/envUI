@@ -6,6 +6,7 @@ import { useResize } from '../resize/useResize.js';
 import { textarea as textareaMessages } from '../../foundations/messages/textarea.js';
 import type { TextareaControlProps } from './TextareaControl.js';
 import { pixelsOf } from '../dom/lengths.js';
+import { observeResize } from '../dom/observeResize.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
 import '../../styles/TextareaResizeEdge.css';
@@ -79,10 +80,7 @@ export function TextareaResizeEdge({
             : next;
         });
       measure();
-      if (typeof ResizeObserver === 'undefined') return;
-      const observer = new ResizeObserver(measure);
-      observer.observe(input);
-      return () => observer.disconnect();
+      return observeResize(input, measure);
     },
     [inputRef],
   );

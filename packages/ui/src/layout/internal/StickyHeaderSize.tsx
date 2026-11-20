@@ -1,6 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useRef } from 'react';
+import { observeResize } from '../../internal/dom/observeResize.js';
 
 const subpixelTolerance = 0.5;
 
@@ -37,16 +38,15 @@ export function StickyHeaderSize() {
       page?.style.setProperty('--_page-header-block-size', `${header.offsetHeight}px`);
     const isPagesOwnHeader = page?.getAttribute('data-env-layout') === 'page';
     if (isPagesOwnHeader) publish();
-    const observer = new ResizeObserver(() => {
+    const stopObserving = observeResize(header, () => {
       if (isPagesOwnHeader) publish();
       schedule();
     });
-    observer.observe(header);
     return () => {
       cancelAnimationFrame(frame);
       header.ownerDocument.removeEventListener('scroll', schedule, { capture: true });
       view.removeEventListener('resize', schedule);
-      observer.disconnect();
+      stopObserving();
       header.removeAttribute('data-scrolled');
       if (isPagesOwnHeader) page?.style.removeProperty('--_page-header-block-size');
     };

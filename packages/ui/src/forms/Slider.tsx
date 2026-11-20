@@ -27,6 +27,7 @@ import { useSliderReveal } from './internal/useSliderReveal.js';
 import { flag } from '../internal/flag.js';
 import { idRefs } from '../internal/dom/idRefs.js';
 import { pixelsOf } from '../internal/dom/lengths.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Slider.css';
 
@@ -180,11 +181,11 @@ export function Slider({
   );
   useEffect(function veilOnResize() {
     const element = control.current;
-    if (!element || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(() => veilIndicatorUnderText(element));
-    observer.observe(element);
-    for (const text of element.querySelectorAll('.env-slider-label, .env-slider-value'))
-      observer.observe(text);
+    if (!element) return;
+    const stopVeilingOnResize = observeResize(
+      [element, ...element.querySelectorAll('.env-slider-label, .env-slider-value')],
+      () => veilIndicatorUnderText(element),
+    );
     const veilWhereHandleComesToRest = (event: TransitionEvent) => {
       if (
         event.propertyName !== 'opacity' &&
@@ -194,7 +195,7 @@ export function Slider({
     };
     element.addEventListener('transitionend', veilWhereHandleComesToRest);
     return () => {
-      observer.disconnect();
+      stopVeilingOnResize();
       element.removeEventListener('transitionend', veilWhereHandleComesToRest);
     };
   }, []);

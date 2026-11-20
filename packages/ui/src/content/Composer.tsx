@@ -26,6 +26,7 @@ import { useFormReset } from '../internal/field/useFormReset.js';
 import { TextareaControl } from '../internal/field/TextareaControl.js';
 import { flag } from '../internal/flag.js';
 import { idRefs } from '../internal/dom/idRefs.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Composer.css';
 
@@ -131,19 +132,18 @@ function useContentHeightWithoutFieldSizing(
   }, [inputRef, text]);
   useEffect(() => {
     const input = inputRef.current;
-    if (!input || typeof ResizeObserver === 'undefined' || supportsFieldSizing(input)) return;
+    if (!input || supportsFieldSizing(input)) return;
     let width = input.clientWidth;
-    const refitWhenWidthRewrapsText = new ResizeObserver(() => {
+    const stopRefittingWhenWidthRewrapsText = observeResize(input, () => {
       if (input.clientWidth === width) return;
       width = input.clientWidth;
       fit.current();
     });
-    refitWhenWidthRewrapsText.observe(input);
     const fonts = input.ownerDocument.fonts;
     const refitWhenWebFontRewrapsText = () => fit.current();
     fonts?.addEventListener('loadingdone', refitWhenWebFontRewrapsText);
     return () => {
-      refitWhenWidthRewrapsText.disconnect();
+      stopRefittingWhenWidthRewrapsText();
       fonts?.removeEventListener('loadingdone', refitWhenWebFontRewrapsText);
     };
   }, [inputRef]);

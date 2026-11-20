@@ -33,6 +33,7 @@ import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { pixelsOf, remPixels } from '../internal/dom/lengths.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Code.css';
 
@@ -350,12 +351,9 @@ function useWideEnoughToSplitBeforePaint(
       root.clientWidth - pixelsOf(style.paddingLeft) - pixelsOf(style.paddingRight) >=
         splitFromOwnWidthRem * rem,
     );
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(([entry]) => {
+    return observeResize(root, ([entry]) => {
       if (entry) setWide(entry.contentRect.width >= splitFromOwnWidthRem * rem);
     });
-    observer.observe(root);
-    return () => observer.disconnect();
   }, [rootRef, measure]);
   return wide;
 }

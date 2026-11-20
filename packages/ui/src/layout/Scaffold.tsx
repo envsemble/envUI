@@ -20,6 +20,7 @@ import { resolveNavigationForms } from './internal/navigationForms.js';
 import { focusRegion } from './internal/scaffoldFocus.js';
 import { useNavigationFocusHandoff } from './internal/useNavigationFocusHandoff.js';
 import { ScaffoldPagesContext, useScaffoldPages } from './internal/PageTitleFocus.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Scaffold.css';
 
@@ -198,11 +199,9 @@ export function Scaffold({
         );
       };
       publish();
-      const observer = new ResizeObserver(publish);
-      for (const region of [topBarRegion, barSlot, bottomBarRegion])
-        if (region) observer.observe(region);
+      const stopObserving = observeResize([topBarRegion, barSlot, bottomBarRegion], publish);
       return () => {
-        observer.disconnect();
+        stopObserving();
         root.style.removeProperty('--_scaffold-top-bar-size');
         root.style.removeProperty('--_scaffold-bar-size');
         root.style.removeProperty('--_scaffold-bottom-size');

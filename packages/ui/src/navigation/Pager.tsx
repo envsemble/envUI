@@ -16,6 +16,7 @@ import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { useLinkComponent } from '../internal/provider/LinkComponentContext.js';
 import { useEnvUI, useMessages } from '../internal/provider/EnvUIContext.js';
 import { pager } from '../foundations/messages/pager.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Pager.css';
 
@@ -108,9 +109,9 @@ export interface RootProps extends ComponentPropsWithRef<'nav'> {
 function useStackedOnceWrapped(pager: RefObject<HTMLElement | null>, linkCount: number) {
   useLayoutEffect(() => {
     const element = pager.current;
-    if (!element || typeof ResizeObserver === 'undefined') return;
+    if (!element) return;
     let measuredWidth = -1;
-    const stackWhereLinksWrap = new ResizeObserver(() => {
+    return observeResize(element, function stackWhereLinksWrap() {
       if (element.clientWidth === measuredWidth) return;
       measuredWidth = element.clientWidth;
       delete element.dataset.stacked;
@@ -118,8 +119,6 @@ function useStackedOnceWrapped(pager: RefObject<HTMLElement | null>, linkCount: 
       const wrapped = links.some((link) => link.offsetTop !== links[0].offsetTop);
       if (wrapped) element.dataset.stacked = '';
     });
-    stackWhereLinksWrap.observe(element);
-    return () => stackWhereLinksWrap.disconnect();
   }, [pager, linkCount]);
 }
 

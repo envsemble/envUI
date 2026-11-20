@@ -3,6 +3,7 @@
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import type { RowDensity } from '../../foundations/Theme.js';
 import { defaultRemPixels, remPixels } from '../../internal/dom/lengths.js';
+import { observeResize } from '../../internal/dom/observeResize.js';
 import '../../styles/Base.css';
 import '../../styles/Tree.css';
 
@@ -66,9 +67,7 @@ export function useTreeViewport({
       else setRowHeight(comfortableRowRem[density] * remPixels());
     };
     measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
+    return observeResize(element, measure);
   }, [containerRef, density, hasItems]);
 
   const scrollToIndex = useCallback(

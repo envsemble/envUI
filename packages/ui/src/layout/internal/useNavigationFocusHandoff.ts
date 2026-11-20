@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { entryOf, focusRegion, showing } from './scaffoldFocus.js';
+import { observeResize } from '../../internal/dom/observeResize.js';
 
 /**
  * When the Scaffold's width changes the form that shows, focus in the form that hid goes to the
@@ -29,7 +30,7 @@ export function useNavigationFocusHandoff(
       if (!(event.target instanceof Node) || !slotThatLastHadFocus?.contains(event.target))
         slotThatLastHadFocus = null;
     };
-    const observer = new ResizeObserver(() => {
+    const handFocusOnFromHiddenForm = () => {
       if (!slotThatLastHadFocus || showing(slotThatLastHadFocus)) return;
       const active = document.activeElement;
       const focusMovedOnRatherThanHidingWithForm =
@@ -46,14 +47,14 @@ export function useNavigationFocusHandoff(
       const entry = entryOf(next);
       if (entry) entry.focus();
       else focusRegion(next);
-    });
+    };
     root.addEventListener('focusin', onFocusIn);
     document.addEventListener('pointerdown', onPointerDown, true);
-    observer.observe(root);
+    const stopObserving = observeResize(root, handFocusOnFromHiddenForm);
     return () => {
       root.removeEventListener('focusin', onFocusIn);
       document.removeEventListener('pointerdown', onPointerDown, true);
-      observer.disconnect();
+      stopObserving();
     };
   }, [root, hasNavigation, navigationId]);
 }

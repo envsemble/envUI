@@ -32,6 +32,7 @@ import { table as tableMessages } from '../foundations/messages/table.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { flag } from '../internal/flag.js';
 import { Slot } from '../internal/layout/Slot.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Table.css';
 
@@ -152,11 +153,7 @@ function useStackingAsTheContainerQueryLaidItOut(
       setStacked(getComputedStyle(grid).getPropertyValue('--_table-stacked').trim() === '1');
     };
     read();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(read);
-    observer.observe(element);
-    observer.observe(grid);
-    return () => observer.disconnect();
+    return observeResize([element, grid], read);
   }, [region, table, enabled, stackBelow]);
   return enabled && stacked;
 }
