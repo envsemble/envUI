@@ -3,12 +3,15 @@
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import type { RowDensity } from '../../../foundations/Theme.js';
 import { remPixels } from '../../../internal/dom/lengths.js';
+import { rowContentHeightRem, treeRowPaddingBlockRem } from '../../../internal/sizeTokens.js';
 import '../../../styles/Base.css';
 import '../../../styles/Tree.css';
 
 const overscanRows = 8;
 const rowsBeforeViewportIsMeasured = 24;
-const comfortableRowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.75 };
+const comfortableRowRem = (density: RowDensity) =>
+  rowContentHeightRem +
+  2 * (density === 'xs' ? treeRowPaddingBlockRem.sm / 2 : treeRowPaddingBlockRem[density]);
 const pixelsPerRemOnServer = 16;
 
 export interface TreeViewportOptions {
@@ -52,7 +55,7 @@ export function useTreeViewport({
 }: TreeViewportOptions): TreeViewport {
   const [scrollTop, setScrollTop] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(0);
-  const [rowHeight, setRowHeight] = useState(comfortableRowRem[density] * pixelsPerRemOnServer);
+  const [rowHeight, setRowHeight] = useState(comfortableRowRem(density) * pixelsPerRemOnServer);
   const revealedSelection = useRef<string | null>(null);
 
   const hasItems = count > 0;
@@ -64,7 +67,7 @@ export function useTreeViewport({
       const row = element.querySelector<HTMLElement>('.env-tree-item');
       const layoutHeightIgnoringTransforms = row ? parseFloat(getComputedStyle(row).blockSize) : 0;
       if (layoutHeightIgnoringTransforms) setRowHeight(layoutHeightIgnoringTransforms);
-      else setRowHeight(comfortableRowRem[density] * remPixels());
+      else setRowHeight(comfortableRowRem(density) * remPixels());
     };
     measure();
     const observer = new ResizeObserver(measure);

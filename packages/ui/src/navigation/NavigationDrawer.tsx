@@ -4,6 +4,7 @@ import { useMemo, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { classNames } from '../internal/classNames.js';
+import { navigationDrawerWidthRem } from '../internal/sizeTokens.js';
 import { landmarkLabel } from './internal/landmarkLabel.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { navigation } from '../foundations/messages/navigation.js';
@@ -153,7 +154,7 @@ export function NavigationDrawer({
   'aria-labelledby': labelledBy,
   resizable = false,
   width: controlledWidth,
-  defaultWidth = 17.5,
+  defaultWidth = navigationDrawerWidthRem,
   onWidthChange,
   minWidth = 15,
   maxWidth = 30,

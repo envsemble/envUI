@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { Column } from '../layout/Layout.js';
 import { classNames } from '../internal/classNames.js';
+import { sheetWidthRem } from '../internal/sizeTokens.js';
 import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/provider/EnvUIContext.js';
@@ -251,7 +252,7 @@ function useSheetWidth({
   const growsTowardStart = side === 'end';
   const resize = useResizableWidth({
     width: typeof width === 'number' ? width : undefined,
-    defaultWidth: defaultWidth ?? (width === 'lg' ? 44 : 24),
+    defaultWidth: defaultWidth ?? sheetWidthRem[width === 'lg' ? 'lg' : 'md'],
     minWidth,
     maxWidth,
     onWidthChange,
