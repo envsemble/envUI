@@ -10,6 +10,7 @@ import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
 import { MessageListFollow } from './internal/MessageListFollow.js';
 import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { flag } from '../internal/flag.js';
+import { rendersContent } from '../internal/react/rendersContent.js';
 import '../styles/Base.css';
 import '../styles/Message.css';
 
@@ -64,10 +65,6 @@ export interface MessageProps
   children?: ReactNode;
 }
 
-function present(node: ReactNode) {
-  return node != null && node !== false;
-}
-
 /**
  * One entry of a conversation, such as a chat message or a comment, as an article: a compact
  * bubble at the inline end for your own messages, full-width content for others', with an
@@ -88,15 +85,15 @@ export function Message(allProps: MessageProps) {
     children,
     ...props
   } = allProps;
-  const hasAuthor = present(author) || given(allProps, 'author');
-  const hasMeta = present(meta) || given(allProps, 'meta');
-  const hasStart = present(start);
-  const hasContent = status !== 'working' || (present(children) && children !== '');
+  const hasAuthor = rendersContent(author) || given(allProps, 'author');
+  const hasMeta = rendersContent(meta) || given(allProps, 'meta');
+  const hasStart = rendersContent(start);
+  const hasContent = status !== 'working' || (rendersContent(children) && children !== '');
   const rowsBesideStart =
     Number(hasAuthor || hasMeta) +
     Number(hasContent) +
     Number(status != null) +
-    Number(present(actions));
+    Number(rendersContent(actions));
   const styleWithRowsBesideStart: CSSProperties | undefined = hasStart
     ? { ...style, '--_message-rows': String(rowsBesideStart) }
     : style;
@@ -150,7 +147,7 @@ export function Message(allProps: MessageProps) {
               <MessageStatusLabel status={status} label={statusLabel} />
             </Row>
           )}
-          {present(actions) && (
+          {rendersContent(actions) && (
             <Slot className="env-message-actions" layout="row">
               <ControlDefaults variant="ghost" size="sm">
                 {actions}

@@ -24,6 +24,7 @@ import {
 } from '../internal/popup/PortalContainerContext.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
+import { rendersContent } from '../internal/react/rendersContent.js';
 
 const contextMenuParts = {
   Portal: BaseContextMenu.Portal,
@@ -80,7 +81,7 @@ function isContextMenuKey(event: KeyboardEvent) {
 
 function offersMenu(content: ContextMenuProps['content'], element: Element | null) {
   const node = contentFor(content, element);
-  return node != null && node !== false && node !== '';
+  return rendersContent(node) && node !== '';
 }
 
 function contentFor(content: ContextMenuProps['content'], element: Element | null) {

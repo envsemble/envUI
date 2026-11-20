@@ -37,6 +37,7 @@ import { backgroundAttribute, type NavigationBackground } from './navigationBack
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
+import { rendersContent } from '../internal/react/rendersContent.js';
 import '../styles/Base.css';
 import '../styles/NavigationDrawer.css';
 
@@ -339,7 +340,7 @@ function Section({
   );
   return (
     <Column render={<li />} className="env-navigation-drawer-section" align="stretch" gap={1}>
-      {end != null && end !== false ? (
+      {rendersContent(end) ? (
         <div className="env-navigation-drawer-group-row">
           {headingElement}
           <Slot className="env-navigation-drawer-group-end" layout="row" shrink="never">
