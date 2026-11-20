@@ -11,7 +11,7 @@ import { navigation } from '../foundations/messages/navigation.js';
 import { DestinationItem, type DestinationClasses } from './internal/DestinationItem.js';
 import { destinationKey } from './internal/destinationModel.js';
 import type { Destination } from './destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import type { NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationDestinations.css';
@@ -88,7 +88,7 @@ export function NavigationRail({
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-rail', className)}
-      data-background={backgroundAttribute(background)}
+      data-background={background}
       data-label-hidden={flag(!visibleLabel)}
       align="center"
       gap={4}

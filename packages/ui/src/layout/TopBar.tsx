@@ -9,10 +9,7 @@ import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/control/ControlDefaults.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import {
-  backgroundAttribute,
-  type NavigationBackground,
-} from '../navigation/navigationBackground.js';
+import type { NavigationBackground } from '../navigation/navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/TopBar.css';
@@ -145,7 +142,7 @@ export function TopBar({
       data-title-bar={flag(titleBar)}
       data-centered={flag(middle)}
       data-loading={flag(loading)}
-      data-background={backgroundAttribute(background)}
+      data-background={background}
     >
       {inSkeleton(
         skeleton,

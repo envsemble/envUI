@@ -18,7 +18,7 @@ import {
 } from './internal/navigationDrawer/DrawerRows.js';
 import { useExpandedSections } from './internal/navigationDrawer/useExpandedSections.js';
 import type { NavigationDrawerDestination } from './destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import type { NavigationBackground } from './navigationBackground.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
@@ -222,7 +222,7 @@ export function NavigationDrawer({
             }
           : style
       }
-      data-background={backgroundAttribute(background)}
+      data-background={background}
       data-resizable={flag(resizable)}
       align="stretch"
       gap={3}
