@@ -12,15 +12,18 @@ const productNames = [
   ...namesThatAreAlsoWordsOrCode.map((name) => ({ name, flags: 'g' })),
 ];
 
-const allowedEnglishUses = {
+const allowedEnglishUses: Record<string, RegExp[]> = {
   Forms: [/Forms & selection/g, /^#{2,} Forms$/g, /^- Forms, validation/g],
 };
 
-const allowedIn = {
+const allowedIn: Record<string, Record<string, RegExp[]>> = {
   'CONTRIBUTING.md': {},
 };
 
-const sources = [
+type Source =
+  { path: string; read: string } | { directory: string; extensions: string[]; read: string };
+
+const sources: Source[] = [
   { path: 'README.md', read: 'whole' },
   { path: 'CONTRIBUTING.md', read: 'whole' },
   { path: 'AGENTS.md', read: 'whole' },
@@ -89,7 +92,7 @@ test('the check finds an application built on envUI and lets other products pass
 async function sourceFiles() {
   const files: { path: string; read: string }[] = [];
   for (const source of sources) {
-    if (source.path) {
+    if ('path' in source) {
       files.push({ path: source.path, read: source.read });
       continue;
     }
@@ -103,8 +106,8 @@ async function sourceFiles() {
   return files;
 }
 
-function productMentions(path, fileText, segment) {
-  const mentions = [];
+function productMentions(path: string, fileText: string, segment: { start: number; text: string }) {
+  const mentions: string[] = [];
   const firstLine = fileText.slice(0, segment.start).split('\n').length;
   segment.text.split('\n').forEach((line, index) => {
     for (const { name, flags } of productNames) {

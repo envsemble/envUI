@@ -41,7 +41,6 @@
     "docs/PageFrontmatter.test.ts",
     "docs/PageSections.test.ts",
     "docs/Parts.test.ts",
-    "docs/PatternPages.test.ts",
     "docs/Props.test.ts",
     "library/package/ClientDirectives.test.ts",
     "library/package/CodeHighlighting.test.ts",
@@ -83,7 +82,6 @@
     "library/source/TextField.test.ts",
     "library/source/TimePicker.test.ts",
     "library/rules/DefinedProperties.test.ts",
-    "tooling/BuildTokens.test.ts",
     "library/source/WindowClasses.test.ts",
     "site/BrowserStandIns.test.ts",
     "site/BuildSearchIndex.test.ts",
@@ -91,10 +89,6 @@
     "site/PlaceCallouts.test.ts",
     "site/SearchResults.test.ts",
     "site/SitePrerender.test.ts",
-    "site/SiteRoutes.test.ts",
-    "tooling/ProductNames.test.ts",
-    "tooling/Release.test.ts",
-    "tooling/StylelintSuppressions.test.ts",
-    "tooling/TestScope.test.ts"
+    "site/SiteRoutes.test.ts"
   ]
 }

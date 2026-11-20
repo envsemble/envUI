@@ -14,7 +14,32 @@ import { buildTokens } from '../../scripts/build/BuildTokens.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const library = join(repositoryRoot, 'packages/ui');
-let scratch;
+let scratch: string | undefined;
+
+type Json = string | number | boolean | null | Json[] | JsonObject;
+interface JsonObject {
+  [key: string]: Json;
+}
+type TokenEdit = (tokens: JsonObject) => void;
+
+interface TokenListFile {
+  tokens: { id: string; values: Record<string, { resolved: Record<string, string> }> }[];
+}
+
+const readTokenList = async (directory: string): Promise<TokenListFile> =>
+  JSON.parse(await readFile(join(directory, 'src/generated/tokens.json'), 'utf8'));
+
+function group(tree: JsonObject, name: string): JsonObject {
+  const value = tree[name];
+  assert.ok(value && typeof value === 'object' && !Array.isArray(value), `${name} is a group`);
+  return value;
+}
+
+function resolvedOf(list: TokenListFile, id: string) {
+  const token = list.tokens.find((each) => each.id === id);
+  assert.ok(token, `${id} is a token`);
+  return token.values.dark!.resolved;
+}
 
 before(async () => {
   scratch = await mkdtemp(join(tmpdir(), 'envui-tokens-'));
@@ -23,7 +48,12 @@ after(async () => {
   if (scratch) await rm(scratch, { recursive: true, force: true });
 });
 
-async function buildChanged(name, change, { handwritten = '' } = {}) {
+async function buildChanged(
+  name: string,
+  change: Record<string, TokenEdit>,
+  { handwritten = '' } = {},
+) {
+  assert.ok(scratch);
   const directory = join(scratch, name);
   await cp(join(library, 'tokens'), join(directory, 'tokens'), { recursive: true });
   await mkdir(join(directory, 'src/styles'), { recursive: true });
@@ -31,7 +61,7 @@ async function buildChanged(name, change, { handwritten = '' } = {}) {
   await writeFile(join(directory, 'src/styles/TokensHandwritten.css'), css + handwritten);
   for (const [file, edit] of Object.entries(change)) {
     const path = join(directory, 'tokens', file);
-    const tokens = JSON.parse(await readFile(path, 'utf8'));
+    const tokens: JsonObject = JSON.parse(await readFile(path, 'utf8'));
     edit(tokens);
     await writeFile(path, JSON.stringify(tokens));
   }
@@ -45,7 +75,7 @@ async function buildChanged(name, change, { handwritten = '' } = {}) {
 test('two tokens that become one custom property fail the build', async () => {
   await assert.rejects(
     buildChanged('collision', {
-      'base/space.tokens.json': (tokens) => {
+      'base/space.tokens.json': (tokens: JsonObject) => {
         tokens['row-padding-inline'] = { $type: 'dimension', $value: { value: 2, unit: 'rem' } };
       },
     }),
@@ -56,8 +86,8 @@ test('two tokens that become one custom property fail the build', async () => {
 test('two tokens that the CSS output names alike fail the build', async () => {
   await assert.rejects(
     buildChanged('collision-written', {
-      'base/space.tokens.json': (tokens) => {
-        tokens.space['4+'] = { $value: { value: 1.25, unit: 'rem' } };
+      'base/space.tokens.json': (tokens: JsonObject) => {
+        group(tokens, 'space')['4+'] = { $value: { value: 1.25, unit: 'rem' } };
       },
     }),
     /space\.4\+ and space\.4 both become --env-space-4|space\.4 and space\.4\+ both become --env-space-4/,
@@ -67,8 +97,8 @@ test('two tokens that the CSS output names alike fail the build', async () => {
 test('a token whose path does not spell its custom property fails the build', async () => {
   await assert.rejects(
     buildChanged('unspelled', {
-      'base/space.tokens.json': (tokens) => {
-        tokens.space['huge+'] = { $value: { value: 8, unit: 'rem' } };
+      'base/space.tokens.json': (tokens: JsonObject) => {
+        group(tokens, 'space')['huge+'] = { $value: { value: 8, unit: 'rem' } };
       },
     }),
     /space\.huge\+ becomes --env-space-huge, not --env-space-huge\+/,
@@ -78,7 +108,7 @@ test('a token whose path does not spell its custom property fails the build', as
 test('a token that two files of the base set declare fails the build', async () => {
   await assert.rejects(
     buildChanged('duplicate', {
-      'base/size.tokens.json': (tokens) => {
+      'base/size.tokens.json': (tokens: JsonObject) => {
         tokens.space = { 4: { $type: 'dimension', $value: { value: 3, unit: 'rem' } } };
       },
     }),
@@ -89,7 +119,7 @@ test('a token that two files of the base set declare fails the build', async () 
 test('a token that two files of one modifier context declare fails the build', async () => {
   await assert.rejects(
     buildChanged('duplicate-context', {
-      'color-scheme/dark.tokens.json': (tokens) => {
+      'color-scheme/dark.tokens.json': (tokens: JsonObject) => {
         tokens['contrast-high'] = {
           color: { bg: { page: { hover: { $type: 'color', $value: '{palette.neutral.90}' } } } },
         };
@@ -100,7 +130,7 @@ test('a token that two files of one modifier context declare fails the build', a
 });
 
 test('the modifier contexts override tokens of the base set, which is no duplicate', async () => {
-  const list = JSON.parse(await readFile(join(library, 'src/generated/tokens.json'), 'utf8'));
+  const list = await readTokenList(library);
   const base = new Set(list.tokens.map((token) => token.id));
   assert.ok(contextTokens('colorScheme', 'dark').some((id) => base.has(id)));
   assert.ok(contextTokens('contrast', 'high').some((id) => base.has(id)));
@@ -110,7 +140,7 @@ test('the modifier contexts override tokens of the base set, which is no duplica
 test('a token that TokensHandwritten.css also declares for every theme fails the build', async () => {
   await assert.rejects(
     buildChanged('handwritten', {
-      'base/space.tokens.json': (tokens) => {
+      'base/space.tokens.json': (tokens: JsonObject) => {
         tokens.viewport = {
           $type: 'dimension',
           gutter: { $value: { value: 1, unit: 'rem' } },
@@ -122,7 +152,7 @@ test('a token that TokensHandwritten.css also declares for every theme fails the
 });
 
 test('only a coarse pointer lets TokensHandwritten.css change a token', () => {
-  const declared = (css) => [...overridingCustomProperties(css)];
+  const declared = (css: string) => [...overridingCustomProperties(css)];
   assert.deepEqual(declared('@media (pointer: coarse) { .env-theme { --a: 1; } }'), []);
   assert.deepEqual(declared('@media (pointer:coarse){@layer x{.env-theme{--a:1}}}'), []);
   assert.deepEqual(declared('@layer x { @media (pointer: coarse) { .env-theme { --a: 1 } } }'), []);
@@ -171,7 +201,7 @@ test('a theme rule leaves out a value its element takes from the rules below any
   --c: 2;
 }
 `);
-  const declared = (selector) =>
+  const declared = (selector: string) =>
     cssDeclarations(css)
       .filter((declaration) => declaration.selector === selector)
       .map(({ property, value }) => `${property}: ${value}`);
@@ -209,7 +239,7 @@ test('a token that TokensHandwritten.css declares under another at-rule fails th
 
 test('a typography token builds, with a custom property for each part', async () => {
   const directory = await buildChanged('typography', {
-    'base/typography.tokens.json': (tokens) => {
+    'base/typography.tokens.json': (tokens: JsonObject) => {
       tokens.text = {
         $type: 'typography',
         label: {
@@ -227,9 +257,8 @@ test('a typography token builds, with a custom property for each part', async ()
   const css = await readFile(join(directory, 'src/generated/Tokens.css'), 'utf8');
   assert.match(css, /--env-text-label-font-size: var\(--env-font-size-body-sm\);/);
   assert.match(css, /--env-text-label: var\(--env-text-label-font-weight\)/);
-  const list = JSON.parse(await readFile(join(directory, 'src/generated/tokens.json'), 'utf8'));
-  const label = list.tokens.find((token) => token.id === 'text.label');
-  assert.deepEqual(label.values.dark.resolved, {
+  const list = await readTokenList(directory);
+  assert.deepEqual(resolvedOf(list, 'text.label'), {
     'font-family': "'envUI Geist', sans-serif",
     'font-size': '0.875rem',
     'font-weight': '400',
@@ -238,7 +267,7 @@ test('a typography token builds, with a custom property for each part', async ()
   });
 });
 
-const textLabel = (extra = {}) => ({
+const textLabel = (extra: JsonObject = {}): JsonObject => ({
   $type: 'typography',
   $value: {
     fontFamily: '{font.family}',
@@ -253,13 +282,13 @@ const textLabel = (extra = {}) => ({
 test('a part that only one theme gives a composite token cannot clash either', async () => {
   await assert.rejects(
     buildChanged('typography-theme-part', {
-      'base/typography.tokens.json': (tokens) => {
+      'base/typography.tokens.json': (tokens: JsonObject) => {
         tokens.text = {
           label: textLabel(),
           'label-font-style': { $type: 'number', $value: 1 },
         };
       },
-      'color-scheme/dark.tokens.json': (tokens) => {
+      'color-scheme/dark.tokens.json': (tokens: JsonObject) => {
         tokens.text = { label: textLabel({ fontStyle: 'italic' }) };
       },
     }),
@@ -269,7 +298,7 @@ test('a part that only one theme gives a composite token cannot clash either', a
 
 test('a typography token that aliases another reads the parts the other declares', async () => {
   const directory = await buildChanged('typography-alias', {
-    'base/typography.tokens.json': (tokens) => {
+    'base/typography.tokens.json': (tokens: JsonObject) => {
       tokens.text = {
         label: textLabel(),
         caption: { $type: 'typography', $value: '{text.label}' },
@@ -283,8 +312,8 @@ test('a typography token that aliases another reads the parts the other declares
     .map(([, name]) => name)
     .filter((name) => !declared.has(name));
   assert.deepEqual(undeclared, []);
-  const list = JSON.parse(await readFile(join(directory, 'src/generated/tokens.json'), 'utf8'));
-  const resolved = (id) => list.tokens.find((token) => token.id === id).values.dark.resolved;
+  const list = await readTokenList(directory);
+  const resolved = (id: string) => resolvedOf(list, id);
   assert.equal(resolved('text.caption')['font-size'], '0.875rem');
   assert.deepEqual(resolved('text.caption'), resolved('text.label'));
 });

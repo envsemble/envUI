@@ -22,7 +22,7 @@ import { fixtureUse, importsOf } from '../../scripts/test/FixtureImports.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import { inScratchFolder } from '../support/ScratchFolder.ts';
 
-const specs = (...paths) => [...browserTestsFor(paths).browserTests.keys()].sort();
+const specs = (...paths: string[]) => [...browserTestsFor(paths).browserTests.keys()].sort();
 
 test('diff parsing reads statuses, renames and untracked files', () => {
   const entries = parseNameStatus(
@@ -43,7 +43,7 @@ test('diff parsing reads statuses, renames and untracked files', () => {
 
 test('changed files come from the merge-base, uncommitted edits and untracked files', () =>
   inScratchFolder('scope', (folder) => {
-    const git = (...args) =>
+    const git = (...args: string[]) =>
       execFileSync('git', args, {
         cwd: folder,
         encoding: 'utf8',
@@ -103,7 +103,7 @@ test('a file many fixtures use runs the most specific few, and says how many use
     'packages/ui/src/internal/classNames.ts',
   ]);
   assert.equal(some.size, 6);
-  assert.ok(widelyUsed.get('packages/ui/src/internal/classNames.ts') > 6);
+  assert.ok((widelyUsed.get('packages/ui/src/internal/classNames.ts') ?? 0) > 6);
   assert.deepEqual(specs('packages/ui/src/actions/Button.tsx'), ['Button']);
 });
 
@@ -116,7 +116,7 @@ test('the affected tier runs every spec a file or helper concerns', () => {
   const helper = browserTestsFor(['tests/browser/support/Servers.ts'], { affected: true });
   assert.equal(
     helper.browserTests.size,
-    helper.helpers.get('tests/browser/support/Servers.ts').length,
+    helper.helpers.get('tests/browser/support/Servers.ts')?.length,
   );
   assert.ok(
     helper.browserTests.size > globSync('tests/browser/{library,site}/*.spec.ts').length / 2,
@@ -155,7 +155,7 @@ test('imports are read from the syntax, types, comments and strings left out', (
 
 test("a fixture's specs follow what its imports mean, however they are written", () =>
   inScratchFolder('imports', (scratch) => {
-    const checkout = (name, files) => {
+    const checkout = (name: string, files: Record<string, string[]>) => {
       const root = join(scratch, name);
       for (const [path, text] of Object.entries(files)) {
         mkdirSync(dirname(join(root, path)), { recursive: true });
@@ -201,7 +201,7 @@ test("a fixture's specs follow what its imports mean, however they are written",
   }));
 
 test('every path a rule names exists, and every spec it runs', () => {
-  const skipped = (name) => name === 'node_modules' || name === '.git' || name === 'dist';
+  const skipped = (name: string) => name === 'node_modules' || name === '.git' || name === 'dist';
   for (const { paths, browserTests: names = [] } of pathRules) {
     for (const glob of paths)
       assert.ok(globSync(glob, { exclude: skipped }).length, `${glob} names no file`);
@@ -228,11 +228,8 @@ test('every alias names a file and specs that exist, and adds what the imports m
     ...readdirSync('packages/ui/src', { recursive: true }),
     ...readdirSync('tests/fixture', { recursive: true }),
   ].map((file) => String(file).replaceAll('\\', '/'));
-  const named = (file) => {
-    const name = file
-      .split('/')
-      .at(-1)
-      .replace(/\.(?:tsx?|css|m?js|html)$/, '');
+  const named = (file: string) => {
+    const name = file.replace(/^.*\//, '').replace(/\.(?:tsx?|css|m?js|html)$/, '');
     return [name, name.replace(/e?s$/, ''), name.replace(/s$/, '')];
   };
   const found = fixtureUse(repositoryRoot);
