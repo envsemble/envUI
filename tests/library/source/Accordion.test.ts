@@ -12,7 +12,7 @@ import {
   textOf,
   type MarkupElement,
 } from '../../support/Markup.ts';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const { Accordion } = await importSource('Accordion', [
   "export * as Accordion from './packages/ui/src/content/Accordion.tsx';",
@@ -37,7 +37,7 @@ test('a skeleton is one busy region: titles become bars and indicators shapes', 
   assert.equal(items.length, 2);
   const labels = elements.filter((element) => hasClass(element, 'env-accordion-label'));
   assert.deepEqual(labels.map(textOf), ['', 'Loaded title']);
-  const css = readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Accordion.css'), 'utf8');
+  const css = readFileSync(join(styleSheetsDirectory, 'Accordion.css'), 'utf8');
   assert.match(
     css,
     /\[data-env-skeleton\] \.env-accordion-label \{[^}]*--_skeleton-placeholder: inline-block;/,

@@ -5,12 +5,11 @@ import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const { Page } = await importSource('Page', 'packages/ui/src/layout/Page.tsx');
 
-const sheet = (name: string) =>
-  readFileSync(join(repositoryRoot, 'packages/ui/src/styles', name), 'utf8');
+const sheet = (name: string) => readFileSync(join(styleSheetsDirectory, name), 'utf8');
 
 test('Page renders invisible structure with its width, and its header above its content', () => {
   assert.equal(

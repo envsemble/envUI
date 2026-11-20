@@ -25,19 +25,13 @@ const eslint = new ESLint({
   ],
 });
 
-function groupingSubject(ruleId, message) {
-  const patterns = {
-    'envui/no-html-elements': /^Use envUI's (\S+) instead of (.+?)(?:, or |: import)/,
-    'envui/no-raw-colors': /^Raw color (.+) in an inline style/,
-    'envui/no-link-in-clickable-row': /^(.+?) inside a clickable (\S+):/,
-    'envui/no-field-in-list-row': /^A (\S+) with no label in a List\.Item's/,
-    'envui/label-vocabulary': /instead of "(.+)"\.$/,
-    'envui/no-raw-graphics':
-      /^(Use envUI's Graphic instead of a raw <img>|A raw <svg [^>]*>|Graphic needs alt|A negative margin on a Graphic|A <[^>]+> from \S+)/,
-  };
-  const match = message.match(patterns[ruleId]);
-  if (!match) return message;
-  return ruleId === 'envui/no-html-elements' ? `${match[2]} -> ${match[1]}` : match[1];
+function groupingSubject({ messageId, line, column, endLine, endColumn }, source) {
+  const lines = source.split(/\r?\n/);
+  const reported =
+    endLine === line
+      ? lines[line - 1].slice(column - 1, endColumn - 1)
+      : lines[line - 1].slice(column - 1);
+  return `${messageId}: ${reported.trim().replace(/\s+/g, ' ').slice(0, 60)}`;
 }
 
 const counts = new Map();
@@ -46,7 +40,8 @@ for (const directory of directories) {
   const results = await eslint.lintFiles([`${directory}/**/*.{js,jsx,mjs,ts,tsx}`]);
   files += results.length;
   for (const result of results)
-    for (const { ruleId, message } of result.messages) {
+    for (const problem of result.messages) {
+      const { ruleId } = problem;
       if (!ruleId?.startsWith('envui/')) continue;
       const byRule = counts.get(ruleId) ?? {
         total: 0,
@@ -55,7 +50,7 @@ for (const directory of directories) {
       };
       byRule.total += 1;
       byRule.byDirectory.set(directory, (byRule.byDirectory.get(directory) ?? 0) + 1);
-      const about = groupingSubject(ruleId, message);
+      const about = groupingSubject(problem, result.source);
       byRule.bySubject.set(about, (byRule.bySubject.get(about) ?? 0) + 1);
       counts.set(ruleId, byRule);
     }

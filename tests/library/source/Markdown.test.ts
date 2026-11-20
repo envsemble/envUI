@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
-import { declarations } from '../../support/CssDeclarations.ts';
+import { declarations } from '../../support/StyleSheets.ts';
 import { elementsOf, firstElement, hasClass, textOf } from '../../support/Markup.ts';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { repositoryRoot, styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const { Markdown } = await importSource('Markdown', 'packages/ui/src/markdown.ts');
 
@@ -35,9 +35,7 @@ test('table regions are named after their heading or first column, numbered wher
 });
 
 test('bold is semibold, heavier than the regular body text and a heading', () => {
-  const prose = declarations(
-    readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Prose.css'), 'utf8'),
-  );
+  const prose = declarations(readFileSync(join(styleSheetsDirectory, 'Prose.css'), 'utf8'));
   const weight = prose.find(
     (each) => each.selector === '.env-prose strong' && each.prop === 'font-weight',
   );

@@ -1,5 +1,5 @@
 import { chromium, type Browser, type Route } from '@playwright/test';
-import { defaultPorts } from './CheckoutMarker.ts';
+import { defaultPorts } from '../DevServers.ts';
 
 const args = process.argv.slice(2).filter((arg) => arg !== '--');
 const onlyIndex = args.indexOf('--only');

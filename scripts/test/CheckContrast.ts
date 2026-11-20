@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { repositoryRoot } from '../RepositoryPaths.ts';
-import { bin } from './TestTasks.ts';
+import { bin, componentTestCommand } from './TestTasks.ts';
 
 const update = process.argv.includes('--update-snapshots');
 
@@ -13,11 +13,4 @@ run([...bin.node, '--test', 'tests/contrast/ContrastRegistry.test.ts'], {
   ...process.env,
   ENVUI_CONTRAST_UPDATE: update ? '1' : '',
 });
-run([
-  ...bin.vitest,
-  'run',
-  '--config',
-  'tests/component/vitest.config.ts',
-  '--project=chromium',
-  'tests/component/Contrast.test.tsx',
-]);
+run(componentTestCommand('chromium', ['tests/component/Contrast.test.tsx']));

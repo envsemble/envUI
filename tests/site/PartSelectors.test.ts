@@ -2,8 +2,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
-import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
-import { partsFile } from '../../scripts/docs/parts/Contract.ts';
+import { partsFile, repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 test("every part class the site selects is one of the library's", () => {
   type Parts = Record<string, { parts: { class: string }[] }>;

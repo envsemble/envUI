@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { siteBuildUrl } from '../support/Servers';
-import { openSite } from '../support/SiteSpecHelpers';
+import { openSite } from '../support/SiteNavigation';
 import { displayStorageKeys, drawerWidthKey } from '../../../apps/site/src/display/DisplayStorage';
 
 const onePageOfEachPrerenderedKind = [

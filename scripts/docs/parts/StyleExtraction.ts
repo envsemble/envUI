@@ -1,6 +1,5 @@
+import { withoutComments } from '../../site/CssComments.ts';
 import { isPrivateState, styleSheets, type StateRecord } from './Library.ts';
-
-const withoutComments = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, '');
 
 function splitTopLevel(text: string, separators: RegExp) {
   const parts: string[] = [];

@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLatest } from '../../../internal/react/useLatest.js';
 import { useControllableState } from '../../../internal/react/useControllableState.js';

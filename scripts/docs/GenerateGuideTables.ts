@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { formatted, readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
-import { documentationDirectory, tokensDataFile } from '../RepositoryPaths.ts';
+import { formatted, GeneratedOutput, readIfExists } from '../build/GeneratedFiles.ts';
+import { documentationDirectory, partsFile, tokensDataFile } from '../RepositoryPaths.ts';
 import { cell } from './MarkdownBlocks.ts';
-import { partsFile, type PartsContract } from './parts/Contract.ts';
+import type { PartsContract } from './parts/Contract.ts';
 
 type Entry = PartsContract['components'][string];
 
@@ -228,7 +228,7 @@ if (import.meta.main) {
     );
     process.exit(1);
   }
-  const stale: string[] = [];
+  const generated = new GeneratedOutput({ check, regenerate: 'npm run docs:guides' });
   for (const [page, sections] of Object.entries(generatedSections(tokens))) {
     const file = resolve(documentationDirectory, page);
     const current = readIfExists(file) ?? '';
@@ -243,18 +243,12 @@ if (import.meta.main) {
         process.exit(1);
       }
     }
-    const output = await formatted(file, markdown);
-    if (check ? current !== output : writeIfChanged(file, output)) stale.push(`docs/${page}`);
+    generated.writeOrCheck(file, await formatted(file, markdown));
   }
-  if (check && stale.length) {
-    console.error(
-      `${stale.join(', ')} differ from the token list and docs/generated/parts.json. Run \`npm run docs:guides\`.`,
-    );
-    process.exit(1);
-  }
+  generated.exitIfStale();
   console.log(
     check
       ? 'The generated tables of the guides match their sources.'
-      : `Generated the tables of the guides${stale.length ? `: ${stale.join(', ')}` : ''}.`,
+      : `Generated the tables of the guides${generated.changed.length ? `: ${generated.changed.join(', ')}` : ''}.`,
   );
 }

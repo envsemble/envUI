@@ -1,5 +1,3 @@
-'use client';
-
 import type { ComponentType, ReactElement } from 'react';
 import { IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';

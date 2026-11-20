@@ -5,13 +5,13 @@ import { mkdtempSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { isPublished, publish, releaseState } from '../../scripts/release/Publish.ts';
+import { isPublished, publish, releaseState, type Run } from '../../scripts/release/Publish.ts';
 import { releaseNotes, releaseNotesLimit } from '../../scripts/release/ValidateRelease.ts';
 import { libraryPackageFile, repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const script = join(repositoryRoot, 'scripts/release/ValidateRelease.ts');
 const { version } = JSON.parse(await readFile(libraryPackageFile, 'utf8'));
-const validate = (...args) =>
+const validate = (...args: string[]) =>
   execFileSync(process.execPath, [script, ...args], {
     encoding: 'utf8',
     env: { ...process.env, GITHUB_REF_NAME: `v${version}` },
@@ -64,16 +64,21 @@ test('a tag that does not match the package version is rejected', () => {
   );
 });
 
-function world({ release, published = [] }) {
-  const calls = [];
-  const run = (command, args, shown = false) => {
+interface World {
+  release: 'released' | 'draft' | 'missing';
+  published?: string[];
+}
+
+function world({ release, published = [] }: World) {
+  const calls: string[] = [];
+  const run: Run = (command, args, shown = false) => {
     calls.push(`${command} ${args.join(' ')}${shown ? ' (shown)' : ''}`);
     if (command === 'gh' && args[1] === 'view')
       return release === 'missing'
         ? { status: 1, stdout: '', stderr: 'release not found' }
         : { status: 0, stdout: release === 'draft' ? 'true\n' : 'false\n', stderr: '' };
     if (command === 'npm' && args[0] === 'view')
-      return published.includes(args[1].replace(/@[^@]+$/, ''))
+      return published.includes(args[1]!.replace(/@[^@]+$/, ''))
         ? { status: 0, stdout: '1.0.0\n', stderr: '' }
         : { status: 1, stdout: '', stderr: 'npm error code E404' };
     return { status: 0, stdout: '', stderr: '' };
@@ -82,7 +87,7 @@ function world({ release, published = [] }) {
 }
 
 const prerelease = { version: '1.0.0-rc.1', prerelease: true, distTag: 'rc', notes: 'Notes.\n' };
-const release = (state) =>
+const release = (state: ReturnType<typeof world>) =>
   publish({
     release: prerelease,
     sha: 'abc123',
@@ -129,10 +134,12 @@ test('a draft left by a failed run is replaced, and only what the registry lacks
 });
 
 test('an answer other than "not found" stops the release', () => {
-  const failing = (command) => () =>
-    command === 'gh'
-      ? { status: 1, stdout: '', stderr: 'HTTP 502' }
-      : { status: 0, stdout: '', stderr: '' };
+  const failing =
+    (command: 'gh' | 'npm'): Run =>
+    () =>
+      command === 'gh'
+        ? { status: 1, stdout: '', stderr: 'HTTP 502' }
+        : { status: 0, stdout: '', stderr: '' };
   assert.throws(() => releaseState('v1.0.0', failing('gh')), /HTTP 502/);
   assert.throws(
     () =>

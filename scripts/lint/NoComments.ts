@@ -1,6 +1,5 @@
 import type { AST, ESLint, Rule, SourceCode } from 'eslint';
-import { relative, sep } from 'node:path';
-import { repositoryRoot } from '../RepositoryPaths.ts';
+import { repositoryPath } from '../RepositoryPaths.ts';
 
 type Comment =
   | ReturnType<SourceCode['getAllComments']>[number]
@@ -126,8 +125,6 @@ function isAttachedDocComment(comment: Comment, text: string, starts: Set<number
   return starts.has(comment.range[1] + gap);
 }
 
-const repositoryPath = (file: string) => relative(repositoryRoot, file).split(sep).join('/');
-
 const noComments: Rule.RuleModule = {
   meta: {
     type: 'suggestion',
@@ -174,7 +171,7 @@ const noComments: Rule.RuleModule = {
   },
 };
 
-export const repositoryPlugin: ESLint.Plugin = {
+export const noCommentsPlugin: ESLint.Plugin = {
   meta: { name: 'repository' },
   rules: { 'no-comments': noComments },
 };

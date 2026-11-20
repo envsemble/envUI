@@ -1,3 +1,5 @@
+'use client';
+
 import { cloneElement, isValidElement, useId, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../classNames.js';
 import { flag } from '../flag.js';

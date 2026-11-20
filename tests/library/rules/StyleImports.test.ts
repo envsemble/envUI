@@ -1,78 +1,46 @@
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { join, posix, relative, sep } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import { libraryEntryPoints } from '../../../scripts/docs/LibraryEntryPoints.ts';
 import { analyze, cssSelectors } from './composition/Analysis.ts';
-import { librarySourceDirectory } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
+import {
+  importsOf,
+  libraryModulePath,
+  libraryModules,
+  readLibraryModule,
+  resolveImport,
+} from '../../support/LibraryModules.ts';
+import { withoutComments } from '../../../scripts/site/CssComments.ts';
 
-const require = createRequire(import.meta.url);
-const ts = require('typescript');
-const sourceRoot = librarySourceDirectory;
-const stylesRoot = join(sourceRoot, 'styles');
-const styleSheet = (name) => readFileSync(join(stylesRoot, name), 'utf8');
+const styleSheet = (name) => readFileSync(join(styleSheetsDirectory, name), 'utf8');
 
-function walk(directory, found = []) {
-  for (const entry of readdirSync(directory, { withFileTypes: true })) {
-    const path = join(directory, entry.name);
-    if (entry.isDirectory()) {
-      if (path !== stylesRoot && entry.name !== 'assets') walk(path, found);
-    } else if (/\.tsx?$/.test(entry.name) && !entry.name.endsWith('.d.ts')) found.push(path);
-  }
-  return found;
-}
-const modules = walk(sourceRoot)
-  .map((path) => relative(sourceRoot, path).split(sep).join('/'))
-  .filter((module) => !module.startsWith('icons/') || module === 'icons/index.ts');
+const modules = libraryModules().filter(
+  (module) => !module.startsWith('icons/') || module === 'icons/index.ts',
+);
 const known = new Set(modules);
-const resolveImport = (from, specifier) => {
-  const target = posix.normalize(posix.join(posix.dirname(from), specifier)).replace(/\.js$/, '');
-  return [`${target}.tsx`, `${target}.ts`, `${target}/index.ts`, `${target}/index.tsx`].find(
-    (candidate) => known.has(candidate),
-  );
-};
 
 const requests = new Map();
 const lazyRequests = new Map();
 for (const module of modules) {
-  const text = readFileSync(join(sourceRoot, module), 'utf8');
-  const file = ts.createSourceFile(module, text, ts.ScriptTarget.Latest, true);
   const lazy = [];
-  const findLazy = (node) => {
-    if (
-      ts.isCallExpression(node) &&
-      node.expression.kind === ts.SyntaxKind.ImportKeyword &&
-      node.arguments[0] &&
-      ts.isStringLiteral(node.arguments[0])
-    ) {
-      const target = resolveImport(module, node.arguments[0].text);
-      if (target) lazy.push(target);
-    }
-    ts.forEachChild(node, findLazy);
-  };
-  findLazy(file);
-  lazyRequests.set(module, lazy);
   const list: ({ sheet: string } | { module: string })[] = [];
-  for (const statement of file.statements) {
-    let specifier;
-    if (ts.isImportDeclaration(statement)) {
-      if (statement.importClause?.isTypeOnly) continue;
-      specifier = statement.moduleSpecifier.text;
-    } else if (
-      ts.isExportDeclaration(statement) &&
-      statement.moduleSpecifier &&
-      !statement.isTypeOnly
-    )
-      specifier = statement.moduleSpecifier.text;
-    else continue;
+  for (const { specifier, kind } of importsOf(module)) {
+    if (kind === 'dynamic') {
+      const target = resolveImport(module, specifier, known);
+      if (target) lazy.push(target);
+      continue;
+    }
+    if (kind === 'type') continue;
     const sheet = /^(?:\.\.?\/)+styles\/(\w+\.css)$/.exec(specifier)?.[1];
     if (sheet) list.push({ sheet });
     else if (specifier.startsWith('.')) {
-      const target = resolveImport(module, specifier);
+      const target = resolveImport(module, specifier, known);
       if (target) list.push({ module: target });
     }
   }
+  lazyRequests.set(module, lazy);
   requests.set(module, list);
 }
 
@@ -90,7 +58,7 @@ function emits(list, seen = new Set(), out = []) {
 
 function guaranteedBefore() {
   const barrels = new Set([
-    ...libraryEntryPoints().map(({ file }) => relative(sourceRoot, file).split(sep).join('/')),
+    ...libraryEntryPoints().map(({ file }) => libraryModulePath(file)),
     'icons/index.ts',
   ]);
   const importers = new Map(modules.map((module) => [module, []]));
@@ -106,7 +74,7 @@ function guaranteedBefore() {
     importers.get(module).length === 0 ||
     importers.get(module).some(([importer]) => barrels.has(importer));
   const prior = (module, index) => emits(requests.get(module).slice(0, index), new Set([module]));
-  const everySheet = readdirSync(stylesRoot).filter((name) => name.endsWith('.css'));
+  const everySheet = readdirSync(styleSheetsDirectory).filter((name) => name.endsWith('.css'));
   const before = new Map(
     modules.map((module) => [module, new Set(first(module) ? [] : everySheet)]),
   );
@@ -192,7 +160,7 @@ test('a module that renders a class brings the style sheets that style it', () =
     ([, name]) => name,
   );
   const styling = new Map();
-  for (const name of readdirSync(stylesRoot).filter((file) => file.endsWith('.css')))
+  for (const name of readdirSync(styleSheetsDirectory).filter((file) => file.endsWith('.css')))
     for (const { selector } of cssSelectors(styleSheet(name))) {
       const first = /\.(env-[a-z0-9]+(?:-[a-z0-9]+)*)/.exec(selector)?.[1];
       if (!first) continue;
@@ -205,7 +173,7 @@ test('a module that renders a class brings the style sheets that style it', () =
     const brought = new Set(emits([{ module }]));
     if (brought.has('Base.css')) for (const part of base) brought.add(part);
     const owner = componentOf.get(module);
-    const text = readFileSync(join(sourceRoot, module), 'utf8');
+    const text = readLibraryModule(module);
     for (const name of new Set(text.match(/(?<![\w-])env-[a-z0-9]+(?:-[a-z0-9]+)*(?![\w-])/g))) {
       const classOwner = ownerOf(name);
       if (classOwner !== owner && classOwner !== 'shared') continue;
@@ -263,7 +231,7 @@ test('style sheets whose rules tie come in index.css order in every bundle', () 
 });
 
 test("Skeleton.css's rules win their ties whatever the order", () => {
-  const css = styleSheet('Skeleton.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  const css = withoutComments(styleSheet('Skeleton.css'));
   const selectors = [
     ...css.matchAll(/(?:^|[;{}])\s*([^;{}@]*\[data-env-skeleton\][^;{}]*)\{/g),
   ].map(([, selector]) => selector.replace(/\s+/g, ' ').trim());

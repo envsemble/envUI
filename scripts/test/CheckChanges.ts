@@ -1,26 +1,18 @@
 import { parseArgs } from 'node:util';
-import { checks, generateDocumentation } from './Checks.ts';
-import { isComponentTest } from './FixtureImports.ts';
-import {
-  changedFiles,
-  selectScope,
-  serversFor,
-  specFile,
-  specNeeds,
-  unitTestFiles,
-} from './TestScope.ts';
+import { planCheck } from './CheckPlan.ts';
+import { generateDocumentation } from './StaticChecks.ts';
+import { browserTestFile } from './BrowserTests.ts';
+import { changedFiles, serversFor } from './TestScope.ts';
 import {
   bin,
-  bold,
-  dim,
+  componentTestCommand,
   parallel,
-  red,
+  playwrightCommand,
   series,
   summary,
   task,
-  yellow,
-  type Task,
 } from './TestTasks.ts';
+import { bold, dim, red, yellow } from '../Terminal.ts';
 
 const started = performance.now();
 const {
@@ -52,28 +44,17 @@ if (!paths.length) {
   process.exit(0);
 }
 
-const scope = selectScope(paths, { affected });
-const windowsCommandLineRoomForPaths = 24_000;
-const tooLong = (paths: readonly string[]) =>
-  paths.reduce((length, path) => length + path.length + 1, 0) > windowsCommandLineRoomForPaths;
-if (tooLong(scope.lint)) scope.whole.lint = true;
-if (tooLong(scope.css)) scope.whole.css = true;
-if (tooLong(scope.format)) scope.whole.format = true;
-const { built: builtUnitTests, fast: fastUnitTests } = unitTestFiles();
-if (paths.some((path) => builtUnitTests.includes(path))) scope.build.library = true;
-
-const needs = new Map([...scope.specs.keys()].map((name) => [name, specNeeds(name)]));
-const live = [...needs].filter(([, need]) => need.live).map(([name]) => name);
-const browserSpecs = [...needs]
-  .filter(([, need]) => !need.live && (affected || !need.library))
-  .map(([name]) => name);
-const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpecs.includes(name));
-const componentTests = browserSpecs.filter((name) => isComponentTest(specFile(name)));
-const playwrightSpecs = browserSpecs.filter((name) => !componentTests.includes(name));
-const builds = {
-  library: affected && scope.build.library,
-  site: [...needs].some(([name, need]) => need.site && playwrightSpecs.includes(name)),
-};
+const {
+  scope,
+  staticTasks,
+  unitTests,
+  browserTests,
+  componentTests,
+  playwrightSpecs,
+  live,
+  deferred,
+  builds,
+} = planCheck(paths, { affected, base: baseOption });
 
 const list = (items: string[]) =>
   items.length > 6
@@ -86,13 +67,15 @@ console.log(
 console.log(`  typecheck: ${scope.typecheck ? 'yes, incrementally' : 'no TypeScript changed'}`);
 if (scope.generated.size) console.log(`  generated files: ${[...scope.generated].join(', ')}`);
 console.log(
-  `  unit tests: ${fastUnitTests.length} files${builds.library ? `, and ${builtUnitTests.length} on the library build` : ''}`,
+  `  unit tests: ${unitTests.fast.length} files${builds.library ? `, and ${unitTests.built.length} on the library build` : ''}`,
 );
-const shown = affected ? [...browserSpecs, ...live] : browserSpecs;
+const shown = affected ? [...browserTests, ...live] : browserTests;
 if (shown.length)
   console.log(
     `  browser specs in ${affected ? 'Chromium, and their @engines tests in Firefox and WebKit' : 'Chromium'}:\n${shown
-      .map((name) => `    ${name} ${dim(`← ${[...(scope.specs.get(name) ?? [])].join('; ')}`)}`)
+      .map(
+        (name) => `    ${name} ${dim(`← ${[...(scope.browserTests.get(name) ?? [])].join('; ')}`)}`,
+      )
       .join('\n')}`,
   );
 else console.log('  browser specs: none for this change');
@@ -107,7 +90,7 @@ if (deferred.length)
     ),
   );
 for (const [helper, users] of scope.helpers)
-  if (!users.some((name) => scope.specs.has(name)) && users.length)
+  if (!users.some((name) => scope.browserTests.has(name)) && users.length)
     console.log(dim(`  ${helper}: ${users.length} specs import it; check:affected runs them`));
 for (const [path, count] of scope.widelyUsed)
   console.log(dim(`  ${path}: ${count} specs' fixtures use it; check:affected runs them all`));
@@ -116,45 +99,17 @@ if (unmatched.length) console.log(dim(`  no spec for ${list(unmatched)}; verify 
 console.log('');
 if (dryRun) process.exit(0);
 
-const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
-const staticTasks: Task[] = [
-  ...(scope.whole.lint ? checks.lint() : scope.lint.length ? checks.lint(scope.lint) : []),
-  ...(scope.whole.lint || scope.lint.length ? checks['lint:unused']() : []),
-  ...(scope.whole.css
-    ? checks['lint:css']()
-    : scope.css.length
-      ? checks['lint:css'](scope.css)
-      : []),
-  ...(scope.whole.format
-    ? checks['format:check']()
-    : scope.format.length
-      ? checks['format:check'](scope.format)
-      : []),
-  ...(scope.typecheck ? checks.typecheck() : []),
-  ...(scope.generated.has('tokens') ? checks['tokens:check']() : []),
-  ...(scope.generated.has('docs') ? checks['docs:check'](baseOption) : []),
-  ...(scope.generated.has('icons') ? checks['icons:check']() : []),
-];
-staticTasks.push(
-  task('unit tests', [...bin.node, '--test', ...fastUnitTests], {
-    detail: `${fastUnitTests.length} files`,
-  }),
-);
-
 await series([generateDocumentation]);
 
 const browserTask = (names: string[], projects: string[], label: string) =>
   task(
     label,
-    [
-      ...bin.playwright,
-      'test',
-      ...projects.map((project) => `--project=${project}`),
+    playwrightCommand(projects, [
       ...(projects.includes('live-development') ? ['--no-deps'] : []),
       '--reporter=dot',
       ...(affected ? ['--retries=1'] : ['--max-failures=5']),
-      ...names.map((name) => specFile(name)),
-    ],
+      ...names.map((name) => browserTestFile(name)),
+    ]),
     {
       env: { ENVUI_SERVERS: serversFor(names).join(',') || 'none' },
       detail: `${names.length} specs`,
@@ -163,18 +118,11 @@ const browserTask = (names: string[], projects: string[], label: string) =>
 const componentTask = (names: string[], engines: boolean) =>
   task(
     engines ? 'component (Firefox, WebKit)' : 'component (Chromium)',
-    [
-      ...bin.vitest,
-      'run',
-      '--config',
-      'tests/component/vitest.config.ts',
+    componentTestCommand(engines ? 'engines' : 'chromium', [
       '--reporter=dot',
-      ...(engines
-        ? ['--project=firefox', '--project=webkit', '--tags-filter=engines']
-        : ['--project=chromium*', '--tags-filter=!a11y']),
       ...(affected ? ['--retry=1'] : ['--bail=5']),
-      ...names.map((name) => specFile(name)),
-    ],
+      ...names.map((name) => browserTestFile(name)),
+    ]),
     { detail: `${names.length} files` },
   );
 const npmScript = (name: string) => series([task(name, [...bin.npm, 'run', '-s', name])]);
@@ -197,9 +145,9 @@ if (!affected) {
     ...catalogueBuilds,
     builds.library &&
       series([
-        task('build:library', node('scripts/build/BuildLibrary.ts')),
-        task('unit tests on the build', [...bin.node, '--test', ...builtUnitTests], {
-          detail: `${builtUnitTests.length} files`,
+        task('build:library', [...bin.node, 'scripts/build/BuildLibrary.ts']),
+        task('unit tests on the build', [...bin.node, '--test', ...unitTests.built], {
+          detail: `${unitTests.built.length} files`,
         }),
       ]),
   ]);

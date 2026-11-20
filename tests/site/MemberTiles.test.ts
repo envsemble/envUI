@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
+import { exportsFile as exportsPath, repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import { importSource } from '../support/ImportSource.ts';
 
 const { shownByPageTile, memberExamples } = await importSource<
@@ -15,7 +15,7 @@ const { documents } = await importSource<typeof import('../../apps/site/src/rout
 
 const site = join(repositoryRoot, 'apps/site/src');
 const exportsFile: Record<string, Record<string, string>> = JSON.parse(
-  readFileSync(join(repositoryRoot, 'docs/generated/exports.json'), 'utf8'),
+  readFileSync(exportsPath, 'utf8'),
 );
 const exported = new Set(Object.values(exportsFile).flatMap((entry) => Object.keys(entry)));
 const pascal = (id: string) =>

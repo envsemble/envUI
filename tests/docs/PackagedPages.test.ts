@@ -3,15 +3,10 @@ import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { compileDocument, compileDocumentation } from '../../scripts/docs/Compiler.ts';
-import {
-  pageFixture,
-  switchBody,
-  switchFrontmatter,
-  switchProps,
-} from './DocumentationFixtures.ts';
+import { samplePage, switchBody, switchFrontmatter, switchProps } from './DocumentationSamples.ts';
 
 test('a filled-in source keeps its fence closed, with backticks in its source', async () => {
-  await pageFixture(async ({ page, read, examples }) => {
+  await samplePage(async ({ page, read, examples }) => {
     const source = "export default function Basic() {\n  return <Code>{'```'}</Code>;\n}\n";
     await writeFile(join(examples, 'switch', 'Basic.tsx'), source);
     await writeFile(

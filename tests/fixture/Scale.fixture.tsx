@@ -46,7 +46,7 @@ import {
   densityScales,
   densitySectionNames,
   type DensitySection,
-} from './ScaleSections.fixture.js';
+} from './ScaleSections.js';
 
 export const mount = 'standalone';
 

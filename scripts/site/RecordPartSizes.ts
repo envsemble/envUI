@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { chromium, type Page, type Route } from '@playwright/test';
-import { defaultPorts } from '../test/CheckoutMarker.ts';
+import { defaultPorts } from '../DevServers.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');

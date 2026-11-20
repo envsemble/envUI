@@ -1,11 +1,25 @@
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
-import { repositoryRoot } from '../RepositoryPaths.ts';
+import { repositoryRoot } from './RepositoryPaths.ts';
 
 const checkoutPath = '/__envui/checkout';
 
 export const defaultPorts = { site: 8770, fixture: 8766, siteBuild: 8767 };
+
+const portsApart = 10;
+
+export const portsFor = (index: number) => ({
+  ENVUI_SITE_PORT: String(
+    Number(process.env.ENVUI_SITE_PORT || defaultPorts.site) + portsApart * index,
+  ),
+  ENVUI_FIXTURE_PORT: String(
+    Number(process.env.ENVUI_FIXTURE_PORT || defaultPorts.fixture) + portsApart * index,
+  ),
+  ENVUI_SITE_BUILD_PORT: String(
+    Number(process.env.ENVUI_SITE_BUILD_PORT || defaultPorts.siteBuild) + portsApart * index,
+  ),
+});
 
 export function checkoutId(folder = repositoryRoot) {
   const path = resolve(folder);
@@ -45,8 +59,10 @@ async function probe(port: number, id = checkoutId()) {
   }
 }
 
+const portsEachCheckout = 4;
+
 export function checkoutPort(offset: number, id = checkoutId()) {
-  return 20000 + (parseInt(id.slice(0, 8), 16) % 9000) * 2 + offset;
+  return 20000 + (parseInt(id.slice(0, 8), 16) % 9000) * portsEachCheckout + offset;
 }
 
 export async function resolveServers(

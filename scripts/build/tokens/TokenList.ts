@@ -11,6 +11,7 @@ import {
   themes,
   type ThemeName,
 } from './Themes.ts';
+import { withoutComments } from '../../site/CssComments.ts';
 
 type CssValue = string | Record<string, string>;
 
@@ -109,9 +110,7 @@ function handwrittenTokens(listFile: URL, cssFile: URL, resolve: Resolve): Liste
     string,
     { type: string; description: string }
   >;
-  const css = existsSync(cssFile)
-    ? readFileSync(cssFile, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
-    : '';
+  const css = existsSync(cssFile) ? withoutComments(readFileSync(cssFile, 'utf8')) : '';
   return Object.entries(listed)
     .filter(([id]) => !id.startsWith('$'))
     .map(([id, { type, description }]) => {

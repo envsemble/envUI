@@ -1,0 +1,165 @@
+import { baseOption } from '../Git.ts';
+import { unitTestFiles } from './TestScope.ts';
+import {
+  bin,
+  componentTestCommand,
+  playwrightCommand,
+  series,
+  task,
+  type Task,
+} from './TestTasks.ts';
+
+const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
+
+const typecheckProjects = {
+  ui: 'packages/ui',
+  site: 'apps/site',
+  scripts: 'scripts',
+  types: 'tests/types',
+  fixture: 'tests/fixture',
+  component: 'tests/component',
+  tests: 'tests',
+  'eslint-plugin': 'packages/eslint-plugin',
+  'stylelint-config': 'packages/stylelint-config',
+};
+
+export const styleSheets = ['packages/ui/src/**/*.css', 'apps/site/src/**/*.css', 'tests/**/*.css'];
+
+const generators = {
+  palette: 'scripts/build/GeneratePalette.ts',
+  tokens: 'scripts/build/BuildTokens.ts',
+  icons: 'scripts/build/GenerateIcons.ts',
+  props: 'scripts/docs/ExtractProps.ts',
+  parts: 'scripts/docs/GenerateParts.ts',
+  'lint packages': 'scripts/build/SyncLintPackages.ts',
+  exports: 'scripts/docs/GenerateExports.ts',
+  guides: 'scripts/docs/GenerateGuideTables.ts',
+  documentation: 'scripts/docs/GenerateDocumentation.ts',
+};
+
+export const generateDocumentation = task('generate documentation', node(generators.documentation));
+
+export const checks = {
+  typecheck: (): Task[] =>
+    Object.entries(typecheckProjects).map(([name, folder]) =>
+      task(`typecheck ${name}`, [
+        ...bin.tsc,
+        '-p',
+        `${folder}/tsconfig.json`,
+        '--noEmit',
+        '--incremental',
+        '--tsBuildInfoFile',
+        `.cache/tsc/${name}.tsbuildinfo`,
+      ]),
+    ),
+  lint: (files?: readonly string[]): Task[] => [
+    task(
+      'lint',
+      [
+        ...bin.eslint,
+        '--cache',
+        '--cache-strategy',
+        'content',
+        '--cache-location',
+        '.cache/eslint/',
+        ...(files ? ['--no-warn-ignored', ...files] : ['.']),
+      ],
+      { detail: files && `${files.length} files` },
+    ),
+  ],
+  'lint:css': (files?: readonly string[]): Task[] => [
+    task('lint:css', [...bin.stylelint, ...(files ?? styleSheets)], {
+      detail: files && `${files.length} files`,
+    }),
+  ],
+  'lint:unused': (): Task[] => [
+    task('lint:unused', [
+      ...bin.knip,
+      '--cache',
+      '--cache-location',
+      '.cache/knip',
+      '--no-progress',
+    ]),
+  ],
+  'format:check': (files?: readonly string[]): Task[] => [
+    task(
+      'format:check',
+      [
+        ...bin.prettier,
+        '--check',
+        '--cache',
+        '--cache-strategy',
+        'content',
+        '--cache-location',
+        '.cache/prettier/.prettiercache',
+        ...(files ? ['--ignore-unknown', ...files] : ['.']),
+      ],
+      { detail: files && `${files.length} files` },
+    ),
+  ],
+  'tokens:check': (): Task[] => [
+    task('tokens:check palette', node(generators.palette, '--check')),
+    task('tokens:check build', node(generators.tokens, '--check')),
+    task('tokens:check lint packages', node(generators['lint packages'], '--check')),
+  ],
+  'docs:check': (base?: string): Task[] => {
+    const against = base ? ['--base', base] : [];
+    return [
+      task('docs:check props', node(generators.props, '--check')),
+      task('docs:check parts', node(generators.parts, '--check', ...against)),
+      task('docs:check exports', node(generators.exports, '--check', ...against)),
+      task('docs:check guides', node(generators.guides, '--check')),
+      task('docs:check pages', node(generators.documentation, '--validate')),
+      task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
+    ];
+  },
+  'icons:check': (): Task[] => [task('icons:check', node(generators.icons, '--check'))],
+  generate: (): Task[] =>
+    Object.entries(generators).map(([name, script]) => task(`generate ${name}`, node(script))),
+  component: (): Task[] => [task('component (Chromium)', componentTestCommand('chromium'))],
+  'component:engines': (): Task[] => [
+    task('component (Firefox, WebKit)', componentTestCommand('engines')),
+  ],
+  a11y: ({ update = false } = {}): Task[] => [
+    task(
+      'accessibility (site)',
+      playwrightCommand(['a11y'], update ? ['--update-snapshots=changed'] : []),
+    ),
+    task('accessibility (fixtures)', componentTestCommand('a11y', update ? ['--update'] : [])),
+  ],
+  unit: (options: readonly string[] = []): Task[] => {
+    const { fast, built } = unitTestFiles();
+    return [
+      task('unit tests', [...bin.node, '--test', ...options, ...fast, ...built], {
+        detail: `${fast.length + built.length} files`,
+      }),
+    ];
+  },
+};
+
+type Check = keyof typeof checks;
+
+if (import.meta.main) {
+  const [name, ...rest] = process.argv.slice(2);
+  if (!name || !(name in checks)) {
+    console.error(
+      `Usage: node scripts/test/StaticChecks.ts <check> [arguments], the check one of ${Object.keys(checks).join(', ')}. lint, lint:css, format:check, component and component:engines pass their arguments on to their tool, unit its options to node --test; docs:check takes --base <ref>, a11y --update.`,
+    );
+    process.exit(2);
+  }
+  const check = name as Check;
+  const tasks =
+    check === 'typecheck'
+      ? [generateDocumentation, ...checks.typecheck()]
+      : check === 'docs:check'
+        ? checks['docs:check'](baseOption())
+        : check === 'unit'
+          ? checks.unit(rest)
+          : check === 'a11y'
+            ? checks.a11y({ update: rest.includes('--update') })
+            : checks[check]().map((item) =>
+                rest.length ? { ...item, run: [...item.run, ...rest] } : item,
+              );
+  const results = await series(tasks.map((item) => ({ ...item, stream: true })));
+  process.exit(results.every((result) => result.ok) && results.length === tasks.length ? 0 : 1);
+}

@@ -13,7 +13,7 @@ import {
   Surface,
   type CheckboxState,
 } from '@envsemble/envui';
-import { planOptions, dialogOptions } from './SelectOptions.fixture.js';
+import { planOptions, dialogOptions } from './SelectOptions.js';
 
 export default function FormsFixture() {
   const [controlled, setControlled] = useState<CheckboxState>('mixed');

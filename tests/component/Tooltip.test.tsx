@@ -11,6 +11,7 @@ import {
   passTime,
   shown,
   stopTimers,
+  waitOnRealTime,
 } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
@@ -34,7 +35,7 @@ const isGone = (locator: Locator) => expect.poll(() => locator.elements().length
 const focus = (locator: Locator) => (locator.element() as HTMLElement).focus();
 const leave = () => mouse.move(1, 1);
 const pastOpening = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 0));
+  await waitOnRealTime(0);
   await nextFrames();
 };
 const button = (name: string) => page.getByRole('button', { name, exact: true });

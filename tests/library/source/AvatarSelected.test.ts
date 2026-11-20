@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const { Avatar } = await importSource('AvatarSelected', [
   "export { Avatar } from './packages/ui/src/data-display/Avatar.tsx';",
@@ -23,7 +23,7 @@ test('a selected avatar marks its state and draws a check hidden from assistive 
 });
 
 test('the chosen look is a ring and a check, not color alone, with a forced-colors outline', () => {
-  const css = readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Avatar.css'), 'utf8');
+  const css = readFileSync(join(styleSheetsDirectory, 'Avatar.css'), 'utf8');
   assert.match(css, /\.env-avatar\[data-selected\] \{[^}]*box-shadow:/);
   assert.match(css, /\.env-avatar-check \{[^}]*position: absolute;/);
   assert.match(

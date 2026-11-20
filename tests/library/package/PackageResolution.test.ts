@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import { lstat, readFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 import { installTimeout, packedConsumer } from '../../support/PackedConsumer.ts';
+import { withoutComments } from '../../../scripts/site/CssComments.ts';
 
 let consumer;
 before(async () => (consumer = await packedConsumer()), { timeout: installTimeout });
@@ -12,7 +13,7 @@ const envLayers = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env
 
 function layerOrder(css) {
   const names = [];
-  for (const [, list] of css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/@layer\s+([^{;]+)[{;]/g))
+  for (const [, list] of withoutComments(css).matchAll(/@layer\s+([^{;]+)[{;]/g))
     for (const name of list.split(',').map((part) => part.trim()))
       if (!names.includes(name)) names.push(name);
   return names;

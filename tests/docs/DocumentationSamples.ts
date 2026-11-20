@@ -1,21 +1,9 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
-import { isAbsolute, join, relative, resolve } from 'node:path';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
 import type { PropsFile } from '../../scripts/docs/PageStructure.ts';
-
-export async function inScratchFolder<T>(prefix: string, run: (folder: string) => Promise<T>) {
-  const cache = resolve('.cache');
-  await mkdir(cache, { recursive: true });
-  const folder = await mkdtemp(join(cache, `${prefix}-`));
-  try {
-    return await run(folder);
-  } finally {
-    const contained = relative(cache, folder);
-    assert.ok(contained && !contained.startsWith('..') && !isAbsolute(contained));
-    await rm(folder, { recursive: true, force: true });
-  }
-}
+import { cacheDirectory, inScratchFolder } from '../support/ScratchFolder.ts';
 
 export const switchExample = [
   "import { Switch } from '@envsemble/envui';",
@@ -159,7 +147,7 @@ export const switchProps: PropsFile = {
   },
 };
 
-interface PageFixture {
+interface SamplePage {
   page: string;
   docs: string;
   examples: string;
@@ -168,33 +156,37 @@ interface PageFixture {
   rejects: (source: string, pattern: RegExp) => Promise<void>;
 }
 
-export function pageFixture(run: (fixture: PageFixture) => Promise<void>) {
-  return inScratchFolder('page', async (fixture) => {
-    const docs = join(fixture, 'docs');
-    const examples = join(fixture, 'examples');
-    const specimens = join(fixture, 'specimens');
-    await mkdir(join(docs, 'components'), { recursive: true });
-    await mkdir(join(examples, 'switch'), { recursive: true });
-    await mkdir(join(specimens, 'switch'), { recursive: true });
-    await writeFile(
-      join(docs, 'index.md'),
-      '# envUI documentation\n\n## Forms & selection\n\n- [Switch](components/switch.md)\n',
-    );
-    for (const name of ['Basic', 'Parts', 'Narrow', 'Instant', 'OnSubmit'])
-      await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
-    await writeFile(
-      join(specimens, 'switch', 'States.tsx'),
-      'export default function States() {}\n',
-    );
-    const page = join(docs, 'components', 'switch.md');
-    await writeFile(page, switchFrontmatter + switchBody);
-    const versions = new Set(['0.1.0', '0.2.0']);
-    const read = () =>
-      readDocumentation(docs, { props: switchProps, examples, specimens, versions });
-    const rejects = async (source: string, pattern: RegExp) => {
-      await writeFile(page, source);
-      assert.throws(read, pattern);
-    };
-    await run({ page, read, rejects, examples, specimens, docs });
-  });
+export function samplePage(run: (fixture: SamplePage) => Promise<void>) {
+  return inScratchFolder(
+    'page',
+    async (folder) => {
+      const docs = join(folder, 'docs');
+      const examples = join(folder, 'examples');
+      const specimens = join(folder, 'specimens');
+      await mkdir(join(docs, 'components'), { recursive: true });
+      await mkdir(join(examples, 'switch'), { recursive: true });
+      await mkdir(join(specimens, 'switch'), { recursive: true });
+      await writeFile(
+        join(docs, 'index.md'),
+        '# envUI documentation\n\n## Forms & selection\n\n- [Switch](components/switch.md)\n',
+      );
+      for (const name of ['Basic', 'Parts', 'Narrow', 'Instant', 'OnSubmit'])
+        await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
+      await writeFile(
+        join(specimens, 'switch', 'States.tsx'),
+        'export default function States() {}\n',
+      );
+      const page = join(docs, 'components', 'switch.md');
+      await writeFile(page, switchFrontmatter + switchBody);
+      const versions = new Set(['0.1.0', '0.2.0']);
+      const read = () =>
+        readDocumentation(docs, { props: switchProps, examples, specimens, versions });
+      const rejects = async (source: string, pattern: RegExp) => {
+        await writeFile(page, source);
+        assert.throws(read, pattern);
+      };
+      await run({ page, read, rejects, examples, specimens, docs });
+    },
+    { within: cacheDirectory },
+  );
 }

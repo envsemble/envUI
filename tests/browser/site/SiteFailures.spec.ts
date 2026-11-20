@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { siteDevUrl } from '../support/Servers';
 import { moduleFiles, requireSite, serveSite, siteUrl } from '../support/HostedSite';
 import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
-import { goTo } from '../support/SiteSpecHelpers';
+import { goTo } from '../support/SiteNavigation';
 
 async function openFailingButtonPage(page: Page) {
   const loaded = new Set([
