@@ -18,6 +18,7 @@ import type { OpenChangeDetails } from '../internal/menuOpenChange.js';
 import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
 import type { TriggerProps } from '../internal/menuTriggerProps.js';
 import { classNames } from '../../internal/classNames.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
@@ -130,9 +131,9 @@ export function Submenu({
         {...accessibility}
       >
         {content}
-        <span className="env-icon env-menu-submenu-chevron" aria-hidden="true">
+        <DecorativeIcon className="env-menu-submenu-chevron">
           <IconChevronRight />
-        </span>
+        </DecorativeIcon>
       </BaseMenu.SubmenuTrigger>
       <MenuPopup
         parts={menuParts}

@@ -37,6 +37,7 @@ import { backgroundAttribute, type NavigationBackground } from './navigationBack
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import '../styles/Base.css';
 import '../styles/NavigationDrawer.css';
 
@@ -208,9 +209,9 @@ function DrawerControl({
 }
 
 const chevron = (
-  <span className="env-icon env-navigation-drawer-chevron" aria-hidden="true">
+  <DecorativeIcon className="env-navigation-drawer-chevron">
     <IconChevronRight />
-  </span>
+  </DecorativeIcon>
 );
 
 function DrawerRow({

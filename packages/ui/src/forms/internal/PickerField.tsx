@@ -38,6 +38,7 @@ import { useFormReset } from '../../internal/field/useFormReset.js';
 import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';
 import { useRowControlNaming } from '../../internal/field/rowControl.js';
 import { flag } from '../../internal/flag.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';
 
@@ -380,9 +381,7 @@ export function PickerField({
               }}
             />
           )}
-          <span className="env-icon env-date-picker-icon" aria-hidden="true">
-            {icon}
-          </span>
+          <DecorativeIcon className="env-date-picker-icon">{icon}</DecorativeIcon>
         </span>
         <PickerNativeInput
           ref={nativeRef}

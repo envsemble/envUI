@@ -21,6 +21,7 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { flag } from '../internal/flag.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import '../styles/Base.css';
 import '../styles/Breadcrumbs.css';
 
@@ -173,9 +174,9 @@ export function Breadcrumbs({
             >
               <Crumb item={item} current={current} />
               {!current && (
-                <span className="env-icon env-breadcrumbs-separator" aria-hidden="true">
+                <DecorativeIcon className="env-breadcrumbs-separator">
                   <IconChevronRight />
-                </span>
+                </DecorativeIcon>
               )}
             </Row>
           );

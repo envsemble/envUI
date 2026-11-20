@@ -6,6 +6,7 @@ import { useControllableState } from '../internal/react/useControllableState.js'
 import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import '../styles/Base.css';
 import '../styles/Disclosure.css';
 
@@ -79,9 +80,9 @@ export function Disclosure({
     setShown(!shown);
   };
   const indicator = (
-    <span className="env-icon env-disclosure-indicator" aria-hidden="true">
+    <DecorativeIcon className="env-disclosure-indicator">
       <IconChevronRight />
-    </span>
+    </DecorativeIcon>
   );
   return (
     <details
