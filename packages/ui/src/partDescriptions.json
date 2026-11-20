@@ -412,7 +412,7 @@
       "env-list-title": "The list's heading."
     },
     "ListRow": {
-      "env-list-row": "The row anatomy of menu, select and combobox options.",
+      "env-list-row": "The row anatomy of select, combobox and command palette options.",
       "env-list-row-description": "A row's description.",
       "env-list-row-end": "The slot of the content at a row's end, such as a count or keys.",
       "env-list-row-indicator": "The check of a chosen row.",

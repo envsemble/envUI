@@ -8,10 +8,10 @@ import '../../styles/ListRow.css';
 export interface ListRowProps {
   /**
    * The row's element, which gives it its role and behavior: a Base UI item, such as
-   * <BaseSelect.Item value={…} />, <BaseMenu.Item />, <BaseMenu.RadioItem value={…} /> or
-   * <BaseCombobox.Item value={…} />, or an option element of a listbox. ListRow fills it with the
-   * row's anatomy and the env-list-row class; its state shows through Base UI's data-highlighted,
-   * data-selected and data-disabled.
+   * <BaseSelect.Item value={…} />, <BaseCombobox.Item value={…} /> or
+   * <BaseAutocomplete.Item value={…} />, or an option element of a listbox. ListRow fills it with
+   * the row's anatomy and the env-list-row class; its state shows through Base UI's
+   * data-highlighted, data-selected and data-disabled.
    */
   render: ReactElement;
   /** The check mark or radio dot slot at the start, such as a Base UI ItemIndicator. */
@@ -36,8 +36,8 @@ export interface ListRowProps {
 /**
  * The one anatomy of a row in a popup list: an indicator, content before the label, a label with a
  * description under it, and content at the end, on the element of the list's own item, so the
- * owner keeps its roles and keyboard handling. Select, Combobox, Menu and the command palette's
- * options share it.
+ * owner keeps its roles and keyboard handling. Select's, Combobox's and the command palette's
+ * options share it; Menu's items have an anatomy of their own.
  */
 export function ListRow({
   render,

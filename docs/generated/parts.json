@@ -6276,7 +6276,7 @@
       "parts": [
         {
           "class": "env-list-row",
-          "description": "The row anatomy of menu, select and combobox options."
+          "description": "The row anatomy of select, combobox and command palette options."
         },
         {
           "class": "env-list-row-description",
