@@ -26,7 +26,7 @@ import { PopupSurface } from '../../packages/ui/src/internal/popup/PopupSurface.
 import { ListRow } from '../../packages/ui/src/internal/list/ListRow.js';
 import { ResizeHandle } from '../../packages/ui/src/layout/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/forms/internal/useRovingFocus.js';
-import { useCopy } from '../../packages/ui/src/internal/useCopy.js';
+import { useCopy } from '../../packages/ui/src/internal/react/useCopy.js';
 
 export const mount = 'standalone';
 
