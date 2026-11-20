@@ -73,7 +73,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Avatar](components/avatar.md)
 - [Graphic](components/graphic.md)
 - [Meter](components/meter.md)
-- [AnimatedNumber](components/animated-number.md)
 - [RelativeTime](components/relative-time.md)
 
 ## Text & content

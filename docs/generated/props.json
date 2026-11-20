@@ -241,32 +241,6 @@
         "@envsemble/envui"
       ]
     },
-    "AnimatedNumber": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/AnimatedNumber.tsx",
-      "description": "A number within text that rolls to its new value when it changes: up when it grows and down when it shrinks, so a count updated by other controls is noticed. The text is always the current value.",
-      "props": [
-        {
-          "name": "value",
-          "type": "number",
-          "required": true,
-          "description": "The number to show; when it changes, the new value rolls in, up as it grows, down as it shrinks."
-        },
-        {
-          "name": "formatValue",
-          "type": "(value: number) => string",
-          "required": false,
-          "default": "the number format of EnvUIProvider's locale, or else the browser's",
-          "description": "Writes the value as text, such as a currency."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Avatar": {
       "kind": "component",
       "source": "packages/ui/src/data-display/Avatar.tsx",

@@ -272,9 +272,6 @@
       "Link": {
         "styles": ["Button.css"]
       },
-      "AnimatedNumber": {
-        "styles": ["Text.css"]
-      },
       "Code": {
         "modules": [
           "content/CodeBlock.tsx",

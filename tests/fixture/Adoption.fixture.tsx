@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  AnimatedNumber,
   Avatar,
   AvatarButton,
   Button,
@@ -54,7 +53,6 @@ export default function AdoptionFixture() {
   const [action, setAction] = useState('');
   const [presses, setPresses] = useState(0);
   const [confirmed, setConfirmed] = useState(0);
-  const [homes, setHomes] = useState(3);
   const [seatsFull, setSeatsFull] = useState(false);
   return (
     <ThemePreferenceProvider theme={{ storageKey: 'fixture-theme' }} className="fixture-adoption">
@@ -168,11 +166,6 @@ export default function AdoptionFixture() {
             data-testid="confirm-icon-button"
           />
           <output data-testid="confirmed">{confirmed}</output>
-          <Button onClick={() => setHomes((count) => count + 1)}>More homes</Button>
-          <Button onClick={() => setHomes((count) => count - 1)}>Fewer homes</Button>
-          <Button>
-            Show <AnimatedNumber value={homes} data-testid="animated-number" /> homes
-          </Button>
           <output hidden data-testid="bootstrap-script">
             {createThemeBootstrapScript({ storageKey: 'bootstrap-theme' })}
           </output>

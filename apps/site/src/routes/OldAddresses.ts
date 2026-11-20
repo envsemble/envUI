@@ -75,6 +75,10 @@ const foldedPages: Record<string, { page: string; section?: string }> = {
   'components/bar': { page: 'components/navigation-drawer' },
   'components/rail': { page: 'components/navigation-drawer' },
   'components/page-header': { page: 'components/page' },
+  'components/animated-number': {
+    page: 'foundations/typography',
+    section: 'a-number-that-changes',
+  },
   'components/calendar-heatmap': {
     page: 'components/tooltip',
     section: 'details-of-each-day-in-a-grid',

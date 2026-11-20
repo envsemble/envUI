@@ -13,6 +13,11 @@ aliases:
   - caption
   - muted text
   - line length
+  - AnimatedNumber
+  - animated number
+  - rolling number
+  - number animation
+  - counter
 avoidWhen:
   - text: Colors for text, in every theme.
     see: colors
@@ -29,6 +34,9 @@ examples:
   Hierarchy: example
   TextSize: example
   Measure: example
+  ChangingNumber:
+    role: example
+    caption: The count rolls in from below as it grows and from above as it shrinks, and changes without moving when the reader prefers reduced motion. It is plain text in the button, so the button's name always says the current count, and it takes no focus of its own.
 ---
 
 # Typography
@@ -67,6 +75,12 @@ Six text styles, each with one job, in one typeface at a regular and a medium we
 Text follows the reader's text size, and the compact scale sets every style a step smaller.
 
 ```tsx figure=TextSize
+
+```
+
+### A number that changes
+
+```tsx figure=ChangingNumber
 
 ```
 

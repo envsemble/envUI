@@ -1,4 +1,4 @@
-import { AnimatedNumber, Badge, Button, Theme, type ColorScheme, Row } from '@envsemble/envui';
+import { Badge, Button, Theme, type ColorScheme, Row } from '@envsemble/envui';
 
 export const themes = true;
 
@@ -23,7 +23,7 @@ export default function ButtonCountsFixture({ theme }: { theme: ColorScheme }) {
         ))}
       </Row>
       <Button data-testid={`show-tasks-${theme}`}>
-        Show <AnimatedNumber value={33} /> tasks
+        Show <strong data-testid="tasks-count">33</strong> tasks
       </Button>
       <Badge count={7} data-testid={`badge-${theme}`} />
       <Row>

@@ -1,5 +1,4 @@
 import {
-  AnimatedNumber,
   Avatar,
   AvatarButton,
   AvatarGroup,
@@ -52,29 +51,6 @@ const wide =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 64"><rect width="160" height="64" fill="#1d4ed8"/>' +
       '<circle cx="32" cy="32" r="18" fill="#fbbf24"/></svg>',
   );
-
-function Numbers() {
-  return (
-    <Section name="AnimatedNumber">
-      <Strip>
-        <Cell caption="Integer">
-          <AnimatedNumber value={1284} />
-        </Cell>
-        <Cell caption="Formatted">
-          <AnimatedNumber value={0.732} formatValue={(value) => `${(value * 100).toFixed(1)}%`} />
-        </Cell>
-        <Cell caption="In a heading">
-          <span style={{ fontSize: '2rem' }}>
-            <AnimatedNumber
-              value={48210}
-              formatValue={(value) => `$${value.toLocaleString('en-US')}`}
-            />
-          </span>
-        </Cell>
-      </Strip>
-    </Section>
-  );
-}
 
 function Avatars() {
   return (
@@ -502,7 +478,6 @@ function Tables() {
 export function DataDisplaySheet() {
   return (
     <>
-      <Numbers />
       <Avatars />
       <Badges />
       <Descriptions />

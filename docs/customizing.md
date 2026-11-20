@@ -64,11 +64,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - States: `data-env-skeleton` on `env-alert`, `env-alert-message`, `env-alert-title`; `data-tone` (`danger`, `info`, `success`, `warning`)
 - Color properties: `--env-alert-container`, `--env-alert-content`, `--env-alert-outline`, `--env-alert-icon`
 
-### AnimatedNumber
-
-- Parts: `env-animated-number`, `env-animated-number-previous`, `env-animated-number-value`
-- States: `data-direction` (`down`, `up`) on `env-animated-number-previous`, `env-animated-number-value`; `data-value` on `env-animated-number-previous`
-
 ### Avatar
 
 - Parts: `env-avatar`, `env-avatar-badge` (slot), `env-avatar-check`, `env-avatar-fallback`, `env-avatar-fallback-content` (slot), `env-avatar-fallback-initials`, `env-avatar-fallback-person`, `env-avatar-image`, `env-avatar-person`, `env-avatar-person-background`, `env-avatar-person-figure`

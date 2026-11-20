@@ -32,7 +32,7 @@ test("a number within a label's words stays in their line, and a badge keeps its
   const button = page.getByTestId('show-tasks-light');
   await expect.element(button).toHaveTextContent('Show 33 tasks');
   const element = button.element();
-  const number = element.querySelector('.env-animated-number')!.getBoundingClientRect();
+  const number = element.querySelector('[data-testid="tasks-count"]')!.getBoundingClientRect();
   const words = document.createRange();
   const run = element.querySelector('.env-button-label')!.firstChild!;
   words.setStart(run, 0);

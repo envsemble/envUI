@@ -4,8 +4,6 @@
     "Alert": "function",
     "AlertProps": "interface",
     "AlertTone": "type",
-    "AnimatedNumber": "function",
-    "AnimatedNumberProps": "interface",
     "Avatar": "function",
     "AvatarButton": "function",
     "AvatarButtonProps": "interface",

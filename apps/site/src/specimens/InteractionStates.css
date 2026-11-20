@@ -110,10 +110,6 @@
 .catalogue-specimen-area .catalogue-force-focus .env-text-field-control > label {
   color: var(--env-color-fg-primary);
 }
-.site-anatomy-subject .catalogue-force-rolling .env-animated-number-value {
-  /* stylelint-disable-next-line unit-disallowed-list */
-  transform: translateY(0.45em);
-}
 .site-anatomy-subject .catalogue-force-handle {
   display: contents;
 }

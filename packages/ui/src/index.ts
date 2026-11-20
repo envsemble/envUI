@@ -80,7 +80,6 @@ export * from './data-display/Avatar.js';
 export * from './data-display/AvatarButton.js';
 export * from './data-display/AvatarGroup.js';
 export * from './data-display/Graphic.js';
-export * from './data-display/AnimatedNumber.js';
 export * from './data-display/RelativeTime.js';
 export {
   formatRelativeTime,
