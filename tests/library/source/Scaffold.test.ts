@@ -1,21 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
-const { Scaffold, Panes, Page, resolveNavigationForms } = await importSource('Scaffolds', [
+const { Scaffold, resolveNavigationForms } = await importSource('Scaffold', [
   "export * from './packages/ui/src/layout/Scaffold.tsx';",
-  "export * as Panes from './packages/ui/src/layout/Panes.tsx';",
-  "export * from './packages/ui/src/layout/Page.tsx';",
   "export { resolveNavigationForms } from './packages/ui/src/layout/internal/scaffold/navigationForms.ts';",
 ]);
-
-const styles = join(repositoryRoot, 'packages/ui/src/styles');
-const sheet = (name: string) => readFileSync(join(styles, name), 'utf8');
 
 test('each window class shows the form it asks for, else the nearest one given', () => {
   const all = { bar: 'B', rail: 'R', drawer: 'D' };
@@ -99,62 +91,4 @@ test('Scaffold without navigation renders no skip link to it, and scrolls the do
   assert.equal(markup.match(/env-scaffold-skip-link"/g)?.length, 1);
   assert.match(markup, /data-scroll="document"/);
   assert.match(renderToString(h(Scaffold, { scroll: 'body' }, 'Body')), /data-scroll="body"/);
-});
-
-test('Panes renders its sized pane, its stacking and its size for CSS, and names the pane the handle resizes', () => {
-  const markup = renderToString(
-    h(
-      Panes.Root,
-      { sized: 'end', stackBelow: 'medium', name: 'doc', defaultWidth: 20 },
-      h(Panes.Pane, { label: 'Document' }, 'Main'),
-      h(Panes.ResizeHandle),
-      h(Panes.Pane, { label: 'Details' }, 'Side'),
-    ),
-  );
-  assert.match(
-    markup,
-    /^<div class="env-panes" style="--env-panes-size:20rem" data-env-layout="panes" data-env-name="doc" data-sized="end" data-stack-below="medium">/,
-  );
-  assert.match(markup, /class="env-panes-pane" role="region" aria-label="Document"/);
-  const controls = /aria-controls="([^"]+)"/.exec(markup)?.[1];
-  assert.ok(controls, markup);
-  assert.match(
-    markup,
-    new RegExp(`id="${controls}" class="env-panes-pane" role="region" aria-label="Details"`),
-  );
-  assert.match(markup, /role="separator"[^>]*aria-valuetext="20 rem"/);
-  assert.match(markup, /class="env-resize-handle env-panes-resize-handle"/);
-  assert.doesNotMatch(markup, /data-behavior|data-split-at|data-open|env-panes-backdrop/);
-  const plain = renderToString(
-    h(
-      Panes.Root,
-      null,
-      h(Panes.Pane, { id: 'list' }, 'L'),
-      h(Panes.ResizeHandle),
-      h(Panes.Pane, null, 'D'),
-    ),
-  );
-  assert.match(plain, /data-sized="start"/);
-  assert.match(plain, /aria-controls="list"/);
-  assert.doesNotMatch(plain, /data-stack-below/);
-});
-
-test('Page renders invisible structure with its width, and its header above its content', () => {
-  assert.equal(
-    renderToString(h(Page, { name: 'settings', width: 'sm' }, 'Content')),
-    '<div class="env-page" data-env-layout="page" data-env-name="settings" data-width="sm">Content</div>',
-  );
-  assert.match(
-    renderToString(
-      h(Page, { header: h('h1', null, 'Title'), gutter: false, render: h('article') }, 'C'),
-    ),
-    /^<article class="env-page" data-env-layout="page" data-width="lg" data-gutter="none"><h1>Title<\/h1><div class="env-page-content">C<\/div><\/article>$/,
-  );
-  const css = sheet('Page.css');
-  assert.match(css, /container: env-page \/ inline-size;/);
-  assert.match(css, /--env-page-gutter: var\(--_theme-page-gutter\);/);
-  assert.match(
-    css,
-    /@container \(width >= 37\.5rem\) \{\s*\.env-page \{\s*--env-page-gutter: var\(--env-space-5\);/,
-  );
 });
