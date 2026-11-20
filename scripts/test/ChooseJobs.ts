@@ -12,7 +12,7 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
       '**/package.json',
       '**/tsconfig.json',
       'playwright.config.ts',
-      'scripts/RepositoryPaths.ts',
+      'scripts/*.ts',
       'scripts/test/**',
       'scripts/build/**',
       '.github/**',
