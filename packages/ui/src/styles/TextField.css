@@ -308,13 +308,13 @@
     inset-inline-end: var(--_text-field-end-inset, var(--env-space-2));
     color: var(--env-color-fg-muted);
   }
-  .env-text-field-control[data-start-icon] {
+  .env-text-field-control[data-start] {
     --_text-field-text-start-past-icon: calc(
       var(--_text-field-start-inset, var(--env-space-4)) + var(--env-control-icon-size) +
         var(--env-space-3)
     );
   }
-  .env-text-field-control[data-start-icon] > .env-text-field-input {
+  .env-text-field-control[data-start] > .env-text-field-input {
     padding-inline-start: var(--_text-field-text-start-past-icon);
   }
   .env-text-field-control[data-end-action] > .env-text-field-input {
@@ -388,7 +388,7 @@
   .env-text-field-control[data-suffix] > .env-text-field-input {
     padding-inline-end: calc(var(--env-space-1) / 2);
   }
-  .env-text-field-control[data-start-icon] > .env-text-field-prefix {
+  .env-text-field-control[data-start] > .env-text-field-prefix {
     padding-inline-start: var(--_text-field-text-start-past-icon);
   }
   .env-text-field-control[data-end-action] > .env-text-field-suffix {

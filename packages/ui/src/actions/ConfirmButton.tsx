@@ -91,7 +91,6 @@ export function ConfirmButton({
   disabled,
   pending,
   start,
-  endIcon,
   className,
   onBlur,
   onKeyDown,
@@ -157,7 +156,6 @@ export function ConfirmButton({
           {...shared}
           fallbackVariant="primary"
           start={armed && icon != null ? icon : start}
-          endIcon={endIcon}
           aria-label={armed ? undefined : label}
         >
           {armed ? confirmLabel : children}

@@ -47,6 +47,8 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    * Schemes a link may take beside the safe ones, such as `['vscode']` for links that open the
    * editor, or the application's own. A link keeps a relative destination or an http, https,
    * mailto, irc, ircs or xmpp one either way; one with another scheme renders as plain text.
+   * javascript, data and vbscript are refused even when listed, since a link with one runs code or
+   * opens content the application didn't write.
    */
   allowLinkSchemes?: readonly string[];
   /** Gives each code block a copy button; false by default. */
@@ -158,9 +160,15 @@ const markdownPlugins = [remarkGfm];
 
 const noOtherLinkSchemes: readonly string[] = [];
 
+const schemesThatRunCode = new Set(['javascript', 'data', 'vbscript']);
+
 function allowingLinkSchemes(schemes: readonly string[]): Options['urlTransform'] {
-  if (schemes.length === 0) return defaultUrlTransform;
-  const allowed = new Set(schemes.map((scheme) => scheme.replace(/:$/, '').toLowerCase()));
+  const allowed = new Set(
+    schemes
+      .map((scheme) => scheme.replace(/:$/, '').toLowerCase())
+      .filter((scheme) => !schemesThatRunCode.has(scheme)),
+  );
+  if (allowed.size === 0) return defaultUrlTransform;
   return (url, key) => {
     const safe = defaultUrlTransform(url);
     if (safe || key !== 'href') return safe;

@@ -16,9 +16,9 @@ export default function SmallToolbar() {
           value={layout}
           onValueChange={setLayout}
           items={[
-            { value: 'list', label: 'List', icon: <IconViewList /> },
-            { value: 'board', label: 'Board', icon: <IconViewModule /> },
-            { value: 'timeline', label: 'Timeline', icon: <IconViewTimeline />, disabled: true },
+            { value: 'list', label: 'List', start: <IconViewList /> },
+            { value: 'board', label: 'Board', start: <IconViewModule /> },
+            { value: 'timeline', label: 'Timeline', start: <IconViewTimeline />, disabled: true },
           ]}
         />
         <Button variant="secondary" size="sm" start={<IconAdd />}>

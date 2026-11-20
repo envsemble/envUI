@@ -12,13 +12,19 @@
 
   - `configs.recommended` no longer turns on `no-html-elements` and `label-vocabulary`. To keep them, use `envui.configs.strict` in place of `envui.configs.recommended`, or turn either on yourself, such as `rules: { 'envui/no-html-elements': 'error' }`.
 
+- `no-raw-graphics` no longer counts `start` and `end` as icon slots: they size only envUI's icons and a Graphic, so a raw `<svg>` or another package's icon in one, such as `<Button start={<Github />}>`, is reported, with the fix to wrap it in `<Graphic alt="">`. See [no-raw-graphics](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#no-raw-graphics).
+
+  Breaking changes:
+
+  - A raw `<svg>` with a fixed size or fill, or another icon package's icon, in a `start` or `end`, such as a List.Item's, is reported: write `start={<Graphic alt=""><Github /></Graphic>}`, or an envUI icon, such as `start={<IconFolder />}`.
+
 ### Minor Changes
 
 - `label-vocabulary` takes an `allow` option: the words an application keeps as labels, such as `['Clone', 'Retry']` in a developer tool, where they are the domain's terms. See [label-vocabulary](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#label-vocabulary).
 - `no-field-in-list-row` reports only a field with no `label`, `aria-label` or `aria-labelledby` in a `List.Item`'s `end`. Any field, a Radio or a RadioGroup can be a row's `control`, which the row names and describes, as it does a Switch or a Checkbox, so a settings row writes its label once: `<List.Item label="Theme" control={<Select items={themes} />} />`. A labelled field in `end`, such as `<SegmentedControl aria-label="View" />`, passes too. See [no-field-in-list-row](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#no-field-in-list-row).
 - `no-html-elements` no longer reports `role="tablist"` or `role="alert"`. envUI has no tabs component, so a tab list an app builds with the tablist, tab and tabpanel roles passes, and so does an app's own live message, such as a failed-load line inside a custom widget. See [no-html-elements](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#no-html-elements).
 - `no-link-in-clickable-row` reports a link in a List.Item only when the row itself takes the click, with `href` or `onClick`, and passes a link in a clickable `List.Item`'s `start` or `control`, as it did in `end`: those slots sit above the row's target, so an Avatar in `start` that links to the person's profile works beside a row that opens the item. Links beside an interactive row's or Card's `data-row-target` pass too, since they now stay clickable above it. See [no-link-in-clickable-row](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#no-link-in-clickable-row).
-- `no-raw-graphics` reports another icon package's icon, such as lucide-react's or react-icons', where it renders outside an icon slot or a Graphic, not its import, so a brand mark Material Symbols lacks can go in `<Graphic alt="">` or a Button's `startIcon`. Only a negative margin on a Graphic is reported now, as making up for the file's empty edges; a margin that spaces it passes. See [no-raw-graphics](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#no-raw-graphics).
+- `no-raw-graphics` reports another icon package's icon, such as lucide-react's or react-icons', where it renders outside an icon slot or a Graphic, not its import, so a brand mark Material Symbols lacks can go in `<Graphic alt="">` or IconButton's `icon`. Only a negative margin on a Graphic is reported now, as making up for the file's empty edges; a margin that spaces it passes. See [no-raw-graphics](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#no-raw-graphics).
 
 ### Patch Changes
 

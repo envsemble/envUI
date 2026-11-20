@@ -9,7 +9,7 @@ const rowsFor = (open: boolean): TreeItem[] =>
       value: 'design',
       depth: 0,
       label: 'Design',
-      icon: <IconFolderOpen />,
+      start: <IconFolderOpen />,
       expandable: true,
       expanded: open,
       end: <Badge count={2} aria-label="2 unread" />,
@@ -18,7 +18,7 @@ const rowsFor = (open: boolean): TreeItem[] =>
       value: 'design/brand.md',
       depth: 1,
       label: 'Brand.md',
-      icon: <IconDescription />,
+      start: <IconDescription />,
       description: 'Draft',
     },
   ].filter((row) => open || row.depth === 0);

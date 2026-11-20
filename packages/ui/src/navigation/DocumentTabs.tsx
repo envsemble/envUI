@@ -12,7 +12,6 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Column, Row } from '../layout/Layout.js';
-import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
@@ -50,8 +49,11 @@ export interface DocumentTabsItem {
    * size and is left out of the tab's name, which the label gives.
    */
   end?: ReactNode;
-  /** Optional leading icon. */
-  icon?: ReactNode;
+  /**
+   * Content before the tab's name, such as a file type's icon: an envUI icon takes the control icon
+   * size and other content keeps its own. It is left out of the tab's name, which the label gives.
+   */
+  start?: ReactNode;
   /** The tab's native tooltip, such as the full path; the label's text by default. */
   tooltip?: string;
   /** A preview tab shows its label in italics until it is pinned. */
@@ -64,8 +66,10 @@ export interface DocumentTabsItem {
   closable?: boolean;
   /**
    * More props for the tab's element, the one that holds the tab and its close button, such as a
-   * className or data attributes for tests. Its class joins the tab's; its handlers run before the
-   * tab's own.
+   * className or data attributes for tests. Its class joins the tab's. Its onPointerDown,
+   * onMouseDown and onAuxClick run before the tab's own, where preventDefault in onPointerDown or
+   * onAuxClick stops the tab's drag or middle-click close; its other handlers run after the tab's
+   * own, on the element around the tab.
    */
   itemProps?: DocumentTabsItemElementProps;
 }
@@ -314,7 +318,16 @@ export function DocumentTabs({
               top: drag.y + dragImageOffsetFromPointerPx,
             }}
           >
-            {dragged.icon != null && <DecorativeIcon>{dragged.icon}</DecorativeIcon>}
+            {dragged.start != null && (
+              <Slot
+                className="env-document-tabs-tab-start"
+                element="span"
+                layout="row"
+                shrink="never"
+              >
+                {dragged.start}
+              </Slot>
+            )}
             <span className="env-document-tabs-tab-label">{dragged.label}</span>
           </div>
         )}

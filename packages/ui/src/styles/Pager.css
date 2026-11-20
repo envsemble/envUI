@@ -48,15 +48,16 @@
     font: var(--env-type-title);
     letter-spacing: var(--env-type-title-letter-spacing);
   }
-  .env-pager-link .env-icon {
+  .env-pager-link-start,
+  .env-pager-link-end {
     --env-icon-size: 1.25rem;
-    color: var(--env-color-fg-muted);
+    --_slot-icon-color: var(--env-color-fg-muted);
   }
   .env-pager-link:hover {
     background: var(--env-color-bg-neutral-subtle-hover);
   }
-  .env-pager-link:hover .env-icon {
-    color: var(--env-color-fg-default);
+  .env-pager-link:hover :is(.env-pager-link-start, .env-pager-link-end) {
+    --_slot-icon-color: var(--env-color-fg-default);
   }
   .env-pager-link:active {
     background: var(--env-color-bg-neutral-subtle-pressed);

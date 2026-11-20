@@ -93,7 +93,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Button
 
-- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-end-icon` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start` (slot)
+- Parts: `env-button`, `env-button-content`, `env-button-end` (slot), `env-button-icon` (slot), `env-button-label` (slot), `env-button-spinner`, `env-button-start` (slot)
 - States: `data-full-width`; `data-pending`; `data-row-target`; `data-size` (`lg`, `md`, `sm`); `data-tone` (`accent`, `danger`); `data-underline`; `data-variant` (`ghost`, `outline`, `primary`, `secondary`, `text`)
 - Color properties: `--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected`, `--env-button-selected-content`
 
@@ -198,7 +198,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### DocumentTabs
 
-- Parts: `env-document-tabs`, `env-document-tabs-close`, `env-document-tabs-drag-image`, `env-document-tabs-end` (slot), `env-document-tabs-item`, `env-document-tabs-list`, `env-document-tabs-panel`, `env-document-tabs-panel-content` (slot), `env-document-tabs-strip`, `env-document-tabs-tab`, `env-document-tabs-tab-end` (slot), `env-document-tabs-tab-label`
+- Parts: `env-document-tabs`, `env-document-tabs-close`, `env-document-tabs-drag-image`, `env-document-tabs-end` (slot), `env-document-tabs-item`, `env-document-tabs-list`, `env-document-tabs-panel`, `env-document-tabs-panel-content` (slot), `env-document-tabs-strip`, `env-document-tabs-tab`, `env-document-tabs-tab-end` (slot), `env-document-tabs-tab-label`, `env-document-tabs-tab-start` (slot)
 - States: `data-active` on `env-document-tabs-item`; `data-drop` (`after`, `before`) on `env-document-tabs-item`; `data-first-active`; `data-moving` (`pointer`) on `env-document-tabs-item`; `data-preview` on `env-document-tabs-tab`; `data-reordering` on `env-document-tabs-list`; `data-value` on `env-document-tabs-tab`
 
 ### DropZone
@@ -316,7 +316,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Pager
 
-- Parts: `env-pager`, `env-pager-link`, `env-pager-link-copy`, `env-pager-link-label`, `env-pager-link-next`, `env-pager-link-previous`, `env-pager-link-title`
+- Parts: `env-pager`, `env-pager-link`, `env-pager-link-copy`, `env-pager-link-end` (slot), `env-pager-link-label`, `env-pager-link-next`, `env-pager-link-previous`, `env-pager-link-start` (slot), `env-pager-link-title`
 - States: `data-stacked`
 
 ### Pagination
@@ -367,7 +367,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### SegmentedControl
 
-- Parts: `env-segmented-control`, `env-segmented-control-item`, `env-segmented-control-item-count`, `env-segmented-control-item-end` (slot), `env-segmented-control-item-icon` (slot), `env-segmented-control-item-label`, `env-segmented-control-thumb`
+- Parts: `env-segmented-control`, `env-segmented-control-item`, `env-segmented-control-item-count`, `env-segmented-control-item-end` (slot), `env-segmented-control-item-label`, `env-segmented-control-item-start` (slot), `env-segmented-control-thumb`
 - States: `data-checked` on `env-segmented-control-item`; `data-disabled` on `env-segmented-control-item`; `data-full-width`; `data-placed` on `env-segmented-control-thumb`; `data-size` (`lg`, `md`, `sm`); `data-traveling` on `env-segmented-control-thumb`
 - Color properties: `--env-segmented-control-container`, `--env-segmented-control-outline`, `--env-segmented-control-content`, `--env-segmented-control-selected`, `--env-segmented-control-selected-content`
 
@@ -426,7 +426,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### TextField
 
 - Parts: `env-text-field`, `env-text-field-control`, `env-text-field-end`, `env-text-field-end-action` (slot), `env-text-field-input`, `env-text-field-label`, `env-text-field-prefix`, `env-text-field-start` (slot), `env-text-field-suffix`
-- States: `data-disabled` on `env-text-field-control`; `data-end-action` on `env-text-field-control`; `data-invalid` on `env-text-field-control`; `data-label-hidden`; `data-popup-open` on `env-text-field-control`; `data-prefix` on `env-text-field-control`; `data-rows` on `env-text-field-input`; `data-size` (`lg`, `md`, `sm`); `data-sizing` (`content`, `fixed`) on `env-text-field-input`; `data-start-icon` on `env-text-field-control`; `data-suffix` on `env-text-field-control`; `data-tall`; `data-variant` (`ghost`, `outline`) on `env-text-field-control`
+- States: `data-disabled` on `env-text-field-control`; `data-end-action` on `env-text-field-control`; `data-invalid` on `env-text-field-control`; `data-label-hidden`; `data-popup-open` on `env-text-field-control`; `data-prefix` on `env-text-field-control`; `data-rows` on `env-text-field-input`; `data-size` (`lg`, `md`, `sm`); `data-sizing` (`content`, `fixed`) on `env-text-field-input`; `data-start` on `env-text-field-control`; `data-suffix` on `env-text-field-control`; `data-tall`; `data-variant` (`ghost`, `outline`) on `env-text-field-control`
 - Color properties: `--env-text-field-container`, `--env-text-field-content`, `--env-text-field-outline`, `--env-text-field-indicator`
 
 ### Textarea
@@ -474,7 +474,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Tree
 
-- Parts: `env-tree`, `env-tree-chevron`, `env-tree-description`, `env-tree-end` (slot), `env-tree-group`, `env-tree-icon`, `env-tree-item`, `env-tree-label`, `env-tree-rows`
+- Parts: `env-tree`, `env-tree-chevron`, `env-tree-description`, `env-tree-end` (slot), `env-tree-group`, `env-tree-item`, `env-tree-label`, `env-tree-rows`, `env-tree-start` (slot)
 - States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-ending-style` on `env-tree-group`; `data-expanded` on `env-tree-chevron`; `data-focus-visible`; `data-highlighted` on `env-tree-item`; `data-id` on `env-tree-item`; `data-starting-style` on `env-tree-group`, `env-tree-item`
 
 ### VisuallyHidden

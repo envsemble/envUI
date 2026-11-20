@@ -53,8 +53,12 @@ export interface TreeItem {
    * @default the label when it is a string, else the label's rendered text
    */
   textValue?: string;
-  /** A decorative icon before the label, such as a folder or a document, at the control icon size. */
-  icon?: ReactNode;
+  /**
+   * Content before the label, such as IconFolder or IconDescription: an envUI icon takes the control
+   * icon size and other content keeps its own. It is hidden from assistive technology, since the
+   * label names the item.
+   */
+  start?: ReactNode;
   /**
    * Muted text after the label, such as a status or a path. It gives way first, to an ellipsis and
    * then out of the row, where the row runs out of room, and is read with the label.
@@ -225,6 +229,7 @@ export function Tree<Item extends TreeItem>({
     if (event.target !== event.currentTarget || !activeItem) return;
     const keyBelongsToApplication = event.altKey || event.ctrlKey || event.metaKey;
     if (keyBelongsToApplication) return;
+    const treeDocument = event.currentTarget.ownerDocument;
     const action = treeKeyAction(
       event.key,
       items,
@@ -236,7 +241,7 @@ export function Tree<Item extends TreeItem>({
         labelText(
           item.label,
           item.textValue,
-          document
+          treeDocument
             .getElementById(rowElementId(treeId, item.value))
             ?.querySelector('.env-tree-label'),
         ),

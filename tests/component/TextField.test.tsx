@@ -83,7 +83,7 @@ test('affixes sit beside the value, a press on one places the caret, and a long 
 
   const price = scope.getByRole('textbox', { name: 'Price', exact: true });
   expect(css(well(price), 'height')).toBe('40px');
-  const icon = box(well(price).querySelector('.env-text-field-start .env-icon')!);
+  const icon = box(well(price).querySelector('.env-text-field-start > *')!);
   const pricePrefix = box(affix(price, 'prefix'));
   const prefixText = textBox(affix(price, 'prefix'));
   const input = box(price);

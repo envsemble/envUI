@@ -618,16 +618,10 @@
           "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
-          "name": "endIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
-        },
-        {
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
+          "description": "Content after the label, at the far end of a full-width button, such as IconChevronRight for a next step, or a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button: an envUI icon takes the button's icon size and other content keeps its own."
         },
         {
           "name": "pending",
@@ -1952,7 +1946,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
+          "description": "Content after the label, at the far end of a full-width button, such as IconChevronRight for a next step, or a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button: an envUI icon takes the button's icon size and other content keeps its own."
         },
         {
           "name": "size",
@@ -1980,12 +1974,6 @@
           "required": false,
           "default": "false",
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
-        },
-        {
-          "name": "endIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
           "name": "aria-label",
@@ -2838,16 +2826,10 @@
           "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
-          "name": "endIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
-        },
-        {
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
+          "description": "Content after the label, at the far end of a full-width button, such as IconChevronRight for a next step, or a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button: an envUI icon takes the button's icon size and other content keeps its own."
         },
         {
           "name": "pending",
@@ -4168,7 +4150,7 @@
           "type": "readonly string[]",
           "required": false,
           "default": "[]",
-          "description": "Schemes a link may take beside the safe ones, such as `['vscode']` for links that open the editor, or the application's own. A link keeps a relative destination or an http, https, mailto, irc, ircs or xmpp one either way; one with another scheme renders as plain text."
+          "description": "Schemes a link may take beside the safe ones, such as `['vscode']` for links that open the editor, or the application's own. A link keeps a relative destination or an http, https, mailto, irc, ircs or xmpp one either way; one with another scheme renders as plain text. javascript, data and vbscript are refused even when listed, since a link with one runs code or opens content the application didn't write."
         },
         {
           "name": "codeCopyable",
@@ -5691,7 +5673,7 @@
     "Pager.Next": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next (EnvUIProvider's messages.pager.next), and an optional icon after them. It also stands alone, outside Pager.Root.",
+      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next (EnvUIProvider's messages.pager.next), and optional content after them, its end. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
@@ -5706,12 +5688,6 @@
           "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
-        },
-        {
           "name": "rel",
           "type": "string",
           "required": false,
@@ -5724,6 +5700,12 @@
           "required": false,
           "default": "'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next",
           "description": "The direction label above the title, such as Previous chapter or Back to setup, for this link alone; null leaves it out."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content after the text, such as IconArrowForward: an envUI icon takes the pager's icon size and other content keeps its own. It is hidden from assistive technology; none by default."
         }
       ],
       "native": [
@@ -5736,7 +5718,7 @@
     "Pager.Previous": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous (EnvUIProvider's messages.pager.previous), and an optional icon before them. It also stands alone, outside Pager.Root.",
+      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous (EnvUIProvider's messages.pager.previous), and optional content before them, its start. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
@@ -5751,12 +5733,6 @@
           "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
-        },
-        {
           "name": "rel",
           "type": "string",
           "required": false,
@@ -5769,6 +5745,12 @@
           "required": false,
           "default": "'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next",
           "description": "The direction label above the title, such as Previous chapter or Back to setup, for this link alone; null leaves it out."
+        },
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the text, such as IconArrowBack: an envUI icon takes the pager's icon size and other content keeps its own. It is hidden from assistive technology; none by default."
         }
       ],
       "native": [
@@ -7913,7 +7895,7 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with optional start content, an end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -7971,10 +7953,10 @@
           "description": "The field's look: outline, a box with a thin edge, or ghost, a faint fill without an edge, for a search at the top of a sidebar or a list."
         },
         {
-          "name": "startIcon",
+          "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon at the start of the field, such as Search or Mail."
+          "description": "Content at the start of the field, before the value, in the room of one icon, such as IconSearch or IconMail: an envUI icon takes the field's icon size. It is hidden from assistive technology."
         },
         {
           "name": "endAction",

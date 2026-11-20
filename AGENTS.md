@@ -22,10 +22,10 @@ Don't run `verify`, `test:browser`, `test:a11y` or `test:visual` as a routine st
 | Path                                         | Holds                                                                                                                                    |
 | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/ui/src/<family>/`                  | Components, in the family of their page's category, with what only that family uses in its `internal/`                                   |
-| `packages/ui/src/styles/<Name>.css`          | Each component's style sheet, one flat folder                                                                                            |
+| `packages/ui/src/styles/<Name>.css`          | Each component's style sheet, one flat folder; `TokensHandwritten.css` for the tokens DTCG can't hold                                    |
 | `packages/ui/src/foundations/messages/`      | Every built-in string, one namespace per component or family                                                                             |
 | `packages/ui/src/partDescriptions.json`      | What the part contract can't derive: each part's and property's description, the color properties                                        |
-| `packages/ui/tokens/`                        | The DTCG tokens and `envui.resolver.json`; `TokensHandwritten.css` and `handwritten.json` for what DTCG can't hold                       |
+| `packages/ui/tokens/`                        | The DTCG tokens and `envui.resolver.json`; `handwritten.json` for what DTCG can't hold                                                   |
 | `tests/library/rules/composition/`           | Each module's layer and each class's owner                                                                                               |
 | `docs/`                                      | The pages the package ships and the site shows; [contributing/pages.md](contributing/pages.md) says how to write one                     |
 | `apps/site/src/`                             | The site: `examples/<page>/`, `specimens/`, `tiles/`, `figures/`, `fit/`, `motion/`, `pages/`, `routes/`, `search/` and more             |

@@ -104,7 +104,7 @@ examples:
 1. **Container** (`env-button`)
 2. **Start** (`env-button-start`, `start`)
 3. **Label** (`env-button::text`)
-4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
+4. **End** (`env-button-end`, `end`)
 
 ## Behaviour
 

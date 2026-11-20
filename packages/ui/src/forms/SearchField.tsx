@@ -18,7 +18,7 @@ function keepEscapeFromEnclosingDialog(event: KeyboardEvent) {
 
 export interface SearchFieldProps extends Omit<
   TextFieldProps,
-  'type' | 'startIcon' | 'label' | 'visibleLabel' | 'value' | 'defaultValue' | 'onValueChange'
+  'type' | 'start' | 'label' | 'visibleLabel' | 'value' | 'defaultValue' | 'onValueChange'
 > {
   /**
    * The field's accessible name, such as Search members: text, or any content, such as an icon
@@ -134,7 +134,7 @@ export function SearchField({
           update('');
         }
       }}
-      startIcon={<IconSearch />}
+      start={<IconSearch />}
       endAction={
         endActions > 0 ? (
           <>

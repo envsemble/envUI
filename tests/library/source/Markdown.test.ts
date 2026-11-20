@@ -139,7 +139,7 @@ test('Markdown accepts component overrides and remark and rehype plugins, and st
   assert.ok(!elements.some((element) => 'onclick' in element.attributes || element.tag === 'b'));
 });
 
-test("links keep only safe schemes, and the application's own with allowLinkSchemes, without images taking them", () => {
+test("links keep only safe schemes, and the application's own with allowLinkSchemes, never javascript, data or vbscript, without images taking them", () => {
   const source = [
     '[Open](vscode://file/src/App.tsx) [Ticket](Tracker:42) [Run](javascript:alert(1))',
     '[Site](https://example.com) [Page](/docs) ![Logo](vscode://file/logo.png)',
@@ -155,6 +155,20 @@ test("links keep only safe schemes, and the application's own with allowLinkSche
     'https://example.com',
     '/docs',
   ]);
+  const refused = [
+    '[Run](javascript:alert(1)) [Page](data:text/html;base64,PHA+aGk8L3A+) [Old](VBScript:msgbox)',
+    '[Open](vscode://file/src/App.tsx)',
+  ].join('\n\n');
+  assert.deepEqual(
+    render(refused, { allowLinkSchemes: ['JavaScript', 'data:', 'vbscript', 'vscode'] })
+      .filter((element) => element.tag === 'a')
+      .map((element) => element.attributes.href),
+    ['vscode://file/src/App.tsx'],
+  );
+  assert.deepEqual(
+    render(refused, { allowLinkSchemes: ['javascript'] }).filter((element) => element.tag === 'a'),
+    [],
+  );
   const images = render(source, { allowLinkSchemes: ['vscode'] }).filter(
     (element) => element.tag === 'img',
   );

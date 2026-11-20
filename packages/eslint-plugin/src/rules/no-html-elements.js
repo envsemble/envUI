@@ -140,7 +140,7 @@ export default {
     docs: {
       description:
         'Disallow raw HTML elements and widget roles that envUI already provides as components',
-      recommended: true,
+      recommended: false,
       url: documentationUrl('no-html-elements'),
     },
     schema: [

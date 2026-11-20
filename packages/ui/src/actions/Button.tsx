@@ -79,11 +79,10 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    * assistive technology, since the label names the button.
    */
   start?: ReactNode;
-  /** A decorative icon after the label, such as a ChevronRight for a next step. */
-  endIcon?: ReactNode;
   /**
-   * Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and
-   * aria-keyshortcuts on the button.
+   * Content after the label, at the far end of a full-width button, such as IconChevronRight for a
+   * next step, or a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the
+   * button: an envUI icon takes the button's icon size and other content keeps its own.
    */
   end?: ReactNode;
   /**

@@ -2,7 +2,6 @@
 
 import type { ComponentPropsWithoutRef, CSSProperties, MouseEvent, ReactNode, Ref } from 'react';
 import * as Field from '../../forms/Field.js';
-import { DecorativeIcon } from '../icon/DecorativeIcon.js';
 import { ControlDefaults } from '../control/ControlDefaults.js';
 import { Slot } from '../layout/Slot.js';
 import { classNames } from '../classNames.js';
@@ -85,7 +84,7 @@ export function FieldFrame({
   children,
   controlBox = false,
   variant = 'outline',
-  startIcon,
+  start,
   endAction,
   visibleLabel,
   size,
@@ -118,15 +117,21 @@ export function FieldFrame({
         ? renderControlBox({
             className: 'env-text-field-control',
             'data-variant': variant,
-            'data-start-icon': flag(startIcon != null),
+            'data-start': flag(start != null),
             'data-end-action': flag(endAction != null),
             'data-prefix': flag(prefix != null),
             'data-suffix': flag(suffix != null),
             children: (
               <>
-                {startIcon != null && (
-                  <Slot className="env-text-field-start" element="span" layout="row" shrink="never">
-                    <DecorativeIcon>{startIcon}</DecorativeIcon>
+                {start != null && (
+                  <Slot
+                    className="env-text-field-start"
+                    element="span"
+                    layout="row"
+                    shrink="never"
+                    aria-hidden
+                  >
+                    {start}
                   </Slot>
                 )}
                 {prefix != null && (

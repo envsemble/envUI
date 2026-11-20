@@ -25,7 +25,7 @@ import { useEyeDropper } from './internal/useEyeDropper.js';
 import type { ColorPickerValueProps } from './internal/colorPickerValueProps.js';
 import { ColorChangeContext } from './internal/ColorChangeContext.js';
 import { useColorFollowingValue } from './internal/useColorFollowingValue.js';
-import { useFormReset } from '../../internal/field/useFormReset.js';
+import { useFormResetting } from './internal/useFormResetting.js';
 import { fieldDescribedBy, fieldPartIds } from '../../internal/field/useFieldControl.js';
 import { formatColor, sameColor, toColor, type ColorFormat } from './internal/colorValue.js';
 import { flag } from '../../internal/flag.js';
@@ -101,7 +101,7 @@ export function ColorPicker({
   const format = formats.includes(chosenFormat) ? chosenFormat : formats[0];
   const { color, setOwn, reset, controlled } = useColorFollowingValue(value, defaultValue, alpha);
   const inputRef = useRef<HTMLInputElement>(null);
-  const resetting = useFormReset(
+  const resetting = useFormResetting(
     inputRef,
     () => {
       if (!controlled) reset();

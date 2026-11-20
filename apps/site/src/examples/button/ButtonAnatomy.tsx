@@ -4,7 +4,7 @@ import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 export default function ButtonAnatomy() {
   return (
-    <Button start={<IconAdd />} endIcon={<IconChevronRight />}>
+    <Button start={<IconAdd />} end={<IconChevronRight />}>
       Create project
     </Button>
   );

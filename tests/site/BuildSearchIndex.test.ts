@@ -36,7 +36,7 @@ const best = (query, count = 1) =>
     .map(({ id }) => id);
 
 test('words split at punctuation and at camel-case humps, which stay whole too', () => {
-  assert.deepEqual(tokenize('startIcon'), ['startIcon', 'start', 'Icon']);
+  assert.deepEqual(tokenize('endAction'), ['endAction', 'end', 'Action']);
   assert.deepEqual(tokenize('--env-color-fg-muted'), ['env', 'color', 'fg', 'muted']);
   assert.deepEqual(tokenize('Menu.RadioItem'), ['Menu', 'RadioItem', 'Radio', 'Item']);
 });
@@ -85,8 +85,8 @@ test('every search result leads to a page there is, and to an element that page 
 test('search finds components by alias, props and tokens by name, and pages before their parts', () => {
   assert.deepEqual(best('text box'), ['page:text-field']);
   assert.deepEqual(best('hamburger'), ['page:navigation-drawer']);
-  assert.ok(best('startIcon', 5).includes('prop:TextField.startIcon'));
-  assert.ok(best('start icon', 5).includes('prop:TextField.startIcon'));
+  assert.ok(best('endAction', 5).includes('prop:TextField.endAction'));
+  assert.ok(best('end action', 5).includes('prop:TextField.endAction'));
   assert.deepEqual(best('--env-color-fg-muted'), ['token:color.fg.muted']);
   assert.deepEqual(best('fg muted'), ['token:color.fg.muted']);
   assert.deepEqual(best('button'), ['page:button']);
@@ -105,7 +105,7 @@ test('a whole name ranks first: an export, a prop by its export, a token', () =>
   assert.deepEqual(best('Menu.Item'), ['export:Menu.Item']);
   assert.deepEqual(best('Theme'), ['export:Theme']);
   assert.ok(
-    best('startIcon', 4).every((id) => id.startsWith('prop:') && id.endsWith('.startIcon')),
+    best('endAction', 4).every((id) => id.startsWith('prop:') && id.endsWith('.endAction')),
   );
 });
 
@@ -173,11 +173,11 @@ test('an export on a page without a Props view leads to the section that shows i
 
 test('a result carries where it is: its page, view and element', () => {
   const prop = index
-    .search('startIcon', queryOptionsFor('startIcon'))
-    .find(({ id }) => id === 'prop:TextField.startIcon');
+    .search('endAction', queryOptionsFor('endAction'))
+    .find(({ id }) => id === 'prop:TextField.endAction');
   assert.equal(prop.page, 'text-field');
   assert.equal(prop.view, 'props');
-  assert.equal(prop.section, 'props-TextField-startIcon');
+  assert.equal(prop.section, 'props-TextField-endAction');
   const token = index.search('--env-color-fg-muted', queryOptionsFor('--env-color-fg-muted'))[0];
   assert.equal(token.page, 'docs/tokens');
   assert.equal(token.section, 'token-env-color-fg-muted');

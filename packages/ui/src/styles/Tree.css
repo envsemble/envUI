@@ -122,17 +122,20 @@
   .env-tree-chevron[data-expanded]:dir(rtl) .env-icon {
     transform: scaleX(-1) rotate(90deg);
   }
-  .env-tree .env-tree-icon {
-    flex: 0 0 auto;
-    inline-size: var(--_tree-icon-size);
-    block-size: var(--_tree-icon-size);
-    color: var(--env-color-fg-muted);
+  .env-tree .env-tree-start {
+    min-inline-size: var(--_tree-icon-size);
+    justify-content: center;
+    --env-icon-size: var(--_tree-icon-size);
+    --_slot-icon-color: var(--env-color-fg-muted);
   }
-  .env-tree-item:has(> .env-tree-icon) {
+  .env-tree-item:has(> .env-tree-start) {
     --_tree-room-before-label: calc(2 * (var(--_tree-icon-size) + var(--env-space-1)));
   }
-  .env-tree-item[aria-selected='true'] :is(.env-tree-icon, .env-tree-chevron) {
+  .env-tree-item[aria-selected='true'] .env-tree-chevron {
     color: inherit;
+  }
+  .env-tree-item[aria-selected='true'] .env-tree-start {
+    --_slot-icon-color: currentColor;
   }
   .env-tree-label {
     min-inline-size: 0;

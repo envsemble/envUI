@@ -13,7 +13,7 @@ export default function IconAndEndAction() {
       type={shown ? 'text' : 'password'}
       autoComplete="current-password"
       defaultValue="northwind-2026"
-      startIcon={<IconLock />}
+      start={<IconLock />}
       endAction={
         <IconButton
           icon={shown ? <IconVisibilityOff /> : <IconVisibility />}

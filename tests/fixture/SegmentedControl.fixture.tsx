@@ -29,7 +29,7 @@ export default function SegmentedControlFixture({ theme }: { theme: ColorScheme 
         value={layout}
         onValueChange={setLayout}
         items={[
-          { value: 'list', label: 'List', icon: <IconViewList /> },
+          { value: 'list', label: 'List', start: <IconViewList /> },
           { value: 'board', label: 'Board' },
         ]}
       />
@@ -78,8 +78,8 @@ export function SegmentContentFixture() {
     <SegmentedControl
       aria-label="View"
       items={[
-        { value: 'list', label: 'List', icon: <IconViewList />, visibleLabel: false },
-        { value: 'grid', label: 'Grid', icon: <IconGridView />, visibleLabel: false },
+        { value: 'list', label: 'List', start: <IconViewList />, visibleLabel: false },
+        { value: 'grid', label: 'Grid', start: <IconGridView />, visibleLabel: false },
         {
           value: 'review',
           label: (

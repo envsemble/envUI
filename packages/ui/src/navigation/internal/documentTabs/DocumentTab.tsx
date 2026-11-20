@@ -5,7 +5,6 @@ import { useRef, type KeyboardEvent, type MouseEvent, type PointerEvent } from '
 import { IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';
 import { classNames } from '../../../internal/classNames.js';
-import { DecorativeIcon } from '../../../internal/icon/DecorativeIcon.js';
 import { Slot } from '../../../internal/layout/Slot.js';
 import { flag } from '../../../internal/flag.js';
 import type { DocumentTabsItem, DocumentTabsProps } from '../../DocumentTabs.js';
@@ -95,7 +94,17 @@ export function DocumentTab({
           if (closable && closesTab(event)) onClose(item.value);
         }}
       >
-        {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
+        {item.start != null && (
+          <Slot
+            className="env-document-tabs-tab-start"
+            element="span"
+            layout="row"
+            shrink="never"
+            aria-hidden
+          >
+            {item.start}
+          </Slot>
+        )}
         <span className="env-document-tabs-tab-label" ref={labelElement}>
           {item.label}
         </span>

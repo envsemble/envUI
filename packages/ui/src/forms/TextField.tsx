@@ -52,7 +52,7 @@ function typeValue(input: HTMLInputElement, value: string) {
 
 /**
  * A labelled single-line text input: a native input with its label above it, a description and an
- * error, at the control height in an outline or ghost look, with an optional start icon, end
+ * error, at the control height in an outline or ghost look, with optional start content, an end
  * action, prefix and suffix.
  */
 export function TextField({
@@ -61,7 +61,7 @@ export function TextField({
   description,
   error,
   variant,
-  startIcon,
+  start,
   endAction,
   visibleLabel,
   size,
@@ -121,7 +121,7 @@ export function TextField({
       error={error}
       controlBox
       variant={variant}
-      startIcon={startIcon}
+      start={start}
       endAction={endAction}
       visibleLabel={visibleLabel}
       size={size}

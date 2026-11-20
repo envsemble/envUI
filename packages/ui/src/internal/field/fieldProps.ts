@@ -37,8 +37,11 @@ export interface FieldSizeProps {
 }
 
 export interface FieldDecorationProps {
-  /** A decorative icon at the start of the field, such as Search or Mail. */
-  startIcon?: ReactNode;
+  /**
+   * Content at the start of the field, before the value, in the room of one icon, such as IconSearch
+   * or IconMail: an envUI icon takes the field's icon size. It is hidden from assistive technology.
+   */
+  start?: ReactNode;
   /**
    * A control at the end of the field, such as an IconButton that reveals or copies the value; name
    * it with aria-label. A button that sets no variant takes ghost here.
