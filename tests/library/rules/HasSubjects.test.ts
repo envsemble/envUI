@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import postcss from 'postcss';
-import { repositoryRoot, styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
+import {
+  repositoryPath,
+  repositoryRoot,
+  styleSheetsDirectory,
+} from '../../../scripts/RepositoryPaths.ts';
 
 function sheetsIn(folder) {
   return readdirSync(folder, { withFileTypes: true }).flatMap((entry) => {
@@ -53,7 +57,7 @@ test('no :has() rule styles any element or a pseudo-element, which Chromium matc
         if (!selector.includes(':has(')) continue;
         const subject = split(selector, (char) => /[\s>+~]/.test(char)).at(-1) ?? '';
         if (subject.includes('::') || !named(subject)) {
-          const file = relative(repositoryRoot, sheet).replaceAll('\\', '/');
+          const file = repositoryPath(sheet);
           found.push(`${file}: ${selector.replace(/\s+/g, ' ')}`);
         }
       }
