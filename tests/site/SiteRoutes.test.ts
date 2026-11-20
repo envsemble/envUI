@@ -63,8 +63,12 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'docs/components/page-header': 'docs/components/page',
     'patterns/search-trigger':
       'components/command-palette?section=opening-it-the-button-and-the-shortcut',
+    'components/rating': 'components/meter',
     'components/rating/props': 'docs/components/meter',
+    'components/animated-number': 'foundations/typography',
     'components/animated-number/props': 'docs/foundations/typography',
+    'components/calendar-heatmap': 'docs',
+    'components/heatmap': 'docs',
     patterns: 'docs',
     'docs/patterns': 'docs',
     'patterns/forms': 'docs',

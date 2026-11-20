@@ -81,16 +81,8 @@ export const formerPages: Record<string, { page: string; section?: string }> = {
   'components/rail': { page: 'components/navigation-drawer' },
   'components/page-header': { page: 'components/page' },
   'components/rich-text': { page: 'components/markdown' },
-  'components/animated-number': {
-    page: 'foundations/typography',
-    section: 'a-number-that-changes',
-  },
-  'components/calendar-heatmap': {
-    page: 'components/tooltip',
-    section: 'details-of-each-day-in-a-grid',
-  },
-  'components/heatmap': { page: 'components/tooltip', section: 'details-of-each-day-in-a-grid' },
-  'components/rating': { page: 'components/meter', section: 'a-score-in-stars' },
+  'components/animated-number': { page: 'foundations/typography' },
+  'components/rating': { page: 'components/meter' },
   'patterns/feature-cards': { page: 'components/card', section: 'feature-card' },
   'patterns/search-trigger': {
     page: 'components/command-palette',
@@ -175,7 +167,16 @@ const patternIds = [
   'window-frame',
 ];
 
-const componentPatterns = ['window-frame', 'account-menu', 'stat', 'stats', 'loading', 'skeleton'];
+const componentsWithoutPage = [
+  'window-frame',
+  'account-menu',
+  'stat',
+  'stats',
+  'loading',
+  'skeleton',
+  'calendar-heatmap',
+  'heatmap',
+];
 
 function mergedPage({ path, rest }: OldAddress) {
   if (/^(?:docs\/)?foundations\/composition(?:\/|$)/.test(path)) return `docs/customizing${rest()}`;
@@ -183,7 +184,11 @@ function mergedPage({ path, rest }: OldAddress) {
   if (/^(?:docs\/)?foundations\/content(?:\/|$)/.test(path)) return `docs/writing${rest()}`;
   if (/^(?:docs\/)?patterns(?:\/|$)/.test(path)) return docsRoute;
   const slug = path.split('/')[1] ?? '';
-  if (path.startsWith('components/') && componentPatterns.includes(slug) && !groupedPageOf(slug))
+  if (
+    path.startsWith('components/') &&
+    componentsWithoutPage.includes(slug) &&
+    !groupedPageOf(slug)
+  )
     return docsRoute;
   return undefined;
 }
@@ -228,7 +233,7 @@ export const oldPaths = [
   ...Object.keys(movedAddresses),
   ...codingAgentsAddresses,
   ...Object.keys(formerPages).flatMap((path) => [path, `docs/${path}`]),
-  ...componentPatterns.map((slug) => `components/${slug}`),
+  ...componentsWithoutPage.map((slug) => `components/${slug}`),
   'patterns',
   'docs/patterns',
   ...patternIds.flatMap((id) => [`patterns/${id}`, `docs/patterns/${id}`]),
