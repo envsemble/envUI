@@ -1,4 +1,5 @@
 import type { ScrollView, SectionPosition } from './contentsOutline.js';
+import { pixelsOf } from '../../internal/dom/lengths.js';
 
 function scrollerOf(element: Element): HTMLElement | null {
   const document = element.ownerDocument;
@@ -27,8 +28,7 @@ export function readSections(
 ): { sections: SectionPosition[]; view: ScrollView } {
   const scroller = scrollerOf(elements[0]);
   const scrolling = scroller ?? doc.scrollingElement ?? doc.documentElement;
-  const padding =
-    parseFloat(getComputedStyle(scroller ?? doc.documentElement).scrollPaddingTop) || 0;
+  const padding = pixelsOf(getComputedStyle(scroller ?? doc.documentElement).scrollPaddingTop);
   const box = scroller?.getBoundingClientRect();
   const scale =
     scroller && box && scroller.offsetHeight > 0 ? box.height / scroller.offsetHeight || 1 : 1;
@@ -40,7 +40,7 @@ export function readSections(
       top:
         (element.getBoundingClientRect().top - top) / scale -
         padding -
-        (parseFloat(getComputedStyle(element).scrollMarginTop) || 0),
+        pixelsOf(getComputedStyle(element).scrollMarginTop),
     })),
     view: {
       height: Math.max(0, height - padding),

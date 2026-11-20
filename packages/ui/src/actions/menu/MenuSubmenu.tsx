@@ -8,12 +8,7 @@ import {
   containedOpenChange,
   usePortalContainer,
 } from '../../internal/popup/PortalContainerContext.js';
-import {
-  MenuPopup,
-  menuParts,
-  menuPopupBlockStartInset,
-  menuPopupInlineEndInset,
-} from '../internal/MenuPopup.js';
+import { MenuPopup, menuParts, menuPopupInset } from '../internal/MenuPopup.js';
 import type { OpenChangeDetails } from '../internal/menuOpenChange.js';
 import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
 import type { TriggerProps } from '../internal/menuTriggerProps.js';
@@ -96,8 +91,8 @@ export function Submenu({
   const textLabel = typeof label === 'string' ? label : undefined;
   const portal = usePortalContainer();
   const clearParentMenuEdge = () =>
-    menuPopupInlineEndInset(trigger.current?.closest('.env-menu')) + gapFromParentMenuEdge;
-  const alignFirstRowWithOpeningRow = () => -menuPopupBlockStartInset(popup.current);
+    menuPopupInset(trigger.current?.closest('.env-menu'), 'inline-end') + gapFromParentMenuEdge;
+  const alignFirstRowWithOpeningRow = () => -menuPopupInset(popup.current, 'block-start');
   const returnFocusToOpeningRowIfStillThere = () => {
     const row = trigger.current;
     const active = row?.ownerDocument.activeElement;

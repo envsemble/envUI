@@ -2,14 +2,13 @@
 
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import type { RowDensity } from '../../foundations/Theme.js';
-import { remPixels } from '../../internal/dom/lengths.js';
+import { defaultRemPixels, remPixels } from '../../internal/dom/lengths.js';
 import '../../styles/Base.css';
 import '../../styles/Tree.css';
 
 const overscanRows = 8;
 const rowsBeforeViewportIsMeasured = 24;
 const comfortableRowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.75 };
-const pixelsPerRemOnServer = 16;
 
 export interface TreeViewportOptions {
   containerRef: RefObject<HTMLElement | null>;
@@ -52,7 +51,7 @@ export function useTreeViewport({
 }: TreeViewportOptions): TreeViewport {
   const [scrollTop, setScrollTop] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(0);
-  const [rowHeight, setRowHeight] = useState(comfortableRowRem[density] * pixelsPerRemOnServer);
+  const [rowHeight, setRowHeight] = useState(comfortableRowRem[density] * defaultRemPixels);
   const revealedSelection = useRef<string | null>(null);
 
   const hasItems = count > 0;

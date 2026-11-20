@@ -5,6 +5,7 @@ import { useMessages } from '../provider/EnvUIContext.js';
 import { useResize } from '../resize/useResize.js';
 import { textarea as textareaMessages } from '../../foundations/messages/textarea.js';
 import type { TextareaControlProps } from './TextareaControl.js';
+import { pixelsOf } from '../dom/lengths.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
 import '../../styles/TextareaResizeEdge.css';
@@ -21,7 +22,7 @@ const unparsedLengthPixels = 16;
 
 function measureTextarea(input: HTMLTextAreaElement): Metrics {
   const styles = (input.ownerDocument.defaultView ?? window).getComputedStyle(input);
-  const minimumHeight = Number.parseFloat(styles.minHeight) || 0;
+  const minimumHeight = pixelsOf(styles.minHeight);
   const maximumHeight = Number.parseFloat(styles.maxHeight);
   return {
     height: input.offsetHeight,

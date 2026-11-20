@@ -26,6 +26,7 @@ import { followDrag, followOverdrag } from './internal/sliderDrag.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
 import { flag } from '../internal/flag.js';
 import { idRefs } from '../internal/dom/idRefs.js';
+import { pixelsOf } from '../internal/dom/lengths.js';
 import '../styles/Base.css';
 import '../styles/Slider.css';
 
@@ -303,7 +304,7 @@ function veilIndicatorUnderText(control: HTMLElement) {
   )) {
     const box = text.getBoundingClientRect();
     if (box.width === 0) continue;
-    const halfLine = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
+    const halfLine = pixelsOf(getComputedStyle(text).fontSize) / 2;
     if (at >= box.left - halfLine && at <= box.right + halfLine) veiled = true;
     const textInLeftHalf = box.left + box.width / 2 < span.left + span.width / 2;
     if (textInLeftHalf) clearStart = Math.max(clearStart, box.right + halfLine - span.left);

@@ -12,6 +12,7 @@ import {
   type PopupSide,
   type PopupSurfaceProps,
 } from '../../internal/popup/PopupSurface.js';
+import { pixelsOf } from '../../internal/dom/lengths.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
@@ -94,20 +95,14 @@ export function MenuPopup({
   );
 }
 
-export function menuPopupBlockStartInset(element: Element | null | undefined) {
+export function menuPopupInset(
+  element: Element | null | undefined,
+  side: 'block-start' | 'inline-end',
+) {
   if (!element) return 0;
   const style = getComputedStyle(element);
   return (
-    (Number.parseFloat(style.paddingBlockStart) || 0) +
-    (Number.parseFloat(style.borderBlockStartWidth) || 0)
-  );
-}
-
-export function menuPopupInlineEndInset(element: Element | null | undefined) {
-  if (!element) return 0;
-  const style = getComputedStyle(element);
-  return (
-    (Number.parseFloat(style.paddingInlineEnd) || 0) +
-    (Number.parseFloat(style.borderInlineEndWidth) || 0)
+    pixelsOf(style.getPropertyValue(`padding-${side}`)) +
+    pixelsOf(style.getPropertyValue(`border-${side}-width`))
   );
 }

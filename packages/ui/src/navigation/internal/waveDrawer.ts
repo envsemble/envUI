@@ -12,6 +12,7 @@ import {
   type Glide,
   type WaveLayout,
 } from './contentsWave.js';
+import { pixelsOf } from '../../internal/dom/lengths.js';
 import '../../styles/Base.css';
 import '../../styles/TableOfContents.css';
 
@@ -26,9 +27,9 @@ function measureWave(body: HTMLElement, shape: SVGSVGElement): WaveLayout | null
   const roomAroundEntries = getComputedStyle(body);
   return {
     anchors,
-    top: first.offsetTop - (parseFloat(roomAroundEntries.paddingTop) || 0),
-    bottom: last.offsetTop + last.offsetHeight + (parseFloat(roomAroundEntries.paddingBottom) || 0),
-    full: parseFloat(getComputedStyle(shape).width) || 0,
+    top: first.offsetTop - pixelsOf(roomAroundEntries.paddingTop),
+    bottom: last.offsetTop + last.offsetHeight + pixelsOf(roomAroundEntries.paddingBottom),
+    full: pixelsOf(getComputedStyle(shape).width),
   };
 }
 
