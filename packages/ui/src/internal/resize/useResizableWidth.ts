@@ -5,7 +5,7 @@ import type { ResizeOptions } from './useResize.js';
 import { useFormatters } from '../provider/useFormatters.js';
 import { remPixels, roundToHundredth } from '../dom/lengths.js';
 import type { ResizeDetails } from './resizeDetails.js';
-import { useLatest } from '../useLatest.js';
+import { useLatest } from '../react/useLatest.js';
 
 const finiteOrUndefined = (value: number | undefined) =>
   value !== undefined && Number.isFinite(value) ? value : undefined;
@@ -31,16 +31,6 @@ export interface ResizableWidthOptions {
   minWidth: number;
   maxWidth: number;
   onWidthChange: ((width: number, details: ResizeDetails) => void) | undefined;
-  /**
-   * The width to start from, in rem, until people choose one or a reset forgets it, such as one the
-   * server read from where the component keeps it; the default otherwise.
-   */
-  keptWidth?: number;
-  /**
-   * Keeps the width people choose, as a change is complete, where the component keeps it; receives
-   * undefined as a double click forgets it.
-   */
-  keep?: (width: number | undefined) => void;
   /** The largest width the room around it allows, in rem, read as a drag starts or a key moves. */
   room: (handle: HTMLElement) => number;
   /** Whether the width grows as the handle moves toward the inline start: a region at the end. */
@@ -52,10 +42,9 @@ export interface ResizableWidthOptions {
 /**
  * The width of a region that a handle on its edge resizes, a pane's, the NavigationDrawer's or a
  * side Sheet's, in rem: the application's where it controls it, else the one people chose, else the
- * kept one, else the default, within the least and the largest width. It returns the width, the
- * props of the ResizeHandle, the same handle and keys everywhere: 1 rem a step, 5 with Shift or Page
- * Up and Page Down, Home and End to the least and the largest width, and a double click back to the
- * default; and `restore`, which takes a width read back from where it was kept as the chosen one.
+ * default, within the least and the largest width. It returns the width and the props of the
+ * ResizeHandle, the same handle and keys everywhere: 1 rem a step, 5 with Shift or Page Up and Page
+ * Down, Home and End to the least and the largest width, and a double click back to the default.
  */
 export function useResizableWidth({
   width: controlledWidth,
@@ -63,8 +52,6 @@ export function useResizableWidth({
   minWidth,
   maxWidth,
   onWidthChange,
-  keptWidth,
-  keep,
   room,
   reverse,
   widthText,
@@ -76,21 +63,15 @@ export function useResizableWidth({
     (value: number) => roundToHundredth(Math.min(max, Math.max(min, value))),
     [min, max],
   );
-  const [chosen, setChosen] = useState<number | 'default'>();
+  const [chosen, setChosen] = useState<number>();
   const controlled = finiteOrUndefined(controlledWidth);
   const defaultWidth = finiteOrUndefined(givenDefault) ?? min;
-  const width = clamp(
-    controlled ??
-      (chosen === 'default'
-        ? defaultWidth
-        : (chosen ?? finiteOrUndefined(keptWidth) ?? defaultWidth)),
-  );
+  const width = clamp(controlled ?? chosen ?? defaultWidth);
 
   const latest = useLatest({
     width,
     controlled,
     onWidthChange,
-    keep,
     defaultWidth,
     clamp,
     widthText,
@@ -99,20 +80,14 @@ export function useResizableWidth({
     (next: number, { committed }: ResizeDetails) => {
       const current = latest.current;
       const value = current.clamp(next);
-      if (current.controlled === undefined) {
-        setChosen(value);
-        if (committed) current.keep?.(value);
-      }
+      if (current.controlled === undefined) setChosen(value);
       if (committed || value !== current.width) current.onWidthChange?.(value, { committed });
     },
     [latest],
   );
   const reset = useCallback(() => {
     const current = latest.current;
-    if (current.controlled === undefined) {
-      setChosen('default');
-      current.keep?.(undefined);
-    }
+    if (current.controlled === undefined) setChosen(undefined);
     current.onWidthChange?.(current.clamp(current.defaultWidth), { committed: true });
   }, [latest]);
 
@@ -142,6 +117,5 @@ export function useResizableWidth({
       },
     [reverse, width, min, max, room, change, reset, latest, formatters],
   );
-  const restore = useCallback((kept: number) => setChosen(kept), []);
-  return { width, handleProps, restore };
+  return { width, handleProps };
 }

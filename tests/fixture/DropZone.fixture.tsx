@@ -156,3 +156,30 @@ export function DropZoneContentFixture() {
     </DropZone>
   );
 }
+
+export function DropZoneRegionFixture() {
+  const [files, setFiles] = useState<File[]>([]);
+  const picker = useRef<HTMLInputElement>(null);
+  return (
+    <DropZone
+      label="Drop files on the table"
+      description="Any file up to 10 MB"
+      target={false}
+      multiple
+      inputRef={picker}
+      render={<section className="own-region" data-testid="region" />}
+      onFilesAccepted={(taken) => setFiles((current) => [...current, ...taken])}
+    >
+      <table>
+        <tbody data-testid="rows">
+          {files.map((each) => (
+            <tr key={each.name}>
+              <td>{each.name}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Button onClick={() => picker.current?.click()}>Browse</Button>
+    </DropZone>
+  );
+}

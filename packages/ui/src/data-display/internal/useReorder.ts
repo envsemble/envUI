@@ -8,7 +8,7 @@ import {
   type RefObject,
   type SyntheticEvent,
 } from 'react';
-import { useLatest } from '../../internal/useLatest.js';
+import { useLatest } from '../../internal/react/useLatest.js';
 import { optionModule } from '../../internal/react/useOptionModule.js';
 import { dragThreshold } from '../../internal/dom/lengths.js';
 import { isLiftKey, isLiftedKey, isRowMoveKey } from './reorderKeys.js';

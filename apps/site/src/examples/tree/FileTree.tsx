@@ -60,7 +60,7 @@ export default function FileTree() {
           label: node.name,
           expandable: Boolean(node.children),
           expanded: open,
-          icon: node.children ? open ? <IconFolderOpen /> : <IconFolder /> : <IconDescription />,
+          start: node.children ? open ? <IconFolderOpen /> : <IconFolder /> : <IconDescription />,
           tooltip: node.path,
         });
         if (node.children && open) visit(node.children, depth + 1);

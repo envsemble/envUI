@@ -131,14 +131,6 @@
   margin: 0;
 }
 
-.catalogue-short-editor {
-  inline-size: 100%;
-  text-align: start;
-}
-.catalogue-short-editor .env-rich-text-document {
-  min-block-size: 4.5rem;
-}
-
 .catalogue-inset-box {
   outline: 0.0625rem dashed var(--env-color-border-default);
   transition: padding var(--env-motion-duration-slow) var(--env-motion-ease);
@@ -147,10 +139,6 @@
   .catalogue-inset-box {
     transition: none;
   }
-}
-
-.catalogue-motion-subject .catalogue-appearance-area {
-  background: none;
 }
 
 .catalogue-row-density {

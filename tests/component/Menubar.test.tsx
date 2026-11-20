@@ -329,3 +329,17 @@ test("a trigger takes its own attributes, and an icon beside its label keeps the
   await keyboard.press('Enter');
   await isShown(page.getByRole('menu', { name: 'Files' }));
 });
+
+test('the access key is underlined inside elements that wrap the label, and both triggers take one kind of attributes', async () => {
+  mount({ default: fixture.RichTriggerFixture });
+  const selection = page.getByTestId('selection-trigger');
+  const underline = selection.element().querySelector('.env-menubar-access-key')!;
+  expect(underline.textContent).toBe('c');
+  expect(underline.closest('.fixture-wrapped-label')).not.toBeNull();
+  expect(selection.element().textContent).toBe('Selection');
+  await expect.element(selection).toHaveAttribute('aria-keyshortcuts', 'Alt+C');
+  (selection.element() as HTMLElement).focus();
+  await keyboard.press('Enter');
+  await isShown(page.getByRole('menu', { name: 'Selection' }));
+  await expect.element(page.getByTestId('expand-trigger')).toHaveClass(/env-menu-submenu-trigger/);
+});

@@ -13,7 +13,7 @@ import {
   Surface,
   type CheckboxState,
 } from '@envsemble/envui';
-import { planOptions, dialogOptions } from './SelectOptions.fixture.js';
+import { planOptions, dialogOptions } from './SelectOptions.js';
 
 export default function FormsFixture() {
   const [controlled, setControlled] = useState<CheckboxState>('mixed');
@@ -188,7 +188,12 @@ export function SelectContentFixture() {
           label: 'Open',
           items: [
             { value: 'active', label: 'Active', start: statusDot('green'), end: <Badge>3</Badge> },
-            { value: 'paused', label: 'Paused', start: statusDot('orange') },
+            {
+              value: 'paused',
+              label: 'Paused',
+              start: statusDot('orange'),
+              itemProps: { 'data-testid': 'paused', title: 'On hold', className: 'fixture-paused' },
+            },
           ],
         },
         { label: 'Closed', items: [{ value: 'done', label: 'Done' }] },
@@ -203,6 +208,9 @@ export function LabelFirstFixture() {
       <Switch label="Dark mode" labelPlacement="start" />
       <Checkbox label="Remember me" labelPlacement="start" />
       <Switch label="Sync" />
+      <RadioGroup aria-label="Plan">
+        <Radio value="team" label="Team plan" labelPlacement="start" />
+      </RadioGroup>
     </>
   );
 }

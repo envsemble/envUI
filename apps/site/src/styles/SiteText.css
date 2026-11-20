@@ -1,6 +1,5 @@
 .site-lead,
 :where(.site-lead) > p,
-.catalogue-supporting,
 .site-figure-note,
 :where(.site-figures .env-markdown) > :is(p, ul, ol) {
   --_seventy-characters-in-geist: 53ch;
@@ -44,7 +43,6 @@
       )
       *
   ),
-.catalogue-supporting,
 .docs-api p.env-text:not(:where(table, .docs-changelog) *) {
   --env-type-body: var(--env-font-weight-body) var(--site-prose-size) / var(--site-prose-leading)
     var(--env-font-family);
@@ -65,7 +63,6 @@
   color: var(--env-color-fg-default);
 }
 
-.catalogue-supporting,
 :where(.site-figures .env-markdown:not(.site-lead)) > p {
   line-height: var(--site-prose-leading);
   color: var(--env-color-fg-muted);
@@ -77,10 +74,6 @@
 :where(.site-figures .env-markdown) > p + p {
   margin-block-start: var(--env-space-3);
 }
-:where(.catalogue-topic-text) > .catalogue-supporting + .catalogue-supporting {
-  margin-block-start: var(--env-space-1);
-}
-
 :where(.site-figure-note) > p {
   font: var(--env-type-body-sm);
   color: var(--env-color-fg-muted);

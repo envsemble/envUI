@@ -10,6 +10,7 @@ import { StageSkeleton } from '../loading/Skeletons';
 import { useSubjectShown } from './useSubjectShown';
 import { VerdictMotion } from './MotionStage';
 import { PageTheme } from './PageTheme';
+import { partKey } from '../documentation/PartKeys';
 
 const specimens = componentRegistry(
   import.meta.glob<{ default: ComponentType }>('/src/specimens/*/*.tsx'),
@@ -36,7 +37,7 @@ function SpecimenBody({
   const skeleton = (
     <StageSkeleton
       ref={place}
-      part={`specimen:${page}/${name}`}
+      part={partKey('specimen', page, name)}
       what="specimens"
       stage={!onStage}
       className={verdict ? 'site-verdict-stage' : undefined}
@@ -54,7 +55,7 @@ function SpecimenBody({
       }}
     >
       <Suspense fallback={skeleton}>
-        <HoldPlaceholder part={`specimen:${page}/${name}`}>
+        <HoldPlaceholder part={partKey('specimen', page, name)}>
           {/* eslint-disable-next-line react-hooks/static-components */}
           <Component />
         </HoldPlaceholder>

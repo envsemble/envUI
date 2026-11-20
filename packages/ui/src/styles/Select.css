@@ -164,7 +164,6 @@
   }
   .env-select-item {
     white-space: normal;
-    overflow-wrap: break-word;
     text-align: start;
   }
   .env-select-item[data-selected] {
@@ -177,11 +176,6 @@
   }
   .env-select-item[data-disabled] {
     pointer-events: none;
-  }
-  @media (pointer: coarse) {
-    .env-select-item {
-      min-height: var(--env-control-height-touch);
-    }
   }
 
   .env-select-icon {

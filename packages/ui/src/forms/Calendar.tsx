@@ -1,13 +1,13 @@
 'use client';
 
-import { useId, useMemo, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
+import { useId, useMemo, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { Slot } from '../internal/layout/Slot.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useHydrated } from '../internal/react/useHydrated.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import { useResolvedLocale } from '../internal/provider/useFormatters.js';
+import { useResolvedLocale } from '../internal/provider/locale.js';
 import { calendar as calendarMessages } from '../foundations/messages/calendar.js';
 import { IconButton } from '../actions/Button.js';
 import { IconChevronLeft } from '../icons/ChevronLeft.js';
@@ -24,12 +24,14 @@ import {
   parseDay,
   toUtcDate,
   type Weekday,
-} from '../internal/time/calendarDays.js';
+} from './internal/calendarDays.js';
 import { useActiveCell } from './internal/useActiveCell.js';
+import { keepFocusWhereItWas } from './internal/pickerFocus.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import '../styles/Base.css';
 import '../styles/Calendar.css';
 
-export type { Weekday } from '../internal/time/calendarDays.js';
+export type { Weekday } from './internal/calendarDays.js';
 
 /** What a calendar's renderDay receives about the day beside its date. */
 export interface CalendarDayState {
@@ -92,24 +94,12 @@ export interface CalendarProps extends Omit<
   nextMonthLabel?: string;
 }
 
-/**
- * The day of a calendar that holds its tab stop, the day focus goes to as the calendar opens in a
- * popup, such as DatePicker's.
- */
-export function calendarActiveDay(root: ParentNode | null | undefined): HTMLElement | null {
-  return root?.querySelector<HTMLElement>('.env-calendar-day[tabindex="0"]') ?? null;
-}
-
 const weeksThatFitAnyMonth = 6;
 
 const firstSundayAfterEpoch = 3;
 
 function unavailableButFocusable(available: boolean) {
   return !available || undefined;
-}
-
-function keepFocusWhereItWas(event: MouseEvent) {
-  event.preventDefault();
 }
 
 function firstGraphemes(text: string, count: number) {
@@ -134,8 +124,8 @@ function shortestDistinctWeekdayNames(short: string[], narrow: string[]) {
 /**
  * A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move
  * by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's
- * ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, it is a group
- * around the month's grid.
+ * ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, or by the
+ * List.Item whose control it is, it is a group around the month's grid.
  */
 export function Calendar({
   value,
@@ -233,13 +223,18 @@ export function Calendar({
       long: formats.weekdayName.format(sample),
     }));
   }, [formats, firstWeekday]);
-  const named = props['aria-label'] != null || props['aria-labelledby'] != null;
+  const naming = useRowControlNaming(props);
+  const named =
+    props['aria-label'] != null ||
+    props['aria-labelledby'] != null ||
+    naming['aria-labelledby'] != null;
 
   return (
     <Grid
       gap={2}
       role={named ? 'group' : undefined}
       {...props}
+      {...naming}
       className={classNames('env-calendar', className)}
     >
       <Row align="center" gap={1} className="env-calendar-header">

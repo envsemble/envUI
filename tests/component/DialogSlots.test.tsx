@@ -74,7 +74,9 @@ test('a dialog puts content at the start of its actions and around its title, an
     .toHaveAttribute('data-pending-read', 'true');
   closeRename();
 
-  const closePreview = render(<Dialog defaultOpen title="Preview" closeButton="heading" />);
+  const closePreview = render(
+    <Dialog defaultOpen title="Preview" closeButtonPlacement="heading" />,
+  );
   const preview = page.getByRole('dialog', { name: 'Preview' });
   await expect.element(preview).toBeInTheDocument();
   const corner = preview.element().querySelector('.env-dialog-heading .env-icon-button');
@@ -86,7 +88,7 @@ test('a dialog puts content at the start of its actions and around its title, an
     <Dialog
       defaultOpen
       aria-label="Search"
-      closeButton="none"
+      closeButton={false}
       actions={<DialogClose>Done</DialogClose>}
     />,
   );

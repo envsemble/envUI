@@ -22,7 +22,6 @@ export interface Suggestion {
   id: string;
   label: string;
   description: string;
-  group: 'Suggested';
   suggested?: SuggestedRoute;
 }
 
@@ -38,7 +37,6 @@ export function suggestionsFor(page: RoutePage | undefined): Suggestion[] {
         target.area === 'docs'
           ? 'Docs · This page in code, with its props'
           : 'Catalogue · This page, with its examples and rules',
-      group: 'Suggested',
     });
   for (const route of suggestedRoutes) {
     const suggested = findPage(route);
@@ -47,7 +45,6 @@ export function suggestionsFor(page: RoutePage | undefined): Suggestion[] {
       id: suggested.path,
       label: suggested.label ?? suggested.title,
       description: `${areas[suggested.area]} · ${suggested.section}`,
-      group: 'Suggested',
       suggested: route,
     });
   }
@@ -136,39 +133,39 @@ export interface ResultRow {
   id: string;
   label: string;
   description?: string;
-  group: string;
   kind: SearchResult['kind'] | 'more';
 }
 
-export function resultRows(grouped: readonly Group[]): ResultRow[] {
+export function resultRows(grouped: readonly Group[]): { label: string; items: ResultRow[] }[] {
   const reads = ({ title, detail }: SearchResult) => `${title} · ${detail}`;
   const readings = new Map<string, number>();
   for (const { results } of grouped)
     for (const result of results)
       readings.set(reads(result), (readings.get(reads(result)) ?? 0) + 1);
-  return grouped.flatMap(({ name, results, hidden }): ResultRow[] => [
-    ...results.map((result) => ({
-      id: result.id,
-      label: result.title,
-      description:
-        (readings.get(reads(result)) ?? 0) > 1
-          ? `${areas[result.area]} · ${result.detail}`
-          : result.detail,
-      group: name,
-      kind: result.kind,
-    })),
-    ...(hidden > 0
-      ? [
-          {
-            id: moreId(name),
-            label:
-              name === mentionsGroup
-                ? `${hidden} ${hidden === 1 ? 'result' : 'results'}`
-                : `${hidden} ${results.length ? 'more ' : ''}${name.toLowerCase()}`,
-            group: name,
-            kind: 'more' as const,
-          },
-        ]
-      : []),
-  ]);
+  return grouped.map(({ name, results, hidden }) => ({
+    label: name,
+    items: [
+      ...results.map((result) => ({
+        id: result.id,
+        label: result.title,
+        description:
+          (readings.get(reads(result)) ?? 0) > 1
+            ? `${areas[result.area]} · ${result.detail}`
+            : result.detail,
+        kind: result.kind,
+      })),
+      ...(hidden > 0
+        ? [
+            {
+              id: moreId(name),
+              label:
+                name === mentionsGroup
+                  ? `${hidden} ${hidden === 1 ? 'result' : 'results'}`
+                  : `${hidden} ${results.length ? 'more ' : ''}${name.toLowerCase()}`,
+              kind: 'more' as const,
+            },
+          ]
+        : []),
+    ],
+  }));
 }

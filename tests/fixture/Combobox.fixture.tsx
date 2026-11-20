@@ -287,3 +287,29 @@ export function ComboboxEndFixture() {
     />
   );
 }
+
+export function ComboboxGroupsFixture() {
+  return (
+    <Combobox
+      label="Reviewer"
+      items={[
+        {
+          label: (
+            <>
+              Team <Badge>2</Badge>
+            </>
+          ),
+          items: [
+            {
+              value: 'alex',
+              label: 'Alex Morgan',
+              itemProps: { 'data-testid': 'alex', title: 'Alex', className: 'fixture-alex' },
+            },
+            { value: 'sam', label: 'Sam Lee' },
+          ],
+        },
+        { label: 'Guests', items: [{ value: 'kim', label: 'Kim Park' }] },
+      ]}
+    />
+  );
+}

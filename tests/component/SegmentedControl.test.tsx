@@ -245,6 +245,15 @@ test('on a touch screen each segment takes a 44 px tap, its look still inside th
   }
 });
 
+test("an item's itemProps reach its button, its class beside the segment's own", async () => {
+  mount({ default: fixture.SegmentContentFixture });
+  const review = page.getByTestId('review-segment');
+  await expect.element(review).toHaveRole('radio');
+  await expect.element(review).toHaveClass('fixture-review-segment');
+  await expect.element(review).toHaveClass('env-segmented-control-item');
+  await expect.element(review).toHaveAttribute('title', 'Review');
+});
+
 test('a segment takes content in its label and at its end, or shows only its icon with its label in a tooltip', async () => {
   mount({ default: fixture.SegmentContentFixture });
   const group = page.getByRole('radiogroup', { name: 'View' });
@@ -252,7 +261,6 @@ test('a segment takes content in its label and at its end, or shows only its ico
   const grid = group.getByRole('radio', { name: 'Grid', exact: true });
   const review = group.getByRole('radio', { name: '● Review New', exact: true });
   await expect.element(review).toBeVisible();
-  expect(review.element().classList.contains('fixture-review-segment')).toBe(true);
   expect(review.element().querySelector('.env-segmented-control-item-end')?.textContent).toBe(
     'New',
   );

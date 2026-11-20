@@ -204,12 +204,40 @@ test('a count of true shows a dot with no number, and the name says the destinat
   }
 });
 
-test('with labels as tooltips, Rail and Bar mark the landmark and keep each label naming its destination', () => {
+test('with visibleLabel false, Rail and Bar mark the landmark and keep each label naming its destination', () => {
   for (const form of ['rail', 'bar']) {
-    const nav = render(h(forms[form], { destinations: mail, labels: 'tooltip' }));
-    assert.equal(nav.attributes['data-labels'], 'tooltip');
+    const nav = render(h(forms[form], { destinations: mail, visibleLabel: false }));
+    assert.equal(nav.attributes['data-label-hidden'], '');
     assert.equal(textOf(item(nav, 'Drafts')), 'Drafts');
     const shown = render(h(forms[form], { destinations: mail }));
-    assert.equal(shown.attributes['data-labels'], undefined);
+    assert.equal(shown.attributes['data-label-hidden'], undefined);
+  }
+});
+
+test('Rail and Bar show the top level, marking the destination whose section holds the current one', () => {
+  const icon = h('svg');
+  const top = [
+    { label: 'Home', icon, href: '#home' },
+    {
+      label: 'Guide',
+      icon,
+      href: '#guide',
+      children: [{ label: 'Passkeys', href: '#passkeys', current: true }],
+    },
+    { label: 'Settings', icon, href: '#settings' },
+  ];
+  for (const component of [NavigationRail, NavigationBar]) {
+    const nav = render(h(component, { 'aria-label': 'Top', destinations: top }));
+    const links = Object.fromEntries(
+      all(nav, (element) => element.tag === 'a').map((element) => [
+        element.attributes.href,
+        element,
+      ]),
+    );
+    assert.equal(links['#guide'].attributes['aria-current'], 'true');
+    assert.equal(links['#guide'].attributes['data-current'], '');
+    assert.equal(links['#home'].attributes['aria-current'], undefined);
+    assert.equal(links['#passkeys'], undefined);
+    assert.doesNotMatch(textOf(nav), /Passkeys/);
   }
 });

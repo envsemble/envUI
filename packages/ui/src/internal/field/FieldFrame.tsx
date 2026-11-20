@@ -2,13 +2,18 @@
 
 import type { ComponentPropsWithoutRef, CSSProperties, MouseEvent, ReactNode, Ref } from 'react';
 import * as Field from '../../forms/Field.js';
-import { DecorativeIcon } from '../icon/DecorativeIcon.js';
 import { ControlDefaults } from '../control/ControlDefaults.js';
 import { Slot } from '../layout/Slot.js';
 import { classNames } from '../classNames.js';
-import type { ControlSize } from '../../foundations/Theme.js';
-import { fieldMessageIds } from './useFieldMetadata.js';
+import { fieldPartIds } from './useFieldControl.js';
 import { flag } from '../flag.js';
+import type {
+  FieldAffixProps,
+  FieldAppearanceProps,
+  FieldDecorationProps,
+  FieldProps,
+  FieldSizeProps,
+} from './fieldProps.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
 
@@ -16,74 +21,6 @@ import '../../styles/TextField.css';
 export type FieldControlBoxProps = ComponentPropsWithoutRef<'div'> & {
   [attribute: `data-${string}`]: string | boolean | undefined;
 };
-
-export interface FieldProps {
-  /**
-   * The field's visible name, above the field, such as Project name; it also names the control for
-   * assistive technology.
-   */
-  label?: ReactNode;
-  /**
-   * Lasting guidance under the field, such as a format or a limit, linked to the control as its
-   * description.
-   */
-  description?: ReactNode;
-  /**
-   * A message under the field that says how to correct the value. While it is set, the control is
-   * invalid (aria-invalid) and the message joins its description, after the description.
-   */
-  error?: ReactNode;
-}
-
-/** A field's look. */
-export type FieldVariant = 'outline' | 'ghost';
-
-export interface TextFieldAppearanceProps {
-  /**
-   * The field's look: outline, a box with a thin edge, or ghost, a faint fill without an edge, for a
-   * search at the top of a sidebar or a list.
-   * @default 'outline'
-   */
-  variant?: FieldVariant;
-}
-
-export interface FieldSizeProps {
-  /** The control height, sm, md or lg; without it, the container's, and else md. */
-  size?: ControlSize;
-}
-
-export interface TextFieldDecorationProps {
-  /** A decorative icon at the start of the field, such as Search or Mail. */
-  startIcon?: ReactNode;
-  /**
-   * A control at the end of the field, such as an IconButton that reveals or copies the value; name
-   * it with aria-label. A button that sets no variant takes ghost here.
-   */
-  endAction?: ReactNode;
-  /**
-   * The label shows above the field. false hides it, for a field whose purpose is clear without it,
-   * such as a search in a toolbar: the label still names the field for assistive technology, and a
-   * placeholder gives the visible guidance.
-   * @default true
-   */
-  visibleLabel?: boolean;
-}
-
-export interface TextFieldAffixProps {
-  /**
-   * Short, non-interactive content before the value: text, such as the start of an address, or any
-   * content, such as a currency's flag beside its code, or a small Avatar, at its own size. It is cut
-   * short with an ellipsis where it is long, is not part of the value, and its text is read after
-   * the label.
-   */
-  prefix?: ReactNode;
-  /**
-   * Short, non-interactive content after the value: text, such as a unit, or any content, such as
-   * an icon beside the unit. It is cut short with an ellipsis where it is long, is not part of the
-   * value, and its text is read after the label.
-   */
-  suffix?: ReactNode;
-}
 
 function placeCaretAtNearerEnd(event: MouseEvent<HTMLElement>) {
   const control = event.currentTarget.parentElement?.querySelector('input');
@@ -100,7 +37,7 @@ function placeCaretAtNearerEnd(event: MouseEvent<HTMLElement>) {
   }
 }
 
-function isLabelShown({ visibleLabel }: TextFieldDecorationProps) {
+function isLabelShown({ visibleLabel }: FieldDecorationProps) {
   return visibleLabel ?? true;
 }
 
@@ -147,7 +84,7 @@ export function FieldFrame({
   children,
   controlBox = false,
   variant = 'outline',
-  startIcon,
+  start,
   endAction,
   visibleLabel,
   size,
@@ -159,12 +96,12 @@ export function FieldFrame({
   rootRef,
   renderControlBox = renderPlainControlBox,
 }: FieldProps &
-  TextFieldAppearanceProps &
-  TextFieldDecorationProps &
+  FieldAppearanceProps &
+  FieldDecorationProps &
   FieldSizeProps &
-  TextFieldAffixProps &
+  FieldAffixProps &
   FieldFrameOwnProps) {
-  const ids = fieldMessageIds(id);
+  const ids = fieldPartIds(id);
   return (
     <Field.Root
       ref={rootRef}
@@ -180,21 +117,27 @@ export function FieldFrame({
         ? renderControlBox({
             className: 'env-text-field-control',
             'data-variant': variant,
-            'data-start-icon': flag(startIcon != null),
+            'data-start': flag(start != null),
             'data-end-action': flag(endAction != null),
             'data-prefix': flag(prefix != null),
             'data-suffix': flag(suffix != null),
             children: (
               <>
-                {startIcon != null && (
-                  <Slot className="env-text-field-start" element="span" layout="row" shrink="never">
-                    <DecorativeIcon>{startIcon}</DecorativeIcon>
+                {start != null && (
+                  <Slot
+                    className="env-text-field-start"
+                    element="span"
+                    layout="row"
+                    shrink="never"
+                    aria-hidden
+                  >
+                    {start}
                   </Slot>
                 )}
                 {prefix != null && (
                   <span
                     className="env-text-field-prefix"
-                    id={`${id}-prefix`}
+                    id={ids.prefix}
                     aria-hidden="true"
                     onMouseDown={placeCaretAtNearerEnd}
                   >
@@ -205,7 +148,7 @@ export function FieldFrame({
                 {suffix != null && (
                   <span
                     className="env-text-field-suffix"
-                    id={`${id}-suffix`}
+                    id={ids.suffix}
                     aria-hidden="true"
                     onMouseDown={placeCaretAtNearerEnd}
                   >

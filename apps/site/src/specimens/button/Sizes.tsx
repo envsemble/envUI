@@ -16,7 +16,7 @@ export default function Sizes() {
         {sizes.map(({ size, title, caption }) => (
           <SpecimenPart key={size} title={title} caption={caption}>
             <Row align="center" gap={3}>
-              <Button size={size} startIcon={<IconAdd />}>
+              <Button size={size} start={<IconAdd />}>
                 New
               </Button>
               <IconButton size={size} icon={<IconEdit />} aria-label="Edit" />

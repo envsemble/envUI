@@ -21,7 +21,7 @@ export default function PageHeaderTile() {
       headingLevel={3}
       title="Projects"
       description="Your team's work."
-      actions={<Button startIcon={<IconAdd />}>New project</Button>}
+      actions={<Button start={<IconAdd />}>New project</Button>}
       style={{ inlineSize: '15rem' }}
     />
   );

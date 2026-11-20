@@ -42,7 +42,9 @@ export function Meter({
   const valueTextReplacingBaseUis = ariaValueText !== undefined && {
     'aria-valuetext': ariaValueText,
   };
-  const shownLabel = <BaseMeter.Label className="env-meter-label">{label}</BaseMeter.Label>;
+  const shownLabel = label != null && (
+    <BaseMeter.Label className="env-meter-label">{label}</BaseMeter.Label>
+  );
   const shownValue = valueText != null && <span className="env-meter-value">{valueText}</span>;
   const inline = layout === 'inline';
   return (
@@ -57,14 +59,14 @@ export function Meter({
       className={classNames('env-meter', className)}
       data-layout={inline ? 'inline' : undefined}
     >
-      {inline ? (
-        shownLabel
-      ) : (
-        <Row wrap justify="between" gap={3} className="env-meter-header">
-          {shownLabel}
-          {shownValue}
-        </Row>
-      )}
+      {inline
+        ? shownLabel
+        : (label != null || valueText != null) && (
+            <Row wrap justify="between" gap={3} className="env-meter-header">
+              {shownLabel}
+              {shownValue}
+            </Row>
+          )}
       <BaseMeter.Track className="env-meter-track">
         <BaseMeter.Indicator className="env-meter-indicator" />
       </BaseMeter.Track>

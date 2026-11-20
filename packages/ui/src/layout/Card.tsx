@@ -11,9 +11,10 @@ import { Column, Row, type SpaceStep } from './Layout.js';
 import { Surface } from './Surface.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
-import { given, type SkeletonProps } from '../internal/skeleton.js';
+import { given, type SkeletonProps } from '../internal/skeleton/skeleton.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
+import { rendersContent } from '../internal/react/rendersContent.js';
 import '../styles/Base.css';
 import '../styles/Card.css';
 
@@ -58,20 +59,21 @@ interface CardContentOptions {
   meta?: ReactNode;
   /**
    * Content at the end of the title row, after the meta, such as an overflow Menu or an Edit
-   * Button, placed as given and kept above the card's target.
+   * Button, placed as given.
    */
-  end?: ReactNode;
+  headerEnd?: ReactNode;
   /** A sentence under the title, in muted text. */
   description?: ReactNode;
   /**
    * The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and
-   * wrapping onto more lines where they don't fit. For controls beside the title, use end.
+   * wrapping onto more lines where they don't fit. For controls beside the title, use headerEnd.
    */
   actions?: ReactNode;
   /**
    * The card opens something through a link or button inside, such as its title: it reacts to
    * hover, keyboard focus on that target and presses. Mark the link or button `data-row-target` to
-   * stretch it over the card; the meta, end and actions stay above it and take their own clicks.
+   * stretch it over the card; the other links, buttons and fields in the card, such as an author's
+   * link in the description or a Menu in headerEnd, stay clickable above it.
    * @default false
    */
   interactive?: boolean;
@@ -181,7 +183,7 @@ function ContentCardLayout({
   title,
   headingLevel,
   meta,
-  end,
+  headerEnd,
   description,
   actions,
   interactive = false,
@@ -193,8 +195,8 @@ function ContentCardLayout({
 }: CardContentProps & { slots: Record<'title' | 'meta' | 'description', boolean> }) {
   const hasTitle = title != null || slots.title;
   const hasMeta = meta != null || slots.meta;
-  const hasEnd = end != null;
-  const hasActions = actions != null && actions !== false;
+  const hasEnd = headerEnd != null;
+  const hasActions = rendersContent(actions);
   const level = headingLevel ?? 3;
   const Heading = `h${level}` as const;
   const headingText = hasTitle && (
@@ -211,8 +213,8 @@ function ContentCardLayout({
         </Text>
       )}
       {hasEnd && (
-        <Slot className="env-card-end" layout="row" shrink="never">
-          {end}
+        <Slot className="env-card-header-end" layout="row" shrink="never">
+          {headerEnd}
         </Slot>
       )}
     </Row>

@@ -1,13 +1,13 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { chromium, type Page, type Route } from '@playwright/test';
-import { defaultPorts } from '../test/CheckoutMarker.ts';
+import { defaultPorts } from '../DevServers.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 const recordFile = resolve(repositoryRoot, 'apps/site/src/generated/PartSizes.json');
 const window = { width: 1440, height: 1000 };
-const parts = /\/src\/(examples|specimens|figures\/dev-mode)\//;
+const parts = /\/src\/(examples|specimens)\//;
 const entrancesAndPlayingFiguresSettleMs = 1500;
 
 async function routes(page: Page) {

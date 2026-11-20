@@ -27,7 +27,7 @@ describe('DocumentTabs', () => {
     const retrospective = strip.getByRole('tab', { name: 'Retrospective.md', exact: true });
     await expect.element(roadmap).toHaveAttribute('aria-selected', 'true');
     await expect.element(roadmap).toHaveAttribute('tabindex', '0');
-    await expect.element(roadmap).toHaveAttribute('data-tab-id', 'plans/roadmap.md');
+    await expect.element(roadmap).toHaveAttribute('data-value', 'plans/roadmap.md');
     await expect.element(roadmap).toHaveAttribute('aria-controls', 'document-panel-light');
     await expect.element(decisions).toHaveAttribute('tabindex', '-1');
     await expect.element(retrospective).toHaveAttribute('data-preview', '');
@@ -244,7 +244,7 @@ describe('DocumentTabs', () => {
       expect(selected()).toEqual(before);
       await page.elementLocator(first!).click();
       await expect.element(page.elementLocator(first!)).toHaveAttribute('aria-selected', 'true');
-      await expect.poll(reorderLog).toBe(`select ${first!.dataset.tabId}`);
+      await expect.poll(reorderLog).toBe(`select ${first!.dataset.value}`);
     },
   );
 
@@ -473,7 +473,7 @@ test(
   },
 );
 
-test('a tab shows its own content and end under its label’s name, can stay open, and the context menu ends with the application’s items', async () => {
+test('a tab takes content for its label, named by its text value or the label’s rendered text, an end, its own item props, can stay open, and the context menu ends with the application’s items', async () => {
   const host = document.createElement('div');
   document.body.append(host);
   const root = createRoot(host);
@@ -487,13 +487,22 @@ test('a tab shows its own content and end under its label’s name, can stay ope
           { value: 'welcome', label: 'Welcome', closable: false },
           {
             value: 'src/index.ts',
-            label: 'index.ts',
-            content: (
+            label: (
               <>
                 <span data-testid="folder">src/</span>index.ts
               </>
             ),
+            textValue: 'index.ts',
             end: <span data-testid="modified">●</span>,
+            itemProps: { className: 'own-tab', 'data-testid': 'index-tab' },
+          },
+          {
+            value: 'lib/util.ts',
+            label: (
+              <>
+                <b>lib/</b>util.ts
+              </>
+            ),
           },
         ]}
         value="welcome"
@@ -521,6 +530,19 @@ test('a tab shows its own content and end under its label’s name, can stay ope
     expect(
       indexElement.closest('.env-document-tabs-item')!.querySelector('.env-document-tabs-close'),
     ).not.toBeNull();
+    await expect
+      .element(page.getByTestId('index-tab'))
+      .toHaveClass('env-document-tabs-item', 'own-tab');
+    expect(indexElement.closest('[data-testid="index-tab"]')).not.toBeNull();
+    const util = strip.getByRole('tab', { name: 'lib/util.ts', exact: true });
+    await expect.element(util).toHaveAttribute('title', 'lib/util.ts');
+    expect(
+      util
+        .element()
+        .closest('.env-document-tabs-item')!
+        .querySelector('.env-document-tabs-close')!
+        .getAttribute('title'),
+    ).toBe('Close lib/util.ts');
     const welcomeItem = welcome.element().closest('.env-document-tabs-item')!;
     expect(welcomeItem.querySelector('.env-document-tabs-close')).toBeNull();
     expect(welcome.element().hasAttribute('aria-keyshortcuts')).toBe(false);

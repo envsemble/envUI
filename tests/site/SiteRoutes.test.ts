@@ -12,12 +12,12 @@ const {
   normalizeRoute,
   otherPartRoute,
   pagesOf,
-  routeOfDocument,
+  formerPages,
 } = await importSource('SiteAddresses', [
-  "export { allPages, findPage, pagesOf, routeOfDocument } from './apps/site/src/routes/SiteRoutes.ts';",
+  "export { allPages, findPage, pagesOf } from './apps/site/src/routes/SiteRoutes.ts';",
   "export { counterpartOf, otherPartRoute } from './apps/site/src/routes/Counterparts.ts';",
   "export { docsTree } from './apps/site/src/routes/DocsTree.ts';",
-  "export { normalizeRoute } from './apps/site/src/routes/OldAddresses.ts';",
+  "export { formerPages, normalizeRoute } from './apps/site/src/routes/OldAddresses.ts';",
   "export { docsTrail } from './apps/site/src/routes/Trails.ts';",
   "export { componentGroups } from './apps/site/src/routes/PageModel.ts';",
 ]);
@@ -32,7 +32,6 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'foundations/colors/preview': 'foundations/colors',
     'foundations/colors/usage': 'docs/foundations/colors',
     'foundations/tokens': 'docs/tokens',
-    'foundations/scale': 'foundations/spacing',
     'foundations/scale/usage': 'docs/foundations/spacing',
     'docs/foundations/scale': 'docs/foundations/spacing',
     'foundations/composition': 'docs/customizing',
@@ -56,20 +55,16 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'contributing/library-development': 'overview',
     changelog: 'docs/changelog',
     'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
-    'dev-mode': 'docs/dev-mode',
-    'dev-mode?section=opening-it': 'docs/dev-mode?section=opening-it',
-    'components/bar': 'components/navigation-drawer',
+    'dev-mode': 'docs',
+    'dev-mode?section=opening-it': 'docs?section=opening-it',
+    'docs/dev-mode': 'docs',
     'components/rail/props': 'docs/components/navigation-drawer',
-    'components/drawer': 'components/navigation-drawer',
     'components/page-header?section=sticky': 'components/page?section=sticky',
     'docs/components/page-header': 'docs/components/page',
-    'patterns/feature-cards': 'components/card?section=feature-card',
-    'docs/patterns/feature-cards': 'docs/components/card',
     'patterns/search-trigger':
       'components/command-palette?section=opening-it-the-button-and-the-shortcut',
-    'components/search-trigger':
-      'components/command-palette?section=opening-it-the-button-and-the-shortcut',
-    'docs/patterns/search-trigger': 'docs/components/command-palette',
+    'components/rating/props': 'docs/components/meter',
+    'components/animated-number/props': 'docs/foundations/typography',
     patterns: 'docs',
     'docs/patterns': 'docs',
     'patterns/forms': 'docs',
@@ -83,7 +78,7 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'components/loading': 'docs',
     'components/skeleton': 'docs',
     'components/empty-state': 'components/empty-state',
-    'overview/get-started?document=dev-mode-overview': 'docs/dev-mode',
+    'overview/get-started?document=dev-mode-overview': 'docs',
     'overview/get-started?document=agent-skills': 'docs?section=coding-agents',
     'overview/get-started?document=full-changelog': 'docs/changelog',
     'get-started/scale?section=density': 'foundations/spacing?section=density',
@@ -92,8 +87,22 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'docs/foundations/content': 'docs/writing',
   };
   for (const [from, to] of Object.entries(routes)) assert.equal(normalizeRoute(from), to, from);
-  assert.equal(routeOfDocument('dev-mode-overview'), undefined);
   for (const { path } of allPages) assert.equal(normalizeRoute(path), path);
+});
+
+test('each former page leads to the page that took its place, at the section it went to', () => {
+  for (const [former, { page, section }] of Object.entries(formerPages)) {
+    const target = findPage(page);
+    assert.ok(target, `${former} leads to ${page}, which is no page`);
+    if (section)
+      assert.ok(
+        target.document?.outline?.some(({ anchors }) => anchors.includes(section)),
+        `${former} leads to #${section}, which ${page} has no heading for`,
+      );
+    const query = section ? `?${new URLSearchParams({ section })}` : '';
+    assert.equal(normalizeRoute(former), `${page}${query}`, former);
+    assert.equal(normalizeRoute(`docs/${former}`), `docs/${page}`, `docs/${former}`);
+  }
 });
 
 test("each page of a subject leads to its page in the other part, and a page without one to the other part's start", () => {
@@ -109,13 +118,7 @@ test("each page of a subject leads to its page in the other part, and a page wit
     assert.equal(counterpartOf(page), undefined, page.path);
     assert.equal(otherPartRoute(page, 'catalogue'), 'docs', page.path);
   }
-  for (const path of [
-    'docs',
-    'docs/dev-mode',
-    'docs/changelog',
-    'docs/tokens',
-    'docs/components/field',
-  ])
+  for (const path of ['docs', 'docs/changelog', 'docs/tokens', 'docs/components/field'])
     assert.equal(otherPartRoute(findPage(path), 'docs'), 'overview', path);
   assert.equal(otherPartRoute(undefined, 'docs'), 'overview');
   assert.equal(otherPartRoute(undefined, 'catalogue'), 'docs');

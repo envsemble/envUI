@@ -31,7 +31,7 @@ export default function InspectorAndStatus() {
           <NavigationDrawer aria-label="Main, with an inspector" destinations={destinations} />
         ),
       }}
-      end={
+      aside={
         <Surface
           render={<aside aria-label="Inspector" />}
           background="default"

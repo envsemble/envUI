@@ -6,6 +6,7 @@ import { PartSwitch } from '../routes/OtherPart';
 import { PartSkeleton, placeholderText } from '../loading/Skeletons';
 import { recordedSize } from '../loading/RecordedSizes';
 import { MetadataBadges } from '../template/MetadataBadges';
+import { partKey } from '../documentation/PartKeys';
 
 const exampleHeightRem = 12;
 const stagePaddingRem = 5;
@@ -17,7 +18,7 @@ function CatalogueSection({ page }: { page: RoutePage }) {
   const opensWithFigure = firstSection?.id === 'overview';
   const example = firstSection?.examples[0];
   const size =
-    example && page.document && recordedSize(`example:${page.document.id}/${example.name}`);
+    example && page.document && recordedSize(partKey('example', page.document.id, example.name));
   return (
     <div className="site-section-groups">
       <Column gap={4} render={<section />} className="site-article site-section-group">

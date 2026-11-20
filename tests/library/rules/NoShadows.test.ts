@@ -2,28 +2,8 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { build } from 'esbuild';
-import { declarations } from '../../support/CssDeclarations.ts';
+import { declarations, shippedStyleSheet } from '../../support/StyleSheets.ts';
 import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
-
-const styles = join(repositoryRoot, 'packages/ui/src/styles');
-
-async function shipped() {
-  const result = await build({
-    entryPoints: [join(styles, 'index.css')],
-    bundle: true,
-    write: false,
-    loader: { '.woff2': 'file', '.svg': 'file' },
-    assetNames: 'assets/[name]',
-    outfile: join(styles, 'out.css'),
-    logLevel: 'silent',
-  });
-  return result.outputFiles.find((file) => file.path.endsWith('.css')).text;
-}
-
-async function devMode() {
-  return readFile(join(repositoryRoot, 'packages/ui/src/dev/ui/DevMode.css'), 'utf8');
-}
 
 async function catalogue() {
   const folder = join(repositoryRoot, 'apps/site/src');
@@ -136,12 +116,7 @@ const catalogueShadows = [
 
 test('no envUI style sheet draws a drop shadow but the avatars’, the popups’, the tooltips’ and the chosen segment’s; rings stay', async () => {
   const library = { allowed: libraryShadows };
-  assert.deepEqual(problems([await shipped()], library), [], 'The shipped style sheet');
-  assert.deepEqual(
-    problems([await shipped(), await devMode()], library),
-    [],
-    'Dev mode’s style sheet',
-  );
+  assert.deepEqual(problems([await shippedStyleSheet()], library), [], 'The shipped style sheet');
   assert.deepEqual(
     problems(await catalogue(), { allowed: catalogueShadows }),
     [],
@@ -150,7 +125,7 @@ test('no envUI style sheet draws a drop shadow but the avatars’, the popups’
 });
 
 test('no token or custom property is a shadow but the avatars’, the popups’, the tooltips’ and the chosen segment’s', async () => {
-  const css = await shipped();
+  const css = await shippedStyleSheet();
   const shadows = declarations(css)
     .map(({ prop }) => prop)
     .filter((prop) => /^--(?:env-|_).*shadow$/.test(prop));
@@ -192,18 +167,17 @@ function usersOf(css, name) {
 }
 
 test('the popups’ shadow is soft, follows the theme, goes where popups are solid and stays on popups', async () => {
-  const css = await shipped();
+  const css = await shippedStyleSheet();
   frostedShadows(css, popupShadow);
   assert.deepEqual(usersOf(css, popupShadow).sort(), [
     '.env-command-palette',
     '.env-popup',
-    '.env-rich-text-suggestions',
     '.env-surface.env-dialog',
   ]);
 });
 
 test('the tooltips’ shadow is smaller than the popups’, goes where they are solid and stays on tooltips', async () => {
-  const css = await shipped();
+  const css = await shippedStyleSheet();
   const [light, dark] = frostedShadows(css, tooltipShadow);
   const [popupLight, popupDark] = frostedShadows(css, popupShadow);
   const blurOf = (value) =>
@@ -219,7 +193,7 @@ test('the tooltips’ shadow is smaller than the popups’, goes where they are 
 });
 
 test('the avatars’ shadow is small, faint and follows the surface below', async () => {
-  const css = await shipped();
+  const css = await shippedStyleSheet();
   const values = valuesOf(css, avatarShadow);
   assert.equal(values.length, 1, 'one shadow');
   const [, ringName, shadow] = values[0].match(/^var\(\s*(--[\w-]+),\s*(.*?)\s*\)$/);
@@ -238,7 +212,7 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
 });
 
 test('the chosen segment’s shadow is small, follows the theme, gives way at high contrast and stays on it', async () => {
-  const css = await shipped();
+  const css = await shippedStyleSheet();
   const values = valuesOf(css, segmentShadow);
   assert.equal(values.length, 1, 'one declaration');
   const [edge, ...layers] = split(values[0].replace(/^var\(|\)$/g, ''), /,/);

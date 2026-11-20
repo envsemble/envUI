@@ -3,20 +3,15 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { useRef, type CSSProperties, type ReactNode, type Ref } from 'react';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
-import { setRef } from '../../internal/react/setRef.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../../internal/popup/PortalContainerContext.js';
-import {
-  MenuPopup,
-  menuParts,
-  menuPopupBlockStartInset,
-  menuPopupInlineEndInset,
-} from '../internal/MenuPopup.js';
-import type { OpenChangeDetails } from '../internal/menuOpenChange.js';
-import { useMenuItemContent, type ItemContentProps, type ItemElementProps } from './MenuItem.js';
+import { mergeRefs } from '../../internal/react/setRef.js';
+import { usePortalContainer } from '../../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../../internal/popup/containedOverlays.js';
+import { MenuPopup, menuParts, menuPopupInset } from './internal/MenuPopup.js';
+import type { OpenChangeDetails } from './internal/menuOpenChange.js';
+import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
+import type { TriggerProps } from './internal/menuTriggerProps.js';
 import { classNames } from '../../internal/classNames.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
@@ -54,7 +49,7 @@ export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'short
    * Attributes of the row that opens the submenu, such as a className, a style, a ref or a data
    * attribute; the submenu's own className, style and ref are its popup's.
    */
-  triggerProps?: ItemElementProps & { className?: string };
+  triggerProps?: TriggerProps;
 }
 
 const gapFromParentMenuEdge = 2;
@@ -67,7 +62,6 @@ const reasonsClosingOnlyTheSubmenu = new Set(['escape-key', 'list-navigation']);
 export function Submenu({
   label,
   textValue,
-  icon,
   start,
   description,
   end,
@@ -86,7 +80,6 @@ export function Submenu({
   const popup = useRef<HTMLDivElement | null>(null);
   const closeReason = useRef<string | null>(null);
   const { content, accessibility } = useMenuItemContent({
-    icon,
     start,
     children: label,
     textValue,
@@ -97,8 +90,8 @@ export function Submenu({
   const textLabel = typeof label === 'string' ? label : undefined;
   const portal = usePortalContainer();
   const clearParentMenuEdge = () =>
-    menuPopupInlineEndInset(trigger.current?.closest('.env-menu')) + gapFromParentMenuEdge;
-  const alignFirstRowWithOpeningRow = () => -menuPopupBlockStartInset(popup.current);
+    menuPopupInset(trigger.current?.closest('.env-menu'), 'inline-end') + gapFromParentMenuEdge;
+  const alignFirstRowWithOpeningRow = () => -menuPopupInset(popup.current, 'block-start');
   const returnFocusToOpeningRowIfStillThere = () => {
     const row = trigger.current;
     const active = row?.ownerDocument.activeElement;
@@ -122,18 +115,15 @@ export function Submenu({
     >
       <BaseMenu.SubmenuTrigger
         {...triggerProps}
-        ref={(node: HTMLDivElement | null) => {
-          trigger.current = node;
-          setRef(triggerProps?.ref, node);
-        }}
+        ref={mergeRefs(trigger, triggerProps?.ref)}
         className={classNames('env-menu-item env-menu-submenu-trigger', triggerProps?.className)}
         disabled={disabled}
         {...accessibility}
       >
         {content}
-        <span className="env-icon env-menu-submenu-chevron" aria-hidden="true">
+        <DecorativeIcon className="env-menu-submenu-chevron">
           <IconChevronRight />
-        </span>
+        </DecorativeIcon>
       </BaseMenu.SubmenuTrigger>
       <MenuPopup
         parts={menuParts}
@@ -145,10 +135,7 @@ export function Submenu({
         trigger={trigger}
         finalFocus={returnFocusToOpeningRowIfStillThere}
         className={className}
-        popupRef={(node: HTMLDivElement | null) => {
-          popup.current = node;
-          setRef(ref, node);
-        }}
+        popupRef={mergeRefs(popup, ref)}
         popupProps={{ style }}
       >
         {children}

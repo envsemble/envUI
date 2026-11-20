@@ -4,27 +4,38 @@ import type { ComponentPropsWithRef } from 'react';
 import { Column, Row } from '../layout/Layout.js';
 import { Badge } from '../data-display/Badge.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
+import {
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { Tooltip } from '../overlays/Tooltip.js';
 import { IconMoreHoriz } from '../icons/MoreHoriz.js';
 import * as Menu from '../actions/menu/Menu.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { navigation } from '../foundations/messages/navigation.js';
+import {
+  DestinationIndicator,
+  DestinationItem,
+  type DestinationClasses,
+} from './internal/DestinationItem.js';
 import {
   countedName,
+  destinationCurrent,
   destinationKey,
-  DestinationItem,
   destinationText,
   holdsCurrent,
   shownCount,
-  useNavigationMessages,
-  type DestinationClasses,
-} from './internal/DestinationItem.js';
-import type { Destination, NavigationLabels } from './destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+} from './internal/destinationModel.js';
+import type { Destination } from './destinations.js';
+import type { NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
+import '../styles/NavigationDestinations.css';
 import '../styles/NavigationBar.css';
 
 const mostDestinationsShownBeforeMore = 5;
@@ -54,12 +65,12 @@ export interface NavigationBarProps
    */
   background?: NavigationBackground;
   /**
-   * How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover
-   * and keyboard focus, for an icon-only bar such as a code editor's activity bar. The label still
-   * names each destination.
-   * @default 'shown'
+   * Whether the destinations' labels show under their icons. False shows the icons only, for an
+   * icon-only bar such as a code editor's activity bar: each label still names its destination
+   * and shows in a tooltip on hover and keyboard focus.
+   * @default true
    */
-  labels?: NavigationLabels;
+  visibleLabel?: boolean;
   /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
@@ -75,14 +86,14 @@ export interface NavigationBarProps
 export function NavigationBar({
   destinations,
   background = 'default',
-  labels = 'shown',
+  visibleLabel = true,
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
   className,
   ...props
 }: NavigationBarProps) {
-  const messages = useNavigationMessages();
+  const messages = useMessages('navigation', navigation);
   const overflow = destinations.length > mostDestinationsShownBeforeMore;
   const shown = overflow
     ? destinations.slice(0, mostDestinationsShownBeforeMore - 1)
@@ -94,11 +105,11 @@ export function NavigationBar({
   );
   const restShown = shownCount(restCount);
   const restDot = restShown === undefined && rest.some(({ count }) => count === true);
+  const restCountShown = restDot ? true : restCount;
   const restCurrent = rest.some(
     (destination) => destination.current === true || holdsCurrent(destination.children),
   );
-  const restName =
-    countedName(messages.more, restDot ? true : restCount, messages) ?? messages.more;
+  const restName = countedName(messages.more, restCountShown, messages) ?? messages.more;
   const moreState = {
     'data-current': flag(restCurrent),
     'aria-label': restCurrent ? messages.moreCurrent({ name: restName }) : restName,
@@ -113,27 +124,26 @@ export function NavigationBar({
     >
       <span className="env-navigation-bar-label">{messages.more}</span>
       {restShown !== undefined && ' '}
-      <span className="env-navigation-bar-indicator">
-        <DecorativeIcon>
-          <IconMoreHoriz />
-        </DecorativeIcon>
-        {(restShown !== undefined || restDot) && (
-          <span className="env-navigation-bar-count" aria-hidden="true" data-dot={flag(restDot)}>
-            {restShown}
-          </span>
-        )}
-      </span>
+      <DestinationIndicator
+        classes={barClasses}
+        icon={
+          <DecorativeIcon>
+            <IconMoreHoriz />
+          </DecorativeIcon>
+        }
+        count={restCountShown}
+      />
     </Column>
   );
   return (
     <nav
       {...props}
-      aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
+      aria-label={landmarkLabel(label, labelledBy, messages.label)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-bar', className)}
-      data-background={backgroundAttribute(background)}
-      data-labels={labels === 'tooltip' ? labels : undefined}
+      data-background={background}
+      data-label-hidden={flag(!visibleLabel)}
     >
       {inSkeleton(
         skeleton,
@@ -144,7 +154,7 @@ export function NavigationBar({
             );
             return (
               <li key={destinationKey(destination)}>
-                {labels === 'tooltip' ? (
+                {!visibleLabel ? (
                   <CutLabelTooltip cut label={destination.label} side="top">
                     {item}
                   </CutLabelTooltip>
@@ -160,7 +170,7 @@ export function NavigationBar({
                 aria-label={messages.more}
                 side="top"
                 trigger={
-                  labels === 'tooltip' ? (
+                  !visibleLabel ? (
                     <Tooltip content={messages.more}>{moreTrigger}</Tooltip>
                   ) : (
                     moreTrigger
@@ -170,14 +180,18 @@ export function NavigationBar({
                 {rest.map((destination) => {
                   const count = shownCount(destination.count);
                   const dot = destination.count === true;
-                  const inside = !destination.current && holdsCurrent(destination.children);
+                  const {
+                    className: itemClassName,
+                    target,
+                    rel,
+                    ...itemProps
+                  } = destination.itemProps ?? {};
                   const shared = {
-                    icon: destination.icon,
-                    'aria-current': destination.current
-                      ? ('page' as const)
-                      : inside
-                        ? ('true' as const)
-                        : undefined,
+                    ...(itemProps as Omit<Menu.ItemElementProps, 'rel'>),
+                    className: itemClassName,
+                    textValue: destinationText(destination),
+                    start: destination.icon,
+                    'aria-current': destinationCurrent(destination, true),
                     'aria-label': countedName(
                       destinationText(destination),
                       destination.count,
@@ -202,6 +216,8 @@ export function NavigationBar({
                       key={destinationKey(destination)}
                       {...shared}
                       href={destination.href}
+                      target={target}
+                      rel={rel}
                       onClick={destination.onClick}
                     />
                   );

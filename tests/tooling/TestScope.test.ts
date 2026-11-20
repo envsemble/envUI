@@ -1,19 +1,10 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import {
-  existsSync,
-  globSync,
-  mkdirSync,
-  mkdtempSync,
-  readdirSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, globSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import {
-  aliases,
+  testsByModuleName,
   changedFiles,
   fixtureBudget,
   mergeChanges,
@@ -21,16 +12,17 @@ import {
   pathRules,
   selectScope,
   serversFor,
-  specFile,
-  specNeeds,
-  specsFor,
+  browserTestNeeds,
+  browserTestsFor,
   unitTestFiles,
 } from '../../scripts/test/TestScope.ts';
-import { checkoutId, checkoutPort } from '../../scripts/test/CheckoutMarker.ts';
+import { checkoutId, checkoutPort } from '../../scripts/DevServers.ts';
+import { browserTestFile } from '../../scripts/test/BrowserTests.ts';
 import { fixtureUse, importsOf } from '../../scripts/test/FixtureImports.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
+import { inScratchFolder } from '../support/ScratchFolder.ts';
 
-const specs = (...paths) => [...specsFor(paths).specs.keys()].sort();
+const specs = (...paths: string[]) => [...browserTestsFor(paths).browserTests.keys()].sort();
 
 test('diff parsing reads statuses, renames and untracked files', () => {
   const entries = parseNameStatus(
@@ -49,11 +41,14 @@ test('diff parsing reads statuses, renames and untracked files', () => {
   assert.deepEqual(parseNameStatus(''), []);
 });
 
-test('changed files come from the merge-base, uncommitted edits and untracked files', () => {
-  const folder = mkdtempSync(join(tmpdir(), 'envui-scope-'));
-  const git = (...args) =>
-    execFileSync('git', args, { cwd: folder, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  try {
+test('changed files come from the merge-base, uncommitted edits and untracked files', () =>
+  inScratchFolder('scope', (folder) => {
+    const git = (...args: string[]) =>
+      execFileSync('git', args, {
+        cwd: folder,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
     git('init', '-q', '-b', 'base');
     git('config', 'user.email', 'test@example.com');
     git('config', 'user.name', 'Test');
@@ -80,15 +75,12 @@ test('changed files come from the merge-base, uncommitted edits and untracked fi
       ['A committed.md', 'M edited.css', 'A new.tsx'],
     );
     assert.throws(() => changedFiles({ root: folder, base: 'missing' }), /missing doesn't exist/);
-  } finally {
-    rmSync(folder, { recursive: true, force: true });
-  }
-});
+  }));
 
 test('a component runs the spec of its name, or of the name its alias gives', () => {
   assert.deepEqual(specs('packages/ui/src/forms/Checkbox.tsx'), ['Checkbox']);
   assert.deepEqual(specs('packages/ui/src/styles/Table.css'), ['Table']);
-  assert.ok(specs('packages/ui/src/layout/panesSize.ts').includes('Panes'));
+  assert.ok(specs('packages/ui/src/internal/resize/useResize.ts').includes('Panes'));
   assert.deepEqual(specs('packages/ui/src/foundations/Theme.tsx'), [
     'ThemeContrast',
     'ThemePreference',
@@ -107,21 +99,28 @@ test('a file runs the specs whose fixtures use it, and a fixture the specs that 
 });
 
 test('a file many fixtures use runs the most specific few, and says how many use it', () => {
-  const { specs: some, widelyUsed } = specsFor(['packages/ui/src/internal/classNames.ts']);
+  const { browserTests: some, widelyUsed } = browserTestsFor([
+    'packages/ui/src/internal/classNames.ts',
+  ]);
   assert.equal(some.size, 6);
-  assert.ok(widelyUsed.get('packages/ui/src/internal/classNames.ts') > 6);
+  assert.ok((widelyUsed.get('packages/ui/src/internal/classNames.ts') ?? 0) > 6);
   assert.deepEqual(specs('packages/ui/src/actions/Button.tsx'), ['Button']);
 });
 
 test('the affected tier runs every spec a file or helper concerns', () => {
   const path = 'packages/ui/src/internal/classNames.ts';
-  const fast = specsFor([path]);
-  const affected = specsFor([path], { affected: true });
+  const fast = browserTestsFor([path]);
+  const affected = browserTestsFor([path], { affected: true });
   assert.equal(affected.widelyUsed.size, 0);
-  assert.equal(affected.specs.size, fast.widelyUsed.get(path));
-  const helper = specsFor(['tests/browser/support/Servers.ts'], { affected: true });
-  assert.equal(helper.specs.size, helper.helpers.get('tests/browser/support/Servers.ts').length);
-  assert.ok(helper.specs.size > globSync('tests/browser/{library,site}/*.spec.ts').length / 2);
+  assert.equal(affected.browserTests.size, fast.widelyUsed.get(path));
+  const helper = browserTestsFor(['tests/browser/support/Servers.ts'], { affected: true });
+  assert.equal(
+    helper.browserTests.size,
+    helper.helpers.get('tests/browser/support/Servers.ts')?.length,
+  );
+  assert.ok(
+    helper.browserTests.size > globSync('tests/browser/{library,site}/*.spec.ts').length / 2,
+  );
 });
 
 test('imports are read from the syntax, types, comments and strings left out', () => {
@@ -154,63 +153,59 @@ test('imports are read from the syntax, types, comments and strings left out', (
   ]);
 });
 
-test("a fixture's specs follow what its imports mean, however they are written", () => {
-  const checkout = (files) => {
-    const root = mkdtempSync(join(tmpdir(), 'envui-imports-'));
-    for (const [path, text] of Object.entries(files)) {
-      mkdirSync(dirname(join(root, path)), { recursive: true });
-      writeFileSync(join(root, path), text.join('\n'));
-    }
-    return root;
-  };
-  const common = {
-    'packages/ui/src/actions/Button.tsx': [
-      "import '../styles/Button.css';",
-      'export function Button() {}',
-    ],
-    'packages/ui/src/styles/Button.css': ['.env-button {}'],
-    'tests/browser/library/Button.spec.ts': [
-      "test('x', ({ page }) => page.goto('/?fixture=button'));",
-    ],
-    'tests/browser/library/Table.spec.ts': ["// import { Button } from '@envsemble/envui';"],
-  };
-  const plain = checkout({
-    ...common,
-    'packages/ui/src/index.ts': ["export { Button } from './actions/Button.js';"],
-    'tests/fixture/Button.fixture.tsx': [
-      "import { Button } from '@envsemble/envui';",
-      'export default Button;',
-    ],
-  });
-  const rewritten = checkout({
-    ...common,
-    'packages/ui/src/index.ts': ["export * from './actions/Button.js';"],
-    'tests/fixture/Button.fixture.tsx': [
-      'import {',
-      '  type Button as Kind,',
-      '  Button as Action,',
-      "} from '@envsemble/envui';",
-      'export default Action;',
-    ],
-  });
-  try {
+test("a fixture's specs follow what its imports mean, however they are written", () =>
+  inScratchFolder('imports', (scratch) => {
+    const checkout = (name: string, files: Record<string, string[]>) => {
+      const root = join(scratch, name);
+      for (const [path, text] of Object.entries(files)) {
+        mkdirSync(dirname(join(root, path)), { recursive: true });
+        writeFileSync(join(root, path), text.join('\n'));
+      }
+      return root;
+    };
+    const common = {
+      'packages/ui/src/actions/Button.tsx': [
+        "import '../styles/Button.css';",
+        'export function Button() {}',
+      ],
+      'packages/ui/src/styles/Button.css': ['.env-button {}'],
+      'tests/browser/library/Button.spec.ts': [
+        "test('x', ({ page }) => page.goto('/?fixture=button'));",
+      ],
+      'tests/browser/library/Table.spec.ts': ["// import { Button } from '@envsemble/envui';"],
+    };
+    const plain = checkout('plain', {
+      ...common,
+      'packages/ui/src/index.ts': ["export { Button } from './actions/Button.js';"],
+      'tests/fixture/Button.fixture.tsx': [
+        "import { Button } from '@envsemble/envui';",
+        'export default Button;',
+      ],
+    });
+    const rewritten = checkout('rewritten', {
+      ...common,
+      'packages/ui/src/index.ts': ["export * from './actions/Button.js';"],
+      'tests/fixture/Button.fixture.tsx': [
+        'import {',
+        '  type Button as Kind,',
+        '  Button as Action,',
+        "} from '@envsemble/envui';",
+        'export default Action;',
+      ],
+    });
     for (const root of [plain, rewritten]) {
       const specsOf = fixtureUse(root);
       assert.deepEqual(specsOf('packages/ui/src/styles/Button.css'), ['Button'], root);
       assert.deepEqual(specsOf('tests/fixture/Button.fixture.tsx'), ['Button'], root);
     }
-  } finally {
-    rmSync(plain, { recursive: true, force: true });
-    rmSync(rewritten, { recursive: true, force: true });
-  }
-});
+  }));
 
 test('every path a rule names exists, and every spec it runs', () => {
-  const skipped = (name) => name === 'node_modules' || name === '.git' || name === 'dist';
-  for (const { paths, specs: names = [] } of pathRules) {
+  const skipped = (name: string) => name === 'node_modules' || name === '.git' || name === 'dist';
+  for (const { paths, browserTests: names = [] } of pathRules) {
     for (const glob of paths)
       assert.ok(globSync(glob, { exclude: skipped }).length, `${glob} names no file`);
-    for (const name of names) assert.ok(existsSync(specFile(name)), `no spec ${name}`);
+    for (const name of names) assert.ok(existsSync(browserTestFile(name)), `no spec ${name}`);
   }
 });
 
@@ -221,7 +216,9 @@ test('a shared file runs the shared set, and a file no fixture uses runs no spec
     'Scale',
     'ThemeContrast',
   ]);
-  const { specs: none, unmatched } = specsFor(['packages/ui/src/foundations/headingLevel.ts']);
+  const { browserTests: none, unmatched } = browserTestsFor([
+    'packages/ui/src/foundations/headingLevel.ts',
+  ]);
   assert.equal(none.size, 0);
   assert.deepEqual(unmatched, ['packages/ui/src/foundations/headingLevel.ts']);
 });
@@ -231,22 +228,19 @@ test('every alias names a file and specs that exist, and adds what the imports m
     ...readdirSync('packages/ui/src', { recursive: true }),
     ...readdirSync('tests/fixture', { recursive: true }),
   ].map((file) => String(file).replaceAll('\\', '/'));
-  const named = (file) => {
-    const name = file
-      .split('/')
-      .at(-1)
-      .replace(/\.(?:tsx?|css|m?js|html)$/, '');
+  const named = (file: string) => {
+    const name = file.replace(/^.*\//, '').replace(/\.(?:tsx?|css|m?js|html)$/, '');
     return [name, name.replace(/e?s$/, ''), name.replace(/s$/, '')];
   };
   const found = fixtureUse(repositoryRoot);
   const redundant: string[] = [];
-  for (const [name, targets] of Object.entries(aliases)) {
+  for (const [name, targets] of Object.entries(testsByModuleName)) {
     assert.ok(
       files.some((file) => named(file).includes(name)),
       `the alias ${name} names no file`,
     );
     for (const target of targets)
-      assert.ok(existsSync(specFile(target)), `${name}: no spec ${target}`);
+      assert.ok(existsSync(browserTestFile(target)), `${name}: no spec ${target}`);
     const modules = files
       .filter(
         (file) =>
@@ -259,13 +253,17 @@ test('every alias names a file and specs that exist, and adds what the imports m
     const imported = new Set(modules.flatMap((path) => found(path).slice(0, fixtureBudget)));
     if (modules.length && targets.every((target) => imported.has(target))) redundant.push(name);
   }
-  assert.deepEqual(redundant, [], 'The imports find these aliases’ specs: remove the aliases.');
+  assert.deepEqual(
+    redundant,
+    [],
+    'The imports find these aliases’ specs: remove the testsByModuleName.',
+  );
 });
 
 test("a spec is in the library's or the site's folder, or a component test", () => {
-  assert.equal(specFile('Hydration'), 'tests/browser/library/Hydration.spec.ts');
-  assert.equal(specFile('Button'), 'tests/component/Button.test.tsx');
-  assert.equal(specFile('SiteSmoke'), 'tests/browser/site/SiteSmoke.spec.ts');
+  assert.equal(browserTestFile('Hydration'), 'tests/browser/library/Hydration.spec.ts');
+  assert.equal(browserTestFile('Button'), 'tests/component/Button.test.tsx');
+  assert.equal(browserTestFile('SiteSmoke'), 'tests/browser/site/SiteSmoke.spec.ts');
 });
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
@@ -275,20 +273,22 @@ test('a changed spec runs itself, and a changed helper the specs that import it'
 });
 
 test('a module of the documentation generator runs the specs of the site', () => {
-  assert.ok([...selectScope(['scripts/docs/PageReader.ts']).specs.keys()].includes('SiteSmoke'));
+  assert.ok(
+    [...selectScope(['scripts/docs/PageReader.ts']).browserTests.keys()].includes('SiteSmoke'),
+  );
 });
 
 test('the site runs its specs and live development, with the builds they open', () => {
   const scope = selectScope(['apps/site/src/main.tsx']);
-  assert.deepEqual([...scope.specs.keys()].sort(), [
+  assert.deepEqual([...scope.browserTests.keys()].sort(), [
     'LiveDevelopment',
     'SiteFailures',
     'SitePrerender',
     'SiteSmoke',
   ]);
   assert.equal(scope.build.site, true);
-  assert.equal(specNeeds('LiveDevelopment').live, true);
-  assert.equal(specNeeds('Hydration').library, true);
+  assert.equal(browserTestNeeds('LiveDevelopment').live, true);
+  assert.equal(browserTestNeeds('Hydration').library, true);
   assert.equal(selectScope(['tests/browser/library/Hydration.spec.ts']).build.library, true);
 });
 
@@ -300,18 +300,15 @@ test('static checks cover the changed files, and configuration the whole of its 
   assert.equal(selectScope(['eslint.config.mjs']).whole.lint, true);
 });
 
-test('servers follow the specs that need them', () => {
-  const root = mkdtempSync(join(tmpdir(), 'envui-servers-'));
-  try {
+test('servers follow the specs that need them', async () => {
+  await inScratchFolder('servers', (root) => {
     mkdirSync(join(root, 'tests/browser/library'), { recursive: true });
     writeFileSync(
       join(root, 'tests/browser/library/Widget.spec.ts'),
       "import { fixtureUrl } from '../support/Servers';",
     );
     assert.deepEqual(serversFor(['Widget'], root), ['fixture']);
-  } finally {
-    rmSync(root, { recursive: true, force: true });
-  }
+  });
   assert.deepEqual(serversFor(['Tree']), []);
   assert.deepEqual(serversFor(['SiteSmoke']), ['site-build']);
   assert.deepEqual(serversFor(['SiteFailures']), ['site']);
@@ -332,5 +329,5 @@ test('each checkout has its own identity and ports', () => {
   assert.notEqual(checkoutId('/a/checkout'), checkoutId('/another/checkout'));
   const id = checkoutId('/a/checkout');
   assert.equal(checkoutPort(1, id), checkoutPort(0, id) + 1);
-  assert.ok(checkoutPort(0, id) >= 20000 && checkoutPort(1, id) < 38001);
+  assert.ok(checkoutPort(0, id) >= 20000 && checkoutPort(3, id) < 56000);
 });

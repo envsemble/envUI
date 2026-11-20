@@ -13,12 +13,10 @@ export interface LoadingBarProps {
   active: boolean;
   /** Accessible name while the bar is visible; EnvUIProvider's messages.common.loading by default. */
   label?: string;
-  /** Milliseconds to wait before appearing, so quick loads never flash the bar. Defaults to 200. */
-  delay?: number;
-  /** Pin the bar to the top of its positioned container instead of the viewport. */
-  contained?: boolean;
   className?: string;
 }
+
+const delayThatKeepsQuickLoadsFromFlashingMs = 200;
 
 type Phase = 'idle' | 'waiting' | 'running' | 'finishing';
 type LoadingBarEvent = 'start' | 'show' | 'stop' | 'hide';
@@ -46,16 +44,10 @@ function reduce(
 }
 
 /**
- * Page-level progress, such as loading the next route: a thin bar that creeps forward while work
- * continues, then completes and fades out.
+ * TopBar's progress, such as loading the next route: a thin bar along its edge that creeps forward
+ * while work continues, then completes and fades out.
  */
-export function LoadingBar({
-  active,
-  label,
-  delay = 200,
-  contained = false,
-  className,
-}: LoadingBarProps) {
+export function LoadingBar({ active, label, className }: LoadingBarProps) {
   const messages = useMessages('common', common);
   const [state, dispatch] = useReducer(reduce, { phase: 'idle', run: 0 });
   const indicator = useRef<HTMLDivElement>(null);
@@ -64,9 +56,9 @@ export function LoadingBar({
 
   useEffect(() => {
     if (state.phase !== 'waiting') return;
-    const timer = setTimeout(() => dispatch('show'), delay);
+    const timer = setTimeout(() => dispatch('show'), delayThatKeepsQuickLoadsFromFlashingMs);
     return () => clearTimeout(timer);
-  }, [state.phase, delay]);
+  }, [state.phase]);
 
   useEffect(
     function removeOnceFadedOut() {
@@ -97,7 +89,7 @@ export function LoadingBar({
       key={state.run}
       role="progressbar"
       aria-label={label ?? messages.loading}
-      className={classNames('env-loading-bar', contained && 'env-loading-bar-contained', className)}
+      className={classNames('env-loading-bar', className)}
       data-state={state.phase}
     >
       <div ref={indicator} className="env-loading-bar-indicator" />

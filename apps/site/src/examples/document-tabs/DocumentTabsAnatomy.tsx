@@ -4,8 +4,8 @@ import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 
 const documents: DocumentTabsItem[] = [
-  { value: 'roadmap.md', label: 'Roadmap.md', icon: <IconDescription /> },
-  { value: 'budget.md', label: 'Budget.md', icon: <IconDescription /> },
+  { value: 'roadmap.md', label: 'Roadmap.md', start: <IconDescription /> },
+  { value: 'budget.md', label: 'Budget.md', start: <IconDescription /> },
 ];
 
 export default function DocumentTabsAnatomy() {

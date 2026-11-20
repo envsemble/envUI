@@ -573,7 +573,7 @@ const registry: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-border-default',
     [field, page, surface, muted, raised, popup],
-    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
+    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone takes it too',
   ),
   ...nonText(
     'composer-hover-edge',
@@ -1210,11 +1210,6 @@ const registry: readonly ContrastPair[] = merged([
     'A soft neutral badge at high contrast, on the page, a pane, a row, a muted or raised surface or a popup',
     neutralBadgeAtHigh,
   ),
-  ...distinct(
-    'heatmap-accent-lowest',
-    [[fill, page]],
-    'The lightest step of a calendar heatmap against an empty day',
-  ),
   ...buttonEndSeparator('accent', [
     raised,
     '--env-color-bg-raised-hover',
@@ -1352,8 +1347,6 @@ const derived: Readonly<Record<string, string>> = {
   ),
   'document-tabs-strip':
     'color-mix(in srgb, var(--env-color-bg-page), var(--env-color-fg-default) 7%)',
-  'heatmap-accent-lowest':
-    'color-mix(in srgb, var(--env-color-fg-primary) 30%, var(--env-color-bg-page))',
   'popup-frosted': 'color-mix(in srgb, var(--_popup-fill) var(--env-popup-opacity), transparent)',
   'popup-fill': 'var(--_popup-fill)',
   'popup-row-highlight': 'var(--_popup-row-highlight)',

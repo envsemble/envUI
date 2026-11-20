@@ -7,6 +7,7 @@ import {
   useState,
   type ComponentPropsWithRef,
   type DragEvent,
+  type ReactElement,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -16,12 +17,15 @@ import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { FileInput } from './internal/FileInput.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { Spinner } from '../feedback/Spinner.js';
+import { VisuallyHidden } from '../content/VisuallyHidden.js';
 import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
+import { fieldDescribedBy, fieldPartIds } from '../internal/field/useFieldControl.js';
 import { flag } from '../internal/flag.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';
 
@@ -31,7 +35,7 @@ export interface DropZoneProps extends Omit<
 > {
   /**
    * What to drop or choose, such as "Drop a logo here, or browse". With the description, it names
-   * the zone, as its visible text does.
+   * the zone, as its visible text does; without the target, only assistive technology reads it.
    */
   label: ReactNode;
   /** Which files fit, such as "PNG, JPG or WebP up to 2 MB"; it is read as part of the name. */
@@ -88,6 +92,19 @@ export interface DropZoneProps extends Omit<
    * reaches the zone itself.
    */
   inputRef?: Ref<HTMLInputElement>;
+  /**
+   * Show the target: the button with the icon, the label and the description that opens the file
+   * picker. Without it, the zone is a group the label names, for content that has its own Browse
+   * button, which opens the picker through inputRef, such as a table the files land in.
+   * @default true
+   */
+  target?: boolean;
+  /**
+   * Another element to render the zone as, such as the application's own panel or table region,
+   * which then takes dropped files: the zone's class, its state attributes, such as
+   * data-drag-over, and its handlers merge into its props.
+   */
+  render?: ReactElement;
 }
 
 const spaceReadInName = ' ';
@@ -117,6 +134,8 @@ export function DropZone({
   files,
   form,
   inputRef,
+  target: showsTarget = true,
+  render,
   className,
   children,
   ...props
@@ -163,16 +182,15 @@ export function DropZone({
     setDragging(false);
   }
 
-  const visibleTextIds = [`${id}-label`, description != null && `${id}-description`]
-    .filter(Boolean)
-    .join(' ');
+  const ids = fieldPartIds(id);
+  const visibleTextIds = idRefs(ids.label, description != null && ids.description);
 
   const target = (
     <ActionElement
       disabled={disabled}
       pending={pending}
       aria-labelledby={visibleTextIds}
-      aria-describedby={error != null ? `${id}-error` : undefined}
+      aria-describedby={error != null ? ids.error : undefined}
       onClick={() => {
         if (available) filePicker.current?.click();
       }}
@@ -190,7 +208,7 @@ export function DropZone({
         )}
       </span>
       <Grid render={<span />} gap={size === 'sm' ? 0 : 1} className="env-drop-zone-text">
-        <span className="env-drop-zone-label" id={`${id}-label`}>
+        <span className="env-drop-zone-label" id={ids.label}>
           <Slot className="env-drop-zone-label-content" element="span">
             {label}
           </Slot>
@@ -198,7 +216,7 @@ export function DropZone({
         {description != null && (
           <>
             {spaceReadInName}
-            <span className="env-drop-zone-description" id={`${id}-description`}>
+            <span className="env-drop-zone-description" id={ids.description}>
               <Slot className="env-drop-zone-description-content" element="span">
                 {description}
               </Slot>
@@ -208,9 +226,18 @@ export function DropZone({
       </Grid>
     </>
   );
+  const group = showsTarget
+    ? {}
+    : {
+        role: 'group',
+        'aria-labelledby': ids.label,
+        'aria-describedby': fieldDescribedBy(id, undefined, description, error),
+      };
   return (
     <Field.Root
+      {...group}
       {...props}
+      render={<Grid gap={3} render={render} />}
       invalid={error != null || undefined}
       className={classNames('env-drop-zone', className)}
       data-size={size}
@@ -240,15 +267,24 @@ export function DropZone({
         if (available) take(Array.from(event.dataTransfer.files));
       }}
     >
-      <Grid gap={3} className="env-drop-zone-target" render={target}>
-        {targetContent}
-      </Grid>
+      {showsTarget ? (
+        <Grid gap={3} className="env-drop-zone-target" render={target}>
+          {targetContent}
+        </Grid>
+      ) : (
+        <VisuallyHidden>
+          <span id={ids.label}>{label}</span>
+          {description != null && (
+            <>
+              {spaceReadInName}
+              <span id={ids.description}>{description}</span>
+            </>
+          )}
+        </VisuallyHidden>
+      )}
       {children != null && <Slot className="env-drop-zone-content">{children}</Slot>}
       <FileInput
-        ref={(node) => {
-          filePicker.current = node;
-          setRef(inputRef, node);
-        }}
+        ref={mergeRefs(filePicker, inputRef)}
         accept={accept}
         multiple={multiple}
         disabled={disabled}
@@ -265,7 +301,7 @@ export function DropZone({
           disabled={disabled}
         />
       ) : null}
-      {error != null && <Field.Error id={`${id}-error`}>{error}</Field.Error>}
+      {error != null && <Field.Error id={ids.error}>{error}</Field.Error>}
     </Field.Root>
   );
 }

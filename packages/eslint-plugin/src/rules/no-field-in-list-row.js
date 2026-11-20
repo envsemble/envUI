@@ -28,8 +28,6 @@ function isNamed(opening) {
   );
 }
 
-const namedByTheRowAsItsControl = new Set(['Radio']);
-
 const fields = new Set([
   'Select',
   'RadioGroup',
@@ -53,14 +51,14 @@ export default {
   meta: {
     type: 'problem',
     docs: {
-      description: "Disallow an unlabelled field in a List.Item's control or end",
+      description: "Disallow an unlabelled field in a List.Item's end",
       recommended: true,
       url: documentationUrl('no-field-in-list-row'),
     },
     schema: [],
     messages: {
       field:
-        "A {{field}} with no label in a List.Item's {{slot}}: the row's label names only a Switch, a Checkbox or a Radio in its control, so nothing names this field. Give it a label, or an aria-label or aria-labelledby when its label shouldn't show.",
+        "A {{field}} with no label in a List.Item's end: the row's label names only the control in its control, so nothing names this field. Put it in control when it is the row's setting, or give it a label, or an aria-label or aria-labelledby when its label shouldn't show.",
     },
   },
   create(context) {
@@ -100,13 +98,9 @@ export default {
       JSXOpeningElement(node) {
         if (envuiName(node.name) !== 'List.Item') return;
         for (const attribute of node.attributes) {
-          if (attribute.type !== 'JSXAttribute') continue;
-          const slot = jsxName(attribute.name);
-          if (slot !== 'control' && slot !== 'end') continue;
-          for (const { node: at, name } of fieldsIn(attribute.value, [])) {
-            if (slot === 'control' && namedByTheRowAsItsControl.has(name)) continue;
-            context.report({ node: at, messageId: 'field', data: { field: name, slot } });
-          }
+          if (attribute.type !== 'JSXAttribute' || jsxName(attribute.name) !== 'end') continue;
+          for (const { node: at, name } of fieldsIn(attribute.value, []))
+            context.report({ node: at, messageId: 'field', data: { field: name } });
         }
       },
     };

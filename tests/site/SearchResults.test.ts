@@ -31,7 +31,6 @@ test("before people type, search suggests the page's counterpart, then the start
   assert.equal(suggestions[0].suggested, undefined);
   assert.equal(suggestions[0].description, 'Docs · This page in code, with its props');
   assert.equal(suggestions[1].suggested, 'docs');
-  assert.ok(suggestions.every(({ group }) => group === 'Suggested'));
   assert.deepEqual(
     search.suggestionsFor(undefined).map(({ id }) => id),
     ['docs', 'components', 'docs/tokens'],
@@ -82,7 +81,7 @@ test("the named components' props come first, pass-through props last, as many a
   const prop = (title, owner, namesProp = false) => result('prop', title, { owner, namesProp });
   const groups = search.groupResults(
     [
-      prop('startDate', 'CalendarHeatmap', true),
+      prop('start', 'Button', true),
       prop('className', 'DatePicker', true),
       prop('value', 'DatePicker', true),
       prop('min', 'DatePicker.Field', true),
@@ -110,7 +109,7 @@ test('a short group one result past its limit shows that one rather than a row f
 });
 
 test("a row names its part only where another reads the same, and a group's row counts the rest", () => {
-  const rows = search.resultRows([
+  const groups = search.resultRows([
     {
       name: 'Pages',
       results: [
@@ -124,7 +123,13 @@ test("a row names its part only where another reads the same, and a group's row 
     { name: 'Also mentioned in', results: [], hidden: 1 },
   ]);
   assert.deepEqual(
-    rows.map(({ id, label, description, kind }) => [id, label, description, kind]),
+    groups.map(({ label }) => label),
+    ['Pages', 'Tokens', 'Also mentioned in'],
+  );
+  assert.deepEqual(
+    groups
+      .flatMap(({ items }) => items)
+      .map(({ id, label, description, kind }) => [id, label, description, kind]),
     [
       ['page:Colors', 'Colors', 'Catalogue · Foundation', 'page'],
       ['docs:Colors', 'Colors', 'Docs · Foundation', 'page'],

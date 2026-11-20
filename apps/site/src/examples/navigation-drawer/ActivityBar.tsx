@@ -20,7 +20,7 @@ export default function ActivityBar() {
   ];
   return (
     <div style={{ blockSize: '16rem' }}>
-      <NavigationRail aria-label="Activity bar" labels="tooltip" destinations={destinations} />
+      <NavigationRail aria-label="Activity bar" visibleLabel={false} destinations={destinations} />
     </div>
   );
 }

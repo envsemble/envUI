@@ -28,15 +28,10 @@ const rows = {
   },
   Card: {
     props: ['href', 'onClick'],
-    raised: new Set(['meta', 'end', 'actions']),
+    raised: new Set(),
     place: 'beside the card as a Button',
     advice:
       " When it goes where the card goes, leave it out: the card's href or onClick takes the click.",
-    targeted: {
-      prop: 'interactive',
-      place: 'its end or actions as a Button',
-      advice: ' When it goes where the card goes, mark it data-row-target instead.',
-    },
   },
 };
 
@@ -100,15 +95,9 @@ export default {
         const row = rows[name];
         if (!row) return;
         const clickable = row.props.some((prop) => isSet(findAttribute(node.openingElement, prop)));
-        const elements = inside(node, row.raised);
-        const targeted =
-          !clickable &&
-          row.targeted !== undefined &&
-          isSet(findAttribute(node.openingElement, row.targeted.prop)) &&
-          elements.some((element) => findAttribute(element, 'data-row-target'));
-        if (!clickable && !targeted) return;
-        const { place, advice } = targeted ? row.targeted : row;
-        for (const element of elements) {
+        if (!clickable) return;
+        const { place, advice } = row;
+        for (const element of inside(node, row.raised)) {
           const found = linkStyled(element);
           if (found)
             context.report({

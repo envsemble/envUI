@@ -5,7 +5,7 @@ import { elementsOf, firstElement } from '../../support/Markup.ts';
 import { createElement as h, type ReactElement } from 'react';
 import { renderToString } from 'react-dom/server';
 
-const { Button, ConfirmButton, CopyButton, Toolbar } = await importSource('Button', [
+const { Button, ConfirmButton, CopyButton, IconButton, Toolbar } = await importSource('Button', [
   "export * from './packages/ui/src/actions/Button.tsx';",
   "export * from './packages/ui/src/actions/ConfirmButton.tsx';",
   "export * from './packages/ui/src/actions/CopyButton.tsx';",
@@ -61,18 +61,19 @@ test('a pair no variant is designed in renders neutral, and is reported', (conte
   );
 });
 
-test('a button shows start content at its own size before its label, hidden from assistive technology', () => {
-  const root = firstElement(
-    renderToString(
-      h(Button, { start: h('span', { className: 'avatar' }, 'PS'), startIcon: h('svg') }, 'Assign'),
-    ),
-  );
-  const [start, icon, label] = root.children.filter((child) => typeof child !== 'string');
-  assert.equal(start.attributes.class, 'env-button-start');
-  assert.equal(start.attributes['aria-hidden'], 'true');
-  assert.ok(!elementsOf(start).some((element) => element.attributes.class === 'env-icon'));
-  assert.equal(icon.attributes.class, 'env-button-start-icon');
-  assert.equal(label.attributes.class, 'env-button-label');
+test('a button shows one start slot before its label, hidden from assistive technology', () => {
+  for (const content of [
+    h('span', { className: 'avatar' }, 'PS'),
+    h('svg', { className: 'env-icon-symbol' }),
+  ]) {
+    const root = firstElement(renderToString(h(Button, { start: content }, 'Assign')));
+    const [start, label, ...rest] = root.children.filter((child) => typeof child !== 'string');
+    assert.equal(start.attributes.class, 'env-button-start');
+    assert.equal(start.attributes['aria-hidden'], 'true');
+    assert.ok(!elementsOf(start).some((element) => element.attributes.class === 'env-icon'));
+    assert.equal(label.attributes.class, 'env-button-label');
+    assert.deepEqual(rest, []);
+  }
 });
 
 test("a button renders as another element with the button's look, content and state", () => {
@@ -96,4 +97,24 @@ test("a button renders as another element with the button's look, content and st
   );
   assert.equal(off.attributes['aria-disabled'], 'true');
   assert.equal(off.attributes.disabled, undefined);
+});
+
+test("an icon button renders as another element, such as a file input's label, with its look and icon", () => {
+  const attach = firstElement(
+    renderToString(
+      h(IconButton, {
+        render: h('label', { htmlFor: 'files' }),
+        icon: h('svg'),
+        'aria-label': 'Attach files',
+        variant: 'ghost',
+      }),
+    ),
+  );
+  assert.equal(attach.tag, 'label');
+  assert.equal(attach.attributes.for, 'files');
+  assert.equal(attach.attributes.class, 'env-button env-icon-button');
+  assert.equal(attach.attributes['aria-label'], 'Attach files');
+  assert.equal(attach.attributes['data-variant'], 'ghost');
+  assert.equal(attach.attributes.type, undefined);
+  assert.ok(elementsOf(attach).some((element) => element.attributes.class === 'env-button-icon'));
 });

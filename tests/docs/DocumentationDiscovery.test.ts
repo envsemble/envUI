@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
-import { inScratchFolder } from './DocumentationFixtures.ts';
+import { cacheDirectory, inScratchFolder } from '../support/ScratchFolder.ts';
 
 const discoveryIndex =
   '# envUI documentation\n\n## Actions\n\n- [Button](button.md) — Perform an action.\n';
@@ -11,15 +11,19 @@ const discoveryIndex =
 const discoveryPage = '# Button\n\n## Example\n\n```tsx\n<Button>Save</Button>\n```\n';
 
 function discoveryFixture(run) {
-  return inScratchFolder('documentation', async (fixture) => {
-    await writeFile(join(fixture, 'index.md'), discoveryIndex);
-    await writeFile(join(fixture, 'button.md'), discoveryPage);
-    await run({
-      fixture,
-      write: (name, text) => writeFile(join(fixture, name), text),
-      read: () => readDocumentation(fixture),
-    });
-  });
+  return inScratchFolder(
+    'documentation',
+    async (fixture) => {
+      await writeFile(join(fixture, 'index.md'), discoveryIndex);
+      await writeFile(join(fixture, 'button.md'), discoveryPage);
+      await run({
+        fixture,
+        write: (name, text) => writeFile(join(fixture, name), text),
+        read: () => readDocumentation(fixture),
+      });
+    },
+    { within: cacheDirectory },
+  );
 }
 
 test('Markdown discovery reads each page the index lists, in its group, with its examples', async () => {
@@ -47,6 +51,13 @@ test('a link reaches a page, and a heading the page has', async () => {
     assert.equal(read().length, 2);
     await write('index.md', discoveryIndex + '\nSee [its example](button.md#usage).\n');
     assert.throws(read, /names no heading of button\.md/);
+  });
+});
+
+test('a guide places no figure', async () => {
+  await discoveryFixture(async ({ write, read }) => {
+    await write('button.md', discoveryPage + '\n```tsx figure=Sizes\n\n```\n');
+    assert.throws(read, /places a figure/);
   });
 });
 

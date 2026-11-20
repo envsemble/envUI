@@ -116,7 +116,7 @@ export default function ColorPickerFixture() {
         <Row gap={4} align="center" data-testid="color-swatches">
           <ColorSwatch color="#6750a4" format="rgb" label="Violet" />
           <ColorSwatch color="#ffffff" />
-          <Button variant="secondary" startIcon={<ColorSwatch color="#ffffff" />}>
+          <Button variant="secondary" start={<ColorSwatch color="#ffffff" />}>
             #FFFFFF
           </Button>
         </Row>

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useId,
   useRef,
   type ButtonHTMLAttributes,
   type ComponentProps,
@@ -10,27 +9,28 @@ import {
   type Ref,
 } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { useFieldControl } from '../internal/field/useFieldControl.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
+import { FieldFrame, FieldLabelContent } from '../internal/field/FieldFrame.js';
 import {
-  FieldFrame,
-  FieldLabelContent,
   type FieldProps,
   type FieldSizeProps,
-  type TextFieldDecorationProps,
-} from '../internal/field/FieldFrame.js';
+  type FieldDecorationProps,
+} from '../internal/field/fieldProps.js';
 import { PopupSurface } from '../internal/popup/PopupSurface.js';
-import {
-  containedModal,
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedModal, containedOpenChange } from '../internal/popup/containedOverlays.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
-import { ListRow } from '../internal/list/ListRow.js';
+import { ListRow } from '../internal/popup/ListRow.js';
+import {
+  flattenGroups,
+  isGroup,
+  type ListItemElementProps,
+} from '../internal/popup/listEntries.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { classNames } from '../internal/classNames.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
@@ -55,12 +55,19 @@ export interface SelectItem {
   end?: ReactNode;
   /** Show the option but don't let people choose it; the keyboard can still highlight it. */
   disabled?: boolean;
+  /**
+   * More props for the option's element, such as a title or data attributes for tests. Its class
+   * joins the option's; the option's role, id and ARIA attributes stay its own.
+   */
+  itemProps?: SelectItemElementProps;
   /** Reserved: an entry with an `items` array is a group, so an option has none. */
   items?: never;
 }
+/** What a Select option's itemProps can set on its option element. */
+export type SelectItemElementProps = ListItemElementProps;
 /** Options of a Select under a heading, which also names the group for assistive technology. */
 export interface SelectGroup {
-  /** The group's heading. */
+  /** The group's heading: text, or content such as an icon or a count beside the group's name. */
   label: ReactNode;
   /** The options under the heading, in display order. */
   items: readonly SelectItem[];
@@ -91,7 +98,7 @@ export interface SelectProps
     >,
     FieldProps,
     FieldSizeProps,
-    Pick<TextFieldDecorationProps, 'visibleLabel'> {
+    Pick<FieldDecorationProps, 'visibleLabel'> {
   /** The trigger, the button that shows the chosen option and opens the list. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element, beside env-field and env-select. */
@@ -154,15 +161,14 @@ const popupParts = {
 };
 
 function SelectOption({ item }: { item: SelectItem }) {
-  const descriptionId = useId();
   return (
     <ListRow
       render={
         <BaseSelect.Item
+          {...item.itemProps}
           value={item.value}
           label={item.label}
           disabled={item.disabled}
-          aria-describedby={item.description ? descriptionId : undefined}
         />
       }
       className="env-select-item"
@@ -174,24 +180,8 @@ function SelectOption({ item }: { item: SelectItem }) {
         </BaseSelect.ItemIndicator>
       }
       label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}
-      description={
-        item.description ? (
-          <span id={descriptionId} aria-hidden="true">
-            {item.description}
-          </span>
-        ) : undefined
-      }
+      description={item.description || undefined}
     />
-  );
-}
-
-function isGroup(entry: SelectItem | SelectGroup): entry is SelectGroup {
-  return Array.isArray(entry.items);
-}
-
-function optionsOf(items: readonly SelectItem[] | readonly SelectGroup[]) {
-  return items.flatMap((entry: SelectItem | SelectGroup) =>
-    isGroup(entry) ? entry.items : [entry],
   );
 }
 
@@ -266,8 +256,16 @@ export function Select({
   style,
   ...triggerProps
 }: SelectProps) {
-  const options = optionsOf(items);
-  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
+  const options = flattenGroups(items);
+  const { naming, metadata } = useFieldControl({
+    ...triggerProps,
+    id: suppliedId,
+    label,
+    description,
+    error,
+    'aria-describedby': describedBy,
+    'aria-invalid': invalid,
+  });
   const { id } = metadata;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const controlRef = useRef<HTMLDivElement>(null);
@@ -344,11 +342,9 @@ export function Select({
       >
         <BaseSelect.Trigger
           {...triggerProps}
+          {...naming}
           {...metadata}
-          ref={(node: HTMLButtonElement | null) => {
-            triggerRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(triggerRef, ref)}
           className="env-text-field-input env-select-trigger"
         >
           <ChosenStart options={options} value={selectedValue} />

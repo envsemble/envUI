@@ -43,7 +43,7 @@ export function createConfig({
           'error',
           {
             light: declaredTokens(
-              readTokenSource('base/contrast-high.tokens.json', tokensDirectory),
+              readTokenSource('base/light-contrast-high.tokens.json', tokensDirectory),
             ),
             dark: declaredTokens(
               readTokenSource('color-scheme/dark-contrast-high.tokens.json', tokensDirectory),

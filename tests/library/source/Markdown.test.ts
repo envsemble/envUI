@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
-import { declarations } from '../../support/CssDeclarations.ts';
+import { declarations } from '../../support/StyleSheets.ts';
 import { elementsOf, firstElement, hasClass, textOf } from '../../support/Markup.ts';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { repositoryRoot, styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const { Markdown } = await importSource('Markdown', 'packages/ui/src/markdown.ts');
 
@@ -35,9 +35,7 @@ test('table regions are named after their heading or first column, numbered wher
 });
 
 test('bold is semibold, heavier than the regular body text and a heading', () => {
-  const prose = declarations(
-    readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Prose.css'), 'utf8'),
-  );
+  const prose = declarations(readFileSync(join(styleSheetsDirectory, 'Prose.css'), 'utf8'));
   const weight = prose.find(
     (each) => each.selector === '.env-prose strong' && each.prop === 'font-weight',
   );
@@ -139,6 +137,42 @@ test('Markdown accepts component overrides and remark and rehype plugins, and st
   assert.ok(paragraphs.includes('Press Ctrl+P or F1.'));
   assert.ok(paragraphs.includes('Not keys: A B'));
   assert.ok(!elements.some((element) => 'onclick' in element.attributes || element.tag === 'b'));
+});
+
+test("links keep only safe schemes, and the application's own with allowLinkSchemes, never javascript, data or vbscript, without images taking them", () => {
+  const source = [
+    '[Open](vscode://file/src/App.tsx) [Ticket](Tracker:42) [Run](javascript:alert(1))',
+    '[Site](https://example.com) [Page](/docs) ![Logo](vscode://file/logo.png)',
+  ].join('\n\n');
+  const hrefs = (props) =>
+    render(source, props)
+      .filter((element) => element.tag === 'a')
+      .map((element) => element.attributes.href);
+  assert.deepEqual(hrefs({}), ['https://example.com', '/docs']);
+  assert.deepEqual(hrefs({ allowLinkSchemes: ['vscode', 'tracker:'] }), [
+    'vscode://file/src/App.tsx',
+    'Tracker:42',
+    'https://example.com',
+    '/docs',
+  ]);
+  const refused = [
+    '[Run](javascript:alert(1)) [Page](data:text/html;base64,PHA+aGk8L3A+) [Old](VBScript:msgbox)',
+    '[Open](vscode://file/src/App.tsx)',
+  ].join('\n\n');
+  assert.deepEqual(
+    render(refused, { allowLinkSchemes: ['JavaScript', 'data:', 'vbscript', 'vscode'] })
+      .filter((element) => element.tag === 'a')
+      .map((element) => element.attributes.href),
+    ['vscode://file/src/App.tsx'],
+  );
+  assert.deepEqual(
+    render(refused, { allowLinkSchemes: ['javascript'] }).filter((element) => element.tag === 'a'),
+    [],
+  );
+  const images = render(source, { allowLinkSchemes: ['vscode'] }).filter(
+    (element) => element.tag === 'img',
+  );
+  assert.deepEqual(images, []);
 });
 
 test('allowHtml keeps raw HTML for the rehype plugins, which a sanitizing rehype-raw then renders', () => {

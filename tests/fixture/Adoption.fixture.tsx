@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  AnimatedNumber,
   Avatar,
   AvatarButton,
   Button,
@@ -24,6 +23,7 @@ import {
   Column,
   Text,
 } from '@envsemble/envui';
+import { useStoredThemePreference } from '@envsemble/envui/theme-storage';
 import { IconError } from '@envsemble/envui/icons/Error';
 import { IconLogout } from '@envsemble/envui/icons/Logout';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
@@ -54,10 +54,10 @@ export default function AdoptionFixture() {
   const [action, setAction] = useState('');
   const [presses, setPresses] = useState(0);
   const [confirmed, setConfirmed] = useState(0);
-  const [homes, setHomes] = useState(3);
   const [seatsFull, setSeatsFull] = useState(false);
+  const storedTheme = useStoredThemePreference({ storageKey: 'fixture-theme' });
   return (
-    <ThemePreferenceProvider theme={{ storageKey: 'fixture-theme' }} className="fixture-adoption">
+    <ThemePreferenceProvider {...storedTheme} className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
         <section>
           <div data-testid="adoption-plain-text">Plain application text</div>
@@ -121,7 +121,7 @@ export default function AdoptionFixture() {
               Account settings
             </Menu.Item>
             <Menu.Separator />
-            <Menu.Item icon={<IconLogout />} onClick={() => setAction('Signed out')}>
+            <Menu.Item start={<IconLogout />} onClick={() => setAction('Signed out')}>
               Sign out
             </Menu.Item>
           </Menu.Root>
@@ -142,7 +142,7 @@ export default function AdoptionFixture() {
             <Button
               variant="secondary"
               fullWidth
-              startIcon={<IconSearch />}
+              start={<IconSearch />}
               end={<Kbd keys={['Ctrl', 'K']} aria-hidden />}
               aria-keyshortcuts="Control+K"
               data-testid="end-button"
@@ -168,16 +168,11 @@ export default function AdoptionFixture() {
             data-testid="confirm-icon-button"
           />
           <output data-testid="confirmed">{confirmed}</output>
-          <Button onClick={() => setHomes((count) => count + 1)}>More homes</Button>
-          <Button onClick={() => setHomes((count) => count - 1)}>Fewer homes</Button>
-          <Button>
-            Show <AnimatedNumber value={homes} data-testid="animated-number" /> homes
-          </Button>
           <output hidden data-testid="bootstrap-script">
-            {createThemeBootstrapScript({ storageKey: 'bootstrap-theme' })}
+            {createThemeBootstrapScript({}, { preference: 'dark' })}
           </output>
           <output hidden data-testid="bootstrap-contrast-script">
-            {createThemeBootstrapScript({ storageKey: 'bootstrap-theme', contrast: 'high' })}
+            {createThemeBootstrapScript({ contrast: 'high' })}
           </output>
           <Tooltip content="All seats are assigned">
             <Button disabled>Assign seat</Button>

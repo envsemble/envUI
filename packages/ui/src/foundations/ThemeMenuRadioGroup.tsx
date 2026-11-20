@@ -2,6 +2,7 @@
 
 import { useContext, type ReactNode } from 'react';
 import * as Menu from '../actions/menu/Menu.js';
+import { RadioItemsCloseOnClickContext } from '../actions/menu/MenuChoices.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { themePreference } from './messages/themePreference.js';
 import { ThemePreferenceContext } from './internal/ThemePreferenceContext.js';
@@ -17,8 +18,8 @@ export interface ThemeMenuRadioGroupProps {
    */
   value?: ThemePreference;
   /**
-   * Called with the preference chosen, for an application that stores the theme itself.
-   * @default the nearest ThemePreferenceProvider's setPreference, which stores the choice
+   * Called with the preference chosen, for a group outside a ThemePreferenceProvider.
+   * @default the nearest ThemePreferenceProvider's setPreference
    */
   onValueChange?: (value: ThemePreference) => void;
   /**
@@ -30,7 +31,7 @@ export interface ThemeMenuRadioGroupProps {
   'aria-labelledby'?: string;
   /**
    * Close the menu after a choice. Off by default, so people see the theme change with the menu
-   * still open. It applies to the three default choices; choices given as children set their own.
+   * still open. It applies to the choices given as children too, unless one sets its own.
    * @default false
    */
   closeOnClick?: boolean;
@@ -51,8 +52,8 @@ const choices = [
 
 /**
  * The theme choice for a Menu: System, Light and Dark as radio items. Inside a
- * ThemePreferenceProvider it shows and stores the provider's preference; value and onValueChange
- * connect it to a theme the application stores itself.
+ * ThemePreferenceProvider it shows and changes the provider's preference; value and onValueChange
+ * connect it to a preference outside one.
  */
 export function ThemeMenuRadioGroup({
   value,
@@ -79,17 +80,14 @@ export function ThemeMenuRadioGroup({
       aria-labelledby={labelledBy}
       className={className}
     >
-      {children ??
-        choices.map((choice) => (
-          <Menu.RadioItem
-            key={choice.value}
-            value={choice.value}
-            icon={choice.icon}
-            closeOnClick={closeOnClick}
-          >
-            {messages[choice.value]}
-          </Menu.RadioItem>
-        ))}
+      <RadioItemsCloseOnClickContext value={closeOnClick}>
+        {children ??
+          choices.map((choice) => (
+            <Menu.RadioItem key={choice.value} value={choice.value} start={choice.icon}>
+              {messages[choice.value]}
+            </Menu.RadioItem>
+          ))}
+      </RadioItemsCloseOnClickContext>
     </Menu.RadioGroup>
   );
 }

@@ -54,7 +54,7 @@ The comments in this folder use these words as defined here.
 - **still**, **at rest**: a tile that is not playing, and what it shows then.
 - **playing**: the tile's script runs, on hover or by itself.
 - **shown** (`data-fitted`): set once the first fit has held still; the picture then fades in.
-- **what it paints**: the boxes that show something of their own, such as a fill, an edge or text, as opposed to boxes that only lay out others (`shownBoxes`, `PaintedBoxes.ts`, built on dev mode's `paintsOf`).
+- **what it paints**: the boxes that show something of their own, such as a fill, an edge or text, as opposed to boxes that only lay out others (`shownBoxes`, `PaintedBoxes.ts`, built on `paintsOf`).
 - **the script**: what a tile's animation tells its fit (`StageScript`): the elements it acts on, which the view keeps in view (it **names** them), where its pointer heads now (the **heading**), and all the points it heads to over the script (the **course**).
 - **held view**: a tile whose still is written as its largest state, such as a picker resting open. It keeps its view while it plays, framed once on its still.
 - **draw out**: while a tile plays, move its view and draw it smaller, once, so what it opened fits.

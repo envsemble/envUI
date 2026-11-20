@@ -1,4 +1,4 @@
-import { Button, DiffStat, Row, Badge } from '@envsemble/envui';
+import { Button, Row, Badge } from '@envsemble/envui';
 
 export default function CountsInButtons() {
   return (
@@ -7,7 +7,7 @@ export default function CountsInButtons() {
         Comments <Badge count={4} />
       </Button>
       <Button variant="secondary">
-        Changes <DiffStat additions={12} deletions={3} />
+        Files changed <Badge count={3} />
       </Button>
       <Button>
         Review requests <Badge count={2} tone="primary" variant="solid" />

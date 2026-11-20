@@ -1,9 +1,9 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import type { RowDensity } from '../foundations/Theme.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
-import type { SkeletonProps } from '../internal/skeleton.js';
+import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
-import { renderItem, renderList } from './internal/ListRows.js';
+import { renderItem, renderList } from './internal/listMarkup.js';
 import { ControlledItem, TitledList } from './internal/ListNaming.js';
 import '../styles/Base.css';
 import '../styles/List.css';
@@ -30,7 +30,7 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'ul'>, 'title'>, S
    * Content at the end of the title's line, outside the heading, such as an Add Button, a Manage
    * link or a count, placed as given; it wraps below the title when it doesn't fit beside it.
    */
-  actions?: ReactNode;
+  headerEnd?: ReactNode;
   /**
    * How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text.
    * @default 'md'
@@ -84,10 +84,9 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
   /** More content under the label and the description, such as a row of Badges, placed as given. */
   children?: ReactNode;
   /**
-   * The selection control the row is about, at the row's end: a Switch, a Checkbox or a Radio, given
-   * no label of its own. The row's label names it and the row's description describes it, so it
-   * isn't labelled twice. A field, such as a Select or a SegmentedControl, takes a label, aria-label or
-   * aria-labelledby of its own.
+   * The control of the setting the row is about, at the row's end: a Switch, a Checkbox, a Radio or
+   * a field, such as a Select or a SegmentedControl, given no label of its own. The row's label names
+   * it and the row's description describes it, so it isn't labelled twice.
    */
   control?: ReactNode;
   /**

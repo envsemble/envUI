@@ -6,19 +6,20 @@ import { RadioGroup } from '@base-ui/react/radio-group';
 import {
   useLayoutEffect,
   useRef,
-  useState,
+  type ComponentPropsWithoutRef,
   type ComponentPropsWithRef,
   type ReactNode,
 } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { VisuallyHidden } from '../content/VisuallyHidden.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { flag } from '../internal/flag.js';
+import { useCutShort } from '../internal/popup/useCutShort.js';
 import '../styles/Base.css';
 import '../styles/SegmentedControl.css';
 
@@ -33,7 +34,7 @@ export interface SegmentedControlItem {
    */
   label: ReactNode;
   /**
-   * Show the label on the segment. Without it the segment shows only its icon, as in a List and
+   * Show the label on the segment. Without it the segment shows only its start, as in a List and
    * Grid view switch: the label still names it, and shows in a tooltip on hover and keyboard focus.
    * @default true
    */
@@ -43,18 +44,41 @@ export interface SegmentedControlItem {
    * format; it is read as part of the item's name, such as Open 12.
    */
   count?: number;
-  /** A decorative icon before the label, at the control icon size of 1 rem. */
-  icon?: ReactNode;
+  /**
+   * Content before the label, such as IconViewList: an envUI icon takes the control icon size of
+   * 1 rem and other content keeps its own. It is hidden from assistive technology, since the label
+   * names the item.
+   */
+  start?: ReactNode;
   /**
    * Content after the label and the count, such as a Badge, which keeps its size; it is read as
    * part of the item's name.
    */
   end?: ReactNode;
-  /** A class of the segment's button, beside env-segmented-control-item. */
-  className?: string;
   /** Show the item but don't let people choose it; the arrow keys skip it. */
   disabled?: boolean;
+  /**
+   * More props for the segment's button, such as a title or data attributes for tests. Its class
+   * joins the segment's; the segment's role, id, ARIA attributes, value and disabled state stay its
+   * own.
+   */
+  itemProps?: SegmentedControlItemElementProps;
 }
+
+/** What a SegmentedControl item's itemProps can set on its button. */
+export type SegmentedControlItemElementProps = Omit<
+  ComponentPropsWithoutRef<'button'>,
+  | 'children'
+  | 'id'
+  | 'role'
+  | 'type'
+  | 'value'
+  | 'name'
+  | 'disabled'
+  | 'tabIndex'
+  | 'dangerouslySetInnerHTML'
+  | `aria-${string}`
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
 
 export interface SegmentedControlProps extends Omit<
   ComponentPropsWithRef<'div'>,
@@ -71,8 +95,11 @@ export interface SegmentedControlProps extends Omit<
   defaultValue?: string;
   /** Receives the value of the item people choose, by pressing it or with the arrow keys. */
   onValueChange?: (value: string) => void;
-  /** The group's accessible name, such as Work items; the control has no visible label. */
-  'aria-label': string;
+  /**
+   * The group's accessible name, such as Work items; the control has no visible label. Without it,
+   * a List.Item whose control it is names it, or name it with aria-labelledby.
+   */
+  'aria-label'?: string;
   /**
    * The height, as on every control: sm, md or lg in the current scale, so it lines up with buttons
    * and fields of the same size. Without it, it takes the control height of its container, md
@@ -107,6 +134,7 @@ export function SegmentedControl({
   onFocus,
   ...props
 }: SegmentedControlProps) {
+  const naming = useRowControlNaming({ ...props, 'aria-label': label });
   const directionScope = useDirectionScope<HTMLDivElement>(ref);
   const thumb = useRef<HTMLSpanElement>(null);
   useLayoutEffect(
@@ -117,6 +145,7 @@ export function SegmentedControl({
     <DirectionProvider direction={directionScope.direction}>
       <RadioGroup
         {...props}
+        {...naming}
         ref={directionScope.ref}
         onFocus={(event) => {
           directionScope.onFocus();
@@ -143,37 +172,26 @@ export function SegmentedControl({
 function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: boolean }) {
   const labelRef = useRef<HTMLSpanElement>(null);
   const formatters = useFormatters();
-  const [labelCutShort, setLabelCutShort] = useState(false);
   const labelShown = item.visibleLabel !== false;
-  useLayoutEffect(() => {
-    const element = labelRef.current;
-    if (!fullWidth || !element) {
-      setLabelCutShort(false);
-      return;
-    }
-    const measure = () => setLabelCutShort(element.scrollWidth > element.clientWidth);
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [fullWidth, labelShown]);
+  const labelCutShort = useCutShort(labelRef, fullWidth && labelShown);
+  const { className: itemClassName, ...itemProps } = item.itemProps ?? {};
   const segment = (
     <Radio.Root
       value={item.value}
       disabled={item.disabled}
       nativeButton
-      render={<button type="button" />}
-      className={classNames('env-segmented-control-item', item.className)}
+      render={<button {...itemProps} type="button" />}
+      className={classNames('env-segmented-control-item', itemClassName)}
     >
-      {item.icon != null && (
+      {item.start != null && (
         <Slot
-          className="env-segmented-control-item-icon"
+          className="env-segmented-control-item-start"
           element="span"
           layout="row"
           shrink="never"
+          aria-hidden
         >
-          <DecorativeIcon>{item.icon}</DecorativeIcon>
+          {item.start}
         </Slot>
       )}
       {labelShown ? (

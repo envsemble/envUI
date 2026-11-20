@@ -15,12 +15,11 @@ import { useEnvUI } from '../internal/provider/EnvUIContext.js';
 import { useHydrated } from '../internal/react/useHydrated.js';
 import { subscribeToClock } from './internal/relativeTimeClock.js';
 import {
-  dateTimeFormatter,
   formatRelativeTime,
-  toTime,
   type RelativeTimeOptions,
   type RelativeTimeValue,
 } from './formatRelativeTime.js';
+import { dateTimeFormatter, toTime } from './internal/relativeTimeFormat.js';
 import '../styles/Base.css';
 import '../styles/RelativeTime.css';
 
@@ -49,7 +48,7 @@ export interface RelativeTimeProps
    * The tooltip's content from the moment, such as the time with its time zone, in UTC, or "Edited
    * by Alex Morgan at 9:41"; the date and time in the locale by default.
    */
-  formatTooltip?: (date: Date) => ReactNode;
+  renderTooltip?: (date: Date) => ReactNode;
 }
 
 /**
@@ -63,7 +62,7 @@ export function RelativeTime({
   format = 'long',
   nowLabel: ownNowLabel,
   tooltip = true,
-  formatTooltip,
+  renderTooltip,
   className,
   ...props
 }: RelativeTimeProps) {
@@ -101,7 +100,7 @@ export function RelativeTime({
   return (
     <Tooltip
       content={
-        <DateAndTimeFormattedOnlyWhenShown time={time} locale={locale} format={formatTooltip} />
+        <DateAndTimeFormattedOnlyWhenShown time={time} locale={locale} format={renderTooltip} />
       }
     >
       {element}
@@ -116,7 +115,7 @@ function DateAndTimeFormattedOnlyWhenShown({
 }: {
   time: number;
   locale: RelativeTimeOptions['locale'];
-  format: RelativeTimeProps['formatTooltip'];
+  format: RelativeTimeProps['renderTooltip'];
 }) {
   return format ? format(new Date(time)) : dateTimeFormatter(locale).format(time);
 }

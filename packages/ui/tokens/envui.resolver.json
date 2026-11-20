@@ -9,7 +9,7 @@
       "sources": [
         { "$ref": "./palette.tokens.json" },
         { "$ref": "./base/color.tokens.json" },
-        { "$ref": "./base/contrast-high.tokens.json" },
+        { "$ref": "./base/light-contrast-high.tokens.json" },
         { "$ref": "./base/elevation.tokens.json" },
         { "$ref": "./base/typography.tokens.json" },
         { "$ref": "./base/space.tokens.json" },

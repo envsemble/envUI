@@ -1,15 +1,13 @@
 import { marked, type Token, type Tokens } from 'marked';
 import type { DocumentationBlock } from '../../apps/site/src/documentation/DocumentationTypes.ts';
-import {
-  optionTable,
-  optionTableProblems,
-} from '../../apps/site/src/documentation/CatalogueContent.ts';
+import { optionTable } from '../../apps/site/src/documentation/CatalogueContent.ts';
 import { codeSubsections, pageSections, sourcePattern, type PageSection } from './PageStructure.ts';
 import {
   accessibilityProblems,
   changelogProblems,
   headingProblems,
 } from './validation/Editorial.ts';
+import { optionTableProblems } from './validation/CatalogueWording.ts';
 import { figurePattern, fileWords, kindFencePattern, placeFigure } from './validation/Figures.ts';
 import { readLegend } from './validation/Legends.ts';
 import { isPropsTable, specimenPattern } from './MarkdownBlocks.ts';

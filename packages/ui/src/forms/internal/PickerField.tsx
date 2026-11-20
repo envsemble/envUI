@@ -13,49 +13,32 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import { setRef } from '../../internal/react/setRef.js';
+import { mergeRefs } from '../../internal/react/setRef.js';
 import { useHydrated } from '../../internal/react/useHydrated.js';
-import { useControllableState } from '../../internal/react/useControllableState.js';
 import { useDirection } from '../../internal/provider/useDirection.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../../internal/popup/PortalContainerContext.js';
-import type { OverlayOpenChangeReason } from '../../internal/popup/overlayOpenChangeReason.js';
-import type { PopoverOpenChangeReason } from '../../overlays/Popover.js';
-import { IconButton } from '../../actions/Button.js';
+import { usePortalContainer } from '../../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../../internal/popup/containedOverlays.js';
+import { Button, IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
 import {
   FieldFrame,
   FieldLabelContent,
   type FieldControlBoxProps,
+} from '../../internal/field/FieldFrame.js';
+import {
   type FieldProps,
   type FieldSizeProps,
-  type TextFieldDecorationProps,
-} from '../../internal/field/FieldFrame.js';
+  type FieldDecorationProps,
+} from '../../internal/field/fieldProps.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { useFormReset } from '../../internal/field/useFormReset.js';
-import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';
+import { useFieldControl } from '../../internal/field/useFieldControl.js';
 import { flag } from '../../internal/flag.js';
+import { classNames } from '../../internal/classNames.js';
+import type { Picker, PickerOpenChangeDetails, PickerOpenChangeReason } from './usePicker.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';
-
-/**
- * Why a date, time or month picker's popup asks to open or close: a popover's reasons, such as
- * trigger-press, outside-press or escape-key; list-navigation for the arrow keys on the field;
- * item-press for a chosen value, such as a day, a month, Today or Now; or clear-press for the
- * clear button.
- */
-export type PickerOpenChangeReason = Extract<
-  OverlayOpenChangeReason,
-  PopoverOpenChangeReason | 'list-navigation' | 'item-press' | 'clear-press'
->;
-
-/** What a date, time or month picker's onOpenChange receives beside the requested state. */
-export interface PickerOpenChangeDetails {
-  /** Why the popup asks to open or close. */
-  reason: PickerOpenChangeReason;
-}
 
 export interface PickerFieldProps
   extends
@@ -65,7 +48,7 @@ export interface PickerFieldProps
     >,
     FieldProps,
     FieldSizeProps,
-    Pick<TextFieldDecorationProps, 'visibleLabel'> {
+    Pick<FieldDecorationProps, 'visibleLabel'> {
   /** The field's button, which shows the value and opens the popup. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element. */
@@ -79,15 +62,24 @@ export interface PickerFieldProps
    * @default false
    */
   required?: boolean;
-  /** The value can be read and focused but not changed. */
+  /**
+   * The value can be read and focused but not changed.
+   * @default false
+   */
   readOnly?: boolean;
   /** Shown while the field is empty and its label floats or is hidden. */
   placeholder?: string;
-  /** A clear button in the field and in the popup removes the value. */
+  /**
+   * A clear button in the field and in the popup removes the value.
+   * @default false
+   */
   clearable?: boolean;
   /** Whether the popup is open; with `onOpenChange` it controls it. */
   open?: boolean;
-  /** Whether an uncontrolled popup starts open; closed by default. */
+  /**
+   * Whether an uncontrolled popup starts open; closed by default.
+   * @default false
+   */
   defaultOpen?: boolean;
   /** Called with the new state, and why, when the popup opens or closes. */
   onOpenChange?: (open: boolean, details: PickerOpenChangeDetails) => void;
@@ -101,26 +93,6 @@ export interface PickerFieldProps
    * such as a note of the time zone or another action.
    */
   popupFooter?: ReactNode;
-}
-
-export function usePickerOpen({
-  open,
-  defaultOpen = false,
-  onOpenChange,
-  disabled = false,
-  readOnly = false,
-}: Pick<PickerFieldProps, 'open' | 'defaultOpen' | 'onOpenChange' | 'disabled' | 'readOnly'>) {
-  const [shown, setShown] = useControllableState({
-    value: open,
-    defaultValue: defaultOpen,
-    onChange: onOpenChange,
-  });
-  function setOpen(next: boolean, reason: PickerOpenChangeReason) {
-    const unavailableFieldStaysClosed = next && (disabled || readOnly);
-    if (unavailableFieldStaysClosed) return;
-    setShown(next, { reason });
-  }
-  return [shown, setOpen] as const;
 }
 
 function PickerValue({ display, placeholder }: { display: string; placeholder: ReactNode }) {
@@ -202,39 +174,31 @@ interface PickerFieldOwnProps extends Omit<
   PickerFieldProps,
   'open' | 'defaultOpen' | 'onOpenChange'
 > {
+  picker: Picker;
   serialized: string;
   display: string;
   icon: ReactNode;
   rootClassName: string;
   popupClassName?: string;
-  popupStart: ReactNode;
-  popupEnd?: ReactNode;
   initialFocus: (popup: HTMLElement | null) => HTMLElement | null;
+  shortcut: { label: ReactNode; available: boolean; onPress: () => void };
   clearLabel: string;
-  onClear: () => void;
-  onFormReset: () => void;
-  open: boolean;
-  setOpen: (open: boolean, reason: PickerOpenChangeReason) => void;
   children: ReactNode | ((name: PickerName) => ReactNode);
 }
 
 export function PickerField({
   ref,
+  picker,
   serialized,
   display,
   icon,
   rootClassName,
   popupClassName,
-  popupStart,
-  popupEnd,
   popupHeader,
   popupFooter,
   initialFocus,
+  shortcut,
   clearLabel,
-  onClear,
-  onFormReset,
-  open,
-  setOpen,
   name,
   form,
   required = false,
@@ -258,20 +222,41 @@ export function PickerField({
   onKeyDown,
   ...triggerProps
 }: PickerFieldOwnProps) {
-  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
+  const { ids, naming, metadata } = useFieldControl({
+    id: suppliedId,
+    label,
+    description,
+    error,
+    'aria-label': ariaLabel,
+    'aria-labelledby': labelledBy,
+    'aria-describedby': describedBy,
+    'aria-invalid': invalid,
+  });
   const { id } = metadata;
-  const labelId = `${id}-label`;
+  const labelId = ids.label;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const controlBoxRef = useRef<HTMLDivElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
+  const { open } = picker;
   const [direction] = useDirection(triggerRef, open);
   const accessibleName: PickerName = {
-    'aria-labelledby': labelledBy ?? (label != null ? labelId : undefined),
+    'aria-labelledby':
+      labelledBy ?? naming['aria-labelledby'] ?? (label != null ? labelId : undefined),
     'aria-label': labelledBy == null && label == null ? ariaLabel : undefined,
   };
 
-  useFormReset(nativeRef, onFormReset, form);
+  useFormReset(nativeRef, picker.reset, form);
+
+  function setOpen(next: boolean, reason: PickerOpenChangeReason) {
+    const unavailableFieldStaysClosed = next && (disabled || readOnly);
+    if (unavailableFieldStaysClosed) return;
+    picker.setOpen(next, reason);
+  }
+
+  function clear() {
+    picker.change(null, serialized);
+  }
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
     onKeyDown?.(event);
@@ -281,7 +266,7 @@ export function PickerField({
       setOpen(true, 'list-navigation');
     } else if (clearable && serialized && (event.key === 'Backspace' || event.key === 'Delete')) {
       event.preventDefault();
-      onClear();
+      clear();
     }
   }
 
@@ -329,16 +314,13 @@ export function PickerField({
         controlBox
         size={size}
         visibleLabel={visibleLabel}
-        className={className ? `${rootClassName} ${className}` : rootClassName}
+        className={classNames(rootClassName, className)}
         style={style}
         renderControlBox={renderControlBox}
       >
         <BasePopover.Trigger
           {...triggerProps}
-          ref={(node: HTMLButtonElement | null) => {
-            triggerRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(triggerRef, ref)}
           id={id}
           role="combobox"
           {...accessibleName}
@@ -361,14 +343,12 @@ export function PickerField({
               title={clearLabel}
               className="env-date-picker-clear"
               onClick={() => {
-                onClear();
+                clear();
                 triggerRef.current?.focus();
               }}
             />
           )}
-          <span className="env-icon env-date-picker-icon" aria-hidden="true">
-            {icon}
-          </span>
+          <DecorativeIcon className="env-date-picker-icon">{icon}</DecorativeIcon>
         </span>
         <PickerNativeInput
           ref={nativeRef}
@@ -392,11 +372,32 @@ export function PickerField({
         header={popupHeader}
         start={
           <>
-            {popupStart}
+            <Button
+              variant="text"
+              aria-disabled={!shortcut.available || undefined}
+              onClick={() => {
+                if (shortcut.available) shortcut.onPress();
+              }}
+            >
+              {shortcut.label}
+            </Button>
             {popupFooter}
           </>
         }
-        end={popupEnd}
+        end={
+          clearable &&
+          serialized && (
+            <Button
+              variant="text"
+              onClick={() => {
+                clear();
+                setOpen(false, 'clear-press');
+              }}
+            >
+              {clearLabel}
+            </Button>
+          )
+        }
       >
         <Fragment key={freshContentPerOpening.count}>
           {typeof children === 'function' ? children(accessibleName) : children}

@@ -1,13 +1,11 @@
 import { expect, test } from 'vitest';
 import { commands, page } from 'vitest/browser';
-import type { LayoutProblem } from '@envsemble/envui/dev';
 import * as fixture from '../fixture/Skeleton.fixture.tsx';
 import { box, css, keyboard, nextFrames, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
 async function open() {
   mount(fixture);
-  await expect.poll(() => window.envui?.layout !== undefined).toBe(true);
   await barsRedrawnAfterWebFontWidensText();
 }
 
@@ -115,9 +113,6 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   await expect.poll(() => status.textContent).toBe('Loading: Owners loading');
 
   expect(style('[data-testid="kbd"]', 'text-decoration-line')).toBe('line-through');
-  expect(
-    style('[data-testid="inline-blocks"] .env-animated-number-value', 'text-decoration-line'),
-  ).toBe('line-through');
   const multi = byTestId('multi-line');
   expect(box(multi).height / Number.parseFloat(css(multi, 'line-height'))).toBeGreaterThanOrEqual(
     2,
@@ -239,20 +234,6 @@ test(
   },
 );
 
-test('the shift check reports what moves or resizes when a skeleton loads', async () => {
-  await open();
-  const check = (selector: string) => window.envui!.layout!.skeletonShift(selector);
-  expect(await check('[data-testid="loaded"]')).toEqual([]);
-  const problems: LayoutProblem[] = await check('[data-testid="shifting"]');
-  expect(problems.map(({ rule, node, path }) => [rule, node, path])).toEqual([
-    ['skeleton-shift', 'env-text', 'env-surface > env-text'],
-    ['skeleton-shift', 'img', 'env-surface > img'],
-  ]);
-  expect(problems[0]!.message).toMatch(/changes from [\d.]+rem×[\d.]+rem to /);
-  expect(byTestId('loaded').hasAttribute('data-env-skeleton')).toBe(false);
-  expect(byTestId('projects').getAttribute('data-env-skeleton')).toBe('');
-});
-
 test('a skeleton takes the boxes its content takes loaded, through its inert wrapper', async () => {
   await open();
   const boxes = (id: string) => {
@@ -268,9 +249,6 @@ test('a skeleton takes the boxes its content takes loaded, through its inert wra
   };
   expect(boxes('paragraphs-skeleton')).toEqual(boxes('paragraphs-loaded'));
   expect(boxes('lists-skeleton')).toEqual(boxes('lists-loaded'));
-  expect(await window.envui!.layout!.skeletonShift('[data-testid="paragraphs-loaded"]')).toEqual(
-    [],
-  );
   expect(byTestId('paragraphs-loaded').querySelector(':scope > .env-skeleton-content')).toBeNull();
   expect(
     byTestId('paragraphs-skeleton').querySelectorAll(':scope > .env-skeleton-content'),

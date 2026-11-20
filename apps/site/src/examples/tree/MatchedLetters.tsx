@@ -23,8 +23,7 @@ const rows: TreeItem[] = [
 ].map(({ name, folder, ...row }) => ({
   ...row,
   label: matched(name),
-  textValue: name,
-  icon: folder ? <IconFolderOpen /> : <IconDescription />,
+  start: folder ? <IconFolderOpen /> : <IconDescription />,
   expandable: folder,
   expanded: folder,
 }));

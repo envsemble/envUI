@@ -57,16 +57,8 @@ const privacy = (
         <li>
           <Text>
             <strong>What it keeps in the browser is the application&apos;s choice.</strong>{' '}
-            ThemePreferenceProvider keeps the chosen theme in the browser&apos;s local storage,
-            under a key the application names, and Panes with <code>persist</code> keeps a
-            pane&apos;s width in a cookie of the application&apos;s own site.
-          </Text>
-        </li>
-        <li>
-          <Text>
-            <strong>Dev mode</strong>, which runs only while an application is being developed,
-            keeps its panel&apos;s settings in local storage and reads envUI&apos;s list of parts
-            from the application&apos;s own development server.
+            useStoredThemePreference keeps the chosen theme in the browser&apos;s local storage,
+            under a key the application names.
           </Text>
         </li>
       </Points>
@@ -80,14 +72,12 @@ const privacy = (
           <Text>
             Your display settings, the theme, contrast, scale and motion, and the width of the
             navigation are kept in your browser&apos;s local storage, so the site looks the same
-            next time. Some examples keep their own state there too, such as a drawer&apos;s width.
+            next time. Some examples keep their own state there too, such as a drawer&apos;s or a
+            pane&apos;s width.
           </Text>
         </li>
         <li>
-          <Text>
-            One example, a resizable pane, keeps its width in a cookie of this site once you resize
-            it. The site sets no other cookies.
-          </Text>
+          <Text>The site sets no cookies.</Text>
         </li>
         <li>
           <Text>

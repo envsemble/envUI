@@ -11,12 +11,12 @@ import type {
 import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
-import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
+import { fieldDescribedBy, fieldPartIds } from '../internal/field/useFieldControl.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import '../styles/Base.css';
 import '../styles/Radio.css';
 
@@ -47,8 +47,8 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   ref?: Ref<HTMLFieldSetElement>;
   /**
    * The group's visible name, such as Visibility, as the fieldset's legend above the options. It
-   * names the group for assistive technology. Without it, name it with aria-label or
-   * aria-labelledby.
+   * names the group for assistive technology. Without it, a List.Item whose control it is names
+   * it, or name it with aria-label or aria-labelledby.
    */
   label?: ReactNode;
   /**
@@ -119,15 +119,14 @@ export function RadioGroup({
     defaultValue: defaultValue ?? null,
     onChange: onValueChange,
   });
-  const ids = fieldMessageIds(id);
-  const describedBy =
-    [
-      props['aria-describedby'],
-      description != null ? ids.description : undefined,
-      error != null ? ids.error : undefined,
-    ]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const ids = fieldPartIds(id);
+  const naming = useRowControlNaming({ label, ...props });
+  const describedBy = fieldDescribedBy(
+    id,
+    naming['aria-describedby'] ?? props['aria-describedby'],
+    description,
+    error,
+  );
   useFormReset(
     fieldsetRef,
     function applyReset() {
@@ -143,10 +142,8 @@ export function RadioGroup({
   const fieldset = (
     <fieldset
       {...props}
-      ref={(node) => {
-        fieldsetRef.current = node;
-        setRef(ref, node);
-      }}
+      {...naming}
+      ref={mergeRefs(fieldsetRef, ref)}
       disabled={disabled}
       aria-describedby={describedBy}
       data-orientation={orientation}
@@ -225,6 +222,12 @@ export interface RadioProps extends Omit<
    * invite. It is part of the option's label, so it is read with its name.
    */
   description?: ReactNode;
+  /**
+   * Where the label sits beside the radio: end, after it, or start, before it, such as in an inline
+   * row whose label leads; the native label still names the radio.
+   * @default 'end'
+   */
+  labelPlacement?: 'end' | 'start';
 }
 
 /** One option of a RadioGroup: a native radio input with its label, and an optional description. */
@@ -233,6 +236,7 @@ export function Radio({
   value,
   label,
   description,
+  labelPlacement = 'end',
   className,
   style,
   onChange,
@@ -259,10 +263,7 @@ export function Radio({
     <input
       {...props}
       {...naming}
-      ref={(node) => {
-        inputRef.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(inputRef, ref)}
       type="radio"
       className="env-radio-input"
       value={value}
@@ -278,8 +279,8 @@ export function Radio({
     />
   );
   const labelContent = label != null && (
-    <span>
-      <Slot className="env-radio-label" element="span">
+    <span className="env-radio-label">
+      <Slot className="env-radio-label-content" element="span">
         {label}
       </Slot>
       {description != null && (
@@ -296,6 +297,7 @@ export function Radio({
       className={classNames('env-radio', className)}
       style={style}
       data-orientation={group.orientation}
+      data-label-placement={labelPlacement === 'start' ? 'start' : undefined}
     >
       <span className="env-radio-control">{radioInput}</span>
       {labelContent}

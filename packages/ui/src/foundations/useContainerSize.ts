@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import { pixelsOf } from '../internal/dom/lengths.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 
 /** An element's size along its own writing mode, in CSS pixels. */
 export interface ContainerSize {
@@ -78,19 +79,20 @@ export function useContainerSize<T extends Element>(
           : next,
       );
     if (hasBox(element)) update(measureAsResizeObserverWould(element, box));
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(([entry]) => {
-      if (!entry || !hasBox(element)) return;
-      const sizes = box === 'border-box' ? entry.borderBoxSize : entry.contentBoxSize;
-      const first = sizes?.[0];
-      update(
-        first
-          ? { inlineSize: first.inlineSize, blockSize: first.blockSize }
-          : measureAsResizeObserverWould(element, box),
-      );
-    });
-    observer.observe(element, { box });
-    return () => observer.disconnect();
+    return observeResize(
+      element,
+      ([entry]) => {
+        if (!entry || !hasBox(element)) return;
+        const sizes = box === 'border-box' ? entry.borderBoxSize : entry.contentBoxSize;
+        const first = sizes?.[0];
+        update(
+          first
+            ? { inlineSize: first.inlineSize, blockSize: first.blockSize }
+            : measureAsResizeObserverWould(element, box),
+        );
+      },
+      { box },
+    );
   }, [target, box]);
 
   return size;

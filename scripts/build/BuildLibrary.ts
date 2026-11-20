@@ -1,6 +1,6 @@
-import { build, transform } from 'esbuild';
+import { build } from 'esbuild';
 import { readdir, readFile, mkdir, writeFile, cp, rm } from 'node:fs/promises';
-import { dirname, resolve, join, relative } from 'node:path';
+import { resolve, join, relative } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { collectDependencyNotices } from './DependencyNotices.ts';
 import { generateDocumentation } from '../docs/GenerateDocumentation.ts';
@@ -70,27 +70,6 @@ for (const file of await findFiles(outputDirectory, /\.js$/)) {
     return `import "#styles/${stylesheet}";`;
   });
   if (rewritten !== code) await writeFile(file, rewritten);
-}
-const rawStylesheetImportToInline =
-  /^import (\w+) from "(\.[^"]+\.css)\?raw"(?: with \{[^}]*\})?;$/gm;
-for (const file of await findFiles(outputDirectory, /\.js$/)) {
-  const code = await readFile(file, 'utf8');
-  const imports = [...code.matchAll(rawStylesheetImportToInline)];
-  if (!imports.length) continue;
-  let inlined = code;
-  for (const [statement, name, specifier] of imports) {
-    const source = resolve(
-      librarySourceDirectory,
-      relative(outputDirectory, dirname(file)),
-      specifier,
-    );
-    const { code: css } = await transform(await readFile(source, 'utf8'), {
-      loader: 'css',
-      minifyWhitespace: true,
-    });
-    inlined = inlined.replace(statement, `const ${name} = ${JSON.stringify(css)};`);
-  }
-  await writeFile(file, inlined);
 }
 const declarationStylesheetImport = /^import '(?:\.\.?\/)+styles\/\w+\.css';\n/gm;
 for (const file of await findFiles(outputDirectory, /\.d\.ts$/)) {

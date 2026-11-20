@@ -25,6 +25,7 @@ import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline'
 import { classNames } from '../shared/Attributes';
 import { StageSkeleton } from '../loading/Skeletons';
 import { useSubjectShown } from './useSubjectShown';
+import { partKey } from '../documentation/PartKeys';
 
 function FoundationFigure({
   page,
@@ -41,7 +42,7 @@ function FoundationFigure({
   const place = useRef<HTMLDivElement>(null);
   const shown = useSubjectShown(place);
   if (!figure) return null;
-  const part = `figure:${page.id}/${block.name}`;
+  const part = partKey('figure', page.id, block.name);
   if (!shown) return <StageSkeleton ref={place} part={part} what="figures" stage />;
   const Render = figure.render;
   return (

@@ -10,8 +10,8 @@ import { narrowGallery } from './Tiles';
 import type { TileWindow } from './Tiles';
 
 const items: CommandPaletteItem[] = [
-  { id: 'new', label: 'New document', icon: <IconNoteAdd /> },
-  { id: 'invite', label: 'Invite people', icon: <IconPersonAdd /> },
+  { id: 'new', label: 'New document', start: <IconNoteAdd /> },
+  { id: 'invite', label: 'Invite people', start: <IconPersonAdd /> },
 ];
 
 const input = '.env-command-palette-input';

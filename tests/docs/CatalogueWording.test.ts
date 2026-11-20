@@ -4,18 +4,20 @@ import { writeFile } from 'node:fs/promises';
 import { marked } from 'marked';
 import {
   lastSubsection,
-  longParagraphs,
   optionPieces,
   optionTable,
-  optionTableProblems,
-  paragraphLength,
-  catalogueStructure,
   subsections,
 } from '../../apps/site/src/documentation/CatalogueContent.ts';
-import { pageFixture, switchBody, switchFrontmatter } from './DocumentationFixtures.ts';
+import {
+  catalogueStructure,
+  longParagraphs,
+  optionTableProblems,
+  paragraphLength,
+} from '../../scripts/docs/validation/CatalogueWording.ts';
+import { samplePage, switchBody, switchFrontmatter } from './DocumentationSamples.ts';
 
 test('an option table names each option in a few words, once, and says what it is for', async () => {
-  await pageFixture(async ({ page, read, rejects }) => {
+  await samplePage(async ({ page, read, rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     const options = (rows) =>
       frontmatter +

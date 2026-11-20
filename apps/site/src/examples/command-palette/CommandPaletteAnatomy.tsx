@@ -8,12 +8,11 @@ const items: CommandPaletteItem[] = [
   {
     id: 'new',
     label: 'New document',
-    icon: <IconNoteAdd />,
+    start: <IconNoteAdd />,
     end: <Kbd keys={['Ctrl', 'N']} />,
-    group: 'Commands',
   },
-  { id: 'invite', label: 'Invite people', icon: <IconPersonAdd />, group: 'Commands' },
-  { id: 'settings', label: 'Open settings', icon: <IconSettings />, group: 'Commands' },
+  { id: 'invite', label: 'Invite people', start: <IconPersonAdd /> },
+  { id: 'settings', label: 'Open settings', start: <IconSettings /> },
 ];
 
 export default function CommandPaletteAnatomy() {
@@ -27,7 +26,14 @@ export default function CommandPaletteAnatomy() {
       placeholder="Search commands"
       inputValue={query}
       onInputValueChange={setQuery}
-      items={items.filter((item) => String(item.label).toLowerCase().includes(query.toLowerCase()))}
+      items={[
+        {
+          label: 'Commands',
+          items: items.filter((item) =>
+            String(item.label).toLowerCase().includes(query.toLowerCase()),
+          ),
+        },
+      ]}
       onAction={() => {}}
       hints={[
         { keys: ['Enter'], label: 'Run' },

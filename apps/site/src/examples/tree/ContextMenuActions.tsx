@@ -47,7 +47,7 @@ export default function ContextMenuActions() {
           label: entry.name,
           expandable: entry.folder,
           expanded: open,
-          icon: entry.folder ? <IconFolder /> : <IconDescription />,
+          start: entry.folder ? <IconFolder /> : <IconDescription />,
         });
         if (entry.folder && open) visit(entry.id, depth + 1);
       }
@@ -114,21 +114,21 @@ export default function ContextMenuActions() {
             row ? (
               <>
                 {row.expandable ? (
-                  <Menu.Item icon={<IconNoteAdd />} onClick={() => create(row.value)}>
+                  <Menu.Item start={<IconNoteAdd />} onClick={() => create(row.value)}>
                     New document here
                   </Menu.Item>
                 ) : (
-                  <Menu.Item icon={<IconFileCopy />} onClick={() => duplicate(row.value)}>
+                  <Menu.Item start={<IconFileCopy />} onClick={() => duplicate(row.value)}>
                     Duplicate
                   </Menu.Item>
                 )}
                 <Menu.Separator />
-                <Menu.Item icon={<IconDelete />} onClick={() => remove(row.value)}>
+                <Menu.Item start={<IconDelete />} onClick={() => remove(row.value)}>
                   Delete
                 </Menu.Item>
               </>
             ) : (
-              <Menu.Item icon={<IconNoteAdd />} onClick={() => create(null)}>
+              <Menu.Item start={<IconNoteAdd />} onClick={() => create(null)}>
                 New document
               </Menu.Item>
             )

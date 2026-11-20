@@ -298,7 +298,7 @@ function Link({ icon, label, className, ...props }: LinkProps) {
 export interface ItemProps extends ComponentPropsWithRef<'button'> {
   /**
    * The control, which joins the toolbar's arrow-key path as one of its stops: a button with a
-   * visible label, such as <Button startIcon={<IconShare />}>Share</Button>, or the trigger of a
+   * visible label, such as <Button start={<IconShare />}>Share</Button>, or the trigger of a
    * Menu or another popup. The item's props, ref and keyboard handling merge into its props; a
    * Button takes the toolbar's ghost variant unless it sets another.
    */

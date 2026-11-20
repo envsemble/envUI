@@ -1,10 +1,12 @@
-import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
-import { fixtureUse, importsOf, isComponentTest, specPaths } from './FixtureImports.ts';
-import { repositoryRoot } from '../RepositoryPaths.ts';
+import { browserTestFile, browserTestPaths, isComponentTest } from './BrowserTests.ts';
+import { fixtureUse, importsOf } from './FixtureImports.ts';
+import { compileGlobs } from './Globs.ts';
+import { partsFile, repositoryPath, repositoryRoot } from '../RepositoryPaths.ts';
+import { baseBranch, git, mergeBase as mergeBaseOf } from '../Git.ts';
 
-export const aliases: Record<string, string[]> = {
+export const testsByModuleName: Record<string, string[]> = {
   SearchField: ['TextField'],
   FieldFrame: ['TextField'],
   Popover: ['Dialog'],
@@ -16,12 +18,18 @@ export const aliases: Record<string, string[]> = {
   useResize: ['Panes'],
   PopupSurface: ['PopupSurface', 'PortalContainer'],
   PortalContainerContext: ['PortalContainer'],
+  containedOverlays: ['PortalContainer'],
   useDirection: ['Direction'],
   Theme: ['ThemePreference', 'ThemeContrast', 'WindowClasses'],
   Popup: ['WindowClasses', 'PopupSurface'],
   windowClasses: ['WindowClasses'],
   themeBootstrap: ['ThemePreference', 'ThemeContrast'],
+  themeRoot: ['ThemePreference', 'ThemeContrast'],
   'theme-bootstrap': ['ThemePreference', 'ThemeContrast'],
+  themeStorage: ['ThemePreference'],
+  'theme-storage': ['ThemePreference'],
+  useStoredThemePreference: ['ThemePreference'],
+  ThemePreferenceProvider: ['ThemePreference'],
   Avatar: ['AvatarGroup'],
   Icon: ['Graphic', 'Button', 'IconButton', 'Skeleton'],
   TimeList: ['DatePicker', 'TimePicker', 'ForcedColors'],
@@ -34,16 +42,15 @@ export const aliases: Record<string, string[]> = {
   accessibleName: ['Tooltip'],
   DialogParts: ['Dialog', 'Skeleton'],
   skeleton: ['Skeleton'],
-  Listbox: ['Select', 'Combobox'],
   ListRow: ['List'],
 };
 
-const sharedChangeSpecs = ['Contrast', 'Colors', 'ThemeContrast', 'Scale'];
-const siteSpecs = ['SitePrerender', 'SiteFailures', 'SiteSmoke'];
+const sharedChangeTests = ['Contrast', 'Colors', 'ThemeContrast', 'Scale'];
+const siteTests = ['SitePrerender', 'SiteFailures', 'SiteSmoke'];
 
 type Need = 'typecheck' | 'lint' | 'css' | 'format' | 'tokens' | 'icons' | 'docs' | 'library';
 
-export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] = [
+export const pathRules: { paths: string[]; needs?: Need[]; browserTests?: string[] }[] = [
   {
     paths: [
       'packages/ui/src/**/*.{ts,tsx}',
@@ -73,7 +80,7 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
       'stylelint.config.mjs',
       'stylelint-suppressions.json',
       'packages/stylelint-config/**',
-      'scripts/lint/NoStyleSheetComments.ts',
+      'scripts/lint/{NoStyleSheetComments,SlotContent,FontWeightFromToken,Selectors,BaseUiProperties}.ts',
     ],
     needs: ['css'],
   },
@@ -81,7 +88,7 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
   {
     paths: ['package.json', 'package-lock.json'],
     needs: ['lint', 'css', 'format', 'typecheck', 'library'],
-    specs: [...sharedChangeSpecs, 'CascadeLayers', 'ForcedColors'],
+    browserTests: [...sharedChangeTests, 'CascadeLayers', 'ForcedColors'],
   },
   {
     paths: [
@@ -94,7 +101,7 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
       'scripts/build/tokens/**',
     ],
     needs: ['tokens', 'docs'],
-    specs: sharedChangeSpecs,
+    browserTests: sharedChangeTests,
   },
   {
     paths: [
@@ -113,19 +120,22 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
       'packages/eslint-plugin/src/data/vocabulary.json',
       'packages/stylelint-config/src/data/customProperties.json',
       'packages/stylelint-config/src/data/scales.json',
-      'docs/generated/parts.json',
+      repositoryPath(partsFile),
       'docs/writing.md',
     ],
     needs: ['tokens', 'docs'],
   },
-  { paths: ['packages/ui/src/styles/Theme.css', 'tests/contrast/**'], specs: sharedChangeSpecs },
+  {
+    paths: ['packages/ui/src/styles/Theme.css', 'tests/contrast/**'],
+    browserTests: sharedChangeTests,
+  },
   {
     paths: [
       'packages/ui/src/styles/index.css',
       'packages/ui/src/styles/Motion.css',
       'packages/ui/src/index.ts',
     ],
-    specs: [...sharedChangeSpecs, 'CascadeLayers', 'ForcedColors'],
+    browserTests: [...sharedChangeTests, 'CascadeLayers', 'ForcedColors'],
   },
   {
     paths: [
@@ -144,9 +154,9 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
   {
     paths: ['apps/site/{src,hosting}/**', 'apps/site/*.{html,ts,json}', 'scripts/docs/**'],
     needs: ['docs'],
-    specs: siteSpecs,
+    browserTests: siteTests,
   },
-  { paths: ['wrangler.jsonc', 'scripts/site/**'], specs: siteSpecs },
+  { paths: ['wrangler.jsonc', 'scripts/site/**'], browserTests: siteTests },
   {
     paths: [
       'packages/ui/src/**',
@@ -159,19 +169,16 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     ],
     needs: ['library'],
   },
-  { paths: ['packages/ui/src/foundations/messages/**'], specs: ['Messages'] },
-  { paths: ['packages/ui/src/dev.ts', 'packages/ui/src/dev/**'], specs: ['DevMode'] },
-  { paths: ['apps/site/src/**'], specs: ['LiveDevelopment'] },
+  { paths: ['packages/ui/src/foundations/messages/**'], browserTests: ['Messages'] },
+  { paths: ['apps/site/src/**'], browserTests: ['LiveDevelopment'] },
 ];
 
-const rulesOf = (path: string) =>
-  pathRules.filter((rule) => rule.paths.some((glob) => posix.matchesGlob(path, glob)));
+const compiledPathRules = pathRules.map((rule) => ({ ...rule, matches: compileGlobs(rule.paths) }));
+const rulesOf = (path: string) => compiledPathRules.filter((rule) => rule.matches(path));
 
-const fastTierHelperSpecLimit = 8;
+const fastTierHelperTestLimit = 8;
 export const fixtureBudget = 6;
 
-export const specFile = (name: string, root = repositoryRoot) =>
-  specPaths(root).get(name) ?? `tests/browser/library/${name}.spec.ts`;
 const baseName = (path: string) =>
   posix.basename(path).replace(/\.(?:spec\.ts|test\.tsx|fixture\.tsx?|tsx?|css|m?js|html)$/, '');
 
@@ -182,8 +189,8 @@ function cachedFixtureUse(root: string) {
   return cached;
 }
 
-export function specNeeds(name: string, root = repositoryRoot) {
-  const source = read(root, specFile(name, root));
+export function browserTestNeeds(name: string, root = repositoryRoot) {
+  const source = read(root, browserTestFile(name, root));
   return {
     site: importsOf(source).some(({ specifier }) => specifier === '../support/HostedSite'),
     library: /\.cache\/Hydration\.html/.test(source),
@@ -196,19 +203,19 @@ interface ScopeOptions {
   affected?: boolean;
 }
 
-export function specsFor(
+export function browserTestsFor(
   paths: readonly string[],
   { root = repositoryRoot, affected = false }: ScopeOptions = {},
 ) {
-  const specs = new Map<string, Set<string>>();
+  const tests = new Map<string, Set<string>>();
   const unmatched: string[] = [];
   const widelyUsed = new Map<string, number>();
-  let specsUsing: ((path: string) => string[]) | undefined;
-  const written = new Set(specPaths(root).keys());
+  let testsUsing: ((path: string) => string[]) | undefined;
+  const written = new Set(browserTestPaths(root).keys());
   const exists = (name: string) => written.has(name);
   const add = (name: string, reason: string) => {
     if (!exists(name)) return false;
-    specs.set(name, (specs.get(name) ?? new Set()).add(reason));
+    tests.set(name, (tests.get(name) ?? new Set()).add(reason));
     return true;
   };
   const helpers = new Map<string, string[]>();
@@ -225,7 +232,7 @@ export function specsFor(
       ) ||
       path === 'tests/fixture/FixtureMount.tsx'
     ) {
-      for (const [name, file] of specPaths(root))
+      for (const [name, file] of browserTestPaths(root))
         if (isComponentTest(file)) found = add(name, `runs on ${path}`) || found;
     } else if (
       /^tests\/browser\/support\/[^/]+\.ts$/.test(path) ||
@@ -236,12 +243,12 @@ export function specsFor(
         ? [`./support/${helper}`, `./support/${baseName(path)}`]
         : [`../support/${baseName(path)}`];
       const users = [...written].filter((spec) =>
-        importsOf(read(root, specFile(spec, root))).some(({ specifier }) =>
+        importsOf(read(root, browserTestFile(spec, root))).some(({ specifier }) =>
           specifiers.includes(specifier),
         ),
       );
       helpers.set(path, users);
-      if (affected || users.length <= fastTierHelperSpecLimit)
+      if (affected || users.length <= fastTierHelperTestLimit)
         for (const user of users) found = add(user, `imports ${path}`) || found;
     } else if (/^(?:packages\/ui\/src|tests\/fixture)\//.test(path)) {
       const name = baseName(path);
@@ -249,13 +256,17 @@ export function specsFor(
         .basename(posix.dirname(path))
         .replace(/(?:^|-)([a-z])/g, (_, letter) => letter.toUpperCase());
       const candidates = path.startsWith('packages/ui/src/icons/') ? [] : [name, folder];
-      const specsOf = (each: string) =>
-        Object.hasOwn(aliases, each) ? aliases[each] : exists(each) ? [each] : [];
-      const component = candidates.find((each) => specsOf(each).length);
-      const named = component ? specsOf(component) : [];
+      const testsOf = (each: string) =>
+        Object.hasOwn(testsByModuleName, each)
+          ? testsByModuleName[each]
+          : exists(each)
+            ? [each]
+            : [];
+      const component = candidates.find((each) => testsOf(each).length);
+      const named = component ? testsOf(component) : [];
       for (const spec of named) found = add(spec, `about ${component} (${path})`) || found;
-      specsUsing ??= cachedFixtureUse(root);
-      const using = specsUsing(path).filter(exists);
+      testsUsing ??= cachedFixtureUse(root);
+      const using = testsUsing(path).filter(exists);
       if (affected || using.length <= fixtureBudget)
         for (const spec of using) found = add(spec, `its fixture uses ${path}`) || found;
       else {
@@ -266,10 +277,10 @@ export function specsFor(
       }
     }
     for (const rule of rulesOf(path))
-      for (const name of rule.specs ?? []) found = add(name, path) || found;
+      for (const name of rule.browserTests ?? []) found = add(name, path) || found;
     if (!found) unmatched.push(path);
   }
-  return { specs, unmatched, helpers, widelyUsed };
+  return { browserTests: tests, unmatched, helpers, widelyUsed };
 }
 
 export function selectScope(paths: readonly string[], options: ScopeOptions = {}) {
@@ -295,19 +306,19 @@ export function selectScope(paths: readonly string[], options: ScopeOptions = {}
       else if (need === 'library') scope.build.library = true;
       else scope.generated.add(need);
   }
-  const { specs, unmatched, helpers, widelyUsed } = specsFor(paths, options);
-  for (const name of specs.keys()) {
-    const needs = specNeeds(name, root);
+  const { browserTests, unmatched, helpers, widelyUsed } = browserTestsFor(paths, options);
+  for (const name of browserTests.keys()) {
+    const needs = browserTestNeeds(name, root);
     scope.build.site ||= needs.site;
     scope.build.library ||= needs.library;
   }
-  return { ...scope, specs, unmatched, helpers, widelyUsed };
+  return { ...scope, browserTests, unmatched, helpers, widelyUsed };
 }
 
 export function serversFor(names: readonly string[], root = repositoryRoot) {
   const servers = new Set<string>();
   for (const name of names) {
-    const source = read(root, specFile(name, root));
+    const source = read(root, browserTestFile(name, root));
     if (/\bsiteDevUrl\b/.test(source)) servers.add('site');
     if (/\bsiteBuildUrl\b/.test(source)) servers.add('site-build');
     if (/\bfixtureUrl\b/.test(source)) servers.add('fixture');
@@ -342,21 +353,6 @@ export function mergeChanges(entries: readonly Change[], untracked: readonly str
   return [...byPath.values()].sort((a, b) => a.path.localeCompare(b.path));
 }
 
-const defaultBase = 'origin/dev';
-
-function git(args: string[], root: string) {
-  return execFileSync('git', args, {
-    cwd: root,
-    encoding: 'utf8',
-    maxBuffer: 64 * 1024 * 1024,
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-}
-
-export function baseBranch(base?: string): string {
-  return base || process.env.ENVUI_BASE || defaultBase;
-}
-
 export function changedFiles({
   root = repositoryRoot,
   base,
@@ -367,7 +363,7 @@ export function changedFiles({
   } catch {
     throw new Error(`${found} doesn't exist. Fetch it, or pass --base <ref> or set ENVUI_BASE.`);
   }
-  const mergeBase = git(['merge-base', 'HEAD', found], root).trim();
+  const mergeBase = mergeBaseOf(found, root);
   const entries = parseNameStatus(
     git(['diff', '--name-status', '-z', '-M', '--no-ext-diff', mergeBase], root),
   );

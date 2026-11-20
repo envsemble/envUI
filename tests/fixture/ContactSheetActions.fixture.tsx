@@ -15,7 +15,7 @@ import {
   ThemePreferenceProvider,
   ThemeToggle,
   Toolbar,
-  type CommandPaletteItem,
+  type CommandPaletteGroup,
 } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
@@ -80,10 +80,10 @@ function Buttons() {
       </Strip>
       <Strip label="Content">
         <Cell caption="Start icon">
-          <Button startIcon={<IconAdd />}>New project</Button>
+          <Button start={<IconAdd />}>New project</Button>
         </Cell>
         <Cell caption="End icon">
-          <Button variant="secondary" endIcon={<IconDownload />}>
+          <Button variant="secondary" end={<IconDownload />}>
             Export
           </Button>
         </Cell>
@@ -333,11 +333,8 @@ function ThemeToggles() {
   return (
     <Section name="ThemeToggle">
       <ThemePreferenceProvider
-        theme={{
-          storageKey: 'contact-sheet-theme',
-          defaultPreference: params.get('theme') === 'dark' ? 'dark' : 'light',
-          scale: params.get('scale') === 'system' ? 'system' : 'comfortable',
-        }}
+        theme={{ scale: params.get('scale') === 'system' ? 'system' : 'comfortable' }}
+        defaultPreference={params.get('theme') === 'dark' ? 'dark' : 'light'}
       >
         <Strip>
           {interactionStates.map(({ caption, force }) => (
@@ -392,13 +389,13 @@ function MenuItems() {
   return (
     <>
       <Menu.Header>Project</Menu.Header>
-      <Menu.Item icon={<IconEdit />} shortcut="F2">
+      <Menu.Item start={<IconEdit />} shortcut="F2">
         Rename
       </Menu.Item>
-      <Menu.Item icon={<IconShare />} description="Anyone in the workspace">
+      <Menu.Item start={<IconShare />} description="Anyone in the workspace">
         Share
       </Menu.Item>
-      <Menu.Item disabled icon={<IconDownload />}>
+      <Menu.Item disabled start={<IconDownload />}>
         Export (disabled)
       </Menu.Item>
       <Menu.Separator />
@@ -414,7 +411,7 @@ function MenuItems() {
         <Menu.Item>Marketing</Menu.Item>
       </Menu.Submenu>
       <Menu.Separator />
-      <Menu.Item tone="danger" icon={<IconDelete />} shortcut="Del">
+      <Menu.Item tone="danger" start={<IconDelete />} shortcut="Del">
         Delete
       </Menu.Item>
     </>
@@ -510,10 +507,10 @@ function Menus() {
               aria-label="Row actions"
               content={
                 <>
-                  <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
+                  <Menu.Item start={<IconEdit />}>Rename</Menu.Item>
                   <Menu.Item shortcut="Ctrl+D">Duplicate</Menu.Item>
                   <Menu.Separator />
-                  <Menu.Item tone="danger" icon={<IconDelete />}>
+                  <Menu.Item tone="danger" start={<IconDelete />}>
                     Delete
                   </Menu.Item>
                 </>
@@ -657,7 +654,7 @@ function Toolbars() {
         </Cell>
         <Cell caption="With labelled buttons">
           <Toolbar.Root aria-label="Document">
-            <Button variant="ghost" startIcon={<IconShare />}>
+            <Button variant="ghost" start={<IconShare />}>
               Share
             </Button>
             <Button>Publish</Button>
@@ -668,29 +665,24 @@ function Toolbars() {
   );
 }
 
-const commands: CommandPaletteItem[] = [
+const commands: CommandPaletteGroup[] = [
   {
-    id: 'new',
-    label: 'New document',
-    icon: <IconAdd />,
-    end: <Kbd keys={['Ctrl', 'N']} />,
-    group: 'Commands',
+    label: 'Commands',
+    items: [
+      { id: 'new', label: 'New document', start: <IconAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
+      {
+        id: 'share',
+        label: 'Share',
+        description: 'Invite people to this project',
+        start: <IconShare />,
+      },
+      { id: 'export', label: 'Export (disabled)', start: <IconDownload />, disabled: true },
+    ],
   },
   {
-    id: 'share',
-    label: 'Share',
-    description: 'Invite people to this project',
-    icon: <IconShare />,
-    group: 'Commands',
+    label: 'Navigation',
+    items: [{ id: 'settings', label: 'Open settings', start: <IconSettings /> }],
   },
-  {
-    id: 'export',
-    label: 'Export (disabled)',
-    icon: <IconDownload />,
-    group: 'Commands',
-    disabled: true,
-  },
-  { id: 'settings', label: 'Open settings', icon: <IconSettings />, group: 'Navigation' },
 ];
 
 function Palette({
@@ -698,7 +690,7 @@ function Palette({
   loading,
   query = '',
 }: {
-  items: CommandPaletteItem[];
+  items: CommandPaletteGroup[];
   loading?: boolean;
   query?: string;
 }) {

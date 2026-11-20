@@ -13,9 +13,9 @@ since: 1.0.0
 category: Forms & selection # its group in the index and its family folder
 aliases:
   - text input
-useWhen: # at most three, each under 80 characters
+useWhen:
   - A short value on one line, such as a name
-avoidWhen: # at most three; each names an export in use or a page in see
+avoidWhen: # each names an export in use or a page in see
   - text: Text that runs over several lines.
     use: Textarea
 components:

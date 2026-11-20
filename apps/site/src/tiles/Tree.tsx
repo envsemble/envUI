@@ -58,7 +58,7 @@ export default function TreeTile() {
       value: folder.id,
       depth: 0,
       label: folder.label,
-      icon: open ? <IconFolderOpen /> : <IconFolder />,
+      start: open ? <IconFolderOpen /> : <IconFolder />,
       expandable: true,
       expanded: open,
     };
@@ -69,7 +69,7 @@ export default function TreeTile() {
         value: `${folder.id}/${name.toLowerCase()}`,
         depth: 1,
         label: name,
-        icon: <IconDescription />,
+        start: <IconDescription />,
       })),
     ];
   });

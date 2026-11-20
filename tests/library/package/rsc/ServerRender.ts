@@ -1,17 +1,15 @@
-import { readFileSync } from 'node:fs';
 import { createElement as h } from 'react';
 import * as ui from '@envsemble/envui';
 import * as code from '@envsemble/envui/code';
 import * as markdown from '@envsemble/envui/markdown';
 import * as diff from '@envsemble/envui/diff';
 import * as color from '@envsemble/envui/color';
-import * as richText from '@envsemble/envui/rich-text';
 import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
+import * as themeStorage from '@envsemble/envui/theme-storage';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { render } from './Render.ts';
-import { join } from 'node:path';
-import { repositoryRoot } from '../../../../scripts/RepositoryPaths.ts';
+import { readProps } from '../../../../scripts/docs/PageStructure.ts';
 
 const clientReference = Symbol.for('react.client.reference');
 const isClientReference = (value) => value?.$$typeof === clientReference;
@@ -20,13 +18,10 @@ const isComponent = (name, value) =>
   /^[A-Z]/.test(name.split('.').at(-1)) &&
   (typeof value === 'function' || wrappedComponents.has(value?.$$typeof));
 
-const documented = JSON.parse(
-  readFileSync(join(repositoryRoot, 'docs/generated/props.json'), 'utf8'),
-).exports;
+const documented = readProps()!.exports;
 
 const requiredProps = {
   AvatarGroup: { people: [{ name: 'Alex Morgan' }, { name: 'Sam Lee' }] },
-  DiffStat: { additions: 12, deletions: 3 },
 };
 
 const icon = h(IconHome);
@@ -101,7 +96,7 @@ const page = render(
     { title: 'Release' },
     h(ui.Text, null, 'Ready to ship'),
     h(ui.Badge, null, 'New'),
-    h(ui.Button, { startIcon: h(IconHome), href: '/home' }, 'Home'),
+    h(ui.Button, { start: h(IconHome), href: '/home' }, 'Home'),
     h(ui.Button, { pending: true }, 'Publish'),
     h(ui.Button, { href: '/archive', pending: true }, 'Archive'),
     h(ui.Button, { href: '/history', disabled: true }, 'History'),
@@ -130,24 +125,22 @@ console.log(
   JSON.stringify({
     list,
     menuItem: isClientReference(ui.Menu.Item),
-    themeBootstrapScript: typeof ui.createThemeBootstrapScript({ storageKey: 'app-theme' }),
+    themeBootstrapScript: typeof ui.createThemeBootstrapScript({}, { preference: 'dark' }),
     bootstrapEntryScript: typeof themeBootstrap.createThemeBootstrapScript(),
     bootstrapContrastScript: themeBootstrap.createThemeBootstrapScript({ contrast: 'high' }),
+    storedBootstrapScript: typeof themeStorage.createStoredThemeBootstrapScript(),
+    storedPreferenceHook: isClientReference(themeStorage.useStoredThemePreference),
     relativeTime: ui.formatRelativeTime(Date.UTC(2026, 9, 14, 9), {
       now: Date.UTC(2026, 9, 14, 12),
       locale: 'en',
     }),
     diffLines: attempt(() => diff.countDiffLines('a\nb\nc\n', 'a\nB\nc\nd\n', 'notes.txt')),
-    richTextExtensions: attempt(() =>
-      richText.createRichTextExtensions().map((extension) => extension.name),
-    ),
     surveys: {
       '@envsemble/envui': survey('@envsemble/envui', ui),
       '@envsemble/envui/code': survey('@envsemble/envui/code', code),
       '@envsemble/envui/markdown': survey('@envsemble/envui/markdown', markdown),
       '@envsemble/envui/diff': survey('@envsemble/envui/diff', diff),
       '@envsemble/envui/color': survey('@envsemble/envui/color', color),
-      '@envsemble/envui/rich-text': survey('@envsemble/envui/rich-text', richText),
     },
     page,
   }),

@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { parse as parseYaml } from 'yaml';
 import { componentGroups } from '../../../apps/site/src/documentation/DocumentationTypes.ts';
+import { readProps } from '../../../scripts/docs/PageStructure.ts';
 
 const familyFolders = {
   Actions: 'actions',
@@ -23,7 +24,7 @@ const elsewhere = {
   useSkeleton: "foundations: the skeleton every family takes; Surface's page documents it",
 };
 
-const { exports: props } = JSON.parse(readFileSync('docs/generated/props.json', 'utf8'));
+const { exports: props } = readProps()!;
 const pages = readdirSync('docs/components')
   .filter((name) => name.endsWith('.md'))
   .map((name) => {

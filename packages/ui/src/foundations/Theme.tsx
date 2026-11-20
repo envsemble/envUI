@@ -1,18 +1,18 @@
 'use client';
 
 import {
-  cloneElement,
   createContext,
-  isValidElement,
   useContext,
   useMemo,
   type ComponentPropsWithRef,
   type ReactElement,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { renderElement } from '../internal/react/renderElement.js';
 import { outsideTheme } from './internal/outsideTheme.js';
 import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import { explicitContrasts, isOneOf, themeScales } from '../internal/theme/themeRoot.js';
 import '../styles/Base.css';
 
 /** A color scheme. */
@@ -94,7 +94,8 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
   /**
    * The boundary's element, for its meaning or its place in the markup, such as
    * render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class
-   * and attributes merge into it. A div by default.
+   * and attributes merge into its props, as on Text: classes join, styles merge, both event
+   * handlers run and both refs receive the node. A div by default.
    */
   render?: ReactElement;
 }
@@ -157,15 +158,10 @@ export function Theme({
   const contrastAttribute = writtenAttributes['data-env-contrast'];
   const contrast =
     ownContrast ??
-    (contrastAttribute === 'high' || contrastAttribute === 'standard'
-      ? contrastAttribute
-      : inherited.contrast);
+    (isOneOf(explicitContrasts, contrastAttribute) ? contrastAttribute : inherited.contrast);
   const scaleAttribute = writtenAttributes['data-env-scale'];
   const scale =
-    ownScale ??
-    (scaleAttribute === 'comfortable' || scaleAttribute === 'compact' || scaleAttribute === 'system'
-      ? scaleAttribute
-      : inherited.scale);
+    ownScale ?? (isOneOf(themeScales, scaleAttribute) ? scaleAttribute : inherited.scale);
   const selection = ownSelection ?? inherited.selection;
   const corners = ownCorners ?? inherited.corners;
   const value = useMemo(
@@ -186,18 +182,7 @@ export function Theme({
     }),
     children,
   };
-  return (
-    <ThemeContext value={value}>
-      {isValidElement<{ className?: string }>(render) ? (
-        cloneElement(render, {
-          ...boundary,
-          className: classNames(boundary.className, render.props.className),
-        })
-      ) : (
-        <div {...boundary} />
-      )}
-    </ThemeContext>
-  );
+  return <ThemeContext value={value}>{renderElement('div', render, boundary)}</ThemeContext>;
 }
 
 /**

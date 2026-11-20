@@ -1,19 +1,19 @@
 import { resolve } from 'node:path';
 import { Node, Project } from 'ts-morph';
-import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
+import { GeneratedOutput } from '../build/GeneratedFiles.ts';
+import { baseOption } from '../Git.ts';
+import { yellow } from '../Terminal.ts';
 import {
   baseContract,
-  baseOption,
   bumpsLibrary,
   recordsBreakingChange,
   names,
   pendingChangesets,
 } from './ContractHistory.ts';
 import { libraryEntryPoints } from './LibraryEntryPoints.ts';
-import { libraryDirectory, repositoryRoot } from '../RepositoryPaths.ts';
+import { exportsFile, libraryDirectory, repositoryPath } from '../RepositoryPaths.ts';
 
-const exportsPath = 'docs/generated/exports.json';
-const exportsFile = resolve(repositoryRoot, exportsPath);
+const exportsPath = repositoryPath(exportsFile);
 
 type ExportsRecord = Record<string, Record<string, string>>;
 
@@ -82,23 +82,26 @@ export function changedExports(
 if (import.meta.main) {
   const record = buildExports();
   const output = `${JSON.stringify(record, null, 2)}\n`;
-  if (!process.argv.includes('--check')) {
-    writeIfChanged(exportsFile, output);
+  const check = process.argv.includes('--check');
+  const generated = new GeneratedOutput({
+    check,
+    regenerate: 'npm run docs:exports',
+    advice: 'or, for a name only another module or a test needs, move it to an internal/ module',
+  });
+  generated.writeOrCheck(exportsFile, output);
+  generated.exitIfStale();
+  if (!check) {
     console.log(
       `Generated ${exportsPath}: ${exportedNames(record).size} exports of ${Object.keys(record).length} entry points.`,
     );
   } else {
-    if (readIfExists(exportsFile) !== output) {
-      console.error(
-        `${exportsPath} differs from the library's source. Run \`npm run docs:exports\` and commit the result, or, for a name only another module or a test needs, move it to an internal/ module.`,
-      );
-      process.exit(1);
-    }
     const base = baseContract<ExportsRecord>(exportsPath, baseOption());
     if (!base.contract) {
       console.log(`${exportsPath} matches its sources.`);
       console.warn(
-        `[33mwarning: no change of the exports was checked: ${base.missing}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
+        yellow(
+          `warning: no change of the exports was checked: ${base.missing}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.`,
+        ),
       );
     } else {
       const changes = changedExports(base.contract, record, pendingChangesets());

@@ -30,11 +30,7 @@ export type WindowClass = keyof typeof windowClasses;
  *   const compact = size !== undefined && windowClassOf(size.inlineSize) === 'compact';
  */
 export function windowClassOf(inlineSize: number): WindowClass {
-  return windowClassOfRem(inlineSize / remPixels());
-}
-
-/** The window class of a width in rem, as the dev mode's readout measures widths. */
-export function windowClassOfRem(widthRem: number): WindowClass {
+  const widthRem = inlineSize / remPixels();
   let found: WindowClass = 'compact';
   for (const [name, start] of Object.entries(windowClasses) as [WindowClass, string][])
     if (widthRem >= Number.parseFloat(start)) found = name;

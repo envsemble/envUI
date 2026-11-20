@@ -98,6 +98,12 @@ test('typing filters by label and description, ignoring case and accents, and En
   await expect.poll(optionTexts).toEqual(['Sam Leesam.lee@example.com']);
   const sam = option('Sam Lee');
   await expect.element(sam).toHaveAccessibleDescription('sam.lee@example.com');
+  const samStart = sam.element().querySelector<HTMLElement>('.env-list-row-start')!;
+  expect(samStart.getAttribute('aria-hidden')).toBe('true');
+  const samAvatar = box(samStart.querySelector('.env-avatar')!);
+  const samLabel = box(sam.element().querySelector('.env-list-row-label')!);
+  expect(samAvatar.width).toBeCloseTo(24, 0);
+  expect(samAvatar.y + samAvatar.height / 2).toBeCloseTo(samLabel.y + samLabel.height / 2, 0);
   await expect.poll(highlighted).toEqual(['Sam Lee']);
   await expect.element(author).toHaveAttribute('aria-activedescendant', sam.element().id);
   expect(wellOf(author).querySelector('.env-combobox-value-icon')).toBeNull();
@@ -665,4 +671,19 @@ test('an option shows end content at the end of its row, and typing still matche
   expect(box(end).x).toBeGreaterThan(box(alex.element().querySelector('.env-list-row-label')!).x);
   await keyboard.press('Enter');
   await expect.poll(value(member)).toBe('Alex Morgan');
+});
+
+test("a group's heading takes content, and an option's itemProps reach its element", async () => {
+  mount({ default: fixture.ComboboxGroupsFixture });
+  await field('Reviewer').click();
+  await expect.element(page.getByRole('group', { name: 'Team 2' })).toBeVisible();
+  await expect.element(page.getByRole('group', { name: 'Guests' })).toBeVisible();
+  const alex = page.getByTestId('alex');
+  await expect.element(alex).toHaveRole('option');
+  await expect.element(alex).toHaveAttribute('title', 'Alex');
+  await expect.element(alex).toHaveClass('fixture-alex');
+  await expect.element(alex).toHaveClass('env-combobox-item');
+  await keyboard.type('kim');
+  await expect.element(page.getByRole('group', { name: 'Team 2' })).not.toBeInTheDocument();
+  await expect.element(option('Kim Park')).toBeVisible();
 });

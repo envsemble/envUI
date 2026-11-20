@@ -44,20 +44,18 @@ test('a count or other part with a role of its own takes no underline', () => {
   assert.ok(underlined(render(h('span', { className: 'total', tabIndex: 0 }, '28 h')).markup));
 });
 
-test('hoverDetail false leaves a text trigger’s class alone, on a HoverCard and on a Tooltip', async () => {
+test('underline false leaves a text trigger’s class alone, on a HoverCard and on a Tooltip', async () => {
   const { Tooltip } = await importSource(
     'HoverDetailTooltip',
     'packages/ui/src/overlays/Tooltip.tsx',
   );
   const mention = () => h('span', { className: 'mention', tabIndex: 0 }, '@sam');
-  const card = renderToStaticMarkup(
-    h(HoverCard, { trigger: mention(), hoverDetail: false }, 'Sam'),
-  );
+  const card = renderToStaticMarkup(h(HoverCard, { trigger: mention(), underline: false }, 'Sam'));
   assert.ok(!underlined(card));
   assert.match(card, /class="mention"/);
   const tip = (props: Record<string, unknown>) =>
     renderToStaticMarkup(h(Tooltip, { content: 'Sam Lee', ...props }, mention()));
   assert.ok(underlined(tip({})));
-  assert.ok(!underlined(tip({ hoverDetail: false })));
-  assert.match(tip({ hoverDetail: false }), /class="mention"/);
+  assert.ok(!underlined(tip({ underline: false })));
+  assert.match(tip({ underline: false }), /class="mention"/);
 });

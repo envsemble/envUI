@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useId,
   useRef,
   type ComponentPropsWithRef,
   type ReactNode,
@@ -14,9 +15,10 @@ import { codeBlock as codeBlockMessages } from '../../foundations/messages/codeB
 import { classNames } from '../../internal/classNames.js';
 import { Row } from '../../layout/Layout.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
-import { useCopy } from '../../internal/useCopy.js';
+import { useCopy } from '../../internal/react/useCopy.js';
 import { flag } from '../../internal/flag.js';
 import { Slot } from '../../internal/layout/Slot.js';
+import { rendersContent } from '../../internal/react/rendersContent.js';
 import '../../styles/Base.css';
 import '../../styles/Code.css';
 
@@ -24,8 +26,7 @@ export interface CodeBlockFrameProps extends Omit<ComponentPropsWithRef<'div'>, 
   source: string;
   language: string | undefined;
   label: ReactNode;
-  textValue: string | undefined;
-  actions: ReactNode;
+  headerEnd: ReactNode;
   copyable: boolean;
   wrap: boolean;
   preRef?: RefObject<HTMLPreElement | null>;
@@ -46,8 +47,7 @@ export function CodeBlockFrame({
   source,
   language,
   label,
-  textValue,
-  actions,
+  headerEnd,
   copyable,
   wrap,
   preRef: givenPreRef,
@@ -65,8 +65,9 @@ export function CodeBlockFrame({
     if (await copy(source, button)) return;
     if (preRef.current) selectForPeopleToCopyThemselves(preRef.current);
   }
-  const labelText = textValue ?? (typeof label === 'string' ? label : undefined);
-  const hasActions = actions != null && actions !== false;
+  const labelId = useId();
+  const labelled = Boolean(label);
+  const hasHeaderEnd = rendersContent(headerEnd);
   const copyButton = copyable && (
     <IconButton
       variant="ghost"
@@ -77,13 +78,13 @@ export function CodeBlockFrame({
   );
   return (
     <div {...props} className={classNames('env-code-block', className)} data-wrap={flag(wrap)}>
-      {(label || copyable || hasActions) && (
+      {(labelled || copyable || hasHeaderEnd) && (
         <Row wrap align="center" justify="between" gap={4} className="env-code-block-header">
-          <span>{label ?? language ?? messages.title}</span>
-          {hasActions ? (
+          <span id={labelled ? labelId : undefined}>{label ?? language ?? messages.title}</span>
+          {hasHeaderEnd ? (
             <Row align="center" gap={1}>
-              <Slot className="env-code-block-actions" layout="row">
-                {actions}
+              <Slot className="env-code-block-header-end" layout="row">
+                {headerEnd}
               </Slot>
               {copyButton}
             </Row>
@@ -95,7 +96,10 @@ export function CodeBlockFrame({
       <pre
         ref={preRef}
         tabIndex={0}
-        aria-label={labelText ?? messages.label({ language: language ?? messages.plainText })}
+        aria-labelledby={labelled ? labelId : undefined}
+        aria-label={
+          labelled ? undefined : messages.label({ language: language ?? messages.plainText })
+        }
       >
         <code>{children}</code>
       </pre>

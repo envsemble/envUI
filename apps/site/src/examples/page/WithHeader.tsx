@@ -16,7 +16,7 @@ export default function WithHeader() {
           headingLevel={3}
           title="Projects"
           description="Everything your team is working on."
-          actions={<Button startIcon={<IconAdd />}>New project</Button>}
+          actions={<Button start={<IconAdd />}>New project</Button>}
         />
       }
     >

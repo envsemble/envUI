@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, CommandPalette, Column, Text, type CommandPaletteItem } from '@envsemble/envui';
+import { Button, CommandPalette, Column, Text, type CommandPaletteGroup } from '@envsemble/envui';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 
@@ -17,24 +17,27 @@ export default function GoToDocument() {
   const [query, setQuery] = useState('');
   const [opened, setOpened] = useState('');
 
-  const items = useMemo<CommandPaletteItem[]>(() => {
+  const items = useMemo<CommandPaletteGroup[]>(() => {
     const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-    return documents
-      .filter((document) =>
-        words.every((word) => `${document.name} ${document.folder}`.toLowerCase().includes(word)),
-      )
-      .map((document) => ({
-        id: `${document.folder}/${document.name}`,
-        label: document.name,
-        description: document.folder,
-        icon: <IconDescription />,
-        group: !query && document.recent ? 'Recently opened' : 'Documents',
-      }));
+    const found = documents.filter((document) =>
+      words.every((word) => `${document.name} ${document.folder}`.toLowerCase().includes(word)),
+    );
+    const recent = (document: (typeof documents)[number]) => !query && document.recent;
+    const itemOf = (document: (typeof documents)[number]) => ({
+      id: `${document.folder}/${document.name}`,
+      label: document.name,
+      description: document.folder,
+      start: <IconDescription />,
+    });
+    return [
+      { label: 'Recently opened', items: found.filter(recent).map(itemOf) },
+      { label: 'Documents', items: found.filter((document) => !recent(document)).map(itemOf) },
+    ];
   }, [query]);
 
   return (
     <Column gap={3} align="center">
-      <Button variant="secondary" startIcon={<IconSearch />} onClick={() => setOpen(true)}>
+      <Button variant="secondary" start={<IconSearch />} onClick={() => setOpen(true)}>
         Search
       </Button>
       <CommandPalette

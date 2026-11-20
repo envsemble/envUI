@@ -15,10 +15,8 @@ import {
   TimePicker,
 } from '@envsemble/envui';
 import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
-import { MarkdownEditor } from '@envsemble/envui/markdown';
-import { RichTextEditor } from '@envsemble/envui/rich-text';
 import { people } from './Combobox.fixture.js';
-import { dialogOptions } from './SelectOptions.fixture.js';
+import { dialogOptions } from './SelectOptions.js';
 
 export const mount = 'standalone';
 
@@ -34,11 +32,6 @@ function Fields() {
     ['month-picker', <MonthPicker label="Month" defaultValue="2026-10" />],
     ['color-picker-button', <ColorPickerButton label="Accent" defaultValue="#2f6f62" />],
     ['color-picker', <ColorPicker label="Brand" defaultValue="#2f6f62" />],
-    [
-      'markdown-editor',
-      <MarkdownEditor label="Notes" rows={3} defaultValue="**Ship** on Friday." />,
-    ],
-    ['rich-text-editor', <RichTextEditor label="Body" defaultValue="Ship on Friday." />],
     [
       'field',
       <Field.Root>

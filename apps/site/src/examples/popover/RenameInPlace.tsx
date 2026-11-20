@@ -11,7 +11,7 @@ export default function RenameInPlace() {
         aria-label="Rename document"
         width="lg"
         trigger={
-          <Button variant="secondary" startIcon={<IconEdit />}>
+          <Button variant="secondary" start={<IconEdit />}>
             Rename
           </Button>
         }

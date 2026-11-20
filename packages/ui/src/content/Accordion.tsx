@@ -6,13 +6,28 @@ import { IconAdd } from '../icons/Add.js';
 import { IconRemove } from '../icons/Remove.js';
 import { classNames } from '../internal/classNames.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  given,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/Accordion.css';
 
-const HeadingLevelContext = createContext<Exclude<HeadingLevel, 1>>(3);
+interface AccordionLook {
+  headingLevel: Exclude<HeadingLevel, 1>;
+  indicator: ReactNode;
+  indicatorPlacement: 'start' | 'end';
+}
+
+const AccordionLookContext = createContext<AccordionLook>({
+  headingLevel: 3,
+  indicator: undefined,
+  indicatorPlacement: 'start',
+});
 
 const asBaseUiMutableList = (values: readonly string[] | undefined) =>
   values as string[] | undefined;
@@ -44,6 +59,19 @@ export interface RootProps
    */
   headingLevel?: Exclude<HeadingLevel, 1>;
   /**
+   * What shows in every item's button whether the item is open, in place of the plus that becomes
+   * a minus, such as a chevron the application turns while the button has data-panel-open; null
+   * for none. It is hidden from assistive technology, which hears the button's expanded state. An
+   * item's own indicator replaces it.
+   */
+  indicator?: ReactNode;
+  /**
+   * Where every item's indicator sits in its button: before the title, or after it at the
+   * button's end. An item's own indicatorPlacement replaces it.
+   * @default 'start'
+   */
+  indicatorPlacement?: 'start' | 'end';
+  /**
    * Every item ignores presses and can't be focused.
    * @default false
    */
@@ -67,6 +95,8 @@ function Root({
   onValueChange,
   multiple = false,
   headingLevel = 3,
+  indicator,
+  indicatorPlacement = 'start',
   disabled = false,
   hiddenUntilFound = false,
   skeleton = false,
@@ -75,7 +105,7 @@ function Root({
   ...props
 }: RootProps) {
   return (
-    <HeadingLevelContext.Provider value={headingLevel}>
+    <AccordionLookContext.Provider value={{ headingLevel, indicator, indicatorPlacement }}>
       <BaseAccordion.Root
         {...props}
         {...skeletonAttributes(skeleton)}
@@ -89,7 +119,7 @@ function Root({
       >
         {inSkeleton(skeleton, children)}
       </BaseAccordion.Root>
-    </HeadingLevelContext.Provider>
+    </AccordionLookContext.Provider>
   );
 }
 
@@ -120,16 +150,17 @@ export interface ItemProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
    */
   end?: ReactNode;
   /**
-   * What shows whether the item is open, in place of the plus that becomes a minus, such as a
-   * chevron the application turns while the button has data-panel-open; null for none. It is
-   * hidden from assistive technology, which hears the button's expanded state.
+   * What shows in this item's button whether it is open, in place of the Root's indicator, such as
+   * a chevron the application turns while the button has data-panel-open; null for none.
+   * @default the Root's indicator
    */
   indicator?: ReactNode;
   /**
-   * Where the indicator sits in the button: before the title, or after it at the button's end.
-   * @default 'start'
+   * Where this item's indicator sits in its button: before the title, or after it at the button's
+   * end.
+   * @default the Root's indicatorPlacement
    */
-  indicatorPosition?: 'start' | 'end';
+  indicatorPlacement?: 'start' | 'end';
 }
 
 /**
@@ -143,14 +174,16 @@ function Item(allProps: ItemProps) {
     disabled,
     onOpenChange,
     end,
-    indicator: ownIndicator,
-    indicatorPosition = 'start',
+    indicator: itemIndicator,
+    indicatorPlacement: itemIndicatorPlacement,
     className,
     children,
     ...props
   } = allProps;
-  const level = useContext(HeadingLevelContext);
-  const Heading = `h${level}` as const;
+  const look = useContext(AccordionLookContext);
+  const Heading = `h${look.headingLevel}` as const;
+  const ownIndicator = itemIndicator !== undefined ? itemIndicator : look.indicator;
+  const indicatorPlacement = itemIndicatorPlacement ?? look.indicatorPlacement;
   const titleGivenEvenAsUndefined = title != null || given(allProps, 'title');
   const ownIndicatorGiven = ownIndicator !== undefined;
   const indicator =
@@ -168,26 +201,26 @@ function Item(allProps: ItemProps) {
         )}
       </span>
     );
-  const indicatorPlacement =
-    ownIndicator === null ? 'none' : indicatorPosition === 'end' ? 'end' : undefined;
+  const indicatorAttribute =
+    ownIndicator === null ? 'none' : indicatorPlacement === 'end' ? 'end' : undefined;
   return (
     <BaseAccordion.Item
       {...props}
       className={classNames('env-accordion-item', className)}
-      data-indicator={indicatorPlacement}
+      data-indicator={indicatorAttribute}
       {...(value !== undefined && { value })}
       disabled={disabled}
       onOpenChange={onOpenChange ? (open) => onOpenChange(open) : undefined}
     >
       <BaseAccordion.Header render={<Heading />} className="env-accordion-header">
         <BaseAccordion.Trigger className="env-accordion-trigger" data-interactive="">
-          {indicatorPosition !== 'end' && indicator}
+          {indicatorPlacement !== 'end' && indicator}
           {titleGivenEvenAsUndefined && (
             <Slot className="env-accordion-label" element="span" grow>
               {title}
             </Slot>
           )}
-          {indicatorPosition === 'end' && indicator}
+          {indicatorPlacement === 'end' && indicator}
         </BaseAccordion.Trigger>
       </BaseAccordion.Header>
       {end != null && (

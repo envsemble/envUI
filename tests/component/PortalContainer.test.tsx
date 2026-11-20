@@ -39,19 +39,19 @@ describe('PortalContainer, contained', () => {
     'first in the file, as the module loads once: a contained notice shown before its code has loaded arrives once it has',
     { tags: ['once'] },
     async () => {
-      await commands.holdModule('PictureNotice');
+      await commands.holdModule('ContainedToastRoot');
       try {
         mount(fixture);
         const layer = page.getByTestId('layer');
-        await commands.moduleRequested('PictureNotice');
+        await commands.moduleRequested('ContainedToastRoot');
         await isShown(layer.getByRole('menu', { name: 'Actions' }));
         expect(toasts(layer)).toHaveLength(0);
-        await commands.releaseModule('PictureNotice');
+        await commands.releaseModule('ContainedToastRoot');
         await isShown(layer.getByText('Changes saved.'));
         await page.getByRole('button', { name: 'Notify' }).click();
         await expect.poll(() => toasts(layer, 'Invitation sent.')).toHaveLength(1);
       } finally {
-        await commands.unrouteModule('PictureNotice');
+        await commands.unrouteModule('ContainedToastRoot');
       }
     },
   );

@@ -7,7 +7,7 @@ export default function NarrowSidebar() {
     <Button
       variant="secondary"
       fullWidth
-      startIcon={<IconSearch />}
+      start={<IconSearch />}
       end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
       aria-keyshortcuts={`${modifier.key}+K`}
     >

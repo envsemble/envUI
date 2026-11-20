@@ -55,7 +55,7 @@ examples:
 1. **Tree** (`env-tree`)
 2. **Row** (`env-tree-item`)
 3. **Chevron** (`env-tree-chevron`, `expandable`)
-4. **Icon** (`env-tree-icon`, `icon`)
+4. **Start** (`env-tree-start`, `start`)
 5. **Label** (`env-tree-label`, `label`)
 6. **End** (`env-tree-end`, `end`)
 7. **Description** (`env-tree-description`, `description`)

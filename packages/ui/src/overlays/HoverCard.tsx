@@ -11,11 +11,9 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/popup/PopupSurface.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
-import type { SkeletonProps } from '../internal/skeleton.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
+import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { Grid } from '../layout/Layout.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/trigger/hoverDetail.js';
 import {
@@ -55,7 +53,7 @@ export interface HoverCardProps
    * @mentions in a feed.
    * @default true
    */
-  hoverDetail?: boolean;
+  underline?: boolean;
   /** The details. Supplementary: never the only place essential information appears. */
   children: ReactNode;
   /**
@@ -121,7 +119,7 @@ export function HoverCard({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
-  hoverDetail = true,
+  underline = true,
   skeleton = false,
   className,
   ...popupProps
@@ -139,7 +137,7 @@ export function HoverCard({
     ? (trigger.props as { children?: unknown }).children
     : trigger;
   const textTrigger = isValidElement(control) && isTextTrigger(control);
-  const underlined = hoverDetail && textTrigger;
+  const underlined = underline && textTrigger;
   reportInDevelopment(
     () =>
       process.env.NODE_ENV !== 'production' &&

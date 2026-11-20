@@ -10,11 +10,11 @@ export default function AttachmentsAndVoice() {
     <Composer
       aria-label="Message"
       placeholder="Ask about these files"
-      top={
+      header={
         files.length > 0 ? (
           <Row wrap gap={2}>
             {files.map((file) => (
-              <Badge key={file} variant="outline" icon={<IconDescription />}>
+              <Badge key={file} variant="outline" start={<IconDescription />}>
                 {file}
               </Badge>
             ))}

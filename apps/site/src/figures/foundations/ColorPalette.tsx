@@ -1,9 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, Dialog, Column, Text, useTheme } from '@envsemble/envui';
 import { ColorPicker } from '@envsemble/envui/color';
 import { SpecimenFrame } from '../SpecimenFrame';
 import { colorGroups, colorVariable } from '../../display/Palette';
 import { usePaletteCustomization } from '../../display/PaletteCustomization';
+import { useHighContrast } from './ColorFigures';
 
 interface MeasuredColor {
   css: string;
@@ -47,14 +48,6 @@ function inkFor(rgb: readonly number[], targetContrast: number) {
   if (fixed.ratio >= targetContrast) return fixed.ink;
   const pure = best(pureInks);
   return pure.ratio > fixed.ratio ? pure.ink : fixed.ink;
-}
-
-function isHighContrast(element: Element) {
-  const contrast = element.closest('.env-theme')?.getAttribute('data-env-contrast');
-  return (
-    contrast === 'high' ||
-    (contrast !== 'standard' && matchMedia('(prefers-contrast: more)').matches)
-  );
 }
 
 function ColorSwatch({
@@ -103,18 +96,10 @@ export function ColorPalette() {
   const { palettes } = usePaletteCustomization();
   const paletteElement = useRef<HTMLDivElement>(null);
   const [colorValues, setColorValues] = useState<Record<string, MeasuredColor>>({});
-  const [systemContrastChanges, setSystemContrastChanges] = useState(0);
-  useEffect(() => {
-    const query = matchMedia('(prefers-contrast: more)');
-    const change = () => setSystemContrastChanges((count) => count + 1);
-    query.addEventListener('change', change);
-    return () => query.removeEventListener('change', change);
-  }, []);
+  const highContrast = useHighContrast(themeContrast);
   useLayoutEffect(() => {
     if (!paletteElement.current) return;
-    const targetContrast = isHighContrast(paletteElement.current)
-      ? highTextContrastTarget
-      : textContrastTarget;
+    const targetContrast = highContrast ? highTextContrastTarget : textContrastTarget;
     const computedStyle = getComputedStyle(paletteElement.current);
     const context = document
       .createElement('canvas')
@@ -151,7 +136,7 @@ export function ColorPalette() {
     }
     for (const { probe } of probes) probe.remove();
     setColorValues(measuredColors);
-  }, [theme, themeContrast, systemContrastChanges, palettes]);
+  }, [theme, highContrast, palettes]);
   return (
     <Column ref={paletteElement} gap={0} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (

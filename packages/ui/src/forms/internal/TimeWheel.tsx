@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, type KeyboardEvent } from 'react';
-import { matchTyped } from '../../internal/time/calendarDays.js';
-import { typeaheadTimeout } from '../../internal/typeahead.js';
+import { matchTyped } from './calendarDays.js';
+import { typeAhead } from '../../internal/typeahead.js';
 import { isRightToLeft } from '../../internal/dom/direction.js';
 import { flag } from '../../internal/flag.js';
 import { useTimeWheelGestures, type TimeWheelDrag } from './useTimeWheelGestures.js';
@@ -11,9 +11,9 @@ import {
   copiesToScrollOnInBothDirections,
   nearestAvailable,
   shownRowsAsTimeListCssSetsThem,
-  wrap,
-  type Entry,
-  type Part,
+  wrapIndex,
+  type TimeWheelEntry,
+  type TimeWheelPart,
 } from './timeWheelRows.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
@@ -22,9 +22,9 @@ const pageRows = 5;
 
 interface TimeWheelProps {
   ref: (node: HTMLDivElement | null) => void;
-  part: Part;
+  part: TimeWheelPart;
   label: string;
-  entries: Entry[];
+  entries: TimeWheelEntry[];
   current: number;
   onChoose: (value: number) => void;
   onSideways: (direction: -1 | 1) => void;
@@ -71,7 +71,7 @@ export function TimeWheel({
   const { centred, scrollToRow } = turning;
 
   function step(index: number, direction: 1 | -1) {
-    const next = keysWrapAround ? wrap(index, count) : Math.min(Math.max(index, 0), count - 1);
+    const next = keysWrapAround ? wrapIndex(index, count) : Math.min(Math.max(index, 0), count - 1);
     const available = nearestAvailable(entries, next, keysWrapAround, direction);
     if (available !== -1 && available !== currentIndex) onChoose(entries[available].value);
   }
@@ -89,7 +89,7 @@ export function TimeWheel({
       event.preventDefault();
       const key = event.key.toLocaleLowerCase();
       const at = event.timeStamp;
-      const text = at - typed.current.at < typeaheadTimeout ? typed.current.text + key : key;
+      const text = typeAhead(typed.current, key, at);
       let index = matchTyped(text, entries);
       let kept = text;
       const keysNameNothing = index === -1 && text.length > 1;

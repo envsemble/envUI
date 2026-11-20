@@ -1,16 +1,18 @@
 'use client';
 
+import { mergeProps } from '@base-ui/react/merge-props';
 import {
-  useLayoutEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type ComponentPropsWithoutRef,
+  type HTMLAttributes,
   type MouseEvent,
   type ReactElement,
   type ReactNode,
-  type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { Row } from '../layout/Layout.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
@@ -18,6 +20,8 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { flag } from '../internal/flag.js';
+import { useCutShort } from '../internal/popup/useCutShort.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import '../styles/Base.css';
 import '../styles/Breadcrumbs.css';
 
@@ -32,7 +36,19 @@ export interface BreadcrumbsItem {
   href?: string;
   /** An action for applications that navigate without URLs; rendered as a button styled as a link. */
   onClick?: (event: MouseEvent<HTMLElement>) => void;
+  /**
+   * More props for the crumb's link, button or text, such as target and rel to open it in a new
+   * tab, or data attributes for tests. Its class joins the crumb's; the crumb's aria-current and
+   * name stay its own.
+   */
+  itemProps?: BreadcrumbsItemElementProps;
 }
+
+/** What a crumb's itemProps can set on its link, button or text. */
+export type BreadcrumbsItemElementProps = Omit<
+  ComponentPropsWithoutRef<'a'>,
+  'children' | 'href' | 'onClick' | 'id' | 'role' | 'dangerouslySetInnerHTML' | `aria-${string}`
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
 
 export interface BreadcrumbsProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /** From the top level to the current page, which is last. */
@@ -52,24 +68,9 @@ export interface BreadcrumbsProps extends Omit<ComponentPropsWithRef<'nav'>, 'ch
   className?: string;
 }
 
-function useTruncated(element: RefObject<HTMLElement | null>) {
-  const [truncated, setTruncated] = useState(false);
-  useLayoutEffect(() => {
-    const node = element.current;
-    if (!node) return;
-    const measure = () => setTruncated(node.scrollWidth > node.clientWidth);
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [element]);
-  return truncated;
-}
-
 function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
   const label = useRef<HTMLSpanElement>(null);
-  const truncated = useTruncated(label);
+  const cut = useCutShort(label);
   const [focused, setFocused] = useState(false);
   const content = (
     <span className="env-breadcrumbs-label" ref={label}>
@@ -77,23 +78,39 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
     </span>
   );
   const keepsFocusUntilBlurEvenOnceItFits = focused;
-  const focusableToShowInFull = {
-    tabIndex: truncated || keepsFocusUntilBlurEvenOnceItFits ? 0 : undefined,
+  const { className: ownClassName, ...ownProps } = item.itemProps ?? {};
+  const focusableToShowInFull = mergeProps(ownProps as HTMLAttributes<HTMLSpanElement>, {
+    tabIndex: cut || keepsFocusUntilBlurEvenOnceItFits ? 0 : ownProps.tabIndex,
     onFocus: () => setFocused(true),
     onBlur: () => setFocused(false),
-  };
+  });
   let crumb: ReactElement;
   if (current) {
     crumb = (
-      <span className="env-breadcrumbs-current" aria-current="page" {...focusableToShowInFull}>
+      <span
+        {...focusableToShowInFull}
+        className={classNames('env-breadcrumbs-current', ownClassName)}
+        aria-current="page"
+      >
         {content}
       </span>
     );
-  } else if (item.href !== undefined || item.onClick) {
+  } else if (item.href !== undefined) {
     crumb = (
       <ActionElement
-        {...(item.href !== undefined ? { href: item.href } : {})}
-        className="env-breadcrumbs-link"
+        {...ownProps}
+        href={item.href}
+        className={classNames('env-breadcrumbs-link', ownClassName)}
+        onClick={item.onClick}
+      >
+        {content}
+      </ActionElement>
+    );
+  } else if (item.onClick) {
+    crumb = (
+      <ActionElement
+        {...(ownProps as HTMLAttributes<HTMLButtonElement>)}
+        className={classNames('env-breadcrumbs-link', ownClassName)}
         onClick={item.onClick}
       >
         {content}
@@ -101,13 +118,13 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
     );
   } else {
     crumb = (
-      <span className="env-breadcrumbs-text" {...focusableToShowInFull}>
+      <span {...focusableToShowInFull} className={classNames('env-breadcrumbs-text', ownClassName)}>
         {content}
       </span>
     );
   }
   return (
-    <CutLabelTooltip cut={truncated} label={item.label} side="bottom">
+    <CutLabelTooltip cut={cut} label={item.label} side="bottom">
       {crumb}
     </CutLabelTooltip>
   );
@@ -125,7 +142,7 @@ export function Breadcrumbs({
   return (
     <nav
       {...props}
-      aria-label={label ?? messages.label}
+      aria-label={landmarkLabel(label, props['aria-labelledby'], messages.label)}
       className={classNames('env-breadcrumbs', className)}
       data-nowrap={flag(!wrap)}
     >
@@ -142,9 +159,9 @@ export function Breadcrumbs({
             >
               <Crumb item={item} current={current} />
               {!current && (
-                <span className="env-icon env-breadcrumbs-separator" aria-hidden="true">
+                <DecorativeIcon className="env-breadcrumbs-separator">
                   <IconChevronRight />
-                </span>
+                </DecorativeIcon>
               )}
             </Row>
           );

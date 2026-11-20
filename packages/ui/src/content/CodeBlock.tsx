@@ -6,21 +6,15 @@ export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   children: string;
   /**
    * Names the block in its heading and for assistive technology, such as a file name, or content
-   * such as a file-type icon and a path link.
+   * such as a file-type icon and a path link. Without one, the code takes the generic name of its
+   * language, such as Plain text code or TypeScript code, from messages.codeBlock.label.
    */
   label?: ReactNode;
   /**
-   * The label as plain text, which names the code for assistive technology where label isn't a
-   * string; without it, such a label leaves the code the generic name of its language, such as
-   * Plain text code or TypeScript code, from messages.codeBlock.label.
-   * @default the label, when it is a string
+   * Content at the end of the heading, before the copy button, such as Open in editor, Run, or a
+   * switch between npm, pnpm and yarn, placed as given.
    */
-  textValue?: string;
-  /**
-   * Content in the heading before the copy button, such as Open in editor, Run, or a switch
-   * between npm, pnpm and yarn, placed as given.
-   */
-  actions?: ReactNode;
+  headerEnd?: ReactNode;
   /** Shows a copy button in the heading that copies the source; false by default. */
   copyable?: boolean;
   /** Wraps long lines instead of scrolling them; false by default. */
@@ -36,8 +30,7 @@ export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
 export function CodeBlock({
   children: source,
   label,
-  textValue,
-  actions,
+  headerEnd,
   copyable = false,
   wrap = false,
   ...props
@@ -48,8 +41,7 @@ export function CodeBlock({
       source={source}
       language={undefined}
       label={label}
-      textValue={textValue}
-      actions={actions}
+      headerEnd={headerEnd}
       copyable={copyable}
       wrap={wrap}
     >

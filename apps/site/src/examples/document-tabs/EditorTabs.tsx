@@ -13,19 +13,17 @@ const inFolder = (folder: string, name: string) => (
 );
 
 const documents: DocumentTabsItem[] = [
-  { value: 'welcome', label: 'Welcome', icon: <IconHome />, closable: false },
+  { value: 'welcome', label: 'Welcome', start: <IconHome />, closable: false },
   {
     value: 'api/index.ts',
-    label: 'api/index.ts',
-    content: inFolder('api', 'index.ts'),
-    icon: <IconDescription />,
+    label: inFolder('api', 'index.ts'),
+    start: <IconDescription />,
     end: <Badge tone="danger" count={2} />,
   },
   {
     value: 'web/index.ts',
-    label: 'web/index.ts',
-    content: inFolder('web', 'index.ts'),
-    icon: <IconDescription />,
+    label: inFolder('web', 'index.ts'),
+    start: <IconDescription />,
   },
 ];
 

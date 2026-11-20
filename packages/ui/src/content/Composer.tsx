@@ -18,13 +18,16 @@ import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { TextareaControl } from '../internal/field/TextareaControl.js';
+import { supportsFieldSizing } from '../internal/field/fieldSizing.js';
 import { flag } from '../internal/flag.js';
+import { idRefs } from '../internal/dom/idRefs.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Composer.css';
 
@@ -82,7 +85,7 @@ interface ComposerOptions {
    * Content inside the composer above the field, such as attachment chips, a quoted reply or
    * context pills, placed as given.
    */
-  top?: ReactNode;
+  header?: ReactNode;
   /**
    * The key that sends: enter, where Shift+Enter starts a new line, or mod-enter, Ctrl+Enter or
    * ⌘+Enter, where Enter starts a new line, for prompts that mostly take several lines.
@@ -111,9 +114,6 @@ export type ComposerProps = ComposerOptions &
 
 const imeProcessKeyCode = 229;
 
-const supportsFieldSizing = (input: HTMLTextAreaElement) =>
-  input.ownerDocument.defaultView?.CSS?.supports('field-sizing', 'content');
-
 function useContentHeightWithoutFieldSizing(
   inputRef: RefObject<HTMLTextAreaElement | null>,
   text: string,
@@ -130,19 +130,18 @@ function useContentHeightWithoutFieldSizing(
   }, [inputRef, text]);
   useEffect(() => {
     const input = inputRef.current;
-    if (!input || typeof ResizeObserver === 'undefined' || supportsFieldSizing(input)) return;
+    if (!input || supportsFieldSizing(input)) return;
     let width = input.clientWidth;
-    const refitWhenWidthRewrapsText = new ResizeObserver(() => {
+    const stopRefittingWhenWidthRewrapsText = observeResize(input, () => {
       if (input.clientWidth === width) return;
       width = input.clientWidth;
       fit.current();
     });
-    refitWhenWidthRewrapsText.observe(input);
     const fonts = input.ownerDocument.fonts;
     const refitWhenWebFontRewrapsText = () => fit.current();
     fonts?.addEventListener('loadingdone', refitWhenWebFontRewrapsText);
     return () => {
-      refitWhenWidthRewrapsText.disconnect();
+      stopRefittingWhenWidthRewrapsText();
       fonts?.removeEventListener('loadingdone', refitWhenWebFontRewrapsText);
     };
   }, [inputRef]);
@@ -169,7 +168,7 @@ export function Composer({
   maxRows = 8,
   start,
   end,
-  top,
+  header,
   sendKey = 'enter',
   description,
   disabled = false,
@@ -254,7 +253,7 @@ export function Composer({
       data-disabled={flag(disabled)}
       data-start={flag(start != null)}
       data-end={flag(end != null)}
-      data-top={flag(top != null)}
+      data-header={flag(header != null)}
     >
       <div
         className="env-composer-surface"
@@ -264,25 +263,18 @@ export function Composer({
           inputRef.current?.focus();
         }}
       >
-        {top != null && <Slot className="env-composer-top">{top}</Slot>}
+        {header != null && <Slot className="env-composer-header">{header}</Slot>}
         <TextareaControl
           bare
           {...props}
-          ref={(node) => {
-            inputRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(inputRef, ref)}
           id={id}
           form={form}
           rows={rows}
           value={text}
           disabled={disabled}
           enterKeyHint={enterKeyHint ?? touchKeyboardEnterLabel}
-          aria-describedby={
-            [describedBy, description != null ? descriptionId : undefined]
-              .filter(Boolean)
-              .join(' ') || undefined
-          }
+          aria-describedby={idRefs(describedBy, description != null ? descriptionId : undefined)}
           className="env-composer-input"
           onChange={(event) => {
             onChange?.(event);

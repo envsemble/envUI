@@ -80,20 +80,20 @@ test('marks the current row on its target and selects the row', () => {
   );
 });
 
-test("a titled list's actions sit beside its heading, outside it", () => {
+test("a titled list's headerEnd sits beside its heading, outside it", () => {
   const root = render(
     h(
       List.Root,
-      { title: 'Members', actions: h('button', { type: 'button' }, 'Add member') },
+      { title: 'Members', headerEnd: h('button', { type: 'button' }, 'Add member') },
       h(List.Item, { label: 'Alex Morgan' }),
     ),
   );
   const header = elementsOf(root).find((element) => hasClass(element, 'env-list-header'));
   const heading = elementsOf(header).find((element) => element.tag === 'h2');
-  const actions = elementsOf(header).find((element) => hasClass(element, 'env-list-actions'));
-  assert.ok(heading && actions);
+  const headerEnd = elementsOf(header).find((element) => hasClass(element, 'env-list-header-end'));
+  assert.ok(heading && headerEnd);
   assert.equal(elementsOf(heading).filter((element) => element.tag === 'button').length, 0);
-  assert.equal(elementsOf(actions).filter((element) => element.tag === 'button').length, 1);
+  assert.equal(elementsOf(headerEnd).filter((element) => element.tag === 'button').length, 1);
   const list = elementsOf(root).find((element) => element.tag === 'ul');
   assert.equal(list.attributes['aria-labelledby'], heading.attributes.id);
 });

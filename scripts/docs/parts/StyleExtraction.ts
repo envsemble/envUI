@@ -1,6 +1,5 @@
+import { withoutComments } from '../../site/CssComments.ts';
 import { isPrivateState, styleSheets, type StateRecord } from './Library.ts';
-
-const withoutComments = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, '');
 
 function splitTopLevel(text: string, separators: RegExp) {
   const parts: string[] = [];
@@ -24,6 +23,16 @@ function splitTopLevel(text: string, separators: RegExp) {
   return parts.map((part) => part.trim()).filter(Boolean);
 }
 
+function isOneGroup(inside: string) {
+  let depth = 0;
+  for (const character of inside) {
+    if (character === '(') depth += 1;
+    else if (character === ')') depth -= 1;
+    if (depth < 0) return false;
+  }
+  return true;
+}
+
 export function readStyles() {
   const states: StateRecord[] = [];
   const visit = (selector: string, path: string) => {
@@ -35,7 +44,8 @@ export function readStyles() {
     for (const body of inner) for (const part of splitTopLevel(body, /,/)) visit(part, path);
     const ownCompounds = splitTopLevel(own, /[\s>+~]/).flatMap((compound) => {
       const group = /^:is\(([\s\S]*)\)$/.exec(compound);
-      if (!group || splitTopLevel(group[1], /[\s>+~]/).length < 2) return [compound];
+      if (!group || !isOneGroup(group[1]) || splitTopLevel(group[1], /[\s>+~]/).length < 2)
+        return [compound];
       for (const part of splitTopLevel(group[1], /,/)) visit(part, path);
       return [];
     });

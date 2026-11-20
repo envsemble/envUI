@@ -11,21 +11,32 @@ export type ToastTone = 'neutral' | 'success' | 'info' | 'danger';
  * downward from the top of the window.
  */
 export type ToastPlacement = 'bottom-end' | 'top-center';
-/** A button a notification offers, such as Undo, or a link, such as View. */
-export interface ToastAction {
-  /** The button's label: a short verb, such as Undo, Retry or View. */
-  label: string;
-  /**
-   * Runs when the button is pressed. The notification stays; dismiss it from here with the id that
-   * show returned, as an undo does once it has run. Give it, href, or both.
-   */
-  onClick?: () => void;
-  /**
-   * The address the action leads to, such as the new item's page: it is then a link, through the
-   * LinkProvider's link component.
-   */
-  href?: string;
-}
+/**
+ * A button a notification offers, such as Undo, with what it runs, or a link, such as View, with
+ * the address it leads to.
+ */
+export type ToastAction =
+  | {
+      /** The button's label: a short verb, such as Undo, Retry or View. */
+      label: string;
+      /**
+       * Runs when the button is pressed. The notification stays; dismiss it from here with the id
+       * that show returned, as an undo does once it has run.
+       */
+      onClick: () => void;
+      href?: undefined;
+    }
+  | {
+      /** The link's label: a short verb, such as View or Open. */
+      label: string;
+      /**
+       * The address the action leads to, such as the new item's page: the action is a link,
+       * through the LinkProvider's link component.
+       */
+      href: string;
+      /** Runs as the link is followed, such as to record it. */
+      onClick?: () => void;
+    };
 /** A notification to show with useToast().show(). */
 export interface ToastNotification {
   /**
@@ -35,11 +46,11 @@ export interface ToastNotification {
    */
   message: ReactNode;
   /**
-   * The message as plain text, for its native title and its announcement, where message isn't a
-   * string; without it, the message itself is announced.
-   * @default the message, when it is a string
+   * The message as plain text, for its native title and its announcement, where the message's
+   * text isn't it.
+   * @default the message when it is a string, else the message's rendered text
    */
-  text?: string;
+  textValue?: string;
   /**
    * Replaces the tone's icon before the message, such as an Avatar for a mention; null or false
    * shows none. It is decorative.
@@ -53,13 +64,9 @@ export interface ToastNotification {
    */
   tone?: ToastTone;
   /**
-   * One button in the notification, such as Undo, with its label and what it runs, or a link with
-   * href. A notification with an action persists until it is dismissed, unless duration is set.
-   */
-  action?: ToastAction;
-  /**
-   * Actions in place of action, such as Undo and View, shown in the order given with the main one
-   * last; they wrap onto more lines when they don't fit beside the message.
+   * The notification's buttons and links, such as Undo, or Undo and View, shown in the order given
+   * with the main one last; they wrap onto more lines when they don't fit beside the message. A
+   * notification with an action persists until it is dismissed, unless duration is set.
    */
   actions?: readonly ToastAction[];
   /**

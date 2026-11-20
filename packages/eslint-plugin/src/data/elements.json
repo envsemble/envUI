@@ -60,7 +60,7 @@
     {
       "id": "[role=textbox]",
       "role": "textbox",
-      "owners": ["TextField", "Textarea", "Composer", "MarkdownEditor", "RichTextEditor"],
+      "owners": ["TextField", "Textarea", "Composer"],
       "use": [
         { "component": "TextField" },
         { "component": "Textarea", "when": "for text on several lines" }

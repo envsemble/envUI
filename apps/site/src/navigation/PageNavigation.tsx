@@ -41,12 +41,12 @@ export function PageNavigation({ page }: { page: RoutePage }) {
   return (
     <Pager.Root className="site-page-navigation">
       {previous && (
-        <Pager.Previous href={routeHref(previous.path)} icon={<IconArrowBack />}>
+        <Pager.Previous href={routeHref(previous.path)} start={<IconArrowBack />}>
           {previous.title}
         </Pager.Previous>
       )}
       {next && (
-        <Pager.Next href={routeHref(next.path)} icon={<IconArrowForward />}>
+        <Pager.Next href={routeHref(next.path)} end={<IconArrowForward />}>
           {next.title}
         </Pager.Next>
       )}

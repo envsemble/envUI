@@ -86,10 +86,8 @@
     white-space: nowrap;
     pointer-events: none;
   }
-  .env-document-tabs-drag-image .env-icon {
-    inline-size: var(--env-control-icon-size);
-    block-size: var(--env-control-icon-size);
-    color: var(--env-color-fg-muted);
+  .env-document-tabs-drag-image .env-document-tabs-tab-start {
+    --_slot-icon-color: var(--env-color-fg-muted);
   }
   .env-document-tabs-item {
     box-sizing: border-box;
@@ -171,10 +169,8 @@
     user-select: none;
     outline: none;
   }
-  .env-document-tabs-tab .env-icon {
-    inline-size: var(--env-control-icon-size);
-    block-size: var(--env-control-icon-size);
-    color: inherit;
+  .env-document-tabs-tab-start {
+    --env-icon-size: var(--env-control-icon-size);
   }
   .env-document-tabs-tab-label {
     min-inline-size: 0;

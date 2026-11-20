@@ -1,8 +1,8 @@
 {
   "$comment": "The architecture tests/library/rules/Composition.test.ts enforces. Paths are relative to packages/ui/src; stylesheets are relative to packages/ui/src/styles.",
   "layers": {
-    "$comment": "Imports go down this list or stay in their layer. A module's layer is entries for the package's entry points, read from its exports, else its entry under modules, else the longest matching entry under directories. A module of a family's folder that renders another component, or serves one that does, is listed as composites, and one of a composites folder that renders none as base, so a base control cannot import a composite; every other module takes its directory's layer. Any other module listed with a layer its directory doesn't give it takes { layer, reason }. Which modules may import a family's internal/ folder is ESLint's rule, in eslint.config.mjs.",
-    "order": ["internal", "foundations", "base", "composites", "shell", "entries"],
+    "$comment": "Imports go down this list or stay in their layer. A module's layer is entries for the package's entry points, read from its exports, else its entry under modules, else for a module of a component's internal folder (<family>/internal/<component>/) that component's layer, else the longest matching entry under directories. A module of a family's folder that renders another component, or serves one that does, is listed as composites, and one of a composites folder that renders none as base, so a base control cannot import a composite; every other module takes its directory's layer. Any other module listed with a layer its directory doesn't give it takes { layer, reason }. Which modules may import a family's internal/ folder is ESLint's rule, in eslint.config.mjs.",
+    "order": ["internal", "foundations", "base", "composites", "entries"],
     "directories": {
       "internal/": "internal",
       "foundations/": "foundations",
@@ -16,11 +16,8 @@
       "data-display/": "base",
       "overlays/": "base",
       "layout/": "composites",
-      "content/internal/markdown/": "composites",
       "forms/color/": "composites",
-      "forms/rich-text/": "composites",
-      "actions/menu/": "composites",
-      "dev/": "shell"
+      "actions/menu/": "composites"
     },
     "modules": {
       "icons/index.ts": {
@@ -43,16 +40,13 @@
       "actions/Link.tsx": "composites",
       "actions/Toolbar.tsx": "composites",
       "data-display/AvatarGroup.tsx": "composites",
-      "data-display/CalendarHeatmap.tsx": "composites",
-      "data-display/internal/calendarHeatmapModel.ts": "composites",
-      "data-display/internal/useHeatmapLabels.ts": "composites",
       "layout/Card.tsx": "base",
       "content/CodeBlock.tsx": "composites",
       "content/HighlightedCodeBlock.tsx": "composites",
       "content/internal/CodeBlockFrame.tsx": "composites",
       "data-display/List.tsx": "composites",
       "data-display/internal/ReorderableList.tsx": "composites",
-      "data-display/internal/ListRows.tsx": "composites",
+      "data-display/internal/listMarkup.tsx": "composites",
       "data-display/internal/ListNaming.tsx": "composites",
       "content/Markdown.tsx": "composites",
       "content/Message.tsx": "composites",
@@ -60,6 +54,8 @@
       "data-display/RelativeTime.tsx": "composites",
       "feedback/Alert.tsx": "composites",
       "actions/CommandPalette.tsx": "composites",
+      "actions/ContextMenu.tsx": "composites",
+      "actions/Menubar.tsx": "composites",
       "actions/internal/CommandPaletteFooter.tsx": "composites",
       "actions/internal/CommandPaletteOptions.tsx": "composites",
       "actions/internal/CommandPaletteStatus.tsx": "composites",
@@ -67,9 +63,11 @@
       "overlays/ConfirmDialog.tsx": "composites",
       "overlays/Dialog.tsx": "composites",
       "overlays/Sheet.tsx": "composites",
-      "overlays/internal/DialogPendingAction.tsx": "composites",
       "feedback/internal/AlertDismiss.tsx": "composites",
-      "feedback/toast/internal/PictureNotice.tsx": "composites",
+      "feedback/toast/internal/ContainedToastRoot.tsx": "composites",
+      "feedback/toast/internal/ContainedToast.tsx": "composites",
+      "feedback/toast/internal/LiveToast.tsx": "composites",
+      "feedback/toast/internal/ToastButtons.tsx": "composites",
       "feedback/toast/internal/ToastBody.tsx": "composites",
       "feedback/toast/internal/toastEntry.ts": "composites",
       "feedback/toast/ToastProvider.tsx": "composites",
@@ -78,9 +76,11 @@
       "feedback/toast/useToast.ts": "composites",
       "feedback/toast/internal/useToastController.ts": "composites",
       "feedback/toast/internal/useToastGlide.ts": "composites",
+      "feedback/toast/internal/ToastManagerContext.ts": "composites",
       "forms/Calendar.tsx": "composites",
       "forms/Combobox.tsx": "composites",
       "forms/internal/autoHighlightAlways.ts": "composites",
+      "forms/internal/ComboboxField.tsx": "composites",
       "forms/internal/ComboboxPopup.tsx": "composites",
       "forms/internal/comboboxItems.ts": "composites",
       "forms/internal/useComboboxOpen.ts": "composites",
@@ -93,15 +93,6 @@
       "forms/internal/PickerField.tsx": "composites",
       "forms/internal/MonthGrid.tsx": "composites",
       "forms/DropZone.tsx": "composites",
-      "content/MarkdownEditor.tsx": "composites",
-      "internal/editor/EditorToolbar.tsx": {
-        "layer": "composites",
-        "reason": "It renders Toolbar."
-      },
-      "internal/editor/LinkDialog.tsx": {
-        "layer": "composites",
-        "reason": "It renders Dialog and Button."
-      },
       "forms/SearchField.tsx": "composites",
       "forms/Select.tsx": "composites",
       "navigation/Breadcrumbs.tsx": "composites",
@@ -110,17 +101,9 @@
       "navigation/NavigationBar.tsx": "composites",
       "navigation/Pagination.tsx": "composites",
       "navigation/Tree.tsx": "composites",
-      "navigation/internal/TreeRow.tsx": "composites",
-      "navigation/internal/treeModel.ts": "composites",
-      "navigation/internal/useTreeTransitions.ts": "composites",
-      "navigation/internal/useTreeViewport.ts": "composites",
       "internal/popup/PopupSurface.tsx": {
         "layer": "foundations",
         "reason": "It reads Theme and the skeleton."
-      },
-      "internal/skeleton.tsx": {
-        "layer": "foundations",
-        "reason": "It reads SkeletonScope."
       },
       "internal/popup/TooltipPopup.tsx": {
         "layer": "foundations",
@@ -141,17 +124,9 @@
         "layer": "base",
         "reason": "It renders Field."
       },
-      "internal/editor/EditorStatus.tsx": {
+      "internal/dialog/ModalLayer.tsx": {
         "layer": "foundations",
-        "reason": "It renders Text."
-      },
-      "internal/editor/editorCommands.ts": {
-        "layer": "foundations",
-        "reason": "It gives each command its Icon."
-      },
-      "internal/dialog/DialogParts.tsx": {
-        "layer": "foundations",
-        "reason": "It renders Surface and reads Theme."
+        "reason": "It renders Theme."
       }
     }
   },
@@ -160,7 +135,7 @@
     "modules": []
   },
   "interactive": {
-    "$comment": "Raw interactive HTML. An <input type=\"hidden\"> and an element that is both aria-hidden and out of the tab order are not interactive. Widget roles count as interactive too; Tree, Calendar and CalendarHeatmap implement patterns no Base UI part covers, so they are the leaf controls for theirs.",
+    "$comment": "Raw interactive HTML. An <input type=\"hidden\"> and an element that is both aria-hidden and out of the tab order are not interactive. Widget roles count as interactive too; Tree and Calendar implement patterns no Base UI part covers, so they are the leaf controls for theirs.",
     "elements": ["button", "a", "input", "textarea", "select"],
     "roles": [
       "button",
@@ -192,18 +167,15 @@
       "forms/Switch.tsx": ["input"],
       "forms/SegmentedControl.tsx": ["button"],
       "navigation/Tree.tsx": ["role=\"tree\""],
-      "navigation/internal/TreeRow.tsx": ["role=\"treeitem\""],
+      "navigation/internal/tree/TreeRow.tsx": ["role=\"treeitem\""],
       "forms/Calendar.tsx": ["role=\"grid\""],
       "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
-      "data-display/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "forms/internal/FileInput.tsx": ["input"],
-      "forms/rich-text/internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
       "forms/color/ColorPickerButton.tsx": ["button"],
       "forms/color/internal/ColorArea.tsx": ["input"],
       "forms/color/internal/ColorFields.tsx": ["input"],
       "forms/color/internal/ColorSlider.tsx": ["input"],
       "forms/color/internal/SwatchList.tsx": ["role=\"listbox\"", "role=\"option\""],
-      "dev/ui/Frame.tsx": ["role=\"slider\""],
       "overlays/Tooltip.tsx": [
         "role=\"button\"",
         "role=\"link\"",
@@ -225,47 +197,20 @@
     }
   },
   "classes": {
-    "$comment": "Every module is a component named after its file, owning the classes that start with env-<file name in kebab case> and the stylesheet of the same name. An entry below adds classes (prefixes), stylesheets and other modules to a component; slots are classes another module may emit inside the component when it imports one of the component's modules. A class belongs to the component with the longest matching prefix. A stylesheet listed for a component holds that component's own rules, never rules that restyle another component.",
+    "$comment": "Every module is a component named after its file, except that a module of <family>/internal/<component>/ belongs to the component of <family>/<Component>.tsx. A component owns the classes that start with env-<file name in kebab case> and the stylesheet of the same name. An entry below adds classes (prefixes), stylesheets and other modules to a component; slots are classes another module may emit inside the component when it imports one of the component's modules. A class belongs to the component with the longest matching prefix. A stylesheet listed for a component holds that component's own rules, never rules that restyle another component.",
     "shared": {
       "env-theme": "The theme boundary, which every popup and provider sets.",
-      "env-window": "The theme boundary's container name, which dialogs, sheets and menus query when nothing nearer applies.",
       "env-text": "The text style helper.",
       "env-surface": "The surface helper, which components render through Surface.",
       "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List.",
       "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of List.",
       "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size.",
-      "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document.",
+      "env-prose": "The prose typography (Prose.css) of Markdown.",
       "env-skeleton-content": "A skeleton's inert content without a box, which every component that takes skeleton renders inside its busy root (Skeleton.css).",
       "env-skeleton-status": "The visually hidden status beside a skeleton list (Skeleton.css).",
       "env-hover-detail": "The dotted underline (HoverDetail.css) of text that shows more on hover or focus, which HoverCard and Tooltip give a text trigger."
     },
     "components": {
-      "dev": {
-        "classes": ["env-dev"],
-        "modules": [
-          "dev/api.ts",
-          "dev/install.tsx",
-          "dev/measure.ts",
-          "dev/model.ts",
-          "dev/parts.ts",
-          "dev/queries.ts",
-          "dev/readout.ts",
-          "dev/ui/DevMode.tsx",
-          "dev/ui/Frame.tsx",
-          "dev/ui/Inspector.tsx",
-          "dev/ui/Legend.tsx",
-          "dev/ui/NodeHints.tsx",
-          "dev/ui/PerformancePanel.tsx",
-          "dev/ui/Plane.tsx",
-          "dev/ui/View3D.tsx",
-          "dev/ui/ViewToolbar.tsx",
-          "dev/ui/surfaces.ts",
-          "dev/ui/useLivePage.ts",
-          "dev/ui/useViewWheel.ts",
-          "dev/units.ts",
-          "dev/usedTokens.ts"
-        ]
-      },
       "Button": {
         "classes": ["env-icon-button"],
         "modules": ["actions/internal/ButtonBase.tsx"]
@@ -275,12 +220,6 @@
       },
       "Link": {
         "styles": ["Button.css"]
-      },
-      "AnimatedNumber": {
-        "styles": ["Text.css"]
-      },
-      "Badge": {
-        "modules": ["data-display/DiffStat.tsx"]
       },
       "Code": {
         "modules": [
@@ -303,17 +242,10 @@
       "Spinner": {
         "modules": ["feedback/internal/SpinnerLabel.tsx", "internal/control/SpinnerArc.tsx"]
       },
-      "Scaffold": {
-        "modules": [
-          "layout/internal/useScrollKeys.ts",
-          "layout/internal/scaffoldFocus.ts",
-          "layout/internal/useNavigationFocusHandoff.ts"
-        ]
-      },
       "List": {
         "modules": [
           "data-display/internal/ReorderableList.tsx",
-          "data-display/internal/ListRows.tsx"
+          "data-display/internal/listMarkup.tsx"
         ]
       },
       "Table": {
@@ -322,6 +254,7 @@
       "Combobox": {
         "modules": [
           "forms/internal/autoHighlightAlways.ts",
+          "forms/internal/ComboboxField.tsx",
           "forms/internal/ComboboxPopup.tsx",
           "forms/internal/comboboxItems.ts",
           "forms/internal/useComboboxOpen.ts",
@@ -330,11 +263,7 @@
         ]
       },
       "Dialog": {
-        "modules": [
-          "internal/dialog/DialogParts.tsx",
-          "overlays/internal/DialogPendingAction.tsx",
-          "overlays/ConfirmDialog.tsx"
-        ],
+        "modules": ["internal/dialog/ModalLayer.tsx", "overlays/ConfirmDialog.tsx"],
         "classes": ["env-overlay-theme"]
       },
       "Progress": {
@@ -367,7 +296,10 @@
           "feedback/toast/useToast.ts",
           "feedback/toast/internal/useToastController.ts",
           "feedback/toast/internal/useToastGlide.ts",
-          "feedback/toast/internal/PictureNotice.tsx"
+          "feedback/toast/internal/ContainedToastRoot.tsx",
+          "feedback/toast/internal/ContainedToast.tsx",
+          "feedback/toast/internal/LiveToast.tsx",
+          "feedback/toast/internal/ToastButtons.tsx"
         ]
       },
       "ChoiceControl": {
@@ -382,62 +314,46 @@
       "Field": {
         "modules": [
           "internal/field/FieldFrame.tsx",
+          "internal/field/fieldProps.ts",
           "forms/TextField.tsx",
           "forms/Textarea.tsx",
           "internal/field/TextareaControl.tsx",
-          "internal/field/TextareaResizeEdge.tsx"
+          "internal/field/TextareaResizeHandle.tsx"
         ],
         "classes": ["env-text-field"],
         "styles": ["TextField.css"],
         "slots": ["env-text-field-input", "env-text-field-start", "env-text-field-end"]
-      },
-      "MarkdownEditor": {
-        "modules": [
-          "content/internal/markdown/markdownFormatting.ts",
-          "content/internal/markdown/markdownHistory.ts",
-          "content/internal/markdown/MarkdownPreview.tsx",
-          "content/internal/markdown/useMarkdownEditing.ts"
-        ],
-        "classes": ["env-markdown-editor-input"]
-      },
-      "Editor": {
-        "modules": [
-          "internal/editor/editorCommands.ts",
-          "internal/editor/EditorToolbar.tsx",
-          "internal/editor/EditorStatus.tsx",
-          "internal/editor/LinkDialog.tsx"
-        ],
-        "styles": ["Editor.css"]
       },
       "Theme": {
         "modules": ["foundations/themeBootstrap.ts"],
         "styles": ["TokensHandwritten.css"]
       },
       "ThemePreference": {
-        "modules": ["foundations/internal/ThemePreferenceContext.ts"]
-      },
-      "Breadcrumbs": {},
-      "DocumentTabs": {
         "modules": [
-          "navigation/internal/tabStrip.ts",
-          "navigation/internal/useTabCloseFocus.ts",
-          "navigation/internal/useTabDrag.ts",
-          "navigation/internal/useTabStripScrolling.ts"
+          "foundations/ThemePreferenceProvider.tsx",
+          "foundations/internal/ThemePreferenceContext.ts",
+          "foundations/themeStorage.ts",
+          "foundations/useStoredThemePreference.ts"
         ]
       },
+      "Breadcrumbs": {},
       "NavigationBar": {
-        "classes": ["env-navigation-bar"]
+        "classes": ["env-navigation-bar"],
+        "styles": ["NavigationDestinations.css"]
       },
       "NavigationDrawer": {
         "classes": ["env-navigation-drawer"]
       },
       "NavigationRail": {
-        "classes": ["env-navigation-rail"]
+        "classes": ["env-navigation-rail"],
+        "styles": ["NavigationDestinations.css"]
       },
       "Menu": {
         "modules": [
           "actions/ContextMenu.tsx",
-          "actions/internal/MenuPopup.tsx",
+          "actions/menu/internal/MenuPopup.tsx",
+          "actions/menu/internal/menuOpenChange.ts",
+          "actions/menu/internal/menuTriggerProps.ts",
           "actions/menu/MenuItem.tsx",
           "actions/menu/MenuSubmenu.tsx",
           "actions/menu/MenuChoices.tsx"
@@ -448,38 +364,6 @@
       },
       "Message": {
         "modules": ["content/internal/MessageListFollow.tsx"]
-      },
-      "TableOfContents": {
-        "modules": [
-          "navigation/internal/sectionScroll.ts",
-          "navigation/internal/useContentsHeadings.ts",
-          "navigation/internal/waveDrawer.ts"
-        ]
-      },
-      "Tree": {
-        "modules": [
-          "navigation/internal/TreeRow.tsx",
-          "navigation/internal/treeModel.ts",
-          "navigation/internal/useTreeTransitions.ts",
-          "navigation/internal/useTreeViewport.ts"
-        ]
-      },
-      "RichText": {
-        "modules": [
-          "forms/rich-text/RichTextEditor.tsx",
-          "forms/rich-text/internal/Reference.tsx",
-          "forms/rich-text/internal/referenceAttributes.ts",
-          "forms/rich-text/internal/referenceExtension.ts",
-          "forms/rich-text/internal/suggestions.tsx",
-          "forms/rich-text/internal/taskItem.tsx",
-          "forms/rich-text/internal/commands.ts",
-          "forms/rich-text/internal/useDocumentAttributes.ts",
-          "forms/rich-text/internal/useLinksAndUploads.ts",
-          "forms/rich-text/internal/useRichTextDocument.ts",
-          "forms/rich-text/internal/useRichTextExtensions.ts",
-          "forms/rich-text/extensions.ts",
-          "forms/rich-text/types.ts"
-        ]
       },
       "PopupSurface": {
         "classes": ["env-popup"],
@@ -494,10 +378,15 @@
           "forms/color/internal/ColorLocale.tsx",
           "forms/color/internal/ColorValues.tsx",
           "forms/color/internal/SwatchList.tsx",
+          "forms/color/internal/useSwatchFocus.ts",
           "forms/color/internal/colorValue.ts",
-          "forms/color/internal/useColorState.ts",
-          "forms/color/internal/useEyeDropper.ts"
+          "forms/color/internal/useColorFollowingValue.ts",
+          "forms/color/internal/useEyeDropper.ts",
+          "forms/color/internal/useFormResetting.ts"
         ]
+      },
+      "Calendar": {
+        "modules": ["forms/internal/pickerFocus.ts"]
       },
       "DatePicker": {
         "modules": [
@@ -518,7 +407,7 @@
       "index.css": "Imports every stylesheet.",
       "Base.css": "The layer order, the reset, the tokens, the theme boundary and the shared surface, icon and motion rules every component builds on.",
       "ConnectedRows.css": "Shared connected-row corners.",
-      "Prose.css": "The prose typography Markdown and the rich-text components share.",
+      "Prose.css": "The prose typography of Markdown.",
       "Motion.css": "The keyframes several components share.",
       "Skeleton.css": "The skeleton state every component that paints a container takes, by element and data-env-skeleton.",
       "Reset.css": "The margin of a themed document's body and the box-sizing reset inside every theme boundary.",
@@ -593,11 +482,6 @@
           "stylesheet": "Code.css",
           "classes": ["env-spinner"],
           "note": "A code diff pads its loading state."
-        },
-        {
-          "stylesheet": "Editor.css",
-          "classes": ["env-toolbar", "env-toolbar-group"],
-          "note": "An editor's formatting toolbar wraps its groups onto more rows, and offsets the row and its first group so the separator a wrapped row starts with lies outside its clip."
         },
         {
           "stylesheet": "Composer.css",

@@ -14,7 +14,7 @@ export default function LabelledControls() {
     <Toolbar.Root aria-label="Formatting">
       <Menu.Root
         aria-label="Block type"
-        trigger={<Toolbar.Item render={<Button endIcon={<IconExpandMore />}>{block}</Button>} />}
+        trigger={<Toolbar.Item render={<Button end={<IconExpandMore />}>{block}</Button>} />}
       >
         <Menu.RadioGroup value={block} onValueChange={setBlock}>
           {blocks.map((each) => (
@@ -34,7 +34,7 @@ export default function LabelledControls() {
       />
       <Toolbar.Button icon={<IconFormatItalic />} label="Italic" shortcut="Ctrl+I" />
       <Toolbar.Separator />
-      <Toolbar.Item render={<Button startIcon={<IconShare />}>Share</Button>} />
+      <Toolbar.Item render={<Button start={<IconShare />}>Share</Button>} />
     </Toolbar.Root>
   );
 }

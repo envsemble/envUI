@@ -5,7 +5,7 @@ import { ToastRegion } from './internal/ToastRegion.js';
 import { useToastController } from './internal/useToastController.js';
 import { toastPlacements } from './internal/toastEntry.js';
 import type { ToastProviderProps } from './toastTypes.js';
-import { ToastManagerContext } from './useToast.js';
+import { ToastManagerContext } from './internal/ToastManagerContext.js';
 
 export type { ToastProviderProps } from './toastTypes.js';
 

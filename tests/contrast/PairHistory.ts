@@ -2,6 +2,16 @@ import { onPage, onRecessed, pairName, pairs, type Relaxation } from './Pairs.ts
 
 export const dropped: readonly { pair: string; rationale: string }[] = [
   {
+    pair: 'heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-page',
+    rationale:
+      "CalendarHeatmap was removed from envUI (a code host's contribution grid is the application's), so nothing draws a heatmap's lightest step against an empty day any more.",
+  },
+  {
+    pair: 'heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      "CalendarHeatmap was removed from envUI (a code host's contribution grid is the application's), so nothing draws a heatmap's lightest step against an empty day any more.",
+  },
+  {
     pair: '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over --env-color-bg-default',
     rationale:
       'Tabs was removed from envUI (SegmentedControl switches views now), so nothing draws an unselected or active tab on a tab rail any more; SegmentedControl measures its own segments.',
@@ -1783,6 +1793,12 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       rationale:
         'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
     })),
+  {
+    from: 'heatmap-accent-lowest on --env-color-bg-neutral-muted over catalogue-canvas',
+    to: 'heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed; the heatmap this measured left with CalendarHeatmap, so the recessed pair is dropped too.',
+  },
   ...['', '-hover', '-pressed'].map((state) => ({
     from: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over catalogue-canvas`,
     to: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over --env-color-bg-recessed`,

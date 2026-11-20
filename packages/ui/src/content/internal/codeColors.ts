@@ -32,7 +32,7 @@ const darkHighContrastEditorBackground = '#0a0c10';
 const colorsOfShikiGithubThemes: Record<ColorScheme, Record<CodeContrast, CodeColors>> = {
   light: {
     standard: {
-      surfaces: ['#f1f1f3', '#f8f8fa', '#ffffff'],
+      surfaces: ['#eaeaec', '#f4f4f6', '#ffffff'],
       block: { color: lightThemeText, alpha: 0.06 },
       inline: { color: lightThemeText, alpha: 0.1 },
       foreground: '#1f2328',
@@ -46,7 +46,7 @@ const colorsOfShikiGithubThemes: Record<ColorScheme, Record<CodeContrast, CodeCo
   },
   dark: {
     standard: {
-      surfaces: ['#1e1f21', '#28292b', '#303234', '#343638'],
+      surfaces: ['#191a1b', '#28292b', '#343638'],
       block: { color: darkThemeText, alpha: 0.05 },
       inline: { color: darkThemeText, alpha: 0.125 },
       foreground: '#b2c0cd',

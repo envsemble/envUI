@@ -5,8 +5,12 @@ export interface RangeBarProps extends Omit<
   ComponentPropsWithRef<'div'>,
   'children' | 'aria-valuetext' | 'defaultValue'
 > {
-  /** What the bar shows, such as Seats assigned; it is visible above the bar and names it. */
-  label: ReactNode;
+  /**
+   * What the bar shows, such as Seats assigned; it shows with the bar and names it. Leave it
+   * out for a bare bar named with aria-label or aria-labelledby, such as by the name beside it in a
+   * row; without a label or valueText the bar has no row above it.
+   */
+  label?: ReactNode;
   /**
    * The low end of the range.
    * @default 0

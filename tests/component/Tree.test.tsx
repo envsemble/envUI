@@ -270,7 +270,7 @@ test('a row keeps its label whole before its end: an end that does not fit besid
   const longEnd = long.querySelector('.env-tree-end')!;
   expect(visible(longEnd, long)).toBe(false);
   expect(visible(longLabel, long)).toBe(true);
-  const icon = long.querySelector('.env-tree-icon')!.getBoundingClientRect();
+  const icon = long.querySelector('.env-tree-start')!.getBoundingClientRect();
   const content =
     long.getBoundingClientRect().right - Number.parseFloat(css(long, 'padding-right'));
   expect(longLabel.getBoundingClientRect().right).toBeCloseTo(content, 0);
@@ -286,7 +286,7 @@ test('a row keeps its label whole before its end: an end that does not fit besid
   expect(short.querySelector('.env-badge')!.getBoundingClientRect().width).toBeGreaterThan(30);
 });
 
-test('a row takes content for its name with a text value for type-ahead, its own row props, and the application handlers beside the tree’s', async () => {
+test('a row takes content for its name, matched by type-ahead through its text value or its rendered text, its own item props, and the application handlers beside the tree’s', async () => {
   const log: string[] = [];
   const items = [
     { value: 'a', depth: 0, label: 'Alpha.md' },
@@ -296,8 +296,9 @@ test('a row takes content for its name with a text value for type-ahead, its own
       label: h('span', null, h('mark', null, 'Br'), 'avo.md'),
       textValue: 'Bravo.md',
       description: h('code', null, 'M'),
-      rowProps: { className: 'modified', 'data-status': 'modified', draggable: true },
+      itemProps: { className: 'modified', 'data-status': 'modified', draggable: true },
     },
+    { value: 'c', depth: 0, label: h('span', null, h('b', null, 'Ch'), 'arlie.md') },
   ];
   const element = h(
     Theme,
@@ -336,10 +337,18 @@ test('a row takes content for its name with a text value for type-ahead, its own
   expect(bravo.element().querySelector('.env-tree-label mark')?.textContent).toBe('Br');
 
   (tree.element() as HTMLElement).focus();
+  stopTimers('performance');
   await keyboard.press('b');
   await expect
     .poll(() => tree.element().getAttribute('aria-activedescendant'))
     .toBe(bravo.element().id);
+  const pastTypeAheadPause = 800;
+  await passTime(pastTypeAheadPause);
+  await keyboard.press('c');
+  await expect
+    .poll(() => tree.element().getAttribute('aria-activedescendant'))
+    .toBe(tree.getByRole('treeitem', { name: 'Charlie.md' }).element().id);
+  vi.useRealTimers();
 
   await tree.getByRole('treeitem', { name: 'Alpha.md' }).click();
   expect(log).toEqual(['pointerdown', 'click']);

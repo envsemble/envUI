@@ -2,7 +2,7 @@ import type { DocumentationMetadata } from '../documentation/DocumentationTypes'
 import { routeHref } from '../routes/Address';
 import { pageHref, groupedPages, routeOfDocument } from '../routes/SiteRoutes';
 import { documents } from '../routes/PageModel';
-import { frameOf, tilePictureOf, type TileFrame, type TilePicture } from '../tiles/TilePictures';
+import { ownsFrame, tilePictureOf, type TilePicture } from '../tiles/TilePictures';
 
 function pageOf(component: string) {
   const namespace = component.split('.')[0];
@@ -24,7 +24,7 @@ export interface Alternative {
   href?: string;
   picture?: TilePicture;
   line: string;
-  frame?: TileFrame;
+  ownFrame: boolean;
 }
 
 export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
@@ -37,7 +37,7 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
         href: page && pageHref(page),
         picture: page && tilePictureOf(page.document, use),
         line: text,
-        frame: frameOf(page?.document.id),
+        ownFrame: ownsFrame(page?.document.id),
       };
     }
     const document = documents.find((item) => item.id === see);
@@ -47,7 +47,7 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
       href: see && relatedHref(see),
       picture: document && tilePictureOf(document),
       line: text,
-      frame: frameOf(see),
+      ownFrame: ownsFrame(see),
     };
   });
 }

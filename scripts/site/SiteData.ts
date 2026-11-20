@@ -17,6 +17,7 @@ import {
   tokenOutlineSources,
 } from './PartOutlines.ts';
 import { readReleaseNotes, releaseNotesSources } from './ReleaseNotes.ts';
+import { partKinds } from '../../apps/site/src/documentation/PartKeys.ts';
 
 const partSizesFile = resolve(repositoryRoot, 'apps/site/src/generated/PartSizes.json');
 function readPartSizes(): Record<string, [number, number]> {
@@ -24,7 +25,7 @@ function readPartSizes(): Record<string, [number, number]> {
   return sizes;
 }
 
-const pagePart = /^(?:example|specimen|open|figure):([^/]+)\//;
+const pagePart = new RegExp(`^(?:${partKinds.join('|')}):([^/]+)/`);
 
 const inside = (directory: string, path: string) => {
   const contained = relative(directory, path);

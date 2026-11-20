@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import { moduleRegistry } from '../loading/ModuleRegistry';
+import { shownByPageTile } from './MemberTiles';
 
 export interface TileModule {
   default: ComponentType;
@@ -29,12 +30,6 @@ export const tileOf = (page: string) =>
   tiles.has(tilePath(page)) ? () => tiles.load(tilePath(page)) : undefined;
 
 const memberTiles = moduleRegistry(import.meta.glob<TileModule>('/src/tiles/members/*.tsx'));
-
-const shownByPageTile: Readonly<Record<string, string>> = {
-  RichTextEditor: 'rich-text',
-  CodeBlock: 'code',
-  HighlightedCodeBlock: 'code',
-};
 
 export const memberTileOf = (component: string) => {
   const page = shownByPageTile[component];

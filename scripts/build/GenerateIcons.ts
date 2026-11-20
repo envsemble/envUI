@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, unlink } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { readIfExists, writeIfChanged } from './GeneratedFiles.ts';
+import { GeneratedOutput } from './GeneratedFiles.ts';
 import { libraryDirectory } from '../RepositoryPaths.ts';
 
 interface IconVariant {
@@ -35,9 +35,9 @@ const checkOnly = process.argv.includes('--check');
 if (process.argv.slice(2).some((argument) => argument !== '--check'))
   throw new Error('Usage: GenerateIcons.ts [--check]');
 await mkdir(outputDirectory, { recursive: true });
+const output = new GeneratedOutput({ check: checkOnly, regenerate: 'npm run icons:generate' });
 function writeModule(path: string, source: string) {
-  if (!checkOnly) writeIfChanged(path, source);
-  else if (readIfExists(path) !== source) throw new Error(`Generated icon is stale: ${path}`);
+  output.writeOrCheck(path, source);
 }
 const hash = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
 if (
@@ -153,10 +153,12 @@ for (const file of await readdir(outputDirectory)) {
   if (generatedFiles.has(file) || !file.endsWith('.tsx')) continue;
   const source = await readFile(resolve(outputDirectory, file), 'utf8');
   if (source.startsWith('// Generated from Google Material Symbols')) {
-    if (checkOnly) throw new Error(`Obsolete generated icon: ${file}`);
+    if (checkOnly)
+      throw new Error(`Obsolete generated icon: ${file}. Run \`npm run icons:generate\`.`);
     await unlink(resolve(outputDirectory, file));
   }
 }
+output.throwIfStale();
 console.log(
   `${checkOnly ? 'Verified' : 'Generated'} ${manifest.iconCount} official icons and the Typography alias from ${manifest.sourceCount} verified SVGs (offline).`,
 );

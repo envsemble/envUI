@@ -49,7 +49,7 @@ function OrganizationSwitcher({
       aria-label="Organizations"
       align="start"
       trigger={
-        <Button variant="secondary" fullWidth endIcon={<IconUnfoldMore />}>
+        <Button variant="secondary" fullWidth end={<IconUnfoldMore />}>
           {active?.label}
         </Button>
       }
@@ -70,7 +70,7 @@ function OrganizationSwitcher({
         ))}
       </Menu.RadioGroup>
       <Menu.Separator />
-      <Menu.Item icon={<IconAdd />}>Create organization</Menu.Item>
+      <Menu.Item start={<IconAdd />}>Create organization</Menu.Item>
     </Menu.Root>
   );
 }
@@ -91,12 +91,12 @@ function AccountMenu({ current, onChange }: { current: string; onChange: (id: st
           </Text>
         </Column>
       </Menu.Header>
-      <Menu.Item href="#account" icon={<IconManageAccounts />}>
+      <Menu.Item href="#account" start={<IconManageAccounts />}>
         Account settings
       </Menu.Item>
       <Menu.Submenu
         label="Organization"
-        icon={<IconGroups3 />}
+        start={<IconGroups3 />}
         description={organizations.find(({ id }) => id === current)?.label}
       >
         <Menu.RadioGroup value={current} onValueChange={onChange}>
@@ -107,11 +107,11 @@ function AccountMenu({ current, onChange }: { current: string; onChange: (id: st
           ))}
         </Menu.RadioGroup>
       </Menu.Submenu>
-      <Menu.Submenu label="Theme" icon={<IconPalette />}>
+      <Menu.Submenu label="Theme" start={<IconPalette />}>
         <ThemeMenuRadioGroup />
       </Menu.Submenu>
       <Menu.Separator />
-      <Menu.Item icon={<IconLogout />}>Sign out</Menu.Item>
+      <Menu.Item start={<IconLogout />}>Sign out</Menu.Item>
     </Menu.Root>
   );
 }

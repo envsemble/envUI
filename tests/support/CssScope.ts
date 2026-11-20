@@ -1,3 +1,5 @@
+import { withoutComments } from '../../scripts/site/CssComments.ts';
+
 function closingParenthesis(selector: string, index: number) {
   let depth = 0;
   for (; index < selector.length; index++) {
@@ -100,7 +102,7 @@ function scopedElement(selector: string): boolean {
 }
 
 export function ruleSelectors(css: string) {
-  const rules = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@[^{};]*;/g, '');
+  const rules = withoutComments(css).replace(/@[^{};]*;/g, '');
   return [...rules.matchAll(/(?:^|(?<=[{}]))\s*([^{}]+)\{/g)].map((match) => match[1].trim());
 }
 

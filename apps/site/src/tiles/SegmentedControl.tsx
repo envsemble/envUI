@@ -31,8 +31,8 @@ export default function SegmentedControlTile() {
       value={value}
       onValueChange={setValue}
       items={[
-        { value: 'list', label: 'List', icon: <IconViewList /> },
-        { value: 'board', label: 'Board', icon: <IconViewModule /> },
+        { value: 'list', label: 'List', start: <IconViewList /> },
+        { value: 'board', label: 'Board', start: <IconViewModule /> },
       ]}
     />
   );

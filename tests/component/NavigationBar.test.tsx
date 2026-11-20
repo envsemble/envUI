@@ -46,10 +46,20 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
   const labels = menu.getByRole('menuitem', { name: /Labels/ });
   await expect.element(labels).toHaveAttribute('aria-current', 'page');
   await expect.element(labels).toHaveAccessibleName('Labels, 4 new');
+  const archive = menu.getByRole('menuitem', { name: /Archive/ });
+  await expect.element(archive).toHaveAttribute('href', '#archive');
+  await expect.element(archive).toHaveAttribute('target', '_blank');
+  await expect.element(archive).toHaveAttribute('data-testid', 'archive-item');
+  await expect.element(archive).toHaveClass('env-menu-item', 'own-item');
+  for (const item of menu.getByRole('menuitem').elements()) {
+    expect(item.querySelector('.env-menu-item-start > svg')).not.toBeNull();
+    expect(item.hasAttribute('icon')).toBe(false);
+  }
+  (labels.element() as HTMLElement).focus();
+  await keyboard.press('t');
   await expect
-    .element(menu.getByRole('menuitem', { name: /Archive/ }))
-    .toHaveAttribute('href', '#archive');
-  (menu.getByRole('menuitem', { name: /Trash/ }).element() as HTMLElement).focus();
+    .poll(() => document.activeElement)
+    .toBe(menu.getByRole('menuitem', { name: 'Trash', exact: true }).element());
   await keyboard.press('Escape');
   await isHidden(menu);
   await expect.element(more).toHaveFocus();

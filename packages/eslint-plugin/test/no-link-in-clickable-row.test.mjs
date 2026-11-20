@@ -34,10 +34,11 @@ ruleTester.run('no-link-in-clickable-row', rule, {
     ]),
     '<Card href="/r/1">Report</Card>',
     ...named(
-      "An interactive Card without a target, and links in an interactive Card's meta, end and actions, which sit above its target",
+      'Links in an interactive Card, which stay clickable above its target, as in an interactive List.Item',
       [
         '<Card interactive title="Report"><Link href="/help">Help</Link></Card>',
-        '<Card interactive title={<Link href="/r/1" data-row-target>Report</Link>} meta={<Link href="/a">Alex</Link>} end={<Button variant="text">Edit</Button>} actions={<Link href="/r/1/share">Share</Link>} />',
+        '<Card interactive title={<Link href="/r/1" data-row-target>Report</Link>} meta={<Link href="/a">Alex</Link>} headerEnd={<Button variant="text">Edit</Button>} actions={<Link href="/r/1/share">Share</Link>} />',
+        '<Card interactive title={<Link href="/r/1" data-row-target>Report</Link>} description={<>Edited by <Link href="/a">Alex Morgan</Link></>} />',
       ],
     ),
     '<Table.Row><Table.Cell><Link href="/r/1">Report</Link></Table.Cell></Table.Row>',
@@ -66,15 +67,6 @@ ruleTester.run('no-link-in-clickable-row', rule, {
             advice:
               " When it goes where the card goes, leave it out: the card's href or onClick takes the click.",
           },
-        },
-      ],
-    },
-    {
-      code: '<Card interactive title={<Link href="/r/1" data-row-target>Report</Link>} description={<>Edited by <Link href="/a">Alex Morgan</Link></>} />',
-      errors: [
-        {
-          message:
-            'A Link inside a clickable Card: the row takes the click. Move the action into its end or actions as a Button, or into a Menu. When it goes where the card goes, mark it data-row-target instead.',
         },
       ],
     },

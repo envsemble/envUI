@@ -101,7 +101,7 @@ examples:
 2. **Header** (`env-card-header`)
 3. **Title** (`env-card-title`, `title`)
 4. **Meta** (`env-card-meta`, `meta`)
-5. **End** (`env-card-end`, `end`)
+5. **Header end** (`env-card-header-end`, `headerEnd`)
 6. **Description** (`env-card-description`, `description`)
 7. **Content** (`env-card-body > env-text:last-child`, `children`)
 8. **Actions** (`env-card-actions`, `actions`)

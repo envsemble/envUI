@@ -8,7 +8,7 @@ export default function EditMember() {
       <Dialog
         trigger={<Button variant="secondary">Edit member</Button>}
         title="Priya Shah"
-        closeButton="heading"
+        closeButtonPlacement="heading"
         actionsStart={
           <DialogClose variant="text" tone="danger" onClick={() => setResult('Member removed')}>
             Remove from team

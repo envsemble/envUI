@@ -1,11 +1,11 @@
-import envui from '@envsemble/eslint-plugin-envui';
 import js from '@eslint/js';
 import { readdirSync } from 'node:fs';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import { repositoryPlugin } from './scripts/lint/NoComments.ts';
+import { siteConfigs } from './apps/site/eslint.rules.mjs';
+import { noCommentsPlugin } from './scripts/lint/NoComments.ts';
 
 const commentFreeFiles = [
   'scripts/**',
@@ -30,7 +30,21 @@ const otherFamiliesInternals = (family) => ({
   message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/.`,
 });
 
-const privateFolders = { 'content/internal/markdown': ['content/MarkdownEditor.tsx'] };
+const providerLocale = {
+  regex: String.raw`(^|/)EnvUIContext\.js$`,
+  importNames: ['useLocale'],
+  message:
+    'Format in useResolvedLocale (src/internal/provider/locale.ts), which keeps the server’s locale until hydration. The provider’s own locale is for a module that hands it to a library that handles hydration itself, listed in providerLocaleReaders in eslint.config.mjs.',
+};
+const providerLocaleReaders = [
+  'foundations/EnvUIProvider.tsx',
+  'internal/provider/locale.ts',
+  'data-display/Meter.tsx',
+  'feedback/Progress.tsx',
+  'forms/Slider.tsx',
+  'forms/Combobox.tsx',
+  'actions/CommandPalette.tsx',
+].map((path) => `packages/ui/src/${path}`);
 
 const confusingBrowserGlobals = [
   'close',
@@ -49,100 +63,6 @@ const confusingBrowserGlobals = [
   'top',
 ];
 
-const siteImports = {
-  regex: String.raw`^(\.\./)+(packages/ui/src|scripts)(/|$)`,
-  message:
-    'Import the library from @envsemble/envui and its internals from @envui-internal/*; the site imports nothing of scripts/.',
-};
-
-const siteInternals = {
-  'content/internal/codeHighlighting':
-    'The highlighter that makes the code tokens a pre-rendered page hands the library.',
-  'content/internal/givenCodeTokens':
-    'The pre-rendered page’s code tokens, handed to the library’s components before they hydrate.',
-  'content/internal/givenMarkdownTrees':
-    'The pre-rendered page’s Markdown trees, handed to the library’s components before they hydrate.',
-  'internal/provider/LinkComponentContext':
-    'The link component an application gives the library, which the site’s own links follow.',
-  'internal/dom/paints':
-    'What a box paints, as dev mode decides it, which the fit centres a picture on.',
-  'internal/motion/motionTokens':
-    'How a motion token is read and eased, as the library’s own motion reads it.',
-  'styles/SegmentedControl.css':
-    'The look of the Design/Code switch, whose segments are links rather than the radios SegmentedControl renders.',
-};
-const siteInternalImports = {
-  regex: String.raw`^@envui-internal/(?!(${Object.keys(siteInternals).join('|')})$)`,
-  message:
-    'The site imports only the library internals listed in eslint.config.mjs (siteInternals): keep a small helper of its own in apps/site/src/shared/, or list the module with its reason.',
-};
-
-const siteFolders = [
-  'navigation',
-  'pages',
-  'frame',
-  'search',
-  'brand',
-  'template',
-  'specimens',
-  'figures',
-  'markdown',
-  'tiles',
-  'motion',
-  'fit',
-  'routes',
-  'loading',
-  'display',
-  'examples',
-  'shared',
-  'generated',
-  'documentation',
-];
-const folderDepths = [1, 2, 3];
-const siteFolderOrder = siteFolders.slice(1).flatMap((folder, index) =>
-  folderDepths.map((depth) => ({
-    files: [`apps/site/src/${folder}/${'*/'.repeat(depth - 1)}*.{ts,tsx}`],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            siteImports,
-            siteInternalImports,
-            {
-              regex: String.raw`^(\.\./){${depth}}(${siteFolders.slice(0, index + 1).join('|')})(/|$)`,
-              message: `${folder}/ imports only the folders after it in siteFolders, in eslint.config.mjs: move what both use into ${folder}/ or below it.`,
-            },
-          ],
-        },
-      ],
-    },
-  })),
-);
-
-const siteResizeObserver = {
-  selector: "NewExpression[callee.name='ResizeObserver']",
-  message:
-    'Measure through remeasure (apps/site/src/shared/Remeasure.ts), the site’s one measuring loop.',
-};
-
-const previewNames = [
-  'VariableDeclarator > Identifier.id',
-  'FunctionDeclaration > Identifier.id',
-  'ClassDeclaration > Identifier.id',
-  'TSTypeAliasDeclaration > Identifier.id',
-  'TSInterfaceDeclaration > Identifier.id',
-  'TSPropertySignature > Identifier.key',
-  'MethodDefinition > Identifier.key',
-  'PropertyDefinition > Identifier.key',
-  'ObjectExpression > Property > Identifier.key',
-  ':function > Identifier.params',
-].map((declared) => ({
-  selector: `${declared}[name=/preview/i]`,
-  message:
-    'Name it with the site’s words, example, specimen, tile, figure or stage: preview is an older name.',
-}));
-
 const emptyOrUndefined = `ConditionalExpression:matches([consequent.value=''][alternate.name='undefined'], [consequent.name='undefined'][alternate.value=''])`;
 const inlineFlags = [
   `JSXAttribute[name.name=/^data-/] > JSXExpressionContainer > ${emptyOrUndefined}`,
@@ -150,6 +70,33 @@ const inlineFlags = [
 ].map((selector) => ({
   selector,
   message: 'Set a state attribute that is on or off with flag() (src/internal/flag.ts).',
+}));
+
+const inlinePixels = {
+  selector:
+    "LogicalExpression[operator='||'][right.value=0] > CallExpression.left:matches([callee.name='parseFloat'], [callee.property.name='parseFloat'])",
+  message: 'Read a computed length with pixelsOf() (src/internal/dom/lengths.ts).',
+};
+
+const ownStateFromDefault = {
+  selector: "CallExpression[callee.name='useState'] Identifier[name=/^default[A-Z]/]",
+  message:
+    'Keep a value that has a default prop in useControllableState (src/internal/react/useControllableState.ts), not in a useState of its own.',
+};
+
+const pathsFromRepositoryPaths = {
+  selector: String.raw`Literal[value=/^(?:\.{1,2}\/)*(?:packages\/ui\/src\/styles\/?|docs\/generated\/(?:parts|props|exports)\.json)$/]`,
+  message:
+    'Take the path from scripts/RepositoryPaths.ts (styleSheetsDirectory, partsFile, propsFile, exportsFile), and repositoryPath() for its repository-relative form.',
+};
+
+const noFixedSleeps = [
+  "NewExpression[callee.name='Promise'] CallExpression[callee.name='setTimeout']",
+  "CallExpression[callee.property.name='waitForTimeout']",
+].map((selector) => ({
+  selector,
+  message:
+    "Wait for a condition (expect.poll, a locator's state), or stop the page's timers (stopTimers, passTime); waitOnRealTime in tests/component/support/Browser.ts is the one wait on real time.",
 }));
 
 const buildOutput = ['**/dist/**', '**/node_modules/**', '.cache/**'];
@@ -227,7 +174,7 @@ export default defineConfig(
   },
   {
     files: commentFreeFiles,
-    plugins: { repository: repositoryPlugin },
+    plugins: { repository: noCommentsPlugin },
     rules: { 'repository/no-comments': ['error', { publicApi: publicApiWithDocComments }] },
   },
   {
@@ -244,54 +191,57 @@ export default defineConfig(
     rules: { 'no-console': 'error', ...strictContentSecurityPolicy },
   },
   {
+    files: ['scripts/**', 'tests/**', 'packages/*/test/**', '*.{js,mjs,ts}'],
+    ignores: ['scripts/RepositoryPaths.ts'],
+    rules: { 'no-restricted-syntax': ['error', pathsFromRepositoryPaths] },
+  },
+  {
+    files: ['tests/{component,browser,accessibility,visual}/**/*.{ts,tsx}'],
+    ignores: ['tests/component/support/Browser.ts'],
+    rules: { 'no-restricted-syntax': ['error', pathsFromRepositoryPaths, ...noFixedSleeps] },
+  },
+  {
     files: ['packages/ui/src/**/*.{ts,tsx}'],
-    rules: { 'no-restricted-syntax': ['error', ...inlineFlags] },
+    rules: {
+      'no-restricted-syntax': ['error', ...inlineFlags, inlinePixels, ownStateFromDefault],
+    },
+  },
+  {
+    files: [
+      'packages/ui/src/internal/react/useControllableState.ts',
+      'packages/ui/src/forms/color/internal/useColorFollowingValue.ts',
+    ],
+    rules: { 'no-restricted-syntax': ['error', ...inlineFlags, inlinePixels] },
   },
   ...families.map((family) => ({
     files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
-    rules: { 'no-restricted-imports': ['error', { patterns: [otherFamiliesInternals(family)] }] },
-  })),
-  ...Object.entries(privateFolders).map(([folder, allowed]) => {
-    const [family, ...rest] = folder.split('/');
-    const name = rest.at(-1);
-    return {
-      files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
-      ignores: [
-        `packages/ui/src/${folder}/**`,
-        ...allowed.map((module) => `packages/ui/src/${module}`),
+    ignores: providerLocaleReaders,
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [otherFamiliesInternals(family), providerLocale] },
       ],
-      rules: {
-        'no-restricted-imports': [
-          'error',
+    },
+  })),
+  ...families.flatMap((family) => {
+    const readers = providerLocaleReaders.filter((path) =>
+      path.startsWith(`packages/ui/src/${family}/`),
+    );
+    return readers.length
+      ? [
           {
-            patterns: [
-              otherFamiliesInternals(family),
-              {
-                regex: String.raw`(^|/)${rest.join('/')}(/|$)|^\./${name}(/|$)`,
-                message: `${folder}/ is private to ${allowed.join(', ')}: build on its public API (eslint.config.mjs, privateFolders).`,
-              },
-            ],
+            files: readers,
+            rules: {
+              'no-restricted-imports': ['error', { patterns: [otherFamiliesInternals(family)] }],
+            },
           },
-        ],
-      },
-    };
+        ]
+      : [];
   }),
   {
-    files: ['apps/site/src/**/*.{ts,tsx}'],
-    ignores: ['apps/site/src/examples/**'],
-    rules: { 'no-restricted-syntax': ['error', ...previewNames, siteResizeObserver] },
+    files: ['packages/ui/src/internal/**/*.{ts,tsx}'],
+    ignores: providerLocaleReaders,
+    rules: { 'no-restricted-imports': ['error', { patterns: [providerLocale] }] },
   },
-  {
-    files: ['apps/site/src/shared/Remeasure.ts'],
-    rules: { 'no-restricted-syntax': ['error', ...previewNames] },
-  },
-  {
-    files: ['apps/site/src/**/*.{ts,tsx}'],
-    rules: { 'no-restricted-imports': ['error', { patterns: [siteImports, siteInternalImports] }] },
-  },
-  ...siteFolderOrder,
-  {
-    ...envui.configs.recommended,
-    files: ['apps/site/src/examples/**/*.{ts,tsx}'],
-  },
+  ...siteConfigs,
 );

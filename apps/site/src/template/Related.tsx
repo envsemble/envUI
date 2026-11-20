@@ -8,18 +8,18 @@ import { usePlaying } from '../motion/usePlaying';
 import { TileStage } from '../figures/TileStage';
 import { useNear } from '../figures/useNear';
 import { alternativesOf, type Alternative } from './RelatedPages';
-import type { TileFrame, TilePicture } from '../tiles/TilePictures';
+import type { TilePicture } from '../tiles/TilePictures';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
 
 function RelatedTile({
   picture,
   near,
-  frame,
+  ownFrame,
   children,
 }: {
   picture?: TilePicture;
   near: boolean;
-  frame?: TileFrame;
+  ownFrame: boolean;
   children: ReactNode;
 }) {
   const tile = useRef<HTMLLIElement>(null);
@@ -33,7 +33,7 @@ function RelatedTile({
           near={near}
           playing={playing || autoplay}
           className="catalogue-tile-stage catalogue-gallery-stage"
-          frame={frame}
+          ownFrame={ownFrame}
         />
       </div>
       <div className="catalogue-gallery-meta catalogue-related-meta">{children}</div>
@@ -47,8 +47,8 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
   const id = useId();
   return (
     <ul ref={list} className="catalogue-related-tiles" data-count={alternatives.length}>
-      {alternatives.map(({ key, name, href, picture, line, frame }, index) => (
-        <RelatedTile key={key} picture={picture} near={near} frame={frame}>
+      {alternatives.map(({ key, name, href, picture, line, ownFrame }, index) => (
+        <RelatedTile key={key} picture={picture} near={near} ownFrame={ownFrame}>
           <Row align="center" justify="between" gap={2}>
             <Text render={<span />} className="catalogue-related-name">
               {href ? (

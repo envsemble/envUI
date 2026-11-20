@@ -2,12 +2,16 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { declarations } from '../../support/CssDeclarations.ts';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { declarations } from '../../support/StyleSheets.ts';
+import {
+  repositoryPath,
+  repositoryRoot,
+  styleSheetsDirectory,
+} from '../../../scripts/RepositoryPaths.ts';
 
 function styleSheets() {
   const sheets: { file: string; css: string }[] = [];
-  for (const directory of ['packages/ui/src/styles', 'packages/ui/src/dev/ui', 'apps/site/src'])
+  for (const directory of [repositoryPath(styleSheetsDirectory), 'apps/site/src'])
     for (const name of readdirSync(join(repositoryRoot, directory), {
       recursive: true,
       encoding: 'utf8',
@@ -56,10 +60,7 @@ test('round corners are capped, except on parts that are always square, each sti
 });
 
 test('the full corner is capped at half the tallest single-line control', () => {
-  const css = readFileSync(
-    join(repositoryRoot, 'packages/ui/src/styles/TokensHandwritten.css'),
-    'utf8',
-  );
+  const css = readFileSync(join(styleSheetsDirectory, 'TokensHandwritten.css'), 'utf8');
   const [, value] = css.match(/--env-radius-full:\s*([^;]+);/) ?? [];
   assert.equal(
     value,

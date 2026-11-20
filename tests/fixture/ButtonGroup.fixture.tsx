@@ -24,10 +24,10 @@ export default function ButtonGroupFixture({ theme }: { theme: ColorScheme }) {
             <Button onClick={() => setActivations((value) => value + 1)}>Continue</Button>
             <IconButton variant="primary" tone="accent" icon={<IconCheck />} aria-label="Confirm" />
             <IconButton icon={<IconSettings />} aria-label="Settings" />
-            <Button href="#group-destination" variant="secondary" startIcon={<IconSettings />}>
+            <Button href="#group-destination" variant="secondary" start={<IconSettings />}>
               Manage
             </Button>
-            <Button variant="primary" tone="danger" endIcon={<IconCheck />}>
+            <Button variant="primary" tone="danger" end={<IconCheck />}>
               Delete
             </Button>
           </ButtonGroup>
@@ -98,7 +98,7 @@ export default function ButtonGroupFixture({ theme }: { theme: ColorScheme }) {
         <output data-testid="activations">{activations}</output>
         <div className="fixture-sidebar" data-testid="sidebar">
           <ButtonGroup fullWidth aria-label="Start a document">
-            <Button startIcon={<IconAdd />}>New document</Button>
+            <Button start={<IconAdd />}>New document</Button>
             <IconButton
               variant="primary"
               icon={<IconExpandMore />}

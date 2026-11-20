@@ -10,21 +10,19 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import { Kbd } from '../../content/Kbd.js';
 import { Slot } from '../../internal/layout/Slot.js';
 import { useLinkComponent } from '../../internal/provider/LinkComponentContext.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
+import { idRefs } from '../../internal/dom/idRefs.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
 export interface ItemContentProps {
-  /** A decorative icon before the label, such as Settings. */
-  icon?: ReactNode;
   /**
-   * Content before the label in place of an icon, such as an Avatar in an account switcher, at its
-   * own size rather than the icon's; the labels of the menu's rows still line up. It is hidden from
-   * assistive technology, since the label names the item.
+   * Content before the label, such as the Settings icon or an Avatar in an account switcher: an
+   * envUI icon takes the icon size and other content keeps its own, and the labels of the menu's
+   * rows still line up. It is hidden from assistive technology, since the label names the item.
    */
   start?: ReactNode;
   /** The item's label, which names it. */
@@ -49,10 +47,9 @@ export interface ItemContentProps {
 
 const endContentSeparateWordInName = ' ';
 
-/** Shared item layout: indicator, icon, label with optional description, end content, shortcut. */
+/** Shared item layout: indicator, start, label with optional description, end content, shortcut. */
 export function useMenuItemContent(
   {
-    icon,
     start,
     children,
     textValue,
@@ -68,7 +65,6 @@ export function useMenuItemContent(
   const content = (
     <>
       {indicator}
-      {icon != null && <DecorativeIcon>{icon}</DecorativeIcon>}
       {start != null && (
         <Slot
           className="env-menu-item-start"
@@ -103,14 +99,12 @@ export function useMenuItemContent(
       )}
     </>
   );
-  const describedBy = [ownDescribedBy, description != null ? descriptionId : undefined]
-    .filter(Boolean)
-    .join(' ');
+  const describedBy = idRefs(ownDescribedBy, description != null ? descriptionId : undefined);
   return {
     content,
     accessibility: {
       label: typeof children === 'string' ? children : textValue,
-      'aria-describedby': describedBy || undefined,
+      'aria-describedby': describedBy,
       'aria-keyshortcuts': keyShortcuts(chords),
     },
   };
@@ -198,7 +192,6 @@ const disabledDestinationFollowsNothing = (event: MouseEvent<HTMLElement>) =>
  * and close the menu as they are followed.
  */
 export function Item({
-  icon,
   start,
   children,
   textValue,
@@ -220,7 +213,6 @@ export function Item({
 }: ItemProps) {
   const LinkComponent = useLinkComponent();
   const { content, accessibility } = useMenuItemContent({
-    icon,
     start,
     children,
     textValue,

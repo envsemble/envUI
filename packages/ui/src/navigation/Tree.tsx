@@ -13,22 +13,20 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { ContextMenu } from '../actions/ContextMenu.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
-import {
-  rowElementId,
-  siblingPositions,
-  treeKeyAction,
-  type TypedText,
-} from './internal/treeModel.js';
-import { placeRows, TreeRow } from './internal/TreeRow.js';
-import { useTreeTransitions } from './internal/useTreeTransitions.js';
-import { useTreeViewport } from './internal/useTreeViewport.js';
+import { rowElementId, siblingPositions, treeKeyAction } from './internal/tree/treeModel.js';
+import { placeRows, TreeRow } from './internal/tree/TreeRow.js';
+import { useTreeTransitions } from './internal/tree/useTreeTransitions.js';
+import { useTreeViewport } from './internal/tree/useTreeViewport.js';
 import { flag } from '../internal/flag.js';
+import { chainHandlers } from '../internal/react/chainHandlers.js';
+import type { TypedText } from '../internal/typeahead.js';
+import { labelText } from '../internal/text/labelText.js';
 import '../styles/Base.css';
 import '../styles/Tree.css';
 
@@ -47,16 +45,20 @@ export interface TreeItem {
   /**
    * The row's name: text, or content such as a name with its matched letters highlighted. It keeps
    * its room before the description and the end, and ends with an ellipsis only where the row is
-   * too narrow for it alone. Type-ahead matches it when it is a string.
+   * too narrow for it alone. Type-ahead matches its text.
    */
   label: ReactNode;
   /**
-   * The row's name as plain text, which type-ahead matches where `label` isn't a string.
-   * @default the label, when it is a string
+   * The row's name as plain text, which type-ahead matches, where the label's text isn't it.
+   * @default the label when it is a string, else the label's rendered text
    */
   textValue?: string;
-  /** A decorative icon before the label, such as a folder or a document, at the control icon size. */
-  icon?: ReactNode;
+  /**
+   * Content before the label, such as IconFolder or IconDescription: an envUI icon takes the control
+   * icon size and other content keeps its own. It is hidden from assistive technology, since the
+   * label names the item.
+   */
+  start?: ReactNode;
   /**
    * Muted text after the label, such as a status or a path. It gives way first, to an ellipsis and
    * then out of the row, where the row runs out of room, and is read with the label.
@@ -79,11 +81,11 @@ export interface TreeItem {
    * The row element's own props, such as a className, data attributes for its state, draggable and
    * drag handlers for moving files. The tree's role, id, ARIA attributes and title stay its own.
    */
-  rowProps?: TreeRowElementProps;
+  itemProps?: TreeItemElementProps;
 }
 
-/** What a Tree row's rowProps can set on the row element. */
-export type TreeRowElementProps = Omit<
+/** What a Tree row's itemProps can set on the row element. */
+export type TreeItemElementProps = Omit<
   ComponentPropsWithoutRef<'div'>,
   'children' | 'id' | 'role' | 'title' | 'dangerouslySetInnerHTML' | `aria-${string}`
 > & { [attribute: `data-${string}`]: string | number | boolean | undefined };
@@ -153,7 +155,7 @@ export interface TreeProps<Item extends TreeItem> extends Omit<
 export function Tree<Item extends TreeItem>({
   items,
   'aria-label': label,
-  value: selectedId = null,
+  value: selectedValue = null,
   onAction,
   onExpandedChange,
   contextMenu,
@@ -173,12 +175,12 @@ export function Tree<Item extends TreeItem>({
   const messages = useMessages('tree', treeMessages);
   const treeId = useId().replace(/[^A-Za-z0-9-]/g, '');
   const container = useRef<HTMLDivElement>(null);
-  const [activeId, setActiveId] = useState<string | null>(selectedId);
+  const [activeValue, setActiveValue] = useState<string | null>(selectedValue);
   const [focusVisible, setFocusVisible] = useState(false);
   const pointerFocus = useRef(false);
-  const typeahead = useRef<TypedText>({ text: '', time: 0 });
+  const typeahead = useRef<TypedText>({ text: '', at: 0 });
 
-  const indexById = useMemo(() => {
+  const indexByValue = useMemo(() => {
     const map = new Map<string, number>();
     items.forEach((item, index) => map.set(item.value, index));
     return map;
@@ -187,8 +189,8 @@ export function Tree<Item extends TreeItem>({
   const { rowsElement, arriving, motion, moving } = useTreeTransitions(items);
 
   const fallbackActiveIndex = useRef(0);
-  const selectedIndex = selectedId === null ? undefined : indexById.get(selectedId);
-  let activeIndex = activeId === null ? -1 : (indexById.get(activeId) ?? -1);
+  const selectedIndex = selectedValue === null ? undefined : indexByValue.get(selectedValue);
+  let activeIndex = activeValue === null ? -1 : (indexByValue.get(activeValue) ?? -1);
   if (activeIndex === -1 && items.length > 0)
     activeIndex = selectedIndex ?? Math.min(fallbackActiveIndex.current, items.length - 1);
   fallbackActiveIndex.current = Math.max(activeIndex, 0);
@@ -200,18 +202,18 @@ export function Tree<Item extends TreeItem>({
     count: items.length,
     activeIndex,
     selectedIndex,
-    selectedId,
+    selectedValue,
   });
 
   useEffect(() => {
-    if (selectedId !== null) setActiveId(selectedId);
-  }, [selectedId]);
+    if (selectedValue !== null) setActiveValue(selectedValue);
+  }, [selectedValue]);
 
   function activate(index: number) {
     const at = Math.max(0, Math.min(items.length - 1, index));
     const item = items[at];
     if (!item) return;
-    setActiveId(item.value);
+    setActiveValue(item.value);
     scrollToIndex(at);
   }
 
@@ -227,6 +229,7 @@ export function Tree<Item extends TreeItem>({
     if (event.target !== event.currentTarget || !activeItem) return;
     const keyBelongsToApplication = event.altKey || event.ctrlKey || event.metaKey;
     if (keyBelongsToApplication) return;
+    const treeDocument = event.currentTarget.ownerDocument;
     const action = treeKeyAction(
       event.key,
       items,
@@ -234,6 +237,14 @@ export function Tree<Item extends TreeItem>({
       pageRows,
       isRightToLeft(event.currentTarget),
       typeahead.current,
+      (item) =>
+        labelText(
+          item.label,
+          item.textValue,
+          treeDocument
+            .getElementById(rowElementId(treeId, item.value))
+            ?.querySelector('.env-tree-label'),
+        ),
     );
     if (!action) return;
     if (action.kind === 'move') activate(action.index);
@@ -245,14 +256,14 @@ export function Tree<Item extends TreeItem>({
 
   function rowFromEvent(event: MouseEvent<HTMLElement>) {
     const row = (event.target as Element).closest<HTMLElement>('.env-tree-item');
-    const index = row?.dataset.id === undefined ? undefined : indexById.get(row.dataset.id);
+    const index = row?.dataset.id === undefined ? undefined : indexByValue.get(row.dataset.id);
     return index === undefined ? undefined : items[index];
   }
 
   function onRowClick(event: MouseEvent<HTMLElement>) {
     const item = rowFromEvent(event);
     if (!item) return;
-    setActiveId(item.value);
+    setActiveValue(item.value);
     if ((event.target as Element).closest('.env-tree-chevron') && item.expandable) {
       setExpanded(item, !item.expanded);
       return;
@@ -273,7 +284,7 @@ export function Tree<Item extends TreeItem>({
       id={rowElementId(treeId, item.value)}
       position={positions[index]}
       setSize={sizes[index]}
-      selected={item.value === selectedId}
+      selected={item.value === selectedValue}
       highlighted={index === activeIndex}
       arriving={arriving.has(item.value)}
       top={top}
@@ -286,10 +297,7 @@ export function Tree<Item extends TreeItem>({
   const tree = (
     <div
       {...props}
-      ref={(node: HTMLDivElement | null) => {
-        container.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(container, ref)}
       role="tree"
       aria-label={label}
       aria-activedescendant={activeItem ? rowElementId(treeId, activeItem.value) : undefined}
@@ -297,10 +305,7 @@ export function Tree<Item extends TreeItem>({
       className={classNames('env-tree', className)}
       data-density={density}
       data-focus-visible={flag(focusVisible)}
-      onKeyDown={(event) => {
-        ownKeyDown?.(event);
-        if (!event.defaultPrevented) onKeyDown(event);
-      }}
+      onKeyDown={chainHandlers(ownKeyDown, onKeyDown)}
       onScroll={(event) => {
         ownScroll?.(event);
         onScroll(event.currentTarget.scrollTop);
@@ -315,18 +320,12 @@ export function Tree<Item extends TreeItem>({
         if (event.target === event.currentTarget) setFocusVisible(!pointerFocus.current);
         pointerFocus.current = false;
       }}
-      onClick={(event) => {
-        ownClick?.(event);
-        if (!event.defaultPrevented) onRowClick(event);
-      }}
-      onDoubleClick={(event) => {
-        ownDoubleClick?.(event);
-        if (!event.defaultPrevented) onRowDoubleClick(event);
-      }}
+      onClick={chainHandlers(ownClick, onRowClick)}
+      onDoubleClick={chainHandlers(ownDoubleClick, onRowDoubleClick)}
       onContextMenu={(event) => {
         ownContextMenu?.(event);
         const item = rowFromEvent(event);
-        if (item) setActiveId(item.value);
+        if (item) setActiveValue(item.value);
       }}
     >
       <div
@@ -348,8 +347,8 @@ export function Tree<Item extends TreeItem>({
     <ContextMenu
       aria-label={contextMenuLabel ?? messages.contextMenu}
       content={(target) => {
-        const id = target?.closest<HTMLElement>('.env-tree-item')?.dataset.id;
-        const index = id === undefined ? undefined : indexById.get(id);
+        const value = target?.closest<HTMLElement>('.env-tree-item')?.dataset.id;
+        const index = value === undefined ? undefined : indexByValue.get(value);
         return contextMenu(index === undefined ? null : items[index]);
       }}
     >

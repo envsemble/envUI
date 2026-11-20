@@ -1,9 +1,10 @@
 import { createElement as h, type ReactElement } from 'react';
 import { renderToString } from 'react-dom/server';
-import { hydrateRoot } from 'react-dom/client';
+import { flushSync } from 'react-dom';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { afterEach, expect, test } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
-import { Table } from '@envsemble/envui';
+import { Table, Theme } from '@envsemble/envui';
 import * as fixture from '../fixture/Table.fixture.tsx';
 import * as dataDisplay from '../fixture/DataDisplay.fixture.tsx';
 import { box, css, keyboard, mouse, nextFrames, shown } from './support/Browser.ts';
@@ -747,3 +748,122 @@ test(
     expect(css(billing, 'border-top-width')).toBe('1px');
   },
 );
+
+test('column widths follow the owner while controlled, keep their own otherwise, and start over from new defaults', async () => {
+  const holder = document.createElement('div');
+  document.body.append(holder);
+  servedHolders.push(holder);
+  const root = createRoot(holder);
+  servedRoots.push(root);
+  const reported: string[] = [];
+  const show = (props: Partial<Table.RootProps>) =>
+    flushSync(() =>
+      root.render(
+        h(
+          Theme,
+          { theme: 'light' },
+          h(
+            Table.Root,
+            {
+              'aria-label': 'Widths',
+              resizableColumns: true,
+              onColumnWidthsChange: (widths, { committed }) =>
+                reported.push(`${widths.join(' ')}${committed ? '' : ' moving'}`),
+              ...props,
+            },
+            h(
+              Table.Head,
+              null,
+              h(
+                Table.Row,
+                null,
+                h(Table.HeaderCell, null, 'A'),
+                h(Table.HeaderCell, null, 'B'),
+                h(Table.HeaderCell, null, 'C'),
+              ),
+            ),
+            h(
+              Table.Body,
+              null,
+              h(
+                Table.Row,
+                null,
+                h(Table.Cell, null, '1'),
+                h(Table.Cell, null, '2'),
+                h(Table.Cell, null, '3'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  const shownWidths = () =>
+    [...holder.querySelectorAll('col')].map((col) => parseFloat(col.style.inlineSize)).join(' ');
+  const handle = table('Widths').getByRole('separator', { name: 'Resize A' });
+  const press = async (key: string) => {
+    (handle.element() as HTMLElement).focus();
+    await keyboard.press(key);
+  };
+  const reset = async () => {
+    const { x, y } = middle(handle);
+    console.log(
+      'BOX',
+      JSON.stringify(box(handle)),
+      document.elementFromPoint(x, y)?.outerHTML.slice(0, 200),
+    );
+    await mouse.dblclick(x, y);
+  };
+
+  show({ defaultColumnWidths: [30, 30, 40] });
+  expect(shownWidths()).toBe('30 30 40');
+  await expect.poll(() => handle.query()).not.toBeNull();
+  await press('ArrowRight');
+  await expect.poll(shownWidths).toBe('31 29 40');
+  await press('End');
+  await expect.poll(shownWidths).toBe('55 5 40');
+  await press('End');
+  await expect.poll(() => reported.length).toBe(3);
+  show({ defaultColumnWidths: [30, 30, 40] });
+  expect(shownWidths()).toBe('55 5 40');
+  show({ defaultColumnWidths: [50, 25, 25] });
+  expect(shownWidths()).toBe('50 25 25');
+  await press('ArrowLeft');
+  await expect.poll(shownWidths).toBe('49 26 25');
+  await reset();
+  await expect.poll(shownWidths).toBe('50 25 25');
+  expect(reported.splice(0)).toEqual([
+    '31 29 40',
+    '55 5 40',
+    '55 5 40',
+    '49 26 25',
+    '49 26 25',
+    '49 26 25',
+    '50 25 25',
+  ]);
+
+  flushSync(() => root.render(null));
+  show({ columnWidths: [40, 30, 30] });
+  expect(shownWidths()).toBe('40 30 30');
+  await expect.poll(() => handle.query()).not.toBeNull();
+  await press('ArrowRight');
+  await expect.poll(() => reported.length).toBe(1);
+  expect(shownWidths()).toBe('40 30 30');
+  show({ columnWidths: [20, 40, 40] });
+  expect(shownWidths()).toBe('20 40 40');
+  await reset();
+  await expect.poll(() => reported.at(-1)).toBe('40 30 30');
+  show({ columnWidths: [20, 40, 40], defaultColumnWidths: [10, 10, 80] });
+  expect(shownWidths()).toBe('20 40 40');
+  await reset();
+  await expect.poll(() => reported.at(-1)).toBe('10 10 80');
+  expect(shownWidths()).toBe('20 40 40');
+  expect(reported).toEqual([
+    '41 29 30',
+    '20 40 40',
+    '20 40 40',
+    '40 30 30',
+    '20 40 40',
+    '20 40 40',
+    '10 10 80',
+  ]);
+});

@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { repositoryRoot, styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
-const styles = join(repositoryRoot, 'packages/ui/src/styles');
+const styles = styleSheetsDirectory;
 const { windowClasses, windowClassOf } = await importSource(
   'WindowClasses',
   'packages/ui/src/foundations/windowClasses.ts',

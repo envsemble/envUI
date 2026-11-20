@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { siteBuildUrl } from '../support/Servers';
 import { chooseScheme } from '../support/CatalogueThemes';
 import { collectErrors } from '../support/PageErrors';
-import { openSite } from '../support/SiteSpecHelpers';
+import { openSite } from '../support/SiteNavigation';
 
 const journeys: { kind: string; path: string; act: (page: Page) => Promise<void> }[] = [
   {

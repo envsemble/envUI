@@ -12,28 +12,28 @@ export default function Destinations() {
       align="start"
       defaultOpen
       trigger={
-        <Button variant="secondary" endIcon={<IconExpandMore />}>
+        <Button variant="secondary" end={<IconExpandMore />}>
           Help
         </Button>
       }
     >
-      <Menu.Item href="/help/guide" icon={<IconMenuBook />}>
+      <Menu.Item href="/help/guide" start={<IconMenuBook />}>
         User guide
       </Menu.Item>
-      <Menu.Item href="/help/shortcuts" icon={<IconKeyboard />} shortcut="Ctrl+/">
+      <Menu.Item href="/help/shortcuts" start={<IconKeyboard />} shortcut="Ctrl+/">
         Keyboard shortcuts
       </Menu.Item>
       <Menu.Item
         href="https://status.example.com"
         target="_blank"
         rel="noopener noreferrer"
-        icon={<IconOpenInNew />}
+        start={<IconOpenInNew />}
         description="Opens in a new tab"
       >
         Service status
       </Menu.Item>
       <Menu.Separator />
-      <Menu.Item icon={<IconFeedback />}>Send feedback</Menu.Item>
+      <Menu.Item start={<IconFeedback />}>Send feedback</Menu.Item>
     </Menu.Root>
   );
 }

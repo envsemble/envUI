@@ -16,6 +16,7 @@ function wholeToken(value) {
 
 const backgroundProperty = /^background(?:-color)?$/i;
 const textProperty = /^color$/i;
+const textSign = /^(?:color|font(?:-.+)?|line-height|text-.+)$/i;
 const maskProperty = /^(?:-webkit-)?mask(?:-|$)/i;
 
 const colorTokens = tokens.color ?? [];
@@ -48,7 +49,7 @@ const rule = (primary) => (root, result) => {
       node.nodes.some(
         (declaration) => declaration.type === 'decl' && property.test(declaration.prop),
       );
-    const holdsText = declares(textProperty) && !declares(maskProperty);
+    const holdsText = declares(textSign) && !declares(maskProperty);
     for (const declaration of node.nodes) {
       if (declaration.type !== 'decl') continue;
       const token = wholeToken(declaration.value);

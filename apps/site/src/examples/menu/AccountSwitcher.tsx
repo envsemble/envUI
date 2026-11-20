@@ -26,7 +26,7 @@ export default function AccountSwitcher() {
         </Menu.RadioItem>
       </Menu.RadioGroup>
       <Menu.Separator />
-      <Menu.Item icon={<IconPersonAdd />}>Add account</Menu.Item>
+      <Menu.Item start={<IconPersonAdd />}>Add account</Menu.Item>
     </Menu.Root>
   );
 }

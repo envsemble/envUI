@@ -21,7 +21,6 @@ import {
   type SelectItem,
 } from '@envsemble/envui';
 import { ColorPicker, ColorPickerButton, ColorSwatch } from '@envsemble/envui/color';
-import { RichText, RichTextEditor } from '@envsemble/envui/rich-text';
 import { IconMail } from '@envsemble/envui/icons/Mail';
 import { IconVisibility } from '@envsemble/envui/icons/Visibility';
 import { IconViewList } from '@envsemble/envui/icons/ViewList';
@@ -111,7 +110,7 @@ function TextFields() {
             label="Password"
             type="password"
             defaultValue="hunter2hunter2"
-            startIcon={<IconMail />}
+            start={<IconMail />}
             endAction={
               <IconButton variant="ghost" size="sm" icon={<IconVisibility />} aria-label="Show" />
             }
@@ -448,9 +447,9 @@ function Choices() {
 
 function Segments() {
   const items = [
-    { value: 'list', label: 'List', icon: <IconViewList />, count: 12 },
-    { value: 'board', label: 'Board', icon: <IconViewModule />, count: 4 },
-    { value: 'calendar', label: 'Calendar', icon: <IconCalendarMonth />, disabled: true },
+    { value: 'list', label: 'List', start: <IconViewList />, count: 12 },
+    { value: 'board', label: 'Board', start: <IconViewModule />, count: 4 },
+    { value: 'calendar', label: 'Calendar', start: <IconCalendarMonth />, disabled: true },
   ];
   const plain = [
     { value: 'day', label: 'Day' },
@@ -854,58 +853,6 @@ function Fields() {
   );
 }
 
-const notes = `
-[reference id="person%3Apriya" label="Priya%20Shah" kind="person" mentionSuggestionChar="%40"]
-sends the **press kit**, with _quotes_ and a [link](https://example.com).
-
-- [x] Book the venue
-- [ ] Print the badges`;
-
-function RichTexts() {
-  return (
-    <Section name="RichTextEditor and RichText">
-      <Strip label="Editor">
-        <Cell caption="Outline" width="22rem">
-          <RichTextEditor
-            label="Meeting notes"
-            description="Shared with the launch team."
-            defaultValue={notes}
-          />
-        </Cell>
-        <Cell caption="Focus-visible" width="22rem" force="focus" target="[contenteditable=true]">
-          <RichTextEditor
-            label="Meeting notes"
-            defaultValue={notes}
-            toolbar={['bold', 'italic', 'link']}
-          />
-        </Cell>
-        <Cell caption="Ghost, placeholder" width="22rem">
-          <RichTextEditor label="Meeting notes" variant="ghost" placeholder="Write notes…" />
-        </Cell>
-        <Cell caption="Invalid" width="22rem">
-          <RichTextEditor
-            label="Summary"
-            defaultValue="Too short."
-            error="Write at least 50 characters."
-            toolbar={['bold', 'italic']}
-          />
-        </Cell>
-        <Cell caption="Read-only" width="22rem">
-          <RichTextEditor label="Meeting notes" defaultValue={notes} readOnly />
-        </Cell>
-        <Cell caption="Disabled" width="22rem">
-          <RichTextEditor label="Meeting notes" defaultValue={notes} disabled />
-        </Cell>
-      </Strip>
-      <Strip label="RichText">
-        <Cell caption="Rendered" width="22rem">
-          <RichText>{notes}</RichText>
-        </Cell>
-      </Strip>
-    </Section>
-  );
-}
-
 export function FormsSheet() {
   return (
     <>
@@ -921,7 +868,6 @@ export function FormsSheet() {
       <Colors />
       <Drops />
       <Fields />
-      <RichTexts />
     </>
   );
 }

@@ -16,7 +16,6 @@ const loaders: Record<string, () => Promise<Figures>> = {
   responsive: () => import('./Responsive').then((module) => module.responsiveFigures),
   icons: () => import('./Icons').then((module) => module.iconsFigures),
   accessibility: () => import('./Accessibility').then((module) => module.accessibilityFigures),
-  'dev-mode': () => import('../dev-mode/DevModeFigures').then((module) => module.devModeFigures),
 };
 const loads = new Map<string, Promise<Figures>>();
 

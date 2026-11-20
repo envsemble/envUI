@@ -22,15 +22,10 @@ function Ladder() {
       <div data-layer="popup-positioner" className="env-popup-positioner" />
       <div data-layer="menu-positioner" className="env-menu-positioner" />
       <div data-layer="tooltip-positioner" className="env-tooltip-positioner" />
-      <div data-layer="rich-text-suggestions" className="env-rich-text-suggestions-positioner" />
       <div data-layer="toast-viewport" className="env-toast-viewport">
         <div data-layer="toast-leaving" className="env-toast" data-leaving="" />
       </div>
       <div data-layer="loading-bar" className="env-loading-bar" />
-      <div
-        data-layer="loading-bar-contained"
-        className="env-loading-bar env-loading-bar-contained"
-      />
       <div className="env-table-region" data-sticky-header="">
         <div className="env-table-head">
           <div data-layer="table-sticky-header-cell" className="env-table-header-cell" />

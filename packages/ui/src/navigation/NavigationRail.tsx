@@ -5,16 +5,21 @@ import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import {
-  destinationKey,
-  DestinationItem,
-  useNavigationMessages,
-  type DestinationClasses,
-} from './internal/DestinationItem.js';
-import type { Destination, NavigationLabels } from './destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { navigation } from '../foundations/messages/navigation.js';
+import { DestinationItem, type DestinationClasses } from './internal/DestinationItem.js';
+import { destinationKey } from './internal/destinationModel.js';
+import type { Destination } from './destinations.js';
+import type { NavigationBackground } from './navigationBackground.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
+import '../styles/NavigationDestinations.css';
 import '../styles/NavigationRail.css';
 
 const railClasses: DestinationClasses = {
@@ -49,12 +54,12 @@ export interface NavigationRailProps
    */
   background?: NavigationBackground;
   /**
-   * How the destinations' labels show: shown, under each icon; tooltip, only in a tooltip on hover
-   * and keyboard focus, for an icon-only rail such as a code editor's activity bar. The label still
-   * names each destination.
-   * @default 'shown'
+   * Whether the destinations' labels show under their icons. False shows the icons only, for an
+   * icon-only rail such as a code editor's activity bar: each label still names its destination
+   * and shows in a tooltip on hover and keyboard focus.
+   * @default true
    */
-  labels?: NavigationLabels;
+  visibleLabel?: boolean;
   /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
@@ -72,24 +77,24 @@ export function NavigationRail({
   header,
   footer,
   background = 'default',
-  labels = 'shown',
+  visibleLabel = true,
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
   className,
   ...props
 }: NavigationRailProps) {
-  const messages = useNavigationMessages();
+  const messages = useMessages('navigation', navigation);
   return (
     <Column
       render={<nav />}
       {...props}
-      aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
+      aria-label={landmarkLabel(label, labelledBy, messages.label)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-rail', className)}
-      data-background={backgroundAttribute(background)}
-      data-labels={labels === 'tooltip' ? labels : undefined}
+      data-background={background}
+      data-label-hidden={flag(!visibleLabel)}
       align="center"
       gap={4}
     >
@@ -104,7 +109,7 @@ export function NavigationRail({
               );
               return (
                 <li key={destinationKey(destination)}>
-                  {labels === 'tooltip' ? (
+                  {!visibleLabel ? (
                     <CutLabelTooltip cut label={destination.label} side="inline-end">
                       {item}
                     </CutLabelTooltip>

@@ -4,7 +4,7 @@ import { useRef, type CSSProperties, type KeyboardEvent, type ReactNode } from '
 import { IconSearch } from '../icons/Search.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { searchField as searchFieldMessages } from '../foundations/messages/searchField.js';
@@ -18,7 +18,7 @@ function keepEscapeFromEnclosingDialog(event: KeyboardEvent) {
 
 export interface SearchFieldProps extends Omit<
   TextFieldProps,
-  'type' | 'startIcon' | 'label' | 'visibleLabel' | 'value' | 'defaultValue' | 'onValueChange'
+  'type' | 'start' | 'label' | 'visibleLabel' | 'value' | 'defaultValue' | 'onValueChange'
 > {
   /**
    * The field's accessible name, such as Search members: text, or any content, such as an icon
@@ -116,10 +116,7 @@ export function SearchField({
           ? ({ '--_text-field-end-actions': endActions, ...style } as CSSProperties)
           : style
       }
-      ref={(node) => {
-        inputRef.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(inputRef, ref)}
       type="search"
       label={label}
       visibleLabel={showLabel}
@@ -137,7 +134,7 @@ export function SearchField({
           update('');
         }
       }}
-      startIcon={<IconSearch />}
+      start={<IconSearch />}
       endAction={
         endActions > 0 ? (
           <>

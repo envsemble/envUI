@@ -188,7 +188,7 @@ export function generateDocumentation() {
 }
 
 if (import.meta.main) {
-  if (process.argv.includes('--check'))
+  if (process.argv.includes('--validate'))
     console.log(
       `The ${readDocumentation().length} indexed Markdown documents and their links hold.`,
     );

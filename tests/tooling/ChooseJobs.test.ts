@@ -1,20 +1,25 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join, posix } from 'node:path';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import { burnInFiles, chooseJobs, jobRules } from '../../scripts/test/ChooseJobs.ts';
 import { pathRules } from '../../scripts/test/TestScope.ts';
-import { specPaths } from '../../scripts/test/FixtureImports.ts';
+import { browserTestPaths } from '../../scripts/test/BrowserTests.ts';
+import { compileGlob, compileGlobs } from '../../scripts/test/Globs.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
+import { inScratchFolder } from '../support/ScratchFolder.ts';
 
 const jobs = (...paths: string[]) => chooseJobs(paths).jobs;
+const compiledPathRules = pathRules.map((rule) => ({
+  ...rule,
+  matches: compileGlobs(rule.paths),
+}));
 
 test('a site change skips the library browser tests, and a library change runs the smoke too', () => {
   assert.deepEqual(jobs('apps/site/src/App.tsx'), { library: false, site: true });
   assert.deepEqual(jobs('docs/components/button.md'), { library: false, site: true });
-  assert.deepEqual(jobs('packages/ui/src/components/button/Button.tsx'), {
+  assert.deepEqual(jobs('packages/ui/src/actions/Button.tsx'), {
     library: true,
     site: true,
   });
@@ -50,19 +55,20 @@ test('tooling, a path no rule names and a full run run everything', () => {
 
 test('every tracked file is placed by a rule, and every rule places a tracked file', () => {
   const files = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split('\n').filter(Boolean);
-  const unplaced = files.filter(
-    (file) => !jobRules.some((rule) => rule.paths.some((glob) => posix.matchesGlob(file, glob))),
+  const placed = compileGlobs(jobRules.flatMap((rule) => rule.paths));
+  assert.deepEqual(
+    files.filter((file) => !placed(file)),
+    [],
   );
-  assert.deepEqual(unplaced, []);
   const unused = jobRules
     .flatMap((rule) => rule.paths)
-    .filter((glob) => !files.some((file) => posix.matchesGlob(file, glob)));
+    .filter((glob) => !files.some(compileGlob(glob)));
   assert.deepEqual(unused, []);
 });
 
 test('CI runs the browser job of every spec the check tiers run for a file', () => {
   const files = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split('\n').filter(Boolean);
-  const specs = specPaths(repositoryRoot);
+  const specs = browserTestPaths(repositoryRoot);
   const jobOf = (spec: string) =>
     specs.get(spec)?.startsWith('tests/browser/site/') ? 'site' : 'library';
   const missed: string[] = [];
@@ -72,9 +78,9 @@ test('CI runs the browser job of every spec the check tiers run for a file', () 
       : /^(?:packages\/ui\/src|tests\/(?:fixture|component|browser\/library))\//.test(file)
         ? ['Button']
         : [];
-    const ruled = pathRules
-      .filter((rule) => rule.paths.some((glob) => posix.matchesGlob(file, glob)))
-      .flatMap((rule) => rule.specs ?? []);
+    const ruled = compiledPathRules
+      .filter((rule) => rule.matches(file))
+      .flatMap((rule) => rule.browserTests ?? []);
     const chosen = jobs(file);
     for (const spec of [...named, ...ruled])
       if (spec !== 'LiveDevelopment' && !chosen[jobOf(spec)])
@@ -106,17 +112,16 @@ test('the burn-in repeats the browser test files a change adds or edits, and not
   assert.deepEqual(burnInFiles([]), []);
 });
 
-test('the choice prints a line for each job, whose job CI skips only when it says false', () => {
-  const folder = mkdtempSync(join(tmpdir(), 'envui-jobs-'));
-  const script = join(repositoryRoot, 'scripts/test/ChooseJobs.ts');
-  const choose = (...args: string[]) =>
-    Object.fromEntries(
-      execFileSync(process.execPath, [script, ...args], { encoding: 'utf8', stdio: 'pipe' })
-        .trim()
-        .split('\n')
-        .map((line) => line.split(/=(.*)/s, 2)),
-    );
-  try {
+test('the choice prints a line for each job, whose job CI skips only when it says false', () =>
+  inScratchFolder('jobs', (folder) => {
+    const script = join(repositoryRoot, 'scripts/test/ChooseJobs.ts');
+    const choose = (...args: string[]) =>
+      Object.fromEntries(
+        execFileSync(process.execPath, [script, ...args], { encoding: 'utf8', stdio: 'pipe' })
+          .trim()
+          .split('\n')
+          .map((line) => line.split(/=(.*)/s, 2)),
+      );
     const changed = join(folder, 'changed');
     const kept = join(folder, 'kept');
     writeFileSync(changed, 'tests/component/Menu.test.tsx\ntests/component/Tree.test.tsx\n');
@@ -142,7 +147,4 @@ test('the choice prints a line for each job, whose job CI skips only when it say
         assert.match(workflow, new RegExp(`^  ${job}:$`, 'm'), `ci.yml has no job ${job}`);
         assert.ok(needs?.split(', ').includes(job), `CI's needs leave out ${job}`);
       }
-  } finally {
-    rmSync(folder, { recursive: true, force: true });
-  }
-});
+  }));

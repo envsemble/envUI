@@ -11,9 +11,6 @@
       "prefix": "env-connected-rows",
       "root": "env-connected-rows"
     },
-    "EditorChrome": {
-      "prefix": "env-editor"
-    },
     "HoverDetail": {
       "prefix": "env-hover-detail",
       "root": "env-hover-detail"
@@ -21,10 +18,6 @@
     "ListRow": {
       "prefix": "env-list-row",
       "root": "env-list-row"
-    },
-    "Listbox": {
-      "prefix": "env-listbox",
-      "root": "env-listbox"
     },
     "LoadingBar": {
       "prefix": "env-loading-bar",
@@ -79,11 +72,6 @@
       "env-alert-row": "The row of the title and message with the actions at its end, which wraps them below where it runs out of room.",
       "env-alert-title": "The alert's title."
     },
-    "AnimatedNumber": {
-      "env-animated-number": "The number, which animates when its value changes.",
-      "env-animated-number-value": "The digits as they change.",
-      "env-animated-number-previous": "The value it changed from, while it leaves; hidden from assistive technology, its text drawn from data-value."
-    },
     "Avatar": {
       "env-avatar": "The avatar: an image, initials or a figure in a circle.",
       "env-avatar-badge": "The slot of the small mark at the avatar's bottom end, such as a presence dot.",
@@ -111,7 +99,7 @@
       "env-badge": "The badge: a small pill label, or with data-count a compact count.",
       "env-badge-count-label": "What a count means, such as 12 unread, for assistive technology; visually hidden.",
       "env-badge-label": "The badge's text, or its count.",
-      "env-badge-start": "The slot of the content before a label, in place of its icon."
+      "env-badge-start": "The slot of the content before the label, such as an icon or an Avatar."
     },
     "Breadcrumbs": {
       "env-breadcrumbs": "The breadcrumb navigation.",
@@ -126,12 +114,10 @@
     "Button": {
       "env-button": "The button.",
       "env-button-content": "The button's label and icons.",
-      "env-button-end": "The slot of the quiet content at the button's far end, such as a shortcut's keys.",
-      "env-button-end-icon": "The slot of the icon after the label.",
+      "env-button-end": "The slot of the content after the label, at a full-width button's far end, such as an icon or a shortcut's keys.",
       "env-button-icon": "The slot of an icon button's icon.",
       "env-button-label": "The slot of the label, the button's children.",
-      "env-button-start": "The slot of the content before the label at its own size, such as an Avatar.",
-      "env-button-start-icon": "The slot of the icon before the label.",
+      "env-button-start": "The slot of the content before the label, such as an icon or an Avatar.",
       "env-button-spinner": "The spinner of a pending button."
     },
     "ButtonGroup": {
@@ -149,20 +135,6 @@
       "env-calendar-pad": "An empty cell before the first day or after the last.",
       "env-calendar-previous": "The button for the previous month."
     },
-    "CalendarHeatmap": {
-      "env-calendar-heatmap": "The heatmap of days over months.",
-      "env-calendar-heatmap-corner": "The empty corner above the weekday labels.",
-      "env-calendar-heatmap-day": "One day's cell, filled by its level.",
-      "env-calendar-heatmap-grid": "The grid of days.",
-      "env-calendar-heatmap-legend": "The legend of levels.",
-      "env-calendar-heatmap-month": "A month's label above the grid.",
-      "env-calendar-heatmap-pad": "An empty cell outside the range.",
-      "env-calendar-heatmap-scroll": "The region that scrolls the grid sideways.",
-      "env-calendar-heatmap-swatch": "One level's swatch in the legend.",
-      "env-calendar-heatmap-tooltip": "The tooltip of a day.",
-      "env-calendar-heatmap-tooltip-positioner": "The tooltip's positioner.",
-      "env-calendar-heatmap-weekday": "A weekday's label beside the grid."
-    },
     "Card": {
       "env-card": "The card's surface.",
       "env-card-body": "The card's content above the footer.",
@@ -172,7 +144,7 @@
       "env-card-header": "The row with the title and the meta.",
       "env-card-title": "The title.",
       "env-card-meta": "The short fact at the end of the title row.",
-      "env-card-end": "The slot at the end of the title row, after the meta, such as a Menu."
+      "env-card-header-end": "The slot at the end of the title row, after the meta, such as a Menu."
     },
     "Checkbox": {
       "env-checkbox": "The checkbox with its label.",
@@ -189,9 +161,9 @@
     },
     "CodeBlock": {
       "env-code-block": "The block of code.",
-      "env-code-block-actions": "The slot of the content in the heading before the copy button.",
       "env-code-block-copy-status": "The announcement that the code was copied.",
       "env-code-block-header": "The row above the code: its label, such as a file name, and the copy button.",
+      "env-code-block-header-end": "The slot of the content at the end of the heading, before the copy button.",
       "env-code-block-token": "One highlighted piece of the source, in its syntax color."
     },
     "CodeDiff": {
@@ -283,10 +255,10 @@
       "env-composer-description": "The slot of the supporting text below the composer.",
       "env-composer-end": "The slot of the content in the action row before the send button.",
       "env-composer-footer": "The supporting text below the composer, which describes the field.",
+      "env-composer-header": "The slot of the content inside the composer above the input, such as attachments.",
       "env-composer-input": "The text input.",
       "env-composer-start": "The slot of the content at the start of the action row.",
-      "env-composer-surface": "The surface around the input and the footer.",
-      "env-composer-top": "The slot of the content inside the composer above the input, such as attachments."
+      "env-composer-surface": "The surface around the input and the footer."
     },
     "ConfirmButton": {
       "env-confirm-button": "The button that asks to confirm before acting.",
@@ -343,12 +315,6 @@
       "env-dialog-surface": "The dialog's surface.",
       "env-dialog-title": "The title."
     },
-    "DiffStat": {
-      "env-diff-stat": "The count of added and removed lines.",
-      "env-diff-stat-additions": "The added lines.",
-      "env-diff-stat-deletions": "The removed lines.",
-      "env-diff-stat-label": "The label for assistive technology."
-    },
     "Disclosure": {
       "env-disclosure": "The disclosure: a summary that shows and hides a panel.",
       "env-disclosure-indicator": "The chevron before the summary's words, turned down while open.",
@@ -366,6 +332,7 @@
       "env-document-tabs-panel": "The panel of the active document, which the active tab joins.",
       "env-document-tabs-panel-content": "The slot of the active document.",
       "env-document-tabs-tab": "A tab's button.",
+      "env-document-tabs-tab-start": "The slot before a tab's title, such as a file type's icon.",
       "env-document-tabs-tab-label": "A tab's title.",
       "env-document-tabs-tab-end": "The slot after a tab's title, such as a dot for unsaved changes."
     },
@@ -380,10 +347,6 @@
       "env-drop-zone-label-content": "The slot of the label.",
       "env-drop-zone-target": "The target that takes the drop and opens the file picker.",
       "env-drop-zone-text": "The column with the label and the description."
-    },
-    "EditorChrome": {
-      "env-editor-status": "The editor's status line, such as a character count.",
-      "env-editor-toolbar": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which wrap onto more rows where they are wider than the editor."
     },
     "EmptyState": {
       "env-empty-state": "The empty state, centred in the region it fills.",
@@ -432,10 +395,10 @@
     },
     "List": {
       "env-list": "The list.",
-      "env-list-actions": "The slot of the content at the end of the title's line, such as an Add button.",
       "env-list-announcer": "The announcements of a reordered item.",
       "env-list-description": "The slot of the sentence under a list's title, in muted text.",
       "env-list-header": "The list's title and description above its rows.",
+      "env-list-header-end": "The slot of the content at the end of the title's line, such as an Add button.",
       "env-list-item": "One item.",
       "env-list-item-content": "The column with an item's label, description and more content.",
       "env-list-item-control": "The slot of the control at an item's end, which the item's label names.",
@@ -449,35 +412,21 @@
       "env-list-title": "The list's heading."
     },
     "ListRow": {
-      "env-list-row": "The row anatomy of menu, select and combobox options.",
+      "env-list-row": "The row anatomy of select, combobox and command palette options.",
       "env-list-row-description": "A row's description.",
       "env-list-row-end": "The slot of the content at a row's end, such as a count or keys.",
-      "env-list-row-icon": "A row's icon.",
       "env-list-row-indicator": "The check of a chosen row.",
       "env-list-row-label": "The slot of a row's name.",
-      "env-list-row-start": "The slot of the content before a row's name in place of an icon, such as an Avatar.",
+      "env-list-row-start": "The slot of the content before a row's name, such as an icon or an Avatar.",
       "env-list-row-text": "The column with a row's label and description."
-    },
-    "Listbox": {
-      "env-listbox": "A list of options in a popup.",
-      "env-listbox-empty": "The message when there are no options.",
-      "env-listbox-options": "The options."
     },
     "LoadingBar": {
       "env-loading-bar": "The loading bar.",
-      "env-loading-bar-contained": "A loading bar inside a region rather than the frame.",
       "env-loading-bar-indicator": "The moving part of the bar."
     },
     "Markdown": {
       "env-markdown": "The rendered Markdown.",
       "env-markdown-table": "The region that scrolls a wide table."
-    },
-    "MarkdownEditor": {
-      "env-markdown-editor": "The Markdown editor.",
-      "env-markdown-editor-write": "The text area for writing.",
-      "env-markdown-editor-input": "The text area that shows the Markdown source as text.",
-      "env-markdown-editor-views": "The view switch, with the source and the preview under it.",
-      "env-markdown-editor-view": "The source or the preview, the one the view switch shows."
     },
     "Menu": {
       "env-menu": "The menu's popup.",
@@ -492,7 +441,7 @@
       "env-menu-item-end": "The end of an item, for a shortcut or a chevron.",
       "env-menu-item-label": "An item's label.",
       "env-menu-item-shortcut": "An item's keyboard shortcut.",
-      "env-menu-item-start": "The slot of the content before an item's label in place of an icon, such as an Avatar.",
+      "env-menu-item-start": "The slot of the content before an item's label, such as an icon or an Avatar.",
       "env-menu-item-text": "The column with an item's label and description.",
       "env-menu-positioner": "The menu's positioner.",
       "env-menu-separator": "The line between groups.",
@@ -513,12 +462,11 @@
       "env-message-header": "The row with the author and the meta.",
       "env-message-meta": "The slot of the time or another fact about the message.",
       "env-message-start": "The slot of the content beside the message at its inline start, such as the author's avatar.",
-      "env-message-status": "The sending or failed status.",
+      "env-message-status": "The sending, failed or working status.",
       "env-message-text": "Content given as plain text, which keeps its line breaks."
     },
     "MessageList": {
       "env-message-list": "The list of messages.",
-      "env-message-list-busy": "The row after the last message while busy: the busy author, a spinner and Working.",
       "env-message-list-jump": "The place of the Jump to latest button at the foot of a list that follows."
     },
     "Meter": {
@@ -606,6 +554,8 @@
       "env-pager": "The previous and next links.",
       "env-pager-link": "One link.",
       "env-pager-link-copy": "The column with a link's label and title.",
+      "env-pager-link-start": "The slot of the content before the previous link's text, such as an icon.",
+      "env-pager-link-end": "The slot of the content after the next link's text, such as an icon.",
       "env-pager-link-label": "A link's label, Previous or Next.",
       "env-pager-link-next": "The link to the next page.",
       "env-pager-link-previous": "The link to the previous page.",
@@ -658,7 +608,8 @@
       "env-radio-description": "A radio's description.",
       "env-radio-description-content": "The slot of a radio's description.",
       "env-radio-input": "The native input.",
-      "env-radio-label": "The slot of a radio's label."
+      "env-radio-label": "The label, with the description under it.",
+      "env-radio-label-content": "The slot of the label."
     },
     "RadioGroup": {
       "env-radio-group": "The group of radios.",
@@ -667,34 +618,11 @@
       "env-radio-group-error": "The error under the options.",
       "env-radio-group-label": "The slot of the group's label, in its legend."
     },
-    "Rating": {
-      "env-rating": "The rating.",
-      "env-rating-star": "One star.",
-      "env-rating-star-half": "The filled half of a half star.",
-      "env-rating-stars": "The row of stars.",
-      "env-rating-value": "The rating as text."
-    },
     "RelativeTime": {
       "env-relative-time": "A time relative to now, with the exact time in a tooltip."
     },
     "ResizeHandle": {
       "env-resize-handle": "The handle: an invisible track that the pointer drags, with a grip of three dots at its middle and a line along it under the pointer, while dragged and with keyboard focus."
-    },
-    "RichText": {
-      "env-rich-text": "The rendered rich text.",
-      "env-rich-text-document": "The editable document.",
-      "env-rich-text-reference": "A reference to a person or an item.",
-      "env-rich-text-suggestions": "The list of suggestions while typing a reference.",
-      "env-rich-text-suggestions-positioner": "The suggestions' positioner.",
-      "env-rich-text-task": "A task item.",
-      "env-rich-text-task-check": "A task's checkbox.",
-      "env-rich-text-task-content": "A task's text."
-    },
-    "RichTextEditor": {
-      "env-rich-text-editor": "The rich text editor.",
-      "env-rich-text-editor-content": "The editable region.",
-      "env-rich-text-editor-control": "The well around the toolbar and the document.",
-      "env-rich-text-editor-footer": "The slot of the content under the document, inside the well, such as a Send button."
     },
     "Scaffold": {
       "env-scaffold": "The scaffold: the top bar, navigation and body regions; it never paints.",
@@ -706,13 +634,13 @@
       "env-scaffold-rail": "The slot of the navigation rail, at the start of a medium window.",
       "env-scaffold-drawer": "The slot of the navigation drawer, at the start from expanded.",
       "env-scaffold-body": "The body, the main region, which scrolls.",
-      "env-scaffold-end": "The end region beside the body, such as an inspector, which scrolls on its own.",
-      "env-scaffold-bottom-bar": "The bottom bar region under the body and the end region, such as a status bar."
+      "env-scaffold-aside": "The aside region at the end edge beside the body, such as an inspector, which scrolls on its own.",
+      "env-scaffold-bottom-bar": "The bottom bar region under the body and the aside region, such as a status bar."
     },
     "SegmentedControl": {
       "env-segmented-control": "The segmented control: the track the segments sit in.",
       "env-segmented-control-item": "One segment; the chosen one rises on a raised thumb.",
-      "env-segmented-control-item-icon": "The slot of a segment's icon.",
+      "env-segmented-control-item-start": "The slot of the content before a segment's label, such as an icon.",
       "env-segmented-control-thumb": "The raised thumb that travels to the chosen segment, hidden until it has measured it.",
       "env-segmented-control-item-count": "A segment's count.",
       "env-segmented-control-item-end": "The slot of the content after a segment's label and count, such as a Badge.",
@@ -810,7 +738,7 @@
       "env-text-field-input": "The input.",
       "env-text-field-label": "The label.",
       "env-text-field-prefix": "Fixed text before the input.",
-      "env-text-field-start": "The slot of the icon at the start of the well.",
+      "env-text-field-start": "The slot of the content at the start of the well, such as an icon.",
       "env-text-field-suffix": "Fixed text after the input."
     },
     "Textarea": {
@@ -874,7 +802,7 @@
       "env-tree-description": "An item's description.",
       "env-tree-end": "The slot of the content at an item's end, such as a count, which leaves the row whole where it doesn't fit beside the label.",
       "env-tree-group": "The rows an expanding or collapsing item reveals or hides, while they grow or shrink.",
-      "env-tree-icon": "An item's icon.",
+      "env-tree-start": "The slot of the content before an item's label, such as an icon.",
       "env-tree-item": "One item.",
       "env-tree-label": "An item's label.",
       "env-tree-rows": "The rows of a level."
@@ -939,7 +867,7 @@
     "Menu": {
       "--env-menu-item-container": "The item's fill; the highlight and press are state layers over it.",
       "--env-menu-item-content": "The label, and the color of the state layers.",
-      "--env-menu-item-icon": "The leading icon."
+      "--env-menu-item-icon": "The content before the label, such as its icon."
     },
     "NavigationBar": {
       "--env-navigation-bar-item-container": "The indicator around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
