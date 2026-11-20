@@ -1,9 +1,8 @@
 ---
 '@envsemble/envui': major
-'@envsemble/eslint-plugin-envui': patch
 ---
 
-One leading slot, `start`, holds the content before a label everywhere: Menu's items and submenus, a CommandPalette item, Button, Badge, TextField, a SegmentedControl item, a Tree item, a DocumentTabs tab, Pager.Previous and the rows of Combobox and Select; Button's and Pager.Next's `end` holds everything after their label. An envUI icon in either takes the icon size and other content, such as an Avatar, keeps its own; a menu widens its leading column only when some row's start holds more than an icon. A Combobox option's `start` renders through the row's start slot, at the size it had. no-raw-graphics' message names IconButton's `icon` as an icon slot that sizes another package's icon, in place of Button's `startIcon`. See [Menu](https://github.com/envsemble/envUI/blob/main/docs/components/menu.md) and [Button](https://github.com/envsemble/envUI/blob/main/docs/components/button.md).
+One leading slot, `start`, holds the content before a label everywhere: Menu's items and submenus, a CommandPalette item, Button, Badge, TextField, a SegmentedControl item, a Tree item, a DocumentTabs tab, Pager.Previous and the rows of Combobox and Select; Button's and Pager.Next's `end` holds everything after their label. An envUI icon in either takes the icon size and other content, such as an Avatar, keeps its own; a menu widens its leading column only when some row's start holds more than an icon. A Combobox option's `start` renders through the row's start slot, at the size it had. See [Menu](https://github.com/envsemble/envUI/blob/main/docs/components/menu.md) and [Button](https://github.com/envsemble/envUI/blob/main/docs/components/button.md).
 
 Breaking changes:
 
