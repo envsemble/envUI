@@ -27,7 +27,7 @@ export default function GoToDocument() {
       id: `${document.folder}/${document.name}`,
       label: document.name,
       description: document.folder,
-      icon: <IconDescription />,
+      start: <IconDescription />,
     });
     return [
       { label: 'Recently opened', items: found.filter(recent).map(itemOf) },

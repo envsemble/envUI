@@ -22,7 +22,7 @@ export default function SearchButton() {
     () =>
       documents
         .filter((name) => name.toLowerCase().includes(query.toLowerCase()))
-        .map((name) => ({ id: name, label: name, icon: <IconDescription /> })),
+        .map((name) => ({ id: name, label: name, start: <IconDescription /> })),
     [query],
   );
   return (

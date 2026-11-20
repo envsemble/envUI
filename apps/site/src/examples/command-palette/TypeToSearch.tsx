@@ -11,7 +11,7 @@ export default function TypeToSearch() {
   const [query, setQuery] = useState('');
   const items = documents
     .filter((name) => name.toLowerCase().includes(query.trim().toLowerCase()))
-    .map((name) => ({ id: name, label: name, icon: <IconDescription /> }));
+    .map((name) => ({ id: name, label: name, start: <IconDescription /> }));
   return (
     <>
       <Button variant="secondary" start={<IconSearch />} onClick={() => setOpen(true)}>

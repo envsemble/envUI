@@ -14,25 +14,25 @@ import { IconNoteAdd } from '@envsemble/envui/icons/NoteAdd';
 import { IconPersonAdd } from '@envsemble/envui/icons/PersonAdd';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
-const commands: { id: string; label: string; icon: ReactNode; end?: ReactNode }[] = [
-  { id: 'new', label: 'New document', icon: <IconNoteAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
-  { id: 'invite', label: 'Invite people', icon: <IconPersonAdd /> },
+const commands: { id: string; label: string; start: ReactNode; end?: ReactNode }[] = [
+  { id: 'new', label: 'New document', start: <IconNoteAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
+  { id: 'invite', label: 'Invite people', start: <IconPersonAdd /> },
   {
     id: 'theme',
     label: 'Switch theme',
-    icon: <IconDarkMode />,
+    start: <IconDarkMode />,
     end: <Kbd keys={['Ctrl', 'J']} />,
   },
   {
     id: 'settings',
     label: 'Open settings',
-    icon: <IconSettings />,
+    start: <IconSettings />,
     end: <Kbd keys={['Ctrl', ',']} />,
   },
   {
     id: 'automations',
     label: 'Create an automation',
-    icon: <IconBolt />,
+    start: <IconBolt />,
     end: <Badge tone="primary">New</Badge>,
   },
 ];
