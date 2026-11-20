@@ -31,6 +31,7 @@ import { useTabStripScrolling } from './internal/useTabStripScrolling.js';
 import { flag } from '../internal/flag.js';
 import { useLabelText } from './internal/labelText.js';
 import { rendersContent } from '../internal/react/rendersContent.js';
+import { chainHandlers } from '../internal/react/chainHandlers.js';
 import '../styles/Base.css';
 import '../styles/DocumentTabs.css';
 
@@ -404,10 +405,7 @@ function DocumentTab({
       data-active={flag(active)}
       data-moving={moving ? 'pointer' : undefined}
       data-drop={drop}
-      onPointerDown={(event) => {
-        ownPointerDown?.(event);
-        if (!event.defaultPrevented) onPointerDown(event);
-      }}
+      onPointerDown={chainHandlers(ownPointerDown, onPointerDown)}
       onMouseDown={(event) => {
         ownMouseDown?.(event);
         preventMiddlePressAutoscroll(event);

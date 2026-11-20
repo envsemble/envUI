@@ -21,6 +21,7 @@ import { remPixels, roundToHundredth } from '../internal/dom/lengths.js';
 import { useResizableWidth } from '../internal/resize/useResizableWidth.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { ResizeHandle as Handle, type ResizeHandleProps as HandleProps } from './ResizeHandle.js';
+import { chainHandlers } from '../internal/react/chainHandlers.js';
 import '../styles/Base.css';
 import '../styles/Panes.css';
 
@@ -227,10 +228,7 @@ function ResizeHandle({ label, className, onDoubleClick, ...props }: ResizeHandl
       label={label ?? messages.resize}
       aria-controls={sizedId}
       className={classNames('env-panes-resize-handle', className)}
-      onDoubleClick={(event) => {
-        onDoubleClick?.(event);
-        handle.onDoubleClick(event);
-      }}
+      onDoubleClick={chainHandlers(onDoubleClick, handle.onDoubleClick)}
     />
   );
 }

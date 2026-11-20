@@ -30,6 +30,7 @@ import { placeRows, TreeRow } from './internal/TreeRow.js';
 import { useTreeTransitions } from './internal/useTreeTransitions.js';
 import { useTreeViewport } from './internal/useTreeViewport.js';
 import { flag } from '../internal/flag.js';
+import { chainHandlers } from '../internal/react/chainHandlers.js';
 import '../styles/Base.css';
 import '../styles/Tree.css';
 
@@ -303,10 +304,7 @@ export function Tree<Item extends TreeItem>({
       className={classNames('env-tree', className)}
       data-density={density}
       data-focus-visible={flag(focusVisible)}
-      onKeyDown={(event) => {
-        ownKeyDown?.(event);
-        if (!event.defaultPrevented) onKeyDown(event);
-      }}
+      onKeyDown={chainHandlers(ownKeyDown, onKeyDown)}
       onScroll={(event) => {
         ownScroll?.(event);
         onScroll(event.currentTarget.scrollTop);
@@ -321,14 +319,8 @@ export function Tree<Item extends TreeItem>({
         if (event.target === event.currentTarget) setFocusVisible(!pointerFocus.current);
         pointerFocus.current = false;
       }}
-      onClick={(event) => {
-        ownClick?.(event);
-        if (!event.defaultPrevented) onRowClick(event);
-      }}
-      onDoubleClick={(event) => {
-        ownDoubleClick?.(event);
-        if (!event.defaultPrevented) onRowDoubleClick(event);
-      }}
+      onClick={chainHandlers(ownClick, onRowClick)}
+      onDoubleClick={chainHandlers(ownDoubleClick, onRowDoubleClick)}
       onContextMenu={(event) => {
         ownContextMenu?.(event);
         const item = rowFromEvent(event);
