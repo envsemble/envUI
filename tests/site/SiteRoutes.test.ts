@@ -12,11 +12,12 @@ const {
   normalizeRoute,
   otherPartRoute,
   pagesOf,
+  formerPages,
 } = await importSource('SiteAddresses', [
   "export { allPages, findPage, pagesOf } from './apps/site/src/routes/SiteRoutes.ts';",
   "export { counterpartOf, otherPartRoute } from './apps/site/src/routes/Counterparts.ts';",
   "export { docsTree } from './apps/site/src/routes/DocsTree.ts';",
-  "export { normalizeRoute } from './apps/site/src/routes/OldAddresses.ts';",
+  "export { formerPages, normalizeRoute } from './apps/site/src/routes/OldAddresses.ts';",
   "export { docsTrail } from './apps/site/src/routes/Trails.ts';",
   "export { componentGroups } from './apps/site/src/routes/PageModel.ts';",
 ]);
@@ -31,7 +32,6 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'foundations/colors/preview': 'foundations/colors',
     'foundations/colors/usage': 'docs/foundations/colors',
     'foundations/tokens': 'docs/tokens',
-    'foundations/scale': 'foundations/spacing',
     'foundations/scale/usage': 'docs/foundations/spacing',
     'docs/foundations/scale': 'docs/foundations/spacing',
     'foundations/composition': 'docs/customizing',
@@ -58,29 +58,13 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'dev-mode': 'docs',
     'dev-mode?section=opening-it': 'docs?section=opening-it',
     'docs/dev-mode': 'docs',
-    'components/bar': 'components/navigation-drawer',
     'components/rail/props': 'docs/components/navigation-drawer',
-    'components/drawer': 'components/navigation-drawer',
     'components/page-header?section=sticky': 'components/page?section=sticky',
     'docs/components/page-header': 'docs/components/page',
-    'components/rich-text': 'components/markdown',
-    'docs/components/rich-text': 'docs/components/markdown',
-    'patterns/feature-cards': 'components/card?section=feature-card',
-    'docs/patterns/feature-cards': 'docs/components/card',
     'patterns/search-trigger':
       'components/command-palette?section=opening-it-the-button-and-the-shortcut',
-    'components/search-trigger':
-      'components/command-palette?section=opening-it-the-button-and-the-shortcut',
-    'docs/patterns/search-trigger': 'docs/components/command-palette',
-    'components/rating': 'components/meter?section=a-score-in-stars',
     'components/rating/props': 'docs/components/meter',
-    'docs/components/rating': 'docs/components/meter',
-    'components/animated-number': 'foundations/typography?section=a-number-that-changes',
     'components/animated-number/props': 'docs/foundations/typography',
-    'docs/components/animated-number': 'docs/foundations/typography',
-    'components/calendar-heatmap': 'components/tooltip?section=details-of-each-day-in-a-grid',
-    'components/heatmap': 'components/tooltip?section=details-of-each-day-in-a-grid',
-    'docs/components/calendar-heatmap': 'docs/components/tooltip',
     patterns: 'docs',
     'docs/patterns': 'docs',
     'patterns/forms': 'docs',
@@ -104,6 +88,21 @@ test('the addresses of the views before the catalogue and the Docs split open th
   };
   for (const [from, to] of Object.entries(routes)) assert.equal(normalizeRoute(from), to, from);
   for (const { path } of allPages) assert.equal(normalizeRoute(path), path);
+});
+
+test('each former page leads to the page that took its place, at the section it went to', () => {
+  for (const [former, { page, section }] of Object.entries(formerPages)) {
+    const target = findPage(page);
+    assert.ok(target, `${former} leads to ${page}, which is no page`);
+    if (section)
+      assert.ok(
+        target.document?.outline?.some(({ anchors }) => anchors.includes(section)),
+        `${former} leads to #${section}, which ${page} has no heading for`,
+      );
+    const query = section ? `?${new URLSearchParams({ section })}` : '';
+    assert.equal(normalizeRoute(former), `${page}${query}`, former);
+    assert.equal(normalizeRoute(`docs/${former}`), `docs/${page}`, `docs/${former}`);
+  }
 });
 
 test("each page of a subject leads to its page in the other part, and a page without one to the other part's start", () => {
