@@ -7,15 +7,13 @@ import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { elementsOf, firstElement, hasClass, textOf } from '../../support/Markup.ts';
 import { declarations } from '../../support/CssDeclarations.ts';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const { Button, IconButton, Message, MessageList } = await importSource(
   'Message',
   'packages/ui/src/index.ts',
 );
-const css = declarations(
-  readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Message.css'), 'utf8'),
-);
+const css = declarations(readFileSync(join(styleSheetsDirectory, 'Message.css'), 'utf8'));
 
 const render = (element) => firstElement(renderToStaticMarkup(element));
 const byClass = (root, name) => elementsOf(root).filter((element) => hasClass(element, name));

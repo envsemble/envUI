@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import plugin from '../src/index.js';
 import { lintPackages, staleFiles } from '../../../scripts/build/SyncLintPackages.ts';
+import { propsFile } from '../../../scripts/RepositoryPaths.ts';
 import { colorTokenAdvice } from '../src/tokens.js';
 
 const read = (url) => JSON.parse(readFileSync(url, 'utf8'));
@@ -62,9 +63,8 @@ test('the mapping table has unique entries that name envUI 1.0 components', () =
 });
 
 test("the components that own a role, and those suggested, are envUI's when the repository has its props data", () => {
-  const props = new URL('../../../docs/generated/props.json', import.meta.url);
-  if (!existsSync(props)) return;
-  const exported = new Set(Object.keys(read(props).exports));
+  if (!existsSync(propsFile)) return;
+  const exported = new Set(Object.keys(read(propsFile).exports));
   for (const entry of elements.roles)
     for (const owner of entry.owners)
       assert.ok(exported.has(owner), `${entry.id}: ${owner} is not an envUI component`);

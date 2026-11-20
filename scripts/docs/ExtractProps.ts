@@ -1,11 +1,13 @@
-import { readFileSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
 import { Node, Project, ts } from 'ts-morph';
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
 import { libraryEntryPoints } from './LibraryEntryPoints.ts';
-import { libraryDirectory, librarySourceDirectory, repositoryRoot } from '../RepositoryPaths.ts';
-
-export const propsFile = resolve(repositoryRoot, 'docs/generated/props.json');
+import {
+  libraryDirectory,
+  librarySourceDirectory,
+  propsFile,
+  repositoryRoot,
+} from '../RepositoryPaths.ts';
 
 const undocumentedEntryPoints = new Set(['@envsemble/envui/messages']);
 
@@ -621,10 +623,6 @@ export function extractProps() {
 
 export function serializeProps(props: unknown) {
   return `${JSON.stringify(props, null, 2)}\n`;
-}
-
-export function readProps() {
-  return JSON.parse(readFileSync(propsFile, 'utf8'));
 }
 
 if (import.meta.main) {

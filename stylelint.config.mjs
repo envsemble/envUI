@@ -5,6 +5,7 @@ import {
   rawColorFunction,
   stackingValues,
 } from '@envsemble/stylelint-config-envui';
+import { partsFile } from './scripts/RepositoryPaths.ts';
 import {
   noStyleSheetComments,
   styleSheetCommentRuleName,
@@ -111,9 +112,7 @@ const slotTextProperties =
   /^(?:font(?:-.*)?|color|overflow(?:-.*)?|text-overflow|text-wrap(?:-.*)?|white-space(?:-.*)?|(?:-webkit-)?line-clamp|line-height|letter-spacing|word-spacing|text-transform|text-decoration(?:-.*)?)$/i;
 
 function readSlotClasses() {
-  const contract = JSON.parse(
-    readFileSync(new URL('./docs/generated/parts.json', import.meta.url), 'utf8'),
-  );
+  const contract = JSON.parse(readFileSync(partsFile, 'utf8'));
   return new Set(
     [...Object.values(contract.components), ...Object.values(contract.shared)].flatMap((entry) =>
       entry.parts.filter((part) => part.slot).map((part) => part.class),

@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { formatted, readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
-import { documentationDirectory, tokensDataFile } from '../RepositoryPaths.ts';
+import { documentationDirectory, partsFile, tokensDataFile } from '../RepositoryPaths.ts';
 import { cell } from './MarkdownBlocks.ts';
-import { partsFile, type PartsContract } from './parts/Contract.ts';
+import type { PartsContract } from './parts/Contract.ts';
 
 type Entry = PartsContract['components'][string];
 

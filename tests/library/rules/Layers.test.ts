@@ -3,9 +3,9 @@ import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { build } from 'esbuild';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
-const styles = join(repositoryRoot, 'packages/ui/src/styles/');
+const styles = styleSheetsDirectory;
 const layerOrder = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env.utilities'];
 
 function topLevel(css: string) {

@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { createElement as h } from 'react';
 import * as ui from '@envsemble/envui';
 import * as code from '@envsemble/envui/code';
@@ -10,8 +9,7 @@ import * as themeStorage from '@envsemble/envui/theme-storage';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { render } from './Render.ts';
-import { join } from 'node:path';
-import { repositoryRoot } from '../../../../scripts/RepositoryPaths.ts';
+import { readProps } from '../../../../scripts/docs/PageStructure.ts';
 
 const clientReference = Symbol.for('react.client.reference');
 const isClientReference = (value) => value?.$$typeof === clientReference;
@@ -20,9 +18,7 @@ const isComponent = (name, value) =>
   /^[A-Z]/.test(name.split('.').at(-1)) &&
   (typeof value === 'function' || wrappedComponents.has(value?.$$typeof));
 
-const documented = JSON.parse(
-  readFileSync(join(repositoryRoot, 'docs/generated/props.json'), 'utf8'),
-).exports;
+const documented = readProps()!.exports;
 
 const requiredProps = {
   AvatarGroup: { people: [{ name: 'Alex Morgan' }, { name: 'Sam Lee' }] },

@@ -34,7 +34,7 @@ Don't run `verify`, `test:browser`, `test:a11y` or `test:visual` as a routine st
 | `apps/site/src/`                             | The site: `examples/<page>/`, `specimens/`, `tiles/`, `figures/`, `fit/`, `motion/`, `pages/`, `routes/`, `search/` and more |
 | `apps/site/hosting/SKILL.md`                 | The setup skill the site serves                                                                                              |
 | `packages/eslint-plugin`, `stylelint-config` | The lint packages, each with its README and tests                                                                            |
-| `scripts/`                                   | Build, docs, site, test and release scripts; paths into the repository from `scripts/RepositoryPaths.ts`                     |
+| `scripts/`                                   | Build, docs, site, test and release scripts                                                                                  |
 | `tests/`                                     | Unit tests by area (`library/`, `site/`, `docs/`, `tooling/`, `lint/`), `component/` with `fixture/`, `browser/` specs       |
 
 Generated, never edited by hand: `packages/ui/src/generated/`, `packages/ui/tokens/palette.tokens.json`, `packages/ui/src/icons/`, `docs/generated/`, the tables under the guides' generated headings, `apps/site/src/generated/` and the lint packages' copied `src/data/`, `tokens.js` and `colorPolicy.js`.

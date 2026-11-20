@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
 import { createElement as h, type ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const library = await importSource('Skeleton', [
   "export { placeholders, isPlaceholder } from './packages/ui/src/foundations/placeholders.ts';",
@@ -78,7 +78,7 @@ test('a surface as a skeleton marks its root and tells what is inside', () => {
 });
 
 test('the style sheet draws text as bars, shapes and missing text, pulses gentler on request with plain-value keyframes, and is imported last', () => {
-  const css = readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Skeleton.css'), 'utf8');
+  const css = readFileSync(join(styleSheetsDirectory, 'Skeleton.css'), 'utf8');
   assert.match(css, /\[data-env-skeleton\]:not\(env-none\) \{[^}]*text-decoration: line-through/);
   assert.match(css, /-webkit-text-fill-color: transparent/);
   assert.match(
@@ -100,6 +100,6 @@ test('the style sheet draws text as bars, shapes and missing text, pulses gentle
   const keyframes = [...css.matchAll(/@keyframes [\w-]+ \{(?:[^{}]*\{[^}]*\})*\s*\}/g)];
   assert.equal(keyframes.length, 2);
   for (const [rule] of keyframes) assert.doesNotMatch(rule, /var\(/);
-  const index = readFileSync(join(repositoryRoot, 'packages/ui/src/styles/index.css'), 'utf8');
+  const index = readFileSync(join(styleSheetsDirectory, 'index.css'), 'utf8');
   assert.match(index, /@import '\.\/Skeleton\.css';\n$/);
 });

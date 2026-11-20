@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { buildParts, partsFile, serializeParts } from '../../scripts/docs/parts/Contract.ts';
+import { buildParts, serializeParts } from '../../scripts/docs/parts/Contract.ts';
+import { partsFile } from '../../scripts/RepositoryPaths.ts';
 import { removedParts } from '../../scripts/docs/parts/ContractComparison.ts';
 import { isPrivateState } from '../../scripts/docs/parts/Library.ts';
 

@@ -2,12 +2,12 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { libraryEntryPoints } from '../docs/LibraryEntryPoints.ts';
-import { repositoryRoot } from '../RepositoryPaths.ts';
+import { partsFile, repositoryPath, repositoryRoot } from '../RepositoryPaths.ts';
 
 const libraryTokens = 'packages/ui/src/generated/tokens.json';
 const libraryTokenStyles = 'packages/ui/src/generated/Tokens.css';
 const handwrittenTokens = 'packages/ui/tokens/handwritten.json';
-const libraryParts = 'docs/generated/parts.json';
+const libraryParts = repositoryPath(partsFile);
 const writingGuide = 'docs/writing.md';
 
 const copiedModules = {

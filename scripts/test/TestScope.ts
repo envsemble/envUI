@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { browserTestFile, browserTestPaths, isComponentTest } from './BrowserTests.ts';
 import { fixtureUse, importsOf } from './FixtureImports.ts';
-import { repositoryRoot } from '../RepositoryPaths.ts';
+import { partsFile, repositoryPath, repositoryRoot } from '../RepositoryPaths.ts';
 import { baseBranch, git, mergeBase as mergeBaseOf } from '../Git.ts';
 
 export const testsByModuleName: Record<string, string[]> = {
@@ -116,7 +116,7 @@ export const pathRules: { paths: string[]; needs?: Need[]; browserTests?: string
       'packages/eslint-plugin/src/data/vocabulary.json',
       'packages/stylelint-config/src/data/customProperties.json',
       'packages/stylelint-config/src/data/scales.json',
-      'docs/generated/parts.json',
+      repositoryPath(partsFile),
       'docs/writing.md',
     ],
     needs: ['tokens', 'docs'],

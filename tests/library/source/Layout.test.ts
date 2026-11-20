@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const { Box, Column, Grid, Row } = await importSource(
   'Layout',
@@ -52,10 +52,10 @@ test('render renders another element, with its own props winning', () => {
 });
 
 test('every rule of the primitives has zero specificity', () => {
-  const css = readFileSync(
-    join(repositoryRoot, 'packages/ui/src/styles/Layout.css'),
-    'utf8',
-  ).replace(/\/\*[\s\S]*?\*\//g, '');
+  const css = readFileSync(join(styleSheetsDirectory, 'Layout.css'), 'utf8').replace(
+    /\/\*[\s\S]*?\*\//g,
+    '',
+  );
   const selectors = [...css.matchAll(/([^{}]+)\{[^{}]*\}/g)].flatMap(([, list]) =>
     list.split(/,(?![^(]*\))/).map((selector) => selector.trim()),
   );
@@ -96,10 +96,10 @@ test('render runs both event handlers, the element’s first, and gives both ref
 });
 
 test('rows and columns lay out with flex and grids with grid, and no primitive paints', () => {
-  const css = readFileSync(
-    join(repositoryRoot, 'packages/ui/src/styles/Layout.css'),
-    'utf8',
-  ).replace(/\/\*[\s\S]*?\*\//g, '');
+  const css = readFileSync(join(styleSheetsDirectory, 'Layout.css'), 'utf8').replace(
+    /\/\*[\s\S]*?\*\//g,
+    '',
+  );
   assert.match(
     css,
     /:where\(\[data-env-layout='row'\], \[data-env-layout='column'\]\) \{\s*display: flex;/,

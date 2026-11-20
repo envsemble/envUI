@@ -12,7 +12,7 @@ import {
 import { contextTokens, duplicateTokens } from '../../../scripts/build/tokens/TokenSources.ts';
 import { withoutRepeatedValues } from '../../../scripts/build/tokens/TokensCss.ts';
 import { buildTokens } from '../../../scripts/build/BuildTokens.ts';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { partsFile, repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
 const library = join(repositoryRoot, 'packages/ui');
 let scratch;
@@ -299,7 +299,7 @@ const baseUiPositionerProperties = [
 ];
 
 const applicationColorProperties = Object.values(
-  JSON.parse(readFileSync(join(repositoryRoot, 'docs/generated/parts.json'), 'utf8')).components,
+  JSON.parse(readFileSync(partsFile, 'utf8')).components,
 ).flatMap((entry) => (entry.colors ?? []).map((color) => color.property));
 
 const impliedClasses = {

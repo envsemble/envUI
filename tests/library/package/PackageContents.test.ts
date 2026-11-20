@@ -4,9 +4,9 @@ import { existsSync } from 'node:fs';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { compileDocumentation } from '../../../scripts/docs/Compiler.ts';
+import { readProps } from '../../../scripts/docs/PageStructure.ts';
 import { ruleSelectors, scopedSelector, splitSelectors } from '../../support/CssScope.ts';
 import { installTimeout, packedConsumer } from '../../support/PackedConsumer.ts';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
 let consumer;
 before(async () => (consumer = await packedConsumer()), { timeout: installTimeout });
@@ -207,10 +207,5 @@ test('the packed README links only what the package ships, and the packed docume
       `Packaged documentation differs from its release source: ${path}`,
     );
   }
-  assert.deepEqual(
-    JSON.parse(
-      await readFile(join(consumer.installedDirectory, 'docs/generated/props.json'), 'utf8'),
-    ),
-    JSON.parse(await readFile(join(repositoryRoot, 'docs/generated/props.json'), 'utf8')),
-  );
+  assert.deepEqual(readProps(join(consumer.installedDirectory, 'docs')), readProps());
 });

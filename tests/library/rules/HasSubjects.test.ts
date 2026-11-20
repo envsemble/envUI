@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { test } from 'node:test';
 import postcss from 'postcss';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { repositoryRoot, styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 function sheetsIn(folder) {
   return readdirSync(folder, { withFileTypes: true }).flatMap((entry) => {
@@ -43,7 +43,7 @@ function named(compound) {
 
 test('no :has() rule styles any element or a pseudo-element, which Chromium matches from every element', () => {
   const sheets = [
-    ...sheetsIn(join(repositoryRoot, 'packages/ui/src/styles')),
+    ...sheetsIn(styleSheetsDirectory),
     ...sheetsIn(join(repositoryRoot, 'apps/site/src')),
   ];
   const found = [];

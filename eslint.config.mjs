@@ -149,6 +149,12 @@ const inlineFlags = [
   message: 'Set a state attribute that is on or off with flag() (src/internal/flag.ts).',
 }));
 
+const pathsFromRepositoryPaths = {
+  selector: String.raw`Literal[value=/^(?:\.{1,2}\/)*(?:packages\/ui\/src\/styles\/?|docs\/generated\/(?:parts|props|exports)\.json)$/]`,
+  message:
+    'Take the path from scripts/RepositoryPaths.ts (styleSheetsDirectory, partsFile, propsFile, exportsFile), and repositoryPath() for its repository-relative form.',
+};
+
 const buildOutput = ['**/dist/**', '**/node_modules/**', '.cache/**'];
 const wranglerDevState = ['.wrangler/**'];
 const testReports = ['test-results/**', 'playwright-report/**'];
@@ -239,6 +245,11 @@ export default defineConfig(
   {
     files: ['packages/ui/src/**', 'apps/site/src/**'],
     rules: { 'no-console': 'error', ...strictContentSecurityPolicy },
+  },
+  {
+    files: ['scripts/**', 'tests/**', 'packages/*/test/**', '*.{js,mjs,ts}'],
+    ignores: ['scripts/RepositoryPaths.ts'],
+    rules: { 'no-restricted-syntax': ['error', pathsFromRepositoryPaths] },
   },
   {
     files: ['packages/ui/src/**/*.{ts,tsx}'],

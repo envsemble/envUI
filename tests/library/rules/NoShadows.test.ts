@@ -4,9 +4,9 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { build } from 'esbuild';
 import { declarations } from '../../support/CssDeclarations.ts';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { repositoryRoot, styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
-const styles = join(repositoryRoot, 'packages/ui/src/styles');
+const styles = styleSheetsDirectory;
 
 async function shipped() {
   const result = await build({

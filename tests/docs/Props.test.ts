@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { extractProps, propsFile, serializeProps } from '../../scripts/docs/ExtractProps.ts';
+import { extractProps, serializeProps } from '../../scripts/docs/ExtractProps.ts';
+import { propsFile } from '../../scripts/RepositoryPaths.ts';
 
 const extracted = extractProps();
 const { exports } = extracted;

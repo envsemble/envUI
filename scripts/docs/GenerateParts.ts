@@ -1,14 +1,9 @@
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
 import { baseOption } from '../Git.ts';
+import { partsFile } from '../RepositoryPaths.ts';
 import { yellow } from '../Terminal.ts';
 import { baseContract, lastReleaseContract, pendingChangesets } from './ContractHistory.ts';
-import {
-  buildParts,
-  partsFile,
-  partsPath,
-  serializeParts,
-  type PartsContract,
-} from './parts/Contract.ts';
+import { buildParts, partsPath, serializeParts, type PartsContract } from './parts/Contract.ts';
 import { removedParts } from './parts/ContractComparison.ts';
 
 const check = process.argv.includes('--check');

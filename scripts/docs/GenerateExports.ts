@@ -11,10 +11,9 @@ import {
   pendingChangesets,
 } from './ContractHistory.ts';
 import { libraryEntryPoints } from './LibraryEntryPoints.ts';
-import { libraryDirectory, repositoryRoot } from '../RepositoryPaths.ts';
+import { exportsFile, libraryDirectory, repositoryPath } from '../RepositoryPaths.ts';
 
-const exportsPath = 'docs/generated/exports.json';
-const exportsFile = resolve(repositoryRoot, exportsPath);
+const exportsPath = repositoryPath(exportsFile);
 
 type ExportsRecord = Record<string, Record<string, string>>;
 
