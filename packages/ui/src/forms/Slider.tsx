@@ -21,7 +21,7 @@ import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { followDrag, followOverdrag } from './internal/sliderDrag.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
 import { flag } from '../internal/flag.js';

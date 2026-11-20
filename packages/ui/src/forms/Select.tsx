@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
 import {

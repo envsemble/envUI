@@ -26,7 +26,7 @@ import {
   type Weekday,
 } from '../internal/time/calendarDays.js';
 import { useActiveCell } from './internal/useActiveCell.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import '../styles/Base.css';
 import '../styles/Calendar.css';
 

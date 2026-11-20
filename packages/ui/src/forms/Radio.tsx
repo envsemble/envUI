@@ -16,7 +16,7 @@ import { useControllableState } from '../internal/react/useControllableState.js'
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import '../styles/Base.css';
 import '../styles/Radio.css';
 

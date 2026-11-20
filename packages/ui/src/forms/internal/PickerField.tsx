@@ -36,7 +36,7 @@ import {
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { useFormReset } from '../../internal/field/useFormReset.js';
 import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../../internal/field/rowControl.js';
+import { useRowControlNaming } from '../../internal/field/RowControl.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';

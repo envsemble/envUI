@@ -19,7 +19,7 @@ import { Slot } from '../internal/layout/Slot.js';
 import { VisuallyHidden } from '../content/VisuallyHidden.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/SegmentedControl.css';

@@ -2,7 +2,7 @@
 
 import { useRef, type CSSProperties, type InputHTMLAttributes, type Ref } from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import {
   FieldFrame,
   FieldLabelContent,

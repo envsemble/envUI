@@ -10,7 +10,7 @@ import {
 } from './internal/useCheckedInput.js';
 import { IconCheck } from '../icons/Check.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import '../styles/Base.css';
 import '../styles/Checkbox.css';
 

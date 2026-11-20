@@ -5,7 +5,7 @@ import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useCheckedInput, type CheckedProps } from './internal/useCheckedInput.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import '../styles/Base.css';
 import '../styles/Switch.css';
 

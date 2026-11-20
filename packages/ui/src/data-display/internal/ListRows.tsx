@@ -21,7 +21,7 @@ import {
 import { ListReorderHandle, ReorderableList } from './ReorderableList.js';
 import { flag } from '../../internal/flag.js';
 import { rowAttributes } from '../../internal/layout/primitiveAttributes.js';
-import { RowControlProvider } from '../../internal/field/rowControl.js';
+import { RowControlProvider } from '../../internal/field/RowControl.js';
 import type { ItemProps, RootProps } from '../List.js';
 
 export interface ListIds {

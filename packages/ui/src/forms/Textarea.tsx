@@ -3,7 +3,7 @@
 import type { CSSProperties, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { TextareaControl, type TextareaControlProps } from '../internal/field/TextareaControl.js';
 import { FieldFrame, FieldLabelContent, type FieldProps } from '../internal/field/FieldFrame.js';
 
