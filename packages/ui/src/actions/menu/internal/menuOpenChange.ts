@@ -1,4 +1,4 @@
-import type { OverlayOpenChangeReason } from '../../internal/popup/overlayOpenChangeReason.js';
+import type { OverlayOpenChangeReason } from '../../../internal/popup/overlayOpenChangeReason.js';
 
 export type OpenChangeReason = Extract<
   OverlayOpenChangeReason,

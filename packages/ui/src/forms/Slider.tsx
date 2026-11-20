@@ -19,9 +19,9 @@ import { useControllableState } from '../internal/react/useControllableState.js'
 import { useLocale } from '../internal/provider/EnvUIContext.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
-import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
+import { fieldDescribedBy } from '../internal/field/useFieldControl.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { followDrag, followOverdrag } from './internal/sliderDrag.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
 import { flag } from '../internal/flag.js';
@@ -210,14 +210,12 @@ export function Slider({
     return followDrag(element, element.closest<HTMLElement>('.env-slider') ?? element);
   }, []);
   const ticks = tickCount(min, max, step, largeStep);
-  const describedByIds =
-    [
-      naming['aria-describedby'] ?? describedBy,
-      description != null ? fieldMessageIds(id).description : undefined,
-      error != null ? fieldMessageIds(id).error : undefined,
-    ]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const describedByIds = fieldDescribedBy(
+    id,
+    naming['aria-describedby'] ?? describedBy,
+    description,
+    error,
+  );
   const inactiveGroupExemptFromContrast = disabled || undefined;
   return (
     <DirectionProvider direction={directionScope.direction}>

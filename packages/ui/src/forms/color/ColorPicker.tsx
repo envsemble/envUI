@@ -24,8 +24,10 @@ import { ColorValues } from './internal/ColorValues.js';
 import { SwatchList } from './internal/SwatchList.js';
 import { useEyeDropper } from './internal/useEyeDropper.js';
 import type { ColorPickerValueProps } from './internal/colorPickerValueProps.js';
-import { ColorChangeContext } from './internal/colorChange.js';
-import { useColorState, useFormResetOf } from './internal/useColorState.js';
+import { ColorChangeContext } from './internal/ColorChangeContext.js';
+import { useColorFollowingValue } from './internal/useColorFollowingValue.js';
+import { useFormReset } from '../../internal/field/useFormReset.js';
+import { fieldDescribedBy, fieldPartIds } from '../../internal/field/useFieldControl.js';
 import { formatColor, sameColor, toColor, type ColorFormat } from './internal/colorValue.js';
 import { flag } from '../../internal/flag.js';
 import { Slot } from '../../internal/layout/Slot.js';
@@ -98,9 +100,9 @@ export function ColorPicker({
   const together = formats.length > 1 && ownFormats !== undefined;
   const [chosenFormat, setFormat] = useState(formats[0]);
   const format = formats.includes(chosenFormat) ? chosenFormat : formats[0];
-  const { color, setOwn, reset, controlled } = useColorState(value, defaultValue, alpha);
+  const { color, setOwn, reset, controlled } = useColorFollowingValue(value, defaultValue, alpha);
   const inputRef = useRef<HTMLInputElement>(null);
-  const resetting = useFormResetOf(
+  const resetting = useFormReset(
     inputRef,
     () => {
       if (!controlled) reset();
@@ -147,10 +149,8 @@ export function ColorPicker({
     />
   );
 
-  const describedByIds =
-    [describedBy, description != null && `${id}-description`, error != null && `${id}-error`]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const ids = fieldPartIds(id);
+  const describedByIds = fieldDescribedBy(id, describedBy, description, error);
 
   return (
     <ColorLocale>
@@ -159,7 +159,7 @@ export function ColorPicker({
         ref={(element) => setRef(ref, element)}
         id={id}
         role="group"
-        aria-labelledby={visibleLabel ? `${id}-label` : undefined}
+        aria-labelledby={visibleLabel ? ids.label : undefined}
         aria-label={visibleLabel ? undefined : label}
         aria-describedby={describedByIds}
         aria-disabled={disabled || undefined}
@@ -169,7 +169,7 @@ export function ColorPicker({
         data-invalid={flag(error != null)}
       >
         {visibleLabel && (
-          <span id={`${id}-label`} className="env-color-picker-label">
+          <span id={ids.label} className="env-color-picker-label">
             {label}
           </span>
         )}
@@ -200,13 +200,13 @@ export function ColorPicker({
         )}
         {!swatchesFirst && swatchList}
         {description != null && (
-          <div id={`${id}-description`} className="env-color-picker-description">
+          <div id={ids.description} className="env-color-picker-description">
             <Slot className="env-color-picker-description-content">{description}</Slot>
           </div>
         )}
         {error != null && (
           <Field.Root invalid>
-            <Field.Error id={`${id}-error`} className="env-color-picker-error">
+            <Field.Error id={ids.error} className="env-color-picker-error">
               {error}
             </Field.Error>
           </Field.Root>

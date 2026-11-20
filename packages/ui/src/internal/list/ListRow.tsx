@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
+import { cloneElement, isValidElement, useId, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../classNames.js';
 import { flag } from '../flag.js';
 import { Slot } from '../layout/Slot.js';
@@ -8,10 +8,10 @@ import '../../styles/ListRow.css';
 export interface ListRowProps {
   /**
    * The row's element, which gives it its role and behavior: a Base UI item, such as
-   * <BaseSelect.Item value={…} />, <BaseMenu.Item />, <BaseMenu.RadioItem value={…} /> or
-   * <BaseCombobox.Item value={…} />, or an option element of a listbox. ListRow fills it with the
-   * row's anatomy and the env-list-row class; its state shows through Base UI's data-highlighted,
-   * data-selected and data-disabled.
+   * <BaseSelect.Item value={…} />, <BaseCombobox.Item value={…} /> or
+   * <BaseAutocomplete.Item value={…} />, or an option element of a listbox. ListRow fills it with
+   * the row's anatomy and the env-list-row class; its state shows through Base UI's
+   * data-highlighted, data-selected and data-disabled.
    */
   render: ReactElement;
   /** The check mark or radio dot slot at the start, such as a Base UI ItemIndicator. */
@@ -30,13 +30,14 @@ export interface ListRowProps {
   end?: ReactNode;
   /** A class of the owner's, such as env-select-item, beside env-list-row. */
   className?: string;
+  descriptionInName?: boolean;
 }
 
 /**
  * The one anatomy of a row in a popup list: an indicator, content before the label, a label with a
  * description under it, and content at the end, on the element of the list's own item, so the
- * owner keeps its roles and keyboard handling. Select, Combobox, Menu and the command palette's
- * options share it.
+ * owner keeps its roles and keyboard handling. Select's, Combobox's and the command palette's
+ * options share it; Menu's items have an anatomy of their own.
  */
 export function ListRow({
   render,
@@ -46,8 +47,11 @@ export function ListRow({
   description,
   end,
   className,
+  descriptionInName = false,
 }: ListRowProps) {
+  const descriptionId = useId();
   const own = isValidElement(render) ? (render.props as { className?: string }) : {};
+  const describes = description != null && !descriptionInName;
   const children = (
     <>
       {indicator != null && <span className="env-list-row-indicator">{indicator}</span>}
@@ -60,7 +64,17 @@ export function ListRow({
         <Slot className="env-list-row-label" element="span">
           {label}
         </Slot>
-        {description != null && <span className="env-list-row-description">{description}</span>}
+        {description != null && (
+          <span className="env-list-row-description">
+            {describes ? (
+              <span id={descriptionId} aria-hidden="true">
+                {description}
+              </span>
+            ) : (
+              description
+            )}
+          </span>
+        )}
       </span>
       {end != null && (
         <Slot className="env-list-row-end" element="span" layout="row" shrink="never">
@@ -74,6 +88,7 @@ export function ListRow({
     {
       className: classNames('env-list-row', className, own.className),
       'data-indicator': flag(indicator != null),
+      ...(describes && { 'aria-describedby': descriptionId }),
       children,
     } as { className: string; children: ReactNode },
   );

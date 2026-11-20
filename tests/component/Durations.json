@@ -75,7 +75,6 @@
     "tests/component/Tooltip.test.tsx": 7.5,
     "tests/component/TouchFields.test.tsx": 0.7,
     "tests/component/Tree.test.tsx": 1.7,
-    "tests/component/WindowClasses.test.tsx": 1.4,
-    "tests/component/useRovingFocus.test.tsx": 0.3
+    "tests/component/WindowClasses.test.tsx": 1.4
   }
 }

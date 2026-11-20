@@ -81,7 +81,7 @@ export function RadioGroup({
 }
 
 /** Whether the radio items inside close the menu, where an item sets none of its own. */
-export const RadioItemsCloseOnClick = createContext<boolean | undefined>(undefined);
+export const RadioItemsCloseOnClickContext = createContext<boolean | undefined>(undefined);
 
 function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   const Indicator = kind === 'radio' ? BaseMenu.RadioItemIndicator : BaseMenu.CheckboxItemIndicator;
@@ -126,7 +126,7 @@ export function RadioItem({
   'aria-describedby': ariaDescribedBy,
   ...props
 }: RadioItemProps) {
-  const groupCloseOnClick = useContext(RadioItemsCloseOnClick);
+  const groupCloseOnClick = useContext(RadioItemsCloseOnClickContext);
   const closeOnClick = ownCloseOnClick ?? groupCloseOnClick ?? true;
   const { content, accessibility } = useMenuItemContent(
     { start, children, textValue, description, end, 'aria-describedby': ariaDescribedBy },

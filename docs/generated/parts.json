@@ -4135,7 +4135,11 @@
         },
         {
           "class": "env-radio-label",
-          "description": "The slot of a radio's label.",
+          "description": "The label, with the description under it."
+        },
+        {
+          "class": "env-radio-label-content",
+          "description": "The slot of the label.",
           "slot": true
         }
       ],
@@ -6272,7 +6276,7 @@
       "parts": [
         {
           "class": "env-list-row",
-          "description": "The row anatomy of menu, select and combobox options."
+          "description": "The row anatomy of select, combobox and command palette options."
         },
         {
           "class": "env-list-row-description",

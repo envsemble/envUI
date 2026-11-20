@@ -71,7 +71,7 @@ test(
     const input = box(options[0]!);
     expect(input.width).toBeCloseTo(20, 0);
     expect(box(first!.querySelector('.env-radio-control')!).width).toBeCloseTo(40, 0);
-    const label = box(first!.querySelector('.env-radio-label')!);
+    const label = box(first!.querySelector('.env-radio-label-content')!);
     const description = box(first!.querySelector('.env-radio-description')!);
     expect(input.x + input.width).toBeLessThanOrEqual(label.x);
     expect(description.x).toBeCloseTo(label.x, 0);

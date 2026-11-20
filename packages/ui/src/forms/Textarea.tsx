@@ -2,10 +2,10 @@
 
 import type { CSSProperties, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useFieldControl } from '../internal/field/useFieldControl.js';
 import { TextareaControl, type TextareaControlProps } from '../internal/field/TextareaControl.js';
-import { FieldFrame, FieldLabelContent, type FieldProps } from '../internal/field/FieldFrame.js';
+import { FieldFrame, FieldLabelContent } from '../internal/field/FieldFrame.js';
+import { type FieldProps } from '../internal/field/fieldProps.js';
 
 export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** The native text area, so that a form library can register it and focus it. */
@@ -42,14 +42,15 @@ export function Textarea({
   'aria-invalid': invalid,
   ...props
 }: TextareaProps) {
-  const naming = useRowControlNaming({ label, ...props, 'aria-describedby': describedBy });
-  const metadata = useFieldMetadata(
-    suppliedId,
+  const { naming, metadata } = useFieldControl({
+    ...props,
+    id: suppliedId,
+    label,
     description,
     error,
-    naming['aria-describedby'] ?? describedBy,
-    invalid,
-  );
+    'aria-describedby': describedBy,
+    'aria-invalid': invalid,
+  });
   const { id } = metadata;
   return (
     <FieldFrame

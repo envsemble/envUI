@@ -22,7 +22,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
 import { setRef } from '../internal/react/setRef.js';
-import { MenuPopup, menuParts } from './internal/MenuPopup.js';
+import { MenuPopup, menuParts } from './menu/internal/MenuPopup.js';
 import {
   containedOpenChange,
   usePortalContainer,
@@ -30,7 +30,7 @@ import {
 import { useDirection } from '../internal/provider/useDirection.js';
 import { flag } from '../internal/flag.js';
 import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';
-import type { TriggerProps } from './internal/menuTriggerProps.js';
+import type { TriggerProps } from './menu/internal/menuTriggerProps.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import '../styles/Base.css';
 import '../styles/Menubar.css';
@@ -173,7 +173,7 @@ function Root({
 }
 
 /** What Menubar.Menu's onOpenChange receives beside the requested state. */
-export interface MenuFocusDetails {
+export interface OpenChangeDetails {
   /**
    * The element that had focus before the menubar took it, such as a text field, or null. Commands
    * such as Copy act on it.
@@ -214,7 +214,7 @@ export interface MenuProps {
   /**
    * Called when the menu opens or closes, with the element that had focus before the menubar took it.
    */
-  onOpenChange?: (open: boolean, details: MenuFocusDetails) => void;
+  onOpenChange?: (open: boolean, details: OpenChangeDetails) => void;
   /** Class of the menu popup. */
   className?: string;
   /** The menu popup's ref; the trigger is the menubar's own. */

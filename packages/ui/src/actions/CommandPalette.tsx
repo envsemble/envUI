@@ -2,16 +2,11 @@
 
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
-import {
-  useId,
-  useRef,
-  type ComponentPropsWithoutRef,
-  type ComponentPropsWithRef,
-  type ReactNode,
-} from 'react';
+import { useId, useRef, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Column, Row } from '../layout/Layout.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
+import type { ListItemElementProps } from '../internal/list/listEntries.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { useTheme } from '../foundations/Theme.js';
@@ -71,10 +66,7 @@ export interface CommandPaletteItem {
 }
 
 /** What a CommandPalette item's itemProps can set on its option element. */
-export type CommandPaletteItemElementProps = Omit<
-  ComponentPropsWithoutRef<'div'>,
-  'children' | 'id' | 'role' | 'tabIndex' | 'dangerouslySetInnerHTML' | `aria-${string}`
-> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
+export type CommandPaletteItemElementProps = ListItemElementProps;
 
 /** Items of a CommandPalette under a heading, which also names the group for assistive technology. */
 export interface CommandPaletteGroup {

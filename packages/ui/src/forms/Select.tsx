@@ -1,27 +1,23 @@
 'use client';
 
 import {
-  useId,
   useRef,
   type ButtonHTMLAttributes,
   type ComponentProps,
-  type ComponentPropsWithoutRef,
   type CSSProperties,
   type ReactNode,
   type Ref,
 } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useFieldControl } from '../internal/field/useFieldControl.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
+import { FieldFrame, FieldLabelContent } from '../internal/field/FieldFrame.js';
 import {
-  FieldFrame,
-  FieldLabelContent,
   type FieldProps,
   type FieldSizeProps,
-  type TextFieldDecorationProps,
-} from '../internal/field/FieldFrame.js';
+  type FieldDecorationProps,
+} from '../internal/field/fieldProps.js';
 import { PopupSurface } from '../internal/popup/PopupSurface.js';
 import {
   containedModal,
@@ -31,6 +27,7 @@ import {
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
 import { ListRow } from '../internal/list/ListRow.js';
+import { flattenGroups, isGroup, type ListItemElementProps } from '../internal/list/listEntries.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
@@ -66,10 +63,7 @@ export interface SelectItem {
   items?: never;
 }
 /** What a Select option's itemProps can set on its option element. */
-export type SelectItemElementProps = Omit<
-  ComponentPropsWithoutRef<'div'>,
-  'children' | 'id' | 'role' | 'tabIndex' | 'dangerouslySetInnerHTML' | `aria-${string}`
-> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
+export type SelectItemElementProps = ListItemElementProps;
 /** Options of a Select under a heading, which also names the group for assistive technology. */
 export interface SelectGroup {
   /** The group's heading: text, or content such as an icon or a count beside the group's name. */
@@ -103,7 +97,7 @@ export interface SelectProps
     >,
     FieldProps,
     FieldSizeProps,
-    Pick<TextFieldDecorationProps, 'visibleLabel'> {
+    Pick<FieldDecorationProps, 'visibleLabel'> {
   /** The trigger, the button that shows the chosen option and opens the list. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element, beside env-field and env-select. */
@@ -166,7 +160,6 @@ const popupParts = {
 };
 
 function SelectOption({ item }: { item: SelectItem }) {
-  const descriptionId = useId();
   return (
     <ListRow
       render={
@@ -175,7 +168,6 @@ function SelectOption({ item }: { item: SelectItem }) {
           value={item.value}
           label={item.label}
           disabled={item.disabled}
-          aria-describedby={item.description ? descriptionId : undefined}
         />
       }
       className="env-select-item"
@@ -187,24 +179,8 @@ function SelectOption({ item }: { item: SelectItem }) {
         </BaseSelect.ItemIndicator>
       }
       label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}
-      description={
-        item.description ? (
-          <span id={descriptionId} aria-hidden="true">
-            {item.description}
-          </span>
-        ) : undefined
-      }
+      description={item.description || undefined}
     />
-  );
-}
-
-function isGroup(entry: SelectItem | SelectGroup): entry is SelectGroup {
-  return Array.isArray(entry.items);
-}
-
-function optionsOf(items: readonly SelectItem[] | readonly SelectGroup[]) {
-  return items.flatMap((entry: SelectItem | SelectGroup) =>
-    isGroup(entry) ? entry.items : [entry],
   );
 }
 
@@ -279,15 +255,16 @@ export function Select({
   style,
   ...triggerProps
 }: SelectProps) {
-  const options = optionsOf(items);
-  const naming = useRowControlNaming({ label, ...triggerProps, 'aria-describedby': describedBy });
-  const metadata = useFieldMetadata(
-    suppliedId,
+  const options = flattenGroups(items);
+  const { naming, metadata } = useFieldControl({
+    ...triggerProps,
+    id: suppliedId,
+    label,
     description,
     error,
-    naming['aria-describedby'] ?? describedBy,
-    invalid,
-  );
+    'aria-describedby': describedBy,
+    'aria-invalid': invalid,
+  });
   const { id } = metadata;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const controlRef = useRef<HTMLDivElement>(null);

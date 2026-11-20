@@ -2,8 +2,8 @@
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import type { ComponentPropsWithRef, ReactNode, Ref } from 'react';
-import { classNames } from '../../internal/classNames.js';
-import { Grid } from '../../layout/Layout.js';
+import { classNames } from '../../../internal/classNames.js';
+import { Grid } from '../../../layout/Layout.js';
 import {
   PopupSurface,
   type PopupAlign,
@@ -11,9 +11,9 @@ import {
   type PopupParts,
   type PopupSide,
   type PopupSurfaceProps,
-} from '../../internal/popup/PopupSurface.js';
-import '../../styles/Base.css';
-import '../../styles/Menu.css';
+} from '../../../internal/popup/PopupSurface.js';
+import '../../../styles/Base.css';
+import '../../../styles/Menu.css';
 
 export const menuParts = {
   Portal: BaseMenu.Portal,

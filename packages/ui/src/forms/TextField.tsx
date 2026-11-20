@@ -1,20 +1,18 @@
 'use client';
 
 import { useRef, type CSSProperties, type InputHTMLAttributes, type Ref } from 'react';
-import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useFieldControl } from '../internal/field/useFieldControl.js';
+import { FieldFrame, FieldLabelContent } from '../internal/field/FieldFrame.js';
 import {
-  FieldFrame,
-  FieldLabelContent,
   type FieldProps,
   type FieldSizeProps,
-  type TextFieldAffixProps,
-  type TextFieldAppearanceProps,
-  type TextFieldDecorationProps,
-} from '../internal/field/FieldFrame.js';
+  type FieldAffixProps,
+  type FieldAppearanceProps,
+  type FieldDecorationProps,
+} from '../internal/field/fieldProps.js';
 
 /** A text field's look: outline or ghost. */
-export type { FieldVariant as TextFieldVariant } from '../internal/field/FieldFrame.js';
+export type { FieldVariant as TextFieldVariant } from '../internal/field/fieldProps.js';
 import '../styles/Base.css';
 import '../styles/TextField.css';
 
@@ -24,10 +22,10 @@ export interface TextFieldProps
   extends
     Omit<InputHTMLAttributes<HTMLInputElement>, NativeAttributesTheFieldRedefines>,
     FieldProps,
-    TextFieldAppearanceProps,
-    TextFieldDecorationProps,
+    FieldAppearanceProps,
+    FieldDecorationProps,
     FieldSizeProps,
-    TextFieldAffixProps {
+    FieldAffixProps {
   /** The native input, so that a form library can register it and focus it. */
   ref?: Ref<HTMLInputElement>;
   /** The field's class, on its root element, beside env-field and env-text-field. */
@@ -81,14 +79,15 @@ export function TextField({
   'aria-invalid': invalid,
   ...props
 }: TextFieldProps) {
-  const naming = useRowControlNaming({ label, ...props, 'aria-describedby': describedBy });
-  const metadata = useFieldMetadata(
-    suppliedId,
+  const { ids, naming, metadata } = useFieldControl({
+    ...props,
+    id: suppliedId,
+    label,
     description,
     error,
-    naming['aria-describedby'] ?? describedBy,
-    invalid,
-  );
+    'aria-describedby': describedBy,
+    'aria-invalid': invalid,
+  });
   const committed = useRef<string | null>(null);
   const rejected = useRef<string | null>(null);
   const commit = (input: HTMLInputElement) => {
@@ -103,11 +102,7 @@ export function TextField({
   };
   const { id } = metadata;
   const describedByIds =
-    [
-      prefix != null && `${id}-prefix`,
-      suffix != null && `${id}-suffix`,
-      metadata['aria-describedby'],
-    ]
+    [prefix != null && ids.prefix, suffix != null && ids.suffix, metadata['aria-describedby']]
       .filter(Boolean)
       .join(' ') || undefined;
   return (

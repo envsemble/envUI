@@ -13,10 +13,10 @@ import {
   menuParts,
   menuPopupBlockStartInset,
   menuPopupInlineEndInset,
-} from '../internal/MenuPopup.js';
-import type { OpenChangeDetails } from '../internal/menuOpenChange.js';
+} from './internal/MenuPopup.js';
+import type { OpenChangeDetails } from './internal/menuOpenChange.js';
 import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
-import type { TriggerProps } from '../internal/menuTriggerProps.js';
+import type { TriggerProps } from './internal/menuTriggerProps.js';
 import { classNames } from '../../internal/classNames.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';

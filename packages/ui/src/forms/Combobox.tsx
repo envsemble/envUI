@@ -9,24 +9,23 @@ import {
   type CSSProperties,
   type ReactNode,
   type Ref,
-  type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
-import { IconButton } from '../actions/Button.js';
-import { IconChevronRight } from '../icons/ChevronRight.js';
-import { IconClose } from '../icons/Close.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
+import { FieldFrame, FieldLabelContent } from '../internal/field/FieldFrame.js';
 import {
-  FieldFrame,
-  FieldLabelContent,
-  type FieldControlBoxProps,
   type FieldProps,
   type FieldSizeProps,
-  type TextFieldDecorationProps,
-} from '../internal/field/FieldFrame.js';
+  type FieldDecorationProps,
+} from '../internal/field/fieldProps.js';
+import {
+  ComboboxActions,
+  ComboboxChips,
+  ComboboxInput,
+  controlBox,
+} from './internal/ComboboxField.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { autoHighlightAlways } from './internal/autoHighlightAlways.js';
 import {
@@ -38,8 +37,7 @@ import {
 import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
 import { useComboboxSelection, type ComboboxSelection } from './internal/useComboboxSelection.js';
-import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useFieldControl } from '../internal/field/useFieldControl.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
@@ -77,7 +75,7 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
     >,
     FieldProps,
     FieldSizeProps,
-    Pick<TextFieldDecorationProps, 'visibleLabel'> {
+    Pick<FieldDecorationProps, 'visibleLabel'> {
   /** The text input, so that a form library can register it and focus it. */
   ref?: Ref<HTMLInputElement>;
   /** The field's class, on its root element, beside env-field and env-combobox. */
@@ -164,8 +162,6 @@ interface ComboboxMultipleProps<Item extends ComboboxItem> {
 export type ComboboxProps<Item extends ComboboxItem = ComboboxItem> = ComboboxSharedProps<Item> &
   (ComboboxSingleProps<Item> | ComboboxMultipleProps<Item>);
 
-const noName = '';
-
 const reasonsPeopleType = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
 
 /**
@@ -217,16 +213,17 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const locale = ownLocale ?? providedLocale;
   const clearName = clearLabel ?? messages.clear;
   const removeName = removeLabel ?? ((text: string) => messages.remove({ label: text }));
-  const naming = useRowControlNaming({ label, ...inputProps, 'aria-describedby': describedBy });
-  const metadata = useFieldMetadata(
-    suppliedId,
+  const { ids, naming, metadata } = useFieldControl({
+    ...inputProps,
+    id: suppliedId,
+    label,
     description,
     error,
-    naming['aria-describedby'] ?? describedBy,
-    invalid,
-  );
+    'aria-describedby': describedBy,
+    'aria-invalid': invalid,
+  });
   const { id } = metadata;
-  const labelId = `${id}-label`;
+  const labelId = ids.label;
   const selectionId = `${id}-selection`;
   const inputRef = useRef<HTMLInputElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
@@ -408,164 +405,5 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
         />
       </BaseCombobox.Root>
     </DirectionProvider>
-  );
-}
-
-function ComboboxInput({
-  ref,
-  inputRef,
-  chosenLabel,
-  ...inputProps
-}: ComponentPropsWithoutRef<typeof BaseCombobox.Input> & {
-  ref: Ref<HTMLInputElement> | undefined;
-  inputRef: RefObject<HTMLInputElement | null>;
-  chosenLabel: string | undefined;
-}) {
-  const pressIsFocusingInput = useRef(false);
-  const showsChosenLabel = (input: HTMLInputElement) =>
-    chosenLabel !== undefined && input.value === chosenLabel;
-
-  return (
-    <BaseCombobox.Input
-      {...inputProps}
-      ref={(node: HTMLInputElement | null) => {
-        inputRef.current = node;
-        setRef(ref, node);
-      }}
-      onPointerDown={(event) => {
-        inputProps.onPointerDown?.(event);
-        pressIsFocusingInput.current =
-          event.currentTarget.ownerDocument.activeElement !== event.currentTarget;
-      }}
-      onFocus={(event) => {
-        inputProps.onFocus?.(event);
-        if (showsChosenLabel(event.currentTarget)) event.currentTarget.select();
-      }}
-      onMouseUp={(event) => {
-        inputProps.onMouseUp?.(event);
-        const keepLabelSelectedOverCaret =
-          pressIsFocusingInput.current && showsChosenLabel(event.currentTarget);
-        if (keepLabelSelectedOverCaret) event.preventDefault();
-        pressIsFocusingInput.current = false;
-      }}
-      className="env-text-field-input env-combobox-input"
-    />
-  );
-}
-
-function controlBox({
-  multiple,
-  clearShown,
-  toolbarName,
-}: {
-  multiple: boolean;
-  clearShown: boolean;
-  toolbarName: { 'aria-labelledby'?: string; 'aria-label'?: string } | undefined;
-}) {
-  return function renderControlBox(boxProps: FieldControlBoxProps) {
-    const props = {
-      ...boxProps,
-      className: `${boxProps.className} env-combobox-control`,
-      'data-action-count': clearShown ? '2' : '1',
-    };
-    if (!multiple) return <BaseCombobox.InputGroup {...props} />;
-    return (
-      <BaseCombobox.InputGroup
-        {...props}
-        {...(toolbarName ? { role: 'toolbar', ...toolbarName } : {})}
-        render={<BaseCombobox.Chips />}
-      />
-    );
-  };
-}
-
-function ComboboxChips({
-  values,
-  known,
-  labelOf,
-  removeName,
-  removable,
-}: {
-  values: readonly string[];
-  known: ReadonlyMap<string, ComboboxItem>;
-  labelOf: (value: string) => string;
-  removeName: (label: string) => string;
-  removable: boolean;
-}) {
-  return values.map((selected) => {
-    const item = known.get(selected);
-    const text = labelOf(selected);
-    return (
-      <BaseCombobox.Chip
-        key={selected}
-        className="env-combobox-chip"
-        render={({ 'aria-readonly': _readOnlyBelongsToInput, ...chipProps }) => (
-          <div {...chipProps} />
-        )}
-      >
-        {item?.start != null && (
-          <span className="env-combobox-start" aria-hidden="true">
-            {item.start}
-          </span>
-        )}
-        <span className="env-combobox-chip-label">{text}</span>
-        {removable && (
-          <BaseCombobox.ChipRemove
-            className="env-combobox-chip-remove"
-            render={
-              <IconButton variant="ghost" icon={<IconClose />} aria-label={removeName(text)} />
-            }
-          />
-        )}
-      </BaseCombobox.Chip>
-    );
-  });
-}
-
-function ComboboxActions({
-  clearName,
-  showClear,
-  fieldLabelId,
-  fieldAriaLabel,
-}: {
-  clearName: string;
-  showClear: boolean;
-  fieldLabelId: string | undefined;
-  fieldAriaLabel: string | undefined;
-}) {
-  return (
-    <>
-      {showClear && (
-        <BaseCombobox.Clear
-          className="env-combobox-clear"
-          render={
-            <IconButton
-              variant="ghost"
-              icon={<IconClose />}
-              aria-label={clearName}
-              title={clearName}
-            />
-          }
-        />
-      )}
-      <BaseCombobox.Trigger
-        className="env-combobox-trigger"
-        {...(fieldLabelId !== undefined ? { 'aria-labelledby': fieldLabelId } : {})}
-        render={({
-          'aria-describedby': _describedByAnnouncedOnInput,
-          'aria-invalid': _invalidAnnouncedOnInput,
-          ...triggerProps
-        }) => (
-          <IconButton
-            {...triggerProps}
-            variant="ghost"
-            icon={<IconChevronRight />}
-            {...(fieldLabelId !== undefined
-              ? { 'aria-labelledby': fieldLabelId }
-              : { 'aria-label': fieldAriaLabel ?? noName })}
-          />
-        )}
-      />
-    </>
   );
 }

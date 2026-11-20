@@ -23,6 +23,7 @@ import { VisuallyHidden } from '../content/VisuallyHidden.js';
 import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
+import { fieldDescribedBy, fieldPartIds } from '../internal/field/useFieldControl.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';
@@ -180,7 +181,8 @@ export function DropZone({
     setDragging(false);
   }
 
-  const visibleTextIds = [`${id}-label`, description != null && `${id}-description`]
+  const ids = fieldPartIds(id);
+  const visibleTextIds = [ids.label, description != null && ids.description]
     .filter(Boolean)
     .join(' ');
 
@@ -189,7 +191,7 @@ export function DropZone({
       disabled={disabled}
       pending={pending}
       aria-labelledby={visibleTextIds}
-      aria-describedby={error != null ? `${id}-error` : undefined}
+      aria-describedby={error != null ? ids.error : undefined}
       onClick={() => {
         if (available) filePicker.current?.click();
       }}
@@ -207,7 +209,7 @@ export function DropZone({
         )}
       </span>
       <Grid render={<span />} gap={size === 'sm' ? 0 : 1} className="env-drop-zone-text">
-        <span className="env-drop-zone-label" id={`${id}-label`}>
+        <span className="env-drop-zone-label" id={ids.label}>
           <Slot className="env-drop-zone-label-content" element="span">
             {label}
           </Slot>
@@ -215,7 +217,7 @@ export function DropZone({
         {description != null && (
           <>
             {spaceReadInName}
-            <span className="env-drop-zone-description" id={`${id}-description`}>
+            <span className="env-drop-zone-description" id={ids.description}>
               <Slot className="env-drop-zone-description-content" element="span">
                 {description}
               </Slot>
@@ -229,11 +231,8 @@ export function DropZone({
     ? {}
     : {
         role: 'group',
-        'aria-labelledby': `${id}-label`,
-        'aria-describedby':
-          [description != null && `${id}-description`, error != null && `${id}-error`]
-            .filter(Boolean)
-            .join(' ') || undefined,
+        'aria-labelledby': ids.label,
+        'aria-describedby': fieldDescribedBy(id, undefined, description, error),
       };
   return (
     <Field.Root
@@ -275,11 +274,11 @@ export function DropZone({
         </Grid>
       ) : (
         <VisuallyHidden>
-          <span id={`${id}-label`}>{label}</span>
+          <span id={ids.label}>{label}</span>
           {description != null && (
             <>
               {spaceReadInName}
-              <span id={`${id}-description`}>{description}</span>
+              <span id={ids.description}>{description}</span>
             </>
           )}
         </VisuallyHidden>
@@ -306,7 +305,7 @@ export function DropZone({
           disabled={disabled}
         />
       ) : null}
-      {error != null && <Field.Error id={`${id}-error`}>{error}</Field.Error>}
+      {error != null && <Field.Error id={ids.error}>{error}</Field.Error>}
     </Field.Root>
   );
 }

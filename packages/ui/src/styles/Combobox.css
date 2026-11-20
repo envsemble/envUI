@@ -200,7 +200,6 @@
 
   .env-combobox-item {
     text-align: start;
-    overflow-wrap: break-word;
   }
   .env-combobox-item[data-disabled] {
     cursor: default;
@@ -240,9 +239,6 @@
       --env-icon-size: 0.875rem;
       --env-icon-button-hit-area: calc(var(--_combobox-row) + var(--env-space-2));
       z-index: var(--env-z-raised);
-    }
-    .env-combobox-popup .env-combobox-item {
-      min-block-size: var(--env-control-height-touch);
     }
   }
 

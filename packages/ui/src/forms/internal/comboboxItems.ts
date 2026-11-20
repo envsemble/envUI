@@ -1,4 +1,5 @@
-import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import type { ListItemElementProps } from '../../internal/list/listEntries.js';
 
 /** One option of a Combobox. */
 export interface ComboboxItem {
@@ -27,10 +28,7 @@ export interface ComboboxItem {
 }
 
 /** What a Combobox option's itemProps can set on its option element. */
-export type ComboboxItemElementProps = Omit<
-  ComponentPropsWithoutRef<'div'>,
-  'children' | 'id' | 'role' | 'tabIndex' | 'dangerouslySetInnerHTML' | `aria-${string}`
-> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
+export type ComboboxItemElementProps = ListItemElementProps;
 
 /** Options under a heading, which also names the group for assistive technology. */
 export interface ComboboxGroup<Item extends ComboboxItem = ComboboxItem> {
@@ -45,17 +43,3 @@ export type ComboboxFilter<Item extends ComboboxItem = ComboboxItem> = (
   item: Item,
   query: string,
 ) => boolean;
-
-export function isGroup<Item extends ComboboxItem>(
-  entry: Item | ComboboxGroup<Item>,
-): entry is ComboboxGroup<Item> {
-  return Array.isArray(entry.items);
-}
-
-export function flattenItems<Item extends ComboboxItem>(
-  items: readonly Item[] | readonly ComboboxGroup<Item>[],
-) {
-  return items.flatMap((entry: Item | ComboboxGroup<Item>) =>
-    isGroup(entry) ? entry.items : [entry],
-  );
-}

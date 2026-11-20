@@ -2,7 +2,7 @@
 
 import { useContext, type ReactNode } from 'react';
 import * as Menu from '../actions/menu/Menu.js';
-import { RadioItemsCloseOnClick } from '../actions/menu/MenuChoices.js';
+import { RadioItemsCloseOnClickContext } from '../actions/menu/MenuChoices.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { themePreference } from './messages/themePreference.js';
 import { ThemePreferenceContext } from './internal/ThemePreferenceContext.js';
@@ -80,14 +80,14 @@ export function ThemeMenuRadioGroup({
       aria-labelledby={labelledBy}
       className={className}
     >
-      <RadioItemsCloseOnClick value={closeOnClick}>
+      <RadioItemsCloseOnClickContext value={closeOnClick}>
         {children ??
           choices.map((choice) => (
             <Menu.RadioItem key={choice.value} value={choice.value} start={choice.icon}>
               {messages[choice.value]}
             </Menu.RadioItem>
           ))}
-      </RadioItemsCloseOnClick>
+      </RadioItemsCloseOnClickContext>
     </Menu.RadioGroup>
   );
 }

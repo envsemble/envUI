@@ -15,16 +15,15 @@ import {
   toUtcDate,
 } from '../../internal/time/calendarDays.js';
 import { useActiveCell } from './useActiveCell.js';
+import { keepFocusWhereItWas } from './pickerFocus.js';
 import '../../styles/Base.css';
 import '../../styles/MonthPicker.css';
 
-export function monthGridActive(root: ParentNode | null | undefined): HTMLElement | null {
+export function monthGridInitialFocus(root: ParentNode | null | undefined): HTMLElement | null {
   return root?.querySelector<HTMLElement>('.env-month-picker-month[tabindex="0"]') ?? null;
 }
 
 const monthsPerRow = 3;
-
-const keepFocusWhereItWas = (event: { preventDefault: () => void }) => event.preventDefault();
 
 function shortMonthNames(format: Intl.DateTimeFormat): string[] {
   const names = Array.from({ length: 12 }, (_, month) => format.format(Date.UTC(2001, month, 1)));

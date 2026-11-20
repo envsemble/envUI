@@ -54,6 +54,8 @@
       "data-display/RelativeTime.tsx": "composites",
       "feedback/Alert.tsx": "composites",
       "actions/CommandPalette.tsx": "composites",
+      "actions/ContextMenu.tsx": "composites",
+      "actions/Menubar.tsx": "composites",
       "actions/internal/CommandPaletteFooter.tsx": "composites",
       "actions/internal/CommandPaletteOptions.tsx": "composites",
       "actions/internal/CommandPaletteStatus.tsx": "composites",
@@ -75,6 +77,7 @@
       "forms/Calendar.tsx": "composites",
       "forms/Combobox.tsx": "composites",
       "forms/internal/autoHighlightAlways.ts": "composites",
+      "forms/internal/ComboboxField.tsx": "composites",
       "forms/internal/ComboboxPopup.tsx": "composites",
       "forms/internal/comboboxItems.ts": "composites",
       "forms/internal/useComboboxOpen.ts": "composites",
@@ -263,6 +266,7 @@
       "Combobox": {
         "modules": [
           "forms/internal/autoHighlightAlways.ts",
+          "forms/internal/ComboboxField.tsx",
           "forms/internal/ComboboxPopup.tsx",
           "forms/internal/comboboxItems.ts",
           "forms/internal/useComboboxOpen.ts",
@@ -323,6 +327,7 @@
       "Field": {
         "modules": [
           "internal/field/FieldFrame.tsx",
+          "internal/field/fieldProps.ts",
           "forms/TextField.tsx",
           "forms/Textarea.tsx",
           "internal/field/TextareaControl.tsx",
@@ -364,7 +369,9 @@
       "Menu": {
         "modules": [
           "actions/ContextMenu.tsx",
-          "actions/internal/MenuPopup.tsx",
+          "actions/menu/internal/MenuPopup.tsx",
+          "actions/menu/internal/menuOpenChange.ts",
+          "actions/menu/internal/menuTriggerProps.ts",
           "actions/menu/MenuItem.tsx",
           "actions/menu/MenuSubmenu.tsx",
           "actions/menu/MenuChoices.tsx"
@@ -404,10 +411,14 @@
           "forms/color/internal/ColorLocale.tsx",
           "forms/color/internal/ColorValues.tsx",
           "forms/color/internal/SwatchList.tsx",
+          "forms/color/internal/useSwatchFocus.ts",
           "forms/color/internal/colorValue.ts",
-          "forms/color/internal/useColorState.ts",
+          "forms/color/internal/useColorFollowingValue.ts",
           "forms/color/internal/useEyeDropper.ts"
         ]
+      },
+      "Calendar": {
+        "modules": ["forms/internal/pickerFocus.ts"]
       },
       "DatePicker": {
         "modules": [

@@ -10,10 +10,11 @@ import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { ColorPicker } from './ColorPicker.js';
 import type { ColorPickerValueProps } from './internal/colorPickerValueProps.js';
 import { ColorSwatch } from './ColorSwatch.js';
-import { ColorLocale, displayColor } from './internal/ColorLocale.js';
-import { ColorChangeContext } from './internal/colorChange.js';
-import { formatColor, sameColor } from './internal/colorValue.js';
-import { useColorState, useFormResetOf } from './internal/useColorState.js';
+import { ColorLocale } from './internal/ColorLocale.js';
+import { ColorChangeContext } from './internal/ColorChangeContext.js';
+import { displayColor, formatColor, sameColor } from './internal/colorValue.js';
+import { useColorFollowingValue } from './internal/useColorFollowingValue.js';
+import { useFormReset } from '../../internal/field/useFormReset.js';
 import '../../styles/Base.css';
 import '../../styles/ColorPicker.css';
 
@@ -93,9 +94,9 @@ export function ColorPickerButton({
   ...props
 }: ColorPickerButtonProps) {
   const messages = useMessages('colorPicker', colorPickerMessages);
-  const { color, setOwn, reset, controlled } = useColorState(value, defaultValue, alpha);
+  const { color, setOwn, reset, controlled } = useColorFollowingValue(value, defaultValue, alpha);
   const inputRef = useRef<HTMLInputElement>(null);
-  useFormResetOf(
+  useFormReset(
     inputRef,
     () => {
       if (!controlled) reset();
