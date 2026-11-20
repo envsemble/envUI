@@ -29,6 +29,7 @@
     "test:library": "node scripts/test/TestBrowser.ts library",
     "test:site": "node scripts/test/TestBrowser.ts site",
     "test:contrast": "node scripts/test/CheckContrast.ts",
+    "test:record-durations": "node scripts/test/RecordDurations.ts",
     "test:a11y": "npm run build:site && node scripts/test/StaticChecks.ts a11y",
     "test:a11y:update": "npm run build:site && node scripts/test/StaticChecks.ts a11y --update",
     "test:visual": "node scripts/test/VisualTests.ts",
@@ -60,7 +61,8 @@
     "changeset": "changeset",
     "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts",
     "docs:readme-images": "node scripts/docs/CaptureReadmeImages.ts",
-    "site:part-sizes": "node scripts/site/RecordPartSizes.ts"
+    "site:part-sizes": "node scripts/site/RecordPartSizes.ts",
+    "site:check-contents": "node scripts/site/CheckSiteContents.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

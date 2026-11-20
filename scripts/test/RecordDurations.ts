@@ -18,7 +18,8 @@ writeFileSync(
   componentDurationsFile,
   `${JSON.stringify(
     {
-      '//': 'Seconds each component test file takes on two workers. Refresh: scripts/test/RecordDurations.ts.',
+      $comment:
+        'Seconds each component test file takes on two workers. Refresh: npm run test:record-durations -- <Vitest JSON report>.',
       files: sorted,
     },
     null,
