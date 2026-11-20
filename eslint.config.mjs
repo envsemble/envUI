@@ -149,6 +149,12 @@ const inlineFlags = [
   message: 'Set a state attribute that is on or off with flag() (src/internal/flag.ts).',
 }));
 
+const ownStateFromDefault = {
+  selector: "CallExpression[callee.name='useState'] Identifier[name=/^default[A-Z]/]",
+  message:
+    'Keep a value that has a default prop in useControllableState (src/internal/react/useControllableState.ts), not in a useState of its own.',
+};
+
 const buildOutput = ['**/dist/**', '**/node_modules/**', '.cache/**'];
 const wranglerDevState = ['.wrangler/**'];
 const testReports = ['test-results/**', 'playwright-report/**'];
@@ -242,6 +248,13 @@ export default defineConfig(
   },
   {
     files: ['packages/ui/src/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-syntax': ['error', ...inlineFlags, ownStateFromDefault] },
+  },
+  {
+    files: [
+      'packages/ui/src/internal/react/useControllableState.ts',
+      'packages/ui/src/forms/color/internal/useColorState.ts',
+    ],
     rules: { 'no-restricted-syntax': ['error', ...inlineFlags] },
   },
   ...families.map((family) => ({
