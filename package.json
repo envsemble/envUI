@@ -47,6 +47,7 @@
     "icons:sync": "node scripts/build/SyncIcons.ts",
     "icons:generate": "node scripts/build/GenerateIcons.ts",
     "icons:check": "node scripts/test/StaticChecks.ts icons:check",
+    "generate": "node scripts/test/StaticChecks.ts generate",
     "palette:generate": "node scripts/build/GeneratePalette.ts",
     "tokens:build": "node scripts/build/BuildTokens.ts && node scripts/build/SyncLintPackages.ts",
     "tokens:check": "node scripts/test/StaticChecks.ts tokens:check",

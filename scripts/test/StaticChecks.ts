@@ -25,10 +25,19 @@ const typecheckProjects = {
 
 export const styleSheets = ['packages/ui/src/**/*.css', 'apps/site/src/**/*.css', 'tests/**/*.css'];
 
-export const generateDocumentation = task(
-  'generate documentation',
-  node('scripts/docs/GenerateDocumentation.ts'),
-);
+const generators = {
+  palette: 'scripts/build/GeneratePalette.ts',
+  tokens: 'scripts/build/BuildTokens.ts',
+  icons: 'scripts/build/GenerateIcons.ts',
+  props: 'scripts/docs/ExtractProps.ts',
+  parts: 'scripts/docs/GenerateParts.ts',
+  'lint packages': 'scripts/build/SyncLintPackages.ts',
+  exports: 'scripts/docs/GenerateExports.ts',
+  guides: 'scripts/docs/GenerateGuideTables.ts',
+  documentation: 'scripts/docs/GenerateDocumentation.ts',
+};
+
+export const generateDocumentation = task('generate documentation', node(generators.documentation));
 
 export const checks = {
   typecheck: (): Task[] =>
@@ -89,24 +98,24 @@ export const checks = {
     ),
   ],
   'tokens:check': (): Task[] => [
-    task('tokens:check palette', node('scripts/build/GeneratePalette.ts', '--check')),
-    task('tokens:check build', node('scripts/build/BuildTokens.ts', '--check')),
-    task('tokens:check lint packages', node('scripts/build/SyncLintPackages.ts', '--check')),
+    task('tokens:check palette', node(generators.palette, '--check')),
+    task('tokens:check build', node(generators.tokens, '--check')),
+    task('tokens:check lint packages', node(generators['lint packages'], '--check')),
   ],
   'docs:check': (base?: string): Task[] => {
     const against = base ? ['--base', base] : [];
     return [
-      task('docs:check props', node('scripts/docs/ExtractProps.ts', '--check')),
-      task('docs:check parts', node('scripts/docs/GenerateParts.ts', '--check', ...against)),
-      task('docs:check exports', node('scripts/docs/GenerateExports.ts', '--check', ...against)),
-      task('docs:check guides', node('scripts/docs/GenerateGuideTables.ts', '--check')),
-      task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--validate')),
+      task('docs:check props', node(generators.props, '--check')),
+      task('docs:check parts', node(generators.parts, '--check', ...against)),
+      task('docs:check exports', node(generators.exports, '--check', ...against)),
+      task('docs:check guides', node(generators.guides, '--check')),
+      task('docs:check pages', node(generators.documentation, '--validate')),
       task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
     ];
   },
-  'icons:check': (): Task[] => [
-    task('icons:check', node('scripts/build/GenerateIcons.ts', '--check')),
-  ],
+  'icons:check': (): Task[] => [task('icons:check', node(generators.icons, '--check'))],
+  generate: (): Task[] =>
+    Object.entries(generators).map(([name, script]) => task(`generate ${name}`, node(script))),
   component: (): Task[] => [task('component (Chromium)', componentTestCommand('chromium'))],
   'component:engines': (): Task[] => [
     task('component (Firefox, WebKit)', componentTestCommand('engines')),

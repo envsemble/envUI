@@ -4,19 +4,16 @@ For agents and people changing envUI. Applications built with envUI read the doc
 
 ## Commands
 
-| Command                               | When                                                                                             |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `npm run check`                       | After each change: lint, types, generated files and the related tests of what the branch changed |
-| `npm run check -- --files <a,b>`      | The same for these files only; `--dry-run` says what it would run                                |
-| `npm run check:affected`              | Before pushing or marking a pull request ready                                                   |
-| `npm run verify`                      | Only when asked, or to reproduce the Verify workflow                                             |
-| `node --test <file>`                  | One unit test                                                                                    |
-| `npm run test:component -- <file>`    | One component test, in Chromium                                                                  |
-| `npm run tokens:build`                | After changing a token                                                                           |
-| `npm run docs:parts`, `docs:props`    | After changing a part, state, color property or a prop's doc comment                             |
-| `npm run docs:exports`, `docs:guides` | After changing the exports; the guides' tables, from the tokens and parts                        |
-| `npm run icons:generate`              | After changing the icon manifest                                                                 |
-| `npm run changeset`                   | For a change people using envUI notice                                                           |
+| Command                            | When                                                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `npm run check`                    | After each change: lint, types, generated files and the related tests of what the branch changed |
+| `npm run check -- --files <a,b>`   | The same for these files only; `--dry-run` says what it would run                                |
+| `npm run check:affected`           | Before pushing or marking a pull request ready                                                   |
+| `npm run verify`                   | Only when asked, or to reproduce the Verify workflow                                             |
+| `node --test <file>`               | One unit test                                                                                    |
+| `npm run test:component -- <file>` | One component test, in Chromium                                                                  |
+| `npm run generate`                 | After changing a source of a generated file                                                      |
+| `npm run changeset`                | For a change people using envUI notice                                                           |
 
 Don't run `verify`, `test:browser`, `test:a11y` or `test:visual` as a routine step. Beside another checkout's tests, set `ENVUI_SITE_PORT`, `ENVUI_SITE_BUILD_PORT` and `ENVUI_FIXTURE_PORT`, and pass Vitest `--api.port`; `ENVUI_WORKERS` sets the workers.
 
