@@ -37,8 +37,7 @@ import {
 import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
 import { useComboboxSelection, type ComboboxSelection } from './internal/useComboboxSelection.js';
-import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/RowControl.js';
+import { useFieldControl } from '../internal/field/useFieldControl.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
@@ -214,16 +213,17 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const locale = ownLocale ?? providedLocale;
   const clearName = clearLabel ?? messages.clear;
   const removeName = removeLabel ?? ((text: string) => messages.remove({ label: text }));
-  const naming = useRowControlNaming({ label, ...inputProps, 'aria-describedby': describedBy });
-  const metadata = useFieldMetadata(
-    suppliedId,
+  const { ids, naming, metadata } = useFieldControl({
+    ...inputProps,
+    id: suppliedId,
+    label,
     description,
     error,
-    naming['aria-describedby'] ?? describedBy,
-    invalid,
-  );
+    'aria-describedby': describedBy,
+    'aria-invalid': invalid,
+  });
   const { id } = metadata;
-  const labelId = `${id}-label`;
+  const labelId = ids.label;
   const selectionId = `${id}-selection`;
   const inputRef = useRef<HTMLInputElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);

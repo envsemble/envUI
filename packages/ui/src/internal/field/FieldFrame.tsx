@@ -6,7 +6,7 @@ import { DecorativeIcon } from '../icon/DecorativeIcon.js';
 import { ControlDefaults } from '../control/ControlDefaults.js';
 import { Slot } from '../layout/Slot.js';
 import { classNames } from '../classNames.js';
-import { fieldMessageIds } from './useFieldMetadata.js';
+import { fieldPartIds } from './useFieldControl.js';
 import { flag } from '../flag.js';
 import type {
   FieldAffixProps,
@@ -102,7 +102,7 @@ export function FieldFrame({
   FieldSizeProps &
   FieldAffixProps &
   FieldFrameOwnProps) {
-  const ids = fieldMessageIds(id);
+  const ids = fieldPartIds(id);
   return (
     <Field.Root
       ref={rootRef}
@@ -132,7 +132,7 @@ export function FieldFrame({
                 {prefix != null && (
                   <span
                     className="env-text-field-prefix"
-                    id={`${id}-prefix`}
+                    id={ids.prefix}
                     aria-hidden="true"
                     onMouseDown={placeCaretAtNearerEnd}
                   >
@@ -143,7 +143,7 @@ export function FieldFrame({
                 {suffix != null && (
                   <span
                     className="env-text-field-suffix"
-                    id={`${id}-suffix`}
+                    id={ids.suffix}
                     aria-hidden="true"
                     onMouseDown={placeCaretAtNearerEnd}
                   >

@@ -37,8 +37,7 @@ import {
 } from '../../internal/field/fieldProps.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { useFormReset } from '../../internal/field/useFormReset.js';
-import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../../internal/field/RowControl.js';
+import { useFieldControl } from '../../internal/field/useFieldControl.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';
@@ -261,21 +260,18 @@ export function PickerField({
   onKeyDown,
   ...triggerProps
 }: PickerFieldOwnProps) {
-  const naming = useRowControlNaming({
+  const { ids, naming, metadata } = useFieldControl({
+    id: suppliedId,
     label,
+    description,
+    error,
     'aria-label': ariaLabel,
     'aria-labelledby': labelledBy,
     'aria-describedby': describedBy,
+    'aria-invalid': invalid,
   });
-  const metadata = useFieldMetadata(
-    suppliedId,
-    description,
-    error,
-    naming['aria-describedby'] ?? describedBy,
-    invalid,
-  );
   const { id } = metadata;
-  const labelId = `${id}-label`;
+  const labelId = ids.label;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const controlBoxRef = useRef<HTMLDivElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);

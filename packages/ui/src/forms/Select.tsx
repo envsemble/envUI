@@ -11,8 +11,7 @@ import {
   type Ref,
 } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/RowControl.js';
+import { useFieldControl } from '../internal/field/useFieldControl.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
 import { FieldFrame, FieldLabelContent } from '../internal/field/FieldFrame.js';
@@ -279,14 +278,15 @@ export function Select({
   ...triggerProps
 }: SelectProps) {
   const options = optionsOf(items);
-  const naming = useRowControlNaming({ label, ...triggerProps, 'aria-describedby': describedBy });
-  const metadata = useFieldMetadata(
-    suppliedId,
+  const { naming, metadata } = useFieldControl({
+    ...triggerProps,
+    id: suppliedId,
+    label,
     description,
     error,
-    naming['aria-describedby'] ?? describedBy,
-    invalid,
-  );
+    'aria-describedby': describedBy,
+    'aria-invalid': invalid,
+  });
   const { id } = metadata;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const controlRef = useRef<HTMLDivElement>(null);

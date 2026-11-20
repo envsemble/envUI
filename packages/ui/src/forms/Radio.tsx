@@ -14,7 +14,7 @@ import { Grid, Row } from '../layout/Layout.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
-import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
+import { fieldDescribedBy, fieldPartIds } from '../internal/field/useFieldControl.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { useRowControlNaming } from '../internal/field/RowControl.js';
 import '../styles/Base.css';
@@ -119,16 +119,14 @@ export function RadioGroup({
     defaultValue: defaultValue ?? null,
     onChange: onValueChange,
   });
-  const ids = fieldMessageIds(id);
+  const ids = fieldPartIds(id);
   const naming = useRowControlNaming({ label, ...props });
-  const describedBy =
-    [
-      naming['aria-describedby'] ?? props['aria-describedby'],
-      description != null ? ids.description : undefined,
-      error != null ? ids.error : undefined,
-    ]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const describedBy = fieldDescribedBy(
+    id,
+    naming['aria-describedby'] ?? props['aria-describedby'],
+    description,
+    error,
+  );
   useFormReset(
     fieldsetRef,
     function applyReset() {

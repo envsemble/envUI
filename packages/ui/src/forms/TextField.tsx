@@ -1,8 +1,7 @@
 'use client';
 
 import { useRef, type CSSProperties, type InputHTMLAttributes, type Ref } from 'react';
-import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useRowControlNaming } from '../internal/field/RowControl.js';
+import { useFieldControl } from '../internal/field/useFieldControl.js';
 import { FieldFrame, FieldLabelContent } from '../internal/field/FieldFrame.js';
 import {
   type FieldProps,
@@ -80,14 +79,15 @@ export function TextField({
   'aria-invalid': invalid,
   ...props
 }: TextFieldProps) {
-  const naming = useRowControlNaming({ label, ...props, 'aria-describedby': describedBy });
-  const metadata = useFieldMetadata(
-    suppliedId,
+  const { ids, naming, metadata } = useFieldControl({
+    ...props,
+    id: suppliedId,
+    label,
     description,
     error,
-    naming['aria-describedby'] ?? describedBy,
-    invalid,
-  );
+    'aria-describedby': describedBy,
+    'aria-invalid': invalid,
+  });
   const committed = useRef<string | null>(null);
   const rejected = useRef<string | null>(null);
   const commit = (input: HTMLInputElement) => {
@@ -102,11 +102,7 @@ export function TextField({
   };
   const { id } = metadata;
   const describedByIds =
-    [
-      prefix != null && `${id}-prefix`,
-      suffix != null && `${id}-suffix`,
-      metadata['aria-describedby'],
-    ]
+    [prefix != null && ids.prefix, suffix != null && ids.suffix, metadata['aria-describedby']]
       .filter(Boolean)
       .join(' ') || undefined;
   return (
