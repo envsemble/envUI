@@ -1,6 +1,6 @@
 # @envsemble/stylelint-config-envui
 
-## 2.1.0 — 2026-11-19
+## 3.0.0 — 2026-11-20
 
 Positions and hairlines need no spacing step, and a text colour can fill a shape with no text on it.
 
