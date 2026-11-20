@@ -4,8 +4,6 @@
   "workspaces": {
     ".": {
       "entry": [
-        "scripts/test/CheckContents.ts",
-        "scripts/test/RecordDurations.ts",
         "tests/**/*.test.ts",
         "tests/browser/{library,site}/*.spec.ts",
         "tests/accessibility/*.spec.ts",
@@ -24,6 +22,7 @@
       ],
       "ignoreDependencies": ["@changesets/types", "@changesets/config", "@base-ui/react"],
       "ignoreBinaries": ["openssl"],
+      "vitest": { "config": ["tests/component/vitest.config.ts"] },
     },
     "packages/ui": {
       "entry": ["terrazzo.config.mjs"],
