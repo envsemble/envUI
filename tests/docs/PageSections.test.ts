@@ -3,15 +3,15 @@ import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
 import { compileDocument } from '../../scripts/docs/Compiler.ts';
 import {
-  pageFixture,
+  samplePage,
   switchBody,
   switchExample,
   switchFrontmatter,
   switchProps,
-} from './DocumentationFixtures.ts';
+} from './DocumentationSamples.ts';
 
 test('a page is read into its sections, figures, legends and specimens', async () => {
-  await pageFixture(async ({ read, examples }) => {
+  await samplePage(async ({ read, examples }) => {
     const documents = read();
     const switchPage = documents[1];
     assert.deepEqual(
@@ -89,7 +89,7 @@ test('a page is read into its sections, figures, legends and specimens', async (
 });
 
 test('the sections are those the structure knows, once each, in its order', async () => {
-  await pageFixture(async ({ rejects }) => {
+  await samplePage(async ({ rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(
       frontmatter + body.replace('## Variants', '## Usage'),
@@ -156,7 +156,7 @@ const referenceBody = [
 ].join('\n');
 
 test('a page of only examples and reference reads, with Rules generated to open with when to use it', async () => {
-  await pageFixture(async ({ page, read, examples }) => {
+  await samplePage(async ({ page, read, examples }) => {
     await writeFile(page, referenceFrontmatter + referenceBody);
     const documents = read();
     const sections = documents[1].sections;
@@ -176,7 +176,7 @@ test('a page of only examples and reference reads, with Rules generated to open 
 });
 
 test('Accessibility, where a page has it, has a Key and Action table under Keyboard', async () => {
-  await pageFixture(async ({ page, read, rejects }) => {
+  await samplePage(async ({ page, read, rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(frontmatter + body.replace('| Key | Action |', '| Keys | Result |'), /"Key"/);
     await writeFile(
@@ -188,7 +188,7 @@ test('Accessibility, where a page has it, has a Key and Action table under Keybo
 });
 
 test("a component page's useWhen and avoidWhen are a few lines each", async () => {
-  await pageFixture(async ({ rejects }) => {
+  await samplePage(async ({ rejects }) => {
     const entries = (count) =>
       Array.from(
         { length: count },
@@ -212,7 +212,7 @@ test("a component page's useWhen and avoidWhen are a few lines each", async () =
 });
 
 test('props, headings, quotes and specimens are written as the structure reads them', async () => {
-  await pageFixture(async ({ rejects }) => {
+  await samplePage(async ({ rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(
       frontmatter +
@@ -239,7 +239,7 @@ test('props, headings, quotes and specimens are written as the structure reads t
 });
 
 test('a page saved with CRLF line endings reads as it does with LF', async () => {
-  await pageFixture(async ({ page, read }) => {
+  await samplePage(async ({ page, read }) => {
     await writeFile(page, (switchFrontmatter + switchBody).replaceAll('\n', '\r\n'));
     assert.deepEqual(
       read()[1].sections.map((section) => section.id),
@@ -278,7 +278,7 @@ const compose = [
 ].join('\n');
 
 test('"## Compose" is the developer part, opened by the generated Import', async () => {
-  await pageFixture(async ({ page, read }) => {
+  await samplePage(async ({ page, read }) => {
     const rejects = async (part, pattern) => {
       await writeFile(
         page,
@@ -331,7 +331,7 @@ test('"## Compose" is the developer part, opened by the generated Import', async
 });
 
 test('the structure reads Markdown as it renders', async () => {
-  await pageFixture(async ({ page, read }) => {
+  await samplePage(async ({ page, read }) => {
     const accepts = async (source) => {
       await writeFile(page, source);
       assert.doesNotThrow(read);

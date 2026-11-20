@@ -171,7 +171,7 @@ const noComments: Rule.RuleModule = {
   },
 };
 
-export const repositoryPlugin: ESLint.Plugin = {
+export const noCommentsPlugin: ESLint.Plugin = {
   meta: { name: 'repository' },
   rules: { 'no-comments': noComments },
 };

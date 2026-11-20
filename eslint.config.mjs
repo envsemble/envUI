@@ -5,7 +5,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import { repositoryPlugin } from './scripts/lint/NoComments.ts';
+import { noCommentsPlugin } from './scripts/lint/NoComments.ts';
 
 const commentFreeFiles = [
   'scripts/**',
@@ -230,7 +230,7 @@ export default defineConfig(
   },
   {
     files: commentFreeFiles,
-    plugins: { repository: repositoryPlugin },
+    plugins: { repository: noCommentsPlugin },
     rules: { 'repository/no-comments': ['error', { publicApi: publicApiWithDocComments }] },
   },
   {

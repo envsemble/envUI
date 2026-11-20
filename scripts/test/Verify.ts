@@ -13,7 +13,7 @@ import {
 import { red, yellow } from '../Terminal.ts';
 import { checks, generateDocumentation } from './StaticChecks.ts';
 import { unitTestFiles } from './TestScope.ts';
-import { defaultPorts } from './CheckoutMarker.ts';
+import { portsFor } from '../DevServers.ts';
 
 const started = performance.now();
 const argv = process.argv.slice(2);
@@ -118,21 +118,12 @@ const totalWorkers = configured
 const totalWeight = suites.reduce((sum, suite) => sum + suite.weight, 0);
 const workersOf = (weight: number) =>
   Math.max(1, Math.round((Math.max(totalWorkers, suites.length) * weight) / totalWeight));
-const ports = (index: number) => ({
-  ENVUI_SITE_PORT: String(Number(process.env.ENVUI_SITE_PORT || defaultPorts.site) + 10 * index),
-  ENVUI_FIXTURE_PORT: String(
-    Number(process.env.ENVUI_FIXTURE_PORT || defaultPorts.fixture) + 10 * index,
-  ),
-  ENVUI_SITE_BUILD_PORT: String(
-    Number(process.env.ENVUI_SITE_BUILD_PORT || defaultPorts.siteBuild) + 10 * index,
-  ),
-});
 const phase2 = await parallel(
   suites.map((suite, index) => {
     const workers = workersOf(suite.weight);
     const folder = suite.name.replace(/\W+/g, '-').replace(/-$/, '').toLowerCase();
     return task(suite.name, suite.run(folder), {
-      env: { ...ports(index), ENVUI_WORKERS: String(workers) },
+      env: { ...portsFor(index), ENVUI_WORKERS: String(workers) },
       detail: `${workers} workers`,
     });
   }),

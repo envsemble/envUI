@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { describe, it } from 'node:test';
 import tseslint from 'typescript-eslint';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
-import { repositoryPlugin } from '../../scripts/lint/NoComments.ts';
+import { noCommentsPlugin } from '../../scripts/lint/NoComments.ts';
 
 RuleTester.describe = describe;
 RuleTester.it = it;
@@ -12,7 +12,7 @@ RuleTester.itOnly = it.only;
 const ruleTester = new RuleTester({
   languageOptions: { parser: tseslint.parser, parserOptions: { ecmaFeatures: { jsx: true } } },
 });
-const rule = repositoryPlugin.rules!['no-comments'];
+const rule = noCommentsPlugin.rules!['no-comments'];
 const options = [{ publicApi: '^packages/ui/src/(?!icons/|generated/)' }];
 
 const script = resolve(repositoryRoot, 'scripts/test/Example.ts');

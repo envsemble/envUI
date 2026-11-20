@@ -2,7 +2,7 @@ import { defineConfig, type UserConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
-import { checkoutMarker } from '../../scripts/test/CheckoutMarker.ts';
+import { checkoutMarker } from '../../scripts/DevServers.ts';
 import { resetClosedConnections } from '../../scripts/test/ServerSockets.ts';
 import { cssCommentsPlugin } from '../../scripts/site/CssComments.ts';
 import { pagePreloadsPlugin } from '../../scripts/site/PagePreloads.ts';

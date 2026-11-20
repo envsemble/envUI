@@ -1,15 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import {
-  existsSync,
-  globSync,
-  mkdirSync,
-  mkdtempSync,
-  readdirSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, globSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import {
@@ -25,10 +16,11 @@ import {
   browserTestsFor,
   unitTestFiles,
 } from '../../scripts/test/TestScope.ts';
-import { checkoutId, checkoutPort } from '../../scripts/test/CheckoutMarker.ts';
+import { checkoutId, checkoutPort } from '../../scripts/DevServers.ts';
 import { browserTestFile } from '../../scripts/test/BrowserTests.ts';
 import { fixtureUse, importsOf } from '../../scripts/test/FixtureImports.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
+import { inScratchFolder } from '../support/ScratchFolder.ts';
 
 const specs = (...paths) => [...browserTestsFor(paths).browserTests.keys()].sort();
 
@@ -49,11 +41,14 @@ test('diff parsing reads statuses, renames and untracked files', () => {
   assert.deepEqual(parseNameStatus(''), []);
 });
 
-test('changed files come from the merge-base, uncommitted edits and untracked files', () => {
-  const folder = mkdtempSync(join(tmpdir(), 'envui-scope-'));
-  const git = (...args) =>
-    execFileSync('git', args, { cwd: folder, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  try {
+test('changed files come from the merge-base, uncommitted edits and untracked files', () =>
+  inScratchFolder('scope', (folder) => {
+    const git = (...args) =>
+      execFileSync('git', args, {
+        cwd: folder,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
     git('init', '-q', '-b', 'base');
     git('config', 'user.email', 'test@example.com');
     git('config', 'user.name', 'Test');
@@ -80,10 +75,7 @@ test('changed files come from the merge-base, uncommitted edits and untracked fi
       ['A committed.md', 'M edited.css', 'A new.tsx'],
     );
     assert.throws(() => changedFiles({ root: folder, base: 'missing' }), /missing doesn't exist/);
-  } finally {
-    rmSync(folder, { recursive: true, force: true });
-  }
-});
+  }));
 
 test('a component runs the spec of its name, or of the name its alias gives', () => {
   assert.deepEqual(specs('packages/ui/src/forms/Checkbox.tsx'), ['Checkbox']);
@@ -161,56 +153,52 @@ test('imports are read from the syntax, types, comments and strings left out', (
   ]);
 });
 
-test("a fixture's specs follow what its imports mean, however they are written", () => {
-  const checkout = (files) => {
-    const root = mkdtempSync(join(tmpdir(), 'envui-imports-'));
-    for (const [path, text] of Object.entries(files)) {
-      mkdirSync(dirname(join(root, path)), { recursive: true });
-      writeFileSync(join(root, path), text.join('\n'));
-    }
-    return root;
-  };
-  const common = {
-    'packages/ui/src/actions/Button.tsx': [
-      "import '../styles/Button.css';",
-      'export function Button() {}',
-    ],
-    'packages/ui/src/styles/Button.css': ['.env-button {}'],
-    'tests/browser/library/Button.spec.ts': [
-      "test('x', ({ page }) => page.goto('/?fixture=button'));",
-    ],
-    'tests/browser/library/Table.spec.ts': ["// import { Button } from '@envsemble/envui';"],
-  };
-  const plain = checkout({
-    ...common,
-    'packages/ui/src/index.ts': ["export { Button } from './actions/Button.js';"],
-    'tests/fixture/Button.fixture.tsx': [
-      "import { Button } from '@envsemble/envui';",
-      'export default Button;',
-    ],
-  });
-  const rewritten = checkout({
-    ...common,
-    'packages/ui/src/index.ts': ["export * from './actions/Button.js';"],
-    'tests/fixture/Button.fixture.tsx': [
-      'import {',
-      '  type Button as Kind,',
-      '  Button as Action,',
-      "} from '@envsemble/envui';",
-      'export default Action;',
-    ],
-  });
-  try {
+test("a fixture's specs follow what its imports mean, however they are written", () =>
+  inScratchFolder('imports', (scratch) => {
+    const checkout = (name, files) => {
+      const root = join(scratch, name);
+      for (const [path, text] of Object.entries(files)) {
+        mkdirSync(dirname(join(root, path)), { recursive: true });
+        writeFileSync(join(root, path), text.join('\n'));
+      }
+      return root;
+    };
+    const common = {
+      'packages/ui/src/actions/Button.tsx': [
+        "import '../styles/Button.css';",
+        'export function Button() {}',
+      ],
+      'packages/ui/src/styles/Button.css': ['.env-button {}'],
+      'tests/browser/library/Button.spec.ts': [
+        "test('x', ({ page }) => page.goto('/?fixture=button'));",
+      ],
+      'tests/browser/library/Table.spec.ts': ["// import { Button } from '@envsemble/envui';"],
+    };
+    const plain = checkout('plain', {
+      ...common,
+      'packages/ui/src/index.ts': ["export { Button } from './actions/Button.js';"],
+      'tests/fixture/Button.fixture.tsx': [
+        "import { Button } from '@envsemble/envui';",
+        'export default Button;',
+      ],
+    });
+    const rewritten = checkout('rewritten', {
+      ...common,
+      'packages/ui/src/index.ts': ["export * from './actions/Button.js';"],
+      'tests/fixture/Button.fixture.tsx': [
+        'import {',
+        '  type Button as Kind,',
+        '  Button as Action,',
+        "} from '@envsemble/envui';",
+        'export default Action;',
+      ],
+    });
     for (const root of [plain, rewritten]) {
       const specsOf = fixtureUse(root);
       assert.deepEqual(specsOf('packages/ui/src/styles/Button.css'), ['Button'], root);
       assert.deepEqual(specsOf('tests/fixture/Button.fixture.tsx'), ['Button'], root);
     }
-  } finally {
-    rmSync(plain, { recursive: true, force: true });
-    rmSync(rewritten, { recursive: true, force: true });
-  }
-});
+  }));
 
 test('every path a rule names exists, and every spec it runs', () => {
   const skipped = (name) => name === 'node_modules' || name === '.git' || name === 'dist';
@@ -315,18 +303,15 @@ test('static checks cover the changed files, and configuration the whole of its 
   assert.equal(selectScope(['eslint.config.mjs']).whole.lint, true);
 });
 
-test('servers follow the specs that need them', () => {
-  const root = mkdtempSync(join(tmpdir(), 'envui-servers-'));
-  try {
+test('servers follow the specs that need them', async () => {
+  await inScratchFolder('servers', (root) => {
     mkdirSync(join(root, 'tests/browser/library'), { recursive: true });
     writeFileSync(
       join(root, 'tests/browser/library/Widget.spec.ts'),
       "import { fixtureUrl } from '../support/Servers';",
     );
     assert.deepEqual(serversFor(['Widget'], root), ['fixture']);
-  } finally {
-    rmSync(root, { recursive: true, force: true });
-  }
+  });
   assert.deepEqual(serversFor(['Tree']), []);
   assert.deepEqual(serversFor(['SiteSmoke']), ['site-build']);
   assert.deepEqual(serversFor(['SiteFailures']), ['site']);

@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { pageFixture, switchBody, switchFrontmatter } from './DocumentationFixtures.ts';
+import { samplePage, switchBody, switchFrontmatter } from './DocumentationSamples.ts';
 
 test('every example the frontmatter lists is placed once, but the overview, which nothing places', async () => {
-  await pageFixture(async ({ rejects }) => {
+  await samplePage(async ({ rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(
       frontmatter + body.replace('```tsx figure=Instant\n', '```tsx figure=Narrow\n'),
@@ -40,7 +40,7 @@ test('every example the frontmatter lists is placed once, but the overview, whic
 });
 
 test('an example the catalogue plays, or an anatomy held in a moment, needs its specimen', async () => {
-  await pageFixture(async ({ page, read, rejects, specimens }) => {
+  await samplePage(async ({ page, read, rejects, specimens }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(
       frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    motion: true') +
@@ -75,7 +75,7 @@ test('an example the catalogue plays, or an anatomy held in a moment, needs its 
 });
 
 test("a figure's fence takes the attributes its role takes, as values and flags", async () => {
-  await pageFixture(async ({ page, read, rejects }) => {
+  await samplePage(async ({ page, read, rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(frontmatter + body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
     await rejects(
@@ -134,7 +134,7 @@ test("a figure's fence takes the attributes its role takes, as values and flags"
 });
 
 test("a figure's legend names parts that exist, each by its name in bold", async () => {
-  await pageFixture(async ({ rejects }) => {
+  await samplePage(async ({ rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(
       frontmatter + body.replace('2. **Thumb** (`env-switch-input`)', '2. The thumb.'),
