@@ -2,7 +2,7 @@ import axe from 'axe-core';
 import { expect, test } from 'vitest';
 import type { FixtureModule } from '../fixture/FixtureMount.tsx';
 import { fixtureName } from '../fixture/FixtureName.ts';
-import { nextFrames } from './support/Browser.ts';
+import { nextFrames, waitOnRealTime } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
 const fixtures = Object.entries(
@@ -55,7 +55,7 @@ test.for(fixtures)(
 
 async function waitUntilLoadedOrBusyOnPurpose() {
   for (let waited = 0; document.querySelector('[aria-busy="true"]') && waited < 3_000; waited += 50)
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await waitOnRealTime(50);
 }
 
 function stableTarget(element: Element): string {

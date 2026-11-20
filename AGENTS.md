@@ -1,6 +1,6 @@
 # envUI: working on it
 
-For agents and people changing envUI. Applications built with envUI read the docs the package ships, not this. Paths are from the repository's root. The lint, the tests and `npm run check` hold most rules: when one fails, its message says what to write instead.
+For agents and people changing envUI. Applications built with envUI read the docs the package ships, not this. Paths are from the repository's root. The lint, the tests and `npm run check` hold most rules: when one fails, its message says what to write instead. Among them, `repository/no-comments` keeps comments out of envUI's code: code that needs explaining is renamed or restructured instead.
 
 ## Commands
 
@@ -38,22 +38,20 @@ Generated, never edited by hand: `packages/ui/src/generated/`, `packages/ui/toke
 
 ## Rules the code doesn't hold
 
-- **No comments in envUI's code**, except doc comments on the public API, tool directives (`eslint-disable…`, `@ts-expect-error`) with no written reason, and licence headers. Code that needs explaining is renamed or restructured instead.
 - **A design value apps line up with is a system token.**
-- **Slots render through Slot**, which places what it holds and never styles it; no style sheet reaches inside a slot.
+- **Slots render through Slot**, which places what it holds and never styles it.
 - **What belongs in envUI:** a variant, slot or component every application needs, built on envUI's primitives and tokens. Routing, authorization, validation and persistence stay in the application.
 - **Props:** a boolean defaults to false, unless it turns off a feature shown by default; then it is named after the feature and defaults to true. A controlled value goes through `internal/react/useControllableState.ts`, where `null` is a controlled none. A prop that overrides a string is named after its key, `<x>Label`.
 - **State attributes keep one meaning:** `data-active` what shows, `data-current` the page's destination, `data-selected` what is chosen, `data-highlighted` the list's cursor.
 - **Colors:** change one by choosing another grade for its role, then `npm run test:contrast`; record a pair that leaves or loosens in `tests/contrast/PairHistory.ts`. Motion takes the motion tokens, and movement only under `prefers-reduced-motion: no-preference`.
 - **A fact lives on the page that owns it.** When an integration finds a gap, fix the library or that page rather than adding a guide.
-- **Lists that only shrink:** `stylelint-suppressions.json`, `tests/accessibility/KnownViolations.json` and the visual baseline. Add to them only for a reviewed reason.
 - **Don't change `.github/workflows`** or the required checks, or start CI runs, without asking.
 
 ## Tests
 
 - Take the first kind that can see it: a unit test in Node, then a component test (`tests/component/<Name>.test.tsx` with `tests/fixture/<Name>.fixture.tsx`, mounted with `mount` and driven by the real mouse and keys), then a Playwright spec, for a whole page: the site's, or the library's build hydrating.
 - Add a test for the public contract (keyboard, focus, ARIA, behaviour, types, tokens) or a bug that happened; test a behaviour once. Don't test what TypeScript, the visual baseline or the contrast gate already see.
-- No fixed sleeps: wait for a condition, or stop the page's timers (`stopTimers`, `passTime`). Tag a test `engines` when it depends on the engine, and `once` when it holds only for a fresh page (a module's first load, a report made once a page); every other test passes run again in the same page, as the burn-in runs it.
+- Tag a test `engines` when it depends on the engine, and `once` when it holds only for a fresh page (a module's first load, a report made once a page); every other test passes run again in the same page, as the burn-in runs it.
 - A fixture is its file's default export: `themes = true` mounts it per theme, `mount = 'standalone'` or `'root'` gives it the page.
 
 ## Record the change

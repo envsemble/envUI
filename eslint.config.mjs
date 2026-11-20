@@ -155,6 +155,15 @@ const pathsFromRepositoryPaths = {
     'Take the path from scripts/RepositoryPaths.ts (styleSheetsDirectory, partsFile, propsFile, exportsFile), and repositoryPath() for its repository-relative form.',
 };
 
+const noFixedSleeps = [
+  "NewExpression[callee.name='Promise'] CallExpression[callee.name='setTimeout']",
+  "CallExpression[callee.property.name='waitForTimeout']",
+].map((selector) => ({
+  selector,
+  message:
+    "Wait for a condition (expect.poll, a locator's state), or stop the page's timers (stopTimers, passTime); waitOnRealTime in tests/component/support/Browser.ts is the one wait on real time.",
+}));
+
 const buildOutput = ['**/dist/**', '**/node_modules/**', '.cache/**'];
 const wranglerDevState = ['.wrangler/**'];
 const testReports = ['test-results/**', 'playwright-report/**'];
@@ -250,6 +259,11 @@ export default defineConfig(
     files: ['scripts/**', 'tests/**', 'packages/*/test/**', '*.{js,mjs,ts}'],
     ignores: ['scripts/RepositoryPaths.ts'],
     rules: { 'no-restricted-syntax': ['error', pathsFromRepositoryPaths] },
+  },
+  {
+    files: ['tests/{component,browser,accessibility,visual}/**/*.{ts,tsx}'],
+    ignores: ['tests/component/support/Browser.ts'],
+    rules: { 'no-restricted-syntax': ['error', pathsFromRepositoryPaths, ...noFixedSleeps] },
   },
   {
     files: ['packages/ui/src/**/*.{ts,tsx}'],
