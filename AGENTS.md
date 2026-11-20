@@ -39,7 +39,7 @@ Generated, never edited by hand: `packages/ui/src/generated/`, `packages/ui/toke
 ## Rules the code doesn't hold
 
 - **No comments in envUI's code**, except doc comments on the public API, tool directives (`eslint-disable…`, `@ts-expect-error`) with no written reason, and licence headers. Code that needs explaining is renamed or restructured instead.
-- **`--env-` is only the public contract:** tokens, color properties (`--env-<component>-<role>`) and the properties `parts.json` lists. Mechanism takes the private `--_` prefix. A design value apps line up with is a system token.
+- **A design value apps line up with is a system token.**
 - **Slots render through Slot**, which places what it holds and never styles it; no style sheet reaches inside a slot.
 - **What belongs in envUI:** a variant, slot or component every application needs, built on envUI's primitives and tokens. Routing, authorization, validation and persistence stay in the application.
 - **Props:** a boolean defaults to false, unless it turns off a feature shown by default; then it is named after the feature and defaults to true. A controlled value goes through `internal/react/useControllableState.ts`, where `null` is a controlled none. A prop that overrides a string is named after its key, `<x>Label`.

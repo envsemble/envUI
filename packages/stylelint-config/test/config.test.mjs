@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import config, { hairlineProperties, rawColorFunction, stackingValues } from '../src/index.js';
+import config from '../src/index.js';
 import { lintPackages, staleFiles } from '../../../scripts/build/SyncLintPackages.ts';
 import { lint, message, passes } from './Lint.mjs';
 
@@ -141,24 +141,6 @@ test('every token the messages and the README name exists in the library', () =>
       );
     else assert.ok(library.includes(name), `${name} is not an envUI token`);
   }
-});
-
-test("envUI's own style sheets take px from the list this config ships", async () => {
-  const repositoryConfig = new URL('../../../stylelint.config.mjs', import.meta.url);
-  if (!existsSync(repositoryConfig)) return;
-  const { default: repository } = await import(repositoryConfig);
-  const pxLists = [repository, ...repository.overrides]
-    .map(({ rules }) => rules['unit-disallowed-list']?.[1]?.ignoreProperties?.px)
-    .filter(Boolean);
-  assert.ok(pxLists.length >= 2, 'the repository sets px for components and for tokens');
-  for (const list of pxLists) assert.equal(list, hairlineProperties);
-  assert.deepEqual(repository.rules['declaration-property-value-disallowed-list'], {
-    '/.*/': [rawColorFunction],
-  });
-  assert.equal(
-    repository.rules['declaration-property-value-allowed-list']['z-index'],
-    stackingValues,
-  );
 });
 
 test('keywords, data URLs, backdrop filters and stroke widths pass', async () => {

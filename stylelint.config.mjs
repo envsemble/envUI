@@ -1,5 +1,4 @@
-import {
-  hairlineProperties,
+import envuiStylelint, {
   rawColorFunction,
   stackingValues,
 } from '@envsemble/stylelint-config-envui';
@@ -33,15 +32,13 @@ const textRelativeProperties = [
 
 const functionsInCssPixels = ['env'];
 
-const unitRule = (units, ignoreProperties) => [
-  units,
+const emOnlyForText = [
+  ['em'],
   {
-    ignoreProperties,
+    ignoreProperties: { em: textRelativeProperties },
     ignoreFunctions: functionsInCssPixels,
-    message: (unit) =>
-      unit === 'em'
-        ? 'Disallowed unit "em": em is only for typography that follows the element’s font size, such as line-height and letter-spacing; use rem or a token.'
-        : `Disallowed unit "${unit}": px is only for hairlines, such as border and outline widths, focus-ring and shadow offsets; use rem or a token.`,
+    message: () =>
+      'Disallowed unit "em": em is only for typography that follows the element’s font size, such as line-height and letter-spacing; use rem or a token.',
   },
 ];
 
@@ -58,22 +55,17 @@ const testStyleSheetsStandingInForAnApplication = ['tests/**/*.css'];
 /** @type {import('stylelint').Config} */
 export default {
   extends: ['stylelint-config-recommended'],
-  plugins: [fontWeightFromToken, slotContent, noStyleSheetComments],
+  plugins: [...envuiStylelint.plugins, fontWeightFromToken, slotContent, noStyleSheetComments],
   reportInvalidScopeDisables: true,
   reportNeedlessDisables: true,
   rules: {
-    'color-no-hex': true,
-    'color-named': 'never',
-    'declaration-property-value-disallowed-list': { '/.*/': [rawColorFunction] },
+    ...envuiStylelint.rules,
     'declaration-property-value-allowed-list': {
       'z-index': stackingValues,
       'font-weight': ['inherit', 'normal', '/^var\\(--/', variableFontWeightRange],
     },
     [fontWeightRuleName]: true,
-    'unit-disallowed-list': unitRule(['px', 'em'], {
-      px: hairlineProperties,
-      em: textRelativeProperties,
-    }),
+    'unit-disallowed-list': emOnlyForText,
     'no-descending-specificity': null,
   },
   overrides: [
@@ -81,6 +73,7 @@ export default {
       files: libraryStyleSheets,
       rules: {
         [slotContentRuleName]: true,
+        'envui/no-contrast-breaking-pairs': null,
         'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] },
         'selector-class-pattern': [
           '^(?:env(?:-[a-z0-9]+)+|contains-task-list|task-list-item|footnotes)$',
@@ -105,7 +98,9 @@ export default {
         },
         'declaration-property-value-allowed-list': null,
         'declaration-property-unit-disallowed-list': null,
-        'unit-disallowed-list': unitRule(['px'], { px: hairlineProperties }),
+        'unit-disallowed-list': null,
+        'envui/no-unknown-custom-properties': null,
+        'envui/no-off-scale-values': null,
       },
     },
     {
@@ -113,6 +108,7 @@ export default {
       rules: {
         'selector-class-pattern': sitePrefixed,
         'custom-property-pattern': siteCustomProperty,
+        'envui/no-off-scale-values': null,
       },
     },
     {
@@ -120,6 +116,8 @@ export default {
       rules: {
         'declaration-property-value-disallowed-list': null,
         'unit-disallowed-list': null,
+        'envui/no-px': null,
+        'envui/no-off-scale-values': null,
         [fontWeightRuleName]: null,
       },
     },
