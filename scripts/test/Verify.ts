@@ -3,13 +3,12 @@ import {
   bin,
   dockerRunning,
   parallel,
-  red,
   series,
   summary,
   task,
-  yellow,
   type TaskResult,
 } from './TestTasks.ts';
+import { red, yellow } from '../Terminal.ts';
 import { checks, generateDocumentation } from './Checks.ts';
 import { unitTestFiles } from './TestScope.ts';
 import { defaultPorts } from './CheckoutMarker.ts';

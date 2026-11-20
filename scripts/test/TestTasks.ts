@@ -1,14 +1,7 @@
 import { spawn } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { repositoryRoot } from '../RepositoryPaths.ts';
-
-const color = process.stdout.isTTY && !process.env.NO_COLOR;
-const paint = (code: number, text: string) => (color ? `\u001b[${code}m${text}\u001b[0m` : text);
-export const red = (text: string) => paint(31, text);
-const green = (text: string) => paint(32, text);
-export const yellow = (text: string) => paint(33, text);
-export const dim = (text: string) => paint(2, text);
-export const bold = (text: string) => paint(1, text);
+import { bold, dim, green, red, showsColor, yellow } from '../Terminal.ts';
 
 const seconds = (ms: number) => `${(ms / 1000).toFixed(1)} s`;
 
@@ -64,7 +57,7 @@ function runTask(item: Task): Promise<TaskResult> {
     const [command, ...args] = item.run as [string, ...string[]];
     const child = spawn(command, args, {
       cwd: repositoryRoot,
-      env: { ...process.env, FORCE_COLOR: color ? '1' : '0', ...item.env },
+      env: { ...process.env, FORCE_COLOR: showsColor ? '1' : '0', ...item.env },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let output = '';

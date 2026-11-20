@@ -9,18 +9,8 @@ import {
   specNeeds,
   unitTestFiles,
 } from './TestScope.ts';
-import {
-  bin,
-  bold,
-  dim,
-  parallel,
-  red,
-  series,
-  summary,
-  task,
-  yellow,
-  type Task,
-} from './TestTasks.ts';
+import { bin, parallel, series, summary, task, type Task } from './TestTasks.ts';
+import { bold, dim, red, yellow } from '../Terminal.ts';
 
 const started = performance.now();
 const {

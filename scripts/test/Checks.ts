@@ -1,4 +1,4 @@
-import { baseOption } from '../docs/ContractHistory.ts';
+import { baseOption } from '../Git.ts';
 import { bin, series, task, type Task } from './TestTasks.ts';
 
 const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];

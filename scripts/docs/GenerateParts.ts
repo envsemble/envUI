@@ -1,10 +1,7 @@
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
-import {
-  baseContract,
-  baseOption,
-  lastReleaseContract,
-  pendingChangesets,
-} from './ContractHistory.ts';
+import { baseOption } from '../Git.ts';
+import { yellow } from '../Terminal.ts';
+import { baseContract, lastReleaseContract, pendingChangesets } from './ContractHistory.ts';
 import {
   buildParts,
   partsFile,
@@ -34,7 +31,9 @@ if (check) {
   if (!base.contract) {
     console.log(`${partsPath} matches its sources.`);
     console.warn(
-      `[33mwarning: no part or state removal was checked: ${base.missing}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
+      yellow(
+        `warning: no part or state removal was checked: ${base.missing}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.`,
+      ),
     );
   } else {
     const release = lastReleaseContract<PartsContract>(partsPath, baseOption());

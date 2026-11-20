@@ -1,8 +1,8 @@
-import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { fixtureUse, importsOf, isComponentTest, specPaths } from './FixtureImports.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
+import { baseBranch, git, mergeBase as mergeBaseOf } from '../Git.ts';
 
 export const aliases: Record<string, string[]> = {
   SearchField: ['TextField'],
@@ -343,21 +343,6 @@ export function mergeChanges(entries: readonly Change[], untracked: readonly str
   return [...byPath.values()].sort((a, b) => a.path.localeCompare(b.path));
 }
 
-const defaultBase = 'origin/dev';
-
-function git(args: string[], root: string) {
-  return execFileSync('git', args, {
-    cwd: root,
-    encoding: 'utf8',
-    maxBuffer: 64 * 1024 * 1024,
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-}
-
-export function baseBranch(base?: string): string {
-  return base || process.env.ENVUI_BASE || defaultBase;
-}
-
 export function changedFiles({
   root = repositoryRoot,
   base,
@@ -368,7 +353,7 @@ export function changedFiles({
   } catch {
     throw new Error(`${found} doesn't exist. Fetch it, or pass --base <ref> or set ENVUI_BASE.`);
   }
-  const mergeBase = git(['merge-base', 'HEAD', found], root).trim();
+  const mergeBase = mergeBaseOf(found, root);
   const entries = parseNameStatus(
     git(['diff', '--name-status', '-z', '-M', '--no-ext-diff', mergeBase], root),
   );

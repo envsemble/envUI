@@ -1,9 +1,10 @@
 import { resolve } from 'node:path';
 import { Node, Project } from 'ts-morph';
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
+import { baseOption } from '../Git.ts';
+import { yellow } from '../Terminal.ts';
 import {
   baseContract,
-  baseOption,
   bumpsLibrary,
   recordsBreakingChange,
   names,
@@ -98,7 +99,9 @@ if (import.meta.main) {
     if (!base.contract) {
       console.log(`${exportsPath} matches its sources.`);
       console.warn(
-        `[33mwarning: no change of the exports was checked: ${base.missing}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
+        yellow(
+          `warning: no change of the exports was checked: ${base.missing}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.`,
+        ),
       );
     } else {
       const changes = changedExports(base.contract, record, pendingChangesets());
