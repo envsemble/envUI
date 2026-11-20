@@ -190,7 +190,7 @@ export function NavigationBar({
                     ...(itemProps as Omit<Menu.ItemElementProps, 'rel'>),
                     className: itemClassName,
                     textValue: destinationText(destination),
-                    icon: destination.icon,
+                    start: destination.icon,
                     'aria-current': destinationCurrent(destination, true),
                     'aria-label': countedName(
                       destinationText(destination),

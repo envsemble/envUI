@@ -51,6 +51,10 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
   await expect.element(archive).toHaveAttribute('target', '_blank');
   await expect.element(archive).toHaveAttribute('data-testid', 'archive-item');
   await expect.element(archive).toHaveClass('env-menu-item', 'own-item');
+  for (const item of menu.getByRole('menuitem').elements()) {
+    expect(item.querySelector('.env-menu-item-start > svg')).not.toBeNull();
+    expect(item.hasAttribute('icon')).toBe(false);
+  }
   (labels.element() as HTMLElement).focus();
   await keyboard.press('t');
   await expect

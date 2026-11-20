@@ -381,7 +381,8 @@
           "forms/color/internal/useSwatchFocus.ts",
           "forms/color/internal/colorValue.ts",
           "forms/color/internal/useColorFollowingValue.ts",
-          "forms/color/internal/useEyeDropper.ts"
+          "forms/color/internal/useEyeDropper.ts",
+          "forms/color/internal/useFormResetting.ts"
         ]
       },
       "Calendar": {

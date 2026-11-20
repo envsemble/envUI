@@ -36,9 +36,7 @@ export function sectionsOf(
 export function textOf(item: CommandPaletteItem, list: HTMLElement | null) {
   const given = givenLabelText(item.label, item.textValue);
   if (given !== undefined) return given;
-  const option = Array.from(list?.querySelectorAll('[data-item-id]') ?? []).find(
-    (element) => element.getAttribute('data-item-id') === item.id,
-  );
+  const option = list?.querySelector(`[data-item-id="${CSS.escape(item.id)}"]`);
   return labelText(item.label, item.textValue, option && listRowLabel(option));
 }
 

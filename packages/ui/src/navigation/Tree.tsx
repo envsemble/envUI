@@ -229,6 +229,7 @@ export function Tree<Item extends TreeItem>({
     if (event.target !== event.currentTarget || !activeItem) return;
     const keyBelongsToApplication = event.altKey || event.ctrlKey || event.metaKey;
     if (keyBelongsToApplication) return;
+    const treeDocument = event.currentTarget.ownerDocument;
     const action = treeKeyAction(
       event.key,
       items,
@@ -240,7 +241,7 @@ export function Tree<Item extends TreeItem>({
         labelText(
           item.label,
           item.textValue,
-          document
+          treeDocument
             .getElementById(rowElementId(treeId, item.value))
             ?.querySelector('.env-tree-label'),
         ),

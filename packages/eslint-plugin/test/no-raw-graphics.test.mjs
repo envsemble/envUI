@@ -21,6 +21,14 @@ const definition = (attributes, what = 'size') => ({
   data: { attributes, what, fix: fixes[what] },
 });
 const icons = (name, source) => ({ messageId: 'iconPackage', data: { name, source } });
+const svgInSlot = (attributes, slot, what = 'size') => ({
+  messageId: 'svgInContentSlot',
+  data: { attributes, slot, what },
+});
+const iconsInSlot = (name, source, slot) => ({
+  messageId: 'iconPackageInContentSlot',
+  data: { name, source, slot },
+});
 
 const graphic = "import { Graphic } from '@envsemble/envui';\n";
 
@@ -39,6 +47,7 @@ ruleTester.run('no-raw-graphics', rule, {
       `${graphic}<Graphic alt=""><AcmeMark /></Graphic>`,
       `${graphic}<Graphic {...logoProps} />`,
       "import { IconSearch } from '@envsemble/envui/icons/Search'; <IconSearch />",
+      "import { IconAdd } from '@envsemble/envui/icons/Add'; <Button start={<IconAdd />} end={<IconAdd />}>Add</Button>;",
     ]),
     ...named("A Graphic of another library's, or of the application's own, needs no alt", [
       "import { Graphic } from './charts'; <Graphic data={data} />",
@@ -59,9 +68,9 @@ ruleTester.run('no-raw-graphics', rule, {
       '<svg width="0" height="0" aria-hidden="true"><defs /></svg>',
     ]),
     ...named('An svg in an icon slot, or in a Graphic, takes its size from there', [
-      '<Button endIcon={<svg width="24" height="24" />}>Save</Button>',
       '<IconButton icon={<svg width="16" height="16" fill="#1a73e8" />} />',
-      '<Badge endIcon={open ? <svg width="12" /> : null} />',
+      '<Alert icon={open ? <svg width="12" /> : null} />',
+      '<Thing statusIcon={<svg width="12" />} />',
       `${graphic}<Graphic alt=""><svg width="24" height="24" fill="#000" /></Graphic>`,
     ]),
     ...named(
@@ -71,12 +80,13 @@ ruleTester.run('no-raw-graphics', rule, {
         `${graphic}<Graphic alt="">{show && <svg width="24" height="24" />}</Graphic>`,
       ],
     ),
-    ...named('The start slot of List.Item, TopBar, PageHeader and Combobox options', [
-      '<List.Item start={<svg width="20" height="20" />}>Inbox</List.Item>',
+    ...named('An svg or an icon in a Graphic in start or end', [
+      `${graphic}<List.Item start={<Graphic alt=""><svg width="20" height="20" /></Graphic>}>Inbox</List.Item>`,
+      `${graphic}import { Github } from 'lucide-react'; <Button end={<Graphic alt=""><Github /></Graphic>}>Sign in</Button>;`,
     ]),
     ...named("An icon slot as an object's property, as in an array of destinations", [
       'const destinations = [{ label: \'Pipelines\', icon: <svg width="24" height="24" /> }];',
-      'const items = [{ id: \'a\', \'startIcon\': <svg width="16" />, start: <svg height="16" /> }];',
+      "const items = [{ id: 'a', 'statusIcon': <svg width=\"16\" /> }];",
     ]),
     ...named('What a part renders in place of its own element', [
       '<Avatar.Image render={<img src={photo} alt="" />} />',
@@ -100,7 +110,7 @@ ruleTester.run('no-raw-graphics', rule, {
       "const icons = require(name); const m = import(name); require('lodash', 1);",
     ]),
     ...named("Another icon package's icon in an icon slot or a Graphic, which sizes it", [
-      "import { Github } from 'lucide-react'; <Button endIcon={<Github />}>Sign in</Button>;",
+      'import { Github } from \'lucide-react\'; <IconButton icon={<Github />} aria-label="Sign in" />;',
       `${graphic}import { SiFigma } from 'react-icons/si'; <Graphic alt="Figma"><SiFigma /></Graphic>;`,
       "import * as Icons from '@tabler/icons-react'; const items = [{ id: 'a', icon: <Icons.IconBrandSlack /> }];",
       'const { Heart } = require(\'phosphor-react\'); <IconButton icon={<Heart />} aria-label="Like" />;',
@@ -192,6 +202,43 @@ ruleTester.run('no-raw-graphics', rule, {
         errors: [svg('width="24"')],
       },
     ]),
+    ...named(
+      "start and end size only envUI's icons and a Graphic, so a raw svg or another package's icon there is told to go in a Graphic",
+      [
+        {
+          code: "import { Github } from 'lucide-react';\n<Button start={<Github />}>Sign in</Button>;",
+          errors: [
+            {
+              message:
+                "A <Github> from lucide-react keeps the package's size in start, which sizes only envUI's icons and a Graphic: wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit it: import { IconSearch } from '@envsemble/envui/icons/Search'.",
+              line: 2,
+              column: 17,
+            },
+          ],
+        },
+        {
+          code: "import { ChevronRight } from 'lucide-react'; <Button end={open ? <ChevronRight /> : null}>Next</Button>;",
+          errors: [iconsInSlot('ChevronRight', 'lucide-react', 'end')],
+        },
+        {
+          code: '<List.Item start={<svg width="20" height="20" />}>Inbox</List.Item>',
+          errors: [
+            {
+              message:
+                'A raw <svg width="20" height="20"> keeps the file\'s size in start, which sizes only envUI\'s icons and a Graphic: wrap it in envUI\'s <Graphic alt="">: import { Graphic } from \'@envsemble/envui\'.',
+            },
+          ],
+        },
+        {
+          code: "import { Folder } from 'lucide-react'; const items = [{ value: 'a', start: <Folder /> }];",
+          errors: [iconsInSlot('Folder', 'lucide-react', 'start')],
+        },
+        {
+          code: 'const items = [{ value: \'a\', end: <span><svg fill="#000" /></span> }];',
+          errors: [svgInSlot('fill="#000"', 'end', 'color')],
+        },
+      ],
+    ),
     ...named("A property that isn't an icon slot", [
       {
         code: 'const items = [{ label: \'Pipelines\', badge: <svg width="24" /> }];',
@@ -270,7 +317,7 @@ ruleTester.run('no-raw-graphics', rule, {
           errors: [icons('Heart', 'phosphor-react')],
         },
         {
-          code: "import { Search as Find } from 'lucide-react'; <><Button endIcon={<Find />}>Find</Button><Find /></>;",
+          code: "import { Search as Find } from 'lucide-react'; <><IconButton icon={<Find />} /><Find /></>;",
           errors: [icons('Find', 'lucide-react')],
         },
       ],
