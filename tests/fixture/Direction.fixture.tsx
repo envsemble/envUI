@@ -1,28 +1,17 @@
 import { useState } from 'react';
 import { useDirection as useBaseDirection } from '@base-ui/react/direction-provider';
 import { EnvUIProvider, Menu, Menubar, SegmentedControl, Toolbar } from '@envsemble/envui';
+import { ColorPicker } from '@envsemble/envui/color';
 import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
 import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
 import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
 import { ResizeHandle } from '../../packages/ui/src/layout/ResizeHandle.js';
-import { useRovingFocus } from '../../packages/ui/src/forms/internal/useRovingFocus.js';
 
 export const mount = 'standalone';
 
-const cells = Array.from({ length: 7 }, (_, index) => `${index + 1}`);
-
 function DirectedControls() {
   const [width, setWidth] = useState(200);
-  const [active, setActive] = useState<string | null>(null);
   const [view, setView] = useState('list');
-  const roving = useRovingFocus({
-    items: cells,
-    getKey: (cell) => cell,
-    orientation: 'grid',
-    columns: 7,
-    activeKey: active,
-    onActiveKeyChange: setActive,
-  });
   return (
     <>
       <ResizeHandle
@@ -33,13 +22,7 @@ function DirectedControls() {
         max={400}
         onChange={(value) => setWidth(value)}
       />
-      <div role="grid" aria-label="Days" {...roving.getContainerProps()}>
-        {cells.map((cell) => (
-          <div key={cell} role="gridcell" {...roving.getItemProps(cell)}>
-            {cell}
-          </div>
-        ))}
-      </div>
+      <ColorPicker label="Accent" swatches={['#ff0000', '#00ff00', '#0000ff']} />
       <Toolbar.Root aria-label="Formatting">
         <Toolbar.Button icon={<IconFormatBold />} label="Bold" />
         <Toolbar.Button icon={<IconFormatItalic />} label="Italic" />

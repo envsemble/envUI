@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useLocale } from '@react-aria/i18n';
 import type { Color } from '@react-stately/color';
-import { useRovingFocus } from '../../internal/useRovingFocus.js';
+import { useSwatchFocus } from './useSwatchFocus.js';
 import { sameColor, toColor, type ColorValue } from './colorValue.js';
 import { flag } from '../../../internal/flag.js';
 import '../../../styles/Base.css';
@@ -34,12 +34,9 @@ export function SwatchList({ swatches, value, onChange, alpha, disabled, label }
   });
   const selected = items.find((item) => sameColor(item.color, value));
   const [activeKey, setActiveKey] = useState<string | null>(null);
-  const roving = useRovingFocus({
-    items,
-    getKey: (item) => item.key,
-    orientation: 'horizontal',
-    loop: true,
-    isDisabled: () => disabled,
+  const swatchFocus = useSwatchFocus({
+    keys: items.map((item) => item.key),
+    disabled,
     activeKey: activeKey ?? selected?.key ?? null,
     onActiveKeyChange: setActiveKey,
   });
@@ -50,7 +47,7 @@ export function SwatchList({ swatches, value, onChange, alpha, disabled, label }
       aria-orientation="horizontal"
       aria-disabled={disabled || undefined}
       className="env-color-picker-swatches"
-      {...roving.getContainerProps()}
+      {...swatchFocus.listProps}
     >
       {items.map((item) => {
         const choose = () => {
@@ -67,7 +64,7 @@ export function SwatchList({ swatches, value, onChange, alpha, disabled, label }
             data-selected={flag(item === selected)}
             data-translucent={flag(item.color.getChannelValue('alpha') < 1)}
             style={{ '--_color-swatch-color': item.color.toString('css') }}
-            {...roving.getItemProps(item)}
+            {...swatchFocus.swatchProps(item.key)}
             onClick={choose}
             onKeyDown={(event) => {
               if (event.key !== 'Enter' && event.key !== ' ') return;
