@@ -25,7 +25,6 @@ avoidWhen:
     use: ResizeHandle
 components:
   - Panes
-  - readPanesWidth
 examples:
   ListAndDetail:
     role: overview

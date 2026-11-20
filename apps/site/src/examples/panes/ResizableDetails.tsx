@@ -1,13 +1,42 @@
+import { useEffect, useState } from 'react';
 import { Column, DescriptionList, Panes, Surface, Text } from '@envsemble/envui';
 
+const storageKey = 'banner-details-width';
+
+function storedWidth() {
+  try {
+    const stored = Number(localStorage.getItem(storageKey) ?? Number.NaN);
+    return Number.isFinite(stored) ? stored : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function storeWidth(width: number) {
+  try {
+    localStorage.setItem(storageKey, String(width));
+  } catch {
+    return;
+  }
+}
+
 export default function ResizableDetails() {
+  const [width, setWidth] = useState(18);
+  useEffect(() => {
+    const stored = storedWidth();
+    if (stored !== undefined) setWidth(stored);
+  }, []);
   return (
     <Panes.Root
       sized="end"
+      width={width}
       defaultWidth={18}
       minWidth={14}
       maxWidth={22}
-      persist="example.details-width"
+      onWidthChange={(next, { committed }) => {
+        setWidth(next);
+        if (committed) storeWidth(next);
+      }}
       style={{
         inlineSize: 'min(100%, 44rem)',
         blockSize: '14rem',

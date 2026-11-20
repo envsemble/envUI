@@ -88,7 +88,7 @@ test('changed files come from the merge-base, uncommitted edits and untracked fi
 test('a component runs the spec of its name, or of the name its alias gives', () => {
   assert.deepEqual(specs('packages/ui/src/forms/Checkbox.tsx'), ['Checkbox']);
   assert.deepEqual(specs('packages/ui/src/styles/Table.css'), ['Table']);
-  assert.ok(specs('packages/ui/src/layout/panesSize.ts').includes('Panes'));
+  assert.ok(specs('packages/ui/src/internal/resize/useResize.ts').includes('Panes'));
   assert.deepEqual(specs('packages/ui/src/foundations/Theme.tsx'), [
     'ThemeContrast',
     'ThemePreference',

@@ -298,7 +298,6 @@
     "formatRelativeTime": "function",
     "isPlaceholder": "function",
     "placeholders": "function",
-    "readPanesWidth": "function",
     "useContainerSize": "function",
     "useDialogPending": "function",
     "useLocale": "function",

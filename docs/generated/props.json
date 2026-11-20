@@ -6243,7 +6243,7 @@
           "type": "number",
           "required": false,
           "default": "22.5",
-          "description": "The sized pane's width in rem until people choose one with Panes.ResizeHandle, or one is kept under `persist`, and the width a double click on the handle returns it to."
+          "description": "The sized pane's width in rem until people choose one with Panes.ResizeHandle, and the width a double click on the handle returns it to. To keep the width people choose, store what onWidthChange receives and pass it back here."
         },
         {
           "name": "onWidthChange",
@@ -6264,18 +6264,6 @@
           "required": false,
           "default": "40",
           "description": "The sized pane's largest width, in rem. It never leaves the other pane less than 16 rem."
-        },
-        {
-          "name": "persist",
-          "type": "string",
-          "required": false,
-          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the handle forgets it and returns to `defaultWidth`. Read it on the server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
-        },
-        {
-          "name": "persistedWidth",
-          "type": "number",
-          "required": false,
-          "description": "The width kept under `persist`, in rem, as the server read it from the request's cookies with `readPanesWidth`: the first render uses it, on the server and in the browser alike."
         },
         {
           "name": "name",
@@ -9411,15 +9399,6 @@
       "source": "packages/ui/src/foundations/placeholders.ts",
       "description": "Stand-in items for data that is loading, so the page renders its normal components over them while a surface around them is a skeleton: `items ?? placeholders<Project>(3)`. Each item has only an `id`, `envui-placeholder-0`, `envui-placeholder-1` and so on, for keys; its other fields are undefined, which the type says, and the components render missing text as bars of a default length for its text style.",
       "signature": "<Item = object>(count: number): Placeholder<Item>[]",
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "readPanesWidth": {
-      "kind": "function",
-      "source": "packages/ui/src/layout/panesSize.ts",
-      "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `persistedWidth`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" persistedWidth={readPanesWidth(cookieHeader, 'inbox')}> Returns undefined where no width is kept under the key, or what is kept there is no width.",
-      "signature": "(cookies: string | null | undefined, key: string): number | undefined",
       "entries": [
         "@envsemble/envui"
       ]

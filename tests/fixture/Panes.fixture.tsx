@@ -26,9 +26,7 @@ export default function PanesFixture() {
         <Panes.Root
           sized={sized}
           stackBelow={stackBelow}
-          persist={query.get('persist') ?? undefined}
           defaultWidth={query.get('size') ? Number(query.get('size')) : undefined}
-          persistedWidth={query.get('kept') ? Number(query.get('kept')) : undefined}
           onWidthChange={(size, { committed }) =>
             setSizes((current) => [...current, `${size}${committed ? '!' : ''}`])
           }
