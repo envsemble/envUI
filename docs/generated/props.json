@@ -5673,7 +5673,7 @@
     "Pager.Next": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next (EnvUIProvider's messages.pager.next), and an optional icon after them. It also stands alone, outside Pager.Root.",
+      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next (EnvUIProvider's messages.pager.next), and optional content after them, its end. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
@@ -5688,12 +5688,6 @@
           "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
-        },
-        {
           "name": "rel",
           "type": "string",
           "required": false,
@@ -5706,6 +5700,12 @@
           "required": false,
           "default": "'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next",
           "description": "The direction label above the title, such as Previous chapter or Back to setup, for this link alone; null leaves it out."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content after the text, such as IconArrowForward: an envUI icon takes the pager's icon size and other content keeps its own. It is hidden from assistive technology; none by default."
         }
       ],
       "native": [
@@ -5718,7 +5718,7 @@
     "Pager.Previous": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous (EnvUIProvider's messages.pager.previous), and an optional icon before them. It also stands alone, outside Pager.Root.",
+      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous (EnvUIProvider's messages.pager.previous), and optional content before them, its start. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
@@ -5733,12 +5733,6 @@
           "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
-        },
-        {
           "name": "rel",
           "type": "string",
           "required": false,
@@ -5751,6 +5745,12 @@
           "required": false,
           "default": "'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next",
           "description": "The direction label above the title, such as Previous chapter or Back to setup, for this link alone; null leaves it out."
+        },
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the text, such as IconArrowBack: an envUI icon takes the pager's icon size and other content keeps its own. It is hidden from assistive technology; none by default."
         }
       ],
       "native": [

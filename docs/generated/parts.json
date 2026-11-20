@@ -3872,6 +3872,11 @@
           "description": "The column with a link's label and title."
         },
         {
+          "class": "env-pager-link-end",
+          "description": "The slot of the content after the next link's text, such as an icon.",
+          "slot": true
+        },
+        {
           "class": "env-pager-link-label",
           "description": "A link's label, Previous or Next."
         },
@@ -3882,6 +3887,11 @@
         {
           "class": "env-pager-link-previous",
           "description": "The link to the previous page."
+        },
+        {
+          "class": "env-pager-link-start",
+          "description": "The slot of the content before the previous link's text, such as an icon.",
+          "slot": true
         },
         {
           "class": "env-pager-link-title",
@@ -3898,9 +3908,6 @@
             "env-pager"
           ]
         }
-      ],
-      "uses": [
-        "Icon"
       ]
     },
     "Pagination": {

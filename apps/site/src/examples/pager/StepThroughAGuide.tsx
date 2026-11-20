@@ -23,7 +23,7 @@ export default function StepThroughAGuide() {
         {previous && (
           <Pager.Previous
             href={previous.href}
-            icon={<IconArrowBack />}
+            start={<IconArrowBack />}
             onClick={() => setIndex(index - 1)}
           >
             {previous.title}
@@ -32,7 +32,7 @@ export default function StepThroughAGuide() {
         {next && (
           <Pager.Next
             href={next.href}
-            icon={<IconArrowForward />}
+            end={<IconArrowForward />}
             onClick={() => setIndex(index + 1)}
           >
             {next.title}

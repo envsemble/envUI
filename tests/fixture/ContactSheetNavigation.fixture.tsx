@@ -286,10 +286,10 @@ function Navigation() {
 function Pagers() {
   const pager = (
     <Pager.Root aria-label="Guide pages">
-      <Pager.Previous href="#install" icon={<IconArrowBack />}>
+      <Pager.Previous href="#install" start={<IconArrowBack />}>
         Install the app
       </Pager.Previous>
-      <Pager.Next href="#invite" icon={<IconArrowForward />}>
+      <Pager.Next href="#invite" end={<IconArrowForward />}>
         Invite your team
       </Pager.Next>
     </Pager.Root>
@@ -310,7 +310,7 @@ function Pagers() {
         ))}
         <Cell caption="Next only" width="30rem">
           <Pager.Root aria-label="Guide pages">
-            <Pager.Next href="#invite" icon={<IconArrowForward />}>
+            <Pager.Next href="#invite" end={<IconArrowForward />}>
               Invite your team
             </Pager.Next>
           </Pager.Root>

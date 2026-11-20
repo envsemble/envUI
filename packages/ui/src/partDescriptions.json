@@ -554,6 +554,8 @@
       "env-pager": "The previous and next links.",
       "env-pager-link": "One link.",
       "env-pager-link-copy": "The column with a link's label and title.",
+      "env-pager-link-start": "The slot of the content before the previous link's text, such as an icon.",
+      "env-pager-link-end": "The slot of the content after the next link's text, such as an icon.",
       "env-pager-link-label": "A link's label, Previous or Next.",
       "env-pager-link-next": "The link to the next page.",
       "env-pager-link-previous": "The link to the previous page.",

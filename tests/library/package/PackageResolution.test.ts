@@ -128,7 +128,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     void advanced;
     const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), start: <IconHome /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
-    const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <IconHome /> };
+    const pagerLinkProps: Pager.NextProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), end: <IconHome /> };
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];
     const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <IconHome /> }];
     const theme: ColorScheme = 'dark';

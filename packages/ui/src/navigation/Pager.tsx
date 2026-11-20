@@ -8,7 +8,7 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { classNames } from '../internal/classNames.js';
 import { landmarkLabel } from './internal/landmarkLabel.js';
 import { Row } from '../layout/Layout.js';
@@ -30,11 +30,6 @@ export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> 
    */
   children: ReactNode;
   /**
-   * A decorative icon, such as ArrowBack, before the previous destination's text, or such as
-   * ArrowForward, after the next one's; none by default.
-   */
-  icon?: ReactNode;
-  /**
    * The link's relation to this page.
    * @default 'prev' on Pager.Previous, 'next' on Pager.Next
    */
@@ -48,23 +43,35 @@ export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> 
 }
 
 /** The link to the previous page. */
-export type PreviousProps = LinkProps;
+export type PreviousProps = LinkProps & {
+  /**
+   * Content before the text, such as IconArrowBack: an envUI icon takes the pager's icon size and
+   * other content keeps its own. It is hidden from assistive technology; none by default.
+   */
+  start?: ReactNode;
+};
 /** The link to the next page. */
-export type NextProps = LinkProps;
+export type NextProps = LinkProps & {
+  /**
+   * Content after the text, such as IconArrowForward: an envUI icon takes the pager's icon size and
+   * other content keeps its own. It is hidden from assistive technology; none by default.
+   */
+  end?: ReactNode;
+};
 
 function PagerLink({
   direction,
-  icon,
+  start,
+  end,
   children,
   className,
   rel,
   label,
   ...props
-}: LinkProps & { direction: 'previous' | 'next' }) {
+}: LinkProps & { direction: 'previous' | 'next'; start?: ReactNode; end?: ReactNode }) {
   const LinkComponent = useLinkComponent();
   const caption = useMessages('pager', pager)[direction];
   const isPrevious = direction === 'previous';
-  const symbol = icon != null ? <DecorativeIcon>{icon}</DecorativeIcon> : null;
 
   return (
     // eslint-disable-next-line react-hooks/static-components
@@ -73,12 +80,26 @@ function PagerLink({
       rel={rel ?? (isPrevious ? 'prev' : 'next')}
       className={classNames('env-pager-link', `env-pager-link-${direction}`, className)}
     >
-      {isPrevious && symbol}
+      {start != null && (
+        <Slot
+          className="env-pager-link-start"
+          element="span"
+          layout="row"
+          shrink="never"
+          aria-hidden
+        >
+          {start}
+        </Slot>
+      )}
       <span className="env-pager-link-copy">
         {label !== null && <span className="env-pager-link-label">{label ?? caption}</span>}
         <span className="env-pager-link-title">{children}</span>
       </span>
-      {!isPrevious && symbol}
+      {end != null && (
+        <Slot className="env-pager-link-end" element="span" layout="row" shrink="never" aria-hidden>
+          {end}
+        </Slot>
+      )}
     </LinkComponent>
   );
 }
@@ -155,13 +176,13 @@ function Root({ children, className, 'aria-label': ariaLabel, ref, ...props }: R
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Pager.Root');
 /**
  * The destination before this one: a native link with rel="prev", its title under the label
- * Previous (EnvUIProvider's messages.pager.previous), and an optional icon before them. It also
+ * Previous (EnvUIProvider's messages.pager.previous), and optional content before them, its start. It also
  * stands alone, outside Pager.Root.
  */
 const PreviousPart = /* @__PURE__ */ withDisplayName(Previous, 'Pager.Previous');
 /**
  * The destination after this one: a native link with rel="next", its title under the label Up
- * next (EnvUIProvider's messages.pager.next), and an optional icon after them. It also stands
+ * next (EnvUIProvider's messages.pager.next), and optional content after them, its end. It also stands
  * alone, outside Pager.Root.
  */
 const NextPart = /* @__PURE__ */ withDisplayName(Next, 'Pager.Next');

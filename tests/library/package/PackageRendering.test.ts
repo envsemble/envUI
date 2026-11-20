@@ -27,7 +27,7 @@ before(
         h(ui.IconButton, { icon: custom, 'aria-label': 'Settings' }),
         h(ui.Button, { variant: 'primary', tone: 'accent', href: '/confirm' }, 'Confirm')),
       h(ui.Pager.Previous, { href: '/previous-guide' }, 'Earlier guide'),
-      h(ui.Pager.Next, { href: '/next-guide', icon: custom }, 'Following guide'),
+      h(ui.Pager.Next, { href: '/next-guide', end: custom }, 'Following guide'),
       h(ui.TextField, { name: 'title', label: 'Title', description: 'One line', defaultValue: 'Example' }),
       h(color.ColorPicker, { name: 'accent', label: 'Accent color', defaultValue: '#ABCDEF', alpha: true }),
       h(color.ColorPickerButton, { name: 'border', label: 'Border color', defaultValue: '#123456' }),

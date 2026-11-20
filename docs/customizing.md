@@ -316,7 +316,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 ### Pager
 
-- Parts: `env-pager`, `env-pager-link`, `env-pager-link-copy`, `env-pager-link-label`, `env-pager-link-next`, `env-pager-link-previous`, `env-pager-link-title`
+- Parts: `env-pager`, `env-pager-link`, `env-pager-link-copy`, `env-pager-link-end` (slot), `env-pager-link-label`, `env-pager-link-next`, `env-pager-link-previous`, `env-pager-link-start` (slot), `env-pager-link-title`
 - States: `data-stacked`
 
 ### Pagination
