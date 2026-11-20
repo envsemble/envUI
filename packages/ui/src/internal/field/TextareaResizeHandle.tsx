@@ -5,9 +5,10 @@ import { useMessages } from '../provider/EnvUIContext.js';
 import { useResize } from '../resize/useResize.js';
 import { textarea as textareaMessages } from '../../foundations/messages/textarea.js';
 import type { TextareaControlProps } from './TextareaControl.js';
+import { supportsFieldSizing } from './fieldSizing.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
-import '../../styles/TextareaResizeEdge.css';
+import '../../styles/TextareaResizeHandle.css';
 
 interface Metrics {
   height: number;
@@ -49,7 +50,7 @@ const unmeasured: Metrics = {
  * and the Up and Down arrows move by a line (five with Shift or Page Up and Page Down), with Home for
  * the minimum height. It sets the text area's height without owning its text or selection.
  */
-export function TextareaResizeEdge({
+export function TextareaResizeHandle({
   inputRef,
   inputId,
   sizing,
@@ -88,10 +89,8 @@ export function TextareaResizeEdge({
 
   useLayoutEffect(() => {
     const input = inputRef.current;
-    const automatic =
-      sizing === 'content' &&
-      input?.ownerDocument.defaultView?.CSS.supports('field-sizing', 'content');
-    const manualHeightWouldConstrainContentSizing = input && automatic;
+    const manualHeightWouldConstrainContentSizing =
+      input && sizing === 'content' && supportsFieldSizing(input);
     if (manualHeightWouldConstrainContentSizing) {
       if (manualHeight.current && input.style.height === manualHeight.current.applied) {
         input.style.height = manualHeight.current.original;

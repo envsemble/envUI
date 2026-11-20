@@ -326,7 +326,7 @@
           "forms/TextField.tsx",
           "forms/Textarea.tsx",
           "internal/field/TextareaControl.tsx",
-          "internal/field/TextareaResizeEdge.tsx"
+          "internal/field/TextareaResizeHandle.tsx"
         ],
         "classes": ["env-text-field"],
         "styles": ["TextField.css"],
