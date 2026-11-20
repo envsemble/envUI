@@ -2,7 +2,7 @@
 
 import { useId } from 'react';
 import type { ItemProps, RootProps } from '../List.js';
-import { listIds, renderItem, renderList } from './ListRows.js';
+import { listIds, renderItem, renderList } from './listMarkup.js';
 
 export function TitledList(props: RootProps) {
   return renderList(props, listIds(useId()));
