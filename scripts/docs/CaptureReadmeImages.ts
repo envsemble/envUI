@@ -9,7 +9,7 @@ const pictures = [
     name: 'overview',
     path: '/',
     window: { width: 1440, height: 900 },
-    end: '.catalogue-fan',
+    end: '.catalogue-overview-widget',
   },
   {
     name: 'gallery',

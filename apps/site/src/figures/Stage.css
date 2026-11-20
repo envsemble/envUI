@@ -5,9 +5,8 @@
 .catalogue-tile-stage,
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
-.catalogue-fan-card,
+.catalogue-overview-widget,
 .site-page-banner,
-.catalogue-explore-grid > .env-card,
 .site-page-navigation .env-pager-link,
 .catalogue-role-swatch {
   --catalogue-card-shadow-color: oklch(
@@ -56,8 +55,7 @@
 .site-loading-stage,
 .catalogue-tile-stage,
 .site-foundation-stage[data-figure='example'],
-.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
-.catalogue-fan-card {
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
   --catalogue-card-fill: var(--env-color-bg-recessed);
   background-color: var(--catalogue-card-fill);
 }
@@ -86,15 +84,7 @@
   border-radius: 0;
 }
 
-.catalogue-fan-card {
-  box-shadow: var(--catalogue-card-shadow-raised);
-}
-[data-env-theme='dark'] .catalogue-fan-card {
-  --catalogue-card-fill: var(--env-color-bg-raised);
-}
-
-.site-page-banner,
-.catalogue-explore-grid > .env-card {
+.site-page-banner {
   --catalogue-card-fill: var(--_surface-color);
   box-shadow: var(--catalogue-card-shadow);
 }

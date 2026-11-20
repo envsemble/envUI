@@ -64,7 +64,11 @@ test('every page the site serves pre-renders, with its one heading and its title
     assert.equal(headings.length, 1, `${route} has one <h1>`);
     const [, heading] = headings[0];
     const name = text(heading) || /aria-label="([^"]*)"/.exec(heading)?.[1];
-    assert.equal(name, page.kind === 'home' ? 'envUI' : page.title, route);
+    assert.equal(
+      name,
+      page.kind === 'home' ? 'A React design system for clear, accessible interfaces.' : page.title,
+      route,
+    );
     const site = page.area === 'docs' ? 'envUI Docs' : 'envUI';
     const home = page.kind === 'home' || page.path === 'docs';
     assert.equal(title, home ? site : `${page.title} · ${site}`, route);
