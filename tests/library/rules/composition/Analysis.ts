@@ -1,31 +1,24 @@
-import { readFileSync, readdirSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { join, posix, relative, resolve, sep } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join, posix } from 'node:path';
+import ts from 'typescript';
 import { libraryEntryPoints } from '../../../../scripts/docs/LibraryEntryPoints.ts';
 import { kebab } from '../../../../scripts/docs/PageStructure.ts';
-
-const require = createRequire(import.meta.url);
-const ts = require('typescript');
+import { styleSheetsDirectory } from '../../../../scripts/RepositoryPaths.ts';
+import {
+  importsOf,
+  libraryModulePath,
+  libraryModules,
+  readLibraryModule,
+  resolveImport,
+} from '../../../support/LibraryModules.ts';
 
 export const rulesFile = 'tests/library/rules/composition/Rules.json';
 export const exceptionsFile = 'tests/library/rules/composition/Exceptions.json';
 
-const sourceRoot = resolve('packages/ui/src');
-const stylesRoot = join(sourceRoot, 'styles');
 const generatedIcons = 'icons/';
 const isGeneratedIconLeftUnread = (module) =>
   module.startsWith(generatedIcons) && module !== 'icons/index.ts';
 const isMessages = (module) => module.startsWith('foundations/messages/');
-
-function walk(directory, found = []) {
-  for (const entry of readdirSync(directory, { withFileTypes: true })) {
-    const path = join(directory, entry.name);
-    if (entry.isDirectory()) {
-      if (path !== stylesRoot && entry.name !== 'assets') walk(path, found);
-    } else if (/\.tsx?$/.test(entry.name) && !entry.name.endsWith('.d.ts')) found.push(path);
-  }
-  return found;
-}
 
 function lineIndex(text) {
   const starts = [0];
@@ -67,13 +60,11 @@ function record(findings, section, entry, site) {
 
 function readLibrary(rules) {
   const problems = [];
-  const modules = walk(sourceRoot)
-    .map((path) => relative(sourceRoot, path).split(sep).join('/'))
-    .sort();
+  const modules = libraryModules();
   const moduleSet = new Set(modules);
   const planned = (rules.planned?.modules ?? []).filter((module) => !moduleSet.has(module));
   const plannedSet = new Set(planned);
-  const stylesheets = readdirSync(stylesRoot)
+  const stylesheets = readdirSync(styleSheetsDirectory)
     .filter((name) => name.endsWith('.css'))
     .sort();
   return {
@@ -85,7 +76,7 @@ function readLibrary(rules) {
     sources: new Map(
       modules
         .filter((module) => !isGeneratedIconLeftUnread(module))
-        .map((module) => [module, readFileSync(join(sourceRoot, module), 'utf8')]),
+        .map((module) => [module, readLibraryModule(module)]),
     ),
     stylesheets,
     usedAllowances: new Set(),
@@ -141,9 +132,7 @@ function readLayers(library) {
       else if (![...modules, ...planned].some((module) => module.startsWith(path)))
         problems.push(`${rulesFile} ${where} names ${path}, which holds no module.`);
     }
-  const entryPoints = new Set(
-    libraryEntryPoints().map(({ file }) => relative(sourceRoot, file).split(sep).join('/')),
-  );
+  const entryPoints = new Set(libraryEntryPoints().map(({ file }) => libraryModulePath(file)));
   const layerOf = (module) => {
     if (entryPoints.has(module)) return 'entries';
     if (Object.hasOwn(layeredModules, module)) return layeredModules[module];
@@ -156,31 +145,20 @@ function readLayers(library) {
 }
 
 function readImports({ problems, modules, moduleSet, sources }) {
-  const resolveImport = (from, specifier) => {
-    if (!specifier.startsWith('.')) return undefined;
-    const target = posix.normalize(posix.join(posix.dirname(from), specifier)).replace(/\.js$/, '');
-    const candidates = [
-      `${target}.tsx`,
-      `${target}.ts`,
-      `${target}/index.ts`,
-      `${target}/index.tsx`,
-    ];
-    const found = candidates.find((candidate) => moduleSet.has(candidate));
-    if (found === undefined && !/\.(?:css|json|svg|woff2)(?:\?raw)?$/.test(specifier))
-      problems.push(`${from} imports ${specifier}, which isn't a module under packages/ui/src.`);
-    return found;
-  };
   const imports = new Map();
   for (const module of modules) {
     const targets = new Map();
     imports.set(module, targets);
     const text = sources.get(module);
     if (text === undefined) continue;
-    const lineOf = lineIndex(text);
-    const { importedFiles } = ts.preProcessFile(text, true, true);
-    for (const file of importedFiles) {
-      const target = resolveImport(module, file.fileName);
-      if (target !== undefined && !targets.has(target)) targets.set(target, lineOf(file.pos));
+    for (const { specifier, line } of importsOf(module, text)) {
+      if (!specifier.startsWith('.')) continue;
+      const target = resolveImport(module, specifier, moduleSet);
+      if (target === undefined && !/\.(?:css|json|svg|woff2)(?:\?raw)?$/.test(specifier))
+        problems.push(
+          `${module} imports ${specifier}, which isn't a module under packages/ui/src.`,
+        );
+      if (target !== undefined && !targets.has(target)) targets.set(target, line);
     }
   }
   return imports;
@@ -387,7 +365,7 @@ function stylesheetFindings(library, { ownerOf, stylesheetOwners }) {
   };
   const findings = new Map();
   for (const stylesheet of stylesheets) {
-    const text = readFileSync(join(stylesRoot, stylesheet), 'utf8');
+    const text = readFileSync(join(styleSheetsDirectory, stylesheet), 'utf8');
     const owners = stylesheetOwners.get(stylesheet);
     for (const { selector, line, properties } of cssSelectors(text)) {
       const tokens = new Set([...selector.matchAll(selectorClassPattern)].map((match) => match[1]));
