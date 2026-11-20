@@ -18,8 +18,8 @@ export interface ThemeMenuRadioGroupProps {
    */
   value?: ThemePreference;
   /**
-   * Called with the preference chosen, for an application that stores the theme itself.
-   * @default the nearest ThemePreferenceProvider's setPreference, which stores the choice
+   * Called with the preference chosen, for a group outside a ThemePreferenceProvider.
+   * @default the nearest ThemePreferenceProvider's setPreference
    */
   onValueChange?: (value: ThemePreference) => void;
   /**
@@ -52,8 +52,8 @@ const choices = [
 
 /**
  * The theme choice for a Menu: System, Light and Dark as radio items. Inside a
- * ThemePreferenceProvider it shows and stores the provider's preference; value and onValueChange
- * connect it to a theme the application stores itself.
+ * ThemePreferenceProvider it shows and changes the provider's preference; value and onValueChange
+ * connect it to a preference outside one.
  */
 export function ThemeMenuRadioGroup({
   value,

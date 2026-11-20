@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useCallback,
   useContext,
   useEffect,
   useInsertionEffect,
@@ -17,7 +16,6 @@ import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ColorScheme } from './Theme.js';
 import {
   contrastSourceAttribute,
-  defaultThemeStorageKey,
   lookAttributes,
   ownContrastSource,
   ownScaleSource,
@@ -31,6 +29,7 @@ import {
 } from './internal/ThemePreferenceContext.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { useHydrated } from '../internal/react/useHydrated.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 
 export type { ThemePreferenceValue } from './internal/ThemePreferenceContext.js';
 
@@ -40,13 +39,24 @@ export interface ThemePreferenceProviderProps {
   /** The application, or the part of it that the preference themes. */
   children: ReactNode;
   /**
-   * The application's theme, from defineTheme: its storage key, default preference, contrast,
-   * scale, selection and corners. Give createThemeBootstrapScript the same theme, so the
-   * root has it before the first paint. Left out, the stored preference is under `env-theme`, the
-   * contrast and scale are an enclosing Theme's, or else the page's on the root, or else system,
-   * and the look is an enclosing Theme's, or else neutral and rounded.
+   * The application's theme, from defineTheme: its contrast, scale, selection and corners. Give
+   * createThemeBootstrapScript the same theme, so the root has it before the first paint. Left out,
+   * the contrast and scale are an enclosing Theme's, or else the page's on the root, or else
+   * system, and the look is an enclosing Theme's, or else neutral and rounded.
    */
   theme?: ThemeDefinition;
+  /**
+   * The chosen preference, for an application that keeps it itself: in a cookie, the user's
+   * account or, with useStoredThemePreference, localStorage. Give onPreferenceChange with it.
+   */
+  preference?: ThemePreference;
+  /**
+   * The preference while `preference` is left out, until people choose another.
+   * @default 'system'
+   */
+  defaultPreference?: ThemePreference;
+  /** Called with the preference people choose, such as with ThemeToggle, for the application to keep. */
+  onPreferenceChange?: (preference: ThemePreference) => void;
   /**
    * Theme the document root as well as this subtree (default). Root theming covers the page
    * background, native controls, portals rendered by other libraries and the content of every
@@ -55,35 +65,12 @@ export interface ThemePreferenceProviderProps {
    * that both apply. Outside any Theme, its boundary around the children is a plain element that
    * takes the root's look, with none of a Theme's class and attributes, unless its contrast is
    * system while the page set a contrast of its own on the root. Rendered on the server, and
-   * as the page hydrates, it renders the preference's default and leaves the page's look to the
-   * theme createThemeBootstrapScript gave the root, which knows the stored preference before the
-   * first paint; once hydrated, it takes the stored one.
+   * as the page hydrates, it leaves the page's look to the theme createThemeBootstrapScript gave the
+   * root, and a system preference renders light; once hydrated, it themes the root itself.
    */
   applyToDocument?: boolean;
   /** Class name for the Theme boundary around the children. */
   className?: string;
-}
-
-function readStorageUnlessBlocked(key: string): string | null {
-  try {
-    return window.localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function writeStorageUnlessBlocked(key: string, value: string): boolean {
-  try {
-    window.localStorage.setItem(key, value);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function readStoredPreference(storageKey: string, fallback: ThemePreference): ThemePreference {
-  const stored = readStorageUnlessBlocked(storageKey);
-  return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : fallback;
 }
 
 interface DocumentWrites {
@@ -169,33 +156,6 @@ function readSystemTheme(): ColorScheme {
     : 'light';
 }
 
-function useStoredPreference(storageKey: string, defaultPreference: ThemePreference) {
-  const [preference, setPreferenceState] = useState<ThemePreference>(() =>
-    typeof window === 'undefined'
-      ? defaultPreference
-      : readStoredPreference(storageKey, defaultPreference),
-  );
-  useEffect(() => {
-    const onStorage = (event: StorageEvent) => {
-      if (event.storageArea !== window.localStorage || event.key !== storageKey) return;
-      const next = event.newValue;
-      setPreferenceState(
-        next === 'light' || next === 'dark' || next === 'system' ? next : defaultPreference,
-      );
-    };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, [storageKey, defaultPreference]);
-  const setPreference = useCallback(
-    (next: ThemePreference) => {
-      setPreferenceState(next);
-      writeStorageUnlessBlocked(storageKey, next);
-    },
-    [storageKey],
-  );
-  return [preference, setPreference] as const;
-}
-
 function useInstantColorSwitch(applyToDocument: boolean, colors: string | undefined) {
   const shownColors = useRef<string | undefined>(undefined);
   useInsertionEffect(() => {
@@ -224,19 +184,20 @@ function useInstantColorSwitch(applyToDocument: boolean, colors: string | undefi
   }, [colors]);
 }
 
-/** Owns the theme preference: persistence, the system theme and document-root theming. */
+/**
+ * Themes the application by the theme preference, which the application keeps where it chooses,
+ * following the system's theme for a system preference, and themes the document root.
+ */
 export function ThemePreferenceProvider({
   children,
   theme: definition = {},
+  preference: givenPreference,
+  defaultPreference = 'system',
+  onPreferenceChange,
   applyToDocument = true,
   className,
 }: ThemePreferenceProviderProps) {
-  const {
-    storageKey = defaultThemeStorageKey,
-    defaultPreference = 'system',
-    contrast: ownContrast,
-    scale: ownScale,
-  } = definition;
+  const { contrast: ownContrast, scale: ownScale } = definition;
   const inherited = useTheme();
   const selection = definition.selection ?? inherited.selection;
   const corners = definition.corners ?? inherited.corners;
@@ -249,26 +210,29 @@ export function ThemePreferenceProvider({
   const scale = ownScale ?? (takesPageScaleAndContrast ? (pageScale ?? 'system') : inherited.scale);
   const leavesPageContrastOnRoot = ownContrast === 'system' && pageContrast !== undefined;
   const boundaryTakesRootLook = takesPageScaleAndContrast && !leavesPageContrastOnRoot;
-  const [storedPreference, setPreference] = useStoredPreference(storageKey, defaultPreference);
+  const [preference, setPreference] = useControllableState({
+    value: givenPreference,
+    defaultValue: defaultPreference,
+    onChange: onPreferenceChange,
+  });
   const [systemTheme, setSystemTheme] = useState<ColorScheme>(() =>
     typeof document !== 'undefined' && document.documentElement.dataset.envTheme === 'dark'
       ? 'dark'
       : readSystemTheme(),
   );
   const hydrated = useHydrated();
-  const preference = hydrated ? storedPreference : defaultPreference;
   const theme: ColorScheme =
     preference === 'system' ? (hydrated ? systemTheme : serverSystemTheme) : preference;
   const [provider] = useState(() => Symbol('ThemePreferenceProvider'));
 
   useEffect(() => {
-    if (storedPreference !== 'system' || !window.matchMedia) return;
+    if (preference !== 'system' || !window.matchMedia) return;
     const query = window.matchMedia(systemDarkQuery);
     const update = () => setSystemTheme(query.matches ? 'dark' : 'light');
     update();
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
-  }, [storedPreference]);
+  }, [preference]);
 
   useInsertionEffect(
     function registerBeforeWritingRoot() {

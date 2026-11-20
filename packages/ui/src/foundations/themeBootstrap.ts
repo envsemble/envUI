@@ -1,6 +1,6 @@
 import type { ThemeContrast, ThemeCorners, ThemeScale, ThemeSelection } from './Theme.js';
 
-/** Preference stored by ThemePreferenceProvider: an explicit theme or the operating system's. */
+/** A theme preference: an explicit theme or the operating system's. */
 export type ThemePreference = 'light' | 'dark' | 'system';
 
 /**
@@ -9,16 +9,6 @@ export type ThemePreference = 'light' | 'dark' | 'system';
  * application agree.
  */
 export interface ThemeDefinition {
-  /**
-   * The localStorage key the stored preference is kept under.
-   * @default 'env-theme'
-   */
-  storageKey?: string;
-  /**
-   * The preference used while nothing is stored.
-   * @default 'system'
-   */
-  defaultPreference?: ThemePreference;
   /**
    * `high` for the high-contrast colors, `standard` for the standard ones even while the system
    * asks for more, `system` to follow `prefers-contrast: more`. The bootstrap script writes `high`
@@ -53,8 +43,6 @@ export function defineTheme(definition: ThemeDefinition = {}): Readonly<ThemeDef
   return Object.freeze({ ...definition });
 }
 
-export const defaultThemeStorageKey = 'env-theme';
-
 /**
  * Marks a root `data-env-contrast` that envUI wrote, the bootstrap script or a
  * ThemePreferenceProvider, so that any provider, including one mounted later, replaces or removes
@@ -84,19 +72,30 @@ const lookValues: Record<keyof typeof lookAttributes, readonly string[]> = {
 const setAttribute = (name: string, value: string) =>
   `r.setAttribute(${JSON.stringify(name)},${JSON.stringify(value)});`;
 
+export interface ThemeBootstrapOptions {
+  /**
+   * The preference the first paint shows, such as the one the server read for this request from
+   * the application's cookie or account.
+   * @default 'system'
+   */
+  preference?: ThemePreference;
+}
+
 /**
  * Inline script for the document head. It themes the root element before the first paint, so a
- * saved or system dark theme does not flash light while the application loads, and the contrast,
- * scale, selection and corners of the theme apply from the start. Give it the theme
- * ThemePreferenceProvider takes.
+ * chosen or system dark theme does not flash light while the application loads, and the contrast,
+ * scale, selection and corners of the theme apply from the start. Give it the theme and the
+ * preference ThemePreferenceProvider takes.
  */
-export function createThemeBootstrapScript(theme: ThemeDefinition = {}) {
-  const {
-    storageKey = defaultThemeStorageKey,
-    defaultPreference = 'system',
-    contrast = 'system',
-    scale = 'system',
-  } = theme;
+export function createThemeBootstrapScript(
+  theme: ThemeDefinition = {},
+  { preference = 'system' }: ThemeBootstrapOptions = {},
+) {
+  return themeBootstrapScript(theme, `var p=${JSON.stringify(preference)};`);
+}
+
+export function themeBootstrapScript(theme: ThemeDefinition, setPreferenceVariable: string) {
+  const { contrast = 'system', scale = 'system' } = theme;
   const writeContrast =
     contrast === 'high' || contrast === 'standard'
       ? setAttribute('data-env-contrast', contrast) +
@@ -115,5 +114,5 @@ export function createThemeBootstrapScript(theme: ThemeDefinition = {}) {
         : '';
     })
     .join('');
-  return `(function(){var r=document.documentElement,t="light";try{var p=localStorage.getItem(${JSON.stringify(storageKey)});if(p!=="light"&&p!=="dark"&&p!=="system")p=${JSON.stringify(defaultPreference)};t=p==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p}catch(e){}r.classList.add("env-theme");r.setAttribute("data-env-theme",t);${writeContrast}${writeScale}${writeLook}r.style.colorScheme=t})();`;
+  return `(function(){var r=document.documentElement,t="light";try{${setPreferenceVariable}t=p==="light"||p==="dark"?p:matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}catch(e){}r.classList.add("env-theme");r.setAttribute("data-env-theme",t);${writeContrast}${writeScale}${writeLook}r.style.colorScheme=t})();`;
 }

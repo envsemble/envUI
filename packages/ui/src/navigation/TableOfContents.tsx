@@ -20,12 +20,13 @@ import {
   flatten,
   type TableOfContentsItem,
 } from './internal/contentsOutline.js';
-import { focusSection, readSections } from './internal/sectionScroll.js';
+import { focusSection, readSections, rememberScroll } from './internal/sectionScroll.js';
 import { useContentsHeadings } from './internal/useContentsHeadings.js';
 import { createWaveDrawer } from './internal/waveDrawer.js';
 import { prefersReducedMotion, reducedMotionQuery } from '../internal/motion/reducedMotion.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
+import { useLatest } from '../internal/useLatest.js';
 import '../styles/Base.css';
 import '../styles/TableOfContents.css';
 
@@ -52,6 +53,13 @@ export interface TableOfContentsProps extends Omit<ComponentPropsWithRef<'nav'>,
   /** Leaves out the headings it returns false for, without `items`, such as an example's own. */
   filter?: (heading: HTMLElement) => boolean;
   /**
+   * Called when people follow a link, with its section's id and the click, before envUI scrolls the
+   * section into view and focuses it. Each link is an `#id` link through LinkProvider's link
+   * component, so the application's router, or else the browser, changes the address. Call
+   * preventDefault to make the jump yourself, without envUI's scroll or the address change.
+   */
+  onNavigate?: (id: string, event: MouseEvent<HTMLAnchorElement>) => void;
+  /**
    * The accessible name of the navigation landmark.
    * @default 'On this page', or EnvUIProvider's messages.tableOfContents.label
    */
@@ -69,7 +77,7 @@ interface ListProps {
   current: string | undefined;
   passed: ReadonlySet<string>;
   depth: number;
-  onNavigate: (event: MouseEvent<HTMLElement>, id: string) => void;
+  onNavigate: (event: MouseEvent<HTMLAnchorElement>, id: string) => void;
 }
 
 function List({ items, current, passed, depth, onNavigate }: ListProps) {
@@ -113,6 +121,7 @@ export function TableOfContents({
   container,
   levels = defaultLevels,
   filter,
+  onNavigate,
   'aria-label': label,
   className,
   ...props
@@ -124,6 +133,8 @@ export function TableOfContents({
   const [current, setCurrent] = useState<string>();
   const chosenByLink = useRef<{ id: string; settled: boolean } | null>(null);
   const settle = useRef(0);
+  const scrollFrame = useRef(0);
+  const latestOnNavigate = useLatest(onNavigate);
   const measureOnNextFrame = useRef<() => void>(() => {});
   const settleLater = useCallback((delay: number) => {
     clearTimeout(settle.current);
@@ -134,7 +145,13 @@ export function TableOfContents({
       measureOnNextFrame.current();
     }, delay);
   }, []);
-  useEffect(() => () => clearTimeout(settle.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(settle.current);
+      cancelAnimationFrame(scrollFrame.current);
+    },
+    [],
+  );
   const flat = useMemo(() => flatten(items), [items]);
   const ids = flat.map((entry) => entry.id).join('\n');
 
@@ -230,7 +247,7 @@ export function TableOfContents({
   );
 
   const navigate = useCallback(
-    (event: MouseEvent<HTMLElement>, id: string) => {
+    (event: MouseEvent<HTMLAnchorElement>, id: string) => {
       if (
         event.defaultPrevented ||
         event.button !== 0 ||
@@ -241,21 +258,25 @@ export function TableOfContents({
       ) {
         return;
       }
+      latestOnNavigate.current?.(id, event);
+      if (event.defaultPrevented) return;
       const target = event.currentTarget.ownerDocument.getElementById(id);
       if (!target) return;
-      event.preventDefault();
+      const scrollBackFromBrowsersJump = rememberScroll(target);
       const choice = { id, settled: false };
       chosenByLink.current = choice;
-      target.scrollIntoView({
-        behavior: prefersReducedMotion() ? 'instant' : 'smooth',
-        block: 'start',
+      cancelAnimationFrame(scrollFrame.current);
+      scrollFrame.current = requestAnimationFrame(() => {
+        scrollBackFromBrowsersJump();
+        target.scrollIntoView({
+          behavior: prefersReducedMotion() ? 'instant' : 'smooth',
+          block: 'start',
+        });
+        settleLater(scrollPauseThatEndsLinkScrollMs * 2);
+        focusSection(target);
       });
-      settleLater(scrollPauseThatEndsLinkScrollMs * 2);
-      const hash = `#${id}`;
-      if (window.location.hash !== hash) window.history.pushState(window.history.state, '', hash);
-      focusSection(target);
     },
-    [settleLater],
+    [settleLater, latestOnNavigate],
   );
 
   const passed = useMemo(() => {

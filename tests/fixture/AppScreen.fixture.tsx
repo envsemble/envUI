@@ -11,9 +11,7 @@ export default function AppScreenFixture() {
   const scale = requested === 'compact' || requested === 'comfortable' ? requested : 'system';
   const overlay = query.get('overlay');
   return (
-    <ThemePreferenceProvider
-      theme={{ storageKey: 'fixture-app-screen', defaultPreference: theme, scale: scale }}
-    >
+    <ThemePreferenceProvider theme={{ scale: scale }} defaultPreference={theme}>
       <ToastProvider>
         {query.get('screen') === 'agent' ? (
           <AgentScreen overlay={overlay === 'palette' || overlay === 'none' ? overlay : 'dialog'} />

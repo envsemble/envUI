@@ -5,6 +5,7 @@ import * as provider from '../fixture/ThemeContrastProvider.fixture.tsx';
 import * as nested from '../fixture/ThemeContrastNested.fixture.tsx';
 import * as remount from '../fixture/ThemeContrastRemount.fixture.tsx';
 import * as release from '../fixture/ThemeRelease.fixture.tsx';
+import * as controlled from '../fixture/ThemePreferenceControlled.fixture.tsx';
 import { collectErrors, css, nextFrames } from './support/Browser.ts';
 import { mount, unmount } from './support/Mount.tsx';
 
@@ -217,7 +218,20 @@ test(
   },
 );
 
-test('ThemePreferenceProvider stores the choice and themes the document root', async () => {
+test('a provider given its preference shows it, reports what people choose and keeps nothing in the browser', async () => {
+  localStorage.clear();
+  mount(controlled);
+  await expect.poll(attribute('data-env-theme')).toBe('dark');
+  await toggle().click();
+  await expect.element(page.getByTestId('preference')).toHaveTextContent('light');
+  await expect.poll(attribute('data-env-theme')).toBe('light');
+  await page.getByRole('button', { name: "Take the account's theme" }).click();
+  await expect.poll(attribute('data-env-theme')).toBe('dark');
+  await expect.element(toggle()).toHaveAccessibleName('Switch to light theme');
+  expect(localStorage.length).toBe(0);
+});
+
+test('useStoredThemePreference stores the choice, and the provider themes the document root', async () => {
   const fixture = mount(adoption);
   await expect.element(toggle()).toBeVisible();
   const after = otherTheme();

@@ -39,7 +39,7 @@ Install the exact version with the project's package manager, such as `npm insta
 Then, as `node_modules/@envsemble/envui/docs/setup.md` shows:
 
 - with a bundler, the components bring their own styles; without one, import `@envsemble/envui/styles.css` once in the client entry, never both;
-- define the app's theme once with `defineTheme` from `@envsemble/envui/theme-bootstrap`, give it to `ThemePreferenceProvider`'s `theme` around the app, and add `createThemeBootstrapScript(theme)` to the document head; use `Theme` alone for a fixed theme;
+- define the app's theme once with `defineTheme` from `@envsemble/envui/theme-bootstrap`, give it to `ThemePreferenceProvider`'s `theme` around the app, and add `createThemeBootstrapScript(theme)` to the document head; keep the preference where the app keeps its settings, through the provider's `preference` and `onPreferenceChange`, or in localStorage with `@envsemble/envui/theme-storage`; use `Theme` alone for a fixed theme;
 - register the app's router link with `LinkProvider`, from the recipes there.
 
 ## Step 2: Point AGENTS.md to the docs

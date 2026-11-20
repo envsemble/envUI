@@ -21,7 +21,7 @@ const eslint = new ESLint({
       languageOptions: { parser: tseslint.parser },
     },
     ignoreDisableCommentsForUnloadedRules,
-    plugin.configs.recommended,
+    plugin.configs.strict,
   ],
 });
 
@@ -61,8 +61,8 @@ for (const directory of directories) {
     }
 }
 
-console.log(`Linted ${files} files in ${directories.join(', ')} with envui/recommended.\n`);
-for (const ruleId of Object.keys(plugin.configs.recommended.rules)) {
+console.log(`Linted ${files} files in ${directories.join(', ')} with envui/strict.\n`);
+for (const ruleId of Object.keys(plugin.configs.strict.rules)) {
   const { total = 0, byDirectory = new Map(), bySubject = new Map() } = counts.get(ruleId) ?? {};
   const where = directories.map((directory) => `${directory} ${byDirectory.get(directory) ?? 0}`);
   console.log(`${ruleId}: ${total} (${where.join(', ')})`);

@@ -347,7 +347,11 @@
         "styles": ["TokensHandwritten.css"]
       },
       "ThemePreference": {
-        "modules": ["foundations/internal/ThemePreferenceContext.ts"]
+        "modules": [
+          "foundations/internal/ThemePreferenceContext.ts",
+          "foundations/themeStorage.ts",
+          "foundations/useStoredThemePreference.ts"
+        ]
       },
       "Breadcrumbs": {},
       "DocumentTabs": {

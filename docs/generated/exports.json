@@ -251,6 +251,7 @@
     "Textarea": "function",
     "TextareaProps": "interface",
     "Theme": "function",
+    "ThemeBootstrapOptions": "interface",
     "ThemeContextValue": "interface",
     "ThemeContrast": "type",
     "ThemeCorners": "type",
@@ -342,9 +343,16 @@
     "defaultMessages": "const"
   },
   "@envsemble/envui/theme-bootstrap": {
+    "ThemeBootstrapOptions": "interface",
     "ThemeDefinition": "interface",
     "ThemePreference": "type",
     "createThemeBootstrapScript": "function",
     "defineTheme": "function"
+  },
+  "@envsemble/envui/theme-storage": {
+    "StoredThemePreference": "interface",
+    "ThemeStorageOptions": "interface",
+    "createStoredThemeBootstrapScript": "function",
+    "useStoredThemePreference": "function"
   }
 }

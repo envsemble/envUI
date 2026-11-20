@@ -15,7 +15,7 @@ export const mount = 'root';
 export default function ThemeChoicesFixture() {
   const [preference, setPreference] = useState<ThemePreference>('light');
   return (
-    <ThemePreferenceProvider theme={{ storageKey: 'fixture-theme-choices' }}>
+    <ThemePreferenceProvider>
       <ThemeToggle icon={<IconContrast data-testid="own-icon" />} data-testid="own-toggle" />
       <Menu.Root trigger={<Button>Appearance</Button>}>
         <ThemeMenuRadioGroup
