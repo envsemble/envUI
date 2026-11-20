@@ -220,3 +220,7 @@ export function localeWeekStart(locale: string | undefined): Weekday {
 }
 
 const monday: Weekday = 1;
+
+export function inBounds(value: number, min: number | undefined, max: number | undefined) {
+  return (min === undefined || value >= min) && (max === undefined || value <= max);
+}

@@ -9,7 +9,6 @@ import {
 } from 'react';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
-import { Button } from '../actions/Button.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { IconCalendarClock } from '../icons/CalendarClock.js';
 import { IconCalendarMonth } from '../icons/CalendarMonth.js';
@@ -20,19 +19,20 @@ import {
   type FieldSizeProps,
   type FieldDecorationProps,
 } from '../internal/field/fieldProps.js';
+import { PickerField } from './internal/PickerField.js';
+import { TimeList } from './internal/TimeList.js';
 import {
-  PickerField,
-  usePickerOpen,
+  usePicker,
   type PickerOpenChangeDetails,
   type PickerOpenChangeReason,
-} from './internal/PickerField.js';
-import { TimeList } from './internal/TimeList.js';
-import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
+} from './internal/usePicker.js';
+import { usePickerFormatter } from './internal/usePickerFormatter.js';
 import {
   clampDay,
   formatDateTime,
   formatDay,
   fromMoment,
+  inBounds,
   momentOf,
   now,
   parseDateTime,
@@ -125,15 +125,24 @@ export interface DatePickerProps
    * @default false
    */
   required?: boolean;
-  /** The value can be read and focused but not changed. */
+  /**
+   * The value can be read and focused but not changed.
+   * @default false
+   */
   readOnly?: boolean;
   /** Shown while the field is empty and its label floats or is hidden. */
   placeholder?: string;
-  /** A clear button in the field and in the calendar removes the value. */
+  /**
+   * A clear button in the field and in the calendar removes the value.
+   * @default false
+   */
   clearable?: boolean;
   /** Whether the calendar is open; with `onOpenChange` it controls it. */
   open?: boolean;
-  /** Whether an uncontrolled calendar starts open; closed by default. */
+  /**
+   * Whether an uncontrolled calendar starts open; closed by default.
+   * @default false
+   */
   defaultOpen?: boolean;
   /** Called with the new state, and why, when the calendar opens or closes. */
   onOpenChange?: (open: boolean, details: DatePickerOpenChangeDetails) => void;
@@ -224,11 +233,8 @@ export function DatePicker({
   hourCycle,
   weekStart,
   formatOptions,
-  disabled = false,
-  readOnly = false,
-  clearable = false,
-  open: controlledOpen,
-  defaultOpen = false,
+  open,
+  defaultOpen,
   onOpenChange,
   clearLabel,
   todayLabel,
@@ -241,17 +247,10 @@ export function DatePicker({
   const withTime = granularity === 'minute';
   const messages = useMessages('datePicker', datePickerMessages);
   const timeHeadingId = useId();
-  const [open, setOpen] = usePickerOpen({
-    open: controlledOpen,
-    defaultOpen,
-    onOpenChange,
-    disabled,
-    readOnly,
-  });
   const defaultMinutes = parseTime(placeholderTime) ?? 0;
 
-  const picked = usePickerValue({ value, defaultValue, onValueChange });
-  const current = parseValue(picked.raw, withTime, defaultMinutes);
+  const picker = usePicker({ value, defaultValue, onValueChange, open, defaultOpen, onOpenChange });
+  const current = parseValue(picker.raw, withTime, defaultMinutes);
   const serialized = current
     ? withTime
       ? formatDateTime(current.day, current.minutes)
@@ -284,14 +283,14 @@ export function DatePicker({
         result = formatDay(clampDay(next.day, minDay, maxDay));
       }
     }
-    picked.change(result, serialized);
+    picker.change(result, serialized);
   }
 
   function chooseDay(day: string) {
     const chosen = parseDay(day);
     if (chosen === undefined) return;
     commit({ day: chosen, minutes: current?.minutes ?? defaultMinutes });
-    if (!withTime) setOpen(false, 'item-press');
+    if (!withTime) picker.setOpen(false, 'item-press');
   }
 
   const dayForChosenTime = current?.day ?? clampDay(now().day, minDay, maxDay);
@@ -299,20 +298,13 @@ export function DatePicker({
   function chooseNow() {
     const moment = now();
     commit(withTime ? moment : { day: moment.day, minutes: 0 });
-    if (!withTime) setOpen(false, 'item-press');
-  }
-
-  function clear() {
-    commit(null);
-    setOpen(false, 'clear-press');
+    if (!withTime) picker.setOpen(false, 'item-press');
   }
 
   const reference = now();
   const nowAvailable = withTime
-    ? (minMoment === undefined || momentOf(reference.day, reference.minutes) >= minMoment) &&
-      (maxMoment === undefined || momentOf(reference.day, reference.minutes) <= maxMoment)
-    : (minDay === undefined || reference.day >= minDay) &&
-      (maxDay === undefined || reference.day <= maxDay) &&
+    ? inBounds(momentOf(reference.day, reference.minutes), minMoment, maxMoment)
+    : inBounds(reference.day, minDay, maxDay) &&
       isDateUnavailable?.(formatDay(reference.day)) !== true;
 
   const calendar = (
@@ -333,38 +325,18 @@ export function DatePicker({
   return (
     <PickerField
       {...fieldProps}
+      picker={picker}
       serialized={serialized}
       display={display}
       icon={withTime ? <IconCalendarClock /> : <IconCalendarMonth />}
       rootClassName="env-date-picker"
       initialFocus={calendarInitialFocus}
-      popupStart={
-        <Button
-          variant="text"
-          aria-disabled={!nowAvailable || undefined}
-          onClick={() => {
-            if (nowAvailable) chooseNow();
-          }}
-        >
-          {withTime ? (nowLabel ?? messages.now) : (todayLabel ?? messages.today)}
-        </Button>
-      }
-      popupEnd={
-        clearable &&
-        serialized && (
-          <Button variant="text" onClick={clear}>
-            {clearLabel ?? messages.clear}
-          </Button>
-        )
-      }
+      shortcut={{
+        label: withTime ? (nowLabel ?? messages.now) : (todayLabel ?? messages.today),
+        available: nowAvailable,
+        onPress: chooseNow,
+      }}
       clearLabel={clearLabel ?? messages.clear}
-      onClear={() => commit(null)}
-      onFormReset={picked.reset}
-      open={open}
-      setOpen={setOpen}
-      disabled={disabled}
-      readOnly={readOnly}
-      clearable={clearable}
     >
       {withTime ? (
         <Grid gap={3} className="env-date-picker-panes">

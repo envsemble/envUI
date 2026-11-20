@@ -2,20 +2,19 @@
 
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { monthPicker as monthPickerMessages } from '../foundations/messages/monthPicker.js';
-import { Button } from '../actions/Button.js';
 import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { MonthGrid, monthGridInitialFocus } from './internal/MonthGrid.js';
+import { PickerField, type PickerFieldProps } from './internal/PickerField.js';
 import {
-  PickerField,
-  usePickerOpen,
-  type PickerFieldProps,
+  usePicker,
   type PickerOpenChangeDetails,
   type PickerOpenChangeReason,
-} from './internal/PickerField.js';
-import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
+} from './internal/usePicker.js';
+import { usePickerFormatter } from './internal/usePickerFormatter.js';
 import {
   clampMonth,
   formatMonth,
+  inBounds,
   monthFirstDay,
   monthOfDay,
   now,
@@ -88,11 +87,8 @@ export function MonthPicker({
   max,
   locale,
   formatOptions,
-  disabled = false,
-  readOnly = false,
-  clearable = false,
-  open: controlledOpen,
-  defaultOpen = false,
+  open,
+  defaultOpen,
   onOpenChange,
   clearLabel,
   thisMonthLabel,
@@ -101,15 +97,8 @@ export function MonthPicker({
   ...fieldProps
 }: MonthPickerProps) {
   const messages = useMessages('monthPicker', monthPickerMessages);
-  const [open, setOpen] = usePickerOpen({
-    open: controlledOpen,
-    defaultOpen,
-    onOpenChange,
-    disabled,
-    readOnly,
-  });
-  const picked = usePickerValue({ value, defaultValue, onValueChange });
-  const current = parseMonth(picked.raw);
+  const picker = usePicker({ value, defaultValue, onValueChange, open, defaultOpen, onOpenChange });
+  const current = parseMonth(picker.raw);
   const serialized = current === undefined ? '' : formatMonth(current);
   const minMonth = parseMonth(min);
   const maxMonth = parseMonth(max);
@@ -122,55 +111,33 @@ export function MonthPicker({
 
   function commit(next: number | null) {
     const result = next === null ? null : formatMonth(clampMonth(next, minMonth, maxMonth));
-    picked.change(result, serialized);
+    picker.change(result, serialized);
   }
 
   function choose(month: number | null) {
     commit(month);
-    setOpen(false, month === null ? 'clear-press' : 'item-press');
+    picker.setOpen(false, month === null ? 'clear-press' : 'item-press');
   }
 
   const thisMonth = monthOfDay(now().day);
-  const thisMonthAvailable =
-    (minMonth === undefined || thisMonth >= minMonth) &&
-    (maxMonth === undefined || thisMonth <= maxMonth);
+  const thisMonthAvailable = inBounds(thisMonth, minMonth, maxMonth);
 
   return (
     <PickerField
       {...fieldProps}
+      picker={picker}
       serialized={serialized}
       display={display}
       icon={<IconCalendarMonth />}
       rootClassName="env-date-picker env-month-picker"
       popupClassName="env-month-picker-popup"
       initialFocus={monthGridInitialFocus}
-      popupStart={
-        <Button
-          variant="text"
-          aria-disabled={!thisMonthAvailable || undefined}
-          onClick={() => {
-            if (thisMonthAvailable) choose(thisMonth);
-          }}
-        >
-          {thisMonthLabel ?? messages.thisMonth}
-        </Button>
-      }
-      popupEnd={
-        clearable &&
-        serialized && (
-          <Button variant="text" onClick={() => choose(null)}>
-            {clearLabel ?? messages.clear}
-          </Button>
-        )
-      }
+      shortcut={{
+        label: thisMonthLabel ?? messages.thisMonth,
+        available: thisMonthAvailable,
+        onPress: () => choose(thisMonth),
+      }}
       clearLabel={clearLabel ?? messages.clear}
-      onClear={() => commit(null)}
-      onFormReset={picked.reset}
-      open={open}
-      setOpen={setOpen}
-      disabled={disabled}
-      readOnly={readOnly}
-      clearable={clearable}
     >
       <MonthGrid
         value={current}

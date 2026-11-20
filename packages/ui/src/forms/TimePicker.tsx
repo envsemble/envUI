@@ -2,18 +2,16 @@
 
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { timePicker as timePickerMessages } from '../foundations/messages/timePicker.js';
-import { Button } from '../actions/Button.js';
 import { IconSchedule } from '../icons/Schedule.js';
+import { PickerField, type PickerFieldProps } from './internal/PickerField.js';
 import {
-  PickerField,
-  usePickerOpen,
-  type PickerFieldProps,
+  usePicker,
   type PickerOpenChangeDetails,
   type PickerOpenChangeReason,
-} from './internal/PickerField.js';
+} from './internal/usePicker.js';
 import { TimeList, timeListInitialFocus } from './internal/TimeList.js';
-import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
-import { formatTime, now, parseTime, toUtcDate } from '../internal/time/calendarDays.js';
+import { usePickerFormatter } from './internal/usePickerFormatter.js';
+import { formatTime, inBounds, now, parseTime, toUtcDate } from '../internal/time/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 import '../styles/TimePicker.css';
@@ -84,26 +82,16 @@ export function TimePicker({
   locale,
   hourCycle,
   formatOptions,
-  disabled = false,
-  readOnly = false,
-  clearable = false,
-  open: controlledOpen,
-  defaultOpen = false,
+  open,
+  defaultOpen,
   onOpenChange,
   clearLabel,
   nowLabel,
   ...fieldProps
 }: TimePickerProps) {
   const messages = useMessages('timePicker', timePickerMessages);
-  const [open, setOpen] = usePickerOpen({
-    open: controlledOpen,
-    defaultOpen,
-    onOpenChange,
-    disabled,
-    readOnly,
-  });
-  const picked = usePickerValue({ value, defaultValue, onValueChange });
-  const current = parseTime(picked.raw);
+  const picker = usePicker({ value, defaultValue, onValueChange, open, defaultOpen, onOpenChange });
+  const current = parseTime(picker.raw);
   const serialized = current === undefined ? '' : formatTime(current);
   const minMinutes = parseTime(min);
   const maxMinutes = parseTime(max);
@@ -124,55 +112,28 @@ export function TimePicker({
       if (maxMinutes !== undefined) kept = Math.min(kept, maxMinutes);
       result = formatTime(kept);
     }
-    picked.change(result, serialized);
-  }
-
-  function clear() {
-    commit(null);
-    setOpen(false, 'clear-press');
+    picker.change(result, serialized);
   }
 
   const reference = now().minutes;
-  const nowAvailable =
-    (minMinutes === undefined || reference >= minMinutes) &&
-    (maxMinutes === undefined || reference <= maxMinutes);
+  const nowAvailable = inBounds(reference, minMinutes, maxMinutes);
 
   return (
     <PickerField
       {...fieldProps}
+      picker={picker}
       serialized={serialized}
       display={display}
       icon={<IconSchedule />}
       rootClassName="env-date-picker env-time-picker"
       popupClassName="env-time-picker-popup"
       initialFocus={timeListInitialFocus}
-      popupStart={
-        <Button
-          variant="text"
-          aria-disabled={!nowAvailable || undefined}
-          onClick={() => {
-            if (nowAvailable) commit(now().minutes);
-          }}
-        >
-          {nowLabel ?? messages.now}
-        </Button>
-      }
-      popupEnd={
-        clearable &&
-        serialized && (
-          <Button variant="text" onClick={clear}>
-            {clearLabel ?? messages.clear}
-          </Button>
-        )
-      }
+      shortcut={{
+        label: nowLabel ?? messages.now,
+        available: nowAvailable,
+        onPress: () => commit(now().minutes),
+      }}
       clearLabel={clearLabel ?? messages.clear}
-      onClear={() => commit(null)}
-      onFormReset={picked.reset}
-      open={open}
-      setOpen={setOpen}
-      disabled={disabled}
-      readOnly={readOnly}
-      clearable={clearable}
     >
       {(name) => (
         <TimeList
