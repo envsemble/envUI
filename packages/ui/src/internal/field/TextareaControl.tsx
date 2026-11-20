@@ -30,8 +30,8 @@ export interface TextareaControlOwnProps {
 }
 
 /**
- * The one native text area of envUI: a text field's, with its resize edge, for Textarea and
- * MarkdownEditor, or a bare one that its owner styles and sizes, as Composer's.
+ * The one native text area of envUI: a text field's, with its resize edge, for Textarea, or a
+ * bare one that its owner styles and sizes, as Composer's.
  */
 export function TextareaControl({
   ref,

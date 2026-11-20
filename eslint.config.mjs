@@ -30,8 +30,6 @@ const otherFamiliesInternals = (family) => ({
   message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/.`,
 });
 
-const privateFolders = { 'content/internal/markdown': ['content/MarkdownEditor.tsx'] };
-
 const confusingBrowserGlobals = [
   'close',
   'closed',
@@ -250,31 +248,6 @@ export default defineConfig(
     files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
     rules: { 'no-restricted-imports': ['error', { patterns: [otherFamiliesInternals(family)] }] },
   })),
-  ...Object.entries(privateFolders).map(([folder, allowed]) => {
-    const [family, ...rest] = folder.split('/');
-    const name = rest.at(-1);
-    return {
-      files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
-      ignores: [
-        `packages/ui/src/${folder}/**`,
-        ...allowed.map((module) => `packages/ui/src/${module}`),
-      ],
-      rules: {
-        'no-restricted-imports': [
-          'error',
-          {
-            patterns: [
-              otherFamiliesInternals(family),
-              {
-                regex: String.raw`(^|/)${rest.join('/')}(/|$)|^\./${name}(/|$)`,
-                message: `${folder}/ is private to ${allowed.join(', ')}: build on its public API (eslint.config.mjs, privateFolders).`,
-              },
-            ],
-          },
-        ],
-      },
-    };
-  }),
   {
     files: ['apps/site/src/**/*.{ts,tsx}'],
     ignores: ['apps/site/src/examples/**'],

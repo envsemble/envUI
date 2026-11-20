@@ -5,7 +5,6 @@ import * as affixes from '../fixture/Affixes.fixture.tsx';
 import * as commandPalette from '../fixture/CommandPalette.fixture.tsx';
 import * as composer from '../fixture/Composer.fixture.tsx';
 import * as forms from '../fixture/Forms.fixture.tsx';
-import * as markdownEditor from '../fixture/MarkdownEditor.fixture.tsx';
 import { css } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
@@ -53,9 +52,6 @@ test('entered text keeps the body size with a mouse, and is 16 px on touch scree
 
     mount(composer);
     expect(fontSize(page.getByRole('textbox', { name: 'Message light' }).element())).toBe('16px');
-
-    mount(markdownEditor);
-    expect(fontSize(page.getByRole('textbox', { name: 'Workload source' }).element())).toBe('16px');
   } finally {
     await commands.emulateTouch(false);
   }

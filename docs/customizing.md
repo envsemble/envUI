@@ -274,10 +274,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 - Parts: `env-markdown`, `env-markdown-table`
 
-### MarkdownEditor
-
-- Parts: `env-markdown-editor`, `env-markdown-editor-input`, `env-markdown-editor-view`, `env-markdown-editor-views`, `env-markdown-editor-write`
-
 ### Menu
 
 - Parts: `env-menu`, `env-menu-choice`, `env-menu-group`, `env-menu-group-label`, `env-menu-header`, `env-menu-item`, `env-menu-item-description`, `env-menu-item-end`, `env-menu-item-indicator`, `env-menu-item-indicator-slot`, `env-menu-item-label`, `env-menu-item-shortcut`, `env-menu-item-start` (slot), `env-menu-item-text`, `env-menu-positioner`, `env-menu-separator`, `env-menu-submenu-chevron`, `env-menu-submenu-trigger`
@@ -516,11 +512,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - Parts: `env-connected-rows`, `env-connected-row`
 - States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-interactive` on `env-connected-row`; `data-reorderable`; `data-selected` on `env-connected-row`; `data-start` on `env-connected-row`
 - Used by: List
-
-### EditorChrome
-
-- Parts: `env-editor-status`, `env-editor-toolbar`
-- Used by: MarkdownEditor
 
 ### HoverDetail
 

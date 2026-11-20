@@ -146,8 +146,6 @@ exports[`list has no new accessibility violations 1`] = `{}`;
 
 exports[`markdown has no new accessibility violations 1`] = `{}`;
 
-exports[`markdown-editor has no new accessibility violations 1`] = `{}`;
-
 exports[`menu has no new accessibility violations 1`] = `{}`;
 
 exports[`menubar has no new accessibility violations 1`] = `{}`;

@@ -21,8 +21,6 @@ useWhen:
 avoidWhen:
   - text: Text over several lines in a form, where Enter starts a new line.
     use: Textarea
-  - text: Formatted text with headings, lists and links.
-    use: MarkdownEditor
   - text: The messages of the conversation itself.
     use: Message
 components:

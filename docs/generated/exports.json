@@ -327,14 +327,7 @@
   },
   "@envsemble/envui/markdown": {
     "Markdown": "function",
-    "MarkdownCommand": "type",
-    "MarkdownEditor": "function",
-    "MarkdownEditorHandle": "interface",
-    "MarkdownEditorMode": "type",
-    "MarkdownEditorProps": "interface",
-    "MarkdownLink": "interface",
     "MarkdownLinkProps": "interface",
-    "MarkdownLinkRequest": "interface",
     "MarkdownProps": "interface"
   },
   "@envsemble/envui/messages": {

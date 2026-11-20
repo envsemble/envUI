@@ -31,7 +31,7 @@ import {
   CodeBlock,
 } from '@envsemble/envui';
 import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
-import { Markdown, MarkdownEditor } from '@envsemble/envui/markdown';
+import { Markdown } from '@envsemble/envui/markdown';
 import { defaultMessages } from '@envsemble/envui/messages';
 import {
   AvatarGroup,
@@ -105,7 +105,6 @@ function ShellAndEditorStrings() {
           '- [ ] Pending',
         ].join('\n')}
       </Markdown>
-      <MarkdownEditor label="Description" defaultValue="Draft" />
     </>
   );
 }

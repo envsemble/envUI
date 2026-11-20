@@ -19,7 +19,7 @@ const content = [
 ];
 
 test('fields and editors take the background of what they sit on, or a fill from their container property', async () => {
-  await expect.poll(() => document.querySelectorAll('[data-field]').length).toBe(2 * 4 * 12);
+  await expect.poll(() => document.querySelectorAll('[data-field]').length).toBe(2 * 4 * 11);
   const painted: string[] = [];
   for (const place of document.querySelectorAll<HTMLElement>('[data-testid]'))
     for (const box of place.querySelectorAll<HTMLElement>('[data-field]'))

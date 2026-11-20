@@ -16,7 +16,6 @@
       "data-display/": "base",
       "overlays/": "base",
       "layout/": "composites",
-      "content/internal/markdown/": "composites",
       "forms/color/": "composites",
       "actions/menu/": "composites"
     },
@@ -91,15 +90,6 @@
       "forms/internal/PickerField.tsx": "composites",
       "forms/internal/MonthGrid.tsx": "composites",
       "forms/DropZone.tsx": "composites",
-      "content/MarkdownEditor.tsx": "composites",
-      "internal/editor/EditorToolbar.tsx": {
-        "layer": "composites",
-        "reason": "It renders Toolbar."
-      },
-      "internal/editor/LinkDialog.tsx": {
-        "layer": "composites",
-        "reason": "It renders Dialog and Button."
-      },
       "forms/SearchField.tsx": "composites",
       "forms/Select.tsx": "composites",
       "navigation/Breadcrumbs.tsx": "composites",
@@ -138,14 +128,6 @@
       "internal/field/FieldFrame.tsx": {
         "layer": "base",
         "reason": "It renders Field."
-      },
-      "internal/editor/EditorStatus.tsx": {
-        "layer": "foundations",
-        "reason": "It renders Text."
-      },
-      "internal/editor/editorCommands.ts": {
-        "layer": "foundations",
-        "reason": "It gives each command its Icon."
       },
       "internal/dialog/DialogParts.tsx": {
         "layer": "foundations",
@@ -360,24 +342,6 @@
         "styles": ["TextField.css"],
         "slots": ["env-text-field-input", "env-text-field-start", "env-text-field-end"]
       },
-      "MarkdownEditor": {
-        "modules": [
-          "content/internal/markdown/markdownFormatting.ts",
-          "content/internal/markdown/markdownHistory.ts",
-          "content/internal/markdown/MarkdownPreview.tsx",
-          "content/internal/markdown/useMarkdownEditing.ts"
-        ],
-        "classes": ["env-markdown-editor-input"]
-      },
-      "Editor": {
-        "modules": [
-          "internal/editor/editorCommands.ts",
-          "internal/editor/EditorToolbar.tsx",
-          "internal/editor/EditorStatus.tsx",
-          "internal/editor/LinkDialog.tsx"
-        ],
-        "styles": ["Editor.css"]
-      },
       "Theme": {
         "modules": ["foundations/themeBootstrap.ts"],
         "styles": ["TokensHandwritten.css"]
@@ -545,11 +509,6 @@
           "stylesheet": "Code.css",
           "classes": ["env-spinner"],
           "note": "A code diff pads its loading state."
-        },
-        {
-          "stylesheet": "Editor.css",
-          "classes": ["env-toolbar", "env-toolbar-group"],
-          "note": "An editor's formatting toolbar wraps its groups onto more rows, and offsets the row and its first group so the separator a wrapped row starts with lies outside its clip."
         },
         {
           "stylesheet": "Composer.css",

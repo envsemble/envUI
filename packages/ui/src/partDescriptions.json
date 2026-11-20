@@ -11,9 +11,6 @@
       "prefix": "env-connected-rows",
       "root": "env-connected-rows"
     },
-    "EditorChrome": {
-      "prefix": "env-editor"
-    },
     "HoverDetail": {
       "prefix": "env-hover-detail",
       "root": "env-hover-detail"
@@ -379,10 +376,6 @@
       "env-drop-zone-target": "The target that takes the drop and opens the file picker.",
       "env-drop-zone-text": "The column with the label and the description."
     },
-    "EditorChrome": {
-      "env-editor-status": "The editor's status line, such as a character count.",
-      "env-editor-toolbar": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which wrap onto more rows where they are wider than the editor."
-    },
     "EmptyState": {
       "env-empty-state": "The empty state, centred in the region it fills.",
       "env-empty-state-actions": "The slot of the actions, a row that wraps.",
@@ -464,13 +457,6 @@
     "Markdown": {
       "env-markdown": "The rendered Markdown.",
       "env-markdown-table": "The region that scrolls a wide table."
-    },
-    "MarkdownEditor": {
-      "env-markdown-editor": "The Markdown editor.",
-      "env-markdown-editor-write": "The text area for writing.",
-      "env-markdown-editor-input": "The text area that shows the Markdown source as text.",
-      "env-markdown-editor-views": "The view switch, with the source and the preview under it.",
-      "env-markdown-editor-view": "The source or the preview, the one the view switch shows."
     },
     "Menu": {
       "env-menu": "The menu's popup.",

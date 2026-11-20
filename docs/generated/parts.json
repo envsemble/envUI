@@ -3081,46 +3081,6 @@
         "Prose"
       ]
     },
-    "MarkdownEditor": {
-      "root": "env-markdown-editor",
-      "source": "packages/ui/src/content/MarkdownEditor.tsx",
-      "parts": [
-        {
-          "class": "env-markdown-editor",
-          "description": "The Markdown editor."
-        },
-        {
-          "class": "env-markdown-editor-input",
-          "description": "The text area that shows the Markdown source as text."
-        },
-        {
-          "class": "env-markdown-editor-view",
-          "description": "The source or the preview, the one the view switch shows."
-        },
-        {
-          "class": "env-markdown-editor-views",
-          "description": "The view switch, with the source and the preview under it."
-        },
-        {
-          "class": "env-markdown-editor-write",
-          "description": "The text area for writing."
-        }
-      ],
-      "states": [],
-      "uses": [
-        "Button",
-        "Dialog",
-        "EditorChrome",
-        "Field",
-        "Icon",
-        "Markdown",
-        "SegmentedControl",
-        "Text",
-        "TextField",
-        "Textarea",
-        "Toolbar"
-      ]
-    },
     "Menu": {
       "root": "env-menu",
       "source": "packages/ui/src/actions/menu/Menu.tsx",
@@ -6522,23 +6482,6 @@
       ],
       "usedBy": [
         "List"
-      ]
-    },
-    "EditorChrome": {
-      "root": null,
-      "parts": [
-        {
-          "class": "env-editor-status",
-          "description": "The editor's status line, such as a character count."
-        },
-        {
-          "class": "env-editor-toolbar",
-          "description": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which wrap onto more rows where they are wider than the editor."
-        }
-      ],
-      "states": [],
-      "usedBy": [
-        "MarkdownEditor"
       ]
     },
     "HoverDetail": {
