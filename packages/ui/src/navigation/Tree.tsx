@@ -19,18 +19,14 @@ import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { ContextMenu } from '../actions/ContextMenu.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
-import {
-  rowElementId,
-  siblingPositions,
-  treeKeyAction,
-  type TypedText,
-} from './internal/treeModel.js';
+import { rowElementId, siblingPositions, treeKeyAction } from './internal/treeModel.js';
 import { labelText } from './internal/labelText.js';
 import { placeRows, TreeRow } from './internal/TreeRow.js';
 import { useTreeTransitions } from './internal/useTreeTransitions.js';
 import { useTreeViewport } from './internal/useTreeViewport.js';
 import { flag } from '../internal/flag.js';
 import { chainHandlers } from '../internal/react/chainHandlers.js';
+import type { TypedText } from '../internal/typeahead.js';
 import '../styles/Base.css';
 import '../styles/Tree.css';
 
@@ -178,7 +174,7 @@ export function Tree<Item extends TreeItem>({
   const [activeId, setActiveId] = useState<string | null>(selectedId);
   const [focusVisible, setFocusVisible] = useState(false);
   const pointerFocus = useRef(false);
-  const typeahead = useRef<TypedText>({ text: '', time: 0 });
+  const typeahead = useRef<TypedText>({ text: '', at: 0 });
 
   const indexById = useMemo(() => {
     const map = new Map<string, number>();

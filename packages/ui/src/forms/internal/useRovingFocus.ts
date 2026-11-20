@@ -3,7 +3,7 @@
 import { useCallback, useRef, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useEnvUI, type Direction } from '../../internal/provider/EnvUIContext.js';
 import { computedDirection } from '../../internal/dom/direction.js';
-import { typeaheadTimeout } from '../../internal/typeahead.js';
+import { typeAhead } from '../../internal/typeahead.js';
 import { flag } from '../../internal/flag.js';
 
 export interface RovingOptions<Item> {
@@ -83,7 +83,7 @@ function useTypeahead<Item>(options: RovingOptions<Item>) {
       return undefined;
     if (event.key === ' ' && typed.current.text === '') return undefined;
     const now = event.timeStamp;
-    const text = (now - typed.current.at > typeaheadTimeout ? '' : typed.current.text) + event.key;
+    const text = typeAhead(typed.current, event.key, now);
     typed.current = { text, at: now };
     const wanted = text.toLocaleLowerCase();
     const repeatedLetter = [...wanted].every((letter) => letter === wanted[0]);

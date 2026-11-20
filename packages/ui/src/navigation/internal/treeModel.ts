@@ -1,4 +1,4 @@
-import { typeaheadTimeout } from '../../internal/typeahead.js';
+import { stillTypingAhead, typeAhead, type TypedText } from '../../internal/typeahead.js';
 import type { TreeItem } from '../Tree.js';
 
 /**
@@ -40,16 +40,6 @@ export function rowElementId(treeId: string, itemId: string) {
   )}`;
 }
 
-/** The text typed ahead so far, and when its last key was, from performance.now(). */
-export interface TypedText {
-  text: string;
-  time: number;
-}
-
-function stillTypingAhead(typed: TypedText) {
-  return performance.now() - typed.time <= typeaheadTimeout;
-}
-
 /** A row's text for type-ahead: its textValue, else its label's text. */
 export type TreeRowText = (item: TreeItem) => string;
 
@@ -61,8 +51,8 @@ function findTypedRow(
   rowText: TreeRowText,
 ) {
   const now = performance.now();
-  typed.text = now - typed.time > typeaheadTimeout ? key : typed.text + key;
-  typed.time = now;
+  typed.text = typeAhead(typed, key, now);
+  typed.at = now;
   const query = typed.text.toLocaleLowerCase();
   const repeated = query.length > 1 && [...query].every((character) => character === query[0]);
   const search = repeated ? query[0] : query;
@@ -139,7 +129,7 @@ export function treeKeyAction(
     case 'Enter':
       return { kind: 'open', preview: false };
     case ' ': {
-      const spaceBelongsToTypedText = stillTypingAhead(typed) && typed.text;
+      const spaceBelongsToTypedText = stillTypingAhead(typed, performance.now()) && typed.text;
       return spaceBelongsToTypedText ? typedRow() : { kind: 'open', preview: true };
     }
     default:
