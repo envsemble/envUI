@@ -325,6 +325,7 @@
       "Field": {
         "modules": [
           "internal/field/FieldFrame.tsx",
+          "internal/field/fieldProps.ts",
           "forms/TextField.tsx",
           "forms/Textarea.tsx",
           "internal/field/TextareaControl.tsx",

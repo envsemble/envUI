@@ -23,10 +23,12 @@ import {
   FieldFrame,
   FieldLabelContent,
   type FieldControlBoxProps,
+} from '../internal/field/FieldFrame.js';
+import {
   type FieldProps,
   type FieldSizeProps,
-  type TextFieldDecorationProps,
-} from '../internal/field/FieldFrame.js';
+  type FieldDecorationProps,
+} from '../internal/field/fieldProps.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { autoHighlightAlways } from './internal/autoHighlightAlways.js';
 import {
@@ -77,7 +79,7 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
     >,
     FieldProps,
     FieldSizeProps,
-    Pick<TextFieldDecorationProps, 'visibleLabel'> {
+    Pick<FieldDecorationProps, 'visibleLabel'> {
   /** The text input, so that a form library can register it and focus it. */
   ref?: Ref<HTMLInputElement>;
   /** The field's class, on its root element, beside env-field and env-combobox. */

@@ -18,8 +18,8 @@ import { calendarInitialFocus } from './internal/pickerFocus.js';
 import {
   type FieldProps,
   type FieldSizeProps,
-  type TextFieldDecorationProps,
-} from '../internal/field/FieldFrame.js';
+  type FieldDecorationProps,
+} from '../internal/field/fieldProps.js';
 import {
   PickerField,
   usePickerOpen,
@@ -58,7 +58,7 @@ export interface DatePickerProps
     >,
     FieldProps,
     FieldSizeProps,
-    Pick<TextFieldDecorationProps, 'visibleLabel'> {
+    Pick<FieldDecorationProps, 'visibleLabel'> {
   /** The field's button, which shows the value and opens the calendar. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element, beside env-field and env-date-picker. */

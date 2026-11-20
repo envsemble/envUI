@@ -15,13 +15,12 @@ import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
+import { FieldFrame, FieldLabelContent } from '../internal/field/FieldFrame.js';
 import {
-  FieldFrame,
-  FieldLabelContent,
   type FieldProps,
   type FieldSizeProps,
-  type TextFieldDecorationProps,
-} from '../internal/field/FieldFrame.js';
+  type FieldDecorationProps,
+} from '../internal/field/fieldProps.js';
 import { PopupSurface } from '../internal/popup/PopupSurface.js';
 import {
   containedModal,
@@ -103,7 +102,7 @@ export interface SelectProps
     >,
     FieldProps,
     FieldSizeProps,
-    Pick<TextFieldDecorationProps, 'visibleLabel'> {
+    Pick<FieldDecorationProps, 'visibleLabel'> {
   /** The trigger, the button that shows the chosen option and opens the list. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element, beside env-field and env-select. */

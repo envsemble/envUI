@@ -5,7 +5,8 @@ import { classNames } from '../internal/classNames.js';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { TextareaControl, type TextareaControlProps } from '../internal/field/TextareaControl.js';
-import { FieldFrame, FieldLabelContent, type FieldProps } from '../internal/field/FieldFrame.js';
+import { FieldFrame, FieldLabelContent } from '../internal/field/FieldFrame.js';
+import { type FieldProps } from '../internal/field/fieldProps.js';
 
 export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** The native text area, so that a form library can register it and focus it. */

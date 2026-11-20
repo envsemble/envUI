@@ -29,10 +29,12 @@ import {
   FieldFrame,
   FieldLabelContent,
   type FieldControlBoxProps,
+} from '../../internal/field/FieldFrame.js';
+import {
   type FieldProps,
   type FieldSizeProps,
-  type TextFieldDecorationProps,
-} from '../../internal/field/FieldFrame.js';
+  type FieldDecorationProps,
+} from '../../internal/field/fieldProps.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { useFormReset } from '../../internal/field/useFormReset.js';
 import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';
@@ -66,7 +68,7 @@ export interface PickerFieldProps
     >,
     FieldProps,
     FieldSizeProps,
-    Pick<TextFieldDecorationProps, 'visibleLabel'> {
+    Pick<FieldDecorationProps, 'visibleLabel'> {
   /** The field's button, which shows the value and opens the popup. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element. */
