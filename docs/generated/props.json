@@ -2469,7 +2469,7 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
+          "type": "(open: boolean, details: DatePickerOpenChangeDetails) => void",
           "required": false,
           "description": "Called with the new state, and why, when the calendar opens or closes."
         },
@@ -4878,7 +4878,7 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean, details: MenuFocusDetails) => void",
+          "type": "(open: boolean, details: OpenChangeDetails) => void",
           "required": false,
           "description": "Called when the menu opens or closes, with the element that had focus before the menubar took it."
         },
@@ -5107,6 +5107,12 @@
       "description": "A field for a month of a year that shows the value in the reader's locale and opens a year of months to choose it from, with keyboard access like Calendar's.",
       "props": [
         {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: MonthPickerOpenChangeDetails) => void",
+          "required": false,
+          "description": "Called with the new state, and why, when the popup opens or closes."
+        },
+        {
           "name": "value",
           "type": "string | null",
           "required": false,
@@ -5240,12 +5246,6 @@
           "required": false,
           "default": "false",
           "description": "Whether an uncontrolled popup starts open; closed by default."
-        },
-        {
-          "name": "onOpenChange",
-          "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
-          "required": false,
-          "description": "Called with the new state, and why, when the popup opens or closes."
         },
         {
           "name": "popupHeader",
@@ -8324,6 +8324,12 @@
       "description": "A field for a time of day that shows the value in the reader's locale and opens wheels of its hours, minutes every `minuteStep` and, on a 12-hour clock, the day's halves to choose it.",
       "props": [
         {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: TimePickerOpenChangeDetails) => void",
+          "required": false,
+          "description": "Called with the new state, and why, when the popup opens or closes."
+        },
+        {
           "name": "value",
           "type": "string | null",
           "required": false,
@@ -8457,12 +8463,6 @@
           "required": false,
           "default": "false",
           "description": "Whether an uncontrolled popup starts open; closed by default."
-        },
-        {
-          "name": "onOpenChange",
-          "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
-          "required": false,
-          "description": "Called with the new state, and why, when the popup opens or closes."
         },
         {
           "name": "popupHeader",

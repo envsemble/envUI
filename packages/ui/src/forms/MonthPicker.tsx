@@ -5,7 +5,13 @@ import { monthPicker as monthPickerMessages } from '../foundations/messages/mont
 import { Button } from '../actions/Button.js';
 import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { MonthGrid, monthGridInitialFocus } from './internal/MonthGrid.js';
-import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
+import {
+  PickerField,
+  usePickerOpen,
+  type PickerFieldProps,
+  type PickerOpenChangeDetails,
+  type PickerOpenChangeReason,
+} from './internal/PickerField.js';
 import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
 import {
   clampMonth,
@@ -19,7 +25,15 @@ import {
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 
+/** Why a month picker's popup asks to open or close: a picker's reasons. */
+export type MonthPickerOpenChangeReason = PickerOpenChangeReason;
+
+/** What a month picker's onOpenChange receives beside the requested state: a picker's details. */
+export type MonthPickerOpenChangeDetails = PickerOpenChangeDetails;
+
 export interface MonthPickerProps extends PickerFieldProps {
+  /** Called with the new state, and why, when the popup opens or closes. */
+  onOpenChange?: (open: boolean, details: MonthPickerOpenChangeDetails) => void;
   /** The value: a month as YYYY-MM. null, or an empty string, for none. */
   value?: string | null;
   /** The value an uncontrolled field starts with, and that a form reset restores; none by default. */

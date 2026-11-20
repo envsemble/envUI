@@ -4,7 +4,13 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { timePicker as timePickerMessages } from '../foundations/messages/timePicker.js';
 import { Button } from '../actions/Button.js';
 import { IconSchedule } from '../icons/Schedule.js';
-import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
+import {
+  PickerField,
+  usePickerOpen,
+  type PickerFieldProps,
+  type PickerOpenChangeDetails,
+  type PickerOpenChangeReason,
+} from './internal/PickerField.js';
 import { TimeList, timeListInitialFocus } from './internal/TimeList.js';
 import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
 import { formatTime, now, parseTime, toUtcDate } from '../internal/time/calendarDays.js';
@@ -12,7 +18,15 @@ import '../styles/Base.css';
 import '../styles/DatePicker.css';
 import '../styles/TimePicker.css';
 
+/** Why a time picker's popup asks to open or close: a picker's reasons. */
+export type TimePickerOpenChangeReason = PickerOpenChangeReason;
+
+/** What a time picker's onOpenChange receives beside the requested state: a picker's details. */
+export type TimePickerOpenChangeDetails = PickerOpenChangeDetails;
+
 export interface TimePickerProps extends PickerFieldProps {
+  /** Called with the new state, and why, when the popup opens or closes. */
+  onOpenChange?: (open: boolean, details: TimePickerOpenChangeDetails) => void;
   /** The value: a time of day as HH:mm on the 24-hour clock. null, or an empty string, for none. */
   value?: string | null;
   /** The value an uncontrolled field starts with, and that a form reset restores; none by default. */

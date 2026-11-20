@@ -173,7 +173,7 @@ function Root({
 }
 
 /** What Menubar.Menu's onOpenChange receives beside the requested state. */
-export interface MenuFocusDetails {
+export interface OpenChangeDetails {
   /**
    * The element that had focus before the menubar took it, such as a text field, or null. Commands
    * such as Copy act on it.
@@ -214,7 +214,7 @@ export interface MenuProps {
   /**
    * Called when the menu opens or closes, with the element that had focus before the menubar took it.
    */
-  onOpenChange?: (open: boolean, details: MenuFocusDetails) => void;
+  onOpenChange?: (open: boolean, details: OpenChangeDetails) => void;
   /** Class of the menu popup. */
   className?: string;
   /** The menu popup's ref; the trigger is the menubar's own. */

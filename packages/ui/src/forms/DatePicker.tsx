@@ -24,6 +24,7 @@ import {
   PickerField,
   usePickerOpen,
   type PickerOpenChangeDetails,
+  type PickerOpenChangeReason,
 } from './internal/PickerField.js';
 import { TimeList } from './internal/TimeList.js';
 import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
@@ -43,7 +44,11 @@ import {
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 
-export type { PickerOpenChangeDetails, PickerOpenChangeReason } from './internal/PickerField.js';
+/** Why a date picker's calendar asks to open or close: a picker's reasons. */
+export type DatePickerOpenChangeReason = PickerOpenChangeReason;
+
+/** What a date picker's onOpenChange receives beside the requested state: a picker's details. */
+export type DatePickerOpenChangeDetails = PickerOpenChangeDetails;
 
 export interface DatePickerProps
   extends
@@ -131,7 +136,7 @@ export interface DatePickerProps
   /** Whether an uncontrolled calendar starts open; closed by default. */
   defaultOpen?: boolean;
   /** Called with the new state, and why, when the calendar opens or closes. */
-  onOpenChange?: (open: boolean, details: PickerOpenChangeDetails) => void;
+  onOpenChange?: (open: boolean, details: DatePickerOpenChangeDetails) => void;
   /**
    * Accessible name of the field's clear button and text of the calendar's.
    * @default 'Clear', or EnvUIProvider's messages.datePicker.clear
