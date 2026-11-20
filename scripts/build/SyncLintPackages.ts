@@ -1,7 +1,8 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { libraryEntryPoints } from '../docs/LibraryEntryPoints.ts';
+import { GeneratedOutput } from './GeneratedFiles.ts';
 import { partsFile, repositoryPath, repositoryRoot } from '../RepositoryPaths.ts';
 
 const libraryTokens = 'packages/ui/src/generated/tokens.json';
@@ -257,20 +258,16 @@ export function staleFiles() {
 
 function main() {
   const check = process.argv.includes('--check');
-  const stale = staleFiles();
-  if (check) {
-    if (stale.length) {
-      console.error(`${stale.join(', ')} differ from their sources. Run npm run tokens:build.`);
-      process.exitCode = 1;
-    } else console.log("The lint packages' shared files match their sources.");
-    return;
-  }
-  const expected = expectedFiles();
-  for (const path of stale) writeFileSync(resolve(repositoryRoot, path), expected.get(path)!);
+  const output = new GeneratedOutput({ check, regenerate: 'npm run tokens:build' });
+  for (const [path, contents] of expectedFiles())
+    output.writeOrCheck(resolve(repositoryRoot, path), contents);
+  output.exitIfStale();
   console.log(
-    stale.length
-      ? `Updated ${stale.join(', ')}.`
-      : `The lint packages' shared files already match their sources.`,
+    check
+      ? "The lint packages' shared files match their sources."
+      : output.changed.length
+        ? `Updated ${output.changed.join(', ')}.`
+        : `The lint packages' shared files already match their sources.`,
   );
 }
 

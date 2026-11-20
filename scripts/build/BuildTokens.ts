@@ -3,9 +3,9 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { build, defineConfig, Logger, parse } from '@terrazzo/parser';
 import type { Plugin, ViteDevServer } from 'vite';
-import { formatted, readIfExists, writeIfChanged } from './GeneratedFiles.ts';
+import { formatted, GeneratedOutput } from './GeneratedFiles.ts';
 import { createConfig } from './tokens/Config.ts';
-import { libraryDirectory, repositoryRoot } from '../RepositoryPaths.ts';
+import { libraryDirectory } from '../RepositoryPaths.ts';
 
 const tokensDirectory = resolve(libraryDirectory, 'tokens');
 
@@ -31,17 +31,15 @@ export async function buildTokens({
     path: fileURLToPath(new URL(filename, config.outDir)),
     contents,
   }));
-  const stale: string[] = [];
-  for (const { path, contents } of outputs) {
-    const text = await formatted(path, String(contents));
-    if (check ? readIfExists(path) === text : !writeIfChanged(path, text)) continue;
-    stale.push(relative(repositoryRoot, path).replaceAll('\\', '/'));
-  }
-  if (check && stale.length > 0)
-    throw new Error(
-      `Generated tokens are stale: ${stale.join(', ')}. Run \`npm run tokens:build\` and commit the result.`,
-    );
-  return { tokenCount: Object.keys(parsed.tokens).length, files: outputs.length, stale };
+  const output = new GeneratedOutput({ check, regenerate: 'npm run tokens:build' });
+  for (const { path, contents } of outputs)
+    output.writeOrCheck(path, await formatted(path, String(contents)));
+  output.throwIfStale();
+  return {
+    tokenCount: Object.keys(parsed.tokens).length,
+    files: outputs.length,
+    stale: output.changed,
+  };
 }
 
 export function tokensVitePlugin(): Plugin {

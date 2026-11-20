@@ -1,4 +1,4 @@
-import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
+import { GeneratedOutput } from '../build/GeneratedFiles.ts';
 import { baseOption } from '../Git.ts';
 import { partsFile } from '../RepositoryPaths.ts';
 import { yellow } from '../Terminal.ts';
@@ -15,13 +15,10 @@ if (problems.length) {
   );
   process.exit(1);
 }
+const generated = new GeneratedOutput({ check, regenerate: 'npm run docs:parts' });
+generated.writeOrCheck(partsFile, output);
+generated.exitIfStale();
 if (check) {
-  if (readIfExists(partsFile) !== output) {
-    console.error(
-      `${partsPath} differs from the library's source. Run \`npm run docs:parts\` and commit the result.`,
-    );
-    process.exit(1);
-  }
   const base = baseContract<PartsContract>(partsPath, baseOption());
   if (!base.contract) {
     console.log(`${partsPath} matches its sources.`);
@@ -49,7 +46,6 @@ if (check) {
     );
   }
 } else {
-  writeIfChanged(partsFile, output);
   console.log(
     `Generated ${partsPath}: ${Object.keys(parts.components).length} components and ${Object.keys(parts.shared).length} shared groups.`,
   );

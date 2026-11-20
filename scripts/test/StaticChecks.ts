@@ -100,7 +100,7 @@ export const checks = {
       task('docs:check parts', node('scripts/docs/GenerateParts.ts', '--check', ...against)),
       task('docs:check exports', node('scripts/docs/GenerateExports.ts', '--check', ...against)),
       task('docs:check guides', node('scripts/docs/GenerateGuideTables.ts', '--check')),
-      task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
+      task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--validate')),
       task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
     ];
   },

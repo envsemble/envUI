@@ -1,6 +1,6 @@
 import { relative, resolve, sep } from 'node:path';
 import { Node, Project, ts } from 'ts-morph';
-import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
+import { GeneratedOutput } from '../build/GeneratedFiles.ts';
 import { libraryEntryPoints } from './LibraryEntryPoints.ts';
 import {
   libraryDirectory,
@@ -627,18 +627,13 @@ export function serializeProps(props: unknown) {
 
 if (import.meta.main) {
   const check = process.argv.includes('--check');
-  const output = serializeProps(extractProps());
-  if (check) {
-    if (readIfExists(propsFile) !== output) {
-      console.error(
-        'docs/generated/props.json differs from the TypeScript source. Run `npm run docs:props` and commit the result.',
-      );
-      process.exit(1);
-    }
-    console.log('docs/generated/props.json matches the TypeScript source.');
-  } else {
-    writeIfChanged(propsFile, output);
-    const count = Object.keys(JSON.parse(output).exports).length;
+  const serialized = serializeProps(extractProps());
+  const output = new GeneratedOutput({ check, regenerate: 'npm run docs:props' });
+  output.writeOrCheck(propsFile, serialized);
+  output.exitIfStale();
+  if (check) console.log('docs/generated/props.json matches the TypeScript source.');
+  else {
+    const count = Object.keys(JSON.parse(serialized).exports).length;
     console.log(`Extracted ${count} public exports into docs/generated/props.json.`);
   }
 }
