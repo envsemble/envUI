@@ -5,13 +5,13 @@ import { test } from 'node:test';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import { importSource } from '../support/ImportSource.ts';
 
-const { groupedPages, densityShots, exampleShots, openLists, surfaceShots } = await importSource(
-  'VisualSnapshots',
-  [
-    "export { groupedPages } from './apps/site/src/routes/SiteRoutes.ts';",
-    "export { densityShots, exampleShots, openLists, surfaceShots } from './tests/visual/VisualShots.ts';",
-  ],
-);
+const { groupedPages, densityShots, exampleShots, openLists, surfaceShots } = await importSource<
+  typeof import('../../apps/site/src/routes/SiteRoutes.ts') &
+    typeof import('../visual/VisualShots.ts')
+>('VisualSnapshots', [
+  "export { groupedPages } from './apps/site/src/routes/SiteRoutes.ts';",
+  "export { densityShots, exampleShots, openLists, surfaceShots } from './tests/visual/VisualShots.ts';",
+]);
 
 const snapshots = join(repositoryRoot, 'tests/visual/snapshots');
 const examples = join(repositoryRoot, 'apps/site/src/examples');

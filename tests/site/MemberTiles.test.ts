@@ -5,17 +5,16 @@ import { test } from 'node:test';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import { importSource } from '../support/ImportSource.ts';
 
-const { shownByPageTile, memberExamples } = await importSource(
-  'MemberTiles',
-  'apps/site/src/tiles/MemberTiles.ts',
-);
-const { documents } = await importSource(
+const { shownByPageTile, memberExamples } = await importSource<
+  typeof import('../../apps/site/src/tiles/MemberTiles.ts')
+>('MemberTiles', 'apps/site/src/tiles/MemberTiles.ts');
+const { documents } = await importSource<typeof import('../../apps/site/src/routes/PageModel.ts')>(
   'MemberTileDocuments',
   'apps/site/src/routes/PageModel.ts',
 );
 
 const site = join(repositoryRoot, 'apps/site/src');
-const exportsFile = JSON.parse(
+const exportsFile: Record<string, Record<string, string>> = JSON.parse(
   readFileSync(join(repositoryRoot, 'docs/generated/exports.json'), 'utf8'),
 );
 const exported = new Set(Object.values(exportsFile).flatMap((entry) => Object.keys(entry)));
