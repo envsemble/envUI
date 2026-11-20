@@ -50,6 +50,13 @@ test('a link reaches a page, and a heading the page has', async () => {
   });
 });
 
+test('a guide places no figure', async () => {
+  await discoveryFixture(async ({ write, read }) => {
+    await write('button.md', discoveryPage + '\n```tsx figure=Sizes\n\n```\n');
+    assert.throws(read, /places a figure/);
+  });
+});
+
 test("a page's title is the index's, and the index lists no page outside docs", async () => {
   await discoveryFixture(async ({ write, read }) => {
     await write('button.md', '# Different title\n');
