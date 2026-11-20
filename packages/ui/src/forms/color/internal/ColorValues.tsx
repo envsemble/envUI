@@ -107,7 +107,7 @@ export function ColorValues({
               <Button
                 variant="ghost"
                 size="sm"
-                endIcon={<IconExpandMore />}
+                end={<IconExpandMore />}
                 disabled={disabled}
                 aria-label={messages.formatButton({ format: messages[format] })}
               >

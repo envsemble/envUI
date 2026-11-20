@@ -542,12 +542,7 @@
         },
         {
           "class": "env-button-end",
-          "description": "The slot of the quiet content at the button's far end, such as a shortcut's keys.",
-          "slot": true
-        },
-        {
-          "class": "env-button-end-icon",
-          "description": "The slot of the icon after the label.",
+          "description": "The slot of the content after the label, at a full-width button's far end, such as an icon or a shortcut's keys.",
           "slot": true
         },
         {
@@ -2145,6 +2140,11 @@
         {
           "class": "env-document-tabs-tab-label",
           "description": "A tab's title."
+        },
+        {
+          "class": "env-document-tabs-tab-start",
+          "description": "The slot before a tab's title, such as a file type's icon.",
+          "slot": true
         }
       ],
       "states": [
@@ -4463,13 +4463,13 @@
           "slot": true
         },
         {
-          "class": "env-segmented-control-item-icon",
-          "description": "The slot of a segment's icon.",
-          "slot": true
-        },
-        {
           "class": "env-segmented-control-item-label",
           "description": "A segment's label."
+        },
+        {
+          "class": "env-segmented-control-item-start",
+          "description": "The slot of the content before a segment's label, such as an icon.",
+          "slot": true
         },
         {
           "class": "env-segmented-control-thumb",
@@ -4527,7 +4527,6 @@
         }
       ],
       "uses": [
-        "Icon",
         "Popup",
         "Skeleton",
         "Theme",
@@ -4862,7 +4861,6 @@
       ],
       "uses": [
         "Field",
-        "Icon",
         "Text",
         "TextField"
       ],
@@ -5393,7 +5391,7 @@
         },
         {
           "class": "env-text-field-start",
-          "description": "The slot of the icon at the start of the well.",
+          "description": "The slot of the content at the start of the well, such as an icon.",
           "slot": true
         },
         {
@@ -5483,7 +5481,7 @@
           ]
         },
         {
-          "attribute": "data-start-icon",
+          "attribute": "data-start",
           "values": [
             ""
           ],
@@ -5521,8 +5519,7 @@
         }
       ],
       "uses": [
-        "Field",
-        "Icon"
+        "Field"
       ],
       "colors": [
         {
@@ -5567,7 +5564,6 @@
       ],
       "uses": [
         "Field",
-        "Icon",
         "TextField"
       ],
       "colors": [
@@ -6086,10 +6082,6 @@
           "description": "The rows an expanding or collapsing item reveals or hides, while they grow or shrink."
         },
         {
-          "class": "env-tree-icon",
-          "description": "An item's icon."
-        },
-        {
           "class": "env-tree-item",
           "description": "One item."
         },
@@ -6100,6 +6092,11 @@
         {
           "class": "env-tree-rows",
           "description": "The rows of a level."
+        },
+        {
+          "class": "env-tree-start",
+          "description": "The slot of the content before an item's label, such as an icon.",
+          "slot": true
         }
       ],
       "states": [

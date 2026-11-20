@@ -49,7 +49,7 @@ function OrganizationSwitcher({
       aria-label="Organizations"
       align="start"
       trigger={
-        <Button variant="secondary" fullWidth endIcon={<IconUnfoldMore />}>
+        <Button variant="secondary" fullWidth end={<IconUnfoldMore />}>
           {active?.label}
         </Button>
       }

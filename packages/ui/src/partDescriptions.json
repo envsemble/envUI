@@ -114,8 +114,7 @@
     "Button": {
       "env-button": "The button.",
       "env-button-content": "The button's label and icons.",
-      "env-button-end": "The slot of the quiet content at the button's far end, such as a shortcut's keys.",
-      "env-button-end-icon": "The slot of the icon after the label.",
+      "env-button-end": "The slot of the content after the label, at a full-width button's far end, such as an icon or a shortcut's keys.",
       "env-button-icon": "The slot of an icon button's icon.",
       "env-button-label": "The slot of the label, the button's children.",
       "env-button-start": "The slot of the content before the label, such as an icon or an Avatar.",
@@ -333,6 +332,7 @@
       "env-document-tabs-panel": "The panel of the active document, which the active tab joins.",
       "env-document-tabs-panel-content": "The slot of the active document.",
       "env-document-tabs-tab": "A tab's button.",
+      "env-document-tabs-tab-start": "The slot before a tab's title, such as a file type's icon.",
       "env-document-tabs-tab-label": "A tab's title.",
       "env-document-tabs-tab-end": "The slot after a tab's title, such as a dot for unsaved changes."
     },
@@ -638,7 +638,7 @@
     "SegmentedControl": {
       "env-segmented-control": "The segmented control: the track the segments sit in.",
       "env-segmented-control-item": "One segment; the chosen one rises on a raised thumb.",
-      "env-segmented-control-item-icon": "The slot of a segment's icon.",
+      "env-segmented-control-item-start": "The slot of the content before a segment's label, such as an icon.",
       "env-segmented-control-thumb": "The raised thumb that travels to the chosen segment, hidden until it has measured it.",
       "env-segmented-control-item-count": "A segment's count.",
       "env-segmented-control-item-end": "The slot of the content after a segment's label and count, such as a Badge.",
@@ -736,7 +736,7 @@
       "env-text-field-input": "The input.",
       "env-text-field-label": "The label.",
       "env-text-field-prefix": "Fixed text before the input.",
-      "env-text-field-start": "The slot of the icon at the start of the well.",
+      "env-text-field-start": "The slot of the content at the start of the well, such as an icon.",
       "env-text-field-suffix": "Fixed text after the input."
     },
     "Textarea": {
@@ -800,7 +800,7 @@
       "env-tree-description": "An item's description.",
       "env-tree-end": "The slot of the content at an item's end, such as a count, which leaves the row whole where it doesn't fit beside the label.",
       "env-tree-group": "The rows an expanding or collapsing item reveals or hides, while they grow or shrink.",
-      "env-tree-icon": "An item's icon.",
+      "env-tree-start": "The slot of the content before an item's label, such as an icon.",
       "env-tree-item": "One item.",
       "env-tree-label": "An item's label.",
       "env-tree-rows": "The rows of a level."

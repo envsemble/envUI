@@ -43,7 +43,7 @@ export function Overview() {
           </Text>
           <Column gap={4} align="center">
             <Row gap={4} align="center" justify="center" wrap className="catalogue-overview-start">
-              <Button href={routeHref(docsRoute)} endIcon={<IconArrowForward />}>
+              <Button href={routeHref(docsRoute)} end={<IconArrowForward />}>
                 Get started
               </Button>
               <span className="catalogue-overview-install">

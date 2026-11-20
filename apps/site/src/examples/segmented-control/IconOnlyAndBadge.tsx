@@ -22,8 +22,8 @@ export default function IconOnlyAndBadge() {
         value={layout}
         onValueChange={setLayout}
         items={[
-          { value: 'list', label: 'List', icon: <IconViewList />, visibleLabel: false },
-          { value: 'board', label: 'Board', icon: <IconViewModule />, visibleLabel: false },
+          { value: 'list', label: 'List', start: <IconViewList />, visibleLabel: false },
+          { value: 'board', label: 'Board', start: <IconViewModule />, visibleLabel: false },
         ]}
       />
     </Row>

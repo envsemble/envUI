@@ -101,7 +101,7 @@ examples:
 1. **Field** (`env-text-field`)
 2. **Control** (`env-text-field-control`)
 3. **Label** (`env-text-field-label`, `label`)
-4. **Start icon** (`env-text-field-start`, `startIcon`)
+4. **Start** (`env-text-field-start`, `start`)
 5. **Prefix** (`env-text-field-prefix`, `prefix`)
 6. **Input** (`env-text-field-input`)
 7. **End action** (`env-text-field-end-action`, `endAction`)

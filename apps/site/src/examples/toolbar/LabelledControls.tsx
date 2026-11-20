@@ -14,7 +14,7 @@ export default function LabelledControls() {
     <Toolbar.Root aria-label="Formatting">
       <Menu.Root
         aria-label="Block type"
-        trigger={<Toolbar.Item render={<Button endIcon={<IconExpandMore />}>{block}</Button>} />}
+        trigger={<Toolbar.Item render={<Button end={<IconExpandMore />}>{block}</Button>} />}
       >
         <Menu.RadioGroup value={block} onValueChange={setBlock}>
           {blocks.map((each) => (

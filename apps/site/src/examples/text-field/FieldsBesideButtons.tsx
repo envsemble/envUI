@@ -10,7 +10,7 @@ export default function FieldsBesideButtons() {
           label="Invite by e-mail"
           type="email"
           placeholder="name@example.com"
-          startIcon={<IconMail />}
+          start={<IconMail />}
         />
         <Button>Invite</Button>
       </Grid>

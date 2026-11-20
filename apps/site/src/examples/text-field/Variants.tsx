@@ -10,7 +10,7 @@ export default function Variants() {
         visibleLabel={false}
         label="Find projects"
         placeholder="Find projects"
-        startIcon={<IconSearch />}
+        start={<IconSearch />}
       />
     </Column>
   );

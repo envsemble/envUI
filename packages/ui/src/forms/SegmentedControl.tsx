@@ -13,7 +13,6 @@ import {
 import type { ControlSize } from '../foundations/Theme.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { VisuallyHidden } from '../content/VisuallyHidden.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
@@ -35,7 +34,7 @@ export interface SegmentedControlItem {
    */
   label: ReactNode;
   /**
-   * Show the label on the segment. Without it the segment shows only its icon, as in a List and
+   * Show the label on the segment. Without it the segment shows only its start, as in a List and
    * Grid view switch: the label still names it, and shows in a tooltip on hover and keyboard focus.
    * @default true
    */
@@ -45,8 +44,12 @@ export interface SegmentedControlItem {
    * format; it is read as part of the item's name, such as Open 12.
    */
   count?: number;
-  /** A decorative icon before the label, at the control icon size of 1 rem. */
-  icon?: ReactNode;
+  /**
+   * Content before the label, such as IconViewList: an envUI icon takes the control icon size of
+   * 1 rem and other content keeps its own. It is hidden from assistive technology, since the label
+   * names the item.
+   */
+  start?: ReactNode;
   /**
    * Content after the label and the count, such as a Badge, which keeps its size; it is read as
    * part of the item's name.
@@ -180,14 +183,15 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       render={<button {...itemProps} type="button" />}
       className={classNames('env-segmented-control-item', itemClassName)}
     >
-      {item.icon != null && (
+      {item.start != null && (
         <Slot
-          className="env-segmented-control-item-icon"
+          className="env-segmented-control-item-start"
           element="span"
           layout="row"
           shrink="never"
+          aria-hidden
         >
-          <DecorativeIcon>{item.icon}</DecorativeIcon>
+          {item.start}
         </Slot>
       )}
       {labelShown ? (

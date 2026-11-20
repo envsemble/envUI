@@ -27,7 +27,7 @@ export default function ButtonGroupFixture({ theme }: { theme: ColorScheme }) {
             <Button href="#group-destination" variant="secondary" start={<IconSettings />}>
               Manage
             </Button>
-            <Button variant="primary" tone="danger" endIcon={<IconCheck />}>
+            <Button variant="primary" tone="danger" end={<IconCheck />}>
               Delete
             </Button>
           </ButtonGroup>

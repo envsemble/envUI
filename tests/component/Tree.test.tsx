@@ -270,7 +270,7 @@ test('a row keeps its label whole before its end: an end that does not fit besid
   const longEnd = long.querySelector('.env-tree-end')!;
   expect(visible(longEnd, long)).toBe(false);
   expect(visible(longLabel, long)).toBe(true);
-  const icon = long.querySelector('.env-tree-icon')!.getBoundingClientRect();
+  const icon = long.querySelector('.env-tree-start')!.getBoundingClientRect();
   const content =
     long.getBoundingClientRect().right - Number.parseFloat(css(long, 'padding-right'));
   expect(longLabel.getBoundingClientRect().right).toBeCloseTo(content, 0);

@@ -12,8 +12,8 @@ export default function SegmentedControlAnatomy() {
       value={value}
       onValueChange={setValue}
       items={[
-        { value: 'list', label: 'List', icon: <IconViewList />, count: 12 },
-        { value: 'board', label: 'Board', icon: <IconViewModule />, count: 4 },
+        { value: 'list', label: 'List', start: <IconViewList />, count: 12 },
+        { value: 'board', label: 'Board', start: <IconViewModule />, count: 4 },
       ]}
     />
   );

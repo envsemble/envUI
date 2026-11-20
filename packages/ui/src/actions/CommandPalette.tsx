@@ -272,7 +272,7 @@ export function CommandPalette({
                     controlBox
                     variant="ghost"
                     size="lg"
-                    startIcon={<IconSearch />}
+                    start={<IconSearch />}
                     endAction={loading ? <Spinner size="sm" /> : undefined}
                     className="env-command-palette-search"
                   >

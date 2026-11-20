@@ -78,9 +78,9 @@ function Crumbs() {
 }
 
 const documents: DocumentTabsItem[] = [
-  { value: 'roadmap.md', label: 'Roadmap.md', icon: <IconDescription /> },
-  { value: 'budget.md', label: 'Budget.md', icon: <IconDescription /> },
-  { value: 'notes.md', label: 'Notes.md (preview)', icon: <IconDescription />, preview: true },
+  { value: 'roadmap.md', label: 'Roadmap.md', start: <IconDescription /> },
+  { value: 'budget.md', label: 'Budget.md', start: <IconDescription /> },
+  { value: 'notes.md', label: 'Notes.md (preview)', start: <IconDescription />, preview: true },
 ];
 
 function Documents({ value = 'roadmap.md' }: { value?: string }) {
@@ -417,7 +417,7 @@ const treeRows: TreeItem[] = [
     value: 'design',
     depth: 0,
     label: 'Design',
-    icon: <IconFolderOpen />,
+    start: <IconFolderOpen />,
     expandable: true,
     expanded: true,
     end: <Badge count={2} aria-label="2 unread" />,
@@ -426,22 +426,22 @@ const treeRows: TreeItem[] = [
     value: 'design/brand.md',
     depth: 1,
     label: 'Brand.md',
-    icon: <IconDescription />,
+    start: <IconDescription />,
     description: 'Draft',
   },
-  { value: 'design/logo.md', depth: 1, label: 'Logo.md', icon: <IconDescription /> },
+  { value: 'design/logo.md', depth: 1, label: 'Logo.md', start: <IconDescription /> },
   {
     value: 'design/old.md',
     depth: 1,
     label: 'Old.md (disabled)',
-    icon: <IconDescription />,
+    start: <IconDescription />,
     disabled: true,
   },
   {
     value: 'research',
     depth: 0,
     label: 'Research',
-    icon: <IconFolder />,
+    start: <IconFolder />,
     expandable: true,
     expanded: false,
   },

@@ -47,7 +47,7 @@ export default function ContextMenuActions() {
           label: entry.name,
           expandable: entry.folder,
           expanded: open,
-          icon: entry.folder ? <IconFolder /> : <IconDescription />,
+          start: entry.folder ? <IconFolder /> : <IconDescription />,
         });
         if (entry.folder && open) visit(entry.id, depth + 1);
       }

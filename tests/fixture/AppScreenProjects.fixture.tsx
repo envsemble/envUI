@@ -275,8 +275,8 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
       value={view}
       onValueChange={setView}
       items={[
-        { value: 'table', label: 'Table', icon: <IconTableRows /> },
-        { value: 'board', label: 'Board', icon: <IconGridView /> },
+        { value: 'table', label: 'Table', start: <IconTableRows /> },
+        { value: 'board', label: 'Board', start: <IconGridView /> },
       ]}
     />
   );
@@ -337,7 +337,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
           <Button
             variant="secondary"
             size="sm"
-            endIcon={<IconClose />}
+            end={<IconClose />}
             aria-label="Remove filter Environment: Production, Staging"
           >
             Environment: Production, Staging

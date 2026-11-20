@@ -26,7 +26,6 @@ export function ButtonBase({
   iconOnly = false,
   icon,
   start,
-  endIcon,
   end,
   pending = false,
   fallbackVariant,
@@ -48,11 +47,6 @@ export function ButtonBase({
       {children != null && (
         <Slot className="env-button-label" element="span">
           {children}
-        </Slot>
-      )}
-      {endIcon != null && (
-        <Slot className="env-button-end-icon" element="span" layout="row" shrink="never">
-          <DecorativeIcon>{endIcon}</DecorativeIcon>
         </Slot>
       )}
       {end != null && (

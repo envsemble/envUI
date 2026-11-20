@@ -12,7 +12,7 @@ export default function Destinations() {
       align="start"
       defaultOpen
       trigger={
-        <Button variant="secondary" endIcon={<IconExpandMore />}>
+        <Button variant="secondary" end={<IconExpandMore />}>
           Help
         </Button>
       }

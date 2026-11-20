@@ -83,7 +83,7 @@ function Buttons() {
           <Button start={<IconAdd />}>New project</Button>
         </Cell>
         <Cell caption="End icon">
-          <Button variant="secondary" endIcon={<IconDownload />}>
+          <Button variant="secondary" end={<IconDownload />}>
             Export
           </Button>
         </Cell>

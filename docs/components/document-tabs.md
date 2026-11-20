@@ -50,7 +50,7 @@ examples:
 1. **Tabs** (`env-document-tabs-list`)
 2. **Item** (`env-document-tabs-item`)
 3. **Tab** (`env-document-tabs-tab`)
-4. **Icon** (`env-document-tabs-tab > env-icon`, `icon`)
+4. **Start** (`env-document-tabs-tab-start`, `start`)
 5. **Label** (`env-document-tabs-tab-label`, `label`)
 6. **Close button** (`env-document-tabs-close`)
 7. **End** (`env-document-tabs-end`, `end`)

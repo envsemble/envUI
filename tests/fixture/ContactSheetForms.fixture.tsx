@@ -110,7 +110,7 @@ function TextFields() {
             label="Password"
             type="password"
             defaultValue="hunter2hunter2"
-            startIcon={<IconMail />}
+            start={<IconMail />}
             endAction={
               <IconButton variant="ghost" size="sm" icon={<IconVisibility />} aria-label="Show" />
             }
@@ -447,9 +447,9 @@ function Choices() {
 
 function Segments() {
   const items = [
-    { value: 'list', label: 'List', icon: <IconViewList />, count: 12 },
-    { value: 'board', label: 'Board', icon: <IconViewModule />, count: 4 },
-    { value: 'calendar', label: 'Calendar', icon: <IconCalendarMonth />, disabled: true },
+    { value: 'list', label: 'List', start: <IconViewList />, count: 12 },
+    { value: 'board', label: 'Board', start: <IconViewModule />, count: 4 },
+    { value: 'calendar', label: 'Calendar', start: <IconCalendarMonth />, disabled: true },
   ];
   const plain = [
     { value: 'day', label: 'Day' },

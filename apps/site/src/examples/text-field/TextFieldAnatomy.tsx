@@ -7,7 +7,7 @@ export default function TextFieldAnatomy() {
     <TextField
       label="Address"
       name="slug"
-      startIcon={<IconLink />}
+      start={<IconLink />}
       prefix="example.com/"
       defaultValue="northwind"
       endAction={<IconButton icon={<IconContentCopy />} aria-label="Copy address" />}
