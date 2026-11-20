@@ -11,9 +11,10 @@ import { Column, Row, type SpaceStep } from './Layout.js';
 import { Surface } from './Surface.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
-import { given, type SkeletonProps } from '../internal/skeleton.js';
+import { given, type SkeletonProps } from '../internal/skeleton/skeleton.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
+import { rendersContent } from '../internal/react/rendersContent.js';
 import '../styles/Base.css';
 import '../styles/Card.css';
 
@@ -195,7 +196,7 @@ function ContentCardLayout({
   const hasTitle = title != null || slots.title;
   const hasMeta = meta != null || slots.meta;
   const hasEnd = headerEnd != null;
-  const hasActions = actions != null && actions !== false;
+  const hasActions = rendersContent(actions);
   const level = headingLevel ?? 3;
   const Heading = `h${level}` as const;
   const headingText = hasTitle && (

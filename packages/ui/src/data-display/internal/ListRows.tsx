@@ -9,7 +9,7 @@ import {
 import { classNames } from '../../internal/classNames.js';
 import { Column, Grid, Row } from '../../layout/Layout.js';
 import { Slot } from '../../internal/layout/Slot.js';
-import { SkeletonStatus } from '../../foundations/SkeletonScope.js';
+import { SkeletonStatus } from '../../internal/skeleton/SkeletonScope.js';
 import { Text } from '../../foundations/Text.js';
 import {
   inSkeleton,
@@ -17,12 +17,14 @@ import {
   given,
   skeletonAttributes,
   skeletonListAttributes,
-} from '../../internal/skeleton.js';
+} from '../../internal/skeleton/skeleton.js';
 import { ListReorderHandle, ReorderableList } from './ReorderableList.js';
 import { flag } from '../../internal/flag.js';
 import { rowAttributes } from '../../internal/layout/primitiveAttributes.js';
 import { RowControlProvider } from '../../internal/field/RowControl.js';
 import type { ItemProps, RootProps } from '../List.js';
+import { idRefs } from '../../internal/dom/idRefs.js';
+import { givenLabelText } from '../../internal/text/labelText.js';
 
 export interface ListIds {
   title?: string;
@@ -61,8 +63,7 @@ export function renderList(
           ...ownProps,
           'aria-labelledby':
             ownProps['aria-labelledby'] ?? (ownProps['aria-label'] == null ? titleId : undefined),
-          'aria-describedby':
-            [descriptionId, ownProps['aria-describedby']].filter(Boolean).join(' ') || undefined,
+          'aria-describedby': idRefs(descriptionId, ownProps['aria-describedby']),
         };
   const list = onReorder ? (
     <ReorderableList
@@ -203,9 +204,7 @@ export function renderItem(props: ItemProps, ids?: ListIds) {
   const shownDescription = mark(description);
   const shownChildren = mark(children);
   const hasStart = start != null || reorderable;
-  const text =
-    textValue ??
-    (typeof label === 'string' || typeof label === 'number' ? String(label) : undefined);
+  const text = givenLabelText(label, textValue);
   return (
     <li
       {...rowLayoutOnTheLiSavingARenderPerRow}

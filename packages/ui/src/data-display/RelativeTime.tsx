@@ -15,12 +15,11 @@ import { useEnvUI } from '../internal/provider/EnvUIContext.js';
 import { useHydrated } from '../internal/react/useHydrated.js';
 import { subscribeToClock } from './internal/relativeTimeClock.js';
 import {
-  dateTimeFormatter,
   formatRelativeTime,
-  toTime,
   type RelativeTimeOptions,
   type RelativeTimeValue,
 } from './formatRelativeTime.js';
+import { dateTimeFormatter, toTime } from './internal/relativeTimeFormat.js';
 import '../styles/Base.css';
 import '../styles/RelativeTime.css';
 

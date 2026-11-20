@@ -18,13 +18,15 @@ import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { TextareaControl } from '../internal/field/TextareaControl.js';
 import { flag } from '../internal/flag.js';
+import { idRefs } from '../internal/dom/idRefs.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Composer.css';
 
@@ -130,19 +132,18 @@ function useContentHeightWithoutFieldSizing(
   }, [inputRef, text]);
   useEffect(() => {
     const input = inputRef.current;
-    if (!input || typeof ResizeObserver === 'undefined' || supportsFieldSizing(input)) return;
+    if (!input || supportsFieldSizing(input)) return;
     let width = input.clientWidth;
-    const refitWhenWidthRewrapsText = new ResizeObserver(() => {
+    const stopRefittingWhenWidthRewrapsText = observeResize(input, () => {
       if (input.clientWidth === width) return;
       width = input.clientWidth;
       fit.current();
     });
-    refitWhenWidthRewrapsText.observe(input);
     const fonts = input.ownerDocument.fonts;
     const refitWhenWebFontRewrapsText = () => fit.current();
     fonts?.addEventListener('loadingdone', refitWhenWebFontRewrapsText);
     return () => {
-      refitWhenWidthRewrapsText.disconnect();
+      stopRefittingWhenWidthRewrapsText();
       fonts?.removeEventListener('loadingdone', refitWhenWebFontRewrapsText);
     };
   }, [inputRef]);
@@ -268,21 +269,14 @@ export function Composer({
         <TextareaControl
           bare
           {...props}
-          ref={(node) => {
-            inputRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(inputRef, ref)}
           id={id}
           form={form}
           rows={rows}
           value={text}
           disabled={disabled}
           enterKeyHint={enterKeyHint ?? touchKeyboardEnterLabel}
-          aria-describedby={
-            [describedBy, description != null ? descriptionId : undefined]
-              .filter(Boolean)
-              .join(' ') || undefined
-          }
+          aria-describedby={idRefs(describedBy, description != null ? descriptionId : undefined)}
           className="env-composer-input"
           onChange={(event) => {
             onChange?.(event);

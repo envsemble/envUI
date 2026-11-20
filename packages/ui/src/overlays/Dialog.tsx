@@ -28,7 +28,7 @@ import {
   usePortalContainer,
 } from '../internal/popup/PortalContainerContext.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
-import type { SkeletonProps } from '../internal/skeleton.js';
+import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Dialog.css';

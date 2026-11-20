@@ -13,7 +13,7 @@ import {
   monthOfDay,
   now,
   toUtcDate,
-} from '../../internal/time/calendarDays.js';
+} from './calendarDays.js';
 import { useActiveCell } from './useActiveCell.js';
 import { keepFocusWhereItWas } from './pickerFocus.js';
 import '../../styles/Base.css';

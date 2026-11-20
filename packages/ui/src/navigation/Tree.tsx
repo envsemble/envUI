@@ -13,23 +13,20 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { ContextMenu } from '../actions/ContextMenu.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
-import {
-  rowElementId,
-  siblingPositions,
-  treeKeyAction,
-  type TypedText,
-} from './internal/treeModel.js';
-import { labelText } from './internal/labelText.js';
+import { rowElementId, siblingPositions, treeKeyAction } from './internal/treeModel.js';
 import { placeRows, TreeRow } from './internal/TreeRow.js';
 import { useTreeTransitions } from './internal/useTreeTransitions.js';
 import { useTreeViewport } from './internal/useTreeViewport.js';
 import { flag } from '../internal/flag.js';
+import { chainHandlers } from '../internal/react/chainHandlers.js';
+import type { TypedText } from '../internal/typeahead.js';
+import { labelText } from '../internal/text/labelText.js';
 import '../styles/Base.css';
 import '../styles/Tree.css';
 
@@ -177,7 +174,7 @@ export function Tree<Item extends TreeItem>({
   const [activeId, setActiveId] = useState<string | null>(selectedId);
   const [focusVisible, setFocusVisible] = useState(false);
   const pointerFocus = useRef(false);
-  const typeahead = useRef<TypedText>({ text: '', time: 0 });
+  const typeahead = useRef<TypedText>({ text: '', at: 0 });
 
   const indexById = useMemo(() => {
     const map = new Map<string, number>();
@@ -295,10 +292,7 @@ export function Tree<Item extends TreeItem>({
   const tree = (
     <div
       {...props}
-      ref={(node: HTMLDivElement | null) => {
-        container.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(container, ref)}
       role="tree"
       aria-label={label}
       aria-activedescendant={activeItem ? rowElementId(treeId, activeItem.value) : undefined}
@@ -306,10 +300,7 @@ export function Tree<Item extends TreeItem>({
       className={classNames('env-tree', className)}
       data-density={density}
       data-focus-visible={flag(focusVisible)}
-      onKeyDown={(event) => {
-        ownKeyDown?.(event);
-        if (!event.defaultPrevented) onKeyDown(event);
-      }}
+      onKeyDown={chainHandlers(ownKeyDown, onKeyDown)}
       onScroll={(event) => {
         ownScroll?.(event);
         onScroll(event.currentTarget.scrollTop);
@@ -324,14 +315,8 @@ export function Tree<Item extends TreeItem>({
         if (event.target === event.currentTarget) setFocusVisible(!pointerFocus.current);
         pointerFocus.current = false;
       }}
-      onClick={(event) => {
-        ownClick?.(event);
-        if (!event.defaultPrevented) onRowClick(event);
-      }}
-      onDoubleClick={(event) => {
-        ownDoubleClick?.(event);
-        if (!event.defaultPrevented) onRowDoubleClick(event);
-      }}
+      onClick={chainHandlers(ownClick, onRowClick)}
+      onDoubleClick={chainHandlers(ownDoubleClick, onRowDoubleClick)}
       onContextMenu={(event) => {
         ownContextMenu?.(event);
         const item = rowFromEvent(event);

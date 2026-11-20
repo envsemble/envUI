@@ -6,7 +6,12 @@ import { IconAdd } from '../icons/Add.js';
 import { IconRemove } from '../icons/Remove.js';
 import { classNames } from '../internal/classNames.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  given,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';

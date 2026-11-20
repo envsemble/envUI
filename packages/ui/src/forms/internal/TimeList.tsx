@@ -13,7 +13,7 @@ import {
   roundToStep,
   toUtcDate,
   withHourCycle,
-} from '../../internal/time/calendarDays.js';
+} from './calendarDays.js';
 import { TimeWheel } from './TimeWheel.js';
 import type { TimeWheelEntry, TimeWheelPart } from './timeWheelRows.js';
 import '../../styles/Base.css';

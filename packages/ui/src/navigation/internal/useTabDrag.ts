@@ -3,7 +3,7 @@
 import { useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react';
 import { isRightToLeft } from '../../internal/dom/direction.js';
 import { dragThreshold } from '../../internal/dom/lengths.js';
-import { useLatest } from '../../internal/useLatest.js';
+import { useLatest } from '../../internal/react/useLatest.js';
 import { moveValue, tabElement } from './tabStrip.js';
 
 const edgeScrollZonePx = 24;

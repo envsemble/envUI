@@ -11,6 +11,7 @@ import { SymbolIconFill } from '../../internal/icon/SymbolIconFill.js';
 import { navigation, type NavigationMessages } from '../../foundations/messages/navigation.js';
 import { flag } from '../../internal/flag.js';
 import type { NavigationDrawerDestination } from '../destinations.js';
+import { givenLabelText } from '../../internal/text/labelText.js';
 
 /**
  * The part classes of a form's destinations, which each form writes out as literals: an indicator
@@ -49,7 +50,7 @@ export function destinationSections<Item extends { group?: string }>(
 
 /** A destination's name as text: its textValue, else its label, which is then a string. */
 export const destinationText = (destination: NavigationDrawerDestination) =>
-  destination.textValue ?? (typeof destination.label === 'string' ? destination.label : '');
+  givenLabelText(destination.label, destination.textValue) ?? '';
 
 /** A destination's key: its id, else its address, else its name, which the list keeps unique. */
 export const destinationKey = (destination: NavigationDrawerDestination) =>

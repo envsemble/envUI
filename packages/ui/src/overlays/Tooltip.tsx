@@ -6,7 +6,6 @@ import {
   Fragment,
   cloneElement,
   isValidElement,
-  useCallback,
   useContext,
   useId,
   useLayoutEffect,
@@ -20,7 +19,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/trigger/hoverDetail.js';
-import { setRef } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import {
   HoverCardTriggerContext,
@@ -42,6 +41,7 @@ import {
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { ownName, useStandIn, useTriggerName } from './internal/tooltipTriggerName.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/Tooltip.css';
 
@@ -155,13 +155,7 @@ type Forwarded = Omit<
 function useControlWithForwardedProps(children: ReactElement<TriggerProps>, forwarded: Forwarded) {
   const forwardedRef = forwarded.ref;
   const childRef = children.props.ref;
-  const controlRef = useCallback(
-    (node: HTMLElement | null) => {
-      setRef(forwardedRef, node);
-      setRef(childRef, node);
-    },
-    [forwardedRef, childRef],
-  );
+  const controlRef = useMergedRefs(forwardedRef, childRef);
   return Object.keys(forwarded).length > 0
     ? cloneElement(children, {
         ...mergeProps(forwarded, children.props),
@@ -344,7 +338,7 @@ function TooltipTrigger({
     useContext(TooltipDescribesContext) && ownWords !== undefined && !repeatsOwnName;
   const describedBy =
     open && describes && (!isDisabled || standsIn)
-      ? [trigger['aria-describedby'], popupId].filter(Boolean).join(' ')
+      ? idRefs(trigger['aria-describedby'], popupId)
       : trigger['aria-describedby'];
   const freshRootPerTriggerElement = isDisabled ? 'disabled' : 'enabled';
   return (

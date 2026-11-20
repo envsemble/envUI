@@ -1,6 +1,7 @@
 'use client';
 
 import { useId, type AriaAttributes, type ReactNode } from 'react';
+import { idRefs } from '../dom/idRefs.js';
 import { useRowControlNaming } from './RowControl.js';
 
 export function fieldPartIds(id: string) {
@@ -20,14 +21,10 @@ export function fieldDescribedBy(
   error: ReactNode,
 ) {
   const ids = fieldPartIds(id);
-  return (
-    [
-      describedBy,
-      description != null ? ids.description : undefined,
-      error != null ? ids.error : undefined,
-    ]
-      .filter(Boolean)
-      .join(' ') || undefined
+  return idRefs(
+    describedBy,
+    description != null ? ids.description : undefined,
+    error != null ? ids.error : undefined,
   );
 }
 

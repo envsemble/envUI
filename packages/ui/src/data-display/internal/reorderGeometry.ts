@@ -42,15 +42,6 @@ export function measureRows(list: HTMLElement, rows: readonly HTMLElement[]) {
   };
 }
 
-export function verticalScrollerOf(element: HTMLElement): Element {
-  for (let node = element.parentElement; node; node = node.parentElement) {
-    const { overflowY } = getComputedStyle(node);
-    if (/(auto|scroll|overlay)/.test(overflowY) && node.scrollHeight > node.clientHeight)
-      return node;
-  }
-  return document.scrollingElement ?? document.documentElement;
-}
-
 function pointerOffsetIncludingScroll(pointer: NonNullable<Move['pointer']>) {
   return pointer.lastY - pointer.startY + scrolledBy(pointer.row, 'y') - pointer.startScrolled;
 }

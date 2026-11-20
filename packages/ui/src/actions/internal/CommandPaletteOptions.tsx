@@ -3,8 +3,9 @@
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import type { MouseEvent, ReactNode, Ref } from 'react';
 import { Grid } from '../../layout/Layout.js';
-import { ListRow, shownLabelText } from '../../internal/list/ListRow.js';
+import { ListRow, listRowLabel } from '../../internal/list/ListRow.js';
 import { isGroup } from '../../internal/list/listEntries.js';
+import { givenLabelText, labelText } from '../../internal/text/labelText.js';
 import type { CommandPaletteGroup, CommandPaletteItem } from '../CommandPalette.js';
 import '../../styles/Base.css';
 import '../../styles/CommandPalette.css';
@@ -33,12 +34,12 @@ export function sectionsOf(
 }
 
 export function textOf(item: CommandPaletteItem, list: HTMLElement | null) {
-  if (item.textValue !== undefined) return item.textValue;
-  if (typeof item.label === 'string' || typeof item.label === 'number') return String(item.label);
+  const given = givenLabelText(item.label, item.textValue);
+  if (given !== undefined) return given;
   const option = Array.from(list?.querySelectorAll('[data-item-id]') ?? []).find(
     (element) => element.getAttribute('data-item-id') === item.id,
   );
-  return (option && shownLabelText(option)) ?? '';
+  return labelText(item.label, item.textValue, option && listRowLabel(option));
 }
 
 export function CommandPaletteOptions({

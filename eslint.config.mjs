@@ -148,6 +148,12 @@ const inlineFlags = [
   message: 'Set a state attribute that is on or off with flag() (src/internal/flag.ts).',
 }));
 
+const inlinePixels = {
+  selector:
+    "LogicalExpression[operator='||'][right.value=0] > CallExpression.left:matches([callee.name='parseFloat'], [callee.property.name='parseFloat'])",
+  message: 'Read a computed length with pixelsOf() (src/internal/dom/lengths.ts).',
+};
+
 const buildOutput = ['**/dist/**', '**/node_modules/**', '.cache/**'];
 const wranglerDevState = ['.wrangler/**'];
 const testReports = ['test-results/**', 'playwright-report/**'];
@@ -241,7 +247,7 @@ export default defineConfig(
   },
   {
     files: ['packages/ui/src/**/*.{ts,tsx}'],
-    rules: { 'no-restricted-syntax': ['error', ...inlineFlags] },
+    rules: { 'no-restricted-syntax': ['error', ...inlineFlags, inlinePixels] },
   },
   ...families.map((family) => ({
     files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],

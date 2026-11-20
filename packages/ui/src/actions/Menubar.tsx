@@ -21,7 +21,8 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
 import { MenuPopup, menuParts } from './menu/internal/MenuPopup.js';
 import {
   containedOpenChange,
@@ -137,13 +138,7 @@ function Root({
     };
   }, []);
 
-  const setRoot = useCallback(
-    (node: HTMLDivElement | null) => {
-      root.current = node;
-      setRef(ref, node);
-    },
-    [ref],
-  );
+  const setRoot = useMergedRefs(root, ref);
   const context = useMemo(
     () => ({ accessKeys, previousFocus, registerClose }),
     [accessKeys, previousFocus, registerClose],
@@ -349,10 +344,7 @@ function Menu({
     >
       <BaseMenu.Trigger
         {...triggerProps}
-        ref={(node: HTMLButtonElement | null) => {
-          trigger.current = node;
-          setRef(triggerProps?.ref, node);
-        }}
+        ref={mergeRefs(trigger, triggerProps?.ref)}
         className={classNames('env-menubar-trigger', triggerProps?.className)}
         data-access-key={key}
         aria-keyshortcuts={menubar.accessKeys && key ? `Alt+${key.toUpperCase()}` : undefined}
@@ -368,10 +360,7 @@ function Menu({
         trigger={trigger}
         finalFocus={focusAfterClosing}
         className={className}
-        popupRef={(node: HTMLDivElement | null) => {
-          popup.current = node;
-          setRef(ref, node);
-        }}
+        popupRef={mergeRefs(popup, ref)}
         popupProps={{ style }}
       >
         {children}

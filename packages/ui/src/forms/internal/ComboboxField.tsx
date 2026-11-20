@@ -2,7 +2,7 @@
 
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useRef, type ComponentPropsWithoutRef, type Ref, type RefObject } from 'react';
-import { setRef } from '../../internal/react/setRef.js';
+import { mergeRefs } from '../../internal/react/setRef.js';
 import { IconButton } from '../../actions/Button.js';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
 import { IconClose } from '../../icons/Close.js';
@@ -31,10 +31,7 @@ export function ComboboxInput({
   return (
     <BaseCombobox.Input
       {...inputProps}
-      ref={(node: HTMLInputElement | null) => {
-        inputRef.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(inputRef, ref)}
       onPointerDown={(event) => {
         inputProps.onPointerDown?.(event);
         pressIsFocusingInput.current =

@@ -3,7 +3,6 @@
 import {
   createContext,
   memo,
-  useCallback,
   useContext,
   useId,
   useLayoutEffect,
@@ -17,13 +16,18 @@ import { classNames } from '../internal/classNames.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { remLength } from '../internal/dom/lengths.js';
-import { setRef } from '../internal/react/setRef.js';
-import { useStackedReport } from '../internal/react/useStackedReport.js';
+import { mergeRefs } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
+import { useStackedReport } from './internal/useStackedReport.js';
 import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconUnfoldMore } from '../icons/UnfoldMore.js';
 import { useEndColumnIndex, useTableColumns, type TableColumns } from './internal/tableColumns.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { optionModule, useOptionModule } from '../internal/react/useOptionModule.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
@@ -32,6 +36,7 @@ import { table as tableMessages } from '../foundations/messages/table.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { flag } from '../internal/flag.js';
 import { Slot } from '../internal/layout/Slot.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Table.css';
 
@@ -152,11 +157,7 @@ function useStackingAsTheContainerQueryLaidItOut(
       setStacked(getComputedStyle(grid).getPropertyValue('--_table-stacked').trim() === '1');
     };
     read();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(read);
-    observer.observe(element);
-    observer.observe(grid);
-    return () => observer.disconnect();
+    return observeResize([element, grid], read);
   }, [region, table, enabled, stackBelow]);
   return enabled && stacked;
 }
@@ -213,13 +214,7 @@ function Root({
     ...ownRegionProps
   } = regionProps ?? {};
   const stackBelowStyle = stack ? { '--_table-stack-below': remLength(stackBelow) } : undefined;
-  const setRegion = useCallback(
-    (node: HTMLDivElement | null) => {
-      region.current = node;
-      setRef(ownRegionRef, node);
-    },
-    [ownRegionRef],
-  );
+  const setRegion = useMergedRefs(region, ownRegionRef);
 
   return (
     <div
@@ -243,10 +238,7 @@ function Root({
           role={stack ? 'table' : undefined}
           aria-labelledby={stack && caption != null ? captionId : undefined}
           {...props}
-          ref={(node) => {
-            table.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(table, ref)}
           aria-label={caption == null ? label : undefined}
           className={classNames('env-table', className)}
           data-density={density}
@@ -450,13 +442,7 @@ function HeaderCell({
   const section = useContext(TableSectionContext);
   const id = useId();
   const cell = useRef<HTMLTableCellElement>(null);
-  const setCell = useCallback(
-    (node: HTMLTableCellElement | null) => {
-      cell.current = node;
-      setRef(ref, node);
-    },
-    [ref],
-  );
+  const setCell = useMergedRefs(cell, ref);
   const column = useEndColumnIndex(cell, section === 'head' && columns?.resizable === true);
   const resize = useOptionModule(
     columnResizeLoadedOnlyByResizableTables,

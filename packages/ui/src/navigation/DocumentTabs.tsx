@@ -29,7 +29,9 @@ import { useTabCloseFocus } from './internal/useTabCloseFocus.js';
 import { useTabDrag } from './internal/useTabDrag.js';
 import { useTabStripScrolling } from './internal/useTabStripScrolling.js';
 import { flag } from '../internal/flag.js';
-import { useLabelText } from './internal/labelText.js';
+import { useLabelText } from './internal/useLabelText.js';
+import { rendersContent } from '../internal/react/rendersContent.js';
+import { chainHandlers } from '../internal/react/chainHandlers.js';
 import '../styles/Base.css';
 import '../styles/DocumentTabs.css';
 
@@ -177,7 +179,7 @@ export function DocumentTabs({
 }: DocumentTabsProps) {
   const ownPanelId = useId();
   const tabIdPrefix = useId();
-  const hasPanel = children != null && children !== false;
+  const hasPanel = rendersContent(children);
   const controlledPanel = panelId ?? (hasPanel ? ownPanelId : undefined);
   const activeIndex = items.findIndex((item) => item.value === value);
   const tabId = (index: number) => `${tabIdPrefix}-tab-${index}`;
@@ -276,7 +278,7 @@ export function DocumentTabs({
               const item = id === undefined ? undefined : items.find((one) => one.value === id);
               const onTab = tab != null && id !== undefined;
               const own = contextMenu?.(item ?? null);
-              const ownItems = own != null && own !== false ? own : undefined;
+              const ownItems = rendersContent(own) ? own : undefined;
               const offersMenu = onTab || onCloseAll !== undefined;
               if (!offersMenu) return ownItems ?? null;
               return (
@@ -403,10 +405,7 @@ function DocumentTab({
       data-active={flag(active)}
       data-moving={moving ? 'pointer' : undefined}
       data-drop={drop}
-      onPointerDown={(event) => {
-        ownPointerDown?.(event);
-        if (!event.defaultPrevented) onPointerDown(event);
-      }}
+      onPointerDown={chainHandlers(ownPointerDown, onPointerDown)}
       onMouseDown={(event) => {
         ownMouseDown?.(event);
         preventMiddlePressAutoscroll(event);

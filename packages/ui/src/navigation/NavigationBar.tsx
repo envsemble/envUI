@@ -4,7 +4,11 @@ import type { ComponentPropsWithRef } from 'react';
 import { Column, Row } from '../layout/Layout.js';
 import { Badge } from '../data-display/Badge.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
@@ -22,7 +26,7 @@ import {
   type DestinationClasses,
 } from './internal/DestinationItem.js';
 import type { Destination } from './destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import type { NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationBar.css';
@@ -132,7 +136,7 @@ export function NavigationBar({
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-bar', className)}
-      data-background={backgroundAttribute(background)}
+      data-background={background}
       data-label-hidden={flag(!visibleLabel)}
     >
       {inSkeleton(

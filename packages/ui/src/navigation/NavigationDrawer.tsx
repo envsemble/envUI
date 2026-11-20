@@ -5,25 +5,27 @@ import {
   useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ComponentPropsWithRef,
   type ReactElement,
   type ReactNode,
-  type RefObject,
 } from 'react';
 import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
-import { useLatest } from '../internal/useLatest.js';
+import { useLatest } from '../internal/react/useLatest.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { ResizeHandle } from '../layout/ResizeHandle.js';
 import { containerWidth, useResizableWidth } from '../internal/resize/useResizableWidth.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import {
   destinationKey,
   DestinationItem,
@@ -33,10 +35,12 @@ import {
   type DestinationClasses,
 } from './internal/DestinationItem.js';
 import type { NavigationDrawerDestination } from './destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import type { NavigationBackground } from './navigationBackground.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
+import { rendersContent } from '../internal/react/rendersContent.js';
+import { useCutShort } from '../internal/popup/useCutShort.js';
 import '../styles/Base.css';
 import '../styles/NavigationDrawer.css';
 
@@ -145,23 +149,6 @@ export interface NavigationDrawerProps
   resizeLabel?: string;
 }
 
-function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
-  const [cut, setCut] = useState(false);
-  useLayoutEffect(() => {
-    const element = ref.current;
-    if (!oneLine || !element) {
-      setCut(false);
-      return;
-    }
-    const measure = () => setCut(element.scrollWidth > element.clientWidth);
-    if (typeof ResizeObserver === 'undefined') return measure();
-    const firstMeasuresOnceLaidOutNotAtMount = new ResizeObserver(measure);
-    firstMeasuresOnceLaidOutNotAtMount.observe(element);
-    return () => firstMeasuresOnceLaidOutNotAtMount.disconnect();
-  }, [ref, oneLine]);
-  return cut;
-}
-
 interface DrawerState {
   oneLine: boolean;
   groupEnd: ((group: string) => ReactNode) | undefined;
@@ -181,7 +168,7 @@ function DrawerControl({
   as?: (item: ReactElement) => ReactElement;
 }) {
   const label = useRef<HTMLSpanElement>(null);
-  const cut = useCut(label, oneLine);
+  const cut = useCutShort(label, oneLine);
   const destinationItem = (
     <DestinationItem
       classes={drawerClasses}
@@ -324,7 +311,7 @@ function Section({
 }) {
   const headingId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
-  const cut = useCut(heading, state.oneLine);
+  const cut = useCutShort(heading, state.oneLine);
   const Heading = `h${level}` as const;
   const end = state.groupEnd?.(group);
   const headingElement = (
@@ -339,7 +326,7 @@ function Section({
   );
   return (
     <Column render={<li />} className="env-navigation-drawer-section" align="stretch" gap={1}>
-      {end != null && end !== false ? (
+      {rendersContent(end) ? (
         <div className="env-navigation-drawer-group-row">
           {headingElement}
           <Slot className="env-navigation-drawer-group-end" layout="row" shrink="never">
@@ -514,7 +501,7 @@ export function NavigationDrawer({
             }
           : style
       }
-      data-background={backgroundAttribute(background)}
+      data-background={background}
       data-resizable={flag(resizable)}
       align="stretch"
       gap={3}

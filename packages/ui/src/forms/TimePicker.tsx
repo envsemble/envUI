@@ -11,7 +11,7 @@ import {
 } from './internal/usePicker.js';
 import { TimeList, timeListInitialFocus } from './internal/TimeList.js';
 import { usePickerFormatter } from './internal/usePickerFormatter.js';
-import { formatTime, inBounds, now, parseTime, toUtcDate } from '../internal/time/calendarDays.js';
+import { formatTime, inBounds, now, parseTime, toUtcDate } from './internal/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 import '../styles/TimePicker.css';

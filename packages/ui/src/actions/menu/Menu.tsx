@@ -9,7 +9,7 @@ import {
   containedOpenChange,
   usePortalContainer,
 } from '../../internal/popup/PortalContainerContext.js';
-import type { SkeletonProps } from '../../internal/skeleton.js';
+import type { SkeletonProps } from '../../internal/skeleton/skeleton.js';
 import { withDisplayName } from '../../internal/react/withDisplayName.js';
 import { markTriggerOwner } from '../../internal/trigger/triggerOwner.js';
 import { MenuPopup, menuParts } from './internal/MenuPopup.js';

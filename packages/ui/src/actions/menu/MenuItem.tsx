@@ -14,6 +14,7 @@ import { Kbd } from '../../content/Kbd.js';
 import { Slot } from '../../internal/layout/Slot.js';
 import { useLinkComponent } from '../../internal/provider/LinkComponentContext.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
+import { idRefs } from '../../internal/dom/idRefs.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
@@ -98,14 +99,12 @@ export function useMenuItemContent(
       )}
     </>
   );
-  const describedBy = [ownDescribedBy, description != null ? descriptionId : undefined]
-    .filter(Boolean)
-    .join(' ');
+  const describedBy = idRefs(ownDescribedBy, description != null ? descriptionId : undefined);
   return {
     content,
     accessibility: {
       label: typeof children === 'string' ? children : textValue,
-      'aria-describedby': describedBy || undefined,
+      'aria-describedby': describedBy,
       'aria-keyshortcuts': keyShortcuts(chords),
     },
   };

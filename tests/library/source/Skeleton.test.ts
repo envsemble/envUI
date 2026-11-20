@@ -9,8 +9,8 @@ import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
 const library = await importSource('Skeleton', [
   "export { placeholders, isPlaceholder } from './packages/ui/src/foundations/placeholders.ts';",
-  "export { skeletonAttributes, skeletonListAttributes, given } from './packages/ui/src/internal/skeleton.tsx';",
-  "export { useSkeleton } from './packages/ui/src/foundations/SkeletonScope.tsx';",
+  "export { skeletonAttributes, skeletonListAttributes, given } from './packages/ui/src/internal/skeleton/skeleton.tsx';",
+  "export { useSkeleton } from './packages/ui/src/foundations/useSkeleton.ts';",
   "export { Surface } from './packages/ui/src/layout/Surface.tsx';",
   "export { Card } from './packages/ui/src/layout/Card.tsx';",
   "export * as List from './packages/ui/src/data-display/List.tsx';",

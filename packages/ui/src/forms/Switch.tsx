@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useCheckedInput, type CheckedProps } from './internal/useCheckedInput.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { useRowControlNaming } from '../internal/field/RowControl.js';
@@ -80,10 +80,7 @@ export function Switch({
         {...naming}
         type="checkbox"
         role="switch"
-        ref={(node) => {
-          inputRef.current = node;
-          setRef(ref, node);
-        }}
+        ref={mergeRefs(inputRef, ref)}
         className="env-switch-input"
         checked={checkedState === true}
         aria-checked={checkedState === true}

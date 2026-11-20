@@ -17,7 +17,7 @@ import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { FileInput } from './internal/FileInput.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { VisuallyHidden } from '../content/VisuallyHidden.js';
 import { IconCloudUpload } from '../icons/CloudUpload.js';
@@ -25,6 +25,7 @@ import * as Field from './Field.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldDescribedBy, fieldPartIds } from '../internal/field/useFieldControl.js';
 import { flag } from '../internal/flag.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';
 
@@ -182,9 +183,7 @@ export function DropZone({
   }
 
   const ids = fieldPartIds(id);
-  const visibleTextIds = [ids.label, description != null && ids.description]
-    .filter(Boolean)
-    .join(' ');
+  const visibleTextIds = idRefs(ids.label, description != null && ids.description);
 
   const target = (
     <ActionElement
@@ -285,10 +284,7 @@ export function DropZone({
       )}
       {children != null && <Slot className="env-drop-zone-content">{children}</Slot>}
       <FileInput
-        ref={(node) => {
-          filePicker.current = node;
-          setRef(inputRef, node);
-        }}
+        ref={mergeRefs(filePicker, inputRef)}
         accept={accept}
         multiple={multiple}
         disabled={disabled}

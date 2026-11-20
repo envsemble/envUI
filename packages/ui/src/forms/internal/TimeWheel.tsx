@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, type KeyboardEvent } from 'react';
-import { matchTyped } from '../../internal/time/calendarDays.js';
-import { typeaheadTimeout } from '../../internal/typeahead.js';
+import { matchTyped } from './calendarDays.js';
+import { typeAhead } from '../../internal/typeahead.js';
 import { isRightToLeft } from '../../internal/dom/direction.js';
 import { flag } from '../../internal/flag.js';
 import { useTimeWheelGestures, type TimeWheelDrag } from './useTimeWheelGestures.js';
@@ -89,7 +89,7 @@ export function TimeWheel({
       event.preventDefault();
       const key = event.key.toLocaleLowerCase();
       const at = event.timeStamp;
-      const text = at - typed.current.at < typeaheadTimeout ? typed.current.text + key : key;
+      const text = typeAhead(typed.current, key, at);
       let index = matchTyped(text, entries);
       let kept = text;
       const keysNameNothing = index === -1 && text.length > 1;

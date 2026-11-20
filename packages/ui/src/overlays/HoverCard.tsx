@@ -15,7 +15,7 @@ import {
   containedOpenChange,
   usePortalContainer,
 } from '../internal/popup/PortalContainerContext.js';
-import type { SkeletonProps } from '../internal/skeleton.js';
+import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { Grid } from '../layout/Layout.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/trigger/hoverDetail.js';
 import {

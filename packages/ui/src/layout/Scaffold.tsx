@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useCallback,
   useEffect,
   useId,
   useState,
@@ -15,12 +14,13 @@ import { scaffold } from '../foundations/messages/scaffold.js';
 import type { WindowClass } from '../foundations/windowClasses.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import { setRef } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
 import { resolveNavigationForms } from './internal/navigationForms.js';
 import { focusRegion } from './internal/scaffoldFocus.js';
 import { useNavigationFocusHandoff } from './internal/useNavigationFocusHandoff.js';
 import { ScaffoldPagesContext, useScaffoldPages } from './internal/PageTitleFocus.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Scaffold.css';
 
@@ -159,20 +159,8 @@ export function Scaffold({
   const mainId = bodyId ?? (landmarks ? 'main' : `${id}-body`);
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   const [body, setBody] = useState<HTMLElement | null>(null);
-  const attachRoot = useCallback(
-    (node: HTMLDivElement | null) => {
-      setRoot(node);
-      setRef(ref, node);
-    },
-    [ref],
-  );
-  const attachBody = useCallback(
-    (node: HTMLElement | null) => {
-      setBody(node);
-      setRef(bodyRef, node);
-    },
-    [bodyRef],
-  );
+  const attachRoot = useMergedRefs(setRoot, ref);
+  const attachBody = useMergedRefs(setBody, bodyRef);
   const pages = useScaffoldPages();
   const bodyScrollsInsteadOfDocument = scroll === 'body';
   useScrollKeys(bodyScrollsInsteadOfDocument ? root : null, body);
@@ -211,11 +199,9 @@ export function Scaffold({
         );
       };
       publish();
-      const observer = new ResizeObserver(publish);
-      for (const region of [topBarRegion, barSlot, bottomBarRegion])
-        if (region) observer.observe(region);
+      const stopObserving = observeResize([topBarRegion, barSlot, bottomBarRegion], publish);
       return () => {
-        observer.disconnect();
+        stopObserving();
         root.style.removeProperty('--_scaffold-top-bar-size');
         root.style.removeProperty('--_scaffold-bar-size');
         root.style.removeProperty('--_scaffold-bottom-size');

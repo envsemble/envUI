@@ -7,7 +7,7 @@ import { Column, Grid, Row } from '../../layout/Layout.js';
 import { Slot } from '../layout/Slot.js';
 import { Surface, type SurfaceProps } from '../../layout/Surface.js';
 import { Theme, type ThemeProps } from '../../foundations/Theme.js';
-import { SkeletonScope } from '../../foundations/SkeletonScope.js';
+import { SkeletonScope } from '../skeleton/SkeletonScope.js';
 import { usePortalContainer } from '../popup/PortalContainerContext.js';
 import { useModalPresence } from './useModalPresence.js';
 import '../../styles/Base.css';

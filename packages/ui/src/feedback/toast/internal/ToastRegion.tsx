@@ -17,10 +17,10 @@ import { Button, IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';
 import { flag } from '../../../internal/flag.js';
 import { ToastBody } from './ToastBody.js';
-import { useRenderedText } from './useRenderedText.js';
 import { useToastGlide } from './useToastGlide.js';
 import type { PictureNotice } from './PictureNotice.js';
 import { optionModule, useOptionModule } from '../../../internal/react/useOptionModule.js';
+import { useRenderedText } from '../../../internal/text/useRenderedText.js';
 import '../../../styles/Base.css';
 import '../../../styles/Toast.css';
 

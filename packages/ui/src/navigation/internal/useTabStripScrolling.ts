@@ -1,8 +1,8 @@
 'use client';
 
-import { useLayoutEffect, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, type RefObject } from 'react';
 import { tabElement } from './tabStrip.js';
-import { useStripWheel } from '../../internal/dom/useStripWheel.js';
+import { isRightToLeft } from '../../internal/dom/direction.js';
 
 /**
  * How a strip of document tabs scrolls: the active tab scrolls whole into view within the strip,
@@ -36,5 +36,24 @@ export function useTabStripScrolling(
     };
   }, [listRef, value, items]);
 
-  useStripWheel(listRef, true);
+  useEffect(
+    function scrollSidewaysOnAVerticalWheel() {
+      const element = listRef.current;
+      if (!element) return;
+      const onWheel = (event: WheelEvent) => {
+        if (event.deltaX !== 0 || event.deltaY === 0 || event.ctrlKey) return;
+        const max = element.scrollWidth - element.clientWidth;
+        if (max <= 0) return;
+        const direction = isRightToLeft(element) ? -1 : 1;
+        const position = element.scrollLeft * direction;
+        const next = Math.min(max, Math.max(0, position + event.deltaY));
+        if (next === position) return;
+        event.preventDefault();
+        element.scrollLeft = next * direction;
+      };
+      element.addEventListener('wheel', onWheel, { passive: false });
+      return () => element.removeEventListener('wheel', onWheel);
+    },
+    [listRef],
+  );
 }

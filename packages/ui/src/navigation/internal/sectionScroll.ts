@@ -1,18 +1,11 @@
 import type { ScrollView, SectionPosition } from './contentsOutline.js';
+import { pixelsOf } from '../../internal/dom/lengths.js';
+import { verticalScrollerOf } from '../../internal/dom/verticalScrollerOf.js';
 
 function scrollerOf(element: Element): HTMLElement | null {
+  const scroller = verticalScrollerOf(element);
   const document = element.ownerDocument;
-  for (
-    let node = element.parentElement;
-    node && node !== document.body && node !== document.documentElement;
-    node = node.parentElement
-  ) {
-    const { overflowY } = getComputedStyle(node);
-    if (/(auto|scroll|overlay)/.test(overflowY) && node.scrollHeight > node.clientHeight) {
-      return node;
-    }
-  }
-  return null;
+  return scroller === document.body || scroller === document.documentElement ? null : scroller;
 }
 
 /**
@@ -27,8 +20,7 @@ export function readSections(
 ): { sections: SectionPosition[]; view: ScrollView } {
   const scroller = scrollerOf(elements[0]);
   const scrolling = scroller ?? doc.scrollingElement ?? doc.documentElement;
-  const padding =
-    parseFloat(getComputedStyle(scroller ?? doc.documentElement).scrollPaddingTop) || 0;
+  const padding = pixelsOf(getComputedStyle(scroller ?? doc.documentElement).scrollPaddingTop);
   const box = scroller?.getBoundingClientRect();
   const scale =
     scroller && box && scroller.offsetHeight > 0 ? box.height / scroller.offsetHeight || 1 : 1;
@@ -40,7 +32,7 @@ export function readSections(
       top:
         (element.getBoundingClientRect().top - top) / scale -
         padding -
-        (parseFloat(getComputedStyle(element).scrollMarginTop) || 0),
+        pixelsOf(getComputedStyle(element).scrollMarginTop),
     })),
     view: {
       height: Math.max(0, height - padding),

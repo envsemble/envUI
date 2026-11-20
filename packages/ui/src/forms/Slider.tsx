@@ -14,7 +14,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
 import { Text } from '../foundations/Text.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useLocale } from '../internal/provider/EnvUIContext.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
@@ -25,6 +25,8 @@ import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { followDrag, followOverdrag } from './internal/sliderDrag.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
 import { flag } from '../internal/flag.js';
+import { pixelsOf } from '../internal/dom/lengths.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Slider.css';
 
@@ -178,11 +180,11 @@ export function Slider({
   );
   useEffect(function veilOnResize() {
     const element = control.current;
-    if (!element || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(() => veilIndicatorUnderText(element));
-    observer.observe(element);
-    for (const text of element.querySelectorAll('.env-slider-label, .env-slider-value'))
-      observer.observe(text);
+    if (!element) return;
+    const stopVeilingOnResize = observeResize(
+      [element, ...element.querySelectorAll('.env-slider-label, .env-slider-value')],
+      () => veilIndicatorUnderText(element),
+    );
     const veilWhereHandleComesToRest = (event: TransitionEvent) => {
       if (
         event.propertyName !== 'opacity' &&
@@ -192,7 +194,7 @@ export function Slider({
     };
     element.addEventListener('transitionend', veilWhereHandleComesToRest);
     return () => {
-      observer.disconnect();
+      stopVeilingOnResize();
       element.removeEventListener('transitionend', veilWhereHandleComesToRest);
     };
   }, []);
@@ -259,10 +261,7 @@ export function Slider({
               <BaseSlider.Indicator className="env-slider-indicator" />
               <BaseSlider.Thumb
                 className="env-slider-thumb"
-                inputRef={(node: HTMLInputElement | null) => {
-                  input.current = node;
-                  setRef(ref, node);
-                }}
+                inputRef={mergeRefs(input, ref)}
                 {...thumbName}
                 aria-describedby={describedByIds}
                 getAriaValueText={(formatted, number) =>
@@ -306,7 +305,7 @@ function veilIndicatorUnderText(control: HTMLElement) {
   )) {
     const box = text.getBoundingClientRect();
     if (box.width === 0) continue;
-    const halfLine = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
+    const halfLine = pixelsOf(getComputedStyle(text).fontSize) / 2;
     if (at >= box.left - halfLine && at <= box.right + halfLine) veiled = true;
     const textInLeftHalf = box.left + box.width / 2 < span.left + span.width / 2;
     if (textInLeftHalf) clearStart = Math.max(clearStart, box.right + halfLine - span.left);

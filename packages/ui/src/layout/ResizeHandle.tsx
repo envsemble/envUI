@@ -1,13 +1,16 @@
 'use client';
 
-import { useEffect, useRef, type ComponentPropsWithRef, type SyntheticEvent } from 'react';
+import { useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useResize, type ResizeOptions } from '../internal/resize/useResize.js';
-import { useLatest } from '../internal/useLatest.js';
+import { useLatest } from '../internal/react/useLatest.js';
 import { flag } from '../internal/flag.js';
+import { chainHandlers } from '../internal/react/chainHandlers.js';
 import '../styles/Base.css';
 import '../styles/ResizeHandle.css';
+
+export type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 
 export type ResizeHandleProps = ResizeOptions &
   Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'children' | 'role' | 'tabIndex'> & {
@@ -99,32 +102,17 @@ export function ResizeHandle({
     <div
       {...props}
       {...own}
-      onPointerDown={first(props.onPointerDown, onPointerDown)}
-      onPointerMove={first(props.onPointerMove, onPointerMove)}
-      onPointerUp={first(props.onPointerUp, onPointerUp)}
-      onPointerCancel={first(props.onPointerCancel, onPointerCancel)}
-      onLostPointerCapture={first(props.onLostPointerCapture, onLostPointerCapture)}
-      onKeyDown={first(props.onKeyDown, onKeyDown)}
-      onFocus={first(props.onFocus, onFocus)}
-      ref={(node) => {
-        element.current = node;
-        setRef(ref, node);
-      }}
+      onPointerDown={chainHandlers(props.onPointerDown, onPointerDown)}
+      onPointerMove={chainHandlers(props.onPointerMove, onPointerMove)}
+      onPointerUp={chainHandlers(props.onPointerUp, onPointerUp)}
+      onPointerCancel={chainHandlers(props.onPointerCancel, onPointerCancel)}
+      onLostPointerCapture={chainHandlers(props.onLostPointerCapture, onLostPointerCapture)}
+      onKeyDown={chainHandlers(props.onKeyDown, onKeyDown)}
+      onFocus={chainHandlers(props.onFocus, onFocus)}
+      ref={mergeRefs(element, ref)}
       aria-label={label}
       data-grip={flag(grip)}
       className={classNames('env-resize-handle', className)}
     />
   );
-}
-
-function first<Event extends SyntheticEvent>(
-  theirs: ((event: Event) => void) | undefined,
-  ours: ((event: Event) => void) | undefined,
-) {
-  if (!theirs) return ours;
-  if (!ours) return theirs;
-  return (event: Event) => {
-    theirs(event);
-    if (!event.defaultPrevented) ours(event);
-  };
 }

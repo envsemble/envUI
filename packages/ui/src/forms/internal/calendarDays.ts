@@ -1,4 +1,4 @@
-import { day as dayMilliseconds, minute } from './durations.js';
+import { day as dayMilliseconds, minute } from '../../internal/time/durations.js';
 
 /** A day of the week: 0 for Sunday through 6 for Saturday. */
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;

@@ -26,7 +26,8 @@ import { createWaveDrawer } from './internal/waveDrawer.js';
 import { prefersReducedMotion, reducedMotionQuery } from '../internal/motion/reducedMotion.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
-import { useLatest } from '../internal/useLatest.js';
+import { useLatest } from '../internal/react/useLatest.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/TableOfContents.css';
 
@@ -224,12 +225,9 @@ export function TableOfContents({
       schedule();
       doc.addEventListener('scroll', onScroll, { capture: true, passive: true });
       window.addEventListener('resize', onResize);
-      const resizes = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize);
-      if (first?.parentElement) resizes?.observe(first.parentElement);
+      const stopResizes = observeResize(first?.parentElement, onResize);
       const body = root.current;
-      const entriesMovedByWrapOrFont =
-        typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(drawer.remeasure);
-      if (body) entriesMovedByWrapOrFont?.observe(body);
+      const stopEntriesMovedByWrapOrFont = observeResize(body, drawer.remeasure);
       body?.addEventListener('pointerover', drawer.onPointerOver);
       body?.addEventListener('pointerleave', drawer.onPointerLeave);
       return () => {
@@ -237,8 +235,8 @@ export function TableOfContents({
         drawer.stop();
         doc.removeEventListener('scroll', onScroll, { capture: true });
         window.removeEventListener('resize', onResize);
-        resizes?.disconnect();
-        entriesMovedByWrapOrFont?.disconnect();
+        stopResizes();
+        stopEntriesMovedByWrapOrFont();
         body?.removeEventListener('pointerover', drawer.onPointerOver);
         body?.removeEventListener('pointerleave', drawer.onPointerLeave);
       };

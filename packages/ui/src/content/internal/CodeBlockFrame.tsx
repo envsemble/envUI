@@ -15,9 +15,10 @@ import { codeBlock as codeBlockMessages } from '../../foundations/messages/codeB
 import { classNames } from '../../internal/classNames.js';
 import { Row } from '../../layout/Layout.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
-import { useCopy } from '../../internal/useCopy.js';
+import { useCopy } from '../../internal/react/useCopy.js';
 import { flag } from '../../internal/flag.js';
 import { Slot } from '../../internal/layout/Slot.js';
+import { rendersContent } from '../../internal/react/rendersContent.js';
 import '../../styles/Base.css';
 import '../../styles/Code.css';
 
@@ -66,7 +67,7 @@ export function CodeBlockFrame({
   }
   const labelId = useId();
   const labelled = Boolean(label);
-  const hasHeaderEnd = headerEnd != null && headerEnd !== false;
+  const hasHeaderEnd = rendersContent(headerEnd);
   const copyButton = copyable && (
     <IconButton
       variant="ghost"

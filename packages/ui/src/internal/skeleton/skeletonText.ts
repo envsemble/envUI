@@ -1,11 +1,12 @@
-import { roundToHundredth } from '../../internal/dom/lengths.js';
+import { roundToHundredth } from '../dom/lengths.js';
+import { observeResize } from '../dom/observeResize.js';
 import '../../styles/Base.css';
 import '../../styles/Skeleton.css';
 
 const skeletonTextAttribute = 'data-env-skeleton-text';
 
 interface Tracked {
-  resize: ResizeObserver | undefined;
+  stopResizing: () => void;
   mutations: MutationObserver;
   inlinePositionToRestore: string | undefined;
 }
@@ -72,8 +73,7 @@ function sync() {
 function track(root: HTMLElement, isStatic: boolean) {
   root.setAttribute(skeletonTextAttribute, '');
   const inlinePositionToRestore = isStatic ? becomeContainingBlockForBars(root) : undefined;
-  const resize = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(schedule);
-  resize?.observe(root);
+  const stopResizing = observeResize(root, schedule);
   const mutations = new MutationObserver((records) => {
     const onlyOwnBarsChanged = records.every(
       (record) => record.target === root && record.attributeName === 'style',
@@ -87,7 +87,7 @@ function track(root: HTMLElement, isStatic: boolean) {
     attributes: true,
     attributeFilter: ['class', 'style', 'hidden', 'data-env-skeleton'],
   });
-  tracked.set(root, { resize, mutations, inlinePositionToRestore });
+  tracked.set(root, { stopResizing, mutations, inlinePositionToRestore });
 }
 
 function becomeContainingBlockForBars(root: HTMLElement) {
@@ -97,7 +97,7 @@ function becomeContainingBlockForBars(root: HTMLElement) {
 }
 
 function untrack(root: HTMLElement, state: Tracked) {
-  state.resize?.disconnect();
+  state.stopResizing();
   state.mutations.disconnect();
   tracked.delete(root);
   root.removeAttribute(skeletonTextAttribute);

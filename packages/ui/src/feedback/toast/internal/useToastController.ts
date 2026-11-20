@@ -9,7 +9,7 @@ import {
   type ToastTimer,
 } from './toastEntry.js';
 import type { ToastNotification, ToastPlacement } from '../toastTypes.js';
-import { useLatest } from '../../../internal/useLatest.js';
+import { useLatest } from '../../../internal/react/useLatest.js';
 
 const longestTimeoutBrowsersKeep = 2_147_483_647;
 const baseUIPriorityThatDoesNotHideUntilFocused = 'low';

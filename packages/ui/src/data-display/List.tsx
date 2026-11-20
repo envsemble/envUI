@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import type { RowDensity } from '../foundations/Theme.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
-import type { SkeletonProps } from '../internal/skeleton.js';
+import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { renderItem, renderList } from './internal/ListRows.js';
 import { ControlledItem, TitledList } from './internal/ListNaming.js';

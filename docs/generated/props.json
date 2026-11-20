@@ -9169,7 +9169,7 @@
     },
     "useSkeleton": {
       "kind": "function",
-      "source": "packages/ui/src/foundations/SkeletonScope.tsx",
+      "source": "packages/ui/src/foundations/useSkeleton.ts",
       "description": "Whether the component is inside a skeleton: a surface with `skeleton` around it. A component of the application's own reads it to give its skeleton a look of its own, such as a chart's.",
       "signature": "(): boolean",
       "entries": [

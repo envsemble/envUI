@@ -29,7 +29,7 @@ import { Grid } from '../layout/Layout.js';
 import { ListRow } from '../internal/list/ListRow.js';
 import { flattenGroups, isGroup, type ListItemElementProps } from '../internal/list/listEntries.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { classNames } from '../internal/classNames.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
@@ -343,10 +343,7 @@ export function Select({
           {...triggerProps}
           {...naming}
           {...metadata}
-          ref={(node: HTMLButtonElement | null) => {
-            triggerRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(triggerRef, ref)}
           className="env-text-field-input env-select-trigger"
         >
           <ChosenStart options={options} value={selectedValue} />

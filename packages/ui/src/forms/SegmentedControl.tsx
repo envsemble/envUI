@@ -6,7 +6,6 @@ import { RadioGroup } from '@base-ui/react/radio-group';
 import {
   useLayoutEffect,
   useRef,
-  useState,
   type ComponentPropsWithoutRef,
   type ComponentPropsWithRef,
   type ReactNode,
@@ -21,6 +20,7 @@ import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
 import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { flag } from '../internal/flag.js';
+import { useCutShort } from '../internal/popup/useCutShort.js';
 import '../styles/Base.css';
 import '../styles/SegmentedControl.css';
 
@@ -169,22 +169,9 @@ export function SegmentedControl({
 function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: boolean }) {
   const labelRef = useRef<HTMLSpanElement>(null);
   const formatters = useFormatters();
-  const [labelCutShort, setLabelCutShort] = useState(false);
   const labelShown = item.visibleLabel !== false;
+  const labelCutShort = useCutShort(labelRef, fullWidth && labelShown);
   const { className: itemClassName, ...itemProps } = item.itemProps ?? {};
-  useLayoutEffect(() => {
-    const element = labelRef.current;
-    if (!fullWidth || !element) {
-      setLabelCutShort(false);
-      return;
-    }
-    const measure = () => setLabelCutShort(element.scrollWidth > element.clientWidth);
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [fullWidth, labelShown]);
   const segment = (
     <Radio.Root
       value={item.value}

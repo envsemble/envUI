@@ -3,7 +3,7 @@ import {
   ownContrastSource,
   ownScaleSource,
   scaleSourceAttribute,
-} from '../../packages/ui/src/foundations/themeBootstrap.ts';
+} from '../../packages/ui/src/foundations/internal/themeRoot.ts';
 import { createStoredThemeBootstrapScript } from '../../packages/ui/src/foundations/themeStorage.ts';
 import {
   displayStorageKeys,

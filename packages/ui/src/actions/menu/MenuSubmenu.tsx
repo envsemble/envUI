@@ -3,17 +3,12 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { useRef, type CSSProperties, type ReactNode, type Ref } from 'react';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
-import { setRef } from '../../internal/react/setRef.js';
+import { mergeRefs } from '../../internal/react/setRef.js';
 import {
   containedOpenChange,
   usePortalContainer,
 } from '../../internal/popup/PortalContainerContext.js';
-import {
-  MenuPopup,
-  menuParts,
-  menuPopupBlockStartInset,
-  menuPopupInlineEndInset,
-} from './internal/MenuPopup.js';
+import { MenuPopup, menuParts, menuPopupInset } from './internal/MenuPopup.js';
 import type { OpenChangeDetails } from './internal/menuOpenChange.js';
 import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
 import type { TriggerProps } from './internal/menuTriggerProps.js';
@@ -96,8 +91,8 @@ export function Submenu({
   const textLabel = typeof label === 'string' ? label : undefined;
   const portal = usePortalContainer();
   const clearParentMenuEdge = () =>
-    menuPopupInlineEndInset(trigger.current?.closest('.env-menu')) + gapFromParentMenuEdge;
-  const alignFirstRowWithOpeningRow = () => -menuPopupBlockStartInset(popup.current);
+    menuPopupInset(trigger.current?.closest('.env-menu'), 'inline-end') + gapFromParentMenuEdge;
+  const alignFirstRowWithOpeningRow = () => -menuPopupInset(popup.current, 'block-start');
   const returnFocusToOpeningRowIfStillThere = () => {
     const row = trigger.current;
     const active = row?.ownerDocument.activeElement;
@@ -121,10 +116,7 @@ export function Submenu({
     >
       <BaseMenu.SubmenuTrigger
         {...triggerProps}
-        ref={(node: HTMLDivElement | null) => {
-          trigger.current = node;
-          setRef(triggerProps?.ref, node);
-        }}
+        ref={mergeRefs(trigger, triggerProps?.ref)}
         className={classNames('env-menu-item env-menu-submenu-trigger', triggerProps?.className)}
         disabled={disabled}
         {...accessibility}
@@ -144,10 +136,7 @@ export function Submenu({
         trigger={trigger}
         finalFocus={returnFocusToOpeningRowIfStillThere}
         className={className}
-        popupRef={(node: HTMLDivElement | null) => {
-          popup.current = node;
-          setRef(ref, node);
-        }}
+        popupRef={mergeRefs(popup, ref)}
         popupProps={{ style }}
       >
         {children}
