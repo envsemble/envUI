@@ -24,6 +24,7 @@ import { StillMark } from './StillMark';
 import { useBrowserStandIns } from '../motion/BrowserStandIns';
 import { PageTheme } from './PageTheme';
 import { keepLinksInPlace } from './KeepLinksInPlace';
+import { partKey } from '../documentation/PartKeys';
 
 function Source({ page, name }: { page: string; name: string }) {
   const source = use(exampleSource(page, name));
@@ -104,7 +105,7 @@ export function ExampleRender({
   const shown = useSubjectShown(fallback === undefined ? place : undefined);
   const skeleton =
     fallback === undefined ? (
-      <StageSkeleton ref={place} part={`example:${page}/${name}`} what="examples" />
+      <StageSkeleton ref={place} part={partKey('example', page, name)} what="examples" />
     ) : (
       fallback
     );
@@ -120,7 +121,7 @@ export function ExampleRender({
       }}
     >
       <Suspense fallback={skeleton}>
-        <HoldPlaceholder part={`example:${page}/${name}`}>
+        <HoldPlaceholder part={partKey('example', page, name)}>
           {/* eslint-disable-next-line react-hooks/static-components */}
           <Example />
         </HoldPlaceholder>
@@ -158,7 +159,7 @@ export function LiveExample({
   const device = presentation?.kind === 'device' ? presentation.device : undefined;
   const render =
     presentation?.kind === 'open' ? (
-      <OpenExample name={name} live={presentation.live ?? false} part={`open:${page}/${name}`}>
+      <OpenExample name={name} live={presentation.live ?? false} part={partKey('open', page, name)}>
         <ExampleRender page={page} name={name} />
       </OpenExample>
     ) : (
