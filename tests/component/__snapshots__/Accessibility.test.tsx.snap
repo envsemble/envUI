@@ -131,6 +131,8 @@ exports[`forms has no new accessibility violations 1`] = `{}`;
 
 exports[`graphic has no new accessibility violations 1`] = `{}`;
 
+exports[`halo has no new accessibility violations 1`] = `{}`;
+
 exports[`hover-card has no new accessibility violations 1`] = `{}`;
 
 exports[`layout has no new accessibility violations 1`] = `{}`;

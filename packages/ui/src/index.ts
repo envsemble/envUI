@@ -80,6 +80,7 @@ export * from './feedback/Alert.js';
 export * from './feedback/EmptyState.js';
 export * from './feedback/Spinner.js';
 export * from './feedback/Progress.js';
+export * from './feedback/Halo.js';
 export * from './feedback/toast/ToastProvider.js';
 export * from './feedback/toast/useToast.js';
 export * from './feedback/toast/toastTypes.js';

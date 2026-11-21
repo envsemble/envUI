@@ -13,7 +13,7 @@ const groups: Record<SearchResult['kind'], string> = {
   token: 'Tokens',
 };
 
-const areas: Record<SearchResult['area'], string> = { catalogue: 'Catalogue', docs: 'Docs' };
+const areas: Record<SearchResult['area'], string> = { catalogue: 'Gallery', docs: 'Docs' };
 
 const suggestedRoutes = [docsRoute, 'components', 'docs/tokens'] as const;
 export type SuggestedRoute = (typeof suggestedRoutes)[number];
@@ -36,7 +36,7 @@ export function suggestionsFor(page: RoutePage | undefined): Suggestion[] {
       description:
         target.area === 'docs'
           ? 'Docs · This page in code, with its props'
-          : 'Catalogue · This page, with its examples and rules',
+          : 'Gallery · This page, with its examples and rules',
     });
   for (const route of suggestedRoutes) {
     const suggested = findPage(route);

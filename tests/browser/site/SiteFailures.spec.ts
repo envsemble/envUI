@@ -19,7 +19,9 @@ async function openFailingButtonPage(page: Page) {
     failure: 'aborted',
   });
   await page.goto(`${siteUrl}/`);
-  await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 1, name: /^A React design system/ }),
+  ).toBeVisible();
   await expect(page.locator('.site-loading')).toHaveCount(0);
   state = 'failing';
   await goTo(page, '/components/button');
@@ -222,7 +224,7 @@ test('a page that fails to render says so, and the navigation leads to the other
   await expect(main.getByRole('link', { name: 'Return to overview' })).toHaveCount(0);
   await expect(main.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
   await expect(main).not.toBeFocused();
-  const navigation = page.getByRole('navigation', { name: 'Catalogue' });
+  const navigation = page.getByRole('navigation', { name: 'Gallery' });
   await navigation.getByRole('link', { name: 'Components', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Components');
   await expect(main.getByText('This page failed to render')).toHaveCount(0);
@@ -247,6 +249,8 @@ test('a page that fails after a press takes the focus it dropped, and leads to t
   await expect(alert).toContainText('This page failed to render');
   await expect(alert).toBeFocused();
   await main.getByRole('link', { name: 'Return to overview', exact: true }).click();
-  await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 1, name: /^A React design system/ }),
+  ).toBeVisible();
   await expect(alert).toHaveCount(0);
 });

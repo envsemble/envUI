@@ -49,10 +49,6 @@
   font-size: var(--site-prose-size);
   line-height: var(--site-prose-leading);
 }
-.site-page-banner-description {
-  font-size: var(--env-font-size-title);
-  line-height: 1.45;
-}
 .site-article > .env-markdown > h2:not(:first-child) {
   margin-block-start: var(--site-section-gap);
 }

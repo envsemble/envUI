@@ -126,9 +126,14 @@ async function showFigures(page: Page) {
   }
 }
 
+async function scrollToTop(page: Page) {
+  await page.evaluate(() => document.getElementById('site-main')?.scrollTo({ top: 0 }));
+}
+
 async function settle(page: Page) {
   await page.locator('#site-main').waitFor();
   await showFigures(page);
+  await scrollToTop(page);
   await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
   await page.locator('.site-loading').first().waitFor({ state: 'detached' });
   await page.evaluate(() => document.fonts.ready);
@@ -218,8 +223,8 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
           if (example) return 'specimen';
           const regions: [string, string][] = [
             ['.site-sidebar', 'sidebar'],
-            ['.site-compact-controls', 'page controls'],
-            ['.site-page-header, .site-page-banner, .catalogue-overview-hero', 'header'],
+            ['.site-top-bar', 'page controls'],
+            ['.site-page-header, .catalogue-overview-hero', 'header'],
             ['.site-page-navigation', 'page navigation'],
             ['.site-article', 'article'],
             ['.catalogue-specimen-area', 'specimen area'],

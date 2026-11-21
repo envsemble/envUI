@@ -220,6 +220,14 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - Parts: `env-graphic`, `env-graphic-image`, `env-graphic-mask`
 - States: `data-aspect`; `data-fit` (`cover`); `data-size` (`fill`, `icon`, `lg`, `md`, `sm`, `text`, `xl`); `data-tint` (`text`)
 
+### Halo
+
+- Parts: `env-halo`, `env-halo-ring`
+- States: `data-placed` (`true`); `data-tone` (`accent`, `primary`)
+- Color properties: `--env-halo-indicator`
+- `--env-halo-radius`, to set: The corner radius of what the halo surrounds, which its ring follows concentrically; unset, the control radius.
+- `--env-halo-spread`, to set: How far the halo reaches beyond the edge while still, which its breath widens and narrows; unset, 0.1875 rem.
+
 ### HoverCard
 
 - Parts: `env-hover-card`

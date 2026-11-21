@@ -1,9 +1,9 @@
 @import './Shell.css';
 @import '../pages/docs/Docs.css';
 @import '../frame/Banners.css';
-@import '../frame/BannerMotifs.css';
 @import '../figures/Examples.css';
 @import '../pages/catalogue/Overview.css';
+@import '../pages/catalogue/overview/OverviewWidget.css';
 @import '../figures/foundations/ColorPalette.css';
 @import '../figures/foundations/Foundations.css';
 @import '../specimens/InteractionStates.css';
@@ -22,7 +22,6 @@
 @import '../figures/Gallery.css';
 @import '../figures/AppTile.css';
 @import '../pages/catalogue/FoundationCatalogue.css';
-@import '../pages/catalogue/OverviewFan.css';
 @import '../template/WhenToUse.css';
 @import '../pages/docs/Changelog.css';
 @import './Print.css';

@@ -2,8 +2,7 @@ import { Fragment } from 'react';
 import { Column, CopyButton, Row, Surface, Text, type TableOfContentsItem } from '@envsemble/envui';
 import { AgentLogos } from '../../brand/AgentLogos';
 import { markdownHeadings, PageMarkdown } from '../../markdown/PageMarkdown';
-
-const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
+import { setupPrompt } from '../../shared/SetupPrompt';
 
 const agentSetupHeading = { id: 'agent-setup', label: 'Set up with your agent' };
 

@@ -3,9 +3,7 @@ import type { DocumentationEntry } from '../../documentation/DocumentationTypes'
 import { SiteBanner } from '../../frame/SiteBanner';
 import { catalogueTrail } from '../../routes/Trails';
 import type { DocumentPage, RoutePage } from '../../routes/SiteRoutes';
-import { PartSwitch } from '../../routes/OtherPart';
 import { TemplateContent, templateContents } from '../../template/TemplateContent';
-import { MetadataBadges } from '../../template/MetadataBadges';
 import { useDocument } from '../PageContent';
 
 export function ComponentPage({ page }: { page: DocumentPage }) {
@@ -13,12 +11,10 @@ export function ComponentPage({ page }: { page: DocumentPage }) {
   return (
     <>
       <SiteBanner
+        page={page}
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        subject={document.id}
-        meta={document.metadata && <MetadataBadges metadata={document.metadata} plain />}
-        corner={<PartSwitch page={page} />}
       />
       <TemplateContent document={document} overviewHeading={false} />
     </>
@@ -44,11 +40,10 @@ export function FoundationPage({ page }: { page: DocumentPage }) {
   return (
     <>
       <SiteBanner
+        page={page}
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        subject={document.id}
-        corner={<PartSwitch page={page} />}
       />
       {document.id === 'icons' && <IconsCredit />}
       <TemplateContent document={document} related={false} />

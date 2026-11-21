@@ -52,7 +52,7 @@ export function CatalogueNavigation({
   return (
     <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
       <NavigationRail
-        aria-label="Catalogue"
+        aria-label="Gallery"
         className="catalogue-rail"
         header={<Brand area="catalogue" />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
@@ -67,14 +67,12 @@ export function CatalogueNavigation({
           inert={drawerLeaving}
           aria-hidden={drawerLeaving}
           header={
-            onClose ? (
+            inSheet ? (
               <div className="site-drawer-top">
                 <SearchButton onClick={onSearch} className="site-drawer-search" />
                 <CloseSheet onClose={onClose} />
               </div>
-            ) : (
-              <SearchButton onClick={onSearch} className="site-drawer-search" />
-            )
+            ) : undefined
           }
           destinations={pageDestinations(
             sectionPages(drawer.drawn.section),
@@ -104,15 +102,17 @@ export function DocsNavigation({
         className="site-sidebar"
         header={
           <div className="docs-drawer-top">
-            {onClose ? (
-              <div className="site-drawer-top">
-                <Brand area="docs" />
-                <CloseSheet onClose={onClose} />
-              </div>
+            {inSheet ? (
+              <>
+                <div className="site-drawer-top">
+                  <Brand area="docs" />
+                  <CloseSheet onClose={onClose} />
+                </div>
+                <SearchButton onClick={onSearch} className="site-drawer-search" />
+              </>
             ) : (
               <Brand area="docs" />
             )}
-            <SearchButton onClick={onSearch} className="site-drawer-search" />
           </div>
         }
         destinations={docsDestinations(routePath, onChoose)}

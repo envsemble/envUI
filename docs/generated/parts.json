@@ -2484,6 +2484,59 @@
         }
       ]
     },
+    "Halo": {
+      "root": "env-halo",
+      "source": "packages/ui/src/feedback/Halo.tsx",
+      "parts": [
+        {
+          "class": "env-halo",
+          "description": "What the halo surrounds, or alone the box the application places, with data-tone."
+        },
+        {
+          "class": "env-halo-ring",
+          "description": "The ring that breathes around it, outside its edge; hidden from assistive technology."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-placed",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-halo"
+          ]
+        },
+        {
+          "attribute": "data-tone",
+          "values": [
+            "accent",
+            "primary"
+          ],
+          "parts": [
+            "env-halo"
+          ]
+        }
+      ],
+      "colors": [
+        {
+          "property": "--env-halo-indicator",
+          "description": "The halo, in place of the tone, such as a brand color; the halo mixes it at 40%, and at 75% in dark, and breathes between about a third and four fifths of that."
+        }
+      ],
+      "properties": [
+        {
+          "property": "--env-halo-radius",
+          "use": "set",
+          "description": "The corner radius of what the halo surrounds, which its ring follows concentrically; unset, the control radius."
+        },
+        {
+          "property": "--env-halo-spread",
+          "use": "set",
+          "description": "How far the halo reaches beyond the edge while still, which its breath widens and narrows; unset, 0.1875 rem."
+        }
+      ]
+    },
     "HoverCard": {
       "root": "env-hover-card",
       "source": "packages/ui/src/overlays/HoverCard.tsx",
@@ -3647,11 +3700,11 @@
         },
         {
           "class": "env-navigation-rail-indicator",
-          "description": "The rounded rectangle around a destination's icon, filled while the destination is current."
+          "description": "The box around a destination's icon, which holds its count."
         },
         {
           "class": "env-navigation-rail-item",
-          "description": "A destination: a link or button with its indicator above its label."
+          "description": "A destination: a link or button, its icon above its label. The current one takes the selected fill and a semibold label, as a navigation drawer's current row does."
         },
         {
           "class": "env-navigation-rail-label",
@@ -3721,11 +3774,11 @@
       "colors": [
         {
           "property": "--env-navigation-rail-item-container",
-          "description": "The indicator around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
+          "description": "A destination's fill at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
         },
         {
           "property": "--env-navigation-rail-item-content",
-          "description": "The label, and the color of the state layers."
+          "description": "The label of a destination that is not current, and the color of the state layers."
         },
         {
           "property": "--env-navigation-rail-item-icon",
@@ -3733,11 +3786,11 @@
         },
         {
           "property": "--env-navigation-rail-item-selected",
-          "description": "The indicator around the icon of the current destination."
+          "description": "The fill of the current destination."
         },
         {
           "property": "--env-navigation-rail-item-selected-content",
-          "description": "The icon of the current destination."
+          "description": "The icon and label of the current destination."
         }
       ]
     },

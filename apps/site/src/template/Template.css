@@ -1,11 +1,3 @@
-.site-page-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--env-space-4);
-}
-
 .site-part-switch {
   display: flex;
 }

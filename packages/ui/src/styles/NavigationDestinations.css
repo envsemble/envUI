@@ -88,6 +88,8 @@
     display: grid;
     place-items: center;
     border-radius: var(--env-radius-md);
+  }
+  .env-navigation-bar-indicator {
     background: var(--_destination-item-custom-fill, transparent);
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
@@ -112,8 +114,7 @@
   :is(.env-navigation-bar-item, .env-navigation-rail-item):not([data-current]) .env-icon {
     color: var(--_destination-item-icon-color, var(--env-color-fg-muted));
   }
-  :is(.env-navigation-bar-item, .env-navigation-rail-item):hover
-    :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator),
+  .env-navigation-bar-item:hover .env-navigation-bar-indicator,
   .env-navigation-bar-more[aria-expanded='true'] .env-navigation-bar-indicator {
     background: var(--_destination-item-custom-fill, var(--env-color-bg-navigation-hover));
   }
@@ -130,24 +131,20 @@
   :is(.env-navigation-bar-item, .env-navigation-rail-item)[data-current]:active {
     --_destination-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
   }
-  :is(.env-navigation-bar-item, .env-navigation-rail-item):active
-    :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator) {
+  .env-navigation-bar-item:active .env-navigation-bar-indicator {
     background: var(--_destination-item-custom-fill, var(--env-color-bg-navigation-pressed));
   }
-  :is(.env-navigation-bar-item, .env-navigation-rail-item)[data-current] {
+  .env-navigation-bar-item[data-current] {
     color: var(--_destination-item-content, var(--env-color-fg-default));
   }
-  :is(.env-navigation-bar-item, .env-navigation-rail-item)[data-current]
-    :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator) {
+  .env-navigation-bar-item[data-current] .env-navigation-bar-indicator {
     color: var(--_destination-item-selected-icon, var(--env-color-fg-on-selected));
     background: var(--_destination-item-selected-fill, var(--env-color-bg-selected));
   }
-  :is(.env-navigation-bar-item, .env-navigation-rail-item)[data-current]:hover
-    :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator) {
+  .env-navigation-bar-item[data-current]:hover .env-navigation-bar-indicator {
     background: var(--_destination-item-selected-fill, var(--env-color-bg-selected-hover));
   }
-  :is(.env-navigation-bar-item, .env-navigation-rail-item)[data-current]:active
-    :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator) {
+  .env-navigation-bar-item[data-current]:active .env-navigation-bar-indicator {
     background: var(--_destination-item-selected-fill, var(--env-color-bg-selected-pressed));
   }
   :is(.env-navigation-bar-count, .env-navigation-rail-count)[data-dot] {
@@ -176,29 +173,25 @@
     white-space: nowrap;
   }
   @media (prefers-reduced-motion: reduce) {
-    :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator) {
+    .env-navigation-bar-indicator {
       transition: none;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
-    :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator) {
+    .env-navigation-bar-indicator {
       transition-property: background-color, transform;
     }
-    :is(.env-navigation-bar-item, .env-navigation-rail-item):active
-      :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator) {
+    .env-navigation-bar-item:active .env-navigation-bar-indicator {
       transform: scale(0.96);
     }
   }
   @media (forced-colors: active) {
-    :is(.env-navigation-bar-item, .env-navigation-rail-item)[data-current]
-      :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator) {
+    .env-navigation-bar-item[data-current] .env-navigation-bar-indicator {
       forced-color-adjust: none;
       background-color: Highlight;
       color: HighlightText;
     }
-    :is(.env-navigation-bar-item, .env-navigation-rail-item)[data-current]
-      :is(.env-navigation-bar-indicator, .env-navigation-rail-indicator)
-      :where(*) {
+    .env-navigation-bar-item[data-current] .env-navigation-bar-indicator :where(*) {
       color: inherit;
     }
     :is(.env-navigation-bar-count, .env-navigation-rail-count) {

@@ -131,7 +131,7 @@ test("a row names its part only where another reads the same, and a group's row 
       .flatMap(({ items }) => items)
       .map(({ id, label, description, kind }) => [id, label, description, kind]),
     [
-      ['page:Colors', 'Colors', 'Catalogue · Foundation', 'page'],
+      ['page:Colors', 'Colors', 'Gallery · Foundation', 'page'],
       ['docs:Colors', 'Colors', 'Docs · Foundation', 'page'],
       ['guide:Setup', 'Setup', 'Guide', 'guide'],
       ['token:space', 'space', 'token', 'token'],
