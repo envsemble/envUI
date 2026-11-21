@@ -149,11 +149,7 @@
 }
 .catalogue-overview-widget-stage {
   --catalogue-overview-ring-reach: calc(var(--env-space-1) * 0.75);
-  --catalogue-overview-pending-ring: var(--catalogue-overview-ring-reach) solid
-    light-dark(
-      color-mix(in srgb, var(--catalogue-tour-accent) 28%, transparent),
-      color-mix(in srgb, var(--catalogue-tour-accent) 50%, transparent)
-    );
+  --catalogue-overview-pending-ring: 0.09375rem solid var(--catalogue-tour-accent);
   --env-beacon-spread: var(--catalogue-overview-ring-reach);
   position: relative;
   display: grid;
