@@ -1,6 +1,6 @@
 ---
 title: DatePicker
-summary: A field that opens a calendar to choose a date, or a date and time, and the calendar on its own.
+summary: A date field with a calendar, for a date or a date and time. The calendar also works on its own.
 status: stable
 since: 1.0.0
 category: Forms & selection

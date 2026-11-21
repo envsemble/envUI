@@ -1,6 +1,6 @@
 ---
 title: Radio
-summary: One choice from up to five options, all in view, listed one under the other.
+summary: Picks one of up to five options, all visible at once.
 status: stable
 since: 1.0.0
 category: Forms & selection

@@ -1,6 +1,6 @@
 ---
 title: RelativeTime
-summary: A moment as text relative to now, such as 3 hours ago, kept current.
+summary: A time shown relative to now, such as 3 hours ago, kept up to date.
 status: stable
 since: 1.0.0
 category: Data display

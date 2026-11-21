@@ -1,6 +1,6 @@
 ---
 title: Avatar
-summary: The picture of a person or an organization, alone or in a group.
+summary: A person's or organization's picture, alone or in a group.
 status: stable
 since: 1.0.0
 category: Data display

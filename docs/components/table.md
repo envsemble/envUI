@@ -1,6 +1,6 @@
 ---
 title: Table
-summary: A shell for rows of anything; the frame, the rows, their states and layout are the table's, and what goes in the cells is yours.
+summary: Rows of data in columns, with your own content in the cells.
 status: stable
 since: 1.0.0
 category: Data display

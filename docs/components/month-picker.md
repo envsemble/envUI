@@ -1,6 +1,6 @@
 ---
 title: MonthPicker
-summary: A field that opens a year of months to choose a month.
+summary: A field for picking a month from a view of the year.
 status: beta
 since: 1.0.0
 category: Forms & selection

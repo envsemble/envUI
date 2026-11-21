@@ -1,6 +1,6 @@
 ---
 title: Spacing & density
-summary: How space groups things, controls line up, the compact scale and tighter rows, and what corners say.
+summary: How spacing groups content, how controls align, compact density and corner radius.
 aliases:
   - scale
   - density

@@ -1,11 +1,11 @@
-import { Row, Surface, Text } from '@envsemble/envui';
+import { Row } from '@envsemble/envui';
+import { edges, Item } from './LayoutDrawing';
 import { useMedia } from '../motion/Autoplay';
 import { useTimeline } from '../motion/Timeline';
-import { outlined } from './Outline';
 import { narrowGallery } from './Tiles';
 
-const cards = ['Plan', 'Docs', 'Team', 'Ops'];
-const narrowCards = ['Plan', 'Docs', 'Ops'];
+const cards = [1, 2, 3, 4];
+const narrowCards = [1, 2, 3];
 
 const cardWidthRem = 2.75;
 
@@ -19,29 +19,25 @@ export default function RowTile() {
   const step = useTimeline([1080, 1200, 1080, 1200]);
   const narrow = useMedia(narrowGallery);
   return (
-    <Surface
-      background="muted"
-      radius="sm"
-      padding={2}
+    <div
       style={{
-        ...outlined,
+        position: 'relative',
+        padding: 'var(--env-space-2)',
         inlineSize: (narrow ? narrowWidths : widths)[step],
         boxSizing: 'content-box',
       }}
     >
+      {edges()}
       <Row wrap gap={2}>
-        {(narrow ? narrowCards : cards).map((name) => (
-          <Surface
-            key={name}
-            background="default"
-            radius="sm"
-            padding={2}
-            style={{ ...outlined, inlineSize: `${cardWidthRem}rem`, boxSizing: 'border-box' }}
-          >
-            <Text variant="body-sm">{name}</Text>
-          </Surface>
+        {(narrow ? narrowCards : cards).map((card) => (
+          <Item
+            key={card}
+            width={`${cardWidthRem}rem`}
+            height="2rem"
+            radius="var(--env-radius-sm)"
+          />
         ))}
       </Row>
-    </Surface>
+    </div>
   );
 }

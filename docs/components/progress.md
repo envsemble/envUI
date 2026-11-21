@@ -1,6 +1,6 @@
 ---
 title: Progress
-summary: How much of a task is done, or that it runs while the amount is unknown.
+summary: Shows how much of a task is done, or that it is still running.
 status: beta
 since: 1.0.0
 category: Feedback

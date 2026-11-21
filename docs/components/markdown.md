@@ -1,6 +1,6 @@
 ---
 title: Markdown
-summary: Shows a Markdown string in envUI's typography.
+summary: Renders Markdown text in envUI's text styles.
 status: stable
 since: 1.0.0
 category: Text & content

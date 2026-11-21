@@ -1,22 +1,19 @@
-import { Button, Column, Surface, Text, type LayoutAlign } from '@envsemble/envui';
+import { Column, type LayoutAlign } from '@envsemble/envui';
+import { edges, Item } from './LayoutDrawing';
 import { useTimeline } from '../motion/Timeline';
-import { outlined } from './Outline';
 
 const aligns: LayoutAlign[] = ['start', 'center', 'end'];
 
 export default function ColumnTile() {
   const align = aligns[useTimeline([1200, 1200, 1200])];
   return (
-    <Surface background="default" radius="sm" padding={3} style={outlined}>
+    <div style={{ position: 'relative', padding: 'var(--env-space-3)' }}>
+      {edges()}
       <Column align={align} gap={2} style={{ inlineSize: '9rem' }}>
-        <Text variant="title">Release notes</Text>
-        <Text variant="body-sm" emphasis="muted">
-          Three fixes this week.
-        </Text>
-        <Button variant="secondary" size="sm">
-          Read
-        </Button>
+        <Item width="6rem" height="0.875rem" />
+        <Item width="8rem" height="0.625rem" />
+        <Item width="3.5rem" height="1.5rem" radius="var(--env-radius-sm)" />
       </Column>
-    </Surface>
+    </div>
   );
 }

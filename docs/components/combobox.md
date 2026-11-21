@@ -1,6 +1,6 @@
 ---
 title: Combobox
-summary: A text field that filters a list of options as people type, to choose one option or, as chips, several.
+summary: A text field that filters options as people type, to pick one or several as chips.
 status: stable
 since: 1.0.0
 category: Forms & selection

@@ -1,6 +1,6 @@
 ---
 title: Spinner
-summary: Work of unknown length in a small area, such as a panel that is updating, as a turning arc.
+summary: A spinning arc that shows a small area is loading.
 status: stable
 since: 1.0.0
 category: Feedback

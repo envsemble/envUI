@@ -1,6 +1,6 @@
 ---
 title: Menu
-summary: Actions and destinations, opened from a trigger or a right click.
+summary: A list of actions and links, opened from a button or a right click.
 status: stable
 since: 1.0.0
 category: Actions

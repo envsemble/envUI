@@ -1,6 +1,6 @@
 ---
 title: Checkbox
-summary: A choice people turn on or off on its own.
+summary: An option people turn on or off, independent of the others.
 status: stable
 since: 1.0.0
 category: Forms & selection

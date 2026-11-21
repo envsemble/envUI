@@ -1,6 +1,6 @@
 ---
 title: Toolbar
-summary: A bar of icon buttons for one subject, such as an editor's formatting, in a row or a column.
+summary: A row or column of icon buttons, such as an editor's formatting tools.
 status: beta
 since: 1.0.0
 category: Actions

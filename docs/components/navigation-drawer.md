@@ -1,6 +1,6 @@
 ---
 title: NavigationDrawer
-summary: An application's main destinations, in a drawer, a rail or a bar by the window's width.
+summary: An app's main navigation, shown as a drawer, a rail or a bar depending on the window width.
 status: beta
 since: 1.0.0
 category: Navigation

@@ -1,6 +1,6 @@
 ---
 title: Accessibility
-summary: What every component does for keyboard, screen readers, contrast, motion and touch, and what an app still supplies.
+summary: What components handle for keyboard, screen readers, contrast, motion and touch, and what your app adds.
 aliases:
   - a11y
   - keyboard

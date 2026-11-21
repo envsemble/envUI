@@ -1,6 +1,6 @@
 ---
 title: DocumentTabs
-summary: Editor-style tabs for the documents people have open.
+summary: Tabs for open documents, as in a code editor.
 status: stable
 since: 1.0.0
 category: Navigation
