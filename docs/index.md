@@ -91,6 +91,7 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Toast](components/toast.md)
 - [Progress](components/progress.md)
 - [Spinner](components/spinner.md)
+- [Beacon](components/beacon.md)
 
 ## Overlays
 

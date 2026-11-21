@@ -490,6 +490,32 @@
         "@envsemble/envui"
       ]
     },
+    "Beacon": {
+      "kind": "component",
+      "source": "packages/ui/src/feedback/Beacon.tsx",
+      "description": "A soft halo that breathes around what it holds, to point at the one control or region to look at next, such as the first step of a tour. The halo stays outside the content and takes no room, and is hidden from assistive technology; it holds still with a reduced-motion preference.",
+      "props": [
+        {
+          "name": "tone",
+          "type": "'accent' | 'primary'",
+          "required": false,
+          "default": "'accent'",
+          "description": "The halo's color: accent, the purple that stands out, or primary, the blue of what is current. --env-beacon-indicator gives it any other color, such as a brand's."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, a span that keeps an inline child, such as a Button, in its line; or render={<div />} around a block, such as a Card, so it keeps its width. Without children it is the box the halo surrounds, which the application places itself, such as with position absolute over a region it measured."
+        }
+      ],
+      "native": [
+        "span"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Box": {
       "kind": "component",
       "source": "packages/ui/src/layout/Layout.tsx",

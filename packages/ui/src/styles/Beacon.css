@@ -1,0 +1,66 @@
+@layer env.components {
+  @property --env-beacon-indicator {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --_beacon-breath {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 1;
+  }
+  .env-beacon {
+    --_beacon-tone: var(--env-color-bg-accent-emphasis);
+    --_beacon-color: var(--env-beacon-indicator, var(--_beacon-tone));
+    --_beacon-radius: var(--env-beacon-radius, var(--env-radius-control));
+    --_beacon-spread: var(--env-beacon-spread, calc(var(--env-space-1) * 0.75));
+    position: relative;
+    display: block;
+    border-radius: var(--_beacon-radius);
+  }
+  .env-beacon:where(span) {
+    display: inline-flex;
+  }
+  .env-beacon[data-tone='primary'] {
+    --_beacon-tone: var(--env-color-bg-primary-emphasis);
+  }
+  .env-beacon-halo {
+    --_beacon-breath: 1;
+    --_beacon-reach: calc(var(--_beacon-spread) * var(--_beacon-breath));
+    position: absolute;
+    inset: calc(-1 * var(--_beacon-reach));
+    padding: var(--_beacon-reach);
+    border-radius: calc(var(--_beacon-radius) + var(--_beacon-reach));
+    background: light-dark(
+      color-mix(in srgb, var(--_beacon-color) 28%, transparent),
+      color-mix(in srgb, var(--_beacon-color) 50%, transparent)
+    );
+    mask:
+      linear-gradient(CanvasText 0 0) content-box exclude,
+      linear-gradient(CanvasText 0 0);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-beacon-halo {
+      animation: env-beacon-breathe calc(var(--env-motion-duration-slow) * 8) var(--env-motion-ease)
+        infinite;
+    }
+  }
+  @keyframes env-beacon-breathe {
+    0%,
+    100% {
+      --_beacon-breath: 2;
+      opacity: 0.78;
+    }
+    50% {
+      --_beacon-breath: 0.67;
+      opacity: 0.35;
+    }
+  }
+  @media (forced-colors: active) {
+    .env-beacon-halo {
+      forced-color-adjust: none;
+      background: Highlight;
+      animation: none;
+    }
+  }
+}
