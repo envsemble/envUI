@@ -3647,11 +3647,11 @@
         },
         {
           "class": "env-navigation-rail-indicator",
-          "description": "The rounded rectangle around a destination's icon, filled while the destination is current."
+          "description": "The box around a destination's icon, which holds its count."
         },
         {
           "class": "env-navigation-rail-item",
-          "description": "A destination: a link or button with its indicator above its label."
+          "description": "A destination: a link or button, its icon above its label. The current one takes the selected fill and a semibold label, as a navigation drawer's current row does."
         },
         {
           "class": "env-navigation-rail-label",
@@ -3721,11 +3721,11 @@
       "colors": [
         {
           "property": "--env-navigation-rail-item-container",
-          "description": "The indicator around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
+          "description": "A destination's fill at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
         },
         {
           "property": "--env-navigation-rail-item-content",
-          "description": "The label, and the color of the state layers."
+          "description": "The label of a destination that is not current, and the color of the state layers."
         },
         {
           "property": "--env-navigation-rail-item-icon",
@@ -3733,11 +3733,11 @@
         },
         {
           "property": "--env-navigation-rail-item-selected",
-          "description": "The indicator around the icon of the current destination."
+          "description": "The fill of the current destination."
         },
         {
           "property": "--env-navigation-rail-item-selected-content",
-          "description": "The icon of the current destination."
+          "description": "The icon and label of the current destination."
         }
       ]
     },

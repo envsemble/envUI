@@ -524,8 +524,8 @@
       "env-navigation-rail": "The navigation rail: a nav landmark, a narrow column with the header, the list and the footer.",
       "env-navigation-rail-header": "The slot of the content above the destinations, such as a button that opens the drawer or the main action.",
       "env-navigation-rail-list": "The list of destinations, one under another, which scrolls where the rail is shorter.",
-      "env-navigation-rail-item": "A destination: a link or button with its indicator above its label.",
-      "env-navigation-rail-indicator": "The rounded rectangle around a destination's icon, filled while the destination is current.",
+      "env-navigation-rail-item": "A destination: a link or button, its icon above its label. The current one takes the selected fill and a semibold label, as a navigation drawer's current row does.",
+      "env-navigation-rail-indicator": "The box around a destination's icon, which holds its count.",
       "env-navigation-rail-label": "A destination's short label, under its indicator.",
       "env-navigation-rail-count": "A destination's count, on the icon's top end; 999+ above 999.",
       "env-navigation-rail-footer": "The slot of the content at the bottom of the rail, such as the account's button."
@@ -884,11 +884,11 @@
       "--env-navigation-drawer-item-selected-content": "The label and icon of the current destination."
     },
     "NavigationRail": {
-      "--env-navigation-rail-item-container": "The indicator around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
-      "--env-navigation-rail-item-content": "The label, and the color of the state layers.",
+      "--env-navigation-rail-item-container": "A destination's fill at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
+      "--env-navigation-rail-item-content": "The label of a destination that is not current, and the color of the state layers.",
       "--env-navigation-rail-item-icon": "The icon of a destination that is not current.",
-      "--env-navigation-rail-item-selected": "The indicator around the icon of the current destination.",
-      "--env-navigation-rail-item-selected-content": "The icon of the current destination."
+      "--env-navigation-rail-item-selected": "The fill of the current destination.",
+      "--env-navigation-rail-item-selected-content": "The icon and label of the current destination."
     },
     "Radio": {
       "--env-radio-content": "The label's text.",
