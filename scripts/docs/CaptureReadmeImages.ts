@@ -11,12 +11,6 @@ const pictures = [
     window: { width: 1440, height: 900 },
     end: '.catalogue-overview-widget',
   },
-  {
-    name: 'gallery',
-    path: '/components',
-    window: { width: 1920, height: 1200 },
-    end: '.catalogue-gallery-grid',
-  },
 ] as const;
 const deviceScaleFactor = 2;
 
