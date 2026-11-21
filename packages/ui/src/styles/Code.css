@@ -40,15 +40,20 @@
     -webkit-box-decoration-break: clone;
   }
   .env-code-block {
+    --_code-block-inset-start: var(--env-space-5);
+    --_code-block-inset-end: var(--env-space-5);
+
     box-sizing: border-box;
     min-inline-size: 0;
     max-inline-size: 100%;
-    padding: var(--env-space-5);
+    padding: var(--env-space-5) var(--_code-block-inset-end) var(--env-space-5)
+      var(--_code-block-inset-start);
     border-radius: var(--env-radius-sm);
     font: var(--_code-font-size) / 1.7 var(--_code-font-family);
   }
   .env-code-block pre {
-    margin: 0;
+    margin: 0 calc(-1 * var(--_code-block-inset-end)) 0 calc(-1 * var(--_code-block-inset-start));
+    padding: 0 var(--_code-block-inset-end) 0 var(--_code-block-inset-start);
     overflow: auto;
     font: inherit;
     tab-size: 2;
@@ -66,7 +71,7 @@
   }
   .env-code-block pre:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
-    outline-offset: var(--env-space-1);
+    outline-offset: -2px;
   }
   .env-code-block[data-wrap] pre {
     white-space: pre-wrap;

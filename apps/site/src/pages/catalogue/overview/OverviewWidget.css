@@ -48,6 +48,8 @@
   min-block-size: 0;
 }
 .catalogue-overview-widget-code .env-code-block {
+  --_code-block-inset-start: 0rem;
+  --_code-block-inset-end: 0rem;
   display: flex;
   flex: 1;
   flex-direction: column;

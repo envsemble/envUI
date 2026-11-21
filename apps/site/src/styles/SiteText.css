@@ -111,13 +111,20 @@
     --_code-background-now,
     light-dark(var(--env-color-bg-muted), var(--env-color-bg-recessed))
   );
-  padding: var(--env-space-4) calc(var(--site-code-corner) + var(--env-space-2)) var(--env-space-4)
-    var(--env-space-4);
+  --_code-block-inset-start: var(--env-space-4);
+  --_code-block-inset-end: calc(var(--site-code-corner) + var(--env-space-2));
+  padding-block: var(--env-space-4);
 }
 .site-code-block-corner {
+  --_code-background-now: var(--_theme-high-contrast) var(--_code-background-high);
   position: absolute;
   inset-block-start: var(--env-space-2);
   inset-inline-end: var(--env-space-2);
   display: flex;
   align-items: center;
+  border-radius: var(--env-radius-sm);
+  background: var(
+    --_code-background-now,
+    light-dark(var(--env-color-bg-muted), var(--env-color-bg-recessed))
+  );
 }
