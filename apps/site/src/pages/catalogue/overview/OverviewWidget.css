@@ -313,7 +313,7 @@
       calc(1.4 * var(--catalogue-overview-phone-code)),
       0.0625rem
     );
-    --catalogue-overview-phone-inset: var(--env-space-2);
+    --catalogue-overview-phone-inset: var(--env-space-3);
     --catalogue-overview-phone-view: calc(
       var(--catalogue-overview-phone-inset) + var(--catalogue-overview-phone-lines) *
         var(--catalogue-overview-phone-line)
@@ -331,9 +331,8 @@
     block-size: calc(var(--catalogue-overview-phone-view) + var(--catalogue-overview-phone-inset));
     margin-inline-end: calc(-1 * var(--site-gutter) - var(--env-space-6));
     overflow: clip;
-    border: 1px solid var(--env-color-border-default);
-    border-radius: calc(var(--env-radius-xl) + var(--env-space-2) + 0.0625rem);
-    box-shadow: var(--catalogue-card-shadow-raised);
+    border-start-start-radius: var(--env-radius-xl);
+    border-end-start-radius: var(--env-radius-xl);
   }
   .catalogue-overview-widget-code .env-code-block {
     font-size: var(--catalogue-overview-phone-code);
@@ -377,15 +376,34 @@
     inset-inline-end: 0;
     flex: none;
     box-sizing: border-box;
-    inline-size: 21rem;
+    inline-size: 19rem;
     overflow: visible;
-    padding: var(--env-space-4);
-    border: calc(1px / var(--catalogue-overview-miniature)) solid var(--env-color-border-default);
-    border-radius: calc(var(--env-radius-xl) + var(--env-space-4));
-    background: color-mix(in oklab, var(--env-color-bg-recessed) 55%, var(--env-color-bg-page));
-    box-shadow: var(--catalogue-card-shadow-raised);
+    padding: 0;
     scale: var(--catalogue-overview-miniature);
     transform-origin: 100% 100%;
+  }
+  .catalogue-overview-widget-stage > :not(style, .catalogue-overview-widget-ring) {
+    box-shadow: var(--catalogue-card-shadow-raised);
+  }
+  .catalogue-overview-widget .catalogue-overview-widget-stage[data-sample='chat'] {
+    --catalogue-overview-surface-inset: var(--env-space-4);
+    --catalogue-overview-surface-inner: var(--env-radius-surface);
+  }
+  .catalogue-overview-widget .catalogue-overview-widget-stage[data-sample='table'] {
+    --catalogue-overview-surface-inset: var(--env-space-3);
+    --catalogue-overview-surface-inner: var(--env-radius-lg);
+  }
+  .catalogue-overview-widget
+    .catalogue-overview-widget-stage:is([data-sample='chat'], [data-sample='table']) {
+    padding: var(--catalogue-overview-surface-inset);
+    border-radius: calc(
+      var(--catalogue-overview-surface-inner) + var(--catalogue-overview-surface-inset)
+    );
+    background: var(--env-color-bg-raised);
+    box-shadow: var(--catalogue-card-shadow-raised);
+  }
+  .catalogue-overview-widget-stage:is([data-sample='chat'], [data-sample='table']) > * {
+    box-shadow: none;
   }
   .catalogue-overview-widget-code[data-pending] {
     --catalogue-overview-pending-shift: max(
@@ -398,8 +416,5 @@
   }
   .catalogue-overview-widget-code[data-pending] pre > code {
     translate: 0 calc(-1lh * var(--catalogue-overview-pending-shift));
-  }
-  [data-env-theme='dark'] > .catalogue-overview-widget-stage {
-    background: var(--env-color-bg-page);
   }
 }

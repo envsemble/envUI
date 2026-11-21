@@ -234,6 +234,7 @@ function motionOf(element: Element) {
 const ringOutset = 4;
 const ringInsideCells = -2;
 const touchPauseMs = 6000;
+const tapSlopPx = 10;
 const ringRoomInCard = 6;
 
 function spanOf(element: Element, box: { left: number; width: number }, zoom: number) {
@@ -282,8 +283,8 @@ function ringAround(stage: HTMLElement, element: Element): Ring {
   };
 }
 
-const miniatureShare = { width: 0.5, height: 0.4 };
-const miniatureScaleMax = 0.6;
+const miniatureShare = { width: 0.58, height: 0.46 };
+const miniatureScaleMax = 0.68;
 
 function miniatureScale(widget: HTMLElement, stage: HTMLElement) {
   return Math.min(
@@ -319,6 +320,7 @@ export function OverviewWidget({ className }: { className?: string }) {
   const hydrated = useHydrated();
   const [touched, setTouched] = useState(false);
   const touchTimer = useRef(0);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const [codeFit, setCodeFit] = useState<number | null>(null);
   const [bands, setBands] = useState<{ key: string; boxes: Band[] }>({ key: '', boxes: [] });
   const [rings, setRings] = useState<{ key: string; boxes: Ring[] }>({ key: '', boxes: [] });
@@ -499,7 +501,12 @@ export function OverviewWidget({ className }: { className?: string }) {
         if (event.pointerType !== 'touch') setHot(null);
       }}
       onPointerDown={(event) => {
-        if (event.pointerType !== 'touch') return;
+        touchStart.current = { x: event.clientX, y: event.clientY };
+      }}
+      onPointerUp={(event) => {
+        const start = touchStart.current;
+        if (event.pointerType !== 'touch' || !start) return;
+        if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > tapSlopPx) return;
         setTouched(true);
         window.clearTimeout(touchTimer.current);
         touchTimer.current = window.setTimeout(() => setTouched(false), touchPauseMs);
@@ -566,6 +573,7 @@ export function OverviewWidget({ className }: { className?: string }) {
             onFocus={findInStage}
             onBlur={() => setHot(null)}
             data-pending={!shownRings.length || undefined}
+            data-sample={sample.id}
             key={sample.id}
           >
             <style>{`.catalogue-overview-widget-stage[data-pending] :is(${sample.rest.css}) { outline: var(--catalogue-overview-ring-width) solid var(--catalogue-tour-accent); outline-offset: ${ringOutset}px; }`}</style>
