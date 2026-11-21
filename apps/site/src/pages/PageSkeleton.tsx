@@ -2,10 +2,8 @@ import { Column, Text } from '@envsemble/envui';
 import { SiteBanner } from '../frame/SiteBanner';
 import { catalogueTrail, docsTrail } from '../routes/Trails';
 import type { RoutePage } from '../routes/SiteRoutes';
-import { PartSwitch } from '../routes/OtherPart';
 import { PartSkeleton, placeholderText } from '../loading/Skeletons';
 import { recordedSize } from '../loading/RecordedSizes';
-import { MetadataBadges } from '../template/MetadataBadges';
 import { partKey } from '../documentation/PartKeys';
 
 const exampleHeightRem = 12;
@@ -72,17 +70,11 @@ export function PageSkeleton({ page }: { page: RoutePage }) {
   return (
     <PartSkeleton what="page" className="site-page-skeleton">
       <SiteBanner
+        page={page}
         title={page.title}
         trail={docs ? docsTrail(page) : catalogueTrail(page)}
         description={page.summary}
         kind={docs ? 'docs' : 'catalogue'}
-        meta={
-          <MetadataBadges
-            metadata={page.document?.metadata ?? { status: page.document?.status }}
-            plain={!docs}
-          />
-        }
-        corner={<PartSwitch page={page} />}
       />
       {docs ? <DocsSection code={page.kind === 'reference'} /> : <CatalogueSection page={page} />}
     </PartSkeleton>

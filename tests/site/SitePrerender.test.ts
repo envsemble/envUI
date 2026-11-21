@@ -132,7 +132,6 @@ const notCatalogueWords = (element) =>
     'site-anatomy-subject',
     'catalogue-tile-stage',
     'catalogue-open-example',
-    'catalogue-banner-motif',
   ].some((name) => hasClass(element, name));
 
 test("the catalogue's component and foundation pages show no technical text", async () => {

@@ -33,6 +33,8 @@ exports[`avatar-group has no new accessibility violations 1`] = `
 
 exports[`badge has no new accessibility violations 1`] = `{}`;
 
+exports[`beacon has no new accessibility violations 1`] = `{}`;
+
 exports[`button-counts has no new accessibility violations 1`] = `{}`;
 
 exports[`button-group has no new accessibility violations 1`] = `{}`;

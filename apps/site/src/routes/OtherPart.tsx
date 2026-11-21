@@ -10,7 +10,7 @@ import '@envui-internal/styles/SegmentedControl.css';
 
 export function otherPart(area: Area) {
   return area === 'docs'
-    ? { label: 'Catalogue', Icon: IconMenuBook }
+    ? { label: 'Gallery', Icon: IconMenuBook }
     : { label: 'Docs', Icon: IconCode };
 }
 
@@ -58,11 +58,11 @@ export function PartSwitch({ page }: { page: RoutePage }) {
   const route = counterpartOf(page);
   if (!route) return null;
   const parts = [
-    { area: 'catalogue', label: 'Design' },
-    { area: 'docs', label: 'Code' },
+    { area: 'catalogue', label: 'Gallery' },
+    { area: 'docs', label: 'Docs' },
   ] as const;
   return (
-    <nav aria-label="Design or code" className="site-part-switch">
+    <nav aria-label="Gallery or docs" className="site-part-switch">
       <div className="env-segmented-control" data-size="sm">
         {parts.map(({ area, label }) => {
           const current = area === page.area;

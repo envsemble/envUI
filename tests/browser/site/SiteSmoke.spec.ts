@@ -82,8 +82,8 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
     path: '/docs/components/button',
     act: async (page) => {
       await page
-        .getByRole('navigation', { name: 'Design or code' })
-        .getByRole('link', { name: 'Design' })
+        .getByRole('navigation', { name: 'Gallery or docs' })
+        .getByRole('link', { name: 'Gallery' })
         .click();
       await expect(page).toHaveURL(`${siteBuildUrl}/components/button`);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');

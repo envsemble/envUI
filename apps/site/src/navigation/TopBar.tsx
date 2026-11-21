@@ -19,7 +19,7 @@ export function TopBar({
   onOpenNavigation: () => void;
   onSearch: () => void;
 }) {
-  const { label, Icon } = otherPart(area);
+  const { label } = otherPart(area);
   const href = routeHref(otherPartRoute(page, area));
   return (
     <div className="site-top-bar">
@@ -29,24 +29,9 @@ export function TopBar({
       <div className="site-top-bar-end">
         <span className="site-narrow-only">
           <SearchButton iconOnly onClick={onSearch} />
-          <Button
-            variant="ghost"
-            href={href}
-            onClick={keepSection}
-            className="site-top-bar-part-label"
-          >
+          <Button variant="ghost" href={href} onClick={keepSection}>
             {label}
           </Button>
-          <Tooltip content={label}>
-            <IconButton
-              variant="ghost"
-              icon={<Icon />}
-              aria-label={label}
-              href={href}
-              onClick={keepSection}
-              className="site-top-bar-part-icon"
-            />
-          </Tooltip>
           <DisplayMenu iconOnly />
           <Tooltip content="Open navigation">
             <IconButton
@@ -59,7 +44,7 @@ export function TopBar({
         </span>
         <span className="site-wide-only">
           <SearchButton onClick={onSearch} />
-          <Button variant="ghost" href={href} start={<Icon />} onClick={keepSection}>
+          <Button variant="ghost" href={href} onClick={keepSection}>
             {label}
           </Button>
           <DisplayMenu />

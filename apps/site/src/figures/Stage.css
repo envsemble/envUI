@@ -6,7 +6,6 @@
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-overview-widget,
-.site-page-banner,
 .site-page-navigation .env-pager-link,
 .catalogue-role-swatch {
   --catalogue-card-shadow-color: oklch(
@@ -84,10 +83,6 @@
   border-radius: 0;
 }
 
-.site-page-banner {
-  --catalogue-card-fill: var(--_surface-color);
-  box-shadow: var(--catalogue-card-shadow);
-}
 .site-page-navigation .env-pager-link {
   --catalogue-card-fill: var(--env-color-bg-raised);
   box-shadow: var(--catalogue-card-shadow-subtle);

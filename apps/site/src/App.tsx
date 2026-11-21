@@ -3,7 +3,7 @@ import { Column, EnvUIProvider, Link, LinkProvider, Scaffold, Sheet, Text } from
 import { findPage, type Area, type RoutePage } from './routes/SiteRoutes';
 import { PageBoundary } from './frame/PageBoundary';
 import { SiteBanner } from './frame/SiteBanner';
-import { ContentsItems, contentsWorthListing, PageContents } from './frame/PageContents';
+import { contentsWorthListing, PageContents } from './frame/PageContents';
 import { PageFooter } from './frame/PageFooter';
 import { retryDocument } from './pages/PageContent';
 import { preloadPage, retryPageView, usePageContents, usePageView } from './pages/PageLoading';
@@ -74,29 +74,27 @@ function PageColumns({
     <div className="site-page-layout">
       <div className="site-page-grid" data-contents={contents || undefined}>
         <div className="site-page-column">
-          <ContentsItems value={listed ? items : undefined}>
-            <PageBoundary
-              title={page?.title ?? 'Page not found'}
-              route={route}
-              onRetry={() => {
-                if (!page) return;
-                retryPageView(page.kind);
-                if (page.document) retryDocument(page.document.id);
-                setPrerenderedPath(undefined);
-              }}
-            >
-              {prerenderedPageHydratesWithFrame ? (
-                view
-              ) : (
-                <Suspense
-                  key={page?.path ?? routePath}
-                  fallback={page && <PageSkeleton page={page} />}
-                >
-                  {view}
-                </Suspense>
-              )}
-            </PageBoundary>
-          </ContentsItems>
+          <PageBoundary
+            title={page?.title ?? 'Page not found'}
+            route={route}
+            onRetry={() => {
+              if (!page) return;
+              retryPageView(page.kind);
+              if (page.document) retryDocument(page.document.id);
+              setPrerenderedPath(undefined);
+            }}
+          >
+            {prerenderedPageHydratesWithFrame ? (
+              view
+            ) : (
+              <Suspense
+                key={page?.path ?? routePath}
+                fallback={page && <PageSkeleton page={page} />}
+              >
+                {view}
+              </Suspense>
+            )}
+          </PageBoundary>
           {page && <PageNavigation page={page} />}
         </div>
         {listed && page && <PageContents path={page.path} items={items ?? []} />}
