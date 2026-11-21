@@ -163,6 +163,11 @@
     block-size: 1.25rem;
   }
 }
+@container catalogue-overview (width < 20rem) {
+  .catalogue-overview-agent-logos > svg:nth-child(n + 2) {
+    display: none;
+  }
+}
 @media (width >= 40rem) and (width < 70rem) {
   .catalogue-overview-hero {
     --catalogue-overview-widget-cap: 32.5rem;

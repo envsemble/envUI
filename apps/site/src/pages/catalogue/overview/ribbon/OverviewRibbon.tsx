@@ -17,16 +17,17 @@ const clearedSelector = '.catalogue-overview-facts';
 const arcProperty = '--catalogue-overview-ribbon-arc';
 const narrowestFramePx = 300;
 
-function frameOf(box: HTMLElement): RibbonFrame | null {
+function frameOf(box: HTMLElement, arc: boolean): RibbonFrame | null {
   const outer = box.getBoundingClientRect();
   const inner = (box.parentElement?.querySelector(framingSelector) ?? box).getBoundingClientRect();
-  if (outer.width < 1 || outer.height < 1 || inner.width < narrowestFramePx) return null;
-  if (getComputedStyle(box).getPropertyValue(arcProperty).trim())
+  if (outer.width < 1 || outer.height < 1) return null;
+  if (arc)
     return arcFrame(
       outer,
       inner,
       box.parentElement?.querySelector(clearedSelector)?.getBoundingClientRect(),
     );
+  if (inner.width < narrowestFramePx) return null;
   return {
     width: outer.width,
     height: outer.height,
@@ -46,12 +47,13 @@ function startRibbon(box: HTMLElement, paused: () => boolean) {
   let clock = 0;
   let last = 0;
   let frame = 0;
+  let arc = false;
   const reduced = reducedMotionQuery();
   const moving = () =>
     view !== null && shown && !canvas.hidden && !document.hidden && !reduced?.matches && !paused();
 
   const draw = () => {
-    const placed = frameOf(box);
+    const placed = frameOf(box, arc);
     canvas.hidden = !placed;
     if (!view || !placed) return;
     const dark = box.closest(`[${themeAttribute}]`)?.getAttribute(themeAttribute) === 'dark';
@@ -88,7 +90,8 @@ function startRibbon(box: HTMLElement, paused: () => boolean) {
 
   const update = () => {
     if (stopped) return;
-    canvas.hidden = !frameOf(box);
+    arc = getComputedStyle(box).getPropertyValue(arcProperty).trim() !== '';
+    canvas.hidden = !frameOf(box, arc);
     if (shown && !canvas.hidden && !view) create();
     if (moving()) {
       if (!frame) {
@@ -118,6 +121,8 @@ function startRibbon(box: HTMLElement, paused: () => boolean) {
   seen.observe(box);
   const framing = box.parentElement?.querySelector(framingSelector);
   if (framing) measuring.observe(framing);
+  const cleared = box.parentElement?.querySelector(clearedSelector);
+  if (cleared) measuring.observe(cleared);
   const onLost = (event: Event) => {
     event.preventDefault();
     lost = true;

@@ -331,7 +331,7 @@ export function OverviewWidget({ className }: { className?: string }) {
   const source = compact ? compactIndent(sample.source) : sample.source;
   const [miniature, setMiniature] = useState<number | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const element = code.current;
     if (!element) return;
     const watching = remeasure(
