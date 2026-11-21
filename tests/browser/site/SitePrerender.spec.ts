@@ -104,9 +104,11 @@ test.describe('a reader on a dark system at high contrast and reduced motion, on
     await expect(bare.locator('html')).toHaveAttribute('data-env-theme', 'light');
     await bare.close();
 
+    const problems = watchProblems(page);
     await openSite(page, `${siteBuildUrl}${path}`);
     await expect(page.locator('#root')).toHaveAttribute('data-site-page', 'components/button');
     await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'light');
+    expect(problems).toEqual([]);
   });
 
   test("having chosen System, a section's address hydrates as it is, its code in the reader's theme from the first paint", async ({
