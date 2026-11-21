@@ -148,7 +148,13 @@
   background: var(--env-color-bg-page);
 }
 .catalogue-overview-widget-stage {
-  --catalogue-overview-ring-width: 1.5px;
+  --catalogue-overview-ring-reach: calc(var(--env-space-1) * 0.75);
+  --catalogue-overview-pending-ring: var(--catalogue-overview-ring-reach) solid
+    light-dark(
+      color-mix(in srgb, var(--catalogue-tour-accent) 28%, transparent),
+      color-mix(in srgb, var(--catalogue-tour-accent) 50%, transparent)
+    );
+  --env-beacon-spread: var(--catalogue-overview-ring-reach);
   position: relative;
   display: grid;
   flex: 1;
@@ -169,17 +175,13 @@
   inline-size: 100%;
 }
 .catalogue-overview-widget-ring {
+  --env-beacon-indicator: var(--catalogue-tour-accent);
+  --env-beacon-radius: var(--env-radius-sm);
   position: absolute;
-  box-sizing: border-box;
-  border: var(--catalogue-overview-ring-width) solid var(--catalogue-tour-accent);
-  border-radius: var(--env-radius-sm);
   pointer-events: none;
 }
 .catalogue-overview-widget-ring[data-text] {
   background: color-mix(in oklab, var(--catalogue-tour-accent) 8%, transparent);
-}
-[data-env-theme='dark'] > .catalogue-overview-widget-stage {
-  --catalogue-overview-ring-width: 2px;
 }
 @media (prefers-reduced-motion: no-preference) {
   .catalogue-overview-widget-ring:not([data-still]) {
@@ -370,7 +372,9 @@
   }
   .catalogue-overview-widget .catalogue-overview-widget-stage {
     --catalogue-overview-miniature: var(--catalogue-overview-miniature-scale, 0.5);
-    --catalogue-overview-ring-width: calc(2px / var(--catalogue-overview-miniature));
+    --catalogue-overview-ring-reach: calc(
+      var(--env-space-1) * 0.75 / var(--catalogue-overview-miniature)
+    );
     position: absolute;
     inset-block-end: calc(-1 * var(--catalogue-overview-phone-hang));
     inset-inline-end: 0;

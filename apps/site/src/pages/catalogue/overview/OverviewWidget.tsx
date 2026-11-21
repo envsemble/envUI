@@ -9,6 +9,7 @@ import {
   type PointerEvent,
 } from 'react';
 import {
+  Beacon,
   IconButton,
   SegmentedControl,
   Text,
@@ -576,10 +577,10 @@ export function OverviewWidget({ className }: { className?: string }) {
             data-sample={sample.id}
             key={sample.id}
           >
-            <style>{`.catalogue-overview-widget-stage[data-pending] :is(${sample.rest.css}) { outline: var(--catalogue-overview-ring-width) solid var(--catalogue-tour-accent); outline-offset: ${ringOutset}px; }`}</style>
+            <style>{`.catalogue-overview-widget-stage[data-pending] :is(${sample.rest.css}) { outline: var(--catalogue-overview-pending-ring); outline-offset: ${ringOutset}px; }`}</style>
             <Specimen />
             {shownRings.map((ring, index) => (
-              <span
+              <Beacon
                 key={index}
                 className="catalogue-overview-widget-ring"
                 data-text={ring.text || undefined}
@@ -590,7 +591,7 @@ export function OverviewWidget({ className }: { className?: string }) {
                   insetInlineStart: ring.left,
                   inlineSize: ring.width,
                   blockSize: ring.height,
-                  borderRadius: ring.radius ?? undefined,
+                  '--env-beacon-radius': ring.radius === null ? undefined : `${ring.radius}px`,
                 }}
               />
             ))}
