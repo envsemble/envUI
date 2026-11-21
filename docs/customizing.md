@@ -86,14 +86,6 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 - States: `data-count`; `data-tone` (`accent`, `danger`, `done`, `neutral`, `primary`, `success`, `warning`); `data-variant` (`outline`, `soft`, `solid`)
 - Color properties: `--env-badge-container`, `--env-badge-content`, `--env-badge-outline`
 
-### Beacon
-
-- Parts: `env-beacon`, `env-beacon-halo`
-- States: `data-tone` (`accent`, `primary`)
-- Color properties: `--env-beacon-indicator`
-- `--env-beacon-radius`, to set: The corner radius of what the beacon surrounds, which the halo follows concentrically; unset, the control radius.
-- `--env-beacon-spread`, to set: How far the halo reaches beyond the edge while still, which its breath widens and narrows; unset, 0.1875 rem.
-
 ### Breadcrumbs
 
 - Parts: `env-breadcrumbs`, `env-breadcrumbs-current`, `env-breadcrumbs-item`, `env-breadcrumbs-label`, `env-breadcrumbs-link`, `env-breadcrumbs-list`, `env-breadcrumbs-separator`, `env-breadcrumbs-text`
@@ -227,6 +219,14 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 
 - Parts: `env-graphic`, `env-graphic-image`, `env-graphic-mask`
 - States: `data-aspect`; `data-fit` (`cover`); `data-size` (`fill`, `icon`, `lg`, `md`, `sm`, `text`, `xl`); `data-tint` (`text`)
+
+### Halo
+
+- Parts: `env-halo`, `env-halo-ring`
+- States: `data-tone` (`accent`, `primary`)
+- Color properties: `--env-halo-indicator`
+- `--env-halo-radius`, to set: The corner radius of what the halo surrounds, which its ring follows concentrically; unset, the control radius.
+- `--env-halo-spread`, to set: How far the halo reaches beyond the edge while still, which its breath widens and narrows; unset, 0.1875 rem.
 
 ### HoverCard
 

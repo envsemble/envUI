@@ -472,50 +472,6 @@
         }
       ]
     },
-    "Beacon": {
-      "root": "env-beacon",
-      "source": "packages/ui/src/feedback/Beacon.tsx",
-      "parts": [
-        {
-          "class": "env-beacon",
-          "description": "The beacon: what it surrounds, or alone the box the application places, with data-tone."
-        },
-        {
-          "class": "env-beacon-halo",
-          "description": "The halo that breathes around it, outside its edge; hidden from assistive technology."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-tone",
-          "values": [
-            "accent",
-            "primary"
-          ],
-          "parts": [
-            "env-beacon"
-          ]
-        }
-      ],
-      "colors": [
-        {
-          "property": "--env-beacon-indicator",
-          "description": "The halo, in place of the tone, such as a brand color; the halo shows it at 28%, and at 50% in dark."
-        }
-      ],
-      "properties": [
-        {
-          "property": "--env-beacon-radius",
-          "use": "set",
-          "description": "The corner radius of what the beacon surrounds, which the halo follows concentrically; unset, the control radius."
-        },
-        {
-          "property": "--env-beacon-spread",
-          "use": "set",
-          "description": "How far the halo reaches beyond the edge while still, which its breath widens and narrows; unset, 0.1875 rem."
-        }
-      ]
-    },
     "Breadcrumbs": {
       "root": "env-breadcrumbs",
       "source": "packages/ui/src/navigation/Breadcrumbs.tsx",
@@ -2525,6 +2481,50 @@
           "parts": [
             "env-graphic"
           ]
+        }
+      ]
+    },
+    "Halo": {
+      "root": "env-halo",
+      "source": "packages/ui/src/feedback/Halo.tsx",
+      "parts": [
+        {
+          "class": "env-halo",
+          "description": "What the halo surrounds, or alone the box the application places, with data-tone."
+        },
+        {
+          "class": "env-halo-ring",
+          "description": "The ring that breathes around it, outside its edge; hidden from assistive technology."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-tone",
+          "values": [
+            "accent",
+            "primary"
+          ],
+          "parts": [
+            "env-halo"
+          ]
+        }
+      ],
+      "colors": [
+        {
+          "property": "--env-halo-indicator",
+          "description": "The halo, in place of the tone, such as a brand color; the halo shows it at 28%, and at 50% in dark."
+        }
+      ],
+      "properties": [
+        {
+          "property": "--env-halo-radius",
+          "use": "set",
+          "description": "The corner radius of what the halo surrounds, which its ring follows concentrically; unset, the control radius."
+        },
+        {
+          "property": "--env-halo-spread",
+          "use": "set",
+          "description": "How far the halo reaches beyond the edge while still, which its breath widens and narrows; unset, 0.1875 rem."
         }
       ]
     },

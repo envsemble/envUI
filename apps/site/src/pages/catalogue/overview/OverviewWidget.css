@@ -150,7 +150,7 @@
 .catalogue-overview-widget-stage {
   --catalogue-overview-ring-reach: calc(var(--env-space-1) * 0.75);
   --catalogue-overview-pending-ring: 0.09375rem solid var(--catalogue-tour-accent);
-  --env-beacon-spread: var(--catalogue-overview-ring-reach);
+  --env-halo-spread: var(--catalogue-overview-ring-reach);
   position: relative;
   display: grid;
   flex: 1;
@@ -171,8 +171,8 @@
   inline-size: 100%;
 }
 .catalogue-overview-widget-ring {
-  --env-beacon-indicator: var(--catalogue-tour-accent);
-  --env-beacon-radius: var(--env-radius-sm);
+  --env-halo-indicator: var(--catalogue-tour-accent);
+  --env-halo-radius: var(--env-radius-sm);
   position: absolute;
   pointer-events: none;
 }

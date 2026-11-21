@@ -1,14 +1,14 @@
-import { Beacon, Button, Row } from '@envsemble/envui';
+import { Halo, Button, Row } from '@envsemble/envui';
 
 export default function Tones() {
   return (
     <Row wrap align="center" gap={6}>
-      <Beacon>
+      <Halo>
         <Button variant="outline">Connect a repository</Button>
-      </Beacon>
-      <Beacon tone="primary">
+      </Halo>
+      <Halo tone="primary">
         <Button variant="outline">Review changes</Button>
-      </Beacon>
+      </Halo>
     </Row>
   );
 }

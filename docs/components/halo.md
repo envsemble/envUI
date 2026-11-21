@@ -1,12 +1,12 @@
 ---
-title: Beacon
+title: Halo
 summary: A soft halo that breathes around the one control or region to look at next.
 status: beta
 since: 3.0.0
 category: Feedback
 aliases:
   - pulse
-  - halo
+  - beacon
   - hotspot
   - spotlight
   - highlight
@@ -25,7 +25,7 @@ avoidWhen:
   - text: A message about the page that needs reading.
     use: Alert
 components:
-  - Beacon
+  - Halo
 examples:
   InviteTeam: overview
   Tones: variants
@@ -34,7 +34,7 @@ examples:
     caption: Around a block, it keeps the block's width and follows its corners.
 ---
 
-# Beacon
+# Halo
 
 ## Variants
 

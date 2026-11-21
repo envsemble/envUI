@@ -101,9 +101,9 @@
       "env-badge-label": "The badge's text, or its count.",
       "env-badge-start": "The slot of the content before the label, such as an icon or an Avatar."
     },
-    "Beacon": {
-      "env-beacon": "The beacon: what it surrounds, or alone the box the application places, with data-tone.",
-      "env-beacon-halo": "The halo that breathes around it, outside its edge; hidden from assistive technology."
+    "Halo": {
+      "env-halo": "What the halo surrounds, or alone the box the application places, with data-tone.",
+      "env-halo-ring": "The ring that breathes around it, outside its edge; hidden from assistive technology."
     },
     "Breadcrumbs": {
       "env-breadcrumbs": "The breadcrumb navigation.",
@@ -831,8 +831,8 @@
       "--env-badge-content": "The label, count or icon.",
       "--env-badge-outline": "An edge in this color."
     },
-    "Beacon": {
-      "--env-beacon-indicator": "The halo, in place of the tone, such as a brand color; the halo shows it at 28%, and at 50% in dark."
+    "Halo": {
+      "--env-halo-indicator": "The halo, in place of the tone, such as a brand color; the halo shows it at 28%, and at 50% in dark."
     },
     "Button": {
       "--env-button-container": "The fill, in every variant; the state layers lie over it, and a solid variant takes them instead of its designed hover and press fills.",
@@ -960,12 +960,12 @@
         "description": "1 on a container, such as a dense list, gives the avatars and groups in it fills at half their chroma, so their initials keep their contrast, as a table cell and a small AvatarGroup do."
       }
     },
-    "Beacon": {
-      "--env-beacon-radius": {
+    "Halo": {
+      "--env-halo-radius": {
         "use": "set",
-        "description": "The corner radius of what the beacon surrounds, which the halo follows concentrically; unset, the control radius."
+        "description": "The corner radius of what the halo surrounds, which its ring follows concentrically; unset, the control radius."
       },
-      "--env-beacon-spread": {
+      "--env-halo-spread": {
         "use": "set",
         "description": "How far the halo reaches beyond the edge while still, which its breath widens and narrows; unset, 0.1875 rem."
       }

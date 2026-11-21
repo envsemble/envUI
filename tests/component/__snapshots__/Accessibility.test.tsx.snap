@@ -33,8 +33,6 @@ exports[`avatar-group has no new accessibility violations 1`] = `
 
 exports[`badge has no new accessibility violations 1`] = `{}`;
 
-exports[`beacon has no new accessibility violations 1`] = `{}`;
-
 exports[`button-counts has no new accessibility violations 1`] = `{}`;
 
 exports[`button-group has no new accessibility violations 1`] = `{}`;
@@ -132,6 +130,8 @@ exports[`forced-colors has no new accessibility violations 1`] = `
 exports[`forms has no new accessibility violations 1`] = `{}`;
 
 exports[`graphic has no new accessibility violations 1`] = `{}`;
+
+exports[`halo has no new accessibility violations 1`] = `{}`;
 
 exports[`hover-card has no new accessibility violations 1`] = `{}`;
 

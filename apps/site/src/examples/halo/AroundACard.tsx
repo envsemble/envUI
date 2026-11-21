@@ -1,14 +1,14 @@
-import { Beacon, Card, Text } from '@envsemble/envui';
+import { Halo, Card, Text } from '@envsemble/envui';
 
 export default function AroundACard() {
   return (
-    <Beacon
+    <Halo
       render={<div />}
-      style={{ inlineSize: 'min(100%, 24rem)', '--env-beacon-radius': 'var(--env-radius-surface)' }}
+      style={{ inlineSize: 'min(100%, 24rem)', '--env-halo-radius': 'var(--env-radius-surface)' }}
     >
       <Card title="Northwind launch" meta="Added by Priya Shah">
         <Text emphasis="muted">Plans and milestones for the spring launch.</Text>
       </Card>
-    </Beacon>
+    </Halo>
   );
 }

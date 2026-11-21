@@ -1,4 +1,4 @@
-import { Beacon, Button, Column, Text } from '@envsemble/envui';
+import { Halo, Button, Column, Text } from '@envsemble/envui';
 
 export default function InviteTeam() {
   return (
@@ -7,9 +7,9 @@ export default function InviteTeam() {
         Website refresh
       </Text>
       <Text emphasis="muted">Invite the people who work on this project to get started.</Text>
-      <Beacon>
+      <Halo>
         <Button>Invite people</Button>
-      </Beacon>
+      </Halo>
     </Column>
   );
 }

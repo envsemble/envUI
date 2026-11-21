@@ -1,23 +1,23 @@
-import { Beacon, Button, Card, Column, Row, Text } from '@envsemble/envui';
+import { Halo, Button, Card, Column, Row, Text } from '@envsemble/envui';
 
-export default function BeaconFixture() {
+export default function HaloFixture() {
   return (
     <Column gap={6} className="fixture-section">
       <Row gap={4} align="center">
-        <Beacon data-testid="beacon">
+        <Halo data-testid="halo">
           <Button data-testid="wrapped">Invite people</Button>
-        </Beacon>
+        </Halo>
         <Button data-testid="plain">Invite people</Button>
       </Row>
       <Column data-testid="column" gap={4} style={{ inlineSize: '20rem' }}>
-        <Beacon render={<div />} data-testid="block">
+        <Halo render={<div />} data-testid="block">
           <Card title="Northwind launch" data-testid="wrapped-card">
             <Text>Plans for the spring launch.</Text>
           </Card>
-        </Beacon>
+        </Halo>
       </Column>
       <div style={{ position: 'relative', blockSize: '6rem' }}>
-        <Beacon
+        <Halo
           data-testid="placed"
           style={{
             position: 'absolute',

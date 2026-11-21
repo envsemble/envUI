@@ -2,22 +2,22 @@ import type { ComponentPropsWithRef, ReactElement } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { renderElement } from '../internal/react/renderElement.js';
 import '../styles/Base.css';
-import '../styles/Beacon.css';
+import '../styles/Halo.css';
 
-/** A beacon's color: accent, the purple that stands out, or primary, the blue of what is current. */
-export type BeaconTone = 'accent' | 'primary';
+/** A halo's color: accent, the purple that stands out, or primary, the blue of what is current. */
+export type HaloTone = 'accent' | 'primary';
 
-export interface BeaconProps extends ComponentPropsWithRef<'span'> {
+export interface HaloProps extends ComponentPropsWithRef<'span'> {
   /**
    * The halo's color: accent, the purple that stands out, or primary, the blue of what is current.
-   * --env-beacon-indicator gives it any other color, such as a brand's.
+   * --env-halo-indicator gives it any other color, such as a brand's.
    * @default 'accent'
    */
-  tone?: BeaconTone;
+  tone?: HaloTone;
   /**
    * The element to render, a span that keeps an inline child, such as a Button, in its line; or
    * render={<div />} around a block, such as a Card, so it keeps its width. Without children it is
-   * the box the halo surrounds, which the application places itself, such as with position
+   * the box the ring surrounds, which the application places itself, such as with position
    * absolute over a region it measured.
    */
   render?: ReactElement;
@@ -28,15 +28,15 @@ export interface BeaconProps extends ComponentPropsWithRef<'span'> {
  * next, such as the first step of a tour. The halo stays outside the content and takes no room, and
  * is hidden from assistive technology; it holds still with a reduced-motion preference.
  */
-export function Beacon({ tone = 'accent', render, className, children, ...props }: BeaconProps) {
+export function Halo({ tone = 'accent', render, className, children, ...props }: HaloProps) {
   return renderElement('span', render, {
     ...props,
-    className: classNames('env-beacon', className),
+    className: classNames('env-halo', className),
     'data-tone': tone,
     children: (
       <>
         {children}
-        <span className="env-beacon-halo" aria-hidden="true" />
+        <span className="env-halo-ring" aria-hidden="true" />
       </>
     ),
   });
