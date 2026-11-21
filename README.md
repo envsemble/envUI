@@ -16,7 +16,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/overview-dark.png">
-  <img src="assets/readme/overview-light.png" alt="The overview of the envUI website: its banner, with Get started beside the install command, over a fan of cards built with envUI: a pull request, a conversation with an assistant, a heatmap of deploys and a calendar" width="1440">
+  <img src="assets/readme/overview-light.png" alt="The front page of the envUI website: its headline, the Explore button and the setup prompt to copy, over a component's code beside the card it renders" width="1440">
 </picture>
 
 ## Get started
