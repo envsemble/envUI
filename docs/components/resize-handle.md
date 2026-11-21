@@ -1,6 +1,6 @@
 ---
 title: ResizeHandle
-summary: A handle people drag, or move with the keys, to resize what is beside it.
+summary: A handle that resizes the area next to it, by dragging or with the arrow keys.
 status: beta
 since: 2.0.0
 category: App frame & layout

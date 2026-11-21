@@ -1,6 +1,6 @@
 ---
 title: List
-summary: A column of discrete items people scan, open or choose, as joined filled rows.
+summary: Items people scan, open or select, shown as rows.
 status: stable
 since: 1.0.0
 category: Data display

@@ -1,6 +1,6 @@
 ---
 title: Adapting to width
-summary: Components follow the space they sit in, and four window classes name where a layout changes.
+summary: Components adapt to their container, and four window sizes set where layouts change.
 components:
   - useContainerSize
   - windowClassOf

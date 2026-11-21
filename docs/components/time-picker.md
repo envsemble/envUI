@@ -1,6 +1,6 @@
 ---
 title: TimePicker
-summary: A field that opens wheels of hours and minutes to choose a time of day, on the locale's own clock.
+summary: A field for picking a time, on a 12- or 24-hour clock by locale.
 status: beta
 since: 1.0.0
 category: Forms & selection

@@ -1,6 +1,6 @@
 ---
 title: Icons
-summary: Thousands of Material Symbols, sized by their component, outlined or filled.
+summary: Thousands of Material Symbols, outlined or filled, sized to fit each component.
 components:
   - Icon
 aliases:

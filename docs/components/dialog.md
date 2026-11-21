@@ -1,6 +1,6 @@
 ---
 title: Dialog
-summary: A focused task over the page.
+summary: A window over the page for one focused task.
 status: stable
 since: 1.0.0
 category: Overlays

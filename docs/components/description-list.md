@@ -1,6 +1,6 @@
 ---
 title: DescriptionList
-summary: The facts about one thing, as labels and their values.
+summary: Labels and their values, describing one thing.
 status: beta
 since: 1.0.0
 category: Data display

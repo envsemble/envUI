@@ -1,6 +1,6 @@
 ---
 title: Column
-summary: Lays out content one under another with even gaps.
+summary: Stacks content vertically with even gaps.
 status: beta
 since: 1.0.0
 category: App frame & layout

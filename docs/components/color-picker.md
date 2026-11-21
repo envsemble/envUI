@@ -1,6 +1,6 @@
 ---
 title: ColorPicker
-summary: Chooses a color, in the formats people work in.
+summary: Picks a color, as hex, RGB or HSL.
 status: stable
 since: 1.0.0
 category: Forms & selection

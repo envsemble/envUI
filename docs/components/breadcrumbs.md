@@ -1,6 +1,6 @@
 ---
 title: Breadcrumbs
-summary: The path from the top level to the current page, with earlier levels as links or buttons.
+summary: The path to the current page, with a link back to each level above it.
 status: stable
 since: 1.0.0
 category: Navigation

@@ -1,6 +1,6 @@
 ---
 title: EmptyState
-summary: What a region shows when it has nothing to show, with a way to fill it.
+summary: Shown when a region has no content, with an action to add some.
 status: beta
 since: 2.0.0
 category: Feedback

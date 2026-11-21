@@ -1,6 +1,6 @@
 ---
 title: Tree
-summary: A tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.
+summary: Nested rows for large hierarchies such as file trees, with keyboard navigation and a context menu.
 status: stable
 since: 1.0.0
 category: Navigation

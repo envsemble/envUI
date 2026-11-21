@@ -1,6 +1,6 @@
 ---
 title: TableOfContents
-summary: The page's sections as links, with the one the reader is in marked.
+summary: Links to the page's sections, with the current one highlighted.
 status: beta
 since: 1.0.0
 category: Navigation

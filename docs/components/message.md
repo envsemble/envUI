@@ -1,6 +1,6 @@
 ---
 title: Message
-summary: The entries of a conversation, your own as bubbles and others at full width.
+summary: 'Chat messages: yours as bubbles, others at full width.'
 status: stable
 since: 1.0.0
 category: Text & content
