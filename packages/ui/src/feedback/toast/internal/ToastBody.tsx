@@ -3,10 +3,15 @@ import { IconCheckCircle } from '../../../icons/CheckCircle.js';
 import { IconError } from '../../../icons/Error.js';
 import { IconInfo } from '../../../icons/Info.js';
 import type { ToastTone } from '../toastTypes.js';
+import { DecorativeIcon } from '../../../internal/icon/DecorativeIcon.js';
 import '../../../styles/Base.css';
 import '../../../styles/Toast.css';
 
-function StatusIcon({ tone }: { tone: ToastTone }) {
+function StatusIcon({ tone, icon }: { tone: ToastTone; icon: ReactNode }) {
+  if (icon !== undefined)
+    return icon === null || icon === false ? null : (
+      <DecorativeIcon className="env-toast-status-icon">{icon}</DecorativeIcon>
+    );
   if (tone === 'neutral') return null;
   const StatusSymbol =
     tone === 'success' ? IconCheckCircle : tone === 'info' ? IconInfo : IconError;
@@ -19,11 +24,13 @@ function StatusIcon({ tone }: { tone: ToastTone }) {
 
 export function ToastBody({
   tone,
+  icon,
   message,
   action,
   dismiss,
 }: {
   tone: ToastTone;
+  icon: ReactNode;
   message: ReactNode;
   action?: ReactNode;
   dismiss?: ReactNode;
@@ -31,7 +38,7 @@ export function ToastBody({
   return (
     <>
       <div className="env-toast-content">
-        <StatusIcon tone={tone} />
+        <StatusIcon tone={tone} icon={icon} />
         {message}
       </div>
       {action}

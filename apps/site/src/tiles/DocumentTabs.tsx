@@ -20,7 +20,7 @@ const firstLines: Record<string, string> = {
   [untitled]: 'Start writing.',
 };
 
-const tab = (id: string) => `.env-document-tabs-tab[data-tab-id="${id}"]`;
+const tab = (id: string) => `.env-document-tabs-tab[data-value="${id}"]`;
 const close = (id: string) =>
   `.env-document-tabs-item:has(> ${tab(id)}) > .env-document-tabs-close`;
 

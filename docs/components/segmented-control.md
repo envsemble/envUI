@@ -28,6 +28,7 @@ components:
 examples:
   WorkItems: overview
   SmallToolbar: example
+  IconOnlyAndBadge: example
   SegmentedControlAnatomy: anatomy
   FullWidthScope: example
 ---
@@ -44,6 +45,12 @@ examples:
 
 ```
 
+### Icon-only segments and badges
+
+```tsx figure=IconOnlyAndBadge
+
+```
+
 ## Anatomy
 
 ```tsx figure=SegmentedControlAnatomy
@@ -53,7 +60,7 @@ examples:
 1. **Track** (`env-segmented-control`)
 2. **Thumb** (`env-segmented-control-item[data-checked]`)
 3. **Segment** (`env-segmented-control-item[data-unchecked]`)
-4. **Icon** (`env-segmented-control-item[data-unchecked] > env-icon`, `icon`)
+4. **Start** (`env-segmented-control-item[data-unchecked] > env-segmented-control-item-start`, `start`)
 5. **Label** (`env-segmented-control-item-label`, `label`)
 6. **Count** (`env-segmented-control-item-count`, `count`)
 

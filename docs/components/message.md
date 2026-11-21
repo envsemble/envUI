@@ -34,6 +34,7 @@ examples:
   FormattedAnswer: variants
   MessageAnatomy: anatomy
   DeliveryStatus: example
+  CommentThread: example
   BubbleWidth: example
 ---
 
@@ -67,6 +68,12 @@ examples:
 ### Delivery status
 
 ```tsx figure=DeliveryStatus motion
+
+```
+
+### Avatars and rich authors
+
+```tsx figure=CommentThread
 
 ```
 

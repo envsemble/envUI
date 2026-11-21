@@ -22,14 +22,14 @@ export default function SearchButton() {
     () =>
       documents
         .filter((name) => name.toLowerCase().includes(query.toLowerCase()))
-        .map((name) => ({ id: name, label: name, icon: <IconDescription /> })),
+        .map((name) => ({ id: name, label: name, start: <IconDescription /> })),
     [query],
   );
   return (
     <Column gap={3} align="start">
       <Button
         variant="secondary"
-        startIcon={<IconSearch />}
+        start={<IconSearch />}
         end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
         aria-keyshortcuts={`${modifier.key}+K`}
         onClick={() => setOpen(true)}

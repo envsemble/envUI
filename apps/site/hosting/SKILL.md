@@ -20,13 +20,13 @@ Here's how I'll set up envUI:
 
 1. Install @envsemble/envui {{version}} with its styles and theme.
 2. Add a short note to AGENTS.md that points coding agents to envUI's docs. Recommended.
-3. Turn on envUI's ESLint and Stylelint rules, which flag hand-built controls and raw colors. Recommended.
+3. Turn on envUI's ESLint and Stylelint rules, which flag envUI used wrongly and raw colors. Recommended.
 4. Check that the app builds, lints and starts.
 
 I won't change your existing UI. You can skip any step. Shall I go ahead?
 ```
 
-Leave out a step that is already done. Skip a step the user declines, and say once what they lose by it: without step 2, agents may write their own components instead of envUI's; without step 3, nothing flags them.
+Leave out a step that is already done. Skip a step the user declines, and say once what they lose by it: without step 2, agents may write their own components instead of envUI's; without step 3, nothing flags envUI used wrongly or a raw color.
 
 ## UI of its own
 
@@ -39,7 +39,7 @@ Install the exact version with the project's package manager, such as `npm insta
 Then, as `node_modules/@envsemble/envui/docs/setup.md` shows:
 
 - with a bundler, the components bring their own styles; without one, import `@envsemble/envui/styles.css` once in the client entry, never both;
-- define the app's theme once with `defineTheme` from `@envsemble/envui/theme-bootstrap`, give it to `ThemePreferenceProvider`'s `theme` around the app, and add `createThemeBootstrapScript(theme)` to the document head; use `Theme` alone for a fixed theme;
+- define the app's theme once with `defineTheme` from `@envsemble/envui/theme-bootstrap`, give it to `ThemePreferenceProvider`'s `theme` around the app, and add `createThemeBootstrapScript(theme)` to the document head; keep the preference where the app keeps its settings, through the provider's `preference` and `onPreferenceChange`, or in localStorage with `@envsemble/envui/theme-storage`; use `Theme` alone for a fixed theme;
 - register the app's router link with `LinkProvider`, from the recipes there.
 
 ## Step 2: Point AGENTS.md to the docs
@@ -65,7 +65,7 @@ Install both as dev dependencies at exactly `{{version}}`, the same version as e
 - `@envsemble/eslint-plugin-envui`, needing ESLint 10 and a flat config: add `envui.configs.recommended` to `eslint.config.js`, imported from `@envsemble/eslint-plugin-envui`.
 - `@envsemble/stylelint-config-envui`, needing Stylelint 17 or 18: add it to `extends` after the project's base config.
 
-Each package's README in `node_modules/@envsemble/` has the options. If the project has neither tool, offer to add it with a minimal config. If it runs an older ESLint or a legacy `.eslintrc`, say so and skip rather than upgrading it. In an app with UI of its own, the rules report its hand-built controls: that list is the work of moving to envUI, not this setup's. If it blocks the user's CI, ask whether to start those rules as warnings.
+Each package's README in `node_modules/@envsemble/` has the options. If the project has neither tool, offer to add it with a minimal config. If it runs an older ESLint or a legacy `.eslintrc`, say so and skip rather than upgrading it. `envui.configs.strict`, in place of `envui.configs.recommended`, also reports hand-built controls and words outside envUI's writing guide: offer it only where the user wants that policy, since in an app with UI of its own its list is the work of moving to envUI, not this setup's. If the rules block the user's CI, ask whether to start them as warnings.
 
 ## Step 4: Verify
 

@@ -8,7 +8,6 @@ import {
   Composer,
   CopyButton,
   Dialog,
-  DiffStat,
   IconButton,
   Kbd,
   List,
@@ -31,7 +30,7 @@ import {
   Textarea,
   Tooltip,
   useToast,
-  type CommandPaletteItem,
+  type CommandPaletteGroup,
   type Destination,
 } from '@envsemble/envui';
 import { HighlightedCodeBlock } from '@envsemble/envui/code';
@@ -127,8 +126,7 @@ function Conversation() {
       <MessageList
         ref={log}
         aria-label="Conversation with the agent"
-        busy={running}
-        busyAuthor="Agent"
+        aria-busy={running || undefined}
         tabIndex={0}
         style={{ flex: 1, minBlockSize: 0, overflowY: 'auto', paddingInline: 'var(--env-space-1)' }}
       >
@@ -141,7 +139,7 @@ function Conversation() {
           author="Agent"
           meta={<RelativeTime value={minutesAgo(14)} />}
           actions={
-            <Button variant="text" size="sm" startIcon={<IconReplay />}>
+            <Button variant="text" size="sm" start={<IconReplay />}>
               Run again
             </Button>
           }
@@ -172,12 +170,9 @@ function Conversation() {
               I added up to three retries with exponential backoff for 5xx responses, and a
               10-second timeout on every attempt. All 50 runs pass now; the whole suite is running.
             </Text>
-            <Row align="center" gap={2}>
-              <Text variant="body-sm" emphasis="muted">
-                1 file changed
-              </Text>
-              <DiffStat additions={additions} deletions={deletions} />
-            </Row>
+            <Text variant="body-sm" emphasis="muted">
+              1 file changed, {additions} lines added and {deletions} removed
+            </Text>
             <CodeDiff
               filename="src/webhooks/deliver.ts"
               language="ts"
@@ -187,6 +182,7 @@ function Conversation() {
             />
           </Column>
         </Message>
+        {running && <Message from="other" author="Agent" status="working" />}
       </MessageList>
       <Composer
         aria-label="Message the agent"
@@ -197,7 +193,7 @@ function Conversation() {
         start={
           <>
             <IconButton variant="text" icon={<IconAttachFile />} aria-label="Attach files" />
-            <Badge icon={<IconTerminal />}>billing-api</Badge>
+            <Badge start={<IconTerminal />}>billing-api</Badge>
           </>
         }
         description="The agent can run commands in the sandbox and push to agent/* branches."
@@ -215,7 +211,7 @@ function RunPanel() {
           <Text render={<h2 />} variant="title">
             Run
           </Text>
-          <Badge tone="primary" icon={<Spinner size="sm" label="Running" />}>
+          <Badge tone="primary" start={<Spinner size="sm" label="Running" />}>
             Running
           </Badge>
         </Row>
@@ -260,7 +256,7 @@ function RunPanel() {
                 A preview deploys once the tests pass.
               </Text>
             </Column>
-            <Button variant="secondary" size="sm" startIcon={<IconRocketLaunch />}>
+            <Button variant="secondary" size="sm" start={<IconRocketLaunch />}>
               Deploy preview now
             </Button>
           </Column>
@@ -323,49 +319,58 @@ function SettingsDialog({
   );
 }
 
-const commands: CommandPaletteItem[] = [
+const commands: CommandPaletteGroup[] = [
   {
-    id: 'new',
-    label: 'New agent run',
-    icon: <IconSmartToy />,
-    group: 'Commands',
-    end: <Kbd keys={['Ctrl', 'N']} />,
-  },
-  { id: 'rerun', label: 'Run the failing step again', icon: <IconReplay />, group: 'Commands' },
-  {
-    id: 'commit',
-    label: 'Commit the changes',
-    icon: <IconCommit />,
-    group: 'Commands',
-    end: <Kbd keys={['Ctrl', 'Enter']} />,
-  },
-  {
-    id: 'settings',
-    label: 'Agent settings',
-    icon: <IconTune />,
-    group: 'Commands',
-    end: <Kbd keys={['Ctrl', ',']} />,
-  },
-  {
-    id: 'billing',
-    label: 'billing-api',
-    description: 'northwind/billing-api',
-    icon: <IconFolder />,
-    group: 'Projects',
+    label: 'Commands',
+    items: [
+      {
+        id: 'new',
+        label: 'New agent run',
+        start: <IconSmartToy />,
+        end: <Kbd keys={['Ctrl', 'N']} />,
+      },
+      { id: 'rerun', label: 'Run the failing step again', start: <IconReplay /> },
+      {
+        id: 'commit',
+        label: 'Commit the changes',
+        start: <IconCommit />,
+        end: <Kbd keys={['Ctrl', 'Enter']} />,
+      },
+      {
+        id: 'settings',
+        label: 'Agent settings',
+        start: <IconTune />,
+        end: <Kbd keys={['Ctrl', ',']} />,
+      },
+    ],
   },
   {
-    id: 'checkout',
-    label: 'checkout-web',
-    description: 'northwind/checkout',
-    icon: <IconFolder />,
-    group: 'Projects',
+    label: 'Projects',
+    items: [
+      {
+        id: 'billing',
+        label: 'billing-api',
+        description: 'northwind/billing-api',
+        start: <IconFolder />,
+      },
+      {
+        id: 'checkout',
+        label: 'checkout-web',
+        description: 'northwind/checkout',
+        start: <IconFolder />,
+      },
+    ],
   },
   {
-    id: 'automation',
-    label: 'Nightly dependency updates',
-    icon: <IconBolt />,
-    group: 'Automations',
-    end: <Badge tone="primary">New</Badge>,
+    label: 'Automations',
+    items: [
+      {
+        id: 'automation',
+        label: 'Nightly dependency updates',
+        start: <IconBolt />,
+        end: <Badge tone="primary">New</Badge>,
+      },
+    ],
   },
 ];
 
@@ -379,7 +384,7 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
     const id = toast.show({
       message: 'Pushed 2 commits to agent/webhook-retries.',
       tone: 'success',
-      action: { label: 'View', onClick: () => undefined },
+      actions: [{ label: 'View', onClick: () => undefined }],
     });
     return () => toast.dismiss(id);
   }, [toast]);
@@ -390,9 +395,12 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
   }));
   const items = useMemo(
     () =>
-      commands.filter((item) =>
-        String(item.label).toLowerCase().includes(query.trim().toLowerCase()),
-      ),
+      commands.map((group) => ({
+        ...group,
+        items: group.items.filter((item) =>
+          String(item.label).toLowerCase().includes(query.trim().toLowerCase()),
+        ),
+      })),
     [query],
   );
   return (
@@ -417,7 +425,7 @@ export function AgentScreen({ overlay }: { overlay: 'dialog' | 'palette' | 'none
                       onClick={() => setSettings(true)}
                     />
                   </Tooltip>
-                  <Button startIcon={<IconCommit />}>Open pull request</Button>
+                  <Button start={<IconCommit />}>Open pull request</Button>
                 </>
               }
             />

@@ -5,10 +5,8 @@ import {
   cloneElement,
   createContext,
   isValidElement,
-  useCallback,
   useContext,
   useId,
-  useLayoutEffect,
   useMemo,
   type ReactElement,
   type ComponentPropsWithRef,
@@ -16,14 +14,15 @@ import {
 } from 'react';
 import { panes } from '../foundations/messages/panes.js';
 import { classNames } from '../internal/classNames.js';
+import { panesOtherMinRem, panesSizeRem } from '../internal/sizeTokens.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
-import { readPanesWidth, writePanesWidth } from './panesSize.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { remPixels, roundToHundredth } from '../internal/dom/lengths.js';
 import { useResizableWidth } from '../internal/resize/useResizableWidth.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { ResizeHandle as Handle, type ResizeHandleProps as HandleProps } from './ResizeHandle.js';
+import { chainHandlers } from '../internal/react/chainHandlers.js';
 import '../styles/Base.css';
 import '../styles/Panes.css';
 
@@ -47,8 +46,9 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
   /** The sized pane's width in rem, for Panes the application controls with onWidthChange. */
   width?: number;
   /**
-   * The sized pane's width in rem until people choose one with Panes.ResizeHandle, or one is kept
-   * under `persist`, and the width a double click on the handle returns it to.
+   * The sized pane's width in rem until people choose one with Panes.ResizeHandle, and the width a
+   * double click on the handle returns it to. To keep the width people choose, store what
+   * onWidthChange receives and pass it back here.
    * @default 22.5
    */
   defaultWidth?: number;
@@ -68,21 +68,8 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    */
   maxWidth?: number;
   /**
-   * Keeps the width people choose in a cookie of this name, for Panes the application doesn't
-   * control; a double click on the handle forgets it and returns to `defaultWidth`. Read it on the
-   * server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's
-   * markup has it and nothing moves as the page hydrates. Without that, the kept width applies
-   * after the first render.
-   */
-  persist?: string;
-  /**
-   * The width kept under `persist`, in rem, as the server read it from the request's cookies with
-   * `readPanesWidth`: the first render uses it, on the server and in the browser alike.
-   */
-  persistedWidth?: number;
-  /**
-   * A name for this node, such as "inbox", which dev mode and the docs show; it renders as
-   * `data-env-name`.
+   * A name for this node, such as "inbox", for the application's styles and tests to find it by; it
+   * renders as `data-env-name`.
    */
   name?: string;
   /** The two panes, with a Panes.ResizeHandle between them for people to resize them. */
@@ -140,14 +127,12 @@ function usePanes(part: string) {
   return context;
 }
 
-const fallbackOtherPaneMinWidthRem = 16;
-
 function widestSizedPaneRem(handle: HTMLElement) {
   const root = handle.parentElement;
   if (!root) return Infinity;
   const other =
     Number.parseFloat(getComputedStyle(root).getPropertyValue('--env-panes-other-min')) ||
-    fallbackOtherPaneMinWidthRem;
+    panesOtherMinRem;
   return roundToHundredth(root.clientWidth / remPixels(handle) - other);
 }
 
@@ -155,12 +140,10 @@ function Root({
   sized = 'start',
   stackBelow,
   width,
-  defaultWidth = 22.5,
+  defaultWidth = panesSizeRem,
   onWidthChange,
   minWidth = 16,
   maxWidth = 40,
-  persist,
-  persistedWidth,
   name,
   className,
   style,
@@ -168,29 +151,16 @@ function Root({
   ...props
 }: RootProps) {
   const sizeText = useMessages('panes', panes).size;
-  const keep = useCallback(
-    (kept: number | undefined) => {
-      if (persist) writePanesWidth(persist, kept);
-    },
-    [persist],
-  );
   const resize = useResizableWidth({
     width,
     defaultWidth,
     onWidthChange,
     minWidth,
     maxWidth,
-    keptWidth: persistedWidth,
-    keep,
     room: widestSizedPaneRem,
     reverse: sized === 'end',
     widthText: (size) => sizeText({ size }),
   });
-  const { restore } = resize;
-  useLayoutEffect(() => {
-    const kept = persist ? readPanesWidth(document.cookie, persist) : undefined;
-    if (kept !== undefined) restore(kept);
-  }, [persist, restore]);
   const fallbackId = `${useId()}-sized`;
   const paneAt: number[] = [];
   const given: ReactElement<PaneProps>[] = [];
@@ -257,10 +227,7 @@ function ResizeHandle({ label, className, onDoubleClick, ...props }: ResizeHandl
       label={label ?? messages.resize}
       aria-controls={sizedId}
       className={classNames('env-panes-resize-handle', className)}
-      onDoubleClick={(event) => {
-        onDoubleClick?.(event);
-        handle.onDoubleClick(event);
-      }}
+      onDoubleClick={chainHandlers(onDoubleClick, handle.onDoubleClick)}
     />
   );
 }
@@ -269,8 +236,10 @@ function ResizeHandle({ label, className, onDoubleClick, ...props }: ResizeHandl
  * A region split into two panes side by side, such as a list and its detail: one pane has a width
  * of its own, which a Panes.ResizeHandle between them resizes, and the other takes the rest. Each
  * pane's content scrolls on its own under its header when Panes has a height. With `stackBelow`
- * the panes stack in a narrow region. Panes fill their region with square corners; an application
- * rounds them with its own class, and the panes follow, since the root clips them.
+ * the panes stack in a narrow region. A pane the application renders alone, such as the list
+ * while no item is open, fills the region and the handle hides. Panes fill their region with square
+ * corners; an application rounds them with its own class, and the panes follow, since the root
+ * clips them.
  */
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Panes.Root');
 /** One pane: the first or the last child of Panes.Root, with an optional header. */

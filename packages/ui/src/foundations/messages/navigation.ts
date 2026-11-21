@@ -7,6 +7,8 @@ export const navigation = {
   label: 'Main',
   /** Names a destination with a count, such as Inbox, 3 new. */
   itemCount: ({ label, count }: { label: string; count: string }) => `${label}, ${count} new`,
+  /** Names a destination with something new and no count, shown as a dot, such as Activity, new. */
+  itemNew: ({ label }: { label: string }) => `${label}, new`,
   /** Labels the NavigationBar's last item, which opens the destinations that don't fit in a menu. */
   more: 'More',
   /**

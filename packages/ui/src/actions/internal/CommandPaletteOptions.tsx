@@ -1,31 +1,43 @@
 'use client';
 
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
-import type { MouseEvent, Ref } from 'react';
+import type { MouseEvent, ReactNode, Ref } from 'react';
 import { Grid } from '../../layout/Layout.js';
-import { ListRow } from '../../internal/list/ListRow.js';
-import type { CommandPaletteItem } from '../CommandPalette.js';
+import { ListRow, listRowLabel } from '../../internal/popup/ListRow.js';
+import { isGroup } from '../../internal/popup/listEntries.js';
+import { givenLabelText, labelText } from '../../internal/text/labelText.js';
+import type { CommandPaletteGroup, CommandPaletteItem } from '../CommandPalette.js';
 import '../../styles/Base.css';
 import '../../styles/CommandPalette.css';
 
 export interface CommandPaletteSection {
   id: string;
-  label: string | undefined;
-  items: CommandPaletteItem[];
+  heading: ReactNode;
+  items: readonly CommandPaletteItem[];
 }
 
-export function sectionsOf(items: readonly CommandPaletteItem[]) {
-  const sections: CommandPaletteSection[] = [];
-  for (const item of items) {
-    const current = sections.at(-1);
-    if (current && current.label === item.group) current.items.push(item);
-    else sections.push({ id: `section-${sections.length}`, label: item.group, items: [item] });
-  }
-  return sections;
+export type SectionsBaseUiTakesAsItsGroups = readonly CommandPaletteItem[];
+
+export function sectionsOf(
+  entries: readonly CommandPaletteItem[] | readonly CommandPaletteGroup[],
+): CommandPaletteSection[] {
+  const groups = (entries as readonly (CommandPaletteItem | CommandPaletteGroup)[]).filter(
+    isGroup<CommandPaletteItem, CommandPaletteGroup>,
+  );
+  if (groups.length === 0)
+    return entries.length === 0
+      ? []
+      : [{ id: 'section-0', heading: undefined, items: entries as readonly CommandPaletteItem[] }];
+  return groups
+    .map((group, index) => ({ id: `section-${index}`, heading: group.label, items: group.items }))
+    .filter((section) => section.items.length > 0);
 }
 
-export function textOf(item: CommandPaletteItem) {
-  return item.textValue ?? (typeof item.label === 'string' ? item.label : item.id);
+export function textOf(item: CommandPaletteItem, list: HTMLElement | null) {
+  const given = givenLabelText(item.label, item.textValue);
+  if (given !== undefined) return given;
+  const option = list?.querySelector(`[data-item-id="${CSS.escape(item.id)}"]`);
+  return labelText(item.label, item.textValue, option && listRowLabel(option));
 }
 
 export function CommandPaletteOptions({
@@ -47,17 +59,22 @@ export function CommandPaletteOptions({
     <ListRow
       key={item.id}
       className="env-command-palette-item"
-      icon={item.icon}
+      start={item.start}
       label={item.label}
       description={item.description}
       end={item.end}
+      descriptionInName
       render={
         <BaseAutocomplete.Item
+          {...item.itemProps}
           value={item}
           disabled={item.disabled}
           data-item-id={item.id}
           aria-label={item.textValue}
-          onClick={(event: MouseEvent) => onAct(item, event.ctrlKey || event.metaKey)}
+          onClick={(event: MouseEvent<HTMLDivElement>) => {
+            item.itemProps?.onClick?.(event);
+            onAct(item, event.ctrlKey || event.metaKey);
+          }}
         />
       }
     />
@@ -73,7 +90,7 @@ export function CommandPaletteOptions({
     >
       {grouped
         ? (section: CommandPaletteSection) =>
-            section.label === undefined ? (
+            section.heading == null ? (
               <BaseAutocomplete.Group key={section.id} items={section.items}>
                 <BaseAutocomplete.Collection>{renderItem}</BaseAutocomplete.Collection>
               </BaseAutocomplete.Group>
@@ -85,7 +102,7 @@ export function CommandPaletteOptions({
                 className="env-command-palette-group"
               >
                 <BaseAutocomplete.GroupLabel className="env-command-palette-group-label">
-                  {section.label}
+                  {section.heading}
                 </BaseAutocomplete.GroupLabel>
                 <BaseAutocomplete.Collection>{renderItem}</BaseAutocomplete.Collection>
               </BaseAutocomplete.Group>

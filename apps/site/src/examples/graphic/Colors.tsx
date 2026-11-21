@@ -22,7 +22,7 @@ export default function Colors() {
     <Row wrap align="center" gap={5}>
       <Graphic src={logo} alt="Northwind" size="md" />
       <Graphic src={oneColorMark} alt="Northwind" size="md" tint="text" />
-      <Button variant="primary" startIcon={<Graphic src={oneColorMark} alt="" tint="text" />}>
+      <Button variant="primary" start={<Graphic src={oneColorMark} alt="" tint="text" />}>
         Connect Northwind
       </Button>
     </Row>

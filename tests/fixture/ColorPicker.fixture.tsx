@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, Checkbox, Column, Row, Theme } from '@envsemble/envui';
+import { Button, Checkbox, Column, Row, Theme, Toolbar } from '@envsemble/envui';
+import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
 import { ColorPicker, ColorPickerButton, ColorSwatch } from '@envsemble/envui/color';
 
 export default function ColorPickerFixture() {
@@ -115,7 +116,7 @@ export default function ColorPickerFixture() {
         <Row gap={4} align="center" data-testid="color-swatches">
           <ColorSwatch color="#6750a4" format="rgb" label="Violet" />
           <ColorSwatch color="#ffffff" />
-          <Button variant="secondary" startIcon={<ColorSwatch color="#ffffff" />}>
+          <Button variant="secondary" start={<ColorSwatch color="#ffffff" />}>
             #FFFFFF
           </Button>
         </Row>
@@ -126,5 +127,29 @@ export default function ColorPickerFixture() {
         <output data-testid="color-values">{JSON.stringify(values)}</output>
       </Column>
     </Theme>
+  );
+}
+
+export function ColorTriggerFixture() {
+  const [color, setColor] = useState('#d32f2f');
+  return (
+    <Toolbar.Root aria-label="Formatting">
+      <Toolbar.Button icon={<IconFormatBold />} label="Bold" />
+      <ColorPickerButton
+        label="Text color"
+        value={color}
+        onValueChange={setColor}
+        swatches={['#d32f2f', '#1976d2']}
+        trigger={({ value }) => (
+          <Toolbar.Item
+            render={
+              <Button data-testid="text-color" style={{ borderBlockEnd: `3px solid ${value}` }}>
+                A
+              </Button>
+            }
+          />
+        )}
+      />
+    </Toolbar.Root>
   );
 }

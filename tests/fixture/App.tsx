@@ -6,10 +6,9 @@ import { fixtureName } from './FixtureName.js';
 
 const fixtures = new Map(
   Object.entries(
-    import.meta.glob<FixtureModule>(
-      ['./*.fixture.tsx', '!./{CascadeLayers,RichTextEditor}.fixture.tsx'],
-      { eager: true },
-    ),
+    import.meta.glob<FixtureModule>(['./*.fixture.tsx', '!./CascadeLayers.fixture.tsx'], {
+      eager: true,
+    }),
   ).map(([file, module]) => [fixtureName(file), module]),
 );
 

@@ -7,3 +7,6 @@
   Cross-Origin-Opener-Policy: same-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=31536000
+/assets/*
+  ! Cache-Control
+  Cache-Control: private, max-age=31536000, immutable

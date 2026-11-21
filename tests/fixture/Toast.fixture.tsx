@@ -44,11 +44,44 @@ function ToastTriggers() {
             toast.show({
               message: 'Persistent action notice',
               tone: 'info',
-              action: { label: 'Undo notice', onClick: () => setActionCount((count) => count + 1) },
+              actions: [
+                { label: 'Undo notice', onClick: () => setActionCount((count) => count + 1) },
+              ],
             })
           }
         >
           Show action notice
+        </Button>
+        <Button
+          data-testid="toast-rich"
+          onClick={() =>
+            toast.show({
+              message: (
+                <>
+                  <strong>report.pdf</strong> uploaded
+                </>
+              ),
+              icon: <span data-testid="toast-own-icon">R</span>,
+              actions: [
+                { label: 'Undo upload', onClick: () => setActionCount((count) => count + 1) },
+                { label: 'View report', href: '#report' },
+              ],
+            })
+          }
+        >
+          Show rich notice
+        </Button>
+        <Button
+          data-testid="toast-three-actions"
+          onClick={() =>
+            toast.show({
+              message: 'Three actions',
+              textValue: 'Three actions to choose from',
+              actions: ['One', 'Two', 'Three'].map((label) => ({ label, onClick() {} })),
+            })
+          }
+        >
+          Show a notice with three actions
         </Button>
         <Button
           data-testid="toast-top"
@@ -87,10 +120,12 @@ function ToastTriggers() {
               toast.show({
                 message: `Action notice ${index}`,
                 duration: 0,
-                action: {
-                  label: 'Restore previous version',
-                  onClick: () => setActionCount((count) => count + 1),
-                },
+                actions: [
+                  {
+                    label: 'Restore previous version',
+                    onClick: () => setActionCount((count) => count + 1),
+                  },
+                ],
               });
           }}
         >

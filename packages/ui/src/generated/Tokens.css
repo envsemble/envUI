@@ -185,7 +185,6 @@
   --env-color-fg-on-selected-accent: #0053b5;
   --env-color-fg-on-strong: #ffffff;
   --env-color-fg-primary: #004aa2;
-  --env-color-fg-rating-star: #dea846;
   --env-color-fg-success: #005a25;
   --env-color-fg-success-on-strong: #7ad197;
   --env-color-fg-warning: #7e4b00;
@@ -467,7 +466,6 @@
   --env-color-fg-on-emphasis: #1e1f21;
   --env-color-fg-on-selected-accent: #b5cffb;
   --env-color-fg-primary: #9fc1f8;
-  --env-color-fg-rating-star: #ebb750;
   --env-color-fg-success: #7ad197;
   --env-color-fg-warning: #ebb750;
   --env-elevation-1-border: #686b70;
@@ -613,7 +611,6 @@
   --env-color-fg-muted-pressed: #1f1f22;
   --env-color-fg-on-selected-accent: #002f6d;
   --env-color-fg-primary: #00377c;
-  --env-color-fg-rating-star: #553200;
   --env-color-fg-success: #00441a;
   --env-color-fg-success-on-strong: #98f0b5;
   --env-color-fg-warning: #553200;
@@ -762,7 +759,6 @@
     --env-color-fg-muted-pressed: #1f1f22;
     --env-color-fg-on-selected-accent: #002f6d;
     --env-color-fg-primary: #00377c;
-    --env-color-fg-rating-star: #553200;
     --env-color-fg-success: #00441a;
     --env-color-fg-success-on-strong: #98f0b5;
     --env-color-fg-warning: #553200;
@@ -911,7 +907,6 @@
   --env-color-fg-on-emphasis: #121315;
   --env-color-fg-on-selected-accent: #cddefc;
   --env-color-fg-primary: #e0ebfd;
-  --env-color-fg-rating-star: #ffe8be;
   --env-color-fg-success: #a5fdc1;
   --env-color-fg-warning: #ffe8be;
   --env-elevation-3-border: #a1a4a9;
@@ -1053,7 +1048,6 @@
     --env-color-fg-on-emphasis: #121315;
     --env-color-fg-on-selected-accent: #cddefc;
     --env-color-fg-primary: #e0ebfd;
-    --env-color-fg-rating-star: #ffe8be;
     --env-color-fg-success: #a5fdc1;
     --env-color-fg-warning: #ffe8be;
     --env-elevation-3-border: #a1a4a9;

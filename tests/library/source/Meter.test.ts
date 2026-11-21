@@ -32,3 +32,46 @@ test('meters and progress bars read their values, Base UI’s formatted value by
   const uploading = withRole(h(Progress, { label: 'Uploading', value: 30 }), 'progressbar');
   assert.match(uploading.attributes['aria-valuetext'], /30/);
 });
+
+test('a meter or progress bar without a label or value text is a bare bar, named by aria-label, with no row above it', () => {
+  for (const [Bar, name, role] of [
+    [Progress, 'progress', 'progressbar'],
+    [Meter, 'meter', 'meter'],
+  ]) {
+    const bare = render(h(Bar, { value: 30, 'aria-label': 'Uploading report.pdf' }));
+    const bar = elementsOf(bare).find((each) => each.attributes.role === role);
+    assert.equal(bar.attributes['aria-label'], 'Uploading report.pdf');
+    assert.equal(bar.attributes['aria-labelledby'], undefined);
+    assert.equal(
+      elementsOf(bare).some((each) => hasClass(each, `env-${name}-header`)),
+      false,
+    );
+    assert.equal(
+      elementsOf(bare).some((each) => hasClass(each, `env-${name}-label`)),
+      false,
+    );
+    const labelled = render(h(Bar, { value: 30, label: 'Uploading' }));
+    assert.ok(elementsOf(labelled).some((each) => hasClass(each, `env-${name}-header`)));
+  }
+  const inline = render(h(Meter, { value: 30, layout: 'inline', 'aria-label': 'Storage' }));
+  assert.equal(
+    elementsOf(inline).some((each) => hasClass(each, 'env-meter-label')),
+    false,
+  );
+});
+
+test('an inline meter lays out its label, bar and value on one line, in that order', () => {
+  const meter = withRole(
+    h(Meter, { label: 'Storage', value: 40, valueText: '40%', layout: 'inline' }),
+    'meter',
+  );
+  assert.equal(meter.attributes['data-layout'], 'inline');
+  const parts = meter.children
+    .filter((child) => typeof child !== 'string')
+    .map((child) => child.attributes.class)
+    .filter(Boolean);
+  assert.deepEqual(parts, ['env-meter-label', 'env-meter-track', 'env-meter-value']);
+  const stacked = withRole(h(Meter, { label: 'Storage', value: 40, valueText: '40%' }), 'meter');
+  assert.equal(stacked.attributes['data-layout'], undefined);
+  assert.ok(elementsOf(stacked).some((element) => hasClass(element, 'env-meter-header')));
+});

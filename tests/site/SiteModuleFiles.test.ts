@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { inScratchFolder } from '../support/ScratchFolder.ts';
 import {
   moduleFiles,
   moduleFilesName,
@@ -67,21 +67,20 @@ test('each lazily loaded catalogue module maps to the files its load fetches', (
   });
 });
 
-test('the map is written once from the manifest, and a finalised build is left as it is', async (t) => {
-  const site = await mkdtemp(join(tmpdir(), 'envui-site-'));
-  t.after(() => rm(site, { recursive: true, force: true }));
-  await assert.rejects(writeModuleFiles(site), /vite build/);
-  await mkdir(join(site, '.vite'));
-  await writeFile(
-    join(site, '.vite/manifest.json'),
-    JSON.stringify({
-      'src/usage/IconUsage.tsx': { file: 'assets/IconUsage-1.js', isDynamicEntry: true },
-    }),
-  );
-  assert.equal(await writeModuleFiles(site), true);
-  assert.equal(existsSync(join(site, '.vite')), false);
-  const map = await readFile(join(site, moduleFilesName), 'utf8');
-  assert.deepEqual(JSON.parse(map), { 'src/usage/IconUsage.tsx': ['assets/IconUsage-1.js'] });
-  assert.equal(await writeModuleFiles(site), false);
-  assert.equal(await readFile(join(site, moduleFilesName), 'utf8'), map);
-});
+test('the map is written once from the manifest, and a finalised build is left as it is', () =>
+  inScratchFolder('site', async (site) => {
+    await assert.rejects(writeModuleFiles(site), /vite build/);
+    await mkdir(join(site, '.vite'));
+    await writeFile(
+      join(site, '.vite/manifest.json'),
+      JSON.stringify({
+        'src/usage/IconUsage.tsx': { file: 'assets/IconUsage-1.js', isDynamicEntry: true },
+      }),
+    );
+    assert.equal(await writeModuleFiles(site), true);
+    assert.equal(existsSync(join(site, '.vite')), false);
+    const map = await readFile(join(site, moduleFilesName), 'utf8');
+    assert.deepEqual(JSON.parse(map), { 'src/usage/IconUsage.tsx': ['assets/IconUsage-1.js'] });
+    assert.equal(await writeModuleFiles(site), false);
+    assert.equal(await readFile(join(site, moduleFilesName), 'utf8'), map);
+  }));

@@ -11,11 +11,9 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/popup/PopupSurface.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
-import type { SkeletonProps } from '../internal/skeleton.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
+import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { Grid } from '../layout/Layout.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/trigger/hoverDetail.js';
 import {
@@ -49,6 +47,13 @@ export interface HoverCardProps
    * another control keeps its own look.
    */
   trigger: ReactElement;
+  /**
+   * Whether a text trigger takes the quiet dotted underline, env-hover-detail, that says it shows
+   * more on hover or focus. False leaves its class alone, for text styled its own way, such as
+   * @mentions in a feed.
+   * @default true
+   */
+  underline?: boolean;
   /** The details. Supplementary: never the only place essential information appears. */
   children: ReactNode;
   /**
@@ -114,6 +119,7 @@ export function HoverCard({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  underline = true,
   skeleton = false,
   className,
   ...popupProps
@@ -131,6 +137,7 @@ export function HoverCard({
     ? (trigger.props as { children?: unknown }).children
     : trigger;
   const textTrigger = isValidElement(control) && isTextTrigger(control);
+  const underlined = underline && textTrigger;
   reportInDevelopment(
     () =>
       process.env.NODE_ENV !== 'production' &&
@@ -158,7 +165,7 @@ export function HoverCard({
         <BasePreviewCard.Trigger
           ref={triggerRef}
           render={trigger}
-          className={textTrigger ? hoverDetailClass : undefined}
+          className={underlined ? hoverDetailClass : undefined}
           delay={delay}
           closeDelay={closeDelay}
           onFocus={openWithoutHoverDelayOnKeyboardFocus}

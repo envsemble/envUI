@@ -84,6 +84,29 @@ test(
   },
 );
 
+test("a link goes through the application's router, which keeps the address, and onNavigate can make the jump itself", async () => {
+  await commands.emulateMedia({ reducedMotion: 'reduce' });
+  mount({ default: fixture.RoutedContentsFixture });
+  const routed = contents('Routed');
+  const address = location.href;
+  const entries = history.length;
+  await routed.getByRole('link', { name: 'Second' }).click();
+  await expect.poll(() => document.body.dataset.routedTo).toBe('#routed-second');
+  await expect.element(heading('routed-second')).toHaveFocus();
+  await expect.poll(current(routed)).toBe('Second');
+  expect([location.href, history.length]).toEqual([address, entries]);
+
+  const own = routed.getByRole('link', { name: 'Handled by the application' });
+  await own.click();
+  await expect.element(page.getByTestId('handled')).toHaveTextContent('routed-own');
+  await nextFrames();
+  await expect.element(own).toHaveFocus();
+  expect(heading('routed-own').getBoundingClientRect().top).toBeGreaterThan(window.innerHeight / 2);
+  expect(document.body.dataset.routedTo).toBe('#routed-second');
+  expect([location.href, history.length]).toEqual([address, entries]);
+  delete document.body.dataset.routedTo;
+});
+
 test('sections of its own follow the box that scrolls them', { tags: ['engines'] }, async () => {
   const review = contents('Review');
   expect(texts(review.getByRole('link').elements())).toEqual(['Summary', 'Results', 'Costs']);

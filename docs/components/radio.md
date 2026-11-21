@@ -30,6 +30,7 @@ examples:
     role: overview
     open: true
   SideBySide: example
+  PlanRows: example
   RadioAnatomy: anatomy
   RequiredChoice: example
 ---
@@ -44,6 +45,12 @@ examples:
 
 ```
 
+### Rows of a list
+
+```tsx figure=PlanRows
+
+```
+
 ## Anatomy
 
 ```tsx figure=RadioAnatomy
@@ -53,7 +60,7 @@ examples:
 1. **Group** (`env-radio-group`)
 2. **Group label** (`env-radio-group > legend`, `label`)
 3. **Option** (`env-radio`)
-4. **Label** (`env-radio > span::text`, `label`)
+4. **Label** (`env-radio-label`, `label`)
 5. **Description** (`env-radio-description`, `description`)
 6. **Radio** (`env-radio-input`)
 7. **State layer** (`env-radio-control`)

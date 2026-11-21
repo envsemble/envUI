@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Alert,
-  AnimatedNumber,
   Avatar,
   Badge,
   NavigationBar,
@@ -27,7 +26,6 @@ import {
   useSkeleton,
   Spinner,
 } from '@envsemble/envui';
-import { installDevMode } from '@envsemble/envui/dev';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 export const mount = 'standalone';
@@ -78,10 +76,6 @@ export default function SkeletonFixture() {
   const [loaded, setLoaded] = useState(false);
   const items = loaded ? projects : undefined;
   const list = items ?? placeholders<Project>(3);
-  useEffect(() => {
-    const devMode = installDevMode({ parts: { schemaVersion: 1, components: {} } });
-    return () => devMode.uninstall();
-  }, []);
   return (
     <Column gap={5} padding={5}>
       <Button variant="secondary" onClick={() => setLoaded((value) => !value)}>
@@ -140,7 +134,7 @@ export default function SkeletonFixture() {
           </Table.Root>
           <div data-testid="raw">Raw text in a div</div>
           <Text data-testid="inline-blocks">
-            Press <Kbd data-testid="kbd">K</Kbd> to open <AnimatedNumber value={42} /> projects.
+            Press <Kbd data-testid="kbd">K</Kbd> to open 42 projects.
           </Text>
           <Text data-testid="multi-line" style={{ inlineSize: '12rem' }}>
             A paragraph long enough to wrap onto several lines in its narrow column.
@@ -245,12 +239,6 @@ export default function SkeletonFixture() {
           </Message>
         </Column>
       </Surface>
-
-      <Surface data-testid="shifting" padding={4}>
-        <Text className="fixture-shifts">Grows in a skeleton</Text>
-        <img alt="" data-testid="no-ratio" />
-      </Surface>
-      <style>{`[data-env-skeleton] .fixture-shifts { padding-block: 1rem; }`}</style>
 
       <TopBar skeleton data-testid="top-bar" title={items?.length ? 'Projects' : undefined} />
       <Card skeleton data-testid="card-skeleton" title="Title" description={undefined} />

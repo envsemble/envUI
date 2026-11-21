@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { highlightCode } from '../../../packages/ui/dist/content/internal/codeHighlighting.js';
 import { tokenStyle } from '../../../packages/ui/dist/content/internal/codeTokenStyle.js';
 import { join } from 'node:path';
-import { repositoryRoot, tokensDataFile } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory, tokensDataFile } from '../../../scripts/RepositoryPaths.ts';
 
 test('concurrent cold highlighting consumers share one token matrix', async (context) => {
   const source = Array.from({ length: 40 }, (_, index) => `const value${index} = ${index};`).join(
@@ -93,7 +93,7 @@ test('the code themes style a token alike, so its font style is the same in eith
 test('every theme boundary sets the code colors codeColors.ts gives its theme', async () => {
   const { codeThemeStyle } =
     await import('../../../packages/ui/dist/content/internal/codeColors.js');
-  const css = await readFile(join(repositoryRoot, 'packages/ui/src/styles/Code.css'), 'utf8');
+  const css = await readFile(join(styleSheetsDirectory, 'Code.css'), 'utf8');
   const declared = (selector) => {
     const properties = {};
     for (const [, at, body] of css.matchAll(/^ {2}([^\n{]+) \{([^}]*)\}/gm))

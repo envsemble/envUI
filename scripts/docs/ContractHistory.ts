@@ -1,7 +1,6 @@
-import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { baseBranch } from '../test/TestScope.ts';
+import { baseBranch, git, mergeBase as mergeBaseOf } from '../Git.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const changesetDirectory = resolve(repositoryRoot, '.changeset');
@@ -22,14 +21,6 @@ export const names = (text: string, name: string) =>
     text,
   );
 
-function git(args: string[]) {
-  return execFileSync('git', args, {
-    cwd: repositoryRoot,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'ignore'],
-  });
-}
-
 export function baseContract<T>(
   path: string,
   base: string | undefined,
@@ -37,7 +28,7 @@ export function baseContract<T>(
   const ref = baseBranch(base);
   let mergeBase: string;
   try {
-    mergeBase = git(['merge-base', 'HEAD', ref]).trim();
+    mergeBase = mergeBaseOf(ref);
   } catch {
     return { ref, missing: `${ref} does not exist here` };
   }
@@ -48,14 +39,41 @@ export function baseContract<T>(
   }
 }
 
+const stableRelease = /^v\d+\.\d+\.\d+$/;
+
+function isAncestor(commit: string, of: string) {
+  try {
+    git(['merge-base', '--is-ancestor', commit, of]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function lastReleaseContract<T>(
+  path: string,
+  base: string | undefined,
+): { tag: string; contract: T } | undefined {
+  const ref = baseBranch(base);
+  let tags: string[];
+  try {
+    tags = git(['tag', '--list', 'v*', '--sort=-v:refname']).split(/\r?\n/);
+  } catch {
+    return undefined;
+  }
+  const releasedFromBase = (tag: string) => isAncestor(tag, ref) || isAncestor(`${tag}^2`, ref);
+  const tag = tags.filter((name) => stableRelease.test(name)).find(releasedFromBase);
+  if (!tag) return undefined;
+  try {
+    return { tag, contract: JSON.parse(git(['show', `${tag}:${path}`])) as T };
+  } catch {
+    return undefined;
+  }
+}
+
 export function pendingChangesets() {
   if (!existsSync(changesetDirectory)) return [];
   return readdirSync(changesetDirectory)
     .filter((name) => name.endsWith('.md') && name !== 'README.md')
     .map((name) => readFileSync(resolve(changesetDirectory, name), 'utf8'));
-}
-
-export function baseOption(argv = process.argv) {
-  const option = argv.indexOf('--base');
-  return option === -1 ? undefined : argv[option + 1];
 }

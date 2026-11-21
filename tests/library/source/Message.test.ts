@@ -6,16 +6,14 @@ import { importSource } from '../../support/ImportSource.ts';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { elementsOf, firstElement, hasClass, textOf } from '../../support/Markup.ts';
-import { declarations } from '../../support/CssDeclarations.ts';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { declarations } from '../../support/StyleSheets.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
 
 const { Button, IconButton, Message, MessageList } = await importSource(
   'Message',
   'packages/ui/src/index.ts',
 );
-const css = declarations(
-  readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Message.css'), 'utf8'),
-);
+const css = declarations(readFileSync(join(styleSheetsDirectory, 'Message.css'), 'utf8'));
 
 const render = (element) => firstElement(renderToStaticMarkup(element));
 const byClass = (root, name) => elementsOf(root).filter((element) => hasClass(element, name));
@@ -74,28 +72,25 @@ test('a conversation is a polite log of articles with authors, status named in t
   assert.equal(textOf(buttons(messages[3])[0]), 'Retry');
 });
 
-test('a busy log reports it while a reply streams in', () => {
-  const list = (busy) =>
-    render(
-      h(
-        MessageList,
-        { 'aria-label': 'Pane conversation', busy, busyAuthor: 'Aurora' },
-        h(Message, { from: 'self' }, 'On a pane'),
-        h(Message, { from: 'other', author: 'Aurora' }, 'The summary'),
-      ),
-    );
-  const idle = list(false);
-  assert.equal(idle.attributes['aria-busy'], undefined);
-  assert.equal(byClass(idle, 'env-message-list-busy').length, 0);
-  const busy = list(true);
-  assert.equal(busy.attributes['aria-busy'], 'true');
-  assert.equal(busy.attributes['aria-live'], 'polite');
-  const [row] = byClass(busy, 'env-message-list-busy');
-  assert.equal(row.attributes['aria-hidden'], 'true');
-  assert.equal(textOf(row), 'AuroraWorking');
+test('a busy log reports it while a working reply streams in as its last message', () => {
+  const list = render(
+    h(
+      MessageList,
+      { 'aria-label': 'Pane conversation', 'aria-busy': true },
+      h(Message, { from: 'self' }, 'On a pane'),
+      h(Message, { from: 'other', author: 'Aurora', status: 'working' }, 'The summ'),
+    ),
+  );
+  assert.equal(list.attributes['aria-busy'], 'true');
+  assert.equal(list.attributes['aria-live'], 'polite');
+  const reply = list.children.filter((child) => child.tag === 'article').at(-1);
+  assert.equal(reply.attributes['data-status'], 'working');
+  assert.equal(textOf(reply), 'AuroraThe summWorking');
   assert.equal(
-    textOf(busy.children.filter((child) => child.tag === 'article').at(-1)),
-    'AuroraThe summary',
+    render(h(MessageList, { 'aria-label': 'Idle' }, h(Message, { from: 'self' }, 'Hi'))).attributes[
+      'aria-busy'
+    ],
+    undefined,
   );
 });
 
@@ -120,4 +115,75 @@ test('actions without a variant or size of their own are small ghost buttons', (
     assert.equal(button.attributes['data-variant'], 'ghost');
     assert.equal(button.attributes['data-size'], 'sm');
   }
+});
+
+test('author and status take any content, and start takes a column beside the message', () => {
+  const avatar = h('span', { 'data-avatar': '' }, 'A');
+  const message = render(
+    h(
+      Message,
+      {
+        from: 'other',
+        start: avatar,
+        author: h(
+          'a',
+          { href: '/people/aurora' },
+          'Aurora',
+          h('span', { 'data-badge': '' }, 'Bot'),
+        ),
+        meta: '09:41',
+        status: 'failed',
+        statusLabel: h('span', null, 'Not sent. ', h('a', { href: '#retry' }, 'Try again')),
+        actions: h(Button, null, 'Copy'),
+        style: { color: 'red' },
+      },
+      'Ping',
+    ),
+  );
+  assert.equal(message.attributes['data-start'], '');
+  assert.match(message.attributes.style, /color:red/);
+  assert.match(message.attributes.style, /--_message-rows:4/);
+  const [start] = message.children.filter((child) => typeof child !== 'string');
+  assert.ok(hasClass(start, 'env-message-start'));
+  assert.equal(textOf(start), 'A');
+  const [author] = byClass(message, 'env-message-author');
+  assert.equal(elementsOf(author).filter((element) => element.tag === 'a').length, 1);
+  assert.equal(textOf(author), 'AuroraBot');
+  const [status] = byClass(message, 'env-message-status');
+  assert.equal(elementsOf(status).find((element) => element.tag === 'a').attributes.href, '#retry');
+  const plain = render(h(Message, { from: 'other', author: 'Aurora' }, 'Hi'));
+  assert.equal(plain.attributes['data-start'], undefined);
+  assert.equal(plain.attributes.style, undefined);
+});
+
+test('a working message shows a spinner and Working or its status label, and its reply once it streams in', () => {
+  const working = (children, props = {}) =>
+    render(
+      h(
+        Message,
+        {
+          from: 'other',
+          author: 'Agent',
+          start: h('span', { 'data-avatar': '' }, 'A'),
+          status: 'working',
+          actions: h(Button, null, 'Stop'),
+          ...props,
+        },
+        children,
+      ),
+    );
+  const empty = working('');
+  assert.equal(empty.attributes['data-status'], 'working');
+  assert.equal(empty.attributes['aria-hidden'], undefined);
+  assert.equal(byClass(empty, 'env-message-content').length, 0);
+  assert.match(empty.attributes.style, /--_message-rows:3/);
+  const [status] = byClass(empty, 'env-message-status');
+  assert.equal(textOf(status), 'Working');
+  assert.equal(byClass(status, 'env-spinner').length, 1);
+  assert.equal(textOf(elementsOf(empty).find((element) => element.tag === 'button')), 'Stop');
+
+  const streaming = working('The tests pass so far', { statusLabel: 'Running tests…' });
+  assert.equal(textOf(byClass(streaming, 'env-message-content')[0]), 'The tests pass so far');
+  assert.equal(textOf(byClass(streaming, 'env-message-status')[0]), 'Running tests…');
+  assert.match(streaming.attributes.style, /--_message-rows:4/);
 });

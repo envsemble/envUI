@@ -1,5 +1,11 @@
 import { useRef, useState } from 'react';
-import { Button, Dialog, TableOfContents } from '@envsemble/envui';
+import {
+  Button,
+  Dialog,
+  LinkProvider,
+  TableOfContents,
+  type LinkComponentProps,
+} from '@envsemble/envui';
 
 export const mount = 'standalone';
 
@@ -111,5 +117,50 @@ export default function TableOfContentsFixture() {
         </aside>
       </div>
     </div>
+  );
+}
+
+function RecordingRouterLink({ onClick, ...props }: LinkComponentProps) {
+  return (
+    <a
+      {...props}
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        event.preventDefault();
+        document.body.dataset.routedTo = props.href;
+      }}
+    />
+  );
+}
+
+export function RoutedContentsFixture() {
+  const [handled, setHandled] = useState('');
+  return (
+    <LinkProvider component={RecordingRouterLink}>
+      <TableOfContents
+        aria-label="Routed"
+        items={[
+          { id: 'routed-first', label: 'First' },
+          { id: 'routed-second', label: 'Second' },
+          { id: 'routed-own', label: 'Handled by the application' },
+        ]}
+        onNavigate={(id, event) => {
+          if (id !== 'routed-own') return;
+          event.preventDefault();
+          setHandled(id);
+        }}
+      />
+      <output data-testid="handled">{handled}</output>
+      <section id="routed-first" style={tall}>
+        First
+      </section>
+      <section id="routed-second" style={tall}>
+        Second
+      </section>
+      <section id="routed-own" style={tall}>
+        Own
+      </section>
+    </LinkProvider>
   );
 }

@@ -1,4 +1,4 @@
-import { defaultPorts } from '../../../scripts/test/CheckoutMarker.ts';
+import { defaultPorts } from '../../../scripts/DevServers.ts';
 
 const sitePort = Number(process.env.ENVUI_SITE_PORT || defaultPorts.site);
 const siteBuildPort = Number(process.env.ENVUI_SITE_BUILD_PORT || defaultPorts.siteBuild);

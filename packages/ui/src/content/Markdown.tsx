@@ -10,7 +10,7 @@ import {
   type ComponentPropsWithoutRef,
   type ReactNode,
 } from 'react';
-import ReactMarkdown, { type Components, type Options } from 'react-markdown';
+import ReactMarkdown, { defaultUrlTransform, type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
@@ -43,6 +43,14 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   headingOffset?: 0 | 1 | 2 | 3 | 4 | 5;
   /** Receives safe hrefs and native anchor props. Retain a real anchor destination. */
   renderLink?: (props: MarkdownLinkProps) => ReactNode;
+  /**
+   * Schemes a link may take beside the safe ones, such as `['vscode']` for links that open the
+   * editor, or the application's own. A link keeps a relative destination or an http, https,
+   * mailto, irc, ircs or xmpp one either way; one with another scheme renders as plain text.
+   * javascript, data and vbscript are refused even when listed, since a link with one runs code or
+   * opens content the application didn't write.
+   */
+  allowLinkSchemes?: readonly string[];
   /** Gives each code block a copy button; false by default. */
   codeCopyable?: boolean;
   /**
@@ -54,6 +62,14 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   remarkPlugins?: Options['remarkPlugins'];
   /** rehype plugins, such as heading ids; envUI adds none of its own. */
   rehypePlugins?: Options['rehypePlugins'];
+  /**
+   * Keeps raw HTML in the Markdown, such as details, sub, sup or an img with a width, for trusted
+   * content such as the application's own docs or a README. Only rehype-raw in rehypePlugins
+   * renders it, so give a sanitizer with it, such as rehype-sanitize. Without it, raw HTML is
+   * dropped, apart from kbd around plain text.
+   * @default false
+   */
+  allowHtml?: boolean;
 }
 
 interface HastNode {
@@ -141,6 +157,25 @@ function remarkDropRawHtmlBeforeAnyRehypePlugin() {
 }
 
 const markdownPlugins = [remarkGfm];
+
+const noOtherLinkSchemes: readonly string[] = [];
+
+const schemesThatRunCode = new Set(['javascript', 'data', 'vbscript']);
+
+function allowingLinkSchemes(schemes: readonly string[]): Options['urlTransform'] {
+  const allowed = new Set(
+    schemes
+      .map((scheme) => scheme.replace(/:$/, '').toLowerCase())
+      .filter((scheme) => !schemesThatRunCode.has(scheme)),
+  );
+  if (allowed.size === 0) return defaultUrlTransform;
+  return (url, key) => {
+    const safe = defaultUrlTransform(url);
+    if (safe || key !== 'href') return safe;
+    const colon = url.indexOf(':');
+    return colon > 0 && allowed.has(url.slice(0, colon).toLowerCase()) ? url : '';
+  };
+}
 const emptySourceThePreParsedTreeReplaces = '';
 
 const rehypeNoteRenderedTree = (source: string) => () => (tree: MarkdownTree) =>
@@ -242,10 +277,12 @@ export function Markdown({
   children,
   headingOffset = 0,
   renderLink,
+  allowLinkSchemes = noOtherLinkSchemes,
   codeCopyable = false,
   components: componentOverrides,
   remarkPlugins,
   rehypePlugins,
+  allowHtml = false,
   className,
   ...props
 }: MarkdownProps) {
@@ -260,6 +297,11 @@ export function Markdown({
         ? { ...stableElementsReadingPropsFromContext, ...componentOverrides }
         : stableElementsReadingPropsFromContext,
     [componentOverrides],
+  );
+  const allowedLinkSchemes = allowLinkSchemes.join(' ');
+  const urlTransform = useMemo(
+    () => allowingLinkSchemes(allowedLinkSchemes ? allowedLinkSchemes.split(' ') : []),
+    [allowedLinkSchemes],
   );
   const preParsedTree = givenMarkdownTree(children);
   const mergedRehypePlugins = useMemo(
@@ -277,8 +319,10 @@ export function Markdown({
     () =>
       preParsedTree
         ? []
-        : [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropRawHtmlBeforeAnyRehypePlugin],
-    [preParsedTree, remarkPlugins],
+        : allowHtml
+          ? [...markdownPlugins, ...(remarkPlugins ?? [])]
+          : [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropRawHtmlBeforeAnyRehypePlugin],
+    [preParsedTree, remarkPlugins, allowHtml],
   );
   return (
     <div {...props} className={classNames('env-markdown', 'env-prose', className)}>
@@ -287,7 +331,8 @@ export function Markdown({
           remarkPlugins={mergedRemarkPlugins}
           rehypePlugins={mergedRehypePlugins}
           components={mergedComponents}
-          skipHtml
+          skipHtml={!allowHtml}
+          urlTransform={urlTransform}
         >
           {preParsedTree ? emptySourceThePreParsedTreeReplaces : children}
         </ReactMarkdown>

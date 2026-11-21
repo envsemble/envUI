@@ -27,12 +27,12 @@ test('LinkProvider routes destinations and leaves disabled links native', async 
   expect(errors).toEqual([]);
 });
 
-test("a number within a label's words stays in their line, and a badge or diff stat keeps its own colors", async () => {
+test("a number within a label's words stays in their line, and a badge keeps its own colors", async () => {
   mount(buttonCounts);
   const button = page.getByTestId('show-tasks-light');
   await expect.element(button).toHaveTextContent('Show 33 tasks');
   const element = button.element();
-  const number = element.querySelector('.env-animated-number')!.getBoundingClientRect();
+  const number = element.querySelector('[data-testid="tasks-count"]')!.getBoundingClientRect();
   const words = document.createRange();
   const run = element.querySelector('.env-button-label')!.firstChild!;
   words.setStart(run, 0);
@@ -44,24 +44,11 @@ test("a number within a label's words stays in their line, and a badge or diff s
   const primary = [...section.querySelectorAll('.env-button')].find((each) =>
     each.textContent!.startsWith('primary'),
   )!;
-  const standaloneOf = (testId: string) => page.getByTestId(testId).element();
-  for (const [selector, standalone] of [
-    ['.env-badge', standaloneOf('badge-light')],
-    ['.env-diff-stat', standaloneOf('diff-stat-light')],
-    [
-      '.env-diff-stat-additions',
-      standaloneOf('diff-stat-light').querySelector('.env-diff-stat-additions'),
-    ],
-    [
-      '.env-diff-stat-deletions',
-      standaloneOf('diff-stat-light').querySelector('.env-diff-stat-deletions'),
-    ],
-  ] as const)
-    for (const property of ['background-color', 'color', 'border-color'])
-      if (selector !== '.env-diff-stat' || property === 'background-color')
-        expect(css(primary.querySelector(selector)!, property), `${selector} ${property}`).toBe(
-          css(standalone!, property),
-        );
+  const badge = page.getByTestId('badge-light').element();
+  for (const property of ['background-color', 'color', 'border-color'])
+    expect(css(primary.querySelector('.env-badge')!, property), property).toBe(
+      css(badge, property),
+    );
   const alone = page.getByTestId('text-alone-light');
   await expect.element(alone).toHaveTextContent('Alex Morgan');
   const lines = document.createRange();

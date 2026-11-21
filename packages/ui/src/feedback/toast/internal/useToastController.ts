@@ -2,16 +2,19 @@
 
 import { useEffect, useId, useMemo, useRef } from 'react';
 import {
+  toastActions,
   toastPlacements,
   type ToastDelivery,
   type ToastEntry,
+  type ToastPauseReason,
   type ToastTimer,
 } from './toastEntry.js';
 import type { ToastNotification, ToastPlacement } from '../toastTypes.js';
-import { useLatest } from '../../../internal/useLatest.js';
+import { useLatest } from '../../../internal/react/useLatest.js';
 
 const longestTimeoutBrowsersKeep = 2_147_483_647;
 const baseUIPriorityThatDoesNotHideUntilFocused = 'low';
+const defaultDurationMs = 5000;
 
 function dropHoverAndFocusPauses(timer: ToastTimer) {
   timer.pauseReasons.delete('hover');
@@ -46,7 +49,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
         Math.min(timer.remainingMs, longestTimeoutBrowsersKeep),
       );
     }
-    function pause(id: string, reason: string) {
+    function pause(id: string, reason: ToastPauseReason) {
       const timer = dismissalTimers.current.get(id);
       if (!timer || timer.pauseReasons.has(reason)) return;
       if (!timer.pauseReasons.size) {
@@ -56,7 +59,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
       }
       timer.pauseReasons.add(reason);
     }
-    function resume(id: string, reason: string) {
+    function resume(id: string, reason: ToastPauseReason) {
       const timer = dismissalTimers.current.get(id);
       if (timer?.pauseReasons.delete(reason) && !timer.pauseReasons.size)
         scheduleDismissal(id, timer);
@@ -67,16 +70,19 @@ export function useToastController(defaultPlacement: ToastPlacement) {
         const delivery = placementStores.current.get(entry.placement);
         if (!delivery) return true;
         const durationMs =
-          entry.duration ?? (entry.tone === 'danger' || entry.action ? Infinity : 5000);
+          entry.duration ??
+          (entry.tone === 'danger' || toastActions(entry).length > 0
+            ? Infinity
+            : defaultDurationMs);
         if (durationMs > 0 && Number.isFinite(durationMs)) {
           dismissalTimers.current.set(entry.id, {
             durationMs,
             remainingMs: durationMs,
             startedAt: Date.now(),
-            pauseReasons: new Set([
+            pauseReasons: new Set<ToastPauseReason>([
               'hidden',
-              ...(isWindowPaused.current ? ['window'] : []),
-              ...(focusedViewports.current.has(entry.placement) ? ['viewport'] : []),
+              ...(isWindowPaused.current ? (['window'] as const) : []),
+              ...(focusedViewports.current.has(entry.placement) ? (['viewport'] as const) : []),
             ]),
           });
         }

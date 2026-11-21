@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Avatar,
   Badge,
   Breadcrumbs,
   List,
@@ -25,6 +26,9 @@ const narrowTrail = [
   { label: 'Plans', href: '/workspace/plans' },
   { label: 'Quarterly review of the shared design tokens' },
 ];
+
+export const contentLabelName =
+  'Northwind, a project whose name runs well past the room that one level takes';
 
 const plans = Array.from({ length: 30 }, (_, index) => ({
   id: index + 1,
@@ -82,6 +86,20 @@ export default function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
             { label: 'Notes' },
           ]}
         />
+        <Breadcrumbs
+          aria-label="Content label trail"
+          items={[
+            {
+              label: (
+                <>
+                  <Avatar name="Northwind" size="sm" /> {contentLabelName}
+                </>
+              ),
+              href: '/projects/northwind',
+            },
+            { label: 'Notes' },
+          ]}
+        />
         <Surface
           background="muted"
           padding={2}
@@ -106,7 +124,11 @@ export default function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
         Open with <Kbd keys={['Ctrl', 'P']} /> or press <Kbd>F2</Kbd>.
       </p>
       <div className="fixture-table-frame">
-        <Table.Root caption={`Plans ${theme}`} stickyHeader regionClassName="fixture-table-region">
+        <Table.Root
+          caption={`Plans ${theme}`}
+          stickyHeader
+          regionProps={{ className: 'fixture-table-region' }}
+        >
           <Table.Head>
             <Table.Row>
               <Table.HeaderCell>Plan</Table.HeaderCell>

@@ -121,7 +121,7 @@ import { Column, Surface, Table, Text, Theme } from '@envsemble/envui';
 
 ### Customize
 
-Generated from the token list by `npm run docs:guides`; values at the default 16 px root.
+Values at the default 16 px root.
 
 #### Spacing
 

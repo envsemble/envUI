@@ -12,20 +12,20 @@ export default function GroupsAndSeparators() {
       aria-label="New"
       align="start"
       defaultOpen
-      trigger={<Button startIcon={<IconAdd />}>New</Button>}
+      trigger={<Button start={<IconAdd />}>New</Button>}
     >
       <Menu.Group label="Documents">
-        <Menu.Item icon={<IconNoteAdd />}>Blank document</Menu.Item>
-        <Menu.Item icon={<IconDescription />}>From a template</Menu.Item>
+        <Menu.Item start={<IconNoteAdd />}>Blank document</Menu.Item>
+        <Menu.Item start={<IconDescription />}>From a template</Menu.Item>
       </Menu.Group>
       <Menu.Group label="Folders">
-        <Menu.Item icon={<IconCreateNewFolder />}>Folder</Menu.Item>
-        <Menu.Item icon={<IconFolder />} description="Everyone in Northwind can open it">
+        <Menu.Item start={<IconCreateNewFolder />}>Folder</Menu.Item>
+        <Menu.Item start={<IconFolder />} description="Everyone in Northwind can open it">
           Shared folder
         </Menu.Item>
       </Menu.Group>
       <Menu.Separator />
-      <Menu.Item icon={<IconUpload />}>Upload files</Menu.Item>
+      <Menu.Item start={<IconUpload />}>Upload files</Menu.Item>
     </Menu.Root>
   );
 }

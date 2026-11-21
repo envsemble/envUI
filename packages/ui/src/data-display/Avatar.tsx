@@ -1,11 +1,12 @@
 'use client';
 
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
-import type { ComponentPropsWithRef } from 'react';
+import type { ComponentPropsWithRef, ReactElement, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { IconCheck } from '../icons/Check.js';
-import { useResolvedLocale } from '../internal/provider/useFormatters.js';
+import { useResolvedLocale } from '../internal/provider/locale.js';
 import { flag } from '../internal/flag.js';
+import { Slot } from '../internal/layout/Slot.js';
 import '../styles/Base.css';
 import '../styles/Avatar.css';
 
@@ -60,10 +61,12 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
   src?: string | null;
   /**
    * Shown without a picture: the initials of `name`, so people tell avatars apart, or the default
-   * person picture, which an empty `name` shows too.
+   * person picture, which an empty `name` shows too. An element is placed as given on the hue's
+   * fill, in its deep shade as `currentColor`, such as an icon or a Graphic for a bot, an agent, a
+   * team or a service account.
    * @default 'initials'
    */
-  fallback?: 'person' | 'initials';
+  fallback?: 'person' | 'initials' | ReactElement;
   /**
    * The fill behind the initials or the person picture. Without it, the name chooses one, the same
    * for the same name everywhere; set it for an organization with a color of its own.
@@ -87,6 +90,13 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
    * @default false
    */
   selected?: boolean;
+  /**
+   * A small mark at the avatar's bottom end, placed as given, such as a presence dot, an unread
+   * marker or an organization's mark; at its top end while the avatar is selected, whose check
+   * takes the bottom end. It is hidden from assistive technology with the avatar, so say what it
+   * shows in the text beside it.
+   */
+  badge?: ReactNode;
 }
 
 function getInitials(name: string, locale: string | undefined) {
@@ -128,12 +138,15 @@ export function Avatar({
   size = 'md',
   named = false,
   selected = false,
+  badge,
   className,
   ...props
 }: AvatarProps) {
   const locale = useResolvedLocale();
   const initials = getInitials(name, locale);
-  const fallback = ownFallback ?? (initials ? 'initials' : 'person');
+  const ownFallbackContent = typeof ownFallback === 'object' ? ownFallback : null;
+  const fallback: 'person' | 'initials' =
+    typeof ownFallback === 'string' ? ownFallback : initials ? 'initials' : 'person';
   return (
     <BaseAvatar.Root
       {...props}
@@ -154,15 +167,28 @@ export function Avatar({
           referrerPolicy="no-referrer"
         />
       ) : null}
-      <BaseAvatar.Fallback
-        className={classNames('env-avatar-fallback', `env-avatar-fallback-${fallback}`)}
-      >
-        {fallback === 'person' ? <DefaultAccountPicture /> : initials}
-      </BaseAvatar.Fallback>
+      {ownFallbackContent ? (
+        <BaseAvatar.Fallback className="env-avatar-fallback">
+          <Slot className="env-avatar-fallback-content" element="span" layout="row">
+            {ownFallbackContent}
+          </Slot>
+        </BaseAvatar.Fallback>
+      ) : (
+        <BaseAvatar.Fallback
+          className={classNames('env-avatar-fallback', `env-avatar-fallback-${fallback}`)}
+        >
+          {fallback === 'person' ? <DefaultAccountPicture /> : initials}
+        </BaseAvatar.Fallback>
+      )}
       {selected && (
         <span className="env-avatar-check" aria-hidden="true">
           <IconCheck />
         </span>
+      )}
+      {badge != null && (
+        <Slot className="env-avatar-badge" element="span" layout="row">
+          {badge}
+        </Slot>
       )}
     </BaseAvatar.Root>
   );

@@ -214,3 +214,65 @@ test('on a touch screen a full-width control wraps long labels instead, and a ta
     await commands.emulateTouch(false);
   }
 });
+
+test('on a touch screen each segment takes a 44 px tap, its look still inside the track', async () => {
+  await commands.emulateTouch(true);
+  try {
+    await page.viewport(1024, 900);
+    mount(fixture);
+    expect(matchMedia('(pointer: coarse)').matches).toBe(true);
+    for (const segment of [
+      page
+        .getByRole('radiogroup', { name: 'Work items light' })
+        .getByRole('radio', { name: 'Blocked 3' }),
+      page
+        .getByRole('radiogroup', { name: 'Work items light' })
+        .getByRole('radio', { name: 'Done 40' }),
+    ]) {
+      const element = segment.element();
+      element.scrollIntoView({ block: 'center' });
+      const at = box(element);
+      expect(at.height).toBeLessThan(44);
+      expect(at.width).toBeGreaterThanOrEqual(44);
+      const reaches = (offset: number) =>
+        element.contains(
+          document.elementFromPoint(at.x + at.width / 2, at.y + at.height / 2 + offset),
+        );
+      expect([reaches(-21), reaches(21)]).toEqual([true, true]);
+    }
+  } finally {
+    await commands.emulateTouch(false);
+  }
+});
+
+test("an item's itemProps reach its button, its class beside the segment's own", async () => {
+  mount({ default: fixture.SegmentContentFixture });
+  const review = page.getByTestId('review-segment');
+  await expect.element(review).toHaveRole('radio');
+  await expect.element(review).toHaveClass('fixture-review-segment');
+  await expect.element(review).toHaveClass('env-segmented-control-item');
+  await expect.element(review).toHaveAttribute('title', 'Review');
+});
+
+test('a segment takes content in its label and at its end, or shows only its icon with its label in a tooltip', async () => {
+  mount({ default: fixture.SegmentContentFixture });
+  const group = page.getByRole('radiogroup', { name: 'View' });
+  const list = group.getByRole('radio', { name: 'List', exact: true });
+  const grid = group.getByRole('radio', { name: 'Grid', exact: true });
+  const review = group.getByRole('radio', { name: '● Review New', exact: true });
+  await expect.element(review).toBeVisible();
+  expect(review.element().querySelector('.env-segmented-control-item-end')?.textContent).toBe(
+    'New',
+  );
+  expect(list.element().querySelector('.env-segmented-control-item-label')).toBeNull();
+  expect(box(list).width).toBeLessThan(box(list).height + 1);
+  await grid.hover();
+  await expect.poll(tooltips).toEqual(['Grid']);
+  await mouse.move(0, 0);
+  await expect.poll(tooltips).toEqual([]);
+  (list.element() as HTMLElement).focus();
+  await keyboard.press('ArrowRight');
+  await expect.element(grid).toHaveFocus();
+  await expect.element(grid).toHaveAttribute('aria-checked', 'true');
+  await expect.poll(tooltips).toEqual(['Grid']);
+});

@@ -12,7 +12,8 @@ import {
   type ThemeScale,
 } from '@envsemble/envui';
 import { IconTune } from '@envsemble/envui/icons/Tune';
-import { displayStorageKeys, siteTheme } from './DisplayStorage';
+import { useStoredThemePreference } from '@envsemble/envui/theme-storage';
+import { displayStorageKeys, siteThemeStorage } from './DisplayStorage';
 import { prefersReducedMotion } from '../shared/ReducedMotion';
 import { useHydrated } from '../shared/useHydrated';
 import {
@@ -83,6 +84,7 @@ export function DisplaySettingsProvider({
     addEventListener('storage', onStorage);
     return () => removeEventListener('storage', onStorage);
   }, []);
+  const storedTheme = useStoredThemePreference(siteThemeStorage);
   const hydrated = useHydrated();
   const shown = hydrated
     ? { contrast, scale, motion }
@@ -111,7 +113,8 @@ export function DisplaySettingsProvider({
   return (
     <DisplaySettingsContext value={value}>
       <ThemePreferenceProvider
-        theme={{ ...siteTheme, contrast: shown.contrast, scale: shown.scale }}
+        theme={{ contrast: shown.contrast, scale: shown.scale }}
+        {...storedTheme}
         className={className}
       >
         {children}
@@ -140,7 +143,7 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
             <IconButton variant="ghost" icon={<IconTune />} aria-label="Display" />
           </Tooltip>
         ) : (
-          <Button variant="ghost" startIcon={<IconTune />}>
+          <Button variant="ghost" start={<IconTune />}>
             Display
           </Button>
         )

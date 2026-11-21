@@ -3,7 +3,7 @@ import { commands, page } from 'vitest/browser';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as primitives from '../fixture/Primitives.fixture.tsx';
 import * as fixture from '../fixture/Scale.fixture.tsx';
-import { controlSizes, densityScales } from '../fixture/ScaleSections.fixture.ts';
+import { controlSizes, densityScales } from '../fixture/ScaleSections.ts';
 import { css } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 

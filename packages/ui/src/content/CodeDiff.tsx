@@ -4,11 +4,11 @@ import { parseDiffFromFile, preloadHighlighter, registerCustomTheme } from '@pie
 import { File, FileDiff } from '@pierre/diffs/react';
 import {
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type ReactNode,
   type RefObject,
 } from 'react';
 import { Button } from '../actions/Button.js';
@@ -31,8 +31,24 @@ import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.j
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { remPixels } from '../internal/dom/lengths.js';
+import { useContainerSize } from '../foundations/useContainerSize.js';
+import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/Code.css';
+
+/** A note attached to a line of a CodeDiff, such as a review comment. */
+export interface CodeDiffAnnotation {
+  /**
+   * The line's side: deletions for a line of before, additions for a line of after. A file that
+   * didn't change has one side.
+   * @default 'additions'
+   */
+  side?: 'deletions' | 'additions';
+  /** The line's number on its side, from 1; 0 places the note above the first change. */
+  lineNumber: number;
+  /** The application's own data for renderAnnotation, such as the comment's id. */
+  data?: unknown;
+}
 
 export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source before the change. */
@@ -47,8 +63,24 @@ export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   header?: boolean;
   /** Shows the unchanged lines between changes instead of folding them; false by default. */
   expandUnchanged?: boolean;
-  /** auto (default) sets old and new side by side from 56 rem of width; unified keeps one column. */
-  layout?: 'auto' | 'unified';
+  /**
+   * auto (default) sets old and new side by side from 56 rem of width; split always sets them side
+   * by side, such as for a split and unified toggle; unified keeps one column.
+   */
+  layout?: 'auto' | 'split' | 'unified';
+  /**
+   * Content at the end of the file header, such as View file, Accept or Revert, or a status Badge.
+   */
+  headerEnd?: ReactNode;
+  /** Notes attached to lines, such as review comments, which renderAnnotation draws under them. */
+  annotations?: readonly CodeDiffAnnotation[];
+  /** Draws one of annotations under its line. */
+  renderAnnotation?: (annotation: CodeDiffAnnotation) => ReactNode;
+  /**
+   * The level of the heading of what shows when the diff fails to load, for the page's outline.
+   * @default 3
+   */
+  headingLevel?: HeadingLevel;
 }
 
 const wrappedLineHangingIndentCh = 4;
@@ -140,6 +172,10 @@ export function CodeDiff({
   header = true,
   expandUnchanged = false,
   layout = 'auto',
+  headerEnd,
+  annotations,
+  renderAnnotation,
+  headingLevel = 3,
   className,
   style,
   ...props
@@ -194,6 +230,34 @@ export function CodeDiff({
     return diff;
   }, [filename, lang, before, after]);
 
+  const diffAnnotations = useMemo(
+    () =>
+      annotations?.map((annotation) => ({
+        side: annotation.side ?? ('additions' as const),
+        lineNumber: annotation.lineNumber,
+        metadata: annotation,
+      })),
+    [annotations],
+  );
+  const fileAnnotations = useMemo(
+    () =>
+      annotations?.map((annotation) => ({
+        lineNumber: annotation.lineNumber,
+        metadata: annotation,
+      })),
+    [annotations],
+  );
+  const drawAnnotation = useMemo(
+    () =>
+      renderAnnotation &&
+      (({ metadata }: { metadata: CodeDiffAnnotation }) => renderAnnotation(metadata)),
+    [renderAnnotation],
+  );
+  const drawHeaderEnd = useMemo(
+    () => (headerEnd != null ? () => headerEnd : undefined),
+    [headerEnd],
+  );
+  const FailedHeading = `h${headingLevel}` as const;
   const previousThemeStillShown =
     keptUntilNextLoads && keptUntilNextLoads.theme !== theme ? keptUntilNextLoads.theme : undefined;
   return (
@@ -214,14 +278,14 @@ export function CodeDiff({
             </DecorativeIcon>
           </span>
           <Column gap={2}>
-            <Text render={<h3 />} variant="title">
+            <Text render={<FailedHeading />} variant="title">
               {messages.failed}
             </Text>
             <Text variant="body-sm">{messages.failedDescription}</Text>
           </Column>
           <Button
             variant="secondary"
-            startIcon={<IconRefresh />}
+            start={<IconRefresh />}
             onClick={() => {
               setFailed(false);
               setAttempt((current) => current + 1);
@@ -236,6 +300,9 @@ export function CodeDiff({
         <File
           file={{ name: filename, contents: after, lang: lang }}
           disableWorkerPool
+          lineAnnotations={fileAnnotations}
+          renderAnnotation={drawAnnotation}
+          renderHeaderMetadata={drawHeaderEnd}
           options={{
             overflow: 'wrap',
             theme: diffThemeNames(keptUntilNextLoads.contrast),
@@ -248,8 +315,11 @@ export function CodeDiff({
         <FileDiff
           fileDiff={fileDiff}
           disableWorkerPool
+          lineAnnotations={diffAnnotations}
+          renderAnnotation={drawAnnotation}
+          renderHeaderMetadata={drawHeaderEnd}
           options={{
-            diffStyle: wide ? 'split' : 'unified',
+            diffStyle: layout === 'split' || wide ? 'split' : 'unified',
             overflow: 'wrap',
             theme: diffThemeNames(keptUntilNextLoads.contrast),
             themeType: keptUntilNextLoads.theme,
@@ -267,29 +337,14 @@ function useWideEnoughToSplitBeforePaint(
   rootRef: RefObject<HTMLDivElement | null>,
   measure: boolean,
 ) {
-  const [wide, setWide] = useState(false);
-  useLayoutEffect(() => {
-    const root = rootRef.current;
-    if (!root || !measure) {
-      setWide(false);
-      return;
-    }
-    const rem = remPixels(root);
-    const style = getComputedStyle(root);
-    setWide(
-      root.clientWidth -
-        (Number.parseFloat(style.paddingLeft) || 0) -
-        (Number.parseFloat(style.paddingRight) || 0) >=
-        splitFromOwnWidthRem * rem,
-    );
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry) setWide(entry.contentRect.width >= splitFromOwnWidthRem * rem);
-    });
-    observer.observe(root);
-    return () => observer.disconnect();
-  }, [rootRef, measure]);
-  return wide;
+  const size = useContainerSize(measure ? rootRef : null);
+  const root = rootRef.current;
+  return (
+    measure &&
+    size !== undefined &&
+    root !== null &&
+    size.inlineSize >= splitFromOwnWidthRem * remPixels(root)
+  );
 }
 
 function languageOf(filename: string) {

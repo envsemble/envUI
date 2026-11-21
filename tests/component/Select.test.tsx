@@ -324,3 +324,35 @@ test(
     expect(focusCount).toBeLessThanOrEqual(1);
   },
 );
+
+test('options take start and end content and groups, and the trigger shows the chosen start', async () => {
+  mount({ default: fixture.SelectContentFixture });
+  const trigger = select('Status');
+  await expect.poll(text(trigger)).toBe('Active');
+  const chosenStart = trigger.element().querySelector('.env-select-value-start')!;
+  expect(chosenStart.getAttribute('aria-hidden')).toBe('true');
+  expect(box(chosenStart).x).toBeLessThan(
+    box(trigger.element().querySelector('.env-select-value')!).x,
+  );
+  await trigger.click();
+  await isOpen();
+  await expect.element(page.getByRole('group', { name: 'Open' })).toBeVisible();
+  await expect.element(page.getByRole('group', { name: 'Closed' })).toBeVisible();
+  const active = option('Active 3');
+  await expect.element(active).toBeVisible();
+  const row = active.element();
+  expect(box(row.querySelector('[data-testid="dot-green"]')!).width).toBeCloseTo(8, 0);
+  expect(row.querySelector('.env-list-row-start')!.getAttribute('aria-hidden')).toBe('true');
+  const paused = page.getByTestId('paused');
+  await expect.element(paused).toHaveRole('option');
+  await expect.element(paused).toHaveAttribute('title', 'On hold');
+  await expect.element(paused).toHaveClass('fixture-paused');
+  await expect.element(paused).toHaveClass('env-select-item');
+  await keyboard.press('ArrowDown');
+  await keyboard.press('Enter');
+  await isClosed();
+  await expect.poll(text(trigger)).toBe('Paused');
+  await expect
+    .poll(() => trigger.element().querySelector('[data-testid="dot-orange"]'))
+    .not.toBeNull();
+});

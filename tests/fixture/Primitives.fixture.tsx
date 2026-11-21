@@ -23,10 +23,9 @@ import { IconHelp } from '@envsemble/envui/icons/Help';
 import { IconUndo } from '@envsemble/envui/icons/Undo';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { PopupSurface } from '../../packages/ui/src/internal/popup/PopupSurface.js';
-import { ListRow } from '../../packages/ui/src/internal/list/ListRow.js';
+import { ListRow } from '../../packages/ui/src/internal/popup/ListRow.js';
 import { ResizeHandle } from '../../packages/ui/src/layout/ResizeHandle.js';
-import { useRovingFocus } from '../../packages/ui/src/forms/internal/useRovingFocus.js';
-import { useCopy } from '../../packages/ui/src/internal/useCopy.js';
+import { useCopy } from '../../packages/ui/src/internal/react/useCopy.js';
 
 export const mount = 'standalone';
 
@@ -199,79 +198,6 @@ function ResizeSample({ dir }: { dir: 'ltr' | 'rtl' }) {
   );
 }
 
-const days = Array.from({ length: 14 }, (_, index) => ({
-  id: `day-${index + 1}`,
-  label: `${index + 1}`,
-  disabled: index === 4,
-}));
-
-function RovingGridSample({ dir }: { dir: 'ltr' | 'rtl' }) {
-  const [active, setActive] = useState<string | null>(null);
-  const roving = useRovingFocus({
-    items: days,
-    getKey: (day) => day.id,
-    isDisabled: (day) => day.disabled,
-    orientation: 'grid',
-    columns: 7,
-    dir,
-    activeKey: active,
-    onActiveKeyChange: setActive,
-  });
-  return (
-    <div
-      role="grid"
-      aria-label={`Days ${dir}`}
-      dir={dir}
-      data-testid={`grid-${dir}`}
-      {...roving.getContainerProps()}
-      style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 2.5rem)', gap: '0.25rem' }}
-    >
-      {days.map((day) => (
-        <div
-          key={day.id}
-          role="gridcell"
-          aria-disabled={day.disabled || undefined}
-          {...roving.getItemProps(day)}
-        >
-          {day.label}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function RovingListSample() {
-  const people = ['Alex Morgan', 'Priya Shah', 'Sam Lee', 'Samir Haddad'];
-  const [active, setActive] = useState<string | null>(null);
-  const roving = useRovingFocus({
-    items: people,
-    getKey: (person) => person,
-    orientation: 'vertical',
-    activeKey: active,
-    onActiveKeyChange: setActive,
-    typeahead: (person) => person,
-  });
-  return (
-    <div
-      role="listbox"
-      aria-label="People"
-      data-testid="roving-list"
-      {...roving.getContainerProps()}
-    >
-      {people.map((person) => (
-        <div
-          key={person}
-          role="option"
-          aria-selected={person === active}
-          {...roving.getItemProps(person)}
-        >
-          {person}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function DirectedPopup({ dir }: { dir: 'ltr' | 'rtl' }) {
   const trigger = useRef<HTMLButtonElement>(null);
   return (
@@ -318,7 +244,7 @@ function ListRowSample() {
       >
         <ListRow
           render={<BaseMenu.Item />}
-          icon={<IconSettings />}
+          start={<IconSettings />}
           label="Settings"
           description="Account and workspace"
           end={<Kbd keys={['Ctrl', ',']} />}
@@ -356,9 +282,6 @@ export default function PrimitivesFixture() {
       <CloseButtonSample />
       <ResizeSample dir="ltr" />
       <ResizeSample dir="rtl" />
-      <RovingGridSample dir="ltr" />
-      <RovingGridSample dir="rtl" />
-      <RovingListSample />
       <PopupSample />
       <ListRowSample />
       <CopySample />

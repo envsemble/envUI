@@ -33,6 +33,7 @@ examples:
     role: overview
     open: true
   SmallToolbar: example
+  Assignee: example
   SelectAnatomy: anatomy
   SelectListAnatomy: anatomy
   SettingsForm: example
@@ -45,6 +46,12 @@ examples:
 ### Sizes
 
 ```tsx figure=SmallToolbar
+
+```
+
+### Pictures and groups
+
+```tsx figure=Assignee
 
 ```
 

@@ -40,6 +40,7 @@ examples:
     stage: shaded
   ActionStrip: example
   Destinations: example
+  OpenFromCard: example
   StartOptions: example
   Backgrounds: variants
   CardAnatomy: anatomy
@@ -65,6 +66,12 @@ examples:
 ### Button card
 
 ```tsx figure=StartOptions motion
+
+```
+
+### Card that opens something
+
+```tsx figure=OpenFromCard
 
 ```
 
@@ -94,9 +101,10 @@ examples:
 2. **Header** (`env-card-header`)
 3. **Title** (`env-card-title`, `title`)
 4. **Meta** (`env-card-meta`, `meta`)
-5. **Description** (`env-card-description`, `description`)
-6. **Content** (`env-card-body > env-text:last-child`, `children`)
-7. **Actions** (`env-card-actions`, `actions`)
+5. **Header end** (`env-card-header-end`, `headerEnd`)
+6. **Description** (`env-card-description`, `description`)
+7. **Content** (`env-card-body > env-text:last-child`, `children`)
+8. **Actions** (`env-card-actions`, `actions`)
 
 ## Behaviour
 

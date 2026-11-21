@@ -85,3 +85,22 @@ test('boxes and tracks follow the scale, on targets of 24 px, or the touch heigh
     }
   }
 });
+
+test('a label placed at the start leads its track or box, and still names and toggles the control', async () => {
+  mount({ default: forms.LabelFirstFixture });
+  for (const [role, name] of [
+    ['switch', 'Dark mode'],
+    ['checkbox', 'Remember me'],
+    ['radio', 'Team plan'],
+  ] as const) {
+    const control = page.getByRole(role, { name, exact: true });
+    const root = control.element().closest('label')!;
+    const text = root.querySelector(':scope > span:last-child')!;
+    expect(box(text).x).toBeLessThan(box(control).x);
+    await page.elementLocator(text).click();
+    await expect.element(control).toBeChecked();
+  }
+  const sync = page.getByRole('switch', { name: 'Sync' });
+  const syncText = sync.element().closest('label')!.querySelector(':scope > span:last-child')!;
+  expect(box(syncText).x).toBeGreaterThan(box(sync).x);
+});

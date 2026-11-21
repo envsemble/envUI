@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Button, ContextMenu, Menu, Theme, type ColorScheme } from '@envsemble/envui';
+import {
+  Avatar,
+  Badge,
+  Button,
+  ContextMenu,
+  Menu,
+  Theme,
+  type ColorScheme,
+} from '@envsemble/envui';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconAdd } from '@envsemble/envui/icons/Add';
@@ -32,7 +40,11 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
           const name = target?.closest<HTMLElement>('[data-document]')?.dataset.document;
           return name ? (
             <>
-              <Menu.Item icon={<IconEdit />} shortcut="F2" onClick={() => setLog(`Rename ${name}`)}>
+              <Menu.Item
+                start={<IconEdit />}
+                shortcut="F2"
+                onClick={() => setLog(`Rename ${name}`)}
+              >
                 Rename {name}
               </Menu.Item>
               <Menu.Item
@@ -42,7 +54,7 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
                 Open to the side
               </Menu.Item>
               <Menu.Separator />
-              <Menu.Item icon={<IconDelete />} onClick={() => setLog(`Delete ${name}`)}>
+              <Menu.Item start={<IconDelete />} onClick={() => setLog(`Delete ${name}`)}>
                 Delete
               </Menu.Item>
             </>
@@ -103,7 +115,7 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
       >
         <Menu.Group label="Document">
           <Menu.Item
-            icon={<IconAdd />}
+            start={<IconAdd />}
             shortcut="Ctrl+Shift+N"
             onClick={() => setLog('New window')}
           >
@@ -115,7 +127,7 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
         </Menu.Group>
         <Menu.Submenu
           label="Open recent"
-          icon={<IconHistory />}
+          start={<IconHistory />}
           onOpenChange={(open) => {
             if (open) setRecentLoads((count) => count + 1);
           }}
@@ -156,7 +168,7 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
           <Menu.RadioItem value="tight">Tight</Menu.RadioItem>
         </Menu.RadioGroup>
         <Menu.Separator data-testid={`density-separator-${theme}`} />
-        <Menu.CheckboxItem defaultChecked icon={<IconHistory />}>
+        <Menu.CheckboxItem defaultChecked start={<IconHistory />}>
           Show icons
         </Menu.CheckboxItem>
       </Menu.Root>
@@ -200,5 +212,84 @@ export default function MenuFixture({ theme }: { theme: ColorScheme }) {
         {appearance} {recentLoads}
       </output>
     </Theme>
+  );
+}
+
+export function AccountSwitcherFixture() {
+  return (
+    <>
+      <Menu.Root aria-label="Switch account" trigger={<Button>Switch account</Button>}>
+        <Menu.Item start={<IconAdd />}>Add account</Menu.Item>
+        <Menu.Item start={<Avatar name="Alex Morgan" size="sm" />} description="alex@example.com">
+          Alex Morgan
+        </Menu.Item>
+        <Menu.Item start={<Avatar name="Priya Shah" size="sm" />}>Priya Shah</Menu.Item>
+        <Menu.RadioGroup label="Workspaces" defaultValue="northwind">
+          <Menu.RadioItem value="nimbus">Nimbus</Menu.RadioItem>
+          <Menu.RadioItem
+            value="northwind"
+            start={<Avatar name="Northwind" size="sm" />}
+            description="team@northwind.example.com"
+            aria-describedby="shared-note"
+          >
+            Northwind
+          </Menu.RadioItem>
+        </Menu.RadioGroup>
+        <Menu.CheckboxItem>Show offline</Menu.CheckboxItem>
+        <Menu.CheckboxItem start={<Avatar name="Sam Lee" size="sm" />} textValue="Sam Lee">
+          <strong>Sam</strong> Lee
+        </Menu.CheckboxItem>
+        <Menu.Item aria-describedby="sign-out-note">Sign out</Menu.Item>
+      </Menu.Root>
+      <p id="shared-note">Shared account</p>
+      <p id="sign-out-note">Signs out of every account</p>
+    </>
+  );
+}
+
+export function ItemAttributesFixture() {
+  const [zoom, setZoom] = useState(100);
+  const [itemTag, setItemTag] = useState('');
+  return (
+    <>
+      <Menu.Root aria-label="View" trigger={<Button>View</Button>}>
+        <Menu.Item
+          closeOnClick={false}
+          data-testid="zoom-in"
+          data-analytics="zoom"
+          id="zoom-in-item"
+          style={{ fontStyle: 'italic' }}
+          ref={(node: HTMLElement | null) => {
+            if (node) setItemTag(node.tagName);
+          }}
+          onClick={() => setZoom((value) => value + 10)}
+        >
+          Zoom in
+        </Menu.Item>
+        <Menu.CheckboxItem data-testid="rulers">Rulers</Menu.CheckboxItem>
+        <Menu.Submenu
+          label="Share"
+          end={<Badge>2</Badge>}
+          triggerProps={{ className: 'fixture-share-row', 'data-testid': 'share-row' }}
+        >
+          <Menu.Item>Copy link</Menu.Item>
+        </Menu.Submenu>
+      </Menu.Root>
+      <output data-testid="zoom">
+        {zoom} {itemTag}
+      </output>
+    </>
+  );
+}
+
+export function IconStartFixture() {
+  return (
+    <Menu.Root aria-label="Edit" trigger={<Button>Edit</Button>}>
+      <Menu.Item start={<IconEdit />}>Rename</Menu.Item>
+      <Menu.Item start={<IconHistory />} description="Every saved version of the document">
+        Version history
+      </Menu.Item>
+      <Menu.Item>Close</Menu.Item>
+    </Menu.Root>
   );
 }

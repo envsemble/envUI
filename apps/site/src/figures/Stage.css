@@ -5,9 +5,7 @@
 .catalogue-tile-stage,
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
-.catalogue-fan-card,
-.site-page-banner,
-.catalogue-explore-grid > .env-card,
+.catalogue-overview-widget,
 .site-page-navigation .env-pager-link,
 .catalogue-role-swatch {
   --catalogue-card-shadow-color: oklch(
@@ -56,8 +54,7 @@
 .site-loading-stage,
 .catalogue-tile-stage,
 .site-foundation-stage[data-figure='example'],
-.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
-.catalogue-fan-card {
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
   --catalogue-card-fill: var(--env-color-bg-recessed);
   background-color: var(--catalogue-card-fill);
 }
@@ -86,18 +83,6 @@
   border-radius: 0;
 }
 
-.catalogue-fan-card {
-  box-shadow: var(--catalogue-card-shadow-raised);
-}
-[data-env-theme='dark'] .catalogue-fan-card {
-  --catalogue-card-fill: var(--env-color-bg-raised);
-}
-
-.site-page-banner,
-.catalogue-explore-grid > .env-card {
-  --catalogue-card-fill: var(--_surface-color);
-  box-shadow: var(--catalogue-card-shadow);
-}
 .site-page-navigation .env-pager-link {
   --catalogue-card-fill: var(--env-color-bg-raised);
   box-shadow: var(--catalogue-card-shadow-subtle);
@@ -113,7 +98,7 @@
     [data-env-theme='light'],
     [data-env-theme='light'] :not([data-env-theme])
   ) {
-  --catalogue-card-fill: oklch(from var(--env-color-bg-page) calc(l - 0.035) c h);
+  --catalogue-card-fill: oklch(from var(--env-color-bg-page) calc(l - 0.07) c h);
 }
 
 :is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-tile-canvas) > * {
@@ -158,8 +143,7 @@
     .catalogue-tile-canvas,
     .catalogue-motion-subject
   )
-  > .env-scaffold,
-.site-live-example > [data-dev-mode-demo] > .env-scaffold {
+  > .env-scaffold {
   background-color: var(--env-color-bg-page);
 }
 

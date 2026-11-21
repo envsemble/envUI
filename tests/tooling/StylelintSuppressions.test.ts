@@ -4,19 +4,22 @@ import { join, sep } from 'node:path';
 import { test } from 'node:test';
 import stylelint from 'stylelint';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
-import { styleSheets } from '../../scripts/test/Checks.ts';
+import { styleSheets } from '../../scripts/test/StaticChecks.ts';
 
 const suppressionsFile = 'stylelint-suppressions.json';
 const recordAgain = `Record the lower counts with \`npm run lint:css -- --suppress\` while \`npm run lint:css\` passes, and commit ${suppressionsFile}.`;
 
-let linted;
+type Counts = Record<string, Record<string, { count: number }>>;
+type FoundWarning = stylelint.Warning & { file: string };
+
+let linted: Promise<FoundWarning[]> | undefined;
 async function warnings() {
   linted ??= lintAll();
   return linted;
 }
 async function lintAll() {
-  const found = [];
-  const files = new Set();
+  const found: FoundWarning[] = [];
+  const files = new Set<string>();
   for (const pattern of styleSheets)
     for await (const file of glob(pattern, { cwd: repositoryRoot }))
       files.add(file.split(sep).join('/'));
@@ -33,16 +36,15 @@ async function lintAll() {
 }
 
 async function violations() {
-  const counts = {};
+  const counts: Counts = {};
   for (const { file, rule } of await warnings()) {
-    counts[file] ??= {};
-    counts[file][rule] ??= { count: 0 };
-    counts[file][rule].count++;
+    const rules = (counts[file] ??= {});
+    (rules[rule] ??= { count: 0 }).count++;
   }
   return counts;
 }
 
-function compareCounts(actual, recorded) {
+function compareCounts(actual: Counts, recorded: Counts) {
   const rises: string[] = [];
   const drops: string[] = [];
   for (const file of new Set([...Object.keys(actual), ...Object.keys(recorded)])) {

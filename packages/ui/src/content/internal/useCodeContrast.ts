@@ -3,6 +3,7 @@
 import { useEffect, useState, type RefObject } from 'react';
 import { useTheme } from '../../foundations/Theme.js';
 import type { CodeContrast } from './codeColors.js';
+import { explicitContrasts, isOneOf, rootAttributes } from '../../internal/theme/themeRoot.js';
 
 export function useCodeContrast(ref: RefObject<HTMLElement | null>): CodeContrast {
   const { contrast: themeContrast } = useTheme();
@@ -14,8 +15,8 @@ export function useCodeContrast(ref: RefObject<HTMLElement | null>): CodeContras
     const theme = element?.closest('.env-theme');
     const systemAsksForMoreContrast = window.matchMedia?.('(prefers-contrast: more)');
     const update = () => {
-      const themeSetting = theme?.getAttribute('data-env-contrast');
-      const followsSystem = themeSetting !== 'high' && themeSetting !== 'standard';
+      const themeSetting = theme?.getAttribute(rootAttributes.contrast);
+      const followsSystem = !isOneOf(explicitContrasts, themeSetting);
       setContrast(
         themeSetting === 'high' || (followsSystem && systemAsksForMoreContrast?.matches)
           ? 'high'
@@ -26,7 +27,7 @@ export function useCodeContrast(ref: RefObject<HTMLElement | null>): CodeContras
     systemAsksForMoreContrast?.addEventListener('change', update);
     const observer = new MutationObserver(update);
     if (theme)
-      observer.observe(theme, { attributes: true, attributeFilter: ['data-env-contrast'] });
+      observer.observe(theme, { attributes: true, attributeFilter: [rootAttributes.contrast] });
     return () => {
       systemAsksForMoreContrast?.removeEventListener('change', update);
       observer.disconnect();

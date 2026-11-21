@@ -42,7 +42,7 @@ export default function WorkItemsWithParts() {
         return (
           <Table.Body key={item.id}>
             <Table.Row interactive>
-              <Table.Cell>
+              <Table.Cell nowrap>
                 <Row gap={2} align="center">
                   <IconButton
                     variant="text"

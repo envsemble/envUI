@@ -40,6 +40,7 @@ examples:
   GroupsAndSeparators: example
   Choices: example
   Submenus: example
+  AccountSwitcher: example
   Destinations: example
   MenuAnatomy: anatomy
 ---
@@ -72,6 +73,12 @@ examples:
 
 ```
 
+### Pictures before the label
+
+```tsx figure=AccountSwitcher open
+
+```
+
 ### Destinations
 
 ```tsx figure=Destinations open
@@ -87,7 +94,7 @@ examples:
 1. **Menu** (`env-menu`)
 2. **Group label** (`env-menu-group-label`, `label`)
 3. **Item** (`env-menu-item`)
-4. **Icon** (`env-menu-item env-icon`, `icon`)
+4. **Start** (`env-menu-item-start`, `start`)
 5. **Shortcut** (`env-menu-item-shortcut`, `shortcut`)
 6. **Description** (`env-menu-item-description`, `description`)
 7. **Separator** (`env-menu-separator`)

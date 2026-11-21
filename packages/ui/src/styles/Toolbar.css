@@ -3,7 +3,13 @@
     flex: 0 0 auto;
     align-self: stretch;
     margin: var(--env-space-1);
-    border: 0 solid var(--env-color-border-muted);
+    --_toolbar-separator-high-contrast: var(--_theme-high-contrast) var(--env-color-border-muted);
+    /* contrast: toolbar-separator */
+    --_toolbar-separator-standard: light-dark(
+      color-mix(in srgb, var(--env-color-fg-default) 20%, transparent),
+      var(--env-color-border-muted)
+    );
+    border: 0 solid var(--_toolbar-separator-high-contrast, var(--_toolbar-separator-standard));
   }
   .env-toolbar-separator[data-orientation='vertical'] {
     border-inline-start-width: var(--env-control-border-width);

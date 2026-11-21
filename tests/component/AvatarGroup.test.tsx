@@ -151,6 +151,38 @@ test('pressable avatars are buttons and links named after each person, with name
   await expect.poll(() => document.body.dataset.avatarNavigatedTo).toBe('/people/sam');
 });
 
+test("a person's tooltip, hue and badge, the overflow tooltip and an account's description take the application's content, and a badge's text follows the name", async () => {
+  await commands.emulateMedia({ reducedMotion: 'reduce' });
+  const group = byTestId('custom');
+  const alex = group.getByRole('button', { name: 'Alex Morgan, online', exact: true });
+  const avatar = alex.element().querySelector('.env-avatar')!;
+  expect(avatar.getAttribute('data-hue')).toBe('oat');
+  expect(avatar.querySelector('.env-avatar-badge')?.textContent).toBe('online');
+  group.element().scrollIntoView({ block: 'center' });
+  await away();
+  await pointAt(group);
+  await expect.poll(() => pointerReachesEachItem(group)).toEqual([true, true, true]);
+  await pointAt(alex);
+  await expect.poll(tooltipText).toBe('Alex Morgan, Owner');
+  await pointAt(chipOf(group));
+  await expect
+    .poll(() =>
+      [...document.querySelectorAll('.fixture-overflow-list li')].map((item) => item.textContent),
+    )
+    .toEqual(['Priya Shah', 'Jordan Rivera', 'Taylor Kim', 'and 2 more']);
+  await expect
+    .element(chipOf(group))
+    .toHaveAccessibleName('Priya Shah, Jordan Rivera, Taylor Kim, 2 more');
+  await away();
+
+  const account = byTestId('account');
+  await expect.element(account).toHaveAccessibleName('Alex Morgan, online');
+  expect(account.element().querySelector('.env-avatar')?.getAttribute('data-hue')).toBe('sage');
+  await pointAt(account);
+  await expect.poll(() => document.querySelector('.env-tooltip strong')?.textContent).toBe('Owner');
+  await away();
+});
+
 test('a group rests as a pile and keeps the spread row as its box, lining up with small controls in a toolbar', async () => {
   await commands.emulateMedia({ reducedMotion: 'reduce' });
   await away();

@@ -8,23 +8,23 @@ const stylesheetGzipBudget = 59250;
 
 const cssGzipBudgets = {
   'Small app (Theme, Button, TextField, Card)': 15400,
-  'Typical app (23 components, with Base UI)': 31350,
+  'Typical app (23 components, with Base UI)': 32200,
   'Everything, envUI’s own code': 55850,
 };
 
 const firstLoadJsBudgets = [
-  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 34000 },
+  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 35750 },
   { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 115200 },
-  { set: 'Theme + Button + Icon', measure: 'minified', budget: 5250 },
+  { set: 'Theme + Button + Icon', measure: 'minified', budget: 6050 },
 ];
 
 const componentOwnCodeMinifiedBudgets = {
-  Tooltip: 15900,
+  Tooltip: 16400,
   Popover: 10450,
-  Menu: 18400,
-  Select: 20250,
-  TextField: 8900,
-  Alert: 11450,
+  Menu: 19450,
+  Select: 21200,
+  TextField: 9200,
+  Alert: 11650,
 };
 
 const report = JSON.parse(

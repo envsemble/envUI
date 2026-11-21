@@ -1,3 +1,4 @@
+import { collapseWhitespace } from '../../internal/text/labelText.js';
 function hiddenFromAccessibility(element: Element): boolean {
   if (element.getAttribute('aria-hidden') === 'true' || element.hasAttribute('hidden')) return true;
   const style = element.ownerDocument.defaultView?.getComputedStyle(element);
@@ -24,7 +25,7 @@ function nameText(node: Node, root: Node, belowHiddenRoot = false): string {
  */
 export function accessibleName(element: Element | null | undefined): string | undefined {
   if (!element) return undefined;
-  const clean = (text: string | null | undefined) => text?.replace(/\s+/g, ' ').trim() || undefined;
+  const clean = (text: string | null | undefined) => collapseWhitespace(text ?? '') || undefined;
   const textOf = (node: Node) => nameText(node, node);
   const labelledBy = element.getAttribute('aria-labelledby');
   if (labelledBy) {

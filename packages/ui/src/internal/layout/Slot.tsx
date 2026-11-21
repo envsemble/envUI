@@ -10,6 +10,7 @@ export interface SlotProps {
   layout?: 'flow' | 'row';
   grow?: boolean;
   shrink?: 'first' | 'never';
+  'aria-hidden'?: boolean;
 }
 
 export function Slot({
@@ -20,6 +21,7 @@ export function Slot({
   layout = 'flow',
   grow,
   shrink,
+  'aria-hidden': hidden,
 }: SlotProps) {
   return (
     <Element
@@ -28,6 +30,7 @@ export function Slot({
       data-env-slot={layout}
       data-env-slot-grow={flag(grow)}
       data-env-slot-shrink={shrink}
+      aria-hidden={hidden || undefined}
     >
       {children}
     </Element>

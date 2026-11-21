@@ -128,3 +128,58 @@ export default function DropZoneFixture({ theme }: { theme: ColorScheme }) {
     </Theme>
   );
 }
+
+export function DropZoneContentFixture() {
+  const [files, setFiles] = useState<File[]>([]);
+  const picker = useRef<HTMLInputElement>(null);
+  return (
+    <DropZone
+      label="Drop attachments here"
+      multiple
+      inputRef={picker}
+      onFilesAccepted={(taken) => setFiles((current) => [...current, ...taken])}
+    >
+      <ul data-testid="attachments">
+        {files.map((each) => (
+          <li key={each.name}>
+            {each.name}{' '}
+            <Button
+              size="sm"
+              onClick={() => setFiles((current) => current.filter((kept) => kept !== each))}
+            >
+              Remove {each.name}
+            </Button>
+          </li>
+        ))}
+      </ul>
+      <Button onClick={() => picker.current?.click()}>Browse</Button>
+    </DropZone>
+  );
+}
+
+export function DropZoneRegionFixture() {
+  const [files, setFiles] = useState<File[]>([]);
+  const picker = useRef<HTMLInputElement>(null);
+  return (
+    <DropZone
+      label="Drop files on the table"
+      description="Any file up to 10 MB"
+      target={false}
+      multiple
+      inputRef={picker}
+      render={<section className="own-region" data-testid="region" />}
+      onFilesAccepted={(taken) => setFiles((current) => [...current, ...taken])}
+    >
+      <table>
+        <tbody data-testid="rows">
+          {files.map((each) => (
+            <tr key={each.name}>
+              <td>{each.name}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Button onClick={() => picker.current?.click()}>Browse</Button>
+    </DropZone>
+  );
+}

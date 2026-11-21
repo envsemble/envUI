@@ -1,5 +1,18 @@
 # @envsemble/stylelint-config-envui
 
+## 3.0.0 — 2026-11-21
+
+No changes in this release.
+
+## 2.1.0 — 2026-11-19
+
+Positions and hairlines need no spacing step, and a text colour can fill a shape with no text on it.
+
+### Minor Changes
+
+- `no-contrast-breaking-pairs` reports a `var(--env-color-fg-…)` token as a whole background only in a rule that also sets a text property, `color`, `font…`, `line-height` or `text-…`, the sign that text sits on it, so a label class that sets the fill and its font but inherits its text color is still reported. A shape with no text, such as a status dot, a separator or a sparkline bar filled with `var(--env-color-fg-success)` to match the text beside it, passes. See [no-contrast-breaking-pairs](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config#envuino-contrast-breaking-pairs).
+- `no-off-scale-values` checks spacing only: `inset*` is a position, so an absolutely placed element can sit at the offset its geometry needs, such as `inset-block-start: 3.5rem`, and a hairline of 1px or less passes, such as `margin: -1px` to overlap borders. `no-px` passes a position offset of 1px or less in `inset*`, `top`, `right`, `bottom` or `left`, and still asks for rem beyond that. See [no-off-scale-values](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config#envuino-off-scale-values).
+
 ## 2.0.0 — 2026-11-19
 
 The Stylelint config for envUI 2.0: px is reported by `envui/no-px`, and new rules catch off-scale lengths, unknown `--env-` properties, contrast-breaking pairs and removed focus outlines. Each breaking change below says what to write instead.

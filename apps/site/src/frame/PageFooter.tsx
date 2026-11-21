@@ -18,32 +18,19 @@ export function PageFooter() {
   return (
     <footer className="site-footer">
       <Row gap={5} align="center" justify="between" wrap className="site-footer-inner">
-        <Link
-          href={routeHref(homeRoute)}
-          underline={false}
-          className="site-footer-brand"
-          aria-label="envUI home"
-        >
-          <EnvUILogo />
-        </Link>
-        <nav aria-label="Footer">
-          <Row render={<ul />} gap={5} align="center" wrap className="site-footer-links">
-            {links.map((link) => (
-              <li key={link.label}>
-                <Text variant="body-sm">
-                  <Link href={link.href} underline={false}>
-                    {link.label}
-                  </Link>
-                </Text>
-              </li>
-            ))}
-          </Row>
-        </nav>
-        <Row gap={2} align="center" className="site-footer-maker">
-          <Text variant="body-sm" emphasis="muted">
-            © 2026
-          </Text>
-          <a href="https://envsemble.com" className="site-footer-maker-logo">
+        <Row gap={4} align="center" wrap className="site-footer-credit">
+          <Link
+            href={routeHref(homeRoute)}
+            underline={false}
+            className="site-footer-brand"
+            aria-label="envUI home"
+          >
+            <EnvUILogo />
+          </Link>
+          <a href="https://envsemble.com" className="site-footer-maker">
+            <Text variant="body-sm" emphasis="muted" render={<span />}>
+              by
+            </Text>
             <img
               src={envsembleOnLight}
               alt="envsemble"
@@ -60,6 +47,19 @@ export function PageFooter() {
             />
           </a>
         </Row>
+        <nav aria-label="Footer">
+          <Row render={<ul />} gap={5} align="center" wrap className="site-footer-links">
+            {links.map((link) => (
+              <li key={link.label}>
+                <Text variant="body-sm">
+                  <Link href={link.href} underline={false}>
+                    {link.label}
+                  </Link>
+                </Text>
+              </li>
+            ))}
+          </Row>
+        </nav>
       </Row>
     </footer>
   );

@@ -6,6 +6,7 @@ import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
+import { renderElement } from '../internal/react/renderElement.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import '../styles/Base.css';
 import '../styles/Field.css';
@@ -87,6 +88,12 @@ export type ErrorProps = Omit<ComponentProps<typeof BaseField.Error>, 'className
      * How to correct the value. Without children, the browser's validation message shows.
      */
     children?: ReactNode;
+    /**
+     * The icon before the message, decorative, so hide an icon of your own from assistive technology,
+     * or null for none, such as for a compact error beside a control.
+     * @default the error icon
+     */
+    icon?: ReactNode;
   };
 
 /**
@@ -95,7 +102,7 @@ export type ErrorProps = Omit<ComponentProps<typeof BaseField.Error>, 'className
  * to the control; match="valueMissing" and the like show it for one kind of failure, and
  * match={true} always.
  */
-function FieldError({ className, children, match, ...props }: ErrorProps) {
+function FieldError({ className, children, match, icon, render, ...props }: ErrorProps) {
   const invalid = useContext(RootGivenInvalidContext);
   return (
     <BaseField.Error
@@ -103,12 +110,22 @@ function FieldError({ className, children, match, ...props }: ErrorProps) {
       match={match ?? (invalid || undefined)}
       {...(children != null && { children })}
       className={classNames('env-field-error', className)}
-      render={({ children: message, ...errorProps }) => (
-        <Row align="start" gap={2} {...errorProps}>
-          <IconError aria-hidden="true" focusable="false" />
-          <span>{message}</span>
-        </Row>
-      )}
+      render={({ children: message, ...errorProps }, state) => {
+        const content = (
+          <>
+            {icon === undefined ? <IconError aria-hidden="true" focusable="false" /> : icon}
+            <span>{message}</span>
+          </>
+        );
+        if (typeof render === 'function')
+          return render({ ...errorProps, children: content }, state);
+        if (render) return renderElement('div', render, { ...errorProps, children: content });
+        return (
+          <Row align="start" gap={2} {...errorProps}>
+            {content}
+          </Row>
+        );
+      }}
     />
   );
 }

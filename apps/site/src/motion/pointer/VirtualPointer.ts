@@ -1,5 +1,4 @@
 import { PointerSelection } from './VirtualSelection';
-import { StageEditors } from './StageEditors';
 import { PointerCursor } from './PointerCursor';
 import { mirrorPointerStates } from './PointerStates';
 import { hitAt, type Aimed, type Point, type PointerSpot } from './PointerTargets';
@@ -16,7 +15,6 @@ let nextId = idsClearOfRealPointers;
 export class VirtualPointer {
   readonly id = nextId++;
   private readonly spot: PointerSpot;
-  private readonly editors = new StageEditors();
   private readonly selection: PointerSelection;
   private readonly pointer: PointerControl;
   private readonly keyboard: KeyboardControl;
@@ -43,9 +41,9 @@ export class VirtualPointer {
     holdReaderMoves();
     captures.set(this.id, null);
     mirrorPointerStates();
-    this.selection = new PointerSelection(scope, this.editors);
+    this.selection = new PointerSelection(scope);
     this.cursor = new PointerCursor(scope);
-    const keyboard = new KeyboardControl(scope, this.selection, this.editors);
+    const keyboard = new KeyboardControl(scope, this.selection);
     this.spot = {
       scope,
       at: null,
@@ -173,7 +171,6 @@ export class VirtualPointer {
     this.keyboard.focus(null);
     this.leave();
     this.selection.clear();
-    this.editors.dispose();
     this.cursor.remove();
     captures.delete(this.id);
   }

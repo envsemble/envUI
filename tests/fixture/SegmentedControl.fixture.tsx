@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { EnvUIProvider, SegmentedControl, Theme, type ColorScheme } from '@envsemble/envui';
+import { Badge, EnvUIProvider, SegmentedControl, Theme, type ColorScheme } from '@envsemble/envui';
+import { IconGridView } from '@envsemble/envui/icons/GridView';
 import { IconViewList } from '@envsemble/envui/icons/ViewList';
 
 export const themes = true;
@@ -28,7 +29,7 @@ export default function SegmentedControlFixture({ theme }: { theme: ColorScheme 
         value={layout}
         onValueChange={setLayout}
         items={[
-          { value: 'list', label: 'List', icon: <IconViewList /> },
+          { value: 'list', label: 'List', start: <IconViewList /> },
           { value: 'board', label: 'Board' },
         ]}
       />
@@ -69,5 +70,31 @@ export default function SegmentedControlFixture({ theme }: { theme: ColorScheme 
         {view} {layout}
       </output>
     </Theme>
+  );
+}
+
+export function SegmentContentFixture() {
+  return (
+    <SegmentedControl
+      aria-label="View"
+      items={[
+        { value: 'list', label: 'List', start: <IconViewList />, visibleLabel: false },
+        { value: 'grid', label: 'Grid', start: <IconGridView />, visibleLabel: false },
+        {
+          value: 'review',
+          label: (
+            <>
+              <span data-testid="review-dot">●</span> Review
+            </>
+          ),
+          end: <Badge>New</Badge>,
+          itemProps: {
+            className: 'fixture-review-segment',
+            'data-testid': 'review-segment',
+            title: 'Review',
+          },
+        },
+      ]}
+    />
   );
 }

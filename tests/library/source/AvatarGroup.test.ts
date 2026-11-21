@@ -76,3 +76,42 @@ test('an avatar group names everyone and counts the people it does not show', ()
     '5 Personen: Alex Morgan, Sam Lee, Priya Shah, Jordan Rivera, Taylor Kim',
   );
 });
+
+test("a person's itemProps reach their avatar, or its link or button, with the class joined", () => {
+  const tagged = (person) => ({
+    ...person,
+    itemProps: { 'data-testid': person.id, className: 'is-owner', title: person.name },
+  });
+  const still = elementsOf(
+    firstElement(renderToStaticMarkup(h(AvatarGroup, { people: people.slice(0, 2).map(tagged) }))),
+  ).filter((element) => hasClass(element, 'env-avatar'));
+  assert.deepEqual(
+    still.map((avatar) => avatar.attributes['data-testid']),
+    ['alex', 'sam'],
+  );
+  assert.ok(still.every((avatar) => hasClass(avatar, 'is-owner')));
+  assert.equal(still[0].attributes['aria-hidden'], 'true');
+
+  const pressable = elementsOf(
+    firstElement(
+      renderToStaticMarkup(
+        h(AvatarGroup, {
+          people: [tagged({ ...people[0], href: '/people/alex' }), tagged(people[1])],
+          onPersonClick() {},
+        }),
+      ),
+    ),
+  ).filter((element) => hasClass(element, 'env-avatar-group-item'));
+  assert.deepEqual(
+    pressable.map((item) => [
+      item.tag,
+      item.attributes['data-testid'],
+      item.attributes['aria-label'],
+    ]),
+    [
+      ['a', 'alex', 'Alex Morgan'],
+      ['button', 'sam', 'Sam Lee'],
+    ],
+  );
+  assert.ok(pressable.every((item) => hasClass(item, 'is-owner')));
+});

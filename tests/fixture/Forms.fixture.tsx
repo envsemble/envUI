@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Badge,
   Button,
   SearchField,
   TextField,
@@ -12,7 +13,7 @@ import {
   Surface,
   type CheckboxState,
 } from '@envsemble/envui';
-import { planOptions, dialogOptions } from './SelectOptions.fixture.js';
+import { planOptions, dialogOptions } from './SelectOptions.js';
 
 export default function FormsFixture() {
   const [controlled, setControlled] = useState<CheckboxState>('mixed');
@@ -167,5 +168,49 @@ export default function FormsFixture() {
         <Textarea label="Ghost notes" variant="ghost" />
       </div>
     </section>
+  );
+}
+
+const statusDot = (color: string) => (
+  <span
+    data-testid={`dot-${color}`}
+    style={{ inlineSize: 8, blockSize: 8, borderRadius: 4, background: color }}
+  />
+);
+
+export function SelectContentFixture() {
+  return (
+    <Select
+      label="Status"
+      defaultValue="active"
+      items={[
+        {
+          label: 'Open',
+          items: [
+            { value: 'active', label: 'Active', start: statusDot('green'), end: <Badge>3</Badge> },
+            {
+              value: 'paused',
+              label: 'Paused',
+              start: statusDot('orange'),
+              itemProps: { 'data-testid': 'paused', title: 'On hold', className: 'fixture-paused' },
+            },
+          ],
+        },
+        { label: 'Closed', items: [{ value: 'done', label: 'Done' }] },
+      ]}
+    />
+  );
+}
+
+export function LabelFirstFixture() {
+  return (
+    <>
+      <Switch label="Dark mode" labelPlacement="start" />
+      <Checkbox label="Remember me" labelPlacement="start" />
+      <Switch label="Sync" />
+      <RadioGroup aria-label="Plan">
+        <Radio value="team" label="Team plan" labelPlacement="start" />
+      </RadioGroup>
+    </>
   );
 }

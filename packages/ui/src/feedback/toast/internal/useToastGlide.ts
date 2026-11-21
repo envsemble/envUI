@@ -6,13 +6,14 @@ import { motionDuration, motionEasing } from '../../../internal/motion/motionTok
 import { prefersReducedMotion } from '../../../internal/motion/reducedMotion.js';
 import type { ToastEntry } from './toastEntry.js';
 import type { ToastPlacement } from '../toastTypes.js';
+import { pixelsOf } from '../../../internal/dom/lengths.js';
 
 const glideId = 'env-toast-glide';
 const revealId = 'env-toast-reveal';
 
 function runningGlideOffset(item: HTMLElement) {
   const [, y = '0'] = getComputedStyle(item).translate.split(' ');
-  return Number.parseFloat(y) || 0;
+  return pixelsOf(y);
 }
 
 function animationsOf(item: HTMLElement) {

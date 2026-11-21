@@ -26,6 +26,7 @@ examples:
   AccordionAnatomy: anatomy
   SeveralOpen: example
   OpenFromOutside: example
+  IntegrationSwitches: example
 ---
 
 # Accordion
@@ -55,5 +56,11 @@ examples:
 ### Open from elsewhere
 
 ```tsx figure=OpenFromOutside motion
+
+```
+
+### Controls beside the heading
+
+```tsx figure=IntegrationSwitches
 
 ```

@@ -12,26 +12,22 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { Button } from '../actions/Button.js';
-import { useTheme } from '../foundations/Theme.js';
 import { confirmDialog } from '../foundations/messages/confirmDialog.js';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
-import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedFocus, containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { Alert } from '../feedback/Alert.js';
 import { DialogClose, type DialogFocusTarget, type DialogOpenChangeDetails } from './Dialog.js';
+import { ModalLayer } from '../internal/dialog/ModalLayer.js';
 import {
   DialogActions,
-  DialogBackdrop,
   DialogContent,
   DialogHeader,
   DialogSurface,
-  OverlayTheme,
-} from '../internal/dialog/DialogParts.js';
+} from './internal/dialog/DialogParts.js';
+import { pendingOpenChange } from './internal/dialog/dialogPending.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import '../styles/Base.css';
@@ -69,13 +65,16 @@ export interface ConfirmDialogProps extends Omit<
    * confirms as the confirm button does, through onConfirm. Hold no form here; use Dialog for one.
    */
   children?: ReactNode;
-  /** The confirm button's label: a verb that names the consequence, such as Delete project. */
-  confirmLabel: string;
+  /**
+   * The confirm button's label: a verb that names the consequence, such as Delete project. Like a
+   * Button's content, it can hold more, such as a Kbd of its shortcut.
+   */
+  confirmLabel: ReactNode;
   /**
    * The cancel button's label.
    * @default 'Cancel', or EnvUIProvider's messages.confirmDialog.cancel
    */
-  cancelLabel?: string;
+  cancelLabel?: ReactNode;
   /**
    * danger for an action that deletes or ends something: the confirm button is a danger one and
    * focus starts on Cancel, so a hurried Enter doesn't confirm. neutral starts focus on the confirm
@@ -156,7 +155,6 @@ export function ConfirmDialog({
   className,
   ...popupProps
 }: ConfirmDialogProps) {
-  const theme = useTheme();
   const messages = useMessages('confirmDialog', confirmDialog);
   const portal = usePortalContainer();
   const Root = portal.contained ? ContainedNonModalRoot : BaseAlertDialog.Root;
@@ -212,68 +210,68 @@ export function ConfirmDialog({
   return (
     <Root
       open={isOpen}
-      onOpenChange={containedOpenChange(portal, null, (next, eventDetails) => {
-        if (!next && pending) eventDetails.cancel();
-        else change(next, { reason: eventDetails.reason });
-      })}
+      onOpenChange={containedOpenChange(
+        portal,
+        null,
+        pendingOpenChange(pending, (next, eventDetails) =>
+          change(next, { reason: eventDetails.reason }),
+        ),
+      )}
     >
       {trigger && <BaseAlertDialog.Trigger render={trigger} />}
       <BaseAlertDialog.Portal container={portal.container}>
-        <OverlayTheme {...theme}>
-          <ResetControlDefaults>
-            <DialogBackdrop />
-            <div className="env-dialog-positioner" data-placement="center">
-              <BaseAlertDialog.Popup
-                render={<DialogSurface radius="xl" />}
-                {...popupProps}
-                className={classNames('env-dialog', className)}
-                data-placement="center"
-                data-width="md"
-                data-tone={tone}
-                aria-busy={pending || undefined}
-                role="alertdialog"
-                initialFocus={portal.contained ? false : tone === 'danger' ? cancel : confirm}
-                finalFocus={portal.contained ? false : finalFocus}
-              >
-                <DialogContent>
-                  <DialogHeader title={title} description={description} />
-                  <form
-                    ref={reportNestedForm}
-                    className="env-confirm-dialog-form"
-                    noValidate
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      keepFromBubblingPastPortal(event);
-                      if (!confirmDisabled) void confirmOnce();
-                    }}
-                  >
-                    {children}
-                    {error != null && (
-                      <Alert tone="danger" announce>
-                        {error}
-                      </Alert>
-                    )}
-                    <DialogActions>
-                      <DialogClose ref={cancel} disabled={pending}>
-                        {cancelLabel ?? messages.cancel}
-                      </DialogClose>
-                      <Button
-                        ref={confirm}
-                        variant="primary"
-                        tone={tone}
-                        pending={pending}
-                        disabled={confirmDisabled}
-                        type="submit"
-                      >
-                        {confirmLabel}
-                      </Button>
-                    </DialogActions>
-                  </form>
-                </DialogContent>
-              </BaseAlertDialog.Popup>
-            </div>
-          </ResetControlDefaults>
-        </OverlayTheme>
+        <ModalLayer backdrop={{}}>
+          <div className="env-dialog-positioner" data-placement="center">
+            <BaseAlertDialog.Popup
+              render={<DialogSurface radius="xl" />}
+              {...popupProps}
+              className={classNames('env-dialog', className)}
+              data-placement="center"
+              data-width="md"
+              data-tone={tone}
+              aria-busy={pending || undefined}
+              role="alertdialog"
+              initialFocus={containedFocus(portal, tone === 'danger' ? cancel : confirm)}
+              finalFocus={containedFocus(portal, finalFocus)}
+            >
+              <DialogContent>
+                <DialogHeader title={title} description={description} />
+                <form
+                  ref={reportNestedForm}
+                  className="env-confirm-dialog-form"
+                  noValidate
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    keepFromBubblingPastPortal(event);
+                    if (!confirmDisabled) void confirmOnce();
+                  }}
+                >
+                  {children}
+                  {error != null && (
+                    <Alert tone="danger" announce>
+                      {error}
+                    </Alert>
+                  )}
+                  <DialogActions>
+                    <DialogClose ref={cancel} disabled={pending}>
+                      {cancelLabel ?? messages.cancel}
+                    </DialogClose>
+                    <Button
+                      ref={confirm}
+                      variant="primary"
+                      tone={tone}
+                      pending={pending}
+                      disabled={confirmDisabled}
+                      type="submit"
+                    >
+                      {confirmLabel}
+                    </Button>
+                  </DialogActions>
+                </form>
+              </DialogContent>
+            </BaseAlertDialog.Popup>
+          </div>
+        </ModalLayer>
       </BaseAlertDialog.Portal>
     </Root>
   );

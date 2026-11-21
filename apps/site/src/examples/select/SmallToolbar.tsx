@@ -18,27 +18,29 @@ export default function SmallToolbar() {
         <Text render={<span />} variant="body-sm">
           Northwind launch plan
         </Text>
-        <IconButton
-          variant="ghost"
-          size="sm"
-          icon={<IconZoomOut />}
-          aria-label="Zoom out"
-          onClick={() => step(-1)}
-        />
-        <Select
-          size="sm"
-          aria-label="Zoom"
-          items={zoomOptions}
-          value={zoom}
-          onValueChange={setZoom}
-        />
-        <IconButton
-          variant="ghost"
-          size="sm"
-          icon={<IconZoomIn />}
-          aria-label="Zoom in"
-          onClick={() => step(1)}
-        />
+        <Row align="center" gap={4}>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<IconZoomOut />}
+            aria-label="Zoom out"
+            onClick={() => step(-1)}
+          />
+          <Select
+            size="sm"
+            aria-label="Zoom"
+            items={zoomOptions}
+            value={zoom}
+            onValueChange={setZoom}
+          />
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<IconZoomIn />}
+            aria-label="Zoom in"
+            onClick={() => step(1)}
+          />
+        </Row>
       </Row>
     </Column>
   );

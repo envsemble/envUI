@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/envui",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "A React design system for B2B SaaS products and AI developer tools, documented for people and coding agents",
   "homepage": "https://github.com/envsemble/envUI#readme",
   "bugs": {
@@ -44,12 +44,6 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./rich-text": {
-      "envui-source": "./src/rich-text.ts",
-      "types": "./dist/rich-text.d.ts",
-      "import": "./dist/rich-text.js",
-      "default": "./dist/rich-text.js"
-    },
     "./code": {
       "envui-source": "./src/code.ts",
       "types": "./dist/code.d.ts",
@@ -80,11 +74,11 @@
       "import": "./dist/theme-bootstrap.js",
       "default": "./dist/theme-bootstrap.js"
     },
-    "./dev": {
-      "envui-source": "./src/dev.ts",
-      "types": "./dist/dev.d.ts",
-      "import": "./dist/dev.js",
-      "default": "./dist/dev.js"
+    "./theme-storage": {
+      "envui-source": "./src/theme-storage.ts",
+      "types": "./dist/theme-storage.d.ts",
+      "import": "./dist/theme-storage.js",
+      "default": "./dist/theme-storage.js"
     },
     "./messages": {
       "envui-source": "./src/messages.ts",
@@ -138,19 +132,6 @@
     "@react-aria/i18n": "3.13.1",
     "@react-stately/color": "3.10.1",
     "@shikijs/langs": "4.5.0",
-    "@tiptap/core": "3.31.4",
-    "@tiptap/extension-image": "3.31.4",
-    "@tiptap/extension-list": "3.31.4",
-    "@tiptap/extension-mention": "3.31.4",
-    "@tiptap/extension-placeholder": "3.31.4",
-    "@tiptap/extension-table": "3.31.4",
-    "@tiptap/markdown": "3.31.4",
-    "@tiptap/pm": "3.31.4",
-    "@tiptap/react": "3.31.4",
-    "@tiptap/starter-kit": "3.31.4",
-    "@tiptap/static-renderer": "3.31.4",
-    "@tiptap/suggestion": "3.31.4",
-    "marked": "17.0.6",
     "react-markdown": "10.1.0",
     "remark-gfm": "4.0.1",
     "shiki": "4.5.0"

@@ -1,11 +1,9 @@
 import { readdirSync, readFileSync } from 'node:fs';
-import { relative, resolve, sep } from 'node:path';
-import { librarySourceDirectory, repositoryRoot } from '../../RepositoryPaths.ts';
-
-export const repositoryPath = (file: string) => relative(repositoryRoot, file).split(sep).join('/');
+import { resolve } from 'node:path';
+import { repositoryPath, styleSheetsDirectory } from '../../RepositoryPaths.ts';
 
 export function styleSheets() {
-  const directory = resolve(librarySourceDirectory, 'styles');
+  const directory = styleSheetsDirectory;
   return readdirSync(directory)
     .filter((name) => name.endsWith('.css'))
     .map((name) => ({

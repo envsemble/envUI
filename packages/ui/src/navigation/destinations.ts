@@ -1,24 +1,21 @@
-import type { MouseEvent, ReactNode } from 'react';
+import type { ComponentPropsWithoutRef, MouseEvent, ReactNode } from 'react';
 
 /** What every destination has, whichever navigation form shows it. */
 interface DestinationFields {
   /**
    * A stable key for the destination, which names a NavigationDrawer section in `expanded` and keys its
-   * element; its `href`, or else its label, by default. Give one to a section whose label is
+   * element; its `href`, or else its label's text, by default. Give one to a section whose label is
    * translated, so the open sections keep their names in every language.
    */
   id?: string;
   /**
-   * The destination's name, such as Inbox: a short noun in sentence case, unique in the list. NavigationBar
-   * and NavigationRail show it under the icon, so keep it to one or two short words there.
-   */
-  label: string;
-  /**
    * A count of new things at the destination, such as unread messages: NavigationDrawer shows it at the end of
    * the item, NavigationRail and NavigationBar on the icon. 0 shows nothing, and more than 999 shows 999+. The item's
-   * name says it, such as Inbox, 3 new, from messages.navigation.itemCount.
+   * name says it, such as Inbox, 3 new, from messages.navigation.itemCount. True shows a dot with no
+   * number, for something new without a count, and the name says Activity, new, from
+   * messages.navigation.itemNew.
    */
-  count?: number;
+  count?: number | true;
   /**
    * The heading of the group the destination belongs to, such as Settings. NavigationDrawer shows a heading
    * where the group changes from the destination before; NavigationRail and NavigationBar show the destinations in the
@@ -30,7 +27,53 @@ interface DestinationFields {
    * Symbol and reports aria-current="page". Mark one destination of a list, from the router.
    */
   current?: boolean;
+  /**
+   * The destination can't be reached now, such as a page of a plan the account doesn't have: it is
+   * dimmed, its button is disabled and its link has no destination, reports aria-disabled and
+   * leaves the tab order.
+   */
+  disabled?: boolean;
+  /**
+   * More props for the destination's link or button, such as target and rel to open it in a new
+   * tab, a title, or data attributes for tests. Its class joins the item's; the item's own
+   * aria-current and name stay.
+   */
+  itemProps?: DestinationElementProps;
 }
+
+/** What a destination's itemProps can set on its link or button. */
+export type DestinationElementProps = Omit<
+  ComponentPropsWithoutRef<'a'>,
+  | 'children'
+  | 'href'
+  | 'onClick'
+  | 'aria-current'
+  | 'aria-label'
+  | 'aria-labelledby'
+  | 'dangerouslySetInnerHTML'
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
+
+/** A destination's name: text, or content with the same name as text in textValue. */
+type DestinationLabel =
+  | {
+      /**
+       * The destination's name, such as Inbox: a short noun in sentence case, unique in the list,
+       * or content, such as a name with a small Beta mark, with its text in `textValue`.
+       * NavigationBar and NavigationRail show it under the icon, so keep it to one or two short
+       * words there.
+       */
+      label: string;
+      /**
+       * The name as plain text, for the destination's key, its name with a count and its section
+       * button's name.
+       * @default the label
+       */
+      textValue?: string;
+    }
+  | {
+      label: ReactNode;
+      textValue: string;
+    };
 
 /** How a destination is reached: a link, or a button that runs onClick. */
 type DestinationTarget =
@@ -68,6 +111,7 @@ interface NestedDestinations {
  * keeps one array of them and passes the same array to each navigation form it shows.
  */
 export type Destination = DestinationFields &
+  DestinationLabel &
   DestinationTarget &
   NestedDestinations & {
     /**
@@ -83,25 +127,26 @@ export type Destination = DestinationFields &
  * the sections of a guide, and which may be only the heading of the destinations nested under it;
  * a list for NavigationRail or NavigationBar needs icons and a target for each destination it shows.
  */
-export type NavigationDrawerDestination = DestinationFields & {
-  /** A decorative icon before the label; leave it out of every destination of a list, or none. */
-  icon?: ReactNode;
-  /**
-   * A short word at the end of the item, after the label and before any count, such as a Badge
-   * that says the page is New: part of the item's name, so keep it to a word or two. An item with
-   * a count is named by its label and count alone. Drawer alone shows it; Rail and Bar leave it
-   * out.
-   * @default none
-   */
-  badge?: ReactNode;
-  /**
-   * A control of its own at the end of the destination's row, outside its link or button, such as
-   * an IconButton that deletes it or a Menu of its actions. It keeps its size, and the row's fill
-   * reaches under it. Drawer alone shows it; Rail and Bar leave it out.
-   * @default none
-   */
-  end?: ReactNode;
-} & (
+export type NavigationDrawerDestination = DestinationFields &
+  DestinationLabel & {
+    /** A decorative icon before the label; leave it out of every destination of a list, or none. */
+    icon?: ReactNode;
+    /**
+     * A short word at the end of the item, after the label and before any count, such as a Badge
+     * that says the page is New: part of the item's name, so keep it to a word or two. An item with
+     * a count is named by its label and count alone. Drawer alone shows it; Rail and Bar leave it
+     * out.
+     * @default none
+     */
+    badge?: ReactNode;
+    /**
+     * A control of its own at the end of the destination's row, outside its link or button, such as
+     * an IconButton that deletes it or a Menu of its actions. It keeps its size, and the row's fill
+     * reaches under it. Drawer alone shows it; Rail and Bar leave it out.
+     * @default none
+     */
+    end?: ReactNode;
+  } & (
     | (DestinationTarget & NestedDestinations)
     | {
         href?: undefined;

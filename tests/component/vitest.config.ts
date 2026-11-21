@@ -6,8 +6,10 @@ import react from '@vitejs/plugin-react';
 import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 import { commands } from './support/Commands.ts';
 import { ShardByDuration } from './support/ShardByDuration.ts';
+import { checkoutPort } from '../../scripts/DevServers.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
+const componentTestsPortOffset = 3;
 const workers = process.env.ENVUI_WORKERS ? Number(process.env.ENVUI_WORKERS) : undefined;
 const viewport = { width: 1440, height: 1000 };
 const contextOptions = { locale: 'en-US', timezoneId: 'UTC' };
@@ -31,19 +33,6 @@ export default defineConfig({
       'react-dom/client',
       'react/jsx-dev-runtime',
       'axe-core',
-      '@tiptap/core',
-      '@tiptap/extension-image',
-      '@tiptap/extension-list',
-      '@tiptap/extension-mention',
-      '@tiptap/extension-placeholder',
-      '@tiptap/extension-table',
-      '@tiptap/markdown',
-      '@tiptap/pm/state',
-      '@tiptap/react',
-      '@tiptap/starter-kit',
-      '@tiptap/static-renderer/pm/react',
-      '@tiptap/suggestion',
-      'marked',
       'react-markdown',
       'remark-gfm',
       '@shikijs/langs/css',
@@ -83,6 +72,7 @@ export default defineConfig({
       },
     ],
     maxWorkers: workers,
+    api: { port: checkoutPort(componentTestsPortOffset) },
     sequence: { sequencer: ShardByDuration },
     testTimeout: 30_000,
     expect: { poll: { timeout: 8_000 } },

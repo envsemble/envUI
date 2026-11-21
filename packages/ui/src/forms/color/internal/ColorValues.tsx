@@ -10,8 +10,7 @@ import { useMessages } from '../../../internal/provider/EnvUIContext.js';
 import { flag } from '../../../internal/flag.js';
 import * as Menu from '../../../actions/menu/Menu.js';
 import { ColorFields } from './ColorFields.js';
-import { displayColor } from './ColorLocale.js';
-import type { ColorFormat } from './colorValue.js';
+import { displayColor, type ColorFormat } from './colorValue.js';
 import '../../../styles/Base.css';
 import '../../../styles/ColorPicker.css';
 
@@ -108,7 +107,7 @@ export function ColorValues({
               <Button
                 variant="ghost"
                 size="sm"
-                endIcon={<IconExpandMore />}
+                end={<IconExpandMore />}
                 disabled={disabled}
                 aria-label={messages.formatButton({ format: messages[format] })}
               >

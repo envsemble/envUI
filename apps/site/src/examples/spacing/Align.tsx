@@ -26,7 +26,7 @@ export default function Align() {
         ]}
       />
       <IconButton variant="secondary" icon={<IconMoreVert />} aria-label="More" />
-      <Button startIcon={<IconAdd />}>New report</Button>
+      <Button start={<IconAdd />}>New report</Button>
     </Row>
   );
 }

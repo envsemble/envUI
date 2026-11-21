@@ -2,6 +2,8 @@
 
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { RootProps } from '../Table.js';
+import type { ResizeDetails } from '../../internal/resize/resizeDetails.js';
+import { useControllableState } from '../../internal/react/useControllableState.js';
 
 export interface TableColumns {
   widths: readonly number[];
@@ -38,22 +40,23 @@ export function useTableColumns({
   | 'minColumnWidths'
   | 'resizableColumns'
 >) {
+  const [shownWidths, changeWidths, keepOwn] = useControllableState<
+    readonly number[] | undefined,
+    number[],
+    [ResizeDetails]
+  >({ value: columnWidths, defaultValue: defaultColumnWidths, onChange: onColumnWidthsChange });
   const defaultsKey = defaultColumnWidths?.join(' ');
-  const [owned, setOwned] = useState({ key: defaultsKey, widths: defaultColumnWidths });
-  const ownedWidthsStartOverWithNewDefaults = owned.key !== defaultsKey;
-  if (ownedWidthsStartOverWithNewDefaults)
-    setOwned({ key: defaultsKey, widths: defaultColumnWidths });
+  const [ownStartedFrom, setOwnStartedFrom] = useState(defaultsKey);
+  const ownStartsOverWithNewDefaults = ownStartedFrom !== defaultsKey;
+  if (ownStartsOverWithNewDefaults) setOwnStartedFrom(defaultsKey);
+  const widths = ownStartsOverWithNewDefaults ? keepOwn(defaultColumnWidths) : shownWidths;
   const [startWidths] = useState(columnWidths);
   const [resizing, setResizing] = useState(false);
-  const widths =
-    columnWidths ?? (ownedWidthsStartOverWithNewDefaults ? defaultColumnWidths : owned.widths);
   if (!widths) return { widths, columns: null, resizing };
 
   const change = (next: number[], committed: boolean) => {
-    const same = sameWidths(widths, next);
-    if (same && !committed) return;
-    if (!same && columnWidths === undefined) setOwned({ key: defaultsKey, widths: next });
-    onColumnWidthsChange?.(next, { committed });
+    if (sameWidths(widths, next) && !committed) return;
+    changeWidths(next, { committed });
   };
   const starting = [defaultColumnWidths, startWidths].find(
     (candidate) => candidate?.length === widths.length,

@@ -20,7 +20,15 @@ const definition = (attributes, what = 'size') => ({
   messageId: 'definition',
   data: { attributes, what, fix: fixes[what] },
 });
-const icons = (source) => ({ messageId: 'iconPackage', data: { source } });
+const icons = (name, source) => ({ messageId: 'iconPackage', data: { name, source } });
+const svgInSlot = (attributes, slot, what = 'size') => ({
+  messageId: 'svgInContentSlot',
+  data: { attributes, slot, what },
+});
+const iconsInSlot = (name, source, slot) => ({
+  messageId: 'iconPackageInContentSlot',
+  data: { name, source, slot },
+});
 
 const graphic = "import { Graphic } from '@envsemble/envui';\n";
 
@@ -39,6 +47,7 @@ ruleTester.run('no-raw-graphics', rule, {
       `${graphic}<Graphic alt=""><AcmeMark /></Graphic>`,
       `${graphic}<Graphic {...logoProps} />`,
       "import { IconSearch } from '@envsemble/envui/icons/Search'; <IconSearch />",
+      "import { IconAdd } from '@envsemble/envui/icons/Add'; <Button start={<IconAdd />} end={<IconAdd />}>Add</Button>;",
     ]),
     ...named("A Graphic of another library's, or of the application's own, needs no alt", [
       "import { Graphic } from './charts'; <Graphic data={data} />",
@@ -59,9 +68,9 @@ ruleTester.run('no-raw-graphics', rule, {
       '<svg width="0" height="0" aria-hidden="true"><defs /></svg>',
     ]),
     ...named('An svg in an icon slot, or in a Graphic, takes its size from there', [
-      '<Button startIcon={<svg width="24" height="24" />}>Save</Button>',
       '<IconButton icon={<svg width="16" height="16" fill="#1a73e8" />} />',
-      '<Badge endIcon={open ? <svg width="12" /> : null} />',
+      '<Alert icon={open ? <svg width="12" /> : null} />',
+      '<Thing statusIcon={<svg width="12" />} />',
       `${graphic}<Graphic alt=""><svg width="24" height="24" fill="#000" /></Graphic>`,
     ]),
     ...named(
@@ -71,12 +80,13 @@ ruleTester.run('no-raw-graphics', rule, {
         `${graphic}<Graphic alt="">{show && <svg width="24" height="24" />}</Graphic>`,
       ],
     ),
-    ...named('The start slot of List.Item, TopBar, PageHeader and Combobox options', [
-      '<List.Item start={<svg width="20" height="20" />}>Inbox</List.Item>',
+    ...named('An svg or an icon in a Graphic in start or end', [
+      `${graphic}<List.Item start={<Graphic alt=""><svg width="20" height="20" /></Graphic>}>Inbox</List.Item>`,
+      `${graphic}import { Github } from 'lucide-react'; <Button end={<Graphic alt=""><Github /></Graphic>}>Sign in</Button>;`,
     ]),
     ...named("An icon slot as an object's property, as in an array of destinations", [
       'const destinations = [{ label: \'Pipelines\', icon: <svg width="24" height="24" /> }];',
-      'const items = [{ id: \'a\', \'startIcon\': <svg width="16" />, start: <svg height="16" /> }];',
+      "const items = [{ id: 'a', 'statusIcon': <svg width=\"16\" /> }];",
     ]),
     ...named('What a part renders in place of its own element', [
       '<Avatar.Image render={<img src={photo} alt="" />} />',
@@ -89,18 +99,30 @@ ruleTester.run('no-raw-graphics', rule, {
         '<Card style={{ margin: 0 }} />',
       ],
     ),
-    ...named('A margin of zero removes no edge', [
-      `${graphic}<Graphic alt="" style={{ margin: 0, marginInline: '0', marginBlockStart: '0px', 'margin-left': '0 0' }} />`,
+    ...named('A margin of zero, or one that spaces the Graphic, removes no edge', [
+      `${graphic}<Graphic alt="" style={{ margin: 0, marginInline: '0', marginBlockStart: '0px', 'margin-left': '0 -0' }} />`,
+      `${graphic}<Graphic alt="" style={{ marginInlineEnd: 'var(--env-space-2)', marginBlock: 4, margin: '0.5rem 0' }} />`,
     ]),
     ...named('Modules that only share a prefix with an icon package, and other packages', [
-      "import { Search } from 'lucide-react-native-shim';",
-      "import Icons from 'react-iconset';",
-      "import { Box } from '@mui/material';",
+      "import { Search } from 'lucide-react-native-shim'; <Search />;",
+      "import Icons from 'react-iconset'; <Icons.Star />;",
+      "import { Box } from '@mui/material'; <Box />;",
       "const icons = require(name); const m = import(name); require('lodash', 1);",
+    ]),
+    ...named("Another icon package's icon in an icon slot or a Graphic, which sizes it", [
+      'import { Github } from \'lucide-react\'; <IconButton icon={<Github />} aria-label="Sign in" />;',
+      `${graphic}import { SiFigma } from 'react-icons/si'; <Graphic alt="Figma"><SiFigma /></Graphic>;`,
+      "import * as Icons from '@tabler/icons-react'; const items = [{ id: 'a', icon: <Icons.IconBrandSlack /> }];",
+      'const { Heart } = require(\'phosphor-react\'); <IconButton icon={<Heart />} aria-label="Like" />;',
+    ]),
+    ...named('Importing or re-exporting an icon package renders nothing', [
+      "import { Search } from 'lucide-react';",
+      "export { IconSearch } from '@tabler/icons-react';",
+      "export * from '@phosphor-icons/react';",
     ]),
     ...named('Allowed by option', [
       {
-        code: "import { SiGithub } from 'react-icons/si';",
+        code: "import { SiGithub } from 'react-icons/si'; <SiGithub />;",
         options: [{ allow: ['react-icons'] }],
       },
     ]),
@@ -127,7 +149,7 @@ ruleTester.run('no-raw-graphics', rule, {
       errors: [
         {
           message:
-            'A raw <svg width="24" height="24"> takes its size from the file: pass it to an icon slot, such as Button\'s startIcon, or wrap it in envUI\'s <Graphic alt="">: import { Graphic } from \'@envsemble/envui\'.',
+            'A raw <svg width="24" height="24"> takes its size from the file: pass it to an icon slot, such as IconButton\'s icon, or wrap it in envUI\'s <Graphic alt="">: import { Graphic } from \'@envsemble/envui\'.',
           line: 1,
           column: 2,
         },
@@ -180,6 +202,43 @@ ruleTester.run('no-raw-graphics', rule, {
         errors: [svg('width="24"')],
       },
     ]),
+    ...named(
+      "start and end size only envUI's icons and a Graphic, so a raw svg or another package's icon there is told to go in a Graphic",
+      [
+        {
+          code: "import { Github } from 'lucide-react';\n<Button start={<Github />}>Sign in</Button>;",
+          errors: [
+            {
+              message:
+                "A <Github> from lucide-react keeps the package's size in start, which sizes only envUI's icons and a Graphic: wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit it: import { IconSearch } from '@envsemble/envui/icons/Search'.",
+              line: 2,
+              column: 17,
+            },
+          ],
+        },
+        {
+          code: "import { ChevronRight } from 'lucide-react'; <Button end={open ? <ChevronRight /> : null}>Next</Button>;",
+          errors: [iconsInSlot('ChevronRight', 'lucide-react', 'end')],
+        },
+        {
+          code: '<List.Item start={<svg width="20" height="20" />}>Inbox</List.Item>',
+          errors: [
+            {
+              message:
+                'A raw <svg width="20" height="20"> keeps the file\'s size in start, which sizes only envUI\'s icons and a Graphic: wrap it in envUI\'s <Graphic alt="">: import { Graphic } from \'@envsemble/envui\'.',
+            },
+          ],
+        },
+        {
+          code: "import { Folder } from 'lucide-react'; const items = [{ value: 'a', start: <Folder /> }];",
+          errors: [iconsInSlot('Folder', 'lucide-react', 'start')],
+        },
+        {
+          code: 'const items = [{ value: \'a\', end: <span><svg fill="#000" /></span> }];',
+          errors: [svgInSlot('fill="#000"', 'end', 'color')],
+        },
+      ],
+    ),
     ...named("A property that isn't an icon slot", [
       {
         code: 'const items = [{ label: \'Pipelines\', badge: <svg width="24" /> }];',
@@ -205,62 +264,69 @@ ruleTester.run('no-raw-graphics', rule, {
       { code: "import * as ui from '@envsemble/envui'; <ui.Graphic src={logo} />", errors: [alt] },
       { code: '<Graphic src={logo} />', errors: [alt] },
     ]),
-    ...named('A margin on a Graphic, by each of its properties', [
+    ...named('A negative margin on a Graphic, by each of its properties', [
       {
         code: `${graphic}<Graphic src={logo} alt="Acme" style={{ marginInlineStart: '-0.25rem', color: 'red' }} />`,
         errors: [
           {
             message:
-              "A margin on a Graphic makes up for the file's empty edges: trim the file once with npx envui-graphic <file>, and drop the margin.",
+              "A negative margin on a Graphic makes up for the file's empty edges: trim the file once with npx envui-graphic <file>, and drop the margin.",
             line: 2,
             column: 41,
           },
         ],
       },
       {
-        code: `${graphic}<Graphic alt="" style={{ margin: 4, marginLeft: -2, 'margin-block-end': '1px', marginBlock: 0, marginInline: '0 2px' }} />`,
+        code: `${graphic}<Graphic alt="" style={{ margin: -4, marginLeft: 2, 'margin-block-end': '-1px', marginBlock: 0, marginInline: '0 -2px', marginTop: 'calc(-1 * var(--env-space-1))' }} />`,
         errors: [margin, margin, margin, margin],
       },
-      { code: '<Graphic style={{ margin: 4 }} />', errors: [alt, margin] },
+      { code: '<Graphic style={{ margin: -4 }} />', errors: [alt, margin] },
     ]),
-    ...named('Imports from other icon packages, in every form', [
-      {
-        code: "import { Search } from 'lucide-react';",
-        errors: [
-          {
-            message:
-              "Use envUI's icons instead of lucide-react: import { IconSearch } from '@envsemble/envui/icons/Search'. For the app's own icons and logos, use Graphic: import { Graphic } from '@envsemble/envui'.",
-            line: 1,
-            column: 24,
-          },
-        ],
-      },
-      { code: "import { FaGithub } from 'react-icons/fa';", errors: [icons('react-icons/fa')] },
-      {
-        code: "import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';",
-        errors: [icons('@heroicons/react/24/outline')],
-      },
-      {
-        code: "import SearchIcon from '@mui/icons-material/Search';",
-        errors: [icons('@mui/icons-material/Search')],
-      },
-      {
-        code: "export { IconSearch } from '@tabler/icons-react';",
-        errors: [icons('@tabler/icons-react')],
-      },
-      { code: "export * from '@phosphor-icons/react';", errors: [icons('@phosphor-icons/react')] },
-      { code: "const { Heart } = require('phosphor-react');", errors: [icons('phosphor-react')] },
-      {
-        code: 'const icons = import(`lucide-react`);',
-        languageOptions: { ecmaVersion: 2022 },
-        errors: [icons('lucide-react')],
-      },
-    ]),
+    ...named(
+      "Another icon package's icon outside an icon slot or Graphic, from every kind of import",
+      [
+        {
+          code: "import { Search } from 'lucide-react';\n<Search />;",
+          errors: [
+            {
+              message:
+                "A <Search> from lucide-react takes its size from the package: pass it to an icon slot, such as IconButton's icon, or wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit its slots and text: import { IconSearch } from '@envsemble/envui/icons/Search'.",
+              line: 2,
+              column: 2,
+            },
+          ],
+        },
+        {
+          code: "import { FaGithub } from 'react-icons/fa'; <Link href={repo}><FaGithub /> GitHub</Link>;",
+          errors: [icons('FaGithub', 'react-icons/fa')],
+        },
+        {
+          code: 'import { MagnifyingGlassIcon } from \'@heroicons/react/24/outline\'; <MagnifyingGlassIcon className="size-6" />;',
+          errors: [icons('MagnifyingGlassIcon', '@heroicons/react/24/outline')],
+        },
+        {
+          code: "import SearchIcon from '@mui/icons-material/Search'; <SearchIcon />;",
+          errors: [icons('SearchIcon', '@mui/icons-material/Search')],
+        },
+        {
+          code: "import * as Tabler from '@tabler/icons-react'; <Tabler.IconSearch size={24} />;",
+          errors: [icons('Tabler.IconSearch', '@tabler/icons-react')],
+        },
+        {
+          code: "const { Heart } = require('phosphor-react'); <Heart />;",
+          errors: [icons('Heart', 'phosphor-react')],
+        },
+        {
+          code: "import { Search as Find } from 'lucide-react'; <><IconButton icon={<Find />} /><Find /></>;",
+          errors: [icons('Find', 'lucide-react')],
+        },
+      ],
+    ),
     ...named('Allowing one package leaves the others reported', [
       {
-        code: "import { SiGithub } from 'react-icons/si'; import { Search } from 'lucide-react';",
+        code: "import { SiGithub } from 'react-icons/si'; import { Search } from 'lucide-react'; <><SiGithub /><Search /></>;",
         options: [{ allow: ['react-icons'] }],
-        errors: [icons('lucide-react')],
+        errors: [icons('Search', 'lucide-react')],
       },
     ]),
   ],
@@ -278,12 +344,12 @@ typeScriptRuleTester.run('no-raw-graphics with TypeScript', rule, {
   ],
   invalid: [
     {
-      code: "import Search = require('lucide-react');",
-      errors: [icons('lucide-react')],
+      code: "import Lucide = require('lucide-react'); <Lucide.Search />;",
+      errors: [icons('Lucide.Search', 'lucide-react')],
     },
     {
-      code: "import { type LucideProps, Search } from 'lucide-react';",
-      errors: [icons('lucide-react')],
+      code: "import { type LucideProps, Search } from 'lucide-react'; <Search />;",
+      errors: [icons('Search', 'lucide-react')],
     },
     {
       code: `${graphic}const Logo = ({ size }: { size: 'md' }) => <Graphic src={logo} size={size} />;`,

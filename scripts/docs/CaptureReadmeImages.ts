@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { chromium, type Page } from '@playwright/test';
 import { createServer, type ViteDevServer } from 'vite';
-import { defaultPorts, resolveServers } from '../test/CheckoutMarker.ts';
+import { defaultPorts, resolveServers } from '../DevServers.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const pictures = [
@@ -9,7 +9,7 @@ const pictures = [
     name: 'overview',
     path: '/',
     window: { width: 1440, height: 900 },
-    end: '.catalogue-fan',
+    end: '.catalogue-overview-widget',
   },
   {
     name: 'gallery',

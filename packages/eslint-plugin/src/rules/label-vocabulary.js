@@ -46,19 +46,38 @@ export default {
     type: 'suggestion',
     docs: {
       description: "Disallow words in labels that envUI's vocabulary replaces",
-      recommended: true,
+      recommended: false,
       url: documentationUrl('label-vocabulary'),
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          allow: {
+            description:
+              'Words the application keeps as labels, such as Clone or Retry in a developer tool, in any case.',
+            type: 'array',
+            items: { type: 'string' },
+            uniqueItems: true,
+          },
+        },
+        additionalProperties: false,
+      },
+    ],
+    defaultOptions: [{ allow: [] }],
     messages: {
       replace: 'Write "{{rewritten}}" instead of "{{label}}".',
     },
   },
   create(context) {
+    const [{ allow }] = context.options;
+    const kept = new Set(allow.map((word) => word.trim().replace(/\s+/g, ' ').toLowerCase()));
+
     function check(node, text) {
       const label = typeof text === 'string' ? labelText(text) : undefined;
       if (!label) return;
       const lower = label.toLowerCase();
+      if (kept.has(lower)) return;
       const entry = replaced.find(({ word }) => lower === word);
       if (entry)
         context.report({

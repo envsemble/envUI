@@ -24,7 +24,7 @@ useWhen:
 avoidWhen:
   - text: A readable column for a page's content, with its gutters.
     use: Page
-  - text: Two panes side by side inside the body, such as a list and its detail.
+  - text: Two panes side by side inside the body, such as a document and its details.
     use: Panes
 components:
   - Scaffold
@@ -37,6 +37,7 @@ examples:
   ChooseForms: example
   NarrowNavigation: example
   TitleBarAcross: example
+  InspectorAndStatus: example
   NavigationApart: example
   ScaffoldAnatomy: anatomy
   FormsByWidth: example
@@ -61,6 +62,12 @@ examples:
 ### A title bar across
 
 ```tsx figure=TitleBarAcross stage=shaded widths="40"
+
+```
+
+### An inspector and a status bar
+
+```tsx figure=InspectorAndStatus stage=shaded widths="44"
 
 ```
 

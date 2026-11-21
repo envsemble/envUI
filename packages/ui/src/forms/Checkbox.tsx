@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import {
   useCheckedInput,
   type CheckedProps,
@@ -10,7 +10,7 @@ import {
 } from './internal/useCheckedInput.js';
 import { IconCheck } from '../icons/Check.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { useRowControlNaming } from '../internal/field/rowControl.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import '../styles/Base.css';
 import '../styles/Checkbox.css';
 
@@ -36,6 +36,12 @@ export interface CheckboxProps extends CheckedProps<CheckboxState> {
    */
   description?: ReactNode;
   /**
+   * Where the label sits beside the box: end, after it, or start, before it, such as in an inline
+   * row whose label leads; the native label still names the checkbox.
+   * @default 'end'
+   */
+  labelPlacement?: 'end' | 'start';
+  /**
    * Whether the box is checked, unchecked or "mixed", for a parent whose children are partly
    * chosen. With `onCheckedChange` it controls the checkbox.
    */
@@ -57,6 +63,7 @@ export function Checkbox({
   onChange,
   className,
   style,
+  labelPlacement = 'end',
   ...props
 }: CheckboxProps) {
   const { inputRef, checkedState, handleChange } = useCheckedInput(
@@ -68,16 +75,17 @@ export function Checkbox({
   );
   const naming = useRowControlNaming({ label, ...props });
   return (
-    <label className={classNames('env-checkbox', className)} style={style}>
+    <label
+      className={classNames('env-checkbox', className)}
+      style={style}
+      data-label-placement={labelPlacement === 'start' ? 'start' : undefined}
+    >
       <span className="env-checkbox-box">
         <input
           {...props}
           {...naming}
           type="checkbox"
-          ref={(node) => {
-            inputRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(inputRef, ref)}
           className="env-checkbox-input"
           checked={checkedState === true}
           aria-checked={checkedState === 'mixed' ? 'mixed' : checkedState}

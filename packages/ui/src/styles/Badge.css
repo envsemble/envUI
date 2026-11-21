@@ -109,7 +109,7 @@
     border: var(--_badge-own-border, var(--_badge-edge-border));
     background: var(--env-badge-container, transparent);
   }
-  .env-badge .env-icon {
+  .env-badge-start {
     --env-icon-size: 0.875rem;
   }
   .env-badge-label {
@@ -145,37 +145,12 @@
     border: var(--_badge-own-border, var(--_badge-count-border, var(--_badge-edge-border)));
     background: var(--env-badge-container, var(--_badge-count-bg, transparent));
   }
-  .env-diff-stat {
-    box-sizing: border-box;
-    position: relative;
-    flex: 0 0 auto;
-    block-size: var(--env-badge-count-height);
-    display: inline-flex;
-    align-items: center;
-    gap: var(--env-space-1);
-    --_diff-stat-digit-room: 0.375rem;
-    padding-inline: var(--_diff-stat-digit-room);
-    border: none;
-    border-radius: var(--env-radius-full);
-    background: var(--env-color-bg-neutral-muted);
-    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-    vertical-align: middle;
-  }
-  .env-diff-stat-additions {
-    color: var(--env-color-fg-success);
-  }
-  .env-diff-stat-deletions {
-    color: var(--env-color-fg-danger);
-  }
-  .env-badge-count-label,
-  .env-diff-stat-label {
-    --_diff-stat-visually-hidden-size: 0.0625rem;
+  .env-badge-count-label {
+    --_badge-count-label-size: 0.0625rem;
     position: absolute;
-    inline-size: var(--_diff-stat-visually-hidden-size);
-    block-size: var(--_diff-stat-visually-hidden-size);
-    margin: calc(-1 * var(--_diff-stat-visually-hidden-size));
+    inline-size: var(--_badge-count-label-size);
+    block-size: var(--_badge-count-label-size);
+    margin: calc(-1 * var(--_badge-count-label-size));
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;

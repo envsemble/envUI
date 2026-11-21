@@ -44,8 +44,8 @@ const states: Record<string, [state: Target, rest: Target]> = {
     ['.env-navigation-drawer-item:not([data-current])'],
   ],
   'the current rail destination': [
-    ['.env-navigation-rail-item[data-current] .env-navigation-rail-indicator'],
-    ['.env-navigation-rail-item:not([data-current]) .env-navigation-rail-indicator'],
+    ['.env-navigation-rail-item[data-current]'],
+    ['.env-navigation-rail-item:not([data-current])'],
   ],
   'a checked checkbox': [
     ['.env-checkbox', { text: 'Checked' }],
@@ -102,7 +102,6 @@ const states: Record<string, [state: Target, rest: Target]> = {
     ['.env-table-of-contents-link[aria-current=location]'],
     ['.env-table-of-contents-link:not([aria-current])'],
   ],
-  'a filled star': [['.env-rating-star'], ['.env-rating-star', { index: 4 }]],
   'a checked menu item': [['[role=menuitemcheckbox]'], ['[role=menuitemcheckbox]', { index: 1 }]],
 };
 
@@ -219,7 +218,7 @@ test(
     for (const target of [
       ['.env-segmented-control-item[data-checked]'],
       ['.env-navigation-drawer-item[data-current]'],
-      ['.env-navigation-rail-item[data-current] .env-navigation-rail-indicator'],
+      ['.env-navigation-rail-item[data-current]'],
       ["[role=treeitem][aria-selected='true']"],
       ['.env-calendar-day[aria-selected=true] > .env-calendar-day-mark'],
       ['[data-part=hour] .env-time-list-row[data-centered]'],
@@ -240,7 +239,6 @@ test(
       'the selected tree row': 'highlight',
       'the chosen calendar day': 'highlight',
       'the active document tab': 'highlight',
-      'a filled star': 'highlight',
       "today's calendar day": 'outline',
       'an invalid field': 'dashed',
       'a pressed toolbar toggle': 'highlight',

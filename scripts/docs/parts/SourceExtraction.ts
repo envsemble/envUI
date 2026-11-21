@@ -1,8 +1,8 @@
 import { relative, resolve } from 'node:path';
 import { Node, Project, SyntaxKind, type JsxAttribute, type SourceFile, type Type } from 'ts-morph';
 import { kebab } from '../PageStructure.ts';
-import { libraryDirectory, librarySourceDirectory } from '../../RepositoryPaths.ts';
-import { isPrivateState, repositoryPath, type StateRecord } from './Library.ts';
+import { libraryDirectory, librarySourceDirectory, repositoryPath } from '../../RepositoryPaths.ts';
+import { isPrivateState, type StateRecord } from './Library.ts';
 
 const classPattern = /(?<![\w.#-])env-[a-z\d]+(?:-[a-z\d]+)*(-?)/g;
 const isClassName = (name: string) => /^(?:class|className|\w+ClassName)$/.test(name);

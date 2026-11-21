@@ -1,7 +1,6 @@
-export type InlinePiece =
-  | { kind: 'text'; text: string }
-  | { kind: 'code'; text: string }
-  | { kind: 'link'; href: string; children: InlinePiece[] };
+import type { InlinePiece } from '../../documentation/InlinePieces';
+
+export type { InlinePiece };
 
 export interface Release {
   version: string;

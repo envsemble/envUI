@@ -1,11 +1,11 @@
 'use client';
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import { createContext, useContext, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { IconCheck } from '../../icons/Check.js';
 import { classNames } from '../../internal/classNames.js';
 import { Grid } from '../../layout/Layout.js';
-import { useMenuItemContent, type ItemContentProps } from './MenuItem.js';
+import { useMenuItemContent, type ItemContentProps, type ItemElementProps } from './MenuItem.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 
@@ -80,6 +80,9 @@ export function RadioGroup({
   );
 }
 
+/** Whether the radio items inside close the menu, where an item sets none of its own. */
+export const RadioItemsCloseOnClickContext = createContext<boolean | undefined>(undefined);
+
 function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   const Indicator = kind === 'radio' ? BaseMenu.RadioItemIndicator : BaseMenu.CheckboxItemIndicator;
   return (
@@ -91,7 +94,8 @@ function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   );
 }
 
-export interface RadioItemProps extends Omit<ItemContentProps, 'shortcut'> {
+export interface RadioItemProps
+  extends Omit<ItemContentProps, 'shortcut'>, Omit<ItemElementProps, 'defaultValue'> {
   /** The value the Menu.RadioGroup reports when this item is chosen. */
   value: string;
   /**
@@ -101,7 +105,7 @@ export interface RadioItemProps extends Omit<ItemContentProps, 'shortcut'> {
   disabled?: boolean;
   /**
    * Close the menu after choosing.
-   * @default true
+   * @default true, or the closeOnClick of the ThemeMenuRadioGroup around it
    */
   closeOnClick?: boolean;
   /** Class of the item's row. */
@@ -112,16 +116,25 @@ export interface RadioItemProps extends Omit<ItemContentProps, 'shortcut'> {
 export function RadioItem({
   value,
   disabled,
-  closeOnClick = true,
+  closeOnClick: ownCloseOnClick,
   className,
-  ...contentProps
+  start,
+  children,
+  textValue,
+  description,
+  end,
+  'aria-describedby': ariaDescribedBy,
+  ...props
 }: RadioItemProps) {
+  const groupCloseOnClick = useContext(RadioItemsCloseOnClickContext);
+  const closeOnClick = ownCloseOnClick ?? groupCloseOnClick ?? true;
   const { content, accessibility } = useMenuItemContent(
-    contentProps,
+    { start, children, textValue, description, end, 'aria-describedby': ariaDescribedBy },
     <CheckIndicator kind="radio" />,
   );
   return (
     <BaseMenu.RadioItem
+      {...props}
       value={value}
       disabled={disabled}
       closeOnClick={closeOnClick}
@@ -133,7 +146,8 @@ export function RadioItem({
   );
 }
 
-export interface CheckboxItemProps extends ItemContentProps {
+export interface CheckboxItemProps
+  extends ItemContentProps, Omit<ItemElementProps, 'defaultChecked'> {
   /** Whether the option is on, for an item the application controls; a check mark shows while it is. */
   checked?: boolean;
   /**
@@ -162,14 +176,30 @@ export function CheckboxItem({
   disabled,
   closeOnClick = false,
   className,
-  ...contentProps
+  start,
+  children,
+  textValue,
+  description,
+  shortcut,
+  end,
+  'aria-describedby': ariaDescribedBy,
+  ...props
 }: CheckboxItemProps) {
   const { content, accessibility } = useMenuItemContent(
-    contentProps,
+    {
+      start,
+      children,
+      textValue,
+      description,
+      shortcut,
+      end,
+      'aria-describedby': ariaDescribedBy,
+    },
     <CheckIndicator kind="checkbox" />,
   );
   return (
     <BaseMenu.CheckboxItem
+      {...props}
       checked={checked}
       defaultChecked={defaultChecked}
       onCheckedChange={(next: boolean) => onCheckedChange?.(next)}

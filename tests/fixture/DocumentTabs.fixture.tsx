@@ -12,7 +12,7 @@ export const initialTabs: DocumentTabsItem[] = [
     value: `notes/note-${index + 1}.md`,
     label: `A rather long note title number ${index + 1}.md`,
   })),
-].map((tab) => ({ ...tab, icon: <IconDescription />, tooltip: tab.value }));
+].map((tab) => ({ ...tab, start: <IconDescription />, tooltip: tab.value }));
 
 export default function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
   const [tabs, setTabs] = useState(initialTabs);

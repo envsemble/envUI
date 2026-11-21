@@ -1,13 +1,17 @@
 'use client';
 
+import { mergeProps } from '@base-ui/react/merge-props';
 import {
   useEffect,
   useRef,
   useState,
+  type ComponentPropsWithoutRef,
   type ComponentPropsWithRef,
   type CSSProperties,
+  type HTMLAttributes,
   type MouseEvent,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
   type RefObject,
 } from 'react';
 import {
@@ -21,7 +25,8 @@ import {
 import { Tooltip } from '../overlays/Tooltip.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/react/setRef.js';
+import { nameWithBadge } from './internal/avatarName.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
 import { avatarGroup as avatarGroupMessages } from '../foundations/messages/avatarGroup.js';
@@ -29,23 +34,45 @@ import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/AvatarGroup.css';
 
-export interface AvatarGroupPerson {
-  /** The person's name: the tooltip and accessible name of a pressable avatar, and the initials. */
-  name: string;
-  /** Picture URL; the fallback shows while it loads and when it is missing or fails. */
-  src?: string | null;
-  /** Initials, by default, or the default person picture, as for Avatar. */
-  fallback?: AvatarProps['fallback'];
+/**
+ * One person in an AvatarGroup: the Avatar props a pile shows, a tooltip, a key, a destination and
+ * itemProps. Without a hue, the name chooses one, never one that looks like its neighbour's. The
+ * name is a pressable avatar's tooltip and accessible name, and a badge given as text, such as
+ * online, follows the name there, as it shows.
+ */
+export interface AvatarGroupPerson extends Pick<
+  AvatarProps,
+  'name' | 'src' | 'fallback' | 'hue' | 'badge' | 'selected'
+> {
+  /**
+   * The tooltip of a pressable avatar, such as the name with a role or an e-mail address; the
+   * name by default. The name stays its accessible name.
+   */
+  tooltip?: ReactNode;
   /** A stable key, such as an account ID; the name and position by default. */
   id?: string | number;
   /** A destination for this person: the avatar becomes a link with a name tooltip. */
   href?: string;
   /**
-   * Shows the person's avatar as chosen: a ring and a check. A look only: say what is chosen in
-   * the control around the group, such as an option or the group's label.
+   * More props for the person's avatar, or for its link or button when it is pressable, such as
+   * data attributes for tests or a title. Its class joins the avatar's, its style and listeners
+   * join the group's, and the avatar's name and role stay.
    */
-  selected?: boolean;
+  itemProps?: AvatarGroupItemProps;
 }
+
+/** What a person's itemProps can set on their avatar, or on its link or button. */
+export type AvatarGroupItemProps = Omit<
+  ComponentPropsWithoutRef<'a'>,
+  | 'children'
+  | 'href'
+  | 'id'
+  | 'role'
+  | 'aria-label'
+  | 'aria-labelledby'
+  | 'aria-hidden'
+  | 'dangerouslySetInnerHTML'
+> & { [attribute: `data-${string}`]: string | number | boolean | undefined };
 
 export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The people, in order. Pass a preview with total when there are many more. */
@@ -86,6 +113,12 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
    * @default '{count} people: {names}'
    */
   formatLabel?: (count: number, names: readonly string[]) => string;
+  /**
+   * The overflow chip's tooltip, from the people it hides and how many more total counts but
+   * people doesn't list, such as a list of them with their avatars. Their names, one a line, and
+   * formatMore's text by default. The chip's accessible name stays their names.
+   */
+  renderOverflowTooltip?: (hidden: readonly AvatarGroupPerson[], unlisted: number) => ReactNode;
 }
 
 const lookAlikeHueFamily: Record<AvatarHue, string> = {
@@ -99,12 +132,16 @@ const lookAlikeHueFamily: Record<AvatarHue, string> = {
   oat: 'warm',
 };
 
-function huesWithoutLookAlikeNeighbours(names: readonly string[]): AvatarHue[] {
+function huesWithoutLookAlikeNeighbours(people: readonly AvatarGroupPerson[]): AvatarHue[] {
   const hues: AvatarHue[] = [];
-  for (const name of names) {
-    let hue = avatarHue(name);
+  for (const person of people) {
+    let hue = person.hue ?? avatarHue(person.name);
     const previous = hues.at(-1);
-    if (previous !== undefined && lookAlikeHueFamily[hue] === lookAlikeHueFamily[previous]) {
+    if (
+      person.hue === undefined &&
+      previous !== undefined &&
+      lookAlikeHueFamily[hue] === lookAlikeHueFamily[previous]
+    ) {
       const start = avatarHues.indexOf(hue);
       for (let step = 1; step < avatarHues.length; step += 1) {
         const next = avatarHues[(start + step) % avatarHues.length];
@@ -156,6 +193,7 @@ export function AvatarGroup({
   onPersonClick,
   formatMore: ownFormatMore,
   formatLabel: ownFormatLabel,
+  renderOverflowTooltip,
   className,
   style,
   'aria-label': label,
@@ -197,7 +235,7 @@ export function AvatarGroup({
   const overflowChipNames = hidden.map((person) => person.name);
   if (countedButUnlisted > 0) overflowChipNames.push(formatMore(countedButUnlisted));
   const counted = overflow > 0;
-  const hues = huesWithoutLookAlikeNeighbours(shown.map((person) => person.name));
+  const hues = huesWithoutLookAlikeNeighbours(shown);
   const placeForTheStyleSheetToBunch = (index: number): CSSProperties => ({
     '--_avatar-group-before': String(Math.min(index, shown.length - 1)),
     '--_avatar-group-after': String(Math.max(0, shown.length - 1 - index)),
@@ -208,10 +246,7 @@ export function AvatarGroup({
     <div
       role="group"
       {...props}
-      ref={(node) => {
-        groupRef.current = node;
-        setRef(ref, node);
-      }}
+      ref={mergeRefs(groupRef, ref)}
       aria-label={label ?? formatLabel(count, names)}
       className={classNames('env-avatar-group', className)}
       style={style}
@@ -247,12 +282,16 @@ export function AvatarGroup({
       {overflow > 0 && (
         <Tooltip
           content={
-            <span className="env-avatar-group-tooltip">
-              {hidden.map((person, index) => (
-                <span key={person.id ?? `${index}-${person.name}`}>{person.name}</span>
-              ))}
-              {countedButUnlisted > 0 && <span>{formatMore(countedButUnlisted)}</span>}
-            </span>
+            renderOverflowTooltip ? (
+              renderOverflowTooltip(hidden, Math.max(0, countedButUnlisted))
+            ) : (
+              <span className="env-avatar-group-tooltip">
+                {hidden.map((person, index) => (
+                  <span key={person.id ?? `${index}-${person.name}`}>{person.name}</span>
+                ))}
+                {countedButUnlisted > 0 && <span>{formatMore(countedButUnlisted)}</span>}
+              </span>
+            )
           }
         >
           <span
@@ -284,41 +323,36 @@ function AvatarGroupItem({
   onPersonClick: AvatarGroupProps['onPersonClick'];
 }) {
   const pressable = Boolean(person.href) || onPersonClick !== undefined;
+  const itemProps = (person.itemProps ?? {}) as HTMLAttributes<HTMLElement>;
   const avatar = (
     <Avatar
+      {...(pressable ? undefined : mergeProps(itemProps, { style }))}
       name={person.name}
       src={person.src}
       fallback={person.fallback}
       hue={hue}
       size={size}
       selected={person.selected}
-      style={pressable ? undefined : style}
+      badge={person.badge}
     />
   );
   if (!pressable) return avatar;
   const onClick =
     onPersonClick && ((event: MouseEvent<HTMLElement>) => onPersonClick(person, event));
+  const ownItemProps = mergeProps(itemProps, {
+    'aria-label': nameWithBadge(person.name, person.badge),
+    className: 'env-avatar-group-item',
+    style,
+    onClick,
+  });
   return (
-    <Tooltip content={person.name}>
+    <Tooltip content={person.tooltip ?? person.name}>
       {person.href ? (
-        <ActionElement
-          href={person.href}
-          aria-label={person.name}
-          className="env-avatar-group-item"
-          style={style}
-          onClick={onClick}
-        >
+        <ActionElement {...ownItemProps} href={person.href}>
           {avatar}
         </ActionElement>
       ) : (
-        <ActionElement
-          aria-label={person.name}
-          className="env-avatar-group-item"
-          style={style}
-          onClick={onClick}
-        >
-          {avatar}
-        </ActionElement>
+        <ActionElement {...ownItemProps}>{avatar}</ActionElement>
       )}
     </Tooltip>
   );

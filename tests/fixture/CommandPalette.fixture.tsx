@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
 import {
+  Avatar,
+  Badge,
+  Button,
   CommandPalette,
   EnvUIProvider,
   Kbd,
   Theme,
-  type CommandPaletteItem,
+  type CommandPaletteGroup,
   type CommandPaletteProps,
   type ColorScheme,
 } from '@envsemble/envui';
@@ -20,20 +23,24 @@ function ThemedPalette({ theme }: { theme: ColorScheme }) {
   const items = useMemo(() => {
     const match = (name: string) => name.toLowerCase().includes(query.toLowerCase());
     return [
-      ...recent.filter(match).map((name) => ({
-        id: `recent/${name}`,
-        label: name,
-        description: 'plans',
-        icon: <IconDescription />,
-        group: 'Recently opened',
-      })),
-      ...documents.filter(match).map((name) => ({
-        id: `documents/${name}`,
-        label: name,
-        description: 'documents',
-        icon: <IconDescription />,
-        group: 'Documents',
-      })),
+      {
+        label: 'Recently opened',
+        items: recent.filter(match).map((name) => ({
+          id: `recent/${name}`,
+          label: name,
+          description: 'plans',
+          icon: <IconDescription />,
+        })),
+      },
+      {
+        label: 'Documents',
+        items: documents.filter(match).map((name) => ({
+          id: `documents/${name}`,
+          label: name,
+          description: 'documents',
+          icon: <IconDescription />,
+        })),
+      },
     ];
   }, [query]);
   return (
@@ -72,11 +79,12 @@ function ThemedPalette({ theme }: { theme: ColorScheme }) {
 }
 
 const pages = ['Home', 'Settings', 'Billing', 'Keyboard shortcuts'];
-const suggested: CommandPaletteItem[] = ['Home', 'Settings'].map((name) => ({
-  id: `suggested/${name}`,
-  label: name,
-  group: 'Suggested',
-}));
+const suggested: CommandPaletteGroup[] = [
+  {
+    label: 'Suggested',
+    items: ['Home', 'Settings'].map((name) => ({ id: `suggested/${name}`, label: name })),
+  },
+];
 
 function EmptyPalette({
   name,
@@ -148,5 +156,47 @@ export default function CommandPaletteFixture() {
       <ThemedPalette theme="dark" />
       <EmptyStates />
     </>
+  );
+}
+
+export function PaletteContentFixture() {
+  const [query, setQuery] = useState('');
+  return (
+    <CommandPalette
+      open
+      onOpenChange={() => undefined}
+      aria-label="Search people"
+      inputValue={query}
+      onInputValueChange={setQuery}
+      onAction={() => undefined}
+      searchStart={<Badge>In: People</Badge>}
+      searchEnd={<Button size="sm">Projects</Button>}
+      items={[
+        {
+          label: (
+            <>
+              People <Badge>2</Badge>
+            </>
+          ),
+          items: [
+            {
+              id: 'priya',
+              label: 'Priya Shah',
+              start: <Avatar name="Priya Shah" size="sm" />,
+              itemProps: { 'data-testid': 'priya', title: 'Priya', className: 'fixture-person' },
+            },
+            {
+              id: 'sam',
+              label: (
+                <>
+                  <b>Sam</b> Lee
+                </>
+              ),
+              start: <Avatar name="Sam Lee" size="sm" />,
+            },
+          ],
+        },
+      ]}
+    />
   );
 }

@@ -14,16 +14,19 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
 import { Text } from '../foundations/Text.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useLocale } from '../internal/provider/EnvUIContext.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
-import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
+import { fieldDescribedBy } from '../internal/field/useFieldControl.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
+import { useRowControlNaming } from '../internal/field/RowControl.js';
 import { followDrag, followOverdrag } from './internal/sliderDrag.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
 import { flag } from '../internal/flag.js';
+import { pixelsOf } from '../internal/dom/lengths.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Slider.css';
 
@@ -32,10 +35,12 @@ export interface SliderProps extends Omit<
   'defaultValue' | 'onChange' | 'children' | 'ref'
 > {
   /**
-   * The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends
-   * in an ellipsis where the slider is too narrow for it.
+   * The value's name, inside the slider at its start, such as Opacity: text, or any content, such
+   * as a volume icon beside the text. It names the slider, and ends in an ellipsis where the slider
+   * is too narrow for it. Without it, a List.Item whose control it is names the slider, or name it
+   * with aria-label or aria-labelledby.
    */
-  label: string;
+  label?: ReactNode;
   /**
    * Lasting guidance under the slider, such as what the value applies to, linked to the slider as
    * its description.
@@ -82,6 +87,12 @@ export interface SliderProps extends Omit<
    * (value) => `${value}%`. Without it, the number shows in the locale.
    */
   formatValue?: (value: number) => string;
+  /**
+   * What the slider's end shows for the value in place of formatValue's text, such as the number
+   * with its unit styled apart, or a swatch; formatValue, or the number in the locale, stays what
+   * assistive technology announces.
+   */
+  renderValue?: (value: number) => ReactNode;
   /** The locale of the shown number: EnvUIProvider's, else the browser's. */
   locale?: string;
   /** Dim the slider; it can't be focused or moved, and forms leave it out. */
@@ -119,6 +130,7 @@ export function Slider({
   step = 1,
   largeStep = Math.max(step, Math.round((max - min) / 10 / step) * step),
   formatValue,
+  renderValue,
   locale,
   disabled = false,
   name,
@@ -128,8 +140,19 @@ export function Slider({
   onFocus,
   'aria-describedby': describedBy,
   style,
-  ...props
+  ...ownProps
 }: SliderProps) {
+  const {
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    ...propsWithoutName
+  } = ownProps;
+  const props = label != null ? ownProps : propsWithoutName;
+  const naming = useRowControlNaming({ label, ...ownProps, 'aria-describedby': describedBy });
+  const thumbName =
+    label != null
+      ? {}
+      : { 'aria-label': ariaLabel, 'aria-labelledby': naming['aria-labelledby'] ?? ariaLabelledBy };
   const directionScope = useDirectionScope<HTMLDivElement>();
   const id = useId();
   const providedLocale = useLocale();
@@ -153,15 +176,15 @@ export function Slider({
     function veilAtCurrentValue() {
       if (control.current) veilIndicatorUnderText(control.current);
     },
-    [current, label, formatValue],
+    [current],
   );
   useEffect(function veilOnResize() {
     const element = control.current;
-    if (!element || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(() => veilIndicatorUnderText(element));
-    observer.observe(element);
-    for (const text of element.querySelectorAll('.env-slider-label, .env-slider-value'))
-      observer.observe(text);
+    if (!element) return;
+    const stopVeilingOnResize = observeResize(
+      [element, ...element.querySelectorAll('.env-slider-label, .env-slider-value')],
+      () => veilIndicatorUnderText(element),
+    );
     const veilWhereHandleComesToRest = (event: TransitionEvent) => {
       if (
         event.propertyName !== 'opacity' &&
@@ -171,7 +194,7 @@ export function Slider({
     };
     element.addEventListener('transitionend', veilWhereHandleComesToRest);
     return () => {
-      observer.disconnect();
+      stopVeilingOnResize();
       element.removeEventListener('transitionend', veilWhereHandleComesToRest);
     };
   }, []);
@@ -189,14 +212,12 @@ export function Slider({
     return followDrag(element, element.closest<HTMLElement>('.env-slider') ?? element);
   }, []);
   const ticks = tickCount(min, max, step, largeStep);
-  const describedByIds =
-    [
-      describedBy,
-      description != null ? fieldMessageIds(id).description : undefined,
-      error != null ? fieldMessageIds(id).error : undefined,
-    ]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const describedByIds = fieldDescribedBy(
+    id,
+    naming['aria-describedby'] ?? describedBy,
+    description,
+    error,
+  );
   const inactiveGroupExemptFromContrast = disabled || undefined;
   return (
     <DirectionProvider direction={directionScope.direction}>
@@ -240,10 +261,8 @@ export function Slider({
               <BaseSlider.Indicator className="env-slider-indicator" />
               <BaseSlider.Thumb
                 className="env-slider-thumb"
-                inputRef={(node: HTMLInputElement | null) => {
-                  input.current = node;
-                  setRef(ref, node);
-                }}
+                inputRef={mergeRefs(input, ref)}
+                {...thumbName}
                 aria-describedby={describedByIds}
                 getAriaValueText={(formatted, number) =>
                   formatValue ? formatValue(number) : formatted
@@ -255,7 +274,13 @@ export function Slider({
                 {label}
               </BaseSlider.Label>
               <BaseSlider.Value className="env-slider-value" render={<Text render={<output />} />}>
-                {(formatted, values) => (formatValue ? formatValue(values[0]) : formatted[0])}
+                {(formatted, values) =>
+                  renderValue
+                    ? renderValue(values[0])
+                    : formatValue
+                      ? formatValue(values[0])
+                      : formatted[0]
+                }
               </BaseSlider.Value>
             </Row>
           </BaseSlider.Control>
@@ -280,7 +305,7 @@ function veilIndicatorUnderText(control: HTMLElement) {
   )) {
     const box = text.getBoundingClientRect();
     if (box.width === 0) continue;
-    const halfLine = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
+    const halfLine = pixelsOf(getComputedStyle(text).fontSize) / 2;
     if (at >= box.left - halfLine && at <= box.right + halfLine) veiled = true;
     const textInLeftHalf = box.left + box.width / 2 < span.left + span.width / 2;
     if (textInLeftHalf) clearStart = Math.max(clearStart, box.right + halfLine - span.left);

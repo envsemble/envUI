@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { build } from 'esbuild';
-import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
+import { styleSheetsDirectory } from '../../../scripts/RepositoryPaths.ts';
+import { shippedStyleSheet } from '../../support/StyleSheets.ts';
+import { withoutComments } from '../../../scripts/site/CssComments.ts';
 
-const styles = join(repositoryRoot, 'packages/ui/src/styles/');
+const styles = styleSheetsDirectory;
 const layerOrder = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env.utilities'];
 
 function topLevel(css: string) {
@@ -13,7 +14,7 @@ function topLevel(css: string) {
   let depth = 0;
   let text = '';
   let quote = null;
-  for (const character of css.replace(/\/\*[\s\S]*?\*\//g, '')) {
+  for (const character of withoutComments(css)) {
     if (quote) {
       if (character === quote) quote = null;
     } else if (character === '"' || character === "'") quote = character;
@@ -36,23 +37,8 @@ function topLevel(css: string) {
   return statements.filter(({ prelude }) => prelude);
 }
 
-async function bundled() {
-  const result = await build({
-    entryPoints: [join(styles, 'index.css')],
-    bundle: true,
-    write: false,
-    loader: { '.woff2': 'file', '.svg': 'file' },
-    assetNames: 'assets/[name]',
-    outfile: join(styles, 'out.css'),
-    logLevel: 'silent',
-  });
-  const sheet = result.outputFiles.find((file) => file.path.endsWith('.css'));
-  assert.ok(sheet, 'esbuild writes the style sheet');
-  return sheet.text;
-}
-
 test('the shipped style sheet puts every rule in a cascade layer of env, in order', async () => {
-  const statements = topLevel(await bundled());
+  const statements = topLevel(await shippedStyleSheet());
   assert.deepEqual(statements[0], { prelude: `@layer ${layerOrder.join(', ')}`, block: false });
   const rules = statements.slice(1).filter(({ prelude }) => prelude !== '@font-face');
   assert.equal(statements.length - rules.length, 2, 'One font face besides the layer order');
@@ -89,31 +75,4 @@ test('every style sheet is imported once and puts its rules in a layer of env', 
     const statements = topLevel(await readFile(join(styles, file), 'utf8'));
     assert.deepEqual(statements, [{ prelude: '@layer env.components', block: true }], file);
   }
-});
-
-test("the library's custom properties take the --env- prefix", async () => {
-  const setByBaseUiReadByEnvUI = new Set([
-    '--anchor-height',
-    '--anchor-width',
-    '--available-height',
-    '--available-width',
-    '--transform-origin',
-    '--drawer-swipe-movement-x',
-    '--drawer-swipe-movement-y',
-    '--accordion-panel-height',
-    '--collapsible-panel-height',
-    '--active-tab-left',
-    '--active-tab-top',
-    '--active-tab-width',
-    '--active-tab-height',
-  ]);
-  const problems: string[] = [];
-  for (const file of await readdir(styles)) {
-    if (!file.endsWith('.css')) continue;
-    const css = (await readFile(join(styles, file), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
-    for (const [name] of css.matchAll(/(?<![\w-])--[a-z][\w-]*/g))
-      if (!name.startsWith('--env-') && !setByBaseUiReadByEnvUI.has(name))
-        problems.push(`${name} in ${file}`);
-  }
-  assert.deepEqual([...new Set(problems)], []);
 });

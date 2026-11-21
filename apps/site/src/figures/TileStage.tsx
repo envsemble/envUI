@@ -5,7 +5,7 @@ import { Playback, StageOverlays } from '../motion/Playback';
 import { useDisplaySettings } from '../display/useDisplaySettings';
 import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
-import type { TileFrame, TilePicture } from '../tiles/TilePictures';
+import type { TilePicture } from '../tiles/TilePictures';
 import { TileSkeleton } from '../loading/Skeletons';
 import { useLoaded } from '../loading/LoadOnce';
 import { cropped, fitKindOf } from '../fit/FitKind';
@@ -31,13 +31,13 @@ export function TileStage({
   near,
   playing = false,
   className = 'catalogue-tile-stage',
-  frame,
+  ownFrame = false,
 }: {
   picture?: TilePicture;
   near: boolean;
   playing?: boolean;
   className?: string;
-  frame?: TileFrame;
+  ownFrame?: boolean;
 }) {
   useBrowserStandIns();
   const theme = useTheme();
@@ -81,7 +81,7 @@ export function TileStage({
   const app = tileWindow?.app;
   const kind = fitKindOf(
     { tile: Boolean(picture?.tile), window: width === undefined ? undefined : { width } },
-    app ? undefined : frame,
+    !app && ownFrame,
   );
   const ownSize = kind.scale === 'own';
   useFit(stage, canvas, { on: shown && !app, kind, playing: plays, script: stageScript });
@@ -90,6 +90,7 @@ export function TileStage({
   return (
     <Theme
       {...theme}
+      scale={kind.tile ? 'compact' : theme.scale}
       ref={stage}
       className={className}
       data-example={picture?.foundation || picture?.tile ? undefined : picture?.name}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   Avatar,
+  Badge,
   Button,
   Combobox,
   Dialog,
@@ -272,5 +273,43 @@ export default function ComboboxFixture({ theme }: { theme: ColorScheme }) {
         <Combobox multiple label={`Share with ${theme}`} visibleLabel items={people} clearable />
       </Dialog>
     </Theme>
+  );
+}
+
+export function ComboboxEndFixture() {
+  return (
+    <Combobox
+      label="Member"
+      items={[
+        { value: 'alex', label: 'Alex Morgan', end: <Badge>Admin</Badge> },
+        { value: 'sam', label: 'Sam Lee' },
+      ]}
+    />
+  );
+}
+
+export function ComboboxGroupsFixture() {
+  return (
+    <Combobox
+      label="Reviewer"
+      items={[
+        {
+          label: (
+            <>
+              Team <Badge>2</Badge>
+            </>
+          ),
+          items: [
+            {
+              value: 'alex',
+              label: 'Alex Morgan',
+              itemProps: { 'data-testid': 'alex', title: 'Alex', className: 'fixture-alex' },
+            },
+            { value: 'sam', label: 'Sam Lee' },
+          ],
+        },
+        { label: 'Guests', items: [{ value: 'kim', label: 'Kim Park' }] },
+      ]}
+    />
   );
 }

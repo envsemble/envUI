@@ -20,7 +20,7 @@ import {
 } from '@envsemble/envui';
 import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { IconHome } from '@envsemble/envui/icons/Home';
-import { planOptions } from './SelectOptions.fixture.js';
+import { planOptions } from './SelectOptions.js';
 
 const emphasis = {
   primary: { variant: 'primary' },

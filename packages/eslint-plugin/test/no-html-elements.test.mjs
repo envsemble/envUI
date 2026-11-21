@@ -68,13 +68,19 @@ ruleTester.run('no-html-elements', rule, {
       '<Dialog role="alertdialog" title="Delete?" />',
       '<DocumentTabs role="tablist" aria-label="Open files" items={items} />',
     ]),
+    ...named(
+      'Roles envUI has no component for: tabs an application builds, its own live messages',
+      [
+        '<div role="tablist" aria-label="Project">{tabs}</div>',
+        "import { Column } from '@envsemble/envui'; <Column role=\"alert\">Couldn't load the diff.</Column>;",
+        '<p role="alert">{error}</p>',
+      ],
+    ),
     ...named('An envUI component that renders the role itself; a role on it refines its own', [
       'import { Popover, Spinner } from \'@envsemble/envui\'; <><Popover role="dialog" /><Spinner role="progressbar" /></>;',
       'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Table.Root role="table" /></>;',
       'import { Popover as Card } from \'@envsemble/envui\'; <Card role="dialog" />;',
       'import { Spinner } from \'@envsemble/envui\'; <Spinner role="progressbar" label="Saving" />;',
-      'import { MarkdownEditor } from \'@envsemble/envui/markdown\'; <MarkdownEditor role="textbox" />;',
-      'import { RichTextEditor } from \'@envsemble/envui/rich-text\'; <RichTextEditor role="textbox" />;',
     ]),
     ...named('Without an import, the full name decides', ['<Table.Root role="table" />']),
     ...named(
@@ -338,8 +344,8 @@ import { Button } from '@envsemble/envui';
           errors: [uses('Dialog', '<Box role="dialog">')],
         },
         {
-          code: 'import { Text } from \'some-library\'; <Text role="alert">Saved</Text>;',
-          errors: [uses('Alert', '<Text role="alert">')],
+          code: 'import { Text } from \'some-library\'; <Text role="tooltip">Saved</Text>;',
+          errors: [uses('Tooltip', '<Text role="tooltip">')],
         },
         {
           code: 'function Local() { const Popover = Box; return <Popover role="dialog" />; }',
@@ -359,8 +365,8 @@ import { Button } from '@envsemble/envui';
           errors: [uses('Menu.Root', '<Column role="menu">')],
         },
         {
-          code: 'import * as ui from \'@envsemble/envui\'; <ui.Text role="alert">Saved</ui.Text>;',
-          errors: [uses('Alert', '<ui.Text role="alert">')],
+          code: 'import * as ui from \'@envsemble/envui\'; <ui.Text role="tooltip">Saved</ui.Text>;',
+          errors: [uses('Tooltip', '<ui.Text role="tooltip">')],
         },
         {
           code: 'import { Popover } from \'@envsemble/envui\'; <Popover role="menu" />;',
@@ -427,15 +433,6 @@ import { Button } from '@envsemble/envui';
             uses('RadioGroup', '<Menu.RadioGroup role="radiogroup">', {
               imports: 'Radio, RadioGroup',
               note: 'Give it a Radio for each option.',
-            }),
-          ],
-        },
-        {
-          code: '<div role="tablist" />',
-          errors: [
-            uses('SegmentedControl', '<div role="tablist">', {
-              alternatives: ', or DocumentTabs for documents people open and close',
-              imports: 'SegmentedControl, DocumentTabs',
             }),
           ],
         },

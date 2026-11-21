@@ -9,7 +9,7 @@ export default function WithToolbar() {
       headingLevel={3}
       title="People"
       controlSize="sm"
-      actions={<Button startIcon={<IconAdd />}>Invite</Button>}
+      actions={<Button start={<IconAdd />}>Invite</Button>}
       toolbar={
         <Row wrap align="center" justify="between" gap={3}>
           <SearchField label="Search people" size="sm" />

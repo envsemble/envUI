@@ -41,6 +41,7 @@ examples:
     caption: With alpha, one format at a time.
   FormatsTogether: example
   PickerButtonOpen: example
+  TextColorInToolbar: example
   PresetSwatches: example
   Swatches: example
   ColorPickerAnatomy: anatomy
@@ -60,6 +61,12 @@ examples:
 ### Open from a button
 
 ```tsx figure=PickerButtonOpen motion
+
+```
+
+### A trigger of your own, swatches first
+
+```tsx figure=TextColorInToolbar
 
 ```
 

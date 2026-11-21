@@ -71,6 +71,8 @@ examples:
     stage: shaded
     caption: 'NavigationBar: three to five destinations along the bottom of a phone.'
   GuideSections: example
+  ActivityBar: example
+  GroupActions: example
   DrawerAnatomy: anatomy
   RailAnatomy: anatomy
   BarAnatomy: anatomy
@@ -92,9 +94,21 @@ examples:
 
 ```
 
+### Icons with tooltips
+
+```tsx figure=ActivityBar stage=shaded
+
+```
+
+### Actions beside a group
+
+```tsx figure=GroupActions stage=shaded
+
+```
+
 ## Anatomy
 
-```tsx figure=DrawerAnatomy stage=shaded
+```tsx figure=DrawerAnatomy stage=shaded width="20"
 
 ```
 

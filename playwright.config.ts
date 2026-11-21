@@ -1,7 +1,7 @@
 import { availableParallelism } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
-import { defaultPorts, resolveServers } from './scripts/test/CheckoutMarker.ts';
+import { defaultPorts, resolveServers } from './scripts/DevServers.ts';
 
 const projectFlag = '--project=';
 const namedProjects = process.argv.flatMap((argument, index, all) =>

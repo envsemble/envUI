@@ -50,3 +50,13 @@ test('the tooltip shows the date and time on hover, in the theme of the page', a
   await mouse.move(0, 0);
   await expect.poll(tooltip).toBeNull();
 });
+
+test("renderTooltip gives the tooltip the application's content from the moment", async () => {
+  const own = page.getByTestId('relative-times-light').getByTestId('own-tooltip').element();
+  await hover(own);
+  await expect
+    .poll(() => document.querySelector('.env-tooltip strong')?.textContent)
+    .toBe('09:00 UTC');
+  await mouse.move(0, 0);
+  await expect.poll(tooltip).toBeNull();
+});

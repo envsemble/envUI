@@ -19,6 +19,15 @@ const overlays = new Set([
   'CommandPalette',
 ]);
 
+const namingAttributes = new Set(['label', 'aria-label', 'aria-labelledby']);
+
+function isNamed(opening) {
+  return opening.attributes.some(
+    (attribute) =>
+      attribute.type === 'JSXSpreadAttribute' || namingAttributes.has(jsxName(attribute.name)),
+  );
+}
+
 const fields = new Set([
   'Select',
   'RadioGroup',
@@ -42,14 +51,14 @@ export default {
   meta: {
     type: 'problem',
     docs: {
-      description: "Disallow a field in a List.Item's control or end",
+      description: "Disallow an unlabelled field in a List.Item's end",
       recommended: true,
       url: documentationUrl('no-field-in-list-row'),
     },
     schema: [],
     messages: {
       field:
-        "A {{field}} in a List.Item's {{slot}}: the row doesn't label it and a list row holds only a Switch or a Checkbox. Put it in a form as a field with its label above it.",
+        "A {{field}} with no label in a List.Item's end: the row's label names only the control in its control, so nothing names this field. Put it in control when it is the row's setting, or give it a label, or an aria-label or aria-labelledby when its label shouldn't show.",
     },
   },
   create(context) {
@@ -69,7 +78,8 @@ export default {
       if (expression.type === 'JSXElement') {
         const name = envuiName(expression.openingElement.name);
         if (name && overlays.has(name)) return found;
-        if (name && fields.has(name)) found.push({ node: expression.openingElement.name, name });
+        if (name && fields.has(name) && !isNamed(expression.openingElement))
+          found.push({ node: expression.openingElement.name, name });
         for (const child of expression.children) fieldsIn(child, found);
       } else if (expression.type === 'JSXFragment') {
         for (const child of expression.children) fieldsIn(child, found);
@@ -88,11 +98,9 @@ export default {
       JSXOpeningElement(node) {
         if (envuiName(node.name) !== 'List.Item') return;
         for (const attribute of node.attributes) {
-          if (attribute.type !== 'JSXAttribute') continue;
-          const slot = jsxName(attribute.name);
-          if (slot !== 'control' && slot !== 'end') continue;
+          if (attribute.type !== 'JSXAttribute' || jsxName(attribute.name) !== 'end') continue;
           for (const { node: at, name } of fieldsIn(attribute.value, []))
-            context.report({ node: at, messageId: 'field', data: { field: name, slot } });
+            context.report({ node: at, messageId: 'field', data: { field: name } });
         }
       },
     };

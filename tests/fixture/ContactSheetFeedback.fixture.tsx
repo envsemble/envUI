@@ -119,14 +119,14 @@ function Toasts({ placement }: { placement: 'bottom-end' | 'top-center' }) {
         tone: 'success',
         duration: 0,
         placement,
-        action: { label: 'Undo', onClick: () => {} },
+        actions: [{ label: 'Undo', onClick: () => {} }],
       }),
       toast.show({
         message: 'Danger: the upload failed.',
         tone: 'danger',
         duration: 0,
         placement,
-        action: { label: 'Retry', onClick: () => {} },
+        actions: [{ label: 'Retry', onClick: () => {} }],
       }),
       toast.show({ message: 'Not dismissible.', duration: 0, placement, dismissible: false }),
     ];

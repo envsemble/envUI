@@ -14,6 +14,7 @@ export default function ComposerFixture({ theme }: { theme: ColorScheme }) {
   const [announcements, setAnnouncements] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<string[]>([]);
   const [detached, setDetached] = useState({ posts: [] as string[], pending: false });
+  const [reviews, setReviews] = useState<string[]>([]);
   return (
     <Theme theme={theme} data-testid={`composer-${theme}`} className="fixture-section">
       <div data-surface="canvas">
@@ -107,6 +108,14 @@ export default function ComposerFixture({ theme }: { theme: ColorScheme }) {
         defaultValue="Thanks, that works."
         start={<span data-testid={`composer-reply-to-${theme}`}>Replying to Aurora</span>}
       />
+      <Composer
+        aria-label={`Review ${theme}`}
+        sendKey="mod-enter"
+        header={<span data-testid={`composer-attachment-${theme}`}>report.pdf</span>}
+        end={<IconButton variant="text" icon={<IconAttachFile />} aria-label="Voice input" />}
+        onSend={(value) => setReviews((list) => [...list, value])}
+      />
+      <output data-testid={`composer-reviews-${theme}`}>{reviews.join(' | ')}</output>
     </Theme>
   );
 }

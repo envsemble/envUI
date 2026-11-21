@@ -331,3 +331,26 @@ test('on a coarse pointer, the action grows to the touch height, and the field t
     await commands.emulateTouch(false);
   }
 });
+
+test('with sendKey mod-enter, Enter starts a line and Ctrl+Enter sends; header sits above the field and end before the send button', async () => {
+  const review = field('Review');
+  const reviews = text('composer-reviews');
+  await expect.element(review).not.toHaveAttribute('enterkeyhint');
+  await review.click();
+  await keyboard.type('First');
+  await keyboard.press('Enter');
+  await keyboard.type('Second');
+  await expect.poll(value('Review')).toBe('First\nSecond');
+  expect(reviews()).toBe('');
+  await keyboard.press('Control+Enter');
+  await expect.poll(reviews).toBe('First\nSecond');
+  await expect.poll(value('Review')).toBe('');
+
+  const attachment = scope().getByTestId('composer-attachment-light');
+  const voice = buttonOf('Review', 'Voice input');
+  const send = sendOf('Review');
+  expect(box(attachment).y + box(attachment).height).toBeLessThanOrEqual(box(input('Review')).y);
+  expect(box(voice).x + box(voice).width).toBeLessThanOrEqual(box(send).x);
+  expect(Math.abs(box(voice).y - box(send).y)).toBeLessThan(box(send).height);
+  expect(box(input('Review')).y + box(input('Review')).height).toBeLessThanOrEqual(box(send).y + 1);
+});

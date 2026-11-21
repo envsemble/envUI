@@ -51,6 +51,9 @@
     color: var(--env-color-fg-default);
     cursor: pointer;
   }
+  .env-switch[data-label-placement='start'] {
+    flex-direction: row-reverse;
+  }
   .env-switch > span {
     min-inline-size: 0;
   }

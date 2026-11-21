@@ -1,6 +1,6 @@
 ---
 title: Panes
-summary: A region split into two panes side by side, such as a list and its detail.
+summary: A region split into two panes side by side, such as a document and its details.
 status: beta
 since: 1.0.0
 category: App frame & layout
@@ -14,8 +14,8 @@ aliases:
   - side pane
   - resizable panes
 useWhen:
-  - A list beside the chosen item's detail, such as messages
   - A document beside its details, which people resize
+  - Two views of one thing side by side, such as source and its preview
 avoidWhen:
   - text: An application's screen with its top bar and navigation.
     use: Scaffold
@@ -25,25 +25,16 @@ avoidWhen:
     use: ResizeHandle
 components:
   - Panes
-  - readPanesWidth
 examples:
-  ListAndDetail:
+  DocumentAndDetails:
     role: overview
-    caption: A list and its detail, with the resize handle on the seam.
+    caption: A document and its details, with the resize handle on the seam; the details pane keeps its width as the region resizes.
   ResizableDetails: example
   PanesAnatomy: anatomy
   StackedWhenNarrow: example
 ---
 
 # Panes
-
-## Variants
-
-### Details at the end
-
-```tsx figure=ResizableDetails motion
-
-```
 
 ## Anatomy
 
@@ -52,15 +43,21 @@ examples:
 ```
 
 1. **Root** (`env-panes`)
-2. **Pane** (`env-panes-pane`)
+2. **Pane** (`env-panes-pane:first-child`)
 3. **Resize handle** (`env-panes-resize-handle`)
-4. **Pane** (`env-panes-pane`)
+4. **Pane** (`env-panes-pane:last-child`)
 
 ## Behaviour
 
 ### Adapting to width
 
 ```tsx figure=StackedWhenNarrow widths="54 24" sweep
+
+```
+
+### Keeping the width people chose
+
+```tsx figure=ResizableDetails motion
 
 ```
 

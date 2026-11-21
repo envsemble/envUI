@@ -16,22 +16,22 @@ export default function Submenus() {
         aria-label="Share"
         align="start"
         trigger={
-          <Button variant="secondary" startIcon={<IconShare />}>
+          <Button variant="secondary" start={<IconShare />}>
             Share
           </Button>
         }
       >
-        <Menu.Item icon={<IconLink />} onClick={() => setLastAction('Copied the link')}>
+        <Menu.Item start={<IconLink />} onClick={() => setLastAction('Copied the link')}>
           Copy link
         </Menu.Item>
-        <Menu.Submenu label="Send to" icon={<IconSend />}>
+        <Menu.Submenu label="Send to" start={<IconSend />}>
           {people.map((person) => (
             <Menu.Item key={person} onClick={() => setLastAction(`Sent to ${person}`)}>
               {person}
             </Menu.Item>
           ))}
         </Menu.Submenu>
-        <Menu.Submenu label="Export as" icon={<IconDownload />}>
+        <Menu.Submenu label="Export as" start={<IconDownload />}>
           {formats.map((format) => (
             <Menu.Item key={format} onClick={() => setLastAction(`Exported as ${format}`)}>
               {format}

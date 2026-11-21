@@ -42,6 +42,7 @@ examples:
   DatePickerPopupAnatomy: anatomy
   MeetingTime: example
   WithinRange: example
+  PresetsAndBusyDays: example
 ---
 
 # DatePicker
@@ -75,7 +76,7 @@ examples:
 6. **Calendar icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-```tsx figure=DatePickerPopupAnatomy open
+```tsx figure=DatePickerPopupAnatomy open width="21"
 
 ```
 
@@ -101,6 +102,12 @@ examples:
 ### Within a range
 
 ```tsx figure=WithinRange motion
+
+```
+
+### Presets and marked days
+
+```tsx figure=PresetsAndBusyDays open
 
 ```
 

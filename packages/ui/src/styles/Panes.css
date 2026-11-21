@@ -36,6 +36,13 @@
   .env-panes[data-sized='end'] > .env-panes-pane:last-child {
     inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
   }
+  .env-panes > .env-panes-pane:not(.env-panes-pane ~ .env-panes-pane):not(:has(~ .env-panes-pane)) {
+    grid-column: 1 / -1;
+    inline-size: auto;
+  }
+  .env-panes:not(:has(> .env-panes-pane ~ .env-panes-pane)) > .env-panes-resize-handle {
+    display: none;
+  }
   .env-panes-header {
     display: flex;
     flex: none;

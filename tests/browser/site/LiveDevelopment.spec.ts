@@ -55,7 +55,7 @@ test('public component, stylesheet, new export and Markdown documentation update
       .and(page.locator('[name="project"]'));
     await projectName.fill('Preserved draft');
     const displayButton = page
-      .locator('.site-page-actions .site-wide-only')
+      .locator('.site-top-bar .site-wide-only')
       .getByRole('button', { name: 'Display', exact: true });
     await writeFile(
       buttonSource,

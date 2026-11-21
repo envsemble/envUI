@@ -11,7 +11,7 @@ import {
   MessageList,
 } from '@envsemble/envui';
 import { HighlightedCodeBlock } from '@envsemble/envui/code';
-import { Markdown, MarkdownEditor } from '@envsemble/envui/markdown';
+import { Markdown } from '@envsemble/envui/markdown';
 import { CodeDiff } from '@envsemble/envui/diff';
 import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
 import { Cell, Section, Strip, interactionStates } from './ContactSheetParts.fixture.js';
@@ -226,63 +226,12 @@ const launch = new Date('2026-11-20');
 
 function Markdowns() {
   return (
-    <Section name="Markdown and MarkdownEditor">
+    <Section name="Markdown">
       <Strip label="Markdown">
         <Cell caption="Headings, lists, quote, table, code" width="36rem">
           <Markdown headingOffset={1} codeCopyable>
             {markdown}
           </Markdown>
-        </Cell>
-      </Strip>
-      <Strip label="Editor">
-        <Cell caption="Outline, toolbar" width="24rem">
-          <MarkdownEditor
-            label="Description"
-            description="Markdown: headings, lists, links and code."
-            rows={3}
-            defaultValue="Ship the **pricing page** first."
-          />
-        </Cell>
-        <Cell caption="Focus-visible" force="focus" target="textarea" width="24rem">
-          <MarkdownEditor
-            label="Description"
-            rows={3}
-            defaultValue="Ship the **pricing page** first."
-          />
-        </Cell>
-        <Cell caption="Preview" width="24rem">
-          <MarkdownEditor
-            label="Description"
-            rows={3}
-            preview
-            defaultValue="Ship the **pricing page** first."
-          />
-        </Cell>
-        <Cell caption="Ghost, content sizing" width="24rem">
-          <MarkdownEditor
-            label="Description"
-            variant="ghost"
-            sizing="content"
-            rows={2}
-            defaultValue="Ship the **pricing page** first."
-          />
-        </Cell>
-        <Cell caption="Invalid" width="24rem">
-          <MarkdownEditor
-            label="Description"
-            rows={2}
-            defaultValue="Short."
-            error="Write at least two sentences."
-          />
-        </Cell>
-        <Cell caption="No toolbar, disabled" width="24rem">
-          <MarkdownEditor
-            label="Description"
-            rows={2}
-            toolbar={false}
-            disabled
-            defaultValue="Ship the **pricing page** first."
-          />
         </Cell>
       </Strip>
     </Section>
@@ -327,8 +276,9 @@ function Messages() {
           </MessageList>
         </Cell>
         <Cell caption="Busy list (a reply coming)" width="26rem">
-          <MessageList aria-label="Conversation" busy busyAuthor="Assistant">
+          <MessageList aria-label="Conversation" aria-busy>
             <Message from="self">Summarise the notes.</Message>
+            <Message from="other" author="Assistant" status="working" />
           </MessageList>
         </Cell>
         <Cell caption="Skeleton" width="26rem">

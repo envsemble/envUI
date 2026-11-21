@@ -54,6 +54,12 @@
     font: var(--env-type-body-sm);
     color: var(--env-color-fg-muted);
   }
+  .env-dialog-header-start + :is(.env-dialog-title, span:empty) {
+    margin-inline-end: auto;
+  }
+  .env-dialog-header-end {
+    margin-inline-start: auto;
+  }
   .env-dialog-content > .env-dialog-header:has(+ :not(.env-dialog-actions)) {
     --_dialog-title-gap: var(--env-space-3);
     --_dialog-content-column-gap: var(--env-space-5);

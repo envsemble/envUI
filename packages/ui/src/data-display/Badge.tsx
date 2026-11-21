@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { Slot } from '../internal/layout/Slot.js';
 import { IconCheck } from '../icons/Check.js';
 import '../styles/Base.css';
 import '../styles/Badge.css';
@@ -28,15 +28,18 @@ interface BadgeAppearanceProps extends Omit<ComponentPropsWithRef<'span'>, 'chil
 
 interface LabelBadgeProps extends BadgeAppearanceProps {
   /**
-   * A decorative icon before the label, such as a check mark; hidden from assistive technology. A
-   * done badge has a check mark unless it is given another icon, or `null` for none.
+   * Content before the label, such as an icon, a small Avatar or a color swatch: an envUI icon takes
+   * the badge's icon size and other content keeps its own. Assistive technology reads it unless it
+   * hides itself, as an icon without a label does. A done badge leads with a check mark unless it
+   * is given another start, or `null` for none.
    */
-  icon?: ReactNode;
+  start?: ReactNode;
   /**
-   * The label: a state, a name or a category in a word or two, as text. It stays on one line and
-   * ends with an ellipsis where the badge is wider than its container.
+   * The label: a state, a name or a category in a word or two, such as text with a bold value or a
+   * RelativeTime in it. It stays on one line and ends with an ellipsis where the badge is wider
+   * than its container.
    */
-  children: string;
+  children: ReactNode;
   count?: undefined;
 }
 
@@ -51,7 +54,7 @@ interface CountBadgeProps extends BadgeAppearanceProps {
    * number; the number alone otherwise.
    */
   'aria-label'?: string;
-  icon?: never;
+  start?: never;
   children?: never;
 }
 
@@ -65,7 +68,7 @@ export type BadgeProps = LabelBadgeProps | CountBadgeProps;
 export function Badge({
   tone = 'neutral',
   variant = 'soft',
-  icon,
+  start,
   count,
   children,
   className,
@@ -94,6 +97,7 @@ export function Badge({
       </span>
     );
   }
+  const shownStart = start === undefined && tone === 'done' ? <IconCheck /> : start;
   return (
     <span
       {...props}
@@ -101,8 +105,10 @@ export function Badge({
       data-tone={tone}
       data-variant={variant}
     >
-      {icon !== null && (icon !== undefined || tone === 'done') && (
-        <DecorativeIcon>{icon ?? <IconCheck />}</DecorativeIcon>
+      {shownStart != null && (
+        <Slot className="env-badge-start" element="span" layout="row" shrink="never">
+          {shownStart}
+        </Slot>
       )}
       <span className="env-badge-label">{children}</span>
     </span>

@@ -1,18 +1,10 @@
 @layer env.components {
   .env-navigation-rail {
-    --_navigation-rail-indicator-width: 2.75rem;
-    --_navigation-rail-indicator-height: 2rem;
-    --_navigation-rail-count-size: 1rem;
-    box-sizing: border-box;
+    --_destination-indicator-width: 2.75rem;
     inline-size: var(--env-navigation-rail-width);
     block-size: 100%;
     min-block-size: 0;
-    padding-block: var(--env-space-3);
-    background: var(--_surface-color, var(--env-color-bg-default));
-    color: var(--env-color-fg-default);
-  }
-  .env-navigation-rail[data-background='page'] {
-    background: var(--_surface-color, var(--env-color-bg-page));
+    padding: var(--env-space-3) var(--env-space-1);
   }
   .env-navigation-rail-header,
   .env-navigation-rail-footer {
@@ -57,204 +49,75 @@
   }
 
   .env-navigation-rail-item {
-    --_navigation-rail-item-layer: initial;
-    --_navigation-rail-item-content-gate: color-mix(
-      in srgb,
-      var(--env-navigation-rail-item-content) 0%,
-      transparent
-    );
-    --_navigation-rail-item-custom-base: var(
-      --env-navigation-rail-item-container,
-      var(--_navigation-rail-item-content-gate)
-    );
-    --_navigation-rail-item-custom-layered: color-mix(
-      in srgb,
-      var(--_navigation-rail-item-custom-base),
-      currentColor var(--_navigation-rail-item-layer)
-    );
-    --_navigation-rail-item-custom-fill: var(
-      --_navigation-rail-item-custom-layered,
-      var(--_navigation-rail-item-custom-base)
-    );
-    --_navigation-rail-item-selected-gate: color-mix(
-      in srgb,
-      var(--env-navigation-rail-item-selected-content) 0%,
-      var(--env-color-bg-selected)
-    );
-    --_navigation-rail-item-selected-base: var(
-      --env-navigation-rail-item-selected,
-      var(--_navigation-rail-item-selected-gate)
-    );
-    --_navigation-rail-item-selected-layered: color-mix(
-      in srgb,
-      var(--_navigation-rail-item-selected-base),
-      currentColor var(--_navigation-rail-item-layer)
-    );
-    --_navigation-rail-item-selected-fill: var(
-      --_navigation-rail-item-selected-layered,
-      var(--_navigation-rail-item-selected-base)
-    );
-    --_navigation-rail-item-selected-icon: var(
-      --env-navigation-rail-item-selected-content,
-      var(--env-color-fg-on-selected)
-    );
-    --_navigation-rail-item-icon-color: var(
-      --env-navigation-rail-item-icon,
-      var(--env-color-fg-muted)
-    );
-    --env-icon-size: var(--env-control-icon-size);
-    box-sizing: border-box;
-    inline-size: 100%;
-    margin: 0;
+    --_navigation-rail-item-fill: var(--_destination-item-custom-fill, transparent);
     padding: var(--env-space-1) var(--env-space-1) var(--env-space-2);
-    border: 0;
-    border-radius: var(--env-radius-md);
-    background: transparent;
-    color: var(--env-navigation-rail-item-content, var(--env-color-fg-control));
-    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.3 var(--env-font-family);
-    text-align: center;
-    text-decoration: none;
+    background: var(--_navigation-rail-item-fill);
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-navigation-rail-indicator {
-    order: -1;
-    position: relative;
-    flex: none;
-    inline-size: var(--_navigation-rail-indicator-width);
-    block-size: var(--_navigation-rail-indicator-height);
-    display: grid;
-    place-items: center;
-    border-radius: var(--env-radius-md);
-    background: var(--_navigation-rail-item-custom-fill, transparent);
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+    inline-size: var(--_destination-indicator-width);
   }
   .env-navigation-rail-label {
     max-inline-size: 100%;
     overflow-wrap: break-word;
   }
-  .env-navigation-rail-count {
-    box-sizing: border-box;
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: calc(50% + var(--env-space-1));
-    min-inline-size: var(--_navigation-rail-count-size);
-    block-size: var(--_navigation-rail-count-size);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding-inline: var(--env-space-1);
-    border-radius: var(--env-radius-full);
-    background: var(--env-color-bg-primary-solid);
-    color: var(--env-color-fg-on-emphasis);
-    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-  .env-navigation-rail-item:not([data-current]) .env-icon {
-    color: var(--_navigation-rail-item-icon-color, var(--env-color-fg-muted));
-  }
-  .env-navigation-rail-item:hover .env-navigation-rail-indicator {
-    background: var(--_navigation-rail-item-custom-fill, var(--env-color-bg-navigation-hover));
-  }
   .env-navigation-rail-item:hover {
-    --_navigation-rail-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+    --_navigation-rail-item-fill: var(
+      --_destination-item-custom-fill,
+      var(--env-color-bg-navigation-hover)
+    );
   }
   .env-navigation-rail-item:active {
-    --_navigation-rail-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
-  }
-  .env-navigation-rail-item[data-current]:hover {
-    --_navigation-rail-item-layer: calc(var(--env-state-hover-opacity) * 75%);
-  }
-  .env-navigation-rail-item[data-current]:active {
-    --_navigation-rail-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
-  }
-  .env-navigation-rail-item:active .env-navigation-rail-indicator {
-    background: var(--_navigation-rail-item-custom-fill, var(--env-color-bg-navigation-pressed));
+    --_navigation-rail-item-fill: var(
+      --_destination-item-custom-fill,
+      var(--env-color-bg-navigation-pressed)
+    );
   }
   .env-navigation-rail-item[data-current] {
-    color: var(--env-navigation-rail-item-content, var(--env-color-fg-default));
+    --_navigation-rail-item-fill: var(
+      --_destination-item-selected-fill,
+      var(--env-color-bg-selected)
+    );
+    color: var(--_destination-item-selected-icon, var(--env-color-fg-on-selected));
+    font-weight: var(--env-font-weight-semibold);
   }
-  .env-navigation-rail-item[data-current] .env-navigation-rail-indicator {
-    color: var(--_navigation-rail-item-selected-icon, var(--env-color-fg-on-selected));
-    background: var(--_navigation-rail-item-selected-fill, var(--env-color-bg-selected));
+  .env-navigation-rail-item[data-current]:hover {
+    --_navigation-rail-item-fill: var(
+      --_destination-item-selected-fill,
+      var(--env-color-bg-selected-hover)
+    );
   }
-  .env-navigation-rail-item[data-current]:hover .env-navigation-rail-indicator {
-    background: var(--_navigation-rail-item-selected-fill, var(--env-color-bg-selected-hover));
-  }
-  .env-navigation-rail-item[data-current]:active .env-navigation-rail-indicator {
-    background: var(--_navigation-rail-item-selected-fill, var(--env-color-bg-selected-pressed));
+  .env-navigation-rail-item[data-current]:active {
+    --_navigation-rail-item-fill: var(
+      --_destination-item-selected-fill,
+      var(--env-color-bg-selected-pressed)
+    );
   }
   .env-navigation-rail-item:focus-visible {
-    outline: none;
-  }
-  .env-navigation-rail-item:focus-visible .env-navigation-rail-indicator {
     outline: 2px solid var(--env-color-border-focus);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
   @media (prefers-reduced-motion: reduce) {
-    .env-navigation-rail-indicator {
+    .env-navigation-rail-item {
       transition: none;
-    }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .env-navigation-rail-indicator {
-      transition-property: background-color, transform;
-    }
-    .env-navigation-rail-item:active .env-navigation-rail-indicator {
-      transform: scale(0.96);
     }
   }
   @media (forced-colors: active) {
     .env-navigation-rail {
       border-inline-end: 1px solid CanvasText;
     }
-    .env-navigation-rail-item[data-current] .env-navigation-rail-indicator {
+    .env-navigation-rail-item[data-current] {
       forced-color-adjust: none;
       background-color: Highlight;
       color: HighlightText;
     }
-    .env-navigation-rail-item[data-current] .env-navigation-rail-indicator :where(*) {
+    .env-navigation-rail-item[data-current] :where(*) {
       color: inherit;
     }
-    .env-navigation-rail-count {
-      border: 1px solid CanvasText;
+    .env-navigation-rail-item[data-current]:focus-visible {
+      outline-color: HighlightText;
     }
-    .env-navigation-rail-item[data-current] .env-navigation-rail-count {
-      background: Canvas;
-      color: CanvasText;
-    }
-  }
-
-  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-rail-item {
-    border-color: transparent;
-    box-shadow: none;
-    background: transparent;
-  }
-  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-rail-item,
-  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *)
-    .env-navigation-rail-item
-    :not(.env-navigation-rail-count) {
-    --_skeleton-shape: 0;
-  }
-  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-rail-item * {
-    visibility: visible;
-  }
-  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *)
-    .env-navigation-rail-item
-    .env-icon
-    * {
-    visibility: hidden;
-  }
-  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *)
-    .env-navigation-rail-indicator {
-    background: transparent;
-  }
-  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *)
-    .env-navigation-rail-item
-    .env-navigation-rail-count {
-    visibility: hidden;
-  }
-  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-rail-label {
-    --_skeleton-placeholder: inline-block;
-    --_skeleton-length: 3rem;
   }
 }

@@ -207,21 +207,3 @@ export function keepClipboard(click: () => void) {
     restore();
   }
 }
-
-export function lendSelection(scope: Element | undefined, run: () => void) {
-  const selection = scope ? window.getSelection() : null;
-  if (!scope || !selection) return run();
-  const kept = Array.from({ length: selection.rangeCount }, (_, index) =>
-    selection.getRangeAt(index),
-  );
-  const range = document.createRange();
-  range.setStart(scope, 0);
-  selection.removeAllRanges();
-  selection.addRange(range);
-  try {
-    run();
-  } finally {
-    selection.removeAllRanges();
-    for (const each of kept) selection.addRange(each);
-  }
-}

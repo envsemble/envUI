@@ -78,7 +78,7 @@ function Files() {
           label: node.name,
           expandable: Boolean(node.children),
           expanded: open,
-          icon: node.children ? open ? <IconFolderOpen /> : <IconFolder /> : <IconDescription />,
+          start: node.children ? open ? <IconFolderOpen /> : <IconFolder /> : <IconDescription />,
         });
         if (node.children && open) visit(node.children, depth + 1);
       }

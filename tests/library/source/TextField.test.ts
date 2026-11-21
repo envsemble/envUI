@@ -50,3 +50,14 @@ test('a suffix follows the value and keeps the hint and error in the description
   assert.equal(quota.input.attributes.disabled, '');
   assert.equal(textOf(quota.suffix), 'GB');
 });
+
+test('a prefix and a suffix take any content, and their text is what the field reads', () => {
+  const amount = field({
+    label: 'Amount',
+    prefix: h('span', { className: 'flag' }, h('svg', { 'aria-hidden': true }), 'EUR'),
+    suffix: h('strong', null, 'per seat'),
+  });
+  assert.ok(elementsOf(amount.prefix).some((element) => element.tag === 'svg'));
+  assert.equal(amount.prefix.attributes['aria-hidden'], 'true');
+  assert.equal(amount.description, 'EUR per seat');
+});

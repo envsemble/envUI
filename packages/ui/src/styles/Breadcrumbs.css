@@ -63,4 +63,17 @@
   .env-breadcrumbs-separator:dir(rtl) {
     transform: scaleX(-1);
   }
+  @media (pointer: coarse) {
+    .env-breadcrumbs-list[data-wrap] {
+      row-gap: max(var(--env-space-1), var(--env-control-height-touch) - 1lh - var(--env-space-1));
+    }
+    .env-breadcrumbs-link {
+      position: relative;
+    }
+    .env-breadcrumbs-link::before {
+      content: '';
+      position: absolute;
+      inset: min(0%, calc((100% - var(--env-control-height-touch)) / 2));
+    }
+  }
 }

@@ -25,11 +25,20 @@ examples:
   NoProjects: overview
   EmptyStateAnatomy: anatomy
   NoMatches: example
+  WithIllustration: example
 components:
   - EmptyState
 ---
 
 # EmptyState
+
+## Variants
+
+### An illustration
+
+```tsx figure=WithIllustration
+
+```
 
 ## Anatomy
 

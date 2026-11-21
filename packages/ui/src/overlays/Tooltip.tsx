@@ -6,7 +6,6 @@ import {
   Fragment,
   cloneElement,
   isValidElement,
-  useCallback,
   useContext,
   useId,
   useLayoutEffect,
@@ -20,7 +19,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/trigger/hoverDetail.js';
-import { setRef } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import {
   HoverCardTriggerContext,
@@ -35,13 +34,12 @@ import {
   tooltipDelay,
 } from '../internal/popup/TooltipPopup.js';
 import { accessibleName } from './internal/accessibleName.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { ownName, useStandIn, useTriggerName } from './internal/tooltipTriggerName.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
+import { idRefs } from '../internal/dom/idRefs.js';
 import '../styles/Base.css';
 import '../styles/Tooltip.css';
 
@@ -85,6 +83,13 @@ export interface TooltipProps extends Omit<
   ref?: Ref<HTMLElement>;
   /** Class of the tooltip's popup, beside env-tooltip. */
   popupClassName?: string;
+  /**
+   * Whether a text trigger takes the quiet dotted underline, env-hover-detail, that says it shows
+   * more on hover or focus. False leaves its class alone, for text styled its own way, such as
+   * @mentions in a feed.
+   * @default true
+   */
+  underline?: boolean;
   /**
    * The side of the control it opens on: top, bottom, left, right, or inline-start and inline-end,
    * which follow the text direction. Where the window has no room, it flips to the other side.
@@ -134,19 +139,21 @@ function componentNameForReport(type: unknown): string {
 
 type Forwarded = Omit<
   TooltipProps,
-  'content' | 'children' | 'side' | 'align' | 'delay' | 'popupClassName' | 'open' | 'onOpenChange'
+  | 'content'
+  | 'children'
+  | 'side'
+  | 'align'
+  | 'delay'
+  | 'popupClassName'
+  | 'open'
+  | 'onOpenChange'
+  | 'underline'
 >;
 
 function useControlWithForwardedProps(children: ReactElement<TriggerProps>, forwarded: Forwarded) {
   const forwardedRef = forwarded.ref;
   const childRef = children.props.ref;
-  const controlRef = useCallback(
-    (node: HTMLElement | null) => {
-      setRef(forwardedRef, node);
-      setRef(childRef, node);
-    },
-    [forwardedRef, childRef],
-  );
+  const controlRef = useMergedRefs(forwardedRef, childRef);
   return Object.keys(forwarded).length > 0
     ? cloneElement(children, {
         ...mergeProps(forwarded, children.props),
@@ -173,6 +180,7 @@ export function Tooltip(props: TooltipProps) {
     open,
     onOpenChange,
     popupClassName,
+    underline = true,
     ...forwarded
   } = props;
   const hoverCardTrigger = useContext(HoverCardTriggerContext);
@@ -214,6 +222,7 @@ export function Tooltip(props: TooltipProps) {
       open={open}
       onOpenChange={onOpenChange}
       popupClassName={popupClassName}
+      underline={underline}
       forwarded={forwarded}
     >
       {children}
@@ -273,6 +282,7 @@ function TooltipTrigger({
   open: controlledOpen,
   onOpenChange,
   popupClassName,
+  underline,
   forwarded,
 }: {
   content: ReactNode;
@@ -284,6 +294,7 @@ function TooltipTrigger({
   open: boolean | undefined;
   onOpenChange: TooltipProps['onOpenChange'];
   popupClassName?: string;
+  underline: boolean;
   forwarded: Forwarded;
 }) {
   const control = useControlWithForwardedProps(children, forwarded);
@@ -325,7 +336,7 @@ function TooltipTrigger({
     useContext(TooltipDescribesContext) && ownWords !== undefined && !repeatsOwnName;
   const describedBy =
     open && describes && (!isDisabled || standsIn)
-      ? [trigger['aria-describedby'], popupId].filter(Boolean).join(' ')
+      ? idRefs(trigger['aria-describedby'], popupId)
       : trigger['aria-describedby'];
   const freshRootPerTriggerElement = isDisabled ? 'disabled' : 'enabled';
   return (
@@ -357,12 +368,13 @@ function TooltipTrigger({
             ) : (
               cloneElement(control, {
                 'aria-describedby': describedBy,
-                ...(isTextTrigger(children) && {
-                  className: classNames(
-                    (control.props as { className?: string }).className,
-                    hoverDetailClass,
-                  ),
-                }),
+                ...(underline &&
+                  isTextTrigger(children) && {
+                    className: classNames(
+                      (control.props as { className?: string }).className,
+                      hoverDetailClass,
+                    ),
+                  }),
               } as TriggerProps)
             )
           }

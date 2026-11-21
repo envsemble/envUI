@@ -4,15 +4,11 @@ import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { libraryVersions } from '../../scripts/docs/LibraryVersions.ts';
 import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
-import {
-  inScratchFolder,
-  pageFixture,
-  switchBody,
-  switchFrontmatter,
-} from './DocumentationFixtures.ts';
+import { cacheDirectory, inScratchFolder } from '../support/ScratchFolder.ts';
+import { samplePage, switchBody, switchFrontmatter } from './DocumentationSamples.ts';
 
 test('a page of a structured kind needs its frontmatter, and its frontmatter its examples', async () => {
-  await pageFixture(async ({ rejects, docs }) => {
+  await samplePage(async ({ rejects, docs }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(
       frontmatter.replace(/examples:\n[\s\S]*?(?=---)/, '') + body,
@@ -36,7 +32,7 @@ test('a page of a structured kind needs its frontmatter, and its frontmatter its
 });
 
 test("an example's frontmatter gives its role and caption, and an overview's its framing", async () => {
-  await pageFixture(async ({ page, read, rejects }) => {
+  await samplePage(async ({ page, read, rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(
       frontmatter.replace('  Parts: anatomy', '  Parts: legend') + body,
@@ -99,7 +95,7 @@ test("an example's frontmatter gives its role and caption, and an overview's its
 });
 
 test("the frontmatter's fields hold what the page's kind takes", async () => {
-  await pageFixture(async ({ page, read, rejects }) => {
+  await samplePage(async ({ page, read, rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(frontmatter.replace('status: beta', 'status: ready') + body, /status must be/);
     await rejects(frontmatter.replace('since: 0.1.0\n', '') + body, /since is required/);
@@ -148,70 +144,81 @@ test("the frontmatter's fields hold what the page's kind takes", async () => {
 });
 
 test('since names a stable release or the version the changesets lead to, also in prerelease mode', async () => {
-  await inScratchFolder('versions', async (fixture) => {
-    const changelog = join(fixture, 'CHANGELOG.md');
-    const changesets = join(fixture, 'changeset');
-    const changeset = (name, packages) =>
-      writeFile(
-        join(changesets, `${name}.md`),
-        `---\n${Object.entries(packages)
-          .map(([pkg, bump]) => `'${pkg}': ${bump}`)
-          .join('\n')}\n---\n\nA change.\n`,
+  await inScratchFolder(
+    'versions',
+    async (fixture) => {
+      const changelog = join(fixture, 'CHANGELOG.md');
+      const changesets = join(fixture, 'changeset');
+      const changeset = (name, packages) =>
+        writeFile(
+          join(changesets, `${name}.md`),
+          `---\n${Object.entries(packages)
+            .map(([pkg, bump]) => `'${pkg}': ${bump}`)
+            .join('\n')}\n---\n\nA change.\n`,
+        );
+      const versions = () => [...libraryVersions({ changelog, changesets })].sort();
+      await mkdir(changesets);
+      await writeFile(
+        join(changesets, 'config.json'),
+        JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/eslint-plugin-envui']] }),
       );
-    const versions = () => [...libraryVersions({ changelog, changesets })].sort();
-    await mkdir(changesets);
-    await writeFile(
-      join(changesets, 'config.json'),
-      JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/eslint-plugin-envui']] }),
-    );
-    await writeFile(changelog, '# Changelog\n\n## 0.7.0\n\nText.\n\n## 0.6.0\n\nText.\n');
-    await changeset('fix', { '@envsemble/envui': 'patch' });
-    assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.7.1']);
-    await changeset('lint', { '@envsemble/eslint-plugin-envui': 'minor' });
-    assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.8.0']);
-    await changeset('names', { '@envsemble/envui': 'major' });
-    await writeFile(
-      join(changesets, 'pre.json'),
-      JSON.stringify({
-        mode: 'pre',
-        tag: 'next',
-        initialVersions: { '@envsemble/envui': '0.7.0' },
-      }),
-    );
-    await writeFile(changelog, '# Changelog\n\n## 1.0.0-next.0\n\nText.\n\n## 0.7.0\n\nText.\n');
-    assert.deepEqual(versions(), ['0.7.0', '1.0.0']);
-  });
+      await writeFile(changelog, '# Changelog\n\n## 0.7.0\n\nText.\n\n## 0.6.0\n\nText.\n');
+      await changeset('fix', { '@envsemble/envui': 'patch' });
+      assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.7.1']);
+      await changeset('lint', { '@envsemble/eslint-plugin-envui': 'minor' });
+      assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.8.0']);
+      await changeset('names', { '@envsemble/envui': 'major' });
+      await writeFile(
+        join(changesets, 'pre.json'),
+        JSON.stringify({
+          mode: 'pre',
+          tag: 'next',
+          initialVersions: { '@envsemble/envui': '0.7.0' },
+        }),
+      );
+      await writeFile(changelog, '# Changelog\n\n## 1.0.0-next.0\n\nText.\n\n## 0.7.0\n\nText.\n');
+      assert.deepEqual(versions(), ['0.7.0', '1.0.0']);
+    },
+    { within: cacheDirectory },
+  );
 });
 
 test("a guide's status, statuses and exportAliases hold, and name only the exports it lists", async () => {
-  await inScratchFolder('guide', async (directory) => {
-    await cp(resolve('docs'), directory, { recursive: true });
-    const setup = join(directory, 'setup.md');
-    const source = await readFile(resolve('docs/setup.md'), 'utf8');
-    const read = () => readDocumentation(directory, { versions: undefined });
-    await writeFile(
-      setup,
-      source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: stable\n'),
-    );
-    assert.throws(read, /statuses of LinkProvider repeats the default status of a guide's exports/);
-    await writeFile(
-      setup,
-      source.replace('exportAliases:\n', 'exportAliases:\n  Button:\n    - push\n'),
-    );
-    assert.throws(read, /exportAliases names Button, which components does not list/);
-    const withStatus = (status, text = source) => `---\nstatus: ${status}\n${text.slice(4)}`;
-    await writeFile(setup, withStatus('experimental'));
-    assert.throws(read, /status must be one of alpha, beta, stable, deprecated/);
-    await writeFile(
-      setup,
-      withStatus(
-        'alpha',
-        source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: alpha\n'),
-      ),
-    );
-    assert.throws(read, /statuses of LinkProvider repeats the page's status/);
-    await writeFile(setup, withStatus('alpha'));
-    const guide = read().find((document) => document.path === 'setup.md');
-    assert.equal(guide.frontmatter.status, 'alpha');
-  });
+  await inScratchFolder(
+    'guide',
+    async (directory) => {
+      await cp(resolve('docs'), directory, { recursive: true });
+      const setup = join(directory, 'setup.md');
+      const source = await readFile(resolve('docs/setup.md'), 'utf8');
+      const read = () => readDocumentation(directory, { versions: undefined });
+      await writeFile(
+        setup,
+        source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: stable\n'),
+      );
+      assert.throws(
+        read,
+        /statuses of LinkProvider repeats the default status of a guide's exports/,
+      );
+      await writeFile(
+        setup,
+        source.replace('exportAliases:\n', 'exportAliases:\n  Button:\n    - push\n'),
+      );
+      assert.throws(read, /exportAliases names Button, which components does not list/);
+      const withStatus = (status, text = source) => `---\nstatus: ${status}\n${text.slice(4)}`;
+      await writeFile(setup, withStatus('experimental'));
+      assert.throws(read, /status must be one of alpha, beta, stable, deprecated/);
+      await writeFile(
+        setup,
+        withStatus(
+          'alpha',
+          source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: alpha\n'),
+        ),
+      );
+      assert.throws(read, /statuses of LinkProvider repeats the page's status/);
+      await writeFile(setup, withStatus('alpha'));
+      const guide = read().find((document) => document.path === 'setup.md');
+      assert.equal(guide.frontmatter.status, 'alpha');
+    },
+    { within: cacheDirectory },
+  );
 });

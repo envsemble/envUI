@@ -22,7 +22,7 @@ avoidWhen:
     use: Column
   - text: A few items side by side at their own widths, such as actions.
     use: Row
-  - text: Two panes people resize, or a list beside its detail.
+  - text: Two panes people resize, such as a document beside its details.
     use: Panes
 components:
   - Grid

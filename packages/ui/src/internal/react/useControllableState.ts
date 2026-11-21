@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { useLatest } from '../useLatest.js';
+import { useLatest } from './useLatest.js';
 
 /**
  * A value the component's owner may control: `value` while it is given, else the component's own,

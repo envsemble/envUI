@@ -3,27 +3,31 @@
 import {
   createContext,
   memo,
-  useCallback,
   useContext,
   useId,
-  useLayoutEffect,
   useRef,
-  useState,
   type ComponentPropsWithRef,
   type ReactNode,
-  type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { remLength } from '../internal/dom/lengths.js';
-import { setRef } from '../internal/react/setRef.js';
-import { useStackedReport } from '../internal/react/useStackedReport.js';
+import { mergeRefs } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
+import {
+  useStackedReport,
+  useStackingAsTheContainerQueryLaidItOut,
+} from './internal/tableStacking.js';
 import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconUnfoldMore } from '../icons/UnfoldMore.js';
 import { useEndColumnIndex, useTableColumns, type TableColumns } from './internal/tableColumns.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { optionModule, useOptionModule } from '../internal/react/useOptionModule.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
@@ -37,7 +41,7 @@ import '../styles/Table.css';
 
 const StackingTableNamesPartRolesContext = createContext(false);
 const TableColumnsContext = createContext<TableColumns | null>(null);
-const TableSectionContext = createContext<'head' | 'body' | null>(null);
+const TableSectionContext = createContext<'head' | 'body' | 'foot' | null>(null);
 
 export interface RootProps
   extends Omit<ComponentPropsWithRef<'table'>, 'aria-label'>, SkeletonProps {
@@ -60,7 +64,7 @@ export interface RootProps
   density?: RowDensity;
   /**
    * The header row stays at the top of the region while the rows scroll beneath it. The region then
-   * scrolls vertically too, so give it a height through regionClassName or the surrounding layout.
+   * scrolls vertically too, so give it a height through regionProps or the surrounding layout.
    */
   stickyHeader?: boolean;
   /**
@@ -69,8 +73,12 @@ export interface RootProps
    * @default false
    */
   plain?: boolean;
-  /** Class of the scroll region around the table, for example to limit its height. */
-  regionClassName?: string;
+  /**
+   * Props of the scroll region around the table, such as a class or a style that limits its
+   * height, a ref for scrolling to a row or virtualising, data attributes or listeners. Its class
+   * joins the region's; the region's role, name, tab stop and layout stay the table's.
+   */
+  regionProps?: Omit<ComponentPropsWithRef<'div'>, 'children' | 'role'>;
   /**
    * What the table does when its region is narrower than stackBelow: scroll keeps the columns and
    * scrolls sideways; stack shows each body row as a block that starts with its first cell,
@@ -128,35 +136,6 @@ const columnResizeLoadedOnlyByResizableTables = optionModule(
   () => import('./internal/ColumnResizeHandle.js'),
 );
 
-function useStackingAsTheContainerQueryLaidItOut(
-  region: RefObject<HTMLElement | null>,
-  table: RefObject<HTMLElement | null>,
-  enabled: boolean,
-  stackBelow: string | number,
-) {
-  const [stacked, setStacked] = useState(false);
-  useLayoutEffect(() => {
-    const element = region.current;
-    const grid = table.current;
-    if (!enabled || !element || !grid) {
-      setStacked(false);
-      return;
-    }
-    const read = () => {
-      const hiddenRegionLaysNothingOut = element.getClientRects().length === 0;
-      if (hiddenRegionLaysNothingOut) return;
-      setStacked(getComputedStyle(grid).getPropertyValue('--_table-stacked').trim() === '1');
-    };
-    read();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(read);
-    observer.observe(element);
-    observer.observe(grid);
-    return () => observer.disconnect();
-  }, [region, table, enabled, stackBelow]);
-  return enabled && stacked;
-}
-
 const defaultStackBelowRegionWidth = '36rem';
 const keyboardScrollTabStop = 0;
 
@@ -172,7 +151,7 @@ function Root({
   density = 'md',
   stickyHeader = false,
   plain = false,
-  regionClassName,
+  regionProps,
   narrowLayout = 'scroll',
   stackBelow = defaultStackBelowRegionWidth,
   onStackedChange,
@@ -202,11 +181,20 @@ function Root({
     resizableColumns,
   });
   if (columns?.resizable) columnResizeLoadedOnlyByResizableTables.preload();
+  const {
+    ref: ownRegionRef,
+    className: ownRegionClassName,
+    style: ownRegionStyle,
+    ...ownRegionProps
+  } = regionProps ?? {};
+  const stackBelowStyle = stack ? { '--_table-stack-below': remLength(stackBelow) } : undefined;
+  const setRegion = useMergedRefs(region, ownRegionRef);
 
   return (
     <div
-      ref={region}
-      className={classNames('env-table-region', regionClassName)}
+      {...ownRegionProps}
+      ref={setRegion}
+      className={classNames('env-table-region', ownRegionClassName)}
       {...skeletonAttributes(skeleton)}
       role="region"
       tabIndex={keyboardScrollTabStop}
@@ -216,7 +204,7 @@ function Root({
       data-sticky-header={flag(stickyHeader)}
       data-narrow-layout={stack ? 'stack' : undefined}
       data-stacked={flag(stacked)}
-      style={stack ? { '--_table-stack-below': remLength(stackBelow) } : undefined}
+      style={ownRegionStyle ? { ...ownRegionStyle, ...stackBelowStyle } : stackBelowStyle}
     >
       {inSkeleton(
         skeleton,
@@ -224,10 +212,7 @@ function Root({
           role={stack ? 'table' : undefined}
           aria-labelledby={stack && caption != null ? captionId : undefined}
           {...props}
-          ref={(node) => {
-            table.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(table, ref)}
           aria-label={caption == null ? label : undefined}
           className={classNames('env-table', className)}
           data-density={density}
@@ -282,6 +267,25 @@ function Body({ className, ...props }: BodyProps) {
         role={stack ? 'rowgroup' : undefined}
         {...props}
         className={classNames('env-table-body', className)}
+      />
+    </TableSectionContext>
+  );
+}
+
+export type FootProps = ComponentPropsWithRef<'tfoot'>;
+
+/**
+ * The summary rows of a table, a native tfoot, such as its totals, on the header's shaded band
+ * under the rows.
+ */
+function Foot({ className, ...props }: FootProps) {
+  const stack = useContext(StackingTableNamesPartRolesContext);
+  return (
+    <TableSectionContext value="foot">
+      <tfoot
+        role={stack ? 'rowgroup' : undefined}
+        {...props}
+        className={classNames('env-table-foot', className)}
       />
     </TableSectionContext>
   );
@@ -373,6 +377,12 @@ export interface HeaderCellProps
    * @default 'Resize {header}', from EnvUIProvider's messages.table.resize
    */
   resizeLabel?: string;
+  /**
+   * Content at the end of the header, beside its sort button and outside it, such as a column
+   * menu, a filter IconButton, a help Tooltip's trigger or a select-all Checkbox, placed as given.
+   * The header's name stays its label.
+   */
+  end?: ReactNode;
 }
 
 const sortIcons = {
@@ -394,6 +404,7 @@ function HeaderCell({
   onSortChange,
   sortLabel,
   resizeLabel,
+  end,
   className,
   children,
   ref,
@@ -405,13 +416,7 @@ function HeaderCell({
   const section = useContext(TableSectionContext);
   const id = useId();
   const cell = useRef<HTMLTableCellElement>(null);
-  const setCell = useCallback(
-    (node: HTMLTableCellElement | null) => {
-      cell.current = node;
-      setRef(ref, node);
-    },
-    [ref],
-  );
+  const setCell = useMergedRefs(cell, ref);
   const column = useEndColumnIndex(cell, section === 'head' && columns?.resizable === true);
   const resize = useOptionModule(
     columnResizeLoadedOnlyByResizableTables,
@@ -421,25 +426,37 @@ function HeaderCell({
   const sortable = onSortChange !== undefined;
   const nextSort = sortDirection === 'ascending' ? 'descending' : 'ascending';
   const controlsAddTheirActionToTheHeadersName = sortable || Boolean(handle);
+  const hasEnd = end != null;
+  const labelWrapped = controlsAddTheirActionToTheHeadersName || hasEnd;
   const ownLabel = props['aria-label'];
-  const nameIds =
-    props['aria-labelledby'] ?? (ownLabel !== undefined ? `${id}-name` : `${id}-label`);
-  const label = controlsAddTheirActionToTheHeadersName ? (
-    <span id={`${id}-label`} className="env-table-header-label">
+  const labelId = `${id}-label`;
+  const ownLabelId = `${id}-name`;
+  const sortWordsId = `${id}-sort`;
+  const resizeWordId = `${id}-resize`;
+  const nameIds = props['aria-labelledby'] ?? (ownLabel !== undefined ? ownLabelId : labelId);
+  const label = labelWrapped ? (
+    <span id={labelId} className="env-table-header-label">
       {children}
     </span>
   ) : (
     children
   );
+  const sortButton = () => (
+    <ActionElement
+      className="env-table-sort-button"
+      aria-label={sortLabel}
+      aria-labelledby={sortLabel === undefined ? `${nameIds} ${sortWordsId}` : undefined}
+      onClick={() => onSortChange?.(nextSort)}
+    >
+      {label}
+      <DecorativeIcon>{sortIcons[sortDirection ?? 'none']}</DecorativeIcon>
+    </ActionElement>
+  );
   return (
     <th
       role={stack ? (scope === 'row' ? 'rowheader' : 'columnheader') : undefined}
       aria-sort={sortable ? (sortDirection ?? 'none') : sortDirection}
-      aria-labelledby={
-        controlsAddTheirActionToTheHeadersName && props['aria-label'] === undefined
-          ? `${id}-label`
-          : undefined
-      }
+      aria-labelledby={labelWrapped && ownLabel === undefined ? labelId : undefined}
       {...props}
       ref={setCell}
       scope={scope}
@@ -448,26 +465,25 @@ function HeaderCell({
       data-resizable={flag(handle)}
       {...cellAttributes({ align, numeric, nowrap })}
     >
-      {sortable ? (
-        <ActionElement
-          className="env-table-sort-button"
-          aria-label={sortLabel}
-          aria-labelledby={sortLabel === undefined ? `${nameIds} ${id}-sort` : undefined}
-          onClick={() => onSortChange(nextSort)}
-        >
-          {label}
-          <DecorativeIcon>{sortIcons[sortDirection ?? 'none']}</DecorativeIcon>
-        </ActionElement>
+      {hasEnd ? (
+        <div className="env-table-header-content">
+          {sortable ? sortButton() : label}
+          <Slot className="env-table-header-end" layout="row" shrink="never">
+            {end}
+          </Slot>
+        </div>
+      ) : sortable ? (
+        sortButton()
       ) : (
         label
       )}
-      {controlsAddTheirActionToTheHeadersName && nameIds === `${id}-name` && (
-        <span id={`${id}-name`} hidden>
+      {controlsAddTheirActionToTheHeadersName && nameIds === ownLabelId && (
+        <span id={ownLabelId} hidden>
           {ownLabel}
         </span>
       )}
       {sortable && sortLabel === undefined && (
-        <span id={`${id}-sort`} hidden>
+        <span id={sortWordsId} hidden>
           {nextSort === 'descending' ? messages.sortDescending : messages.sortAscending}
         </span>
       )}
@@ -476,11 +492,11 @@ function HeaderCell({
           column={column}
           columns={columns}
           label={resizeLabel}
-          labelledBy={`${id}-resize ${nameIds}`}
+          labelledBy={`${resizeWordId} ${nameIds}`}
         />
       )}
       {handle && resizeLabel === undefined && (
-        <span id={`${id}-resize`} hidden>
+        <span id={resizeWordId} hidden>
           {messages.resize}
         </span>
       )}
@@ -528,6 +544,7 @@ function Cell({ align, numeric, nowrap, label, className, children, ...props }: 
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Table.Root');
 const HeadPart = /* @__PURE__ */ withDisplayName(Head, 'Table.Head');
 const BodyPart = /* @__PURE__ */ withDisplayName(Body, 'Table.Body');
+const FootPart = /* @__PURE__ */ withDisplayName(Foot, 'Table.Foot');
 const RowPart = /* @__PURE__ */ withDisplayName(Row, 'Table.Row');
 const HeaderCellPart = /* @__PURE__ */ withDisplayName(HeaderCell, 'Table.HeaderCell');
 const CellRenderedAgainOnlyWhenItsPropsChange = /* @__PURE__ */ memo(Cell);
@@ -539,6 +556,7 @@ export {
   RootPart as Root,
   HeadPart as Head,
   BodyPart as Body,
+  FootPart as Foot,
   RowPart as Row,
   HeaderCellPart as HeaderCell,
   CellPart as Cell,

@@ -79,3 +79,39 @@ test('marks the current row on its target and selects the row', () => {
     [false, true, false, false],
   );
 });
+
+test("a titled list's headerEnd sits beside its heading, outside it", () => {
+  const root = render(
+    h(
+      List.Root,
+      { title: 'Members', headerEnd: h('button', { type: 'button' }, 'Add member') },
+      h(List.Item, { label: 'Alex Morgan' }),
+    ),
+  );
+  const header = elementsOf(root).find((element) => hasClass(element, 'env-list-header'));
+  const heading = elementsOf(header).find((element) => element.tag === 'h2');
+  const headerEnd = elementsOf(header).find((element) => hasClass(element, 'env-list-header-end'));
+  assert.ok(heading && headerEnd);
+  assert.equal(elementsOf(heading).filter((element) => element.tag === 'button').length, 0);
+  assert.equal(elementsOf(headerEnd).filter((element) => element.tag === 'button').length, 1);
+  const list = elementsOf(root).find((element) => element.tag === 'ul');
+  assert.equal(list.attributes['aria-labelledby'], heading.attributes.id);
+});
+
+test("handlePlacement end puts each row's handle last, after its end content", () => {
+  const root = render(
+    h(
+      List.Root,
+      { 'aria-label': 'Slides', onReorder() {}, handlePlacement: 'end' },
+      slides.map((slide) => h(List.Item, { key: slide, label: slide, end: 'Draft' })),
+    ),
+  );
+  const rows = elementsOf(root).filter((element) => element.tag === 'li');
+  assert.equal(rows.length, slides.length);
+  for (const [index, row] of rows.entries()) {
+    const last = row.children.filter((child) => typeof child !== 'string').at(-1);
+    assert.ok(hasClass(last, 'env-list-item-handle'));
+    assert.equal(last.attributes['data-placement'], 'end');
+    assert.equal(last.attributes['aria-label'], `Reorder ${slides[index]}`);
+  }
+});

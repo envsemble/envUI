@@ -93,3 +93,28 @@ test('a toolbar opens its tooltips after tooltipDelay, at once with 0', async ()
       .toBe(true);
   }
 });
+
+test('Toolbar.Item and Toolbar.Input join the arrow keys of the toolbar as single stops, a Menu trigger too', async () => {
+  mount(await import('../fixture/ToolbarItems.fixture.tsx'));
+  const toolbar = page.getByRole('toolbar', { name: 'Editor' });
+  const share = toolbar.getByRole('button', { name: 'Share' });
+  const paragraph = toolbar.getByRole('button', { name: 'Paragraph' });
+  const size = toolbar.getByRole('textbox', { name: 'Font size' });
+  focus(toolbar.getByRole('button', { name: 'Bold' }).element());
+  await keyboard.press('ArrowRight');
+  await expect.element(share).toHaveFocus();
+  expect(share.element().getAttribute('data-variant')).toBe('ghost');
+  await keyboard.press('ArrowRight');
+  await expect.element(paragraph).toHaveFocus();
+  await keyboard.press('ArrowRight');
+  await expect.element(size).toHaveFocus();
+  await keyboard.press('Tab');
+  await expect.element(page.getByRole('button', { name: 'After editor toolbar' })).toHaveFocus();
+  await keyboard.press('Shift+Tab');
+  await expect.element(size).toHaveFocus();
+  focus(paragraph.element());
+  await keyboard.press('Enter');
+  await expect.element(page.getByRole('menuitem', { name: 'Heading' })).toBeVisible();
+  await keyboard.press('Escape');
+  await expect.element(paragraph).toHaveFocus();
+});

@@ -3,15 +3,10 @@ import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { compileDocument, compileDocumentation } from '../../scripts/docs/Compiler.ts';
-import {
-  pageFixture,
-  switchBody,
-  switchFrontmatter,
-  switchProps,
-} from './DocumentationFixtures.ts';
+import { samplePage, switchBody, switchFrontmatter, switchProps } from './DocumentationSamples.ts';
 
 test('a filled-in source keeps its fence closed, with backticks in its source', async () => {
-  await pageFixture(async ({ page, read, examples }) => {
+  await samplePage(async ({ page, read, examples }) => {
     const source = "export default function Basic() {\n  return <Code>{'```'}</Code>;\n}\n";
     await writeFile(join(examples, 'switch', 'Basic.tsx'), source);
     await writeFile(
@@ -83,7 +78,7 @@ test('a page ships the whole file, in its order, with code once', () => {
   assert.ok(hasLine(button, 'Example: OnePrimaryAction (do).'));
   assert.doesNotMatch(button, /^`{3,}tsx (?:figure|example|do|dont|anatomy|variants)=/m);
   assert.ok(hasLine(button, '1. **Container** (`env-button`)'));
-  assert.match(button, /^Also `end`, `size`, .* as on Button\.$/m);
+  assert.match(button, /^Also `start`, `end`, `size`, .* as on Button\.$/m);
   const spacing = compiled.get('foundations/spacing.md');
   assert.ok(spacing.includes('\n1. **Tight, inside a group**: '));
   assert.ok(hasLine(spacing, 'examples: # Each file is examples/spacing/<Name>.tsx.'));

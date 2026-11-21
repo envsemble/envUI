@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useRef, type Ref, type TextareaHTMLAttributes } from 'react';
+import { useRef, type Ref, type TextareaHTMLAttributes } from 'react';
 import { classNames } from '../classNames.js';
-import { setRef } from '../react/setRef.js';
-import { TextareaResizeEdge } from './TextareaResizeEdge.js';
+import { useMergedRefs } from '../react/useMergedRefs.js';
+import { TextareaResizeHandle } from './TextareaResizeHandle.js';
 import { flag } from '../flag.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
@@ -30,8 +30,8 @@ export interface TextareaControlOwnProps {
 }
 
 /**
- * The one native text area of envUI: a text field's, with its resize edge, for Textarea and
- * MarkdownEditor, or a bare one that its owner styles and sizes, as Composer's.
+ * The one native text area of envUI: a text field's, with its resize edge, for Textarea, or a
+ * bare one that its owner styles and sizes, as Composer's.
  */
 export function TextareaControl({
   ref,
@@ -43,13 +43,7 @@ export function TextareaControl({
   ...props
 }: TextareaControlProps & TextareaControlOwnProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const attachInput = useCallback(
-    (input: HTMLTextAreaElement | null) => {
-      inputRef.current = input;
-      setRef(ref, input);
-    },
-    [ref],
-  );
+  const attachInput = useMergedRefs(inputRef, ref);
   if (bare)
     return (
       <textarea {...props} ref={attachInput} rows={rows} style={style} className={className} />
@@ -69,7 +63,7 @@ export function TextareaControl({
         style={sizingStyle}
         className={classNames('env-text-field-input', className)}
       />
-      <TextareaResizeEdge
+      <TextareaResizeHandle
         inputRef={inputRef}
         inputId={props.id}
         sizing={sizing}

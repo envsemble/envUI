@@ -14,8 +14,8 @@ export default function MenuTrigger() {
         </Tooltip>
       }
     >
-      <Menu.Item icon={<IconFileCopy />}>Duplicate</Menu.Item>
-      <Menu.Item icon={<IconArchive />}>Archive</Menu.Item>
+      <Menu.Item start={<IconFileCopy />}>Duplicate</Menu.Item>
+      <Menu.Item start={<IconArchive />}>Archive</Menu.Item>
     </Menu.Root>
   );
 }

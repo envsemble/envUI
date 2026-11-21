@@ -16,6 +16,22 @@ export default function CodeDiffFixture() {
       <Theme theme={theme}>
         <CodeDiff before={longBefore} after={longAfter} filename="lines.ts" layout="unified" />
       </Theme>
+      <div data-testid="annotated" style={{ inlineSize: '30rem' }}>
+        <CodeDiff
+          before={longBefore}
+          after={longAfter}
+          filename="annotated.ts"
+          layout="split"
+          headerEnd={<button type="button">View file</button>}
+          annotations={[{ side: 'additions', lineNumber: 1, data: 'Why zero?' }]}
+          renderAnnotation={(annotation) => (
+            <p className="fixture-annotation">{String(annotation.data)}</p>
+          )}
+        />
+      </div>
+      <div data-testid="auto" style={{ inlineSize: '60rem' }}>
+        <CodeDiff before={longBefore} after={longAfter} filename="auto.ts" />
+      </div>
     </Column>
   );
 }

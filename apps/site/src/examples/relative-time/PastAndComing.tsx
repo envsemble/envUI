@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { RelativeTime, Column, Text } from '@envsemble/envui';
 
-const hour = 60 * 60_000;
-const day = 24 * hour;
+const hourMs = 60 * 60_000;
+const dayMs = 24 * hourMs;
 
 export default function PastAndComing() {
   const [now] = useState(() => Date.now());
   const events = [
-    { label: 'Quarterly report updated', at: now - 3 * hour },
-    { label: 'Design review due', at: now + 2 * day },
-    { label: 'Budget approved', at: now - 35 * day },
-    { label: 'Contract renews', at: now + 300 * day },
+    { label: 'Quarterly report updated', at: now - 3 * hourMs },
+    { label: 'Design review due', at: now + 2 * dayMs },
+    { label: 'Budget approved', at: now - 35 * dayMs },
+    { label: 'Contract renews', at: now + 300 * dayMs },
   ];
   return (
     <Column gap={2}>

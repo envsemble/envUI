@@ -16,7 +16,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Install and set up](setup.md) — Install, theme, router, locale and entry points.
 - [Customize](customizing.md) — The styling contract of every component, the theme settings and colors.
 - [Writing](writing.md) — The words of an interface: the vocabulary and sentence case.
-- [Dev mode](dev-mode.md) — A readout of a page's layout and its problems, and a 3D view.
 
 ## Foundations
 
@@ -52,7 +51,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [MonthPicker](components/month-picker.md)
 - [ColorPicker](components/color-picker.md)
 - [DropZone](components/drop-zone.md)
-- [RichText](components/rich-text.md)
 
 ## Navigation
 
@@ -73,9 +71,6 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Avatar](components/avatar.md)
 - [Graphic](components/graphic.md)
 - [Meter](components/meter.md)
-- [Rating](components/rating.md)
-- [CalendarHeatmap](components/calendar-heatmap.md)
-- [AnimatedNumber](components/animated-number.md)
 - [RelativeTime](components/relative-time.md)
 
 ## Text & content
@@ -96,6 +91,7 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Toast](components/toast.md)
 - [Progress](components/progress.md)
 - [Spinner](components/spinner.md)
+- [Halo](components/halo.md)
 
 ## Overlays
 

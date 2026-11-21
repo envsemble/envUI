@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { IconButton, TextField, SearchField, Theme, type ColorScheme } from '@envsemble/envui';
 import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { IconSell } from '@envsemble/envui/icons/Sell';
+import { IconFilterList } from '@envsemble/envui/icons/FilterList';
 
 export const themes = true;
 
@@ -32,7 +33,7 @@ export default function AffixesFixture({ theme }: { theme: ColorScheme }) {
           placeholder="0.00"
           prefix="€"
           suffix="per month"
-          startIcon={<IconSell />}
+          start={<IconSell />}
           endAction={
             <IconButton variant="text" icon={<IconContentCopy />} aria-label="Copy price" />
           }
@@ -61,8 +62,19 @@ export default function AffixesFixture({ theme }: { theme: ColorScheme }) {
       <output data-testid={`affixes-submitted-${theme}`}>{submitted}</output>
       <div dir="rtl">
         <TextField label="Street" name="street" />
-        <TextField label="City" name="city" startIcon={<IconSell />} />
+        <TextField label="City" name="city" start={<IconSell />} />
       </div>
     </Theme>
+  );
+}
+
+export function SearchEndActionFixture() {
+  return (
+    <SearchField
+      label="Search issues"
+      defaultValue="a long query that runs on to the end of the field"
+      style={{ inlineSize: '16rem' }}
+      endAction={<IconButton icon={<IconFilterList />} aria-label="Filters" />}
+    />
   );
 }

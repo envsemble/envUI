@@ -3,6 +3,7 @@ import { groupedPages } from '../routes/SiteRoutes';
 import type { DocumentSummary } from '../routes/PageModel';
 import { hasFoundationTile } from './foundations/FoundationTiles';
 import { memberTileOf, tileOf, type TileModule } from './Tiles';
+import { memberExamples } from './MemberTiles';
 
 export interface TilePicture {
   page: string;
@@ -14,11 +15,6 @@ export interface TilePicture {
 }
 
 const squash = (text: string) => text.toLowerCase().replace(/[^a-z\d]/g, '');
-
-const memberExamples: Record<string, string> = {
-  IconButton: 'Icons',
-  CopyButton: 'CopyValue',
-};
 
 export function tilePictureOf(
   document: DocumentSummary,
@@ -69,10 +65,6 @@ export function tilePictureOf(
   };
 }
 
-export type TileFrame = 'own';
-
-export function frameOf(id?: string): TileFrame | undefined {
-  return groupedPages.some((page) => page.document.id === id && page.section === 'Components')
-    ? 'own'
-    : undefined;
+export function ownsFrame(id?: string): boolean {
+  return groupedPages.some((page) => page.document.id === id && page.section === 'Components');
 }

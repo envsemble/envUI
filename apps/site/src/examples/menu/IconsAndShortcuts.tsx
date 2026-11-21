@@ -16,25 +16,25 @@ export default function IconsAndShortcuts() {
         align="start"
         trigger={<IconButton icon={<IconMoreVert />} aria-label="More actions" />}
       >
-        <Menu.Item icon={<IconEdit />} shortcut="F2" onClick={() => setLastAction('Rename')}>
+        <Menu.Item start={<IconEdit />} shortcut="F2" onClick={() => setLastAction('Rename')}>
           Rename
         </Menu.Item>
         <Menu.Item
-          icon={<IconFileCopy />}
+          start={<IconFileCopy />}
           shortcut="Ctrl+D"
           onClick={() => setLastAction('Duplicate')}
         >
           Duplicate
         </Menu.Item>
         <Menu.Item
-          icon={<IconComment />}
+          start={<IconComment />}
           end={<Badge count={3} aria-label="3 unresolved" />}
           onClick={() => setLastAction('Show comments')}
         >
           Show comments
         </Menu.Item>
         <Menu.Item
-          icon={<IconDownload />}
+          start={<IconDownload />}
           description="Available once the report is final"
           disabled
         >
@@ -42,7 +42,7 @@ export default function IconsAndShortcuts() {
         </Menu.Item>
         <Menu.Separator />
         <Menu.Item
-          icon={<IconDelete />}
+          start={<IconDelete />}
           tone="danger"
           shortcut="Del"
           onClick={() => setLastAction('Delete')}

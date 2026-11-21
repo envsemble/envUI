@@ -8,16 +8,17 @@ const popups = await importSource('FitResting', 'apps/site/src/fit/FitResting.ts
 const screen = await importSource('FitScreen', 'apps/site/src/fit/FitScreen.ts');
 const device = await importSource('DeviceFit', 'apps/site/src/fit/standalone/DeviceFit.ts');
 const room = await importSource('OverlayRoom', 'apps/site/src/fit/standalone/OverlayRoom.ts');
+const paints = await importSource('PaintedBoxes', 'apps/site/src/fit/PaintedBoxes.ts');
 
 const box = (left, top, right, bottom) => ({ left, top, right, bottom });
 
 test('a picture is fitted by its kind, and only a cropped tile that has shown plays drawn out', () => {
-  assert.deepEqual(kinds.fitKindOf({ tile: true }, 'own'), { scale: 'own', tile: true });
-  const drawing = kinds.fitKindOf({ tile: true, window: { width: 8 } }, 'own');
+  assert.deepEqual(kinds.fitKindOf({ tile: true }, true), { scale: 'own', tile: true });
+  const drawing = kinds.fitKindOf({ tile: true, window: { width: 8 } }, true);
   assert.deepEqual(drawing, { scale: 'window', tile: true });
-  assert.deepEqual(kinds.fitKindOf(undefined, undefined), { scale: 'content', tile: false });
-  assert.equal(kinds.fitKindOf({ tile: true }, 'own'), kinds.fitKindOf({ tile: true }, 'own'));
-  const tile = kinds.fitKindOf({ tile: true }, 'own');
+  assert.deepEqual(kinds.fitKindOf(undefined, false), { scale: 'content', tile: false });
+  assert.equal(kinds.fitKindOf({ tile: true }, true), kinds.fitKindOf({ tile: true }, true));
+  const tile = kinds.fitKindOf({ tile: true }, true);
   const playing = { playing: true, shown: true };
   assert.equal(kinds.fitModeOf(tile, false, playing), 'playing');
   assert.equal(kinds.fitModeOf(tile, false, { playing: true, shown: false }), 'resting');
@@ -285,4 +286,36 @@ test("a modal's screen fits what it needs, no smaller than the popups' least, an
   const kept = { played: 320, rest: 0.7 };
   const played = screen.decideScreenScale(stage, { scales, own: 1 }, dialog, kept);
   assert.deepEqual([played.scale, played.tall, played.plays], [0.7, 320, true]);
+});
+
+test('what an element paints: a fill, an image, a shadow, or an edge of a color that shows', () => {
+  const style = (values) => {
+    const all = {
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      backgroundImage: 'none',
+      boxShadow: 'none',
+      ...values,
+    };
+    return { ...all, getPropertyValue: (name) => all[name] ?? '' };
+  };
+  const edge = (color, width = '1px', kind = 'solid') =>
+    Object.fromEntries(
+      ['top', 'right', 'bottom', 'left'].flatMap((side) => [
+        [`border-${side}-width`, width],
+        [`border-${side}-style`, kind],
+        [`border-${side}-color`, color],
+      ]),
+    );
+  assert.deepEqual(paints.paintsOf(style({})), []);
+  assert.deepEqual(paints.paintsOf(style({ backgroundColor: 'oklch(0.5 0.1 200 / 0)' })), []);
+  assert.deepEqual(paints.paintsOf(style({ backgroundColor: 'rgb(255, 0, 0)' })), [
+    'background rgb(255, 0, 0)',
+  ]);
+  assert.deepEqual(paints.paintsOf(style(edge('rgb(0, 0, 0)'))), [
+    'a border (top, right, bottom, left)',
+  ]);
+  assert.deepEqual(paints.paintsOf(style(edge('rgb(0, 0, 0)', '0px'))), []);
+  assert.deepEqual(paints.paintsOf(style(edge('rgb(0, 0, 0)', '1px', 'hidden'))), []);
+  assert.deepEqual(paints.paintsOf(style(edge('rgba(0, 0, 0, 0)'))), []);
+  assert.deepEqual(paints.paintsOf(style(edge('transparent'))), []);
 });

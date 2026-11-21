@@ -7,7 +7,7 @@ export const message = {
   sending: 'Sending',
   /** The status of a message that could not be sent. */
   failed: 'Not sent',
-  /** Beside the spinner of a MessageList while a reply is on its way. */
+  /** The status of a reply still being written, beside its spinner. */
   working: 'Working',
   /** The button of a MessageList that follows, shown once newer messages arrive out of view. */
   jumpToLatest: 'Jump to latest',

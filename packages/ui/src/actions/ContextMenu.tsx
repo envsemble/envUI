@@ -16,14 +16,13 @@ import {
   type Ref,
   type TouchEvent,
 } from 'react';
-import { MenuPopup, menuParts } from './internal/MenuPopup.js';
-import type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { MenuPopup, menuParts } from './menu/internal/MenuPopup.js';
+import type { OpenChangeDetails, OpenChangeReason } from './menu/internal/menuOpenChange.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
+import { rendersContent } from '../internal/react/rendersContent.js';
 
 const contextMenuParts = {
   Portal: BaseContextMenu.Portal,
@@ -80,7 +79,7 @@ function isContextMenuKey(event: KeyboardEvent) {
 
 function offersMenu(content: ContextMenuProps['content'], element: Element | null) {
   const node = contentFor(content, element);
-  return node != null && node !== false && node !== '';
+  return rendersContent(node) && node !== '';
 }
 
 function contentFor(content: ContextMenuProps['content'], element: Element | null) {

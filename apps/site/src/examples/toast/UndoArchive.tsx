@@ -11,15 +11,17 @@ function Projects() {
     setProjects((current) => current.filter((project) => project !== name));
     const id = toast.show({
       message: `${name} archived.`,
-      action: {
-        label: 'Undo',
-        onClick: () => {
-          setProjects((current) =>
-            initialProjects.filter((project) => project === name || current.includes(project)),
-          );
-          toast.dismiss(id);
+      actions: [
+        {
+          label: 'Undo',
+          onClick: () => {
+            setProjects((current) =>
+              initialProjects.filter((project) => project === name || current.includes(project)),
+            );
+            toast.dismiss(id);
+          },
         },
-      },
+      ],
     });
   };
   if (projects.length === 0) return <Text variant="body-sm">Every project is archived.</Text>;

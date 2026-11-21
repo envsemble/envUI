@@ -78,6 +78,21 @@ export default function ScaffoldFixture() {
           landmarks={query.get('landmarks') !== 'off'}
           navigationForms={forms}
           navigation={given}
+          aside={
+            query.has('aside') ? (
+              <aside aria-label="Inspector" data-testid="inspector" className="fixture-inspector">
+                <p>Inspector</p>
+                <div style={{ blockSize: '60rem' }} />
+              </aside>
+            ) : undefined
+          }
+          bottomBar={
+            query.has('status') ? (
+              <div role="status" data-testid="status-bar">
+                Synced
+              </div>
+            ) : undefined
+          }
           topBar={
             <TopBar
               start={<IconButton icon={<IconMenu />} aria-label="Open navigation" />}

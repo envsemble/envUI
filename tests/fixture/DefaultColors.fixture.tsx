@@ -38,7 +38,7 @@ import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
-import { planOptions } from './SelectOptions.fixture.js';
+import { planOptions } from './SelectOptions.js';
 
 const destinations: Destination[] = [
   { label: 'Home', icon: <IconHome />, href: '#home', current: true },
@@ -54,7 +54,7 @@ function Toasts() {
     toast.show({
       message: 'Error toast',
       tone: 'danger',
-      action: { label: 'Retry', onClick: () => {} },
+      actions: [{ label: 'Retry', onClick: () => {} }],
     });
   }, [toast]);
   return null;
@@ -124,7 +124,7 @@ export default function DefaultColorsFixture() {
           />
         </List.Root>
         <Menu.Root aria-label="Actions" defaultOpen trigger={<Button>Actions</Button>}>
-          <Menu.Item icon={<IconSettings />}>Preferences</Menu.Item>
+          <Menu.Item start={<IconSettings />}>Preferences</Menu.Item>
           <Menu.Item>Rename</Menu.Item>
         </Menu.Root>
         <NavigationDrawer aria-label="Drawer destinations" destinations={destinations} />

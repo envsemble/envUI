@@ -5,7 +5,7 @@ name: Verify
 # the unit tests and Chromium on the same pull requests, in full, so the two required checks
 # together are `npm run verify`. It is a workflow of its own so that pull requests into dev never
 # report a Verify check, which an organization ruleset requires on envUI's main. The jobs run on
-# the Linux runner the envsemble organization variable CI_LINUX_RUNNER names.
+# GitHub's own Linux runners, free for a public repository.
 on:
   pull_request:
     branches: [main]
@@ -29,7 +29,7 @@ jobs:
   engines:
     name: Library browser tests (${{ matrix.browser }})
     if: ${{ !github.event.pull_request.draft }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     # WebKit runs one file at a time: two at once on the runner's two cores left a test past its
     # timeouts in most runs (a 2-CPU container failed 2 runs of 3 with two, none of 3 with one) for
@@ -66,7 +66,7 @@ jobs:
   a11y:
     name: Accessibility
     if: ${{ !github.event.pull_request.draft }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -89,7 +89,7 @@ jobs:
   visual:
     name: Visual baseline
     if: ${{ !github.event.pull_request.draft }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -112,7 +112,7 @@ jobs:
   live:
     name: Live development
     if: ${{ !github.event.pull_request.draft }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -139,7 +139,7 @@ jobs:
     name: Verify
     if: ${{ always() && !github.event.pull_request.draft }}
     needs: [engines, a11y, visual, live]
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Require every job to pass

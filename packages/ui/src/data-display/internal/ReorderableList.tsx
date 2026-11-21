@@ -18,13 +18,14 @@ import { IconDragIndicator } from '../../icons/DragIndicator.js';
 import { classNames } from '../../internal/classNames.js';
 import { Grid } from '../../layout/Layout.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
-import { setRef } from '../../internal/react/setRef.js';
+import { useMergedRefs } from '../../internal/react/useMergedRefs.js';
 import { useFormatters } from '../../internal/provider/useFormatters.js';
 import { useHydrated } from '../../internal/react/useHydrated.js';
 import { useReorder, type Announcement, type ReorderHandlers } from './useReorder.js';
 import type { RootProps } from '../List.js';
-import { usePortalContainer } from '../../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../../internal/provider/PortalContainerContext.js';
 import { reportInDevelopment } from '../../internal/developmentReport.js';
+import { collapseWhitespace, followRenderedText } from '../../internal/text/labelText.js';
 import '../../styles/Base.css';
 import '../../styles/List.css';
 import '../../styles/ConnectedRows.css';
@@ -58,8 +59,7 @@ function rowOf(list: HTMLElement, element: EventTarget | null) {
 
 const labelOf = (row: HTMLElement) =>
   row.querySelector(':scope > .env-list-item-handle')?.getAttribute('data-label') ??
-  row.textContent?.trim() ??
-  '';
+  collapseWhitespace(row.textContent ?? '');
 
 function reportOfRowsWithoutHandle(list: HTMLUListElement | null) {
   const bare = Array.from(list?.children ?? []).filter(
@@ -80,7 +80,7 @@ export function ReorderableList({
   onKeyDown,
   children,
   ...props
-}: Omit<RootProps, 'title' | 'headingLevel' | 'description'> & {
+}: Omit<RootProps, 'title' | 'headingLevel' | 'description' | 'headerEnd' | 'handlePlacement'> & {
   onReorder: NonNullable<RootProps['onReorder']>;
 }) {
   const element = useRef<HTMLUListElement | null>(null);
@@ -96,13 +96,7 @@ export function ReorderableList({
       { key: instructionsId },
     );
   });
-  const forward = useCallback(
-    (node: HTMLUListElement | null) => {
-      element.current = node;
-      setRef(ref, node);
-    },
-    [ref],
-  );
+  const forward = useMergedRefs(element, ref);
   return (
     <ReorderContext value={reorder}>
       <Grid
@@ -133,7 +127,13 @@ export function ReorderableList({
   );
 }
 
-export function ListReorderHandle({ textValue }: { textValue?: string }) {
+export function ListReorderHandle({
+  textValue,
+  placement,
+}: {
+  textValue?: string;
+  placement?: 'end';
+}) {
   const reorder = useContext(ReorderContext);
   const messages = useMessages('list', listMessages);
   const button = useRef<HTMLButtonElement | null>(null);
@@ -145,11 +145,7 @@ export function ListReorderHandle({ textValue }: { textValue?: string }) {
         ?.closest('li')
         ?.querySelector(':scope > .env-list-item-content > .env-list-item-label');
       if (!content) return;
-      const read = () => setLabelShownAsText(content.textContent?.trim() ?? '');
-      read();
-      const observer = new MutationObserver(read);
-      observer.observe(content, { childList: true, characterData: true, subtree: true });
-      return () => observer.disconnect();
+      return followRenderedText(content, setLabelShownAsText);
     },
     [textValue, reorder],
   );
@@ -168,6 +164,7 @@ export function ListReorderHandle({ textValue }: { textValue?: string }) {
       aria-describedby={instructionsId}
       aria-pressed={notLiftedUntilTheReorderLiftsIt}
       data-label={text}
+      data-placement={placement}
       className="env-list-item-handle"
       onClick={(event) => {
         const each = row();

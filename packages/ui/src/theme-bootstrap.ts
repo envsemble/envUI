@@ -1,6 +1,1 @@
-export {
-  createThemeBootstrapScript,
-  defineTheme,
-  type ThemeDefinition,
-  type ThemePreference,
-} from './foundations/themeBootstrap.js';
+export * from './foundations/themeBootstrap.js';

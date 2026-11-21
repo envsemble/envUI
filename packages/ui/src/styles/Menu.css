@@ -16,7 +16,8 @@
     outline: none;
   }
   .env-menu {
-    --_menu-slot: calc(var(--env-control-icon-size) + var(--_popup-row-gap));
+    --_menu-leading-column: var(--env-control-icon-size);
+    --_menu-slot: calc(var(--_menu-leading-column) + var(--_popup-row-gap));
     --_menu-leading: 0rem;
     inline-size: max-content;
     --_menu-min-width: 12rem;
@@ -27,10 +28,15 @@
     padding: var(--_popup-padding);
     border-radius: var(--_popup-radius);
   }
-  .env-menu:has(.env-menu-item > :is(.env-menu-item-indicator-slot, .env-icon):first-child) {
+  .env-menu:has(.env-menu-item-start > :not(svg, .env-icon)) {
+    --_menu-leading-column: var(--env-picture-size-sm);
+  }
+  .env-menu:has(
+    .env-menu-item > :is(.env-menu-item-indicator-slot, .env-menu-item-start):first-child
+  ) {
     --_menu-leading: var(--_menu-slot);
   }
-  .env-menu:has(.env-menu-item > .env-menu-item-indicator-slot + .env-icon) {
+  .env-menu:has(.env-menu-item > .env-menu-item-indicator-slot + .env-menu-item-start) {
     --_menu-leading: calc(2 * var(--_menu-slot));
   }
   .env-menu-header,
@@ -71,12 +77,12 @@
     color: var(--env-menu-item-content, var(--env-color-fg-default));
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
-  .env-menu-item:has(> :is(.env-menu-item-indicator-slot, .env-icon):first-child) {
+  .env-menu-item:has(> :is(.env-menu-item-indicator-slot, .env-menu-item-start):first-child) {
     padding-inline-start: calc(
       var(--_popup-row-padding-inline) + var(--_menu-leading) - var(--_menu-slot)
     );
   }
-  .env-menu-item:has(> .env-menu-item-indicator-slot + .env-icon) {
+  .env-menu-item:has(> .env-menu-item-indicator-slot + .env-menu-item-start) {
     padding-inline-start: calc(
       var(--_popup-row-padding-inline) + var(--_menu-leading) - 2 * var(--_menu-slot)
     );
@@ -84,13 +90,22 @@
   .env-menu-item:has(> .env-menu-item-indicator-slot:first-child) {
     padding-inline-start: var(--_popup-row-padding-inline);
   }
-  .env-menu-item > .env-menu-item-indicator-slot:first-child:not(:has(+ .env-icon)) {
+  .env-menu-item > .env-menu-item-indicator-slot:first-child:not(:has(+ .env-menu-item-start)) {
     margin-inline-end: calc(var(--_menu-leading) - var(--_menu-slot));
   }
   .env-menu-item .env-icon {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
     color: var(--_menu-item-icon-color, var(--env-color-fg-muted));
+  }
+  .env-menu-item-start {
+    justify-content: center;
+    min-inline-size: var(--_menu-leading-column);
+    --env-icon-size: var(--env-control-icon-size);
+    --_slot-icon-color: var(--_menu-item-icon-color, var(--env-color-fg-muted));
+  }
+  .env-menu-item-start:has(> :not(svg, .env-icon)) {
+    align-self: center;
   }
   .env-menu-item[data-tone='danger'] {
     --_menu-item-icon-color: var(--env-menu-item-icon, var(--env-color-fg-danger));
@@ -115,7 +130,9 @@
     align-items: flex-start;
   }
   .env-menu-item:has(> .env-menu-item-text > .env-menu-item-description)
-    > :is(.env-menu-item-indicator-slot, .env-icon) {
+    > :is(.env-menu-item-indicator-slot, .env-icon),
+  .env-menu-item:has(> .env-menu-item-text > .env-menu-item-description)
+    > .env-menu-item-start:not(:has(> :not(svg, .env-icon))) {
     margin-block-start: calc((1lh - var(--env-control-icon-size)) / 2);
   }
   .env-menu-item:has(> .env-menu-item-text > .env-menu-item-description)

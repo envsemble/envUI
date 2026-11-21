@@ -61,6 +61,34 @@ export default function AvatarGroupFixture({ theme }: { theme: ColorScheme }) {
         size="sm"
         onPersonClick={(person) => setPressed(person.name)}
       />
+      <AvatarGroup
+        data-testid="custom"
+        aria-label={`Custom people ${theme}`}
+        people={people.map((person) =>
+          person.id === 'alex'
+            ? { ...person, hue: 'oat' as const, tooltip: 'Alex Morgan, Owner', badge: 'online' }
+            : person,
+        )}
+        max={2}
+        onPersonClick={() => undefined}
+        renderOverflowTooltip={(hidden, unlisted) => (
+          <ul className="fixture-overflow-list">
+            {hidden.map((person) => (
+              <li key={person.id}>{person.name}</li>
+            ))}
+            <li>{`and ${unlisted} more`}</li>
+          </ul>
+        )}
+        total={7}
+      />
+      <AvatarButton
+        data-testid="account"
+        name="Alex Morgan"
+        description={<strong>Owner</strong>}
+        hue="sage"
+        fallback="person"
+        badge="online"
+      />
       <output data-testid="pressed">{pressed}</output>
       <LinkProvider component={RecordingLink}>
         <AvatarGroup

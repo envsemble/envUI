@@ -83,7 +83,7 @@ test('affixes sit beside the value, a press on one places the caret, and a long 
 
   const price = scope.getByRole('textbox', { name: 'Price', exact: true });
   expect(css(well(price), 'height')).toBe('40px');
-  const icon = box(well(price).querySelector('.env-text-field-start .env-icon')!);
+  const icon = box(well(price).querySelector('.env-text-field-start > *')!);
   const pricePrefix = box(affix(price, 'prefix'));
   const prefixText = textBox(affix(price, 'prefix'));
   const input = box(price);
@@ -222,3 +222,19 @@ test(
     expect(commits()).toBe('rejected=7420x rejected=7420y');
   },
 );
+
+test("SearchField's end action follows the clear button, and the query stops short of both", async () => {
+  await open({ default: affixes.SearchEndActionFixture });
+  const search = page.getByRole('searchbox', { name: 'Search issues' });
+  const clear = page.getByRole('button', { name: 'Clear search' });
+  const filters = page.getByRole('button', { name: 'Filters' });
+  expect(box(filters).x).toBeGreaterThan(box(clear).x);
+  const input = search.element() as HTMLInputElement;
+  const textEnd = box(input).x + box(input).width - Number.parseFloat(css(input, 'padding-right'));
+  expect(textEnd).toBeLessThanOrEqual(box(clear).x);
+  await expect.element(filters).toHaveAttribute('data-variant', 'ghost');
+  await clear.click();
+  await expect.element(search).toHaveValue('');
+  expect(clear.elements()).toHaveLength(0);
+  await expect.element(filters).toBeVisible();
+});

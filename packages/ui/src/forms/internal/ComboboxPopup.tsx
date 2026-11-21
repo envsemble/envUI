@@ -1,14 +1,15 @@
 'use client';
 
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
-import { useId, type ReactNode, type Ref } from 'react';
+import type { ReactNode, Ref } from 'react';
 import type { Direction } from '../../internal/provider/EnvUIContext.js';
 import { PopupSurface } from '../../internal/popup/PopupSurface.js';
-import { ListRow } from '../../internal/list/ListRow.js';
+import { ListRow } from '../../internal/popup/ListRow.js';
 import { Column, Grid } from '../../layout/Layout.js';
 import { Spinner } from '../../feedback/Spinner.js';
 import { IconCheck } from '../../icons/Check.js';
-import { isGroup, type ComboboxGroup, type ComboboxItem } from './comboboxItems.js';
+import { isGroup } from '../../internal/popup/listEntries.js';
+import type { ComboboxGroup, ComboboxItem } from './comboboxItems.js';
 import '../../styles/Base.css';
 import '../../styles/Combobox.css';
 
@@ -59,10 +60,10 @@ export function ComboboxPopup<Item extends ComboboxItem>({
         className="env-combobox-list"
         aria-busy={loading || undefined}
       >
-        {(entry: Item | ComboboxGroup<Item>) =>
+        {(entry: Item | ComboboxGroup<Item>, index: number) =>
           isGroup(entry) ? (
             <BaseCombobox.Group
-              key={entry.label}
+              key={index}
               items={entry.items}
               render={<Grid />}
               className="env-combobox-group"
@@ -92,31 +93,19 @@ function ComboboxOption<Item extends ComboboxItem>({
   item: Item;
   startSlot: boolean;
 }) {
-  const descriptionId = useId();
   return (
     <ListRow
-      render={
-        <BaseCombobox.Item
-          value={item.value}
-          disabled={item.disabled}
-          aria-describedby={item.description ? descriptionId : undefined}
-        />
-      }
+      render={<BaseCombobox.Item {...item.itemProps} value={item.value} disabled={item.disabled} />}
       className="env-combobox-item"
       indicator={
         <BaseCombobox.ItemIndicator className="env-icon env-combobox-item-indicator">
           <IconCheck />
         </BaseCombobox.ItemIndicator>
       }
-      icon={startSlot ? <span className="env-combobox-start">{item.start}</span> : undefined}
+      start={startSlot ? <span className="env-combobox-start">{item.start}</span> : undefined}
       label={item.label}
-      description={
-        item.description ? (
-          <span id={descriptionId} aria-hidden="true">
-            {item.description}
-          </span>
-        ) : undefined
-      }
+      end={item.end}
+      description={item.description || undefined}
     />
   );
 }

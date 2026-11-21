@@ -56,8 +56,19 @@ export function removedParts(
   before: PartsContract | undefined,
   after: PartsContract,
   changesets: string | string[] = [],
+  released?: PartsContract,
 ) {
   const now = contractNames(after);
+  const shipped = released && [...contractNames(released).values()];
+  const wasReleased = (item: ContractItem) =>
+    !shipped ||
+    shipped.some(
+      (each) =>
+        each.name === item.name &&
+        each.value === item.value &&
+        Boolean(each.part) === Boolean(item.part) &&
+        Boolean(each.color) === Boolean(item.color),
+    );
   const kept = contractClasses(after);
   const major = (Array.isArray(changesets) ? changesets : [changesets]).filter(
     recordsBreakingChange,
@@ -73,7 +84,7 @@ export function removedParts(
   };
   const removed: { label: string; name: string; recorded: boolean }[] = [];
   for (const [label, item] of contractNames(before))
-    if (!now.has(label) && !stays(item))
+    if (!now.has(label) && !stays(item) && wasReleased(item))
       removed.push({
         label,
         name: item.name,

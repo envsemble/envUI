@@ -5,12 +5,8 @@ import * as affixes from '../fixture/Affixes.fixture.tsx';
 import * as commandPalette from '../fixture/CommandPalette.fixture.tsx';
 import * as composer from '../fixture/Composer.fixture.tsx';
 import * as forms from '../fixture/Forms.fixture.tsx';
-import * as markdownEditor from '../fixture/MarkdownEditor.fixture.tsx';
-import { RichTextEditingFixture } from '../fixture/RichTextEditor.fixture.tsx';
 import { css } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
-
-const richText = { default: RichTextEditingFixture };
 
 function bodySize(element: Element) {
   const probe = document.createElement('span');
@@ -22,7 +18,6 @@ function bodySize(element: Element) {
 }
 
 const fontSize = (element: Element) => css(element, 'font-size');
-const editable = () => document.querySelector('[contenteditable="true"]')!;
 
 test('entered text keeps the body size with a mouse, and is 16 px on touch screens, so focusing a field does not zoom the page', async () => {
   mount(forms);
@@ -30,9 +25,6 @@ test('entered text keeps the body size with a mouse, and is 16 px on touch scree
   const notes = () => page.getByRole('textbox', { name: 'Notes', exact: true }).element();
   expect(fontSize(name())).toBe(bodySize(name()));
   expect(fontSize(notes())).toBe(bodySize(notes()));
-  mount(richText);
-  await expect.poll(() => document.querySelector('[contenteditable="true"]')).not.toBeNull();
-  expect(fontSize(editable())).toBe(bodySize(editable()));
 
   await commands.emulateTouch(true);
   try {
@@ -60,14 +52,6 @@ test('entered text keeps the body size with a mouse, and is 16 px on touch scree
 
     mount(composer);
     expect(fontSize(page.getByRole('textbox', { name: 'Message light' }).element())).toBe('16px');
-
-    mount(markdownEditor);
-    expect(fontSize(page.getByRole('textbox', { name: 'Workload source' }).element())).toBe('16px');
-
-    mount(richText);
-    await expect.poll(() => document.querySelector('[contenteditable="true"]')).not.toBeNull();
-    expect(fontSize(editable())).toBe('16px');
-    expect(fontSize(editable().querySelector('p')!)).toBe('16px');
   } finally {
     await commands.emulateTouch(false);
   }

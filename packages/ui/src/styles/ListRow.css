@@ -53,27 +53,28 @@
   .env-list-row:is([data-disabled], [aria-disabled='true']) > :not(.env-list-row-text) {
     opacity: var(--env-state-disabled-opacity);
   }
-  .env-list-row-indicator,
-  .env-list-row-icon {
+  .env-list-row-indicator {
     flex: 0 0 auto;
     display: grid;
     place-items: center;
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
     --env-icon-size: var(--env-control-icon-size);
-  }
-  .env-list-row-indicator {
     order: 1;
     color: var(--env-color-bg-primary-emphasis);
   }
   .env-list-row[data-selected] .env-list-row-indicator {
     color: var(--env-color-fg-on-selected);
   }
-  .env-list-row-icon {
-    inline-size: var(--_list-row-icon-size, var(--env-control-icon-size));
-    block-size: var(--_list-row-icon-size, var(--env-control-icon-size));
-    --env-icon-size: var(--_list-row-icon-size, var(--env-control-icon-size));
-    color: var(--env-color-fg-muted);
+  .env-list-row-start {
+    justify-content: center;
+    min-inline-size: var(--env-control-icon-size);
+    --env-icon-size: var(--env-control-icon-size);
+    --_slot-icon-color: var(--env-color-fg-muted);
+  }
+  .env-list-row-start:has(> :not(svg, .env-icon)) {
+    min-inline-size: var(--env-picture-size-sm);
+    align-self: center;
   }
   .env-list-row-text {
     min-inline-size: 0;
@@ -92,14 +93,26 @@
   .env-list-row:has(> .env-list-row-text > .env-list-row-description) > .env-list-row-indicator {
     margin-block-start: calc((1lh - var(--env-control-icon-size)) / 2);
   }
-  .env-list-row:has(> .env-list-row-text > .env-list-row-description) > .env-list-row-icon {
-    margin-block-start: calc((1lh - var(--_list-row-icon-size, var(--env-control-icon-size))) / 2);
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description)
+    > .env-list-row-start:not(:has(> :not(svg, .env-icon))) {
+    margin-block-start: calc((1lh - var(--env-control-icon-size)) / 2);
+  }
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description)
+    > .env-list-row-start:has(> :not(svg, .env-icon)) {
+    align-self: var(--_list-row-described-start-align, center);
+    margin-block-start: var(--_list-row-described-start-offset, 0);
   }
   .env-list-row:has(> .env-list-row-text > .env-list-row-description) > .env-list-row-end {
     min-block-size: 1lh;
   }
   .env-list-row-end {
     gap: var(--env-space-1);
+  }
+
+  @media (pointer: coarse) {
+    .env-list-row {
+      min-block-size: var(--env-control-height-touch);
+    }
   }
 
   @media (forced-colors: active) {

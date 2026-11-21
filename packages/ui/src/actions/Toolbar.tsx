@@ -54,7 +54,10 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * the toolbar's class, attributes and keyboard handling merge into its props.
    */
   render?: ReactElement;
-  /** The controls: Toolbar.Button, Toolbar.Link, Toolbar.Group and Toolbar.Separator. */
+  /**
+   * The controls: Toolbar.Button, Toolbar.Link, Toolbar.Item, Toolbar.Input, Toolbar.Group and
+   * Toolbar.Separator.
+   */
   children?: ReactNode;
 }
 
@@ -292,15 +295,65 @@ function Link({ icon, label, className, ...props }: LinkProps) {
   );
 }
 
+export interface ItemProps extends ComponentPropsWithRef<'button'> {
+  /**
+   * The control, which joins the toolbar's arrow-key path as one of its stops: a button with a
+   * visible label, such as <Button start={<IconShare />}>Share</Button>, or the trigger of a
+   * Menu or another popup. The item's props, ref and keyboard handling merge into its props; a
+   * Button takes the toolbar's ghost variant unless it sets another.
+   */
+  render: ReactElement;
+  /**
+   * The control can't be pressed, and leaves the arrow keys' path.
+   * @default false
+   */
+  disabled?: boolean;
+}
+
+/**
+ * Any button-like control as one stop of a toolbar's arrow-key path, such as a labelled Button or
+ * a Menu's trigger: `<Menu.Root trigger={<Toolbar.Item render={<Button>Paragraph</Button>} />}>`.
+ */
+function Item({ render, disabled, ...props }: ItemProps) {
+  return (
+    <BaseToolbar.Button
+      {...props}
+      disabled={disabled}
+      focusableWhenDisabled={false}
+      render={render}
+    />
+  );
+}
+
+export interface InputProps extends ComponentPropsWithRef<'input'> {
+  /**
+   * The input to render, such as an input of the application's own; a native input by default.
+   * The toolbar's props and keyboard handling merge into its props.
+   */
+  render?: ReactElement;
+}
+
+/**
+ * A text input as one stop of a toolbar's arrow-key path, such as a font size: the arrow keys move
+ * its caret, and leave it for the next control at the text's ends. Name it with aria-label.
+ */
+function Input({ render, ...props }: InputProps) {
+  return <BaseToolbar.Input {...props} render={render} />;
+}
+
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Toolbar.Root');
 const GroupPart = /* @__PURE__ */ withDisplayName(Group, 'Toolbar.Group');
 const SeparatorPart = /* @__PURE__ */ withDisplayName(Separator, 'Toolbar.Separator');
 const ButtonPart = /* @__PURE__ */ withDisplayName(ToolbarButton, 'Toolbar.Button');
 const LinkPart = /* @__PURE__ */ withDisplayName(Link, 'Toolbar.Link');
+const ItemPart = /* @__PURE__ */ withDisplayName(Item, 'Toolbar.Item');
+const InputPart = /* @__PURE__ */ withDisplayName(Input, 'Toolbar.Input');
 export {
   RootPart as Root,
   GroupPart as Group,
   SeparatorPart as Separator,
   ButtonPart as Button,
   LinkPart as Link,
+  ItemPart as Item,
+  InputPart as Input,
 };

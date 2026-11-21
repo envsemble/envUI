@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import { lstat, readFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 import { installTimeout, packedConsumer } from '../../support/PackedConsumer.ts';
+import { withoutComments } from '../../../scripts/site/CssComments.ts';
 
 let consumer;
 before(async () => (consumer = await packedConsumer()), { timeout: installTimeout });
@@ -12,7 +13,7 @@ const envLayers = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env
 
 function layerOrder(css) {
   const names = [];
-  for (const [, list] of css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/@layer\s+([^{;]+)[{;]/g))
+  for (const [, list] of withoutComments(css).matchAll(/@layer\s+([^{;]+)[{;]/g))
     for (const name of list.split(',').map((part) => part.trim()))
       if (!names.includes(name)) names.push(name);
   return names;
@@ -82,8 +83,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'DropZone',
     'Alert',
     'Badge',
-    'DiffStat',
-    'CalendarHeatmap',
     'Menu',
     'ContextMenu',
     'Menubar',
@@ -112,47 +111,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
   );
 });
 
-test('a packed consumer imports the dev entry, which types its readout and does nothing on a server', async () => {
-  const dev = await consumer.runScript(
-    'DevConsumer.mjs',
-    `
-    import * as dev from '@envsemble/envui/dev';
-    const handle = dev.installDevMode();
-    await handle.ready;
-    handle.open();
-    handle.uninstall();
-    console.log(JSON.stringify({
-      exports: Object.keys(dev).sort(),
-      module: import.meta.resolve('@envsemble/envui/dev'),
-      same: handle.layout === dev.layout,
-      layout: Object.keys(dev.layout).sort(),
-    }));
-  `,
-  );
-  assert.deepEqual(dev.exports, ['installDevMode', 'layout']);
-  assert.match(dev.module, /\/node_modules\/@envsemble\/envui\/dist\/dev\.js$/);
-  assert.equal(dev.same, true);
-  assert.deepEqual(dev.layout, ['at', 'check', 'describe', 'skeletonShift']);
-  assert.ok(
-    consumer.packedFiles.includes('docs/generated/parts.json'),
-    'Dev mode reads parts.json.',
-  );
-
-  await consumer.typecheck(
-    'DevConsumer',
-    `
-    import { installDevMode, layout, type DevModeHandle, type LayoutAtResult, type LayoutProblem, type PartsFile } from '@envsemble/envui/dev';
-    const parts: PartsFile = { schemaVersion: 1, components: {} };
-    const handle: DevModeHandle = installDevMode({ parts, root: '#app', button: false, shortcut: false });
-    const results: LayoutAtResult[] = layout.at(['22rem', 960]);
-    const problems: LayoutProblem[] = window.envui?.layout?.check() ?? [];
-    // @ts-expect-error
-    const layoutAtTakesPxOrLengthsNotOptions = layout.at({ width: '40rem' });
-    void [handle, results, problems, layoutAtTakesPxOrLengthsNotOptions];
-  `,
-  );
-});
-
 test('installed declarations typecheck a React 19 consumer without source aliases', async () => {
   const viteTypesDeclaringStyleSheetImports = 'vite/client';
   const typedFiles = await consumer.typecheck(
@@ -164,20 +122,16 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       type ColorScheme, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { IconHome } from '@envsemble/envui/icons/Home';
     import '@envsemble/envui/styles.css';
-    import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
     import { ColorPicker, ColorPickerButton, ColorSwatch, type Color, type ColorValue } from '@envsemble/envui/color';
     const colorValue: ColorValue = 'hsl(256, 34%, 48%)';
     const advanced = (color: Color): ColorValue => color.withChannelValue('alpha', 0.5);
     void advanced;
-    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <IconHome /> };
+    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), start: <IconHome /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
-    const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <IconHome /> };
+    const pagerLinkProps: Pager.NextProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), end: <IconHome /> };
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];
     const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <IconHome /> }];
     const theme: ColorScheme = 'dark';
-    const referenceSources: RichTextReferenceSource[] = [{ trigger: '@', search: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
-    const richTextConsumer = <><RichTextEditor editorRef={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
-    void richTextConsumer;
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<IconHome filled />} />
@@ -277,10 +231,6 @@ test('a small independent bundle excludes unused icons and Base UI', async () =>
       (path) => !path.includes('/color/') && !path.includes('/@react-aria/'),
     ),
     'Unused color picking must stay out of basic control bundles.',
-  );
-  assert.ok(
-    result.emittedInputs.every((path) => !path.includes('/@tiptap/')),
-    'Optional Tiptap must stay out of core bundles.',
   );
   assert.ok(
     result.emittedInputs.every((path) => !path.includes('/src/')),

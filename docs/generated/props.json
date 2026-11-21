@@ -48,6 +48,26 @@
           "type": "(open: boolean) => void",
           "required": false,
           "description": "Receives whether this item is open, each time it opens or closes."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the item's heading row, beside its button and outside it, such as a Switch, a Badge with a Menu, or a Delete IconButton, placed as given."
+        },
+        {
+          "name": "indicator",
+          "type": "ReactNode",
+          "required": false,
+          "default": "the Root's indicator",
+          "description": "What shows in this item's button whether it is open, in place of the Root's indicator, such as a chevron the application turns while the button has data-panel-open; null for none."
+        },
+        {
+          "name": "indicatorPlacement",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "the Root's indicatorPlacement",
+          "description": "Where this item's indicator sits in its button: before the title, or after it at the button's end."
         }
       ],
       "native": [
@@ -102,6 +122,19 @@
           "description": "The level of each item's heading, for the page's outline; they look the same at every level."
         },
         {
+          "name": "indicator",
+          "type": "ReactNode",
+          "required": false,
+          "description": "What shows in every item's button whether the item is open, in place of the plus that becomes a minus, such as a chevron the application turns while the button has data-panel-open; null for none. It is hidden from assistive technology, which hears the button's expanded state. An item's own indicator replaces it."
+        },
+        {
+          "name": "indicatorPlacement",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where every item's indicator sits in its button: before the title, or after it at the button's end. An item's own indicatorPlacement replaces it."
+        },
+        {
           "name": "disabled",
           "type": "boolean",
           "required": false,
@@ -144,9 +177,9 @@
         },
         {
           "name": "title",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "A short heading for the message, such as \"Sync paused\", above the message."
+          "description": "A short heading for the message, such as \"Sync paused\", above the message: text, or content such as a branch name in Code or a link."
         },
         {
           "name": "children",
@@ -165,6 +198,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "Actions below the message, such as a Button or a Link, in a row that wraps."
+        },
+        {
+          "name": "actionsPlacement",
+          "type": "'below' | 'end'",
+          "required": false,
+          "default": "'below'",
+          "description": "Where the actions go: below the message, or at the end of the alert's row, before the dismiss button, as in a one-line banner such as \"Sync paused. Resume\". At the end, they move below the message where the alert is too narrow for both."
         },
         {
           "name": "onDismiss",
@@ -201,32 +241,6 @@
         "@envsemble/envui"
       ]
     },
-    "AnimatedNumber": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/AnimatedNumber.tsx",
-      "description": "A number within text that rolls to its new value when it changes: up when it grows and down when it shrinks, so a count updated by other controls is noticed. The text is always the current value.",
-      "props": [
-        {
-          "name": "value",
-          "type": "number",
-          "required": true,
-          "description": "The number to show; when it changes, the new value rolls in, up as it grows, down as it shrinks."
-        },
-        {
-          "name": "formatValue",
-          "type": "(value: number) => string",
-          "required": false,
-          "default": "the number format of EnvUIProvider's locale, or else the browser's",
-          "description": "Writes the value as text, such as a currency."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Avatar": {
       "kind": "component",
       "source": "packages/ui/src/data-display/Avatar.tsx",
@@ -246,10 +260,10 @@
         },
         {
           "name": "fallback",
-          "type": "'person' | 'initials'",
+          "type": "'person' | 'initials' | ReactElement",
           "required": false,
           "default": "'initials'",
-          "description": "Shown without a picture: the initials of `name`, so people tell avatars apart, or the default person picture, which an empty `name` shows too."
+          "description": "Shown without a picture: the initials of `name`, so people tell avatars apart, or the default person picture, which an empty `name` shows too. An element is placed as given on the hue's fill, in its deep shade as `currentColor`, such as an icon or a Graphic for a bot, an agent, a team or a service account."
         },
         {
           "name": "hue",
@@ -277,6 +291,12 @@
           "required": false,
           "default": "false",
           "description": "Shows the avatar as chosen, such as in a list of people to pick from: a ring around it and a small check at its bottom end, so the choice never rests on color alone. It is a look only: the control around the avatar, such as a checkbox or an option, says it is chosen."
+        },
+        {
+          "name": "badge",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A small mark at the avatar's bottom end, placed as given, such as a presence dot, an unread marker or an organization's mark; at its top end while the avatar is selected, whose check takes the bottom end. It is hidden from assistive technology with the avatar, so say what it shows in the text beside it."
         }
       ],
       "native": [
@@ -295,13 +315,13 @@
           "name": "name",
           "type": "string",
           "required": true,
-          "description": "The person's name: shown in the tooltip, and the accessible name unless aria-label is set."
+          "description": "The person's name: shown in the tooltip, and the accessible name unless aria-label is set, followed by a badge's text, such as Alex Morgan, online."
         },
         {
           "name": "description",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "A second tooltip line, such as the e-mail address of the signed-in account."
+          "description": "A second tooltip line, such as the e-mail address of the signed-in account, or content such as an organization's name with its plan's Badge."
         },
         {
           "name": "src",
@@ -314,6 +334,24 @@
           "type": "AvatarProps['fallback']",
           "required": false,
           "description": "Shown without a picture: the initials of `name`, by default, or the default person picture."
+        },
+        {
+          "name": "hue",
+          "type": "AvatarProps['hue']",
+          "required": false,
+          "description": "The fill behind the initials or the person picture, as for Avatar; the name chooses one by default."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "description": "Shows the avatar as chosen, as for Avatar: a ring and a check. A look only."
+        },
+        {
+          "name": "badge",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A small mark at the avatar's bottom end, as for Avatar, such as a presence dot. Text, such as online, also follows the name in the button's accessible name, as it shows on the button."
         },
         {
           "name": "size",
@@ -386,6 +424,12 @@
           "required": false,
           "default": "'{count} people: {names}'",
           "description": "The group's name from the number of people and their names, which end with formatMore's text for people counted in total but not listed, such as \"3 people: Alex Morgan, Sam Lee, 1 more\". It overrides EnvUIProvider's `messages.avatarGroup.label` for this group; aria-label replaces it."
+        },
+        {
+          "name": "renderOverflowTooltip",
+          "type": "(hidden: readonly AvatarGroupPerson[], unlisted: number) => ReactNode",
+          "required": false,
+          "description": "The overflow chip's tooltip, from the people it hides and how many more total counts but people doesn't list, such as a list of them with their avatars. Their names, one a line, and formatMore's text by default. The chip's accessible name stays their names."
         }
       ],
       "native": [
@@ -401,16 +445,16 @@
       "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats; with count, a compact count, such as 12 unread.",
       "props": [
         {
-          "name": "icon",
+          "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as a check mark; hidden from assistive technology. A done badge has a check mark unless it is given another icon, or `null` for none."
+          "description": "Content before the label, such as an icon, a small Avatar or a color swatch: an envUI icon takes the badge's icon size and other content keeps its own. Assistive technology reads it unless it hides itself, as an icon without a label does. A done badge leads with a check mark unless it is given another start, or `null` for none."
         },
         {
           "name": "children",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "The label: a state, a name or a category in a word or two, as text. It stays on one line and ends with an ellipsis where the badge is wider than its container."
+          "description": "The label: a state, a name or a category in a word or two, such as text with a bold value or a RelativeTime in it. It stays on one line and ends with an ellipsis where the badge is wider than its container."
         },
         {
           "name": "count",
@@ -467,7 +511,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+          "description": "A name for this node, such as \"filters\" or \"summary\", for the application's styles and tests to find it by; it renders as `data-env-name`. A component's part class names its node instead."
         },
         {
           "name": "container",
@@ -568,22 +612,16 @@
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
-          "name": "startIcon",
+          "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
-        },
-        {
-          "name": "endIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
+          "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
+          "description": "Content after the label, at the far end of a full-width button, such as IconChevronRight for a next step, or a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button: an envUI icon takes the button's icon size and other content keeps its own."
         },
         {
           "name": "pending",
@@ -603,6 +641,12 @@
           "type": "string",
           "required": false,
           "description": "The destination: the element is a native link, through the LinkProvider's link component."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "Another element to render the button as, such as a label for a file input, or a router's own link in one place: the button's class, look, state attributes, content and handlers merge into its props. It takes no type or disabled attribute; disabled reports aria-disabled and blocks presses."
         }
       ],
       "native": [
@@ -643,7 +687,7 @@
     "Calendar": {
       "kind": "component",
       "source": "packages/ui/src/forms/Calendar.tsx",
-      "description": "A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, it is a group around the month's grid.",
+      "description": "A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, or by the List.Item whose control it is, it is a group around the month's grid.",
       "props": [
         {
           "name": "value",
@@ -677,6 +721,19 @@
           "description": "The latest day that can be chosen, as YYYY-MM-DD; later days are unavailable."
         },
         {
+          "name": "isDateUnavailable",
+          "type": "(day: string) => boolean",
+          "required": false,
+          "description": "Whether a day, as YYYY-MM-DD, can't be chosen, such as a weekend, a holiday or a booked day; it shows dimmed and reports aria-disabled, as days outside min and max do, and the keyboard still moves onto it."
+        },
+        {
+          "name": "renderDay",
+          "type": "(day: string, state: CalendarDayState) => ReactNode",
+          "required": false,
+          "default": "the day's number",
+          "description": "The content of a day's mark in place of its number, such as the number with a dot under it for a day with events, or a price; it receives the day as YYYY-MM-DD and its state. The cell keeps its role, its name, the full date, and its keyboard handling."
+        },
+        {
           "name": "weekStart",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
@@ -702,132 +759,6 @@
           "required": false,
           "default": "'Next month', or EnvUIProvider's messages.calendar.nextMonth",
           "description": "Accessible name of the next month button."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "CalendarHeatmap": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
-      "description": "A calendar of daily values with weeks as columns and weekdays as rows, colored in steps of a tone. Each day names its date and value, shows them in a tooltip on hover and focus, and the grid is one tab stop that the arrow keys move through.",
-      "props": [
-        {
-          "name": "data",
-          "type": "readonly CalendarHeatmapDay[]",
-          "required": true,
-          "description": "Values by day; days without an entry count as 0."
-        },
-        {
-          "name": "startDate",
-          "type": "string",
-          "required": false,
-          "description": "The first day shown, as YYYY-MM-DD; the earliest day in data by default."
-        },
-        {
-          "name": "endDate",
-          "type": "string",
-          "required": false,
-          "description": "The last day shown, as YYYY-MM-DD; the latest day in data by default."
-        },
-        {
-          "name": "levels",
-          "type": "number",
-          "required": false,
-          "default": "5",
-          "description": "Color steps including the empty step, 2 to 10; 5 by default."
-        },
-        {
-          "name": "maxValue",
-          "type": "number",
-          "required": false,
-          "description": "The value that takes the strongest color; the largest value shown by default."
-        },
-        {
-          "name": "thresholds",
-          "type": "readonly number[]",
-          "required": false,
-          "description": "The lowest value of each color step above the empty one, in ascending order, such as quantiles of the data to color by rank. Up to nine; they replace levels and maxValue. A day below the first threshold shows as empty, and a first threshold of 0 or less colors days of 0 too."
-        },
-        {
-          "name": "weekStart",
-          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
-          "required": false,
-          "default": "the locale's, or Monday where the browser cannot tell",
-          "description": "The first day of each week column, from 0 for Sunday to 6 for Saturday, as on Calendar."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
-          "required": false,
-          "default": "'primary'",
-          "description": "The tone the colors are mixed from: primary by default."
-        },
-        {
-          "name": "formatValue",
-          "type": "(value: number) => string",
-          "required": false,
-          "default": "the number format of EnvUIProvider's locale, or else the browser's",
-          "description": "Text for a value."
-        },
-        {
-          "name": "formatDate",
-          "type": "(date: string) => string",
-          "required": false,
-          "default": "the weekday, day, month and year in the locale, such as Tue 14 Oct 2025",
-          "description": "Text for a day's date, in its accessible name and the default tooltip."
-        },
-        {
-          "name": "renderTooltip",
-          "type": "(day: CalendarHeatmapCell) => ReactNode",
-          "required": false,
-          "description": "Tooltip content for a day; the date and value by default."
-        },
-        {
-          "name": "monthLabels",
-          "type": "readonly string[]",
-          "required": false,
-          "default": "the locale's short month names, from Intl",
-          "description": "Twelve month names above the weeks, from January."
-        },
-        {
-          "name": "weekdayLabels",
-          "type": "readonly string[]",
-          "required": false,
-          "default": "the locale's short weekday names, from Intl",
-          "description": "Seven weekday names beside the rows, from Sunday."
-        },
-        {
-          "name": "lessLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Less'",
-          "description": "Legend text before the lightest color. It overrides EnvUIProvider's `messages.calendarHeatmap.less`."
-        },
-        {
-          "name": "moreLabel",
-          "type": "string",
-          "required": false,
-          "default": "'More'",
-          "description": "Legend text after the strongest color. It overrides EnvUIProvider's `messages.calendarHeatmap.more`."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`aria-labelledby` is not set",
-          "description": "Names the grid of days, such as \"Deployments in the last year\"; this or aria-labelledby."
-        },
-        {
-          "name": "aria-labelledby",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`aria-label` is not set",
-          "description": "The id of visible text that names the grid of days, such as a heading; this or aria-label."
         }
       ],
       "native": [
@@ -895,6 +826,12 @@
           "description": "A short fact at the end of the title row, such as when the card was updated."
         },
         {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the title row, after the meta, such as an overflow Menu or an Edit Button, placed as given."
+        },
+        {
           "name": "description",
           "type": "ReactNode",
           "required": false,
@@ -904,7 +841,14 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and wrapping onto more lines where they don't fit. For controls beside the title, use headerEnd."
+        },
+        {
+          "name": "interactive",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The card opens something through a link or button inside, such as its title: it reacts to hover, keyboard focus on that target and presses. Mark the link or button `data-row-target` to stretch it over the card; the other links, buttons and fields in the card, such as an author's link in the description or a Menu in headerEnd, stay clickable above it."
         },
         {
           "name": "render",
@@ -978,6 +922,13 @@
           "description": "A short, muted line under the label, such as what the option changes. It is part of the checkbox's label, so it is read with its name."
         },
         {
+          "name": "labelPlacement",
+          "type": "'end' | 'start'",
+          "required": false,
+          "default": "'end'",
+          "description": "Where the label sits beside the box: end, after it, or start, before it, such as in an inline row whose label leads; the native label still names the checkbox."
+        },
+        {
           "name": "checked",
           "type": "boolean | 'mixed'",
           "required": false,
@@ -1029,9 +980,15 @@
         },
         {
           "name": "label",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Names the block in its heading and for assistive technology, such as a file name."
+          "description": "Names the block in its heading and for assistive technology, such as a file name, or content such as a file-type icon and a path link. Without one, the code takes the generic name of its language, such as Plain text code or TypeScript code, from messages.codeBlock.label."
+        },
+        {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the heading, before the copy button, such as Open in editor, Run, or a switch between npm, pnpm and yarn, placed as given."
         },
         {
           "name": "copyable",
@@ -1100,10 +1057,35 @@
         },
         {
           "name": "layout",
-          "type": "'auto' | 'unified'",
+          "type": "'auto' | 'split' | 'unified'",
           "required": false,
           "default": "'auto'",
-          "description": "auto (default) sets old and new side by side from 56 rem of width; unified keeps one column."
+          "description": "auto (default) sets old and new side by side from 56 rem of width; split always sets them side by side, such as for a split and unified toggle; unified keeps one column."
+        },
+        {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the file header, such as View file, Accept or Revert, or a status Badge."
+        },
+        {
+          "name": "annotations",
+          "type": "readonly CodeDiffAnnotation[]",
+          "required": false,
+          "description": "Notes attached to lines, such as review comments, which renderAnnotation draws under them."
+        },
+        {
+          "name": "renderAnnotation",
+          "type": "(annotation: CodeDiffAnnotation) => ReactNode",
+          "required": false,
+          "description": "Draws one of annotations under its line."
+        },
+        {
+          "name": "headingLevel",
+          "type": "1 | 2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "default": "3",
+          "description": "The level of the heading of what shows when the diff fails to load, for the page's outline."
         }
       ],
       "native": [
@@ -1203,6 +1185,20 @@
           "description": "Preset colors to choose from, under the fields: CSS color strings, React Aria's Colors, or `{ color, label }` with a name, such as the colors of a brand."
         },
         {
+          "name": "swatchesFirst",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Show the swatches first, above the area and the fields, for a picker where presets are the usual choice, such as a tag's color."
+        },
+        {
+          "name": "fields",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the row of value fields, with the format select, the eyedropper and the copy button; without it, the area, the sliders and the swatches choose the color."
+        },
+        {
           "name": "name",
           "type": "string",
           "required": false,
@@ -1281,6 +1277,13 @@
           "description": "Receives the requested state, and why, as Popover's onOpenChange does: such as to close the picker once a swatch is chosen."
         },
         {
+          "name": "trigger",
+          "type": "ReactElement | ((color: { value: string }) => ReactElement)",
+          "required": false,
+          "default": "a button with a swatch and the value",
+          "description": "The element that opens the picker in place of the swatch button, such as a text color button of a toolbar, an A over a bar of the color: an element, or a function that receives the color's value and returns one. It takes the native props given here, the opening behavior and, unless it has its own, the name after the label and the color; style it, and show the color, yourself."
+        },
+        {
           "name": "label",
           "type": "string",
           "required": true,
@@ -1344,6 +1347,20 @@
           "type": "readonly ColorPickerSwatch[]",
           "required": false,
           "description": "Preset colors to choose from, under the fields: CSS color strings, React Aria's Colors, or `{ color, label }` with a name, such as the colors of a brand."
+        },
+        {
+          "name": "swatchesFirst",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Show the swatches first, above the area and the fields, for a picker where presets are the usual choice, such as a tag's color."
+        },
+        {
+          "name": "fields",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the row of value fields, with the format select, the eyedropper and the copy button; without it, the area, the sliders and the swatches choose the color."
         },
         {
           "name": "name",
@@ -1458,7 +1475,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+          "description": "A name for this node, such as \"filters\" or \"summary\", for the application's styles and tests to find it by; it renders as `data-env-name`. A component's part class names its node instead."
         },
         {
           "name": "container",
@@ -1688,13 +1705,13 @@
         },
         {
           "name": "items",
-          "type": "readonly CommandPaletteItem[]",
+          "type": "readonly CommandPaletteItem[] | readonly CommandPaletteGroup[]",
           "required": true,
-          "description": "Filtered and ranked by the application, in display order."
+          "description": "Filtered and ranked by the application, in display order; or groups of items, each under a heading."
         },
         {
           "name": "suggestedItems",
-          "type": "readonly CommandPaletteItem[]",
+          "type": "readonly CommandPaletteItem[] | readonly CommandPaletteGroup[]",
           "required": false,
           "description": "Shown in place of items while the search field is empty, such as recent documents or suggested pages under a group heading; options like any other."
         },
@@ -1762,6 +1779,18 @@
           "type": "ReactNode",
           "required": false,
           "description": "Other content below the list, after the hints."
+        },
+        {
+          "name": "searchStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the search field in its row, such as a scope chip, In: Projects."
+        },
+        {
+          "name": "searchEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content after the search field in its row, before the close button, such as a mode switch."
         }
       ],
       "native": [
@@ -1774,7 +1803,7 @@
     "Composer": {
       "kind": "component",
       "source": "packages/ui/src/content/Composer.tsx",
-      "description": "The message field of a conversation: a multiline field on a raised surface that grows with its text up to maxRows, with a send button at the end that becomes a stop button while running. Enter submits, Shift+Enter starts a new line and an input method's composition never submits. Without onSend, Enter and the send button submit the field's form.",
+      "description": "The message field of a conversation: a multiline field on a raised surface that grows with its text up to maxRows, with a send button at the end that becomes a stop button while running. Enter submits, or with sendKey mod-enter Ctrl+Enter or ⌘+Enter; Shift+Enter starts a new line and an input method's composition never submits. Without onSend, Enter and the send button submit the field's form.",
       "props": [
         {
           "name": "value",
@@ -1856,6 +1885,25 @@
           "description": "Content at the start of the action row, such as an attach button or the name of a model."
         },
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the action row just before the send button, such as a voice button, a model picker or a token count; the field then takes a row of its own above the action row."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content inside the composer above the field, such as attachment chips, a quoted reply or context pills, placed as given."
+        },
+        {
+          "name": "sendKey",
+          "type": "'enter' | 'mod-enter'",
+          "required": false,
+          "default": "'enter'",
+          "description": "The key that sends: enter, where Shift+Enter starts a new line, or mod-enter, Ctrl+Enter or ⌘+Enter, where Enter starts a new line, for prompts that mostly take several lines."
+        },
+        {
           "name": "description",
           "type": "ReactNode",
           "required": false,
@@ -1889,10 +1937,16 @@
       "description": "A button for an action that takes effect at once and cannot be undone. The first press arms it and names the consequence in place; a second press runs it. It disarms after a few seconds, when focus leaves and on Escape.",
       "props": [
         {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
+        },
+        {
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
+          "description": "Content after the label, at the far end of a full-width button, such as IconChevronRight for a next step, or a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button: an envUI icon takes the button's icon size and other content keeps its own."
         },
         {
           "name": "size",
@@ -1920,18 +1974,6 @@
           "required": false,
           "default": "false",
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
-        },
-        {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
-        },
-        {
-          "name": "endIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
           "name": "aria-label",
@@ -2037,13 +2079,13 @@
         },
         {
           "name": "confirmLabel",
-          "type": "string",
+          "type": "ReactNode",
           "required": true,
-          "description": "The confirm button's label: a verb that names the consequence, such as Delete project."
+          "description": "The confirm button's label: a verb that names the consequence, such as Delete project. Like a Button's content, it can hold more, such as a Kbd of its shortcut."
         },
         {
           "name": "cancelLabel",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
           "default": "'Cancel', or EnvUIProvider's messages.confirmDialog.cancel",
           "description": "The cancel button's label."
@@ -2317,6 +2359,18 @@
           "description": "The latest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; later days are unavailable."
         },
         {
+          "name": "isDateUnavailable",
+          "type": "CalendarProps['isDateUnavailable']",
+          "required": false,
+          "description": "As Calendar's: whether a day, as YYYY-MM-DD, can't be chosen, such as a booked day."
+        },
+        {
+          "name": "renderDay",
+          "type": "CalendarProps['renderDay']",
+          "required": false,
+          "description": "As Calendar's: the content of a day's mark in the calendar in place of its number."
+        },
+        {
           "name": "placeholderTime",
           "type": "string",
           "required": false,
@@ -2403,7 +2457,7 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
+          "type": "(open: boolean, details: DatePickerOpenChangeDetails) => void",
           "required": false,
           "description": "Called with the new state, and why, when the calendar opens or closes."
         },
@@ -2448,6 +2502,18 @@
           "required": false,
           "default": "'Next month', or EnvUIProvider's messages.calendar.nextMonth",
           "description": "Accessible name of the calendar's next month button."
+        },
+        {
+          "name": "popupHeader",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the top of the popup, above the calendar, such as presets: buttons for Tomorrow or Next Monday that set the value, from a field the application controls."
+        },
+        {
+          "name": "popupFooter",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the popup's footer, after its shortcut to the current date or time and before Clear, such as a note of the time zone or another action."
         },
         {
           "name": "label",
@@ -2592,8 +2658,8 @@
         {
           "name": "title",
           "type": "ReactNode",
-          "required": true,
-          "description": "The dialog's heading and accessible name, such as “Delete project?”."
+          "required": false,
+          "description": "The dialog's heading and accessible name, such as “Delete project?”. Without one, such as for an image viewer or a search dialog its field names, name the dialog with aria-label or aria-labelledby."
         },
         {
           "name": "description",
@@ -2611,14 +2677,46 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The dialog's own actions, after the built-in close button, with the primary action last. They close the dialog only where they are DialogClose or set open to false. While the dialog is pending, the last one shows it, where it is a Button that sets no pending of its own."
+          "description": "The dialog's own actions, after the built-in close button, with the primary action last. They close the dialog only where they are DialogClose or set open to false. While the dialog is pending, the last one shows it, where it is a Button that sets no pending of its own; another component reads it with useDialogPending."
+        },
+        {
+          "name": "actionsStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the start of the actions' row, which takes the room the actions leave, such as a destructive Delete, a Learn more link or a Don't show again checkbox."
+        },
+        {
+          "name": "closeButton",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether the dialog shows its built-in close button, as on a Sheet. Leave it out only where the dialog places its own DialogClose."
+        },
+        {
+          "name": "closeButtonPlacement",
+          "type": "'actions' | 'heading'",
+          "required": false,
+          "default": "'actions'",
+          "description": "Where the built-in close button is: actions, a secondary button that starts the actions; heading, an IconButton with a cross at the end of the heading, as on a Sheet."
         },
         {
           "name": "closeLabel",
           "type": "string",
           "required": false,
           "default": "'Close', or EnvUIProvider's messages.dialog.close",
-          "description": "The label of the built-in close button that starts the actions, such as Cancel."
+          "description": "The label of the built-in close button, such as Cancel, or its name in the heading."
+        },
+        {
+          "name": "headerStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the title in the heading's row, such as a back button."
+        },
+        {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the heading's row, before a close button there, such as a Menu of more actions or an Open full page button."
         },
         {
           "name": "placement",
@@ -2722,22 +2820,16 @@
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
-          "name": "startIcon",
+          "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as IconAdd."
-        },
-        {
-          "name": "endIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
+          "description": "Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an envUI icon takes the button's icon size and other content keeps its own. It is hidden from assistive technology, since the label names the button."
         },
         {
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
+          "description": "Content after the label, at the far end of a full-width button, such as IconChevronRight for a next step, or a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button: an envUI icon takes the button's icon size and other content keeps its own."
         },
         {
           "name": "pending",
@@ -2745,42 +2837,16 @@
           "required": false,
           "default": "false",
           "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "Another element to render the button as, such as a label for a file input, or a router's own link in one place: the button's class, look, state attributes, content and handlers merge into its props. It takes no type or disabled attribute; disabled reports aria-disabled and blocks presses."
         }
       ],
       "native": [
         "button"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "DiffStat": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/DiffStat.tsx",
-      "description": "The size of a change as one compact pill, such as +12 −3: additions in the success tone and deletions in the danger tone, on a counter badge's quiet fill.",
-      "props": [
-        {
-          "name": "additions",
-          "type": "number",
-          "required": true,
-          "description": "Lines or items added, shown as +12 in the success tone, in the locale's digits; left out where it is 0 and deletions aren't."
-        },
-        {
-          "name": "deletions",
-          "type": "number",
-          "required": true,
-          "description": "Lines or items removed, shown as −3 in the danger tone, in the locale's digits; left out where it is 0 and additions aren't."
-        },
-        {
-          "name": "formatLabel",
-          "type": "(additions: number, deletions: number) => string",
-          "required": false,
-          "default": "'{additions} added lines and {deletions} removed lines'",
-          "description": "Full meaning for assistive technology. It overrides EnvUIProvider's `messages.diffStat.label`."
-        }
-      ],
-      "native": [
-        "span"
       ],
       "entries": [
         "@envsemble/envui"
@@ -2821,6 +2887,20 @@
           "type": "(open: boolean) => void",
           "required": false,
           "description": "Receives whether the details show, each time the disclosure opens or closes."
+        },
+        {
+          "name": "indicatorPlacement",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where the chevron sits in the summary: before its words, or after them, as in a Show more link."
+        },
+        {
+          "name": "panelLayout",
+          "type": "'stack' | 'flow'",
+          "required": false,
+          "default": "'stack'",
+          "description": "stack lays the details out one under another, a small gap apart; flow places them as given, so they keep their own spacing and flow, such as inline text."
         }
       ],
       "native": [
@@ -2861,19 +2941,19 @@
         },
         {
           "name": "onClose",
-          "type": "(id: string) => void",
+          "type": "(value: string) => void",
           "required": true,
           "description": "Called from a tab's close button, a middle click, Delete or Backspace on the focused tab, and Close in the tab's context menu."
         },
         {
           "name": "onPin",
-          "type": "(id: string) => void",
+          "type": "(value: string) => void",
           "required": false,
           "description": "Called when a tab is double-clicked, typically to keep a preview tab open."
         },
         {
           "name": "onReorder",
-          "type": "(ids: string[]) => void",
+          "type": "(values: string[]) => void",
           "required": false,
           "description": "Called with every tab's value in the new order when a tab is dragged to another place with a mouse or pen, or moved with Move left or Move right in its context menu, which also reach the keyboard and touch. Without it, the tabs keep their order."
         },
@@ -2900,7 +2980,7 @@
           "type": "(label: string) => string",
           "required": false,
           "default": "'Close {label}', or EnvUIProvider's messages.documentTabs.close",
-          "description": "The name of the context menu's item that closes a tab, and the tooltip of its close button."
+          "description": "The name of the context menu's item that closes a tab, and the tooltip of its close button, from the tab's text value."
         },
         {
           "name": "onCloseAll",
@@ -2921,6 +3001,12 @@
           "required": false,
           "default": "'Tab actions', or EnvUIProvider's messages.documentTabs.contextMenu",
           "description": "Accessible name of the context menu."
+        },
+        {
+          "name": "contextMenu",
+          "type": "(tab: DocumentTabsItem | null) => ReactNode",
+          "required": false,
+          "description": "The application's own items for the context menu of the tab people open it on, or of the strip around the tabs when the tab is null, such as Close others or Copy path. They come after the built-in items, past a separator."
         }
       ],
       "native": [
@@ -2939,7 +3025,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "What to drop or choose, such as \"Drop a logo here, or browse\". With the description, it names the zone, as its visible text does."
+          "description": "What to drop or choose, such as \"Drop a logo here, or browse\". With the description, it names the zone, as its visible text does; without the target, only assistive technology reads it."
         },
         {
           "name": "description",
@@ -2952,6 +3038,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "Replaces the upload icon."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content inside the zone, under its target, such as the chosen files with their previews and Remove buttons, or a Browse button that opens the file picker through inputRef. Files dropped on it are taken too; it can hold controls, since it is beside the target button, not inside it."
         },
         {
           "name": "accept",
@@ -3029,6 +3121,19 @@
           "type": "Ref<HTMLInputElement>",
           "required": false,
           "description": "The native file input that opens the file picker, for example from a Replace button; ref reaches the zone itself."
+        },
+        {
+          "name": "target",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show the target: the button with the icon, the label and the description that opens the file picker. Without it, the zone is a group the label names, for content that has its own Browse button, which opens the picker through inputRef, such as a table the files land in."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "Another element to render the zone as, such as the application's own panel or table region, which then takes dropped files: the zone's class, its state attributes, such as data-drag-over, and its handlers merge into its props."
         }
       ],
       "native": [
@@ -3041,13 +3146,19 @@
     "EmptyState": {
       "kind": "component",
       "source": "packages/ui/src/feedback/EmptyState.tsx",
-      "description": "What a region shows when it has nothing to show: an optional icon, a title, an optional description and optional actions, centred in the region it fills, and compact where that region is narrow.",
+      "description": "What a region shows when it has nothing to show: an optional illustration or icon, a title, an optional description and optional actions, centred in the region it fills, and compact where that region is narrow.",
       "props": [
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon above the title, such as the icon of what the region would list."
+          "description": "A decorative icon above the title, such as the icon of what the region would list, at the icon size of the region's width."
+        },
+        {
+          "name": "illustration",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A decorative illustration above the title, such as an SVG drawing or an image, at its own size and no wider than the region, in place of the icon where both are given. It is hidden from assistive technology."
         },
         {
           "name": "title",
@@ -3248,6 +3359,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "How to correct the value. Without children, the browser's validation message shows."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "the error icon",
+          "description": "The icon before the message, decorative, so hide an icon of your own from assistive technology, or null for none, such as for a compact error beside a control."
         }
       ],
       "native": [
@@ -3495,7 +3613,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+          "description": "A name for this node, such as \"filters\" or \"summary\", for the application's styles and tests to find it by; it renders as `data-env-name`. A component's part class names its node instead."
         },
         {
           "name": "container",
@@ -3512,6 +3630,32 @@
       ],
       "native": [
         "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Halo": {
+      "kind": "component",
+      "source": "packages/ui/src/feedback/Halo.tsx",
+      "description": "A soft halo that breathes around what it holds, to point at the one control or region to look at next, such as the first step of a tour. The halo stays outside the content and takes no room, and is hidden from assistive technology; it holds still with a reduced-motion preference.",
+      "props": [
+        {
+          "name": "tone",
+          "type": "'accent' | 'primary'",
+          "required": false,
+          "default": "'accent'",
+          "description": "The halo's color: accent, the purple that stands out, or primary, the blue of what is current. --env-halo-indicator gives it any other color, such as a brand's."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, a span that keeps an inline child, such as a Button, in its line; or render={<div />} around a block, such as a Card, so it keeps its width. Without children it is the box the ring surrounds, which the application places itself, such as with position absolute over a region it measured."
+        }
+      ],
+      "native": [
+        "span"
       ],
       "entries": [
         "@envsemble/envui"
@@ -3536,9 +3680,15 @@
         },
         {
           "name": "label",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Names the block in its heading and for assistive technology, such as a file name."
+          "description": "Names the block in its heading and for assistive technology, such as a file name, or content such as a file-type icon and a path link. Without one, the code takes the generic name of its language, such as Plain text code or TypeScript code, from messages.codeBlock.label."
+        },
+        {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the heading, before the copy button, such as Open in editor, Run, or a switch between npm, pnpm and yarn, placed as given."
         },
         {
           "name": "copyable",
@@ -3572,6 +3722,13 @@
           "type": "ReactElement",
           "required": true,
           "description": "The element that opens the card on hover and keyboard focus; it receives the ref. Text, such as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; give it tabIndex={0}, so keyboard focus reaches it, which envUI reports while developing. A link or another control keeps its own look."
+        },
+        {
+          "name": "underline",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether a text trigger takes the quiet dotted underline, env-hover-detail, that says it shows more on hover or focus. False leaves its class alone, for text styled its own way, such as"
         },
         {
           "name": "children",
@@ -3739,6 +3896,12 @@
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
           "description": "As Button's: the height, and the width, of the square button."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "As Button's: another element to render the button as, such as a label for a file input shaped like an icon button. Its class, look, state attributes, icon and handlers merge into that element's props; disabled reports aria-disabled and blocks presses."
         }
       ],
       "native": [
@@ -3756,9 +3919,16 @@
       "props": [
         {
           "name": "keys",
-          "type": "readonly string[]",
+          "type": "readonly ReactNode[]",
           "required": false,
-          "description": "Keys pressed together, such as ['Ctrl', 'P']: one key cap each, joined by +, inside an outer `<kbd>`. Without it, the children are one key."
+          "description": "Keys pressed together, such as ['Ctrl', 'P']: one key cap each, joined by the separator, inside an outer `<kbd>`. A key can be any content, such as an icon for an arrow or Return. Without it, the children are one key."
+        },
+        {
+          "name": "separator",
+          "type": "ReactNode",
+          "required": false,
+          "default": "'+'",
+          "description": "What joins the keys: a +, null for none, as in ⌘⇧P, or a word for keys pressed one after another, such as then in G then I."
         }
       ],
       "native": [
@@ -3868,14 +4038,14 @@
           "name": "control",
           "type": "ReactNode",
           "required": false,
-          "description": "The selection control the row is about, at the row's end: a Switch or a Checkbox, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice. A field, such as a Select, a TextField or a RadioGroup, belongs in a form, with its label above it."
+          "description": "The control of the setting the row is about, at the row's end: a Switch, a Checkbox, a Radio or a field, such as a Select or a SegmentedControl, given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice."
         },
         {
           "name": "interactive",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The row opens something through a link or button inside: it reacts to hover, keyboard focus inside it and presses. Mark that link or button `data-row-target` to stretch it over the row."
+          "description": "The row opens something through a link or button inside: it reacts to hover, keyboard focus inside it and presses. Mark that link or button `data-row-target` to stretch it over the row; the other links, buttons and fields in the row, such as an author's link in the description, stay clickable above it."
         },
         {
           "name": "current",
@@ -3937,6 +4107,12 @@
           "description": "A sentence under the title, in muted text, such as what the group's settings change. It describes the list."
         },
         {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the title's line, outside the heading, such as an Add Button, a Manage link or a count, placed as given; it wraps below the title when it doesn't fit beside it."
+        },
+        {
           "name": "density",
           "type": "'xs' | 'sm' | 'md' | 'lg'",
           "required": false,
@@ -3947,7 +4123,14 @@
           "name": "onReorder",
           "type": "(from: number, to: number) => void",
           "required": false,
-          "description": "Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it, by pressing it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The rows are the list's children, directly or in arrays and fragments: List.Item elements, or elements of a row component that passes the props it doesn't use on to its List.Item, such as `function SlideRow({ slide, ...props }) { return <List.Item {...props} label={slide} />; }`."
+          "description": "Makes the rows reorderable: each row gets a drag handle, at its start unless handlePlacement puts it at its end, moved by dragging it, by pressing it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The rows are the list's children, directly or in arrays and fragments: List.Item elements, or elements of a row component that passes the props it doesn't use on to its List.Item, such as `function SlideRow({ slide, ...props }) { return <List.Item {...props} label={slide} />; }`."
+        },
+        {
+          "name": "handlePlacement",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where each row's drag handle sits in a list with onReorder: at the row's start, before its start content, or at its end, after its end content and its control."
         },
         {
           "name": "skeleton",
@@ -3989,6 +4172,13 @@
           "description": "Receives safe hrefs and native anchor props. Retain a real anchor destination."
         },
         {
+          "name": "allowLinkSchemes",
+          "type": "readonly string[]",
+          "required": false,
+          "default": "[]",
+          "description": "Schemes a link may take beside the safe ones, such as `['vscode']` for links that open the editor, or the application's own. A link keeps a relative destination or an http, https, mailto, irc, ircs or xmpp one either way; one with another scheme renders as plain text. javascript, data and vbscript are refused even when listed, since a link with one runs code or opens content the application didn't write."
+        },
+        {
           "name": "codeCopyable",
           "type": "boolean",
           "required": false,
@@ -4012,125 +4202,17 @@
           "type": "Options['rehypePlugins']",
           "required": false,
           "description": "rehype plugins, such as heading ids; envUI adds none of its own."
+        },
+        {
+          "name": "allowHtml",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Keeps raw HTML in the Markdown, such as details, sub, sup or an img with a width, for trusted content such as the application's own docs or a README. Only rehype-raw in rehypePlugins renders it, so give a sanitizer with it, such as rehype-sanitize. Without it, raw HTML is dropped, apart from kbd around plain text."
         }
       ],
       "native": [
         "div"
-      ],
-      "entries": [
-        "@envsemble/envui/markdown"
-      ]
-    },
-    "MarkdownEditor": {
-      "kind": "component",
-      "source": "packages/ui/src/content/MarkdownEditor.tsx",
-      "description": "Native Markdown source editing, shared formatting history, and optional preview. Its toolbar, views and status come from EnvUIProvider's messages: markdownEditor, editor and linkDialog.",
-      "props": [
-        {
-          "name": "ref",
-          "type": "Ref<HTMLTextAreaElement>",
-          "required": false,
-          "description": "The native text area of the source, so that a form library can register it and focus it."
-        },
-        {
-          "name": "value",
-          "type": "string",
-          "required": false,
-          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
-        },
-        {
-          "name": "defaultValue",
-          "type": "string",
-          "required": false,
-          "default": "''",
-          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": false,
-          "description": "Receives the whole source after typing, formatting, undo or redo."
-        },
-        {
-          "name": "toolbar",
-          "type": "readonly MarkdownCommand[] | false",
-          "required": false,
-          "default": "['heading', 'bold', 'italic', 'inline-code', 'bullet-list', 'numbered-list', 'quote', 'code-block', 'link']",
-          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
-        },
-        {
-          "name": "preview",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Show the Write and Preview switch above the source. Preview uses the same public Markdown renderer."
-        },
-        {
-          "name": "previewProps",
-          "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
-          "required": false,
-          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
-        },
-        {
-          "name": "pickLink",
-          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
-          "required": false,
-          "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
-        },
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "Styles of the field's root element, such as its width in a row."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "The field's class, on its root element, beside env-field, env-text-field and env-textarea."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
-        },
-        {
-          "name": "rows",
-          "type": "number",
-          "required": false,
-          "default": "8",
-          "description": "The lines the field shows: with fixed sizing, its height in rows, which resizes down to them or to 7.5 rem, whichever is less; with content sizing, the lines it starts at and shrinks back to. Without rows, both start at 7.5 rem."
-        },
-        {
-          "name": "variant",
-          "type": "'outline' | 'ghost'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The field's look, as TextField's: outline or ghost."
-        },
-        {
-          "name": "error",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
-        },
-        {
-          "name": "sizing",
-          "type": "'fixed' | 'content'",
-          "required": false,
-          "default": "'fixed'",
-          "description": "How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom edge, by dragging it or with the arrow keys; content grows and shrinks with the text."
-        }
-      ],
-      "native": [
-        "textarea"
       ],
       "entries": [
         "@envsemble/envui/markdown"
@@ -4200,16 +4282,23 @@
           "description": "Class of the item's row."
         },
         {
-          "name": "icon",
+          "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as Settings."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
           "description": "The item's label, which names it."
+        },
+        {
+          "name": "textValue",
+          "type": "string",
+          "required": false,
+          "default": "children, when it is a string",
+          "description": "The label as plain text, which typing a letter in the open menu matches, where children isn't a string, such as a label with a Badge or emphasis inside."
         },
         {
           "name": "description",
@@ -4228,9 +4317,17 @@
           "type": "ReactNode",
           "required": false,
           "description": "End content, such as a Badge or a count; it is part of the item's name."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The item's row element."
         }
       ],
-      "native": [],
+      "native": [
+        "element"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -4317,16 +4414,23 @@
           "description": "Class of the item's row."
         },
         {
-          "name": "icon",
+          "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as Settings."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
           "description": "The item's label, which names it."
+        },
+        {
+          "name": "textValue",
+          "type": "string",
+          "required": false,
+          "default": "children, when it is a string",
+          "description": "The label as plain text, which typing a letter in the open menu matches, where children isn't a string, such as a label with a Badge or emphasis inside."
         },
         {
           "name": "description",
@@ -4347,6 +4451,18 @@
           "description": "End content, such as a Badge or a count; it is part of the item's name."
         },
         {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The item's row element."
+        },
+        {
+          "name": "rel",
+          "type": "string",
+          "required": false,
+          "description": "The destination's relationship to the page, such as noopener, as on a native link."
+        },
+        {
           "name": "href",
           "type": "string",
           "required": false,
@@ -4365,10 +4481,11 @@
           "description": "Where the destination opens, such as _blank, as on a native link."
         },
         {
-          "name": "rel",
-          "type": "string",
+          "name": "closeOnClick",
+          "type": "boolean",
           "required": false,
-          "description": "The destination's relationship to the page, such as noopener, as on a native link."
+          "default": "true",
+          "description": "Close the menu once the action runs; false keeps it open, for an action people repeat, such as Zoom in."
         }
       ],
       "native": [
@@ -4450,7 +4567,7 @@
           "name": "closeOnClick",
           "type": "boolean",
           "required": false,
-          "default": "true",
+          "default": "true, or the closeOnClick of the ThemeMenuRadioGroup around it",
           "description": "Close the menu after choosing."
         },
         {
@@ -4466,25 +4583,40 @@
           "description": "The item's label, which names it."
         },
         {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+        },
+        {
           "name": "end",
           "type": "ReactNode",
           "required": false,
           "description": "End content, such as a Badge or a count; it is part of the item's name."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
+          "name": "textValue",
+          "type": "string",
           "required": false,
-          "description": "A decorative icon before the label, such as Settings."
+          "default": "children, when it is a string",
+          "description": "The label as plain text, which typing a letter in the open menu matches, where children isn't a string, such as a label with a Badge or emphasis inside."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "A second, muted line; announced as the item's description."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The item's row element."
         }
       ],
-      "native": [],
+      "native": [
+        "element"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -4647,10 +4779,29 @@
           "description": "The submenu popup's inline style."
         },
         {
-          "name": "icon",
+          "name": "triggerProps",
+          "type": "TriggerProps",
+          "required": false,
+          "description": "Attributes of the row that opens the submenu, such as a className, a style, a ref or a data attribute; the submenu's own className, style and ref are its popup's."
+        },
+        {
+          "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as Settings."
+          "description": "Content before the label, such as the Settings icon or an Avatar in an account switcher: an envUI icon takes the icon size and other content keeps its own, and the labels of the menu's rows still line up. It is hidden from assistive technology, since the label names the item."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
+        },
+        {
+          "name": "textValue",
+          "type": "string",
+          "required": false,
+          "default": "children, when it is a string",
+          "description": "The label as plain text, which typing a letter in the open menu matches, where children isn't a string, such as a label with a Badge or emphasis inside."
         },
         {
           "name": "description",
@@ -4687,13 +4838,19 @@
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The trigger's text, such as File."
+          "description": "The trigger's text, such as File, or content such as an icon beside the text."
         },
         {
           "name": "accessKey",
           "type": "string",
           "required": false,
-          "description": "A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines it and Alt with the letter opens the menu."
+          "description": "A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines it, in the label's text also beside an icon or inside an element such as a span, and Alt with the letter opens the menu."
+        },
+        {
+          "name": "triggerProps",
+          "type": "TriggerProps",
+          "required": false,
+          "description": "Attributes of the trigger button, such as a className, a style, a ref or a data attribute; the menu's own className, style and ref are its popup's."
         },
         {
           "name": "children",
@@ -4729,7 +4886,7 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean, details: MenuFocusDetails) => void",
+          "type": "(open: boolean, details: OpenChangeDetails) => void",
           "required": false,
           "description": "Called when the menu opens or closes, with the element that had focus before the menubar took it."
         },
@@ -4811,9 +4968,15 @@
         },
         {
           "name": "author",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Who wrote the message, such as a name, shown above it at weight 500. Leave it out where the conversation makes it clear, such as on your own messages in a conversation with one person."
+          "description": "Who wrote the message, such as a name, shown above it at weight 500, or content such as a link to their profile with a Bot or Owner Badge. Leave it out where the conversation makes it clear, such as on your own messages in a conversation with one person."
+        },
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content beside the message, at its inline start, placed as given, such as the author's Avatar or an assistant's mark, in a column of its own beside the header and the content."
         },
         {
           "name": "meta",
@@ -4829,22 +4992,22 @@
         },
         {
           "name": "status",
-          "type": "'sending' | 'failed'",
+          "type": "'sending' | 'failed' | 'working'",
           "required": false,
-          "description": "A message on its way, sending, with a spinner and Sending; or one that could not be sent, failed, with an error icon and Not sent in the danger tone and, on your own message, a red outline around the bubble. Without it the message is sent."
+          "description": "A message on its way, sending, with a spinner and Sending; one that could not be sent, failed, with an error icon and Not sent in the danger tone and, on your own message, a red outline around the bubble; or a reply still being written, working, with a spinner and Working, such as an agent's while it runs, last in a MessageList with aria-busy. Without it the message is sent."
         },
         {
           "name": "statusLabel",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "default": "'Sending' or 'Not sent'",
-          "description": "The text beside the status icon, such as \"Could not deliver\". It overrides EnvUIProvider's `messages.message.sending` and `.failed`."
+          "default": "'Sending', 'Not sent' or 'Working'",
+          "description": "The content beside the status icon, such as \"Could not deliver\", a sentence with a Try again link or the step a reply is on, Running tests…. It overrides EnvUIProvider's `messages.message.sending`, `.failed` and `.working`."
         },
         {
           "name": "children",
           "type": "ReactNode",
-          "required": true,
-          "description": "The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the width of a message from someone else."
+          "required": false,
+          "description": "The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the width of a message from someone else. A working message shows the reply streamed so far, or only its status while it is empty."
         },
         {
           "name": "skeleton",
@@ -4864,28 +5027,8 @@
     "MessageList": {
       "kind": "component",
       "source": "packages/ui/src/content/Message.tsx",
-      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. Set busy while a reply is on its way or streams in, and follow where the list scrolls by itself. Name it with aria-label or aria-labelledby.",
+      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. While a reply is on its way or streams in, set aria-busy, so assistive technology waits for it to finish instead of announcing every step, and show it as a Message with status working, last. Set follow where the list scrolls by itself. Name it with aria-label or aria-labelledby.",
       "props": [
-        {
-          "name": "busy",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "A reply is on its way or streaming in: after the last message, where the reply will show, a row with the busy author, a quiet spinner and Working in the muted color; and the log reports aria-busy, so assistive technology can wait for the reply to finish instead of announcing every step."
-        },
-        {
-          "name": "busyAuthor",
-          "type": "string",
-          "required": false,
-          "description": "Who the reply on its way comes from, such as Agent, named on the busy row as a message's author."
-        },
-        {
-          "name": "busyLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Working'",
-          "description": "The text beside the busy spinner, such as \"Thinking\". It overrides EnvUIProvider's `messages.message.working`."
-        },
         {
           "name": "follow",
           "type": "boolean",
@@ -4920,10 +5063,17 @@
           "description": "The measurement, between min and max. A value outside the range shows, and is reported, as the nearest end."
         },
         {
+          "name": "layout",
+          "type": "'stacked' | 'inline'",
+          "required": false,
+          "default": "'stacked'",
+          "description": "stacked puts the label and the value on a row above the bar; inline puts the label, the bar and the value on one line, as in a table's usage column or a list row."
+        },
+        {
           "name": "label",
           "type": "ReactNode",
-          "required": true,
-          "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
+          "required": false,
+          "description": "What the bar shows, such as Seats assigned; it shows with the bar and names it. Leave it out for a bare bar named with aria-label or aria-labelledby, such as by the name beside it in a row; without a label or valueText the bar has no row above it."
         },
         {
           "name": "min",
@@ -4964,6 +5114,12 @@
       "source": "packages/ui/src/forms/MonthPicker.tsx",
       "description": "A field for a month of a year that shows the value in the reader's locale and opens a year of months to choose it from, with keyboard access like Calendar's.",
       "props": [
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: MonthPickerOpenChangeDetails) => void",
+          "required": false,
+          "description": "Called with the new state, and why, when the popup opens or closes."
+        },
         {
           "name": "value",
           "type": "string | null",
@@ -5100,10 +5256,16 @@
           "description": "Whether an uncontrolled popup starts open; closed by default."
         },
         {
-          "name": "onOpenChange",
-          "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
+          "name": "popupHeader",
+          "type": "ReactNode",
           "required": false,
-          "description": "Called with the new state, and why, when the popup opens or closes."
+          "description": "Content at the top of the popup, above the calendar or the list, such as presets: buttons for Tomorrow or Next Monday that set the value, from a field the application controls."
+        },
+        {
+          "name": "popupFooter",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the popup's footer, after its shortcut to the current date or time and before Clear, such as a note of the time zone or another action."
         },
         {
           "name": "label",
@@ -5161,6 +5323,13 @@
           "required": false,
           "default": "'default'",
           "description": "The bar's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
+        },
+        {
+          "name": "visibleLabel",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether the destinations' labels show under their icons. False shows the icons only, for an icon-only bar such as a code editor's activity bar: each label still names its destination and shows in a tooltip on hover and keyboard focus."
         },
         {
           "name": "aria-label",
@@ -5225,6 +5394,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
+        },
+        {
+          "name": "groupEnd",
+          "type": "(group: string) => ReactNode",
+          "required": false,
+          "description": "Content after a group's heading, outside it, such as an IconButton that adds a project to Projects, a Menu of the group's actions or a count. It keeps its size, and the heading gives way to it."
         },
         {
           "name": "headingLevel",
@@ -5340,6 +5515,13 @@
           "description": "The rail's background, named as Surface's and Card's: default, the default surface color, the app frame's own fill that stands apart from the page; page, the page's background, the same as the content beside it, from which a Scaffold sets it apart with a hairline. On a surface, such as a Sheet, both take the surface's color."
         },
         {
+          "name": "visibleLabel",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether the destinations' labels show under their icons. False shows the icons only, for an icon-only rail such as a code editor's activity bar: each label still names its destination and shows in a tooltip on hover and keyboard focus."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,
@@ -5390,7 +5572,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"settings\", which dev mode and the docs show; it renders as `data-env-name`."
+          "description": "A name for this node, such as \"settings\", for the application's styles and tests to find it by; it renders as `data-env-name`."
         },
         {
           "name": "render",
@@ -5486,6 +5668,12 @@
           "required": false,
           "default": "true",
           "description": "In a Scaffold, moves focus to the title of a level 1 header when the page changes: as a new page's header mounts after the Scaffold first showed, not as a title changes. People using a screen reader then hear the new page, and the next Tab starts from it. Focus moved there shows no ring, and focus in a field or an open overlay stays where it is. False leaves focus to the application."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "More rows under the toolbar, placed as given, such as a progress strip or an inline Alert. They stay in the header, so they stick with it."
         }
       ],
       "native": [
@@ -5511,7 +5699,7 @@
     "Pager.Next": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next (EnvUIProvider's messages.pager.next), and an optional icon after them. It also stands alone, outside Pager.Root.",
+      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next (EnvUIProvider's messages.pager.next), and optional content after them, its end. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
@@ -5526,17 +5714,24 @@
           "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
-        },
-        {
           "name": "rel",
           "type": "string",
           "required": false,
           "default": "'prev' on Pager.Previous, 'next' on Pager.Next",
           "description": "The link's relation to this page."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "default": "'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next",
+          "description": "The direction label above the title, such as Previous chapter or Back to setup, for this link alone; null leaves it out."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content after the text, such as IconArrowForward: an envUI icon takes the pager's icon size and other content keeps its own. It is hidden from assistive technology; none by default."
         }
       ],
       "native": [
@@ -5549,7 +5744,7 @@
     "Pager.Previous": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous (EnvUIProvider's messages.pager.previous), and an optional icon before them. It also stands alone, outside Pager.Root.",
+      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous (EnvUIProvider's messages.pager.previous), and optional content before them, its start. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
@@ -5564,17 +5759,24 @@
           "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
-        },
-        {
           "name": "rel",
           "type": "string",
           "required": false,
           "default": "'prev' on Pager.Previous, 'next' on Pager.Next",
           "description": "The link's relation to this page."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "default": "'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next",
+          "description": "The direction label above the title, such as Previous chapter or Back to setup, for this link alone; null leaves it out."
+        },
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the text, such as IconArrowBack: an envUI icon takes the pager's icon size and other content keeps its own. It is hidden from assistive technology; none by default."
         }
       ],
       "native": [
@@ -5587,7 +5789,7 @@
     "Pager.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous and Pager.Next children; either one can be left out, and without any it renders nothing.",
+      "description": "A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous and Pager.Next children; either one can be left out, and without any it renders nothing. Where the two don't fit side by side, they stack as rows of the pager's width, the previous first.",
       "props": [
         {
           "name": "children",
@@ -5641,12 +5843,6 @@
           "description": "Whether a later page exists, for a list without total, such as from a cursor's has more."
         },
         {
-          "name": "onPageChange",
-          "type": "(page: number) => void",
-          "required": true,
-          "description": "Receives the page before or after the current one when its button is pressed. The application loads that page and passes it back as page."
-        },
-        {
           "name": "pending",
           "type": "boolean",
           "required": false,
@@ -5661,11 +5857,11 @@
           "description": "Render nothing while every item fits on one page, so neither button has anywhere to go."
         },
         {
-          "name": "formatRange",
+          "name": "renderRange",
           "type": "(range: PaginationRange) => ReactNode",
           "required": false,
           "default": "1–60 of 245, or 61–120 without total, with numbers in the locale",
-          "description": "Writes the range from the first and last item shown, the total, the page and the page count, for one pager; EnvUIProvider's messages.pagination.range writes it for every pager."
+          "description": "Draws the range from the first and last item shown, the total, the page and the page count, for one pager; EnvUIProvider's messages.pagination.range writes it for every pager."
         },
         {
           "name": "previousLabel",
@@ -5700,6 +5896,20 @@
           "required": false,
           "default": "'Pagination', or EnvUIProvider's messages.pagination.label",
           "description": "The navigation landmark's name, such as Report pages, where a page has more than one."
+        },
+        {
+          "name": "onPageChange",
+          "type": "(page: number) => void",
+          "required": false,
+          "requiredWhen": "`pageHref` is not set",
+          "description": "Receives the page before or after the current one when its button is pressed. The application loads that page and passes it back as page. Give it, or pageHref, or both."
+        },
+        {
+          "name": "pageHref",
+          "type": "(page: number) => string",
+          "required": false,
+          "requiredWhen": "`onPageChange` is not set",
+          "description": "The address of a page, such as `?page=3`, for a list whose pages have their own URLs: the previous and next controls are then links, through the LinkProvider's link component, which open in a new tab, are crawlable and work before hydration. A control with no page to go to reports aria-disabled and has no destination."
         }
       ],
       "native": [
@@ -5783,7 +5993,7 @@
     "Panes.Root": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "A region split into two panes side by side, such as a list and its detail: one pane has a width of its own, which a Panes.ResizeHandle between them resizes, and the other takes the rest. Each pane's content scrolls on its own under its header when Panes has a height. With `stackBelow` the panes stack in a narrow region. Panes fill their region with square corners; an application rounds them with its own class, and the panes follow, since the root clips them.",
+      "description": "A region split into two panes side by side, such as a list and its detail: one pane has a width of its own, which a Panes.ResizeHandle between them resizes, and the other takes the rest. Each pane's content scrolls on its own under its header when Panes has a height. With `stackBelow` the panes stack in a narrow region. A pane the application renders alone, such as the list while no item is open, fills the region and the handle hides. Panes fill their region with square corners; an application rounds them with its own class, and the panes follow, since the root clips them.",
       "props": [
         {
           "name": "sized",
@@ -5809,7 +6019,7 @@
           "type": "number",
           "required": false,
           "default": "22.5",
-          "description": "The sized pane's width in rem until people choose one with Panes.ResizeHandle, or one is kept under `persist`, and the width a double click on the handle returns it to."
+          "description": "The sized pane's width in rem until people choose one with Panes.ResizeHandle, and the width a double click on the handle returns it to. To keep the width people choose, store what onWidthChange receives and pass it back here."
         },
         {
           "name": "onWidthChange",
@@ -5832,22 +6042,10 @@
           "description": "The sized pane's largest width, in rem. It never leaves the other pane less than 16 rem."
         },
         {
-          "name": "persist",
-          "type": "string",
-          "required": false,
-          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the handle forgets it and returns to `defaultWidth`. Read it on the server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
-        },
-        {
-          "name": "persistedWidth",
-          "type": "number",
-          "required": false,
-          "description": "The width kept under `persist`, in rem, as the server read it from the request's cookies with `readPanesWidth`: the first render uses it, on the server and in the browser alike."
-        },
-        {
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"inbox\", which dev mode and the docs show; it renders as `data-env-name`."
+          "description": "A name for this node, such as \"inbox\", for the application's styles and tests to find it by; it renders as `data-env-name`."
         },
         {
           "name": "children",
@@ -5871,8 +6069,15 @@
         {
           "name": "trigger",
           "type": "ReactElement",
-          "required": true,
-          "description": "The control that opens and closes the popover, such as a Button or an IconButton. It must take a ref and props: it receives the press handler, aria-haspopup and aria-expanded."
+          "required": false,
+          "description": "The control that opens and closes the popover, such as a Button or an IconButton. It must take a ref and props: it receives the press handler, aria-haspopup and aria-expanded. Leave it out for a popover the application opens with open, beside its anchor."
+        },
+        {
+          "name": "anchor",
+          "type": "PopoverAnchor",
+          "required": false,
+          "default": "the trigger",
+          "description": "What the popover opens beside where that isn't its trigger, such as a table cell, a word in the text or a range of selected text: an element, its ref, or a virtual element with a getBoundingClientRect."
         },
         {
           "name": "title",
@@ -5997,8 +6202,8 @@
         {
           "name": "label",
           "type": "ReactNode",
-          "required": true,
-          "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
+          "required": false,
+          "description": "What the bar shows, such as Seats assigned; it shows with the bar and names it. Leave it out for a bare bar named with aria-label or aria-labelledby, such as by the name beside it in a row; without a label or valueText the bar has no row above it."
         },
         {
           "name": "min",
@@ -6066,14 +6271,21 @@
         {
           "name": "label",
           "type": "ReactNode",
-          "required": true,
-          "description": "The option's visible name, such as Private; pressing it chooses the option."
+          "required": false,
+          "description": "The option's visible name, such as Private; pressing it chooses the option. Without it, a List.Item whose control it is names it, such as a plan's row with its price and features, or name it with aria-label or aria-labelledby, such as a radio in a table's cell."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "A short, muted line under the label that helps people choose, such as Only the people you invite. It is part of the option's label, so it is read with its name."
+        },
+        {
+          "name": "labelPlacement",
+          "type": "'end' | 'start'",
+          "required": false,
+          "default": "'end'",
+          "description": "Where the label sits beside the radio: end, after it, or start, before it, such as in an inline row whose label leads; the native label still names the radio."
         }
       ],
       "native": [
@@ -6098,7 +6310,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, name it with aria-label or aria-labelledby."
+          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, a List.Item whose control it is names it, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "value",
@@ -6165,46 +6377,6 @@
         "@envsemble/envui"
       ]
     },
-    "Rating": {
-      "kind": "component",
-      "source": "packages/ui/src/data-display/Rating.tsx",
-      "description": "A read-only rating, such as a review score: stars filled to the value in half steps in their own gold, with an optional number before them, named once for assistive technology as an image, such as \"4.5 out of 5 stars\". It shows a rating; it does not ask for one.",
-      "props": [
-        {
-          "name": "value",
-          "type": "number",
-          "required": true,
-          "description": "The rating, from 0 to max, such as 4.5. It shows rounded to the nearest half star, kept within 0 and max; a value that is not a number, such as NaN, shows no stars filled."
-        },
-        {
-          "name": "max",
-          "type": "number",
-          "required": false,
-          "default": "5",
-          "description": "How many stars the scale has, as a whole number, such as 10. A fraction rounds to the nearest whole star; a value below 1 or not a number shows 5 stars."
-        },
-        {
-          "name": "showValue",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the rating as a number before the stars, such as 4.5, in tabular digits and the locale's number format, such as 4,5 in German. The number is the rounded value the stars show, and it is hidden from assistive technology, since the stars' name already says it."
-        },
-        {
-          "name": "formatLabel",
-          "type": "(value: number, max: number) => string",
-          "required": false,
-          "default": "'{value} out of {max} stars'",
-          "description": "Writes the accessible name of the stars from the shown value, rounded to a half star, and the number of stars. It overrides EnvUIProvider's `messages.rating.label`, which receives both as text in the locale's number format."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "RelativeTime": {
       "kind": "component",
       "source": "packages/ui/src/data-display/RelativeTime.tsx",
@@ -6228,6 +6400,12 @@
           "required": false,
           "default": "true",
           "description": "Show the date and time in a tooltip on hover, such as \"Oct 14, 2026, 9:41 AM\", in the reader's time zone and the locale. Turn it off where the exact moment shows nearby. Inside an application's own Tooltip, that one describes the time instead."
+        },
+        {
+          "name": "renderTooltip",
+          "type": "(date: Date) => ReactNode",
+          "required": false,
+          "description": "The tooltip's content from the moment, such as the time with its time zone, in UTC, or \"Edited by Alex Morgan at 9:41\"; the date and time in the locale by default."
         },
         {
           "name": "locale",
@@ -6362,224 +6540,6 @@
         "@envsemble/envui"
       ]
     },
-    "RichText": {
-      "kind": "component",
-      "source": "packages/ui/src/forms/rich-text/RichText.tsx",
-      "description": "Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it shows what RichTextEditor wrote, references included, with envUI's links, code and checkboxes. It renders on the server too.",
-      "props": [
-        {
-          "name": "children",
-          "type": "string",
-          "required": true,
-          "description": "The Markdown to show, such as what RichTextEditor saved."
-        },
-        {
-          "name": "extensions",
-          "type": "AnyExtension[]",
-          "required": false,
-          "default": "[]",
-          "description": "Tiptap extensions added to the shared schema, such as a custom mark. They must parse and write Markdown, and the array must stay the same between renders, such as at module scope; a new array starts a new editing session. Pass the same extensions to RichText."
-        },
-        {
-          "name": "renderReference",
-          "type": "(reference: RichTextReference, context: { readOnly: boolean; selected: boolean }) => ReactNode",
-          "required": false,
-          "default": "the trigger and the label, such as #Launch",
-          "description": "Renders a reference's content, such as an avatar beside the name; it receives whether the document is read-only and whether the reference is selected."
-        },
-        {
-          "name": "onReferenceClick",
-          "type": "(reference: RichTextReference, event: MouseEvent<HTMLElement>) => void",
-          "required": false,
-          "description": "Called when people activate a reference, with the reference and the event, such as to open the record. A reference with an href is a link, which the editor never follows while it is editable; without an href, this makes the reference a button."
-        },
-        {
-          "name": "onLinkClick",
-          "type": "(href: string, event: RichTextLinkEvent) => void",
-          "required": false,
-          "description": "Called when people activate a link in the document, with its href and the event: a native MouseEvent in the editor, a React mouse event in RichText. The editor never follows links while editable; call preventDefault to keep RichText or a read-only editor from following it."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui/rich-text"
-      ]
-    },
-    "RichTextEditor": {
-      "kind": "component",
-      "source": "packages/ui/src/forms/rich-text/RichTextEditor.tsx",
-      "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
-      "props": [
-        {
-          "name": "editorRef",
-          "type": "Ref<RichTextEditorHandle>",
-          "required": false,
-          "description": "Gives the Tiptap editor, as editorRef.current.editor, for commands."
-        },
-        {
-          "name": "value",
-          "type": "string",
-          "required": false,
-          "description": "The Markdown of a controlled editor; update it from onValueChange. A new value from outside, such as another draft, replaces the document and keeps the caret where it can."
-        },
-        {
-          "name": "defaultValue",
-          "type": "string",
-          "required": false,
-          "default": "''",
-          "description": "The Markdown an uncontrolled editor starts with, and returns to when its form resets."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(markdown: string) => void",
-          "required": false,
-          "description": "Receives the document as Markdown after every edit, normalized by the editor's schema, so it can differ from the Markdown it was given, such as * for _ around italics."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "required": false,
-          "description": "Submits the Markdown with a native form under this name, through a hidden input."
-        },
-        {
-          "name": "form",
-          "type": "string",
-          "required": false,
-          "description": "The ID of the form the hidden input belongs to, where the editor sits outside it."
-        },
-        {
-          "name": "placeholder",
-          "type": "string",
-          "required": false,
-          "description": "Text shown in an empty document, such as what to write."
-        },
-        {
-          "name": "disabled",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Makes the editor unavailable: it cannot be edited or focused, the toolbar is disabled, its value is left out of form submission and it takes the shared disabled opacity."
-        },
-        {
-          "name": "readOnly",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the document without editing it: the toolbar is disabled and the document cannot be focused, but its links and references can, and the form still submits its value."
-        },
-        {
-          "name": "toolbar",
-          "type": "readonly RichTextCommand[] | false",
-          "required": false,
-          "default": "every command, from heading to table",
-          "description": "The toolbar's commands, in order, or false for no toolbar; Undo and Redo, and Attach files with onUpload, follow them."
-        },
-        {
-          "name": "references",
-          "type": "readonly RichTextReferenceSource[]",
-          "required": false,
-          "default": "[]",
-          "description": "Kinds of references people insert by typing a trigger, such as @ for people and # for topics, each with its own lookup. Triggers must be unique, and the array must stay the same between renders, such as at module scope."
-        },
-        {
-          "name": "slashCommands",
-          "type": "boolean | readonly RichTextSlashCommand[]",
-          "required": false,
-          "default": "false",
-          "description": "Typing / opens a menu of block commands: true offers heading, the lists, quote, code block and table; an array adds the application's commands after them. A / reference source can't be used beside it."
-        },
-        {
-          "name": "pickLink",
-          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
-          "required": false,
-          "description": "Opens the application's own link picker for Insert link, with the selected text, instead of the built-in dialog. Return the link, null to cancel, or a promise of either. A selection becomes a link to its href; at the caret, the label is inserted as the link's text."
-        },
-        {
-          "name": "onUpload",
-          "type": "(file: File, request: { signal: AbortSignal }) => RichTextAttachment | null | Promise<RichTextAttachment | null>",
-          "required": false,
-          "description": "Uploads a file people chose with Attach files, which shows in the toolbar only with this. Return where it lives as an attachment, null to skip it, or a promise of either; the signal aborts when the editor becomes read-only or disabled, or when a controlled value changes."
-        },
-        {
-          "name": "accept",
-          "type": "string",
-          "required": false,
-          "description": "The file types Attach files offers, as in a file input's accept, such as \"image/*,.pdf\"."
-        },
-        {
-          "name": "multiple",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Lets people choose several files at once with Attach files."
-        },
-        {
-          "name": "variant",
-          "type": "'outline' | 'ghost'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it."
-        },
-        {
-          "name": "minRows",
-          "type": "number",
-          "required": false,
-          "description": "Lines of text the document is tall enough for while it holds fewer, such as 2 for a short note in a card; it grows with its text. Without it the document is at least 10 rem tall."
-        },
-        {
-          "name": "extensions",
-          "type": "AnyExtension[]",
-          "required": false,
-          "default": "[]",
-          "description": "Tiptap extensions added to the shared schema, such as a custom mark. They must parse and write Markdown, and the array must stay the same between renders, such as at module scope; a new array starts a new editing session. Pass the same extensions to RichText."
-        },
-        {
-          "name": "renderReference",
-          "type": "(reference: RichTextReference, context: { readOnly: boolean; selected: boolean }) => ReactNode",
-          "required": false,
-          "default": "the trigger and the label, such as #Launch",
-          "description": "Renders a reference's content, such as an avatar beside the name; it receives whether the document is read-only and whether the reference is selected."
-        },
-        {
-          "name": "onReferenceClick",
-          "type": "(reference: RichTextReference, event: MouseEvent<HTMLElement>) => void",
-          "required": false,
-          "description": "Called when people activate a reference, with the reference and the event, such as to open the record. A reference with an href is a link, which the editor never follows while it is editable; without an href, this makes the reference a button."
-        },
-        {
-          "name": "onLinkClick",
-          "type": "(href: string, event: RichTextLinkEvent) => void",
-          "required": false,
-          "description": "Called when people activate a link in the document, with its href and the event: a native MouseEvent in the editor, a React mouse event in RichText. The editor never follows links while editable; call preventDefault to keep RichText or a read-only editor from following it."
-        },
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The field's visible name, above the field, such as Project name; it also names the control for assistive technology."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
-        },
-        {
-          "name": "error",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui/rich-text"
-      ]
-    },
     "Row": {
       "kind": "component",
       "source": "packages/ui/src/layout/Layout.tsx",
@@ -6628,7 +6588,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+          "description": "A name for this node, such as \"filters\" or \"summary\", for the application's styles and tests to find it by; it renders as `data-env-name`. A component's part class names its node instead."
         },
         {
           "name": "container",
@@ -6653,13 +6613,25 @@
     "Scaffold": {
       "kind": "component",
       "source": "packages/ui/src/layout/Scaffold.tsx",
-      "description": "The invisible structure of an application's screen: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
+      "description": "The invisible structure of an application's screen: a top bar region, a navigation region and the body, with an optional aside region and bottom bar. It never paints. It shows one navigation form at a time by its own width: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
       "props": [
         {
           "name": "topBar",
           "type": "ReactNode",
           "required": false,
           "description": "The top bar region, above the body: usually a TopBar."
+        },
+        {
+          "name": "aside",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A region at the end edge, beside the body and under the top bar, such as an inspector, at the width of its content and scrolling on its own. It stays in view as the rail does."
+        },
+        {
+          "name": "bottomBar",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A bar along the bottom of the body and the aside region, such as a status bar, above a NavigationBar. It stays in view as the top bar does, and focus scrolls clear of it."
         },
         {
           "name": "navigation",
@@ -6726,7 +6698,7 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": "A name for this node, such as \"app\", which dev mode and the docs show; it renders as `data-env-name`."
+          "description": "A name for this node, such as \"app\", for the application's styles and tests to find it by; it renders as `data-env-name`."
         },
         {
           "name": "children",
@@ -6749,9 +6721,15 @@
       "props": [
         {
           "name": "label",
-          "type": "string",
+          "type": "ReactNode",
           "required": true,
-          "description": "The field's accessible name, such as Search members. It shows above the field only with showLabel; otherwise a placeholder gives the visible guidance."
+          "description": "The field's accessible name, such as Search members: text, or any content, such as an icon beside the text. It shows above the field only with showLabel; otherwise a placeholder gives the visible guidance."
+        },
+        {
+          "name": "endAction",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A control at the end of the field, after the clear button, such as an IconButton that opens filters, or a quiet hint such as a shortcut's Kbd; name a control with aria-label. A button that sets no variant takes ghost here."
         },
         {
           "name": "showLabel",
@@ -6813,9 +6791,9 @@
         },
         {
           "name": "prefix",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
+          "description": "Short, non-interactive content before the value: text, such as the start of an address, or any content, such as a currency's flag beside its code, or a small Avatar, at its own size. It is cut short with an ellipsis where it is long, is not part of the value, and its text is read after the label."
         },
         {
           "name": "description",
@@ -6850,9 +6828,9 @@
         },
         {
           "name": "suffix",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
+          "description": "Short, non-interactive content after the value: text, such as a unit, or any content, such as an icon beside the unit. It is cut short with an ellipsis where it is long, is not part of the value, and its text is read after the label."
         }
       ],
       "native": [
@@ -6895,8 +6873,8 @@
         {
           "name": "aria-label",
           "type": "string",
-          "required": true,
-          "description": "The group's accessible name, such as Work items; the control has no visible label."
+          "required": false,
+          "description": "The group's accessible name, such as Work items; the control has no visible label. Without it, a List.Item whose control it is names it, or name it with aria-labelledby."
         },
         {
           "name": "size",
@@ -6951,9 +6929,9 @@
         },
         {
           "name": "items",
-          "type": "readonly SelectItem[]",
+          "type": "readonly SelectItem[] | readonly SelectGroup[]",
           "required": true,
-          "description": "The options of the list, in order, each with a value, a label, an optional description and whether it is disabled."
+          "description": "The options of the list, in order, each with a value, a label, an optional description, start and end content and whether it is disabled; or groups of options under headings."
         },
         {
           "name": "value",
@@ -7128,7 +7106,25 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Actions at the end of the content, such as Apply, with the primary action last. While the sheet is pending, the last one shows it, where it is a Button that sets no pending of its own."
+          "description": "Actions at the end of the content, such as Apply, with the primary action last. While the sheet is pending, the last one shows it, where it is a Button that sets no pending of its own; another component reads it with useDialogPending."
+        },
+        {
+          "name": "actionsStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the start of the actions' row, which takes the room the actions leave, such as a Reset button or a Learn more link."
+        },
+        {
+          "name": "headerStart",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the title in the heading's row, such as a back button."
+        },
+        {
+          "name": "headerEnd",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the heading's row, before the close button, such as a Menu of more actions or an Open full page button."
         },
         {
           "name": "closeButton",
@@ -7247,9 +7243,9 @@
       "props": [
         {
           "name": "label",
-          "type": "string",
-          "required": true,
-          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends in an ellipsis where the slider is too narrow for it."
+          "type": "ReactNode",
+          "required": false,
+          "description": "The value's name, inside the slider at its start, such as Opacity: text, or any content, such as a volume icon beside the text. It names the slider, and ends in an ellipsis where the slider is too narrow for it. Without it, a List.Item whose control it is names the slider, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "description",
@@ -7321,6 +7317,12 @@
           "type": "(value: number) => string",
           "required": false,
           "description": "The value as people read it at the slider's end and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
+        },
+        {
+          "name": "renderValue",
+          "type": "(value: number) => ReactNode",
+          "required": false,
+          "description": "What the slider's end shows for the value in place of formatValue's text, such as the number with its unit styled apart, or a swatch; formatValue, or the number in the locale, stays what assistive technology announces."
         },
         {
           "name": "locale",
@@ -7483,6 +7485,13 @@
           "description": "A short, muted line under the label, such as what the option changes. It is part of the switch's label, so it is read with its name."
         },
         {
+          "name": "labelPlacement",
+          "type": "'end' | 'start'",
+          "required": false,
+          "default": "'end'",
+          "description": "Where the label sits beside the track: end, after it, or start, before it, as in an inline Dark mode switch whose label leads; the native label still names the switch."
+        },
+        {
           "name": "checked",
           "type": "boolean",
           "required": false,
@@ -7517,6 +7526,7 @@
         "Table.Root",
         "Table.Head",
         "Table.Body",
+        "Table.Foot",
         "Table.Row",
         "Table.HeaderCell",
         "Table.Cell"
@@ -7577,6 +7587,18 @@
         "@envsemble/envui"
       ]
     },
+    "Table.Foot": {
+      "kind": "component",
+      "source": "packages/ui/src/data-display/Table.tsx",
+      "description": "The summary rows of a table, a native tfoot, such as its totals, on the header's shaded band under the rows.",
+      "props": [],
+      "native": [
+        "tfoot"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Table.Head": {
       "kind": "component",
       "source": "packages/ui/src/data-display/Table.tsx",
@@ -7620,6 +7642,12 @@
           "required": false,
           "default": "'Resize {header}', from EnvUIProvider's messages.table.resize",
           "description": "Accessible name of the column's resize handle, \"Resize\" followed by the header's name."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the end of the header, beside its sort button and outside it, such as a column menu, a filter IconButton, a help Tooltip's trigger or a select-all Checkbox, placed as given. The header's name stays its label."
         },
         {
           "name": "align",
@@ -7679,7 +7707,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The header row stays at the top of the region while the rows scroll beneath it. The region then scrolls vertically too, so give it a height through regionClassName or the surrounding layout."
+          "description": "The header row stays at the top of the region while the rows scroll beneath it. The region then scrolls vertically too, so give it a height through regionProps or the surrounding layout."
         },
         {
           "name": "plain",
@@ -7689,10 +7717,10 @@
           "description": "Drops the frame, the raised surface and the header's shaded band: a hairline under the header and between the rows, the table lying on the surface around it."
         },
         {
-          "name": "regionClassName",
-          "type": "string",
+          "name": "regionProps",
+          "type": "Omit<ComponentPropsWithRef<'div'>, 'children' | 'role'>",
           "required": false,
-          "description": "Class of the scroll region around the table, for example to limit its height."
+          "description": "Props of the scroll region around the table, such as a class or a style that limits its height, a ref for scrolling to a row or virtualising, data attributes or listeners. Its class joins the region's; the region's role, name, tab stop and layout stay the table's."
         },
         {
           "name": "narrowLayout",
@@ -7819,6 +7847,12 @@
           "description": "Leaves out the headings it returns false for, without `items`, such as an example's own."
         },
         {
+          "name": "onNavigate",
+          "type": "(id: string, event: MouseEvent<HTMLAnchorElement>) => void",
+          "required": false,
+          "description": "Called when people follow a link, with its section's id and the click, before envUI scrolls the section into view and focuses it. Each link is an `#id` link through LinkProvider's link component, so the application's router, or else the browser, changes the address. Call preventDefault to make the jump yourself, without envUI's scroll or the address change."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,
@@ -7887,7 +7921,7 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with optional start content, an end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -7945,10 +7979,10 @@
           "description": "The field's look: outline, a box with a thin edge, or ghost, a faint fill without an edge, for a search at the top of a sidebar or a list."
         },
         {
-          "name": "startIcon",
+          "name": "start",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon at the start of the field, such as Search or Mail."
+          "description": "Content at the start of the field, before the value, in the room of one icon, such as IconSearch or IconMail: an envUI icon takes the field's icon size. It is hidden from assistive technology."
         },
         {
           "name": "endAction",
@@ -7971,15 +8005,15 @@
         },
         {
           "name": "prefix",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
+          "description": "Short, non-interactive content before the value: text, such as the start of an address, or any content, such as a currency's flag beside its code, or a small Avatar, at its own size. It is cut short with an ellipsis where it is long, is not part of the value, and its text is read after the label."
         },
         {
           "name": "suffix",
-          "type": "string",
+          "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit, cut short with an ellipsis where it is long. It is not part of the value and is read after the label."
+          "description": "Short, non-interactive content after the value: text, such as a unit, or any content, such as an icon beside the unit. It is cut short with an ellipsis where it is long, is not part of the value, and its text is read after the label."
         }
       ],
       "native": [
@@ -8098,6 +8132,12 @@
           "type": "'sharp' | 'rounded' | 'round'",
           "required": false,
           "description": "The corner shape inside: sharp, rounded or round. Defaults to the corners of the enclosing Theme, and to rounded outside any."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The boundary's element, for its meaning or its place in the markup, such as render={<section />} for a landmark or render={<tbody />} inside a table. The boundary's class and attributes merge into its props, as on Text: classes join, styles merge, both event handlers run and both refs receive the node. A div by default."
         }
       ],
       "native": [
@@ -8110,7 +8150,7 @@
     "ThemeMenuRadioGroup": {
       "kind": "component",
       "source": "packages/ui/src/foundations/ThemeMenuRadioGroup.tsx",
-      "description": "The theme choice for a Menu: System, Light and Dark as radio items. Inside a ThemePreferenceProvider it shows and stores the provider's preference; value and onValueChange connect it to a theme the application stores itself.",
+      "description": "The theme choice for a Menu: System, Light and Dark as radio items. Inside a ThemePreferenceProvider it shows and changes the provider's preference; value and onValueChange connect it to a preference outside one.",
       "props": [
         {
           "name": "value",
@@ -8123,8 +8163,8 @@
           "name": "onValueChange",
           "type": "(value: ThemePreference) => void",
           "required": false,
-          "default": "the nearest ThemePreferenceProvider's setPreference, which stores the choice",
-          "description": "Called with the preference chosen, for an application that stores the theme itself."
+          "default": "the nearest ThemePreferenceProvider's setPreference",
+          "description": "Called with the preference chosen, for a group outside a ThemePreferenceProvider."
         },
         {
           "name": "label",
@@ -8143,7 +8183,19 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open."
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open. It applies to the choices given as children too, unless one sets its own."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The choices, as Menu.RadioItems valued system, light or dark, in place of the three default ones: such as Light and Dark alone, or a choice with a hint beside it."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The group's class, beside env-menu-group."
         }
       ],
       "native": [],
@@ -8153,8 +8205,8 @@
     },
     "ThemePreferenceProvider": {
       "kind": "component",
-      "source": "packages/ui/src/foundations/ThemePreference.tsx",
-      "description": "Owns the theme preference: persistence, the system theme and document-root theming.",
+      "source": "packages/ui/src/foundations/ThemePreferenceProvider.tsx",
+      "description": "Themes the application by the theme preference, which the application keeps where it chooses, following the system's theme for a system preference, and themes the document root.",
       "props": [
         {
           "name": "children",
@@ -8167,14 +8219,33 @@
           "type": "ThemeDefinition",
           "required": false,
           "default": "{}",
-          "description": "The application's theme, from defineTheme: its storage key, default preference, contrast, scale, selection and corners. Give createThemeBootstrapScript the same theme, so the root has it before the first paint. Left out, the stored preference is under `env-theme`, the contrast and scale are an enclosing Theme's, or else the page's on the root, or else system, and the look is an enclosing Theme's, or else neutral and rounded."
+          "description": "The application's theme, from defineTheme: its contrast, scale, selection and corners. Give createThemeBootstrapScript the same theme, so the root has it before the first paint. Left out, the contrast and scale are an enclosing Theme's, or else the page's on the root, or else system, and the look is an enclosing Theme's, or else neutral and rounded."
+        },
+        {
+          "name": "preference",
+          "type": "'light' | 'dark' | 'system'",
+          "required": false,
+          "description": "The chosen preference, for an application that keeps it itself: in a cookie, the user's account or, with useStoredThemePreference, localStorage. Give onPreferenceChange with it."
+        },
+        {
+          "name": "defaultPreference",
+          "type": "'light' | 'dark' | 'system'",
+          "required": false,
+          "default": "'system'",
+          "description": "The preference while `preference` is left out, until people choose another."
+        },
+        {
+          "name": "onPreferenceChange",
+          "type": "(preference: ThemePreference) => void",
+          "required": false,
+          "description": "Called with the preference people choose, such as with ThemeToggle, for the application to keep."
         },
         {
           "name": "applyToDocument",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color. One provider per document applies to it: pass false to any other, nested in it or beside it. In development, envUI reports two providers that both apply. Outside any Theme, its boundary around the children is a plain element that takes the root's look, with none of a Theme's class and attributes, unless its contrast is system while the page set a contrast of its own on the root. Rendered on the server, and as the page hydrates, it renders the preference's default and leaves the page's look to the theme createThemeBootstrapScript gave the root, which knows the stored preference before the first paint; once hydrated, it takes the stored one."
+          "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color. One provider per document applies to it: pass false to any other, nested in it or beside it. In development, envUI reports two providers that both apply. Outside any Theme, its boundary around the children is a plain element that takes the root's look, with none of a Theme's class and attributes, unless its contrast is system while the page set a contrast of its own on the root. Rendered on the server, and as the page hydrates, it leaves the page's look to the theme createThemeBootstrapScript gave the root, and a system preference renders light; once hydrated, it themes the root itself."
         },
         {
           "name": "className",
@@ -8191,7 +8262,7 @@
     "ThemeToggle": {
       "kind": "component",
       "source": "packages/ui/src/foundations/ThemeToggle.tsx",
-      "description": "Switches between the light and dark themes and stores the choice.",
+      "description": "Switches between the light and dark themes, through the nearest ThemePreferenceProvider.",
       "props": [
         {
           "name": "aria-labelledby",
@@ -8199,6 +8270,12 @@
           "required": false,
           "requiredWhen": "in some forms",
           "description": "The id of visible text that names the action; this or aria-label."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "As Button's: another element to render the button as, such as a label for a file input shaped like an icon button. Its class, look, state attributes, icon and handlers merge into that element's props; disabled reports aria-disabled and blocks presses."
         },
         {
           "name": "size",
@@ -8233,6 +8310,13 @@
           "type": "string",
           "required": false,
           "description": "The button's name; without it, Switch to dark theme or Switch to light theme, or EnvUIProvider's messages.themePreference."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "the dark mode icon in the light theme, the light mode icon in the dark theme",
+          "description": "The button's icon, such as one of the application's own; useThemePreference gives the theme to choose it by."
         }
       ],
       "native": [
@@ -8247,6 +8331,12 @@
       "source": "packages/ui/src/forms/TimePicker.tsx",
       "description": "A field for a time of day that shows the value in the reader's locale and opens wheels of its hours, minutes every `minuteStep` and, on a 12-hour clock, the day's halves to choose it.",
       "props": [
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: TimePickerOpenChangeDetails) => void",
+          "required": false,
+          "description": "Called with the new state, and why, when the popup opens or closes."
+        },
         {
           "name": "value",
           "type": "string | null",
@@ -8383,10 +8473,16 @@
           "description": "Whether an uncontrolled popup starts open; closed by default."
         },
         {
-          "name": "onOpenChange",
-          "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
+          "name": "popupHeader",
+          "type": "ReactNode",
           "required": false,
-          "description": "Called with the new state, and why, when the popup opens or closes."
+          "description": "Content at the top of the popup, above the calendar or the list, such as presets: buttons for Tomorrow or Next Monday that set the value, from a field the application controls."
+        },
+        {
+          "name": "popupFooter",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content in the popup's footer, after its shortcut to the current date or time and before Clear, such as a note of the time zone or another action."
         },
         {
           "name": "label",
@@ -8467,7 +8563,9 @@
         "Toolbar.Group",
         "Toolbar.Separator",
         "Toolbar.Button",
-        "Toolbar.Link"
+        "Toolbar.Link",
+        "Toolbar.Item",
+        "Toolbar.Input"
       ],
       "entries": [
         "@envsemble/envui"
@@ -8562,6 +8660,51 @@
         "@envsemble/envui"
       ]
     },
+    "Toolbar.Input": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "A text input as one stop of a toolbar's arrow-key path, such as a font size: the arrow keys move its caret, and leave it for the next control at the text's ends. Name it with aria-label.",
+      "props": [
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The input to render, such as an input of the application's own; a native input by default. The toolbar's props and keyboard handling merge into its props."
+        }
+      ],
+      "native": [
+        "input"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Toolbar.Item": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "Any button-like control as one stop of a toolbar's arrow-key path, such as a labelled Button or a Menu's trigger: `<Menu.Root trigger={<Toolbar.Item render={<Button>Paragraph</Button>} />}>`.",
+      "props": [
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": true,
+          "description": "The control, which joins the toolbar's arrow-key path as one of its stops: a button with a visible label, such as <Button start={<IconShare />}>Share</Button>, or the trigger of a Menu or another popup. The item's props, ref and keyboard handling merge into its props; a Button takes the toolbar's ghost variant unless it sets another."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The control can't be pressed, and leaves the arrow keys' path."
+        }
+      ],
+      "native": [
+        "button"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Toolbar.Link": {
       "kind": "component",
       "source": "packages/ui/src/actions/Toolbar.tsx",
@@ -8648,7 +8791,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "The controls: Toolbar.Button, Toolbar.Link, Toolbar.Group and Toolbar.Separator."
+          "description": "The controls: Toolbar.Button, Toolbar.Link, Toolbar.Item, Toolbar.Input, Toolbar.Group and Toolbar.Separator."
         }
       ],
       "native": [
@@ -8698,6 +8841,13 @@
           "type": "string",
           "required": false,
           "description": "Class of the tooltip's popup, beside env-tooltip."
+        },
+        {
+          "name": "underline",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether a text trigger takes the quiet dotted underline, env-hover-detail, that says it shows more on hover or focus. False leaves its class alone, for text styled its own way, such as"
         },
         {
           "name": "side",
@@ -8927,26 +9077,26 @@
     "countDiffLines": {
       "kind": "function",
       "source": "packages/ui/src/content/countDiffLines.ts",
-      "description": "How many lines a change adds and removes, as a DiffStat shows them.",
+      "description": "How many lines a change adds and removes, such as for the size of a change beside its file's name.",
       "signature": "(before: string, after: string, filename?: string): { additions: number; deletions: number; }",
       "entries": [
         "@envsemble/envui/diff"
       ]
     },
-    "createRichTextExtensions": {
+    "createStoredThemeBootstrapScript": {
       "kind": "function",
-      "source": "packages/ui/src/forms/rich-text/extensions.ts",
-      "description": "The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists, tables, safe links and images, Markdown with raw HTML kept as text, a placeholder and references. options.extensions are added after them, for other Tiptap integrations that need the same schema.",
-      "signature": "(options?: RichTextRenderOptions & { placeholder?: string; }): AnyExtension[]",
+      "source": "packages/ui/src/foundations/themeStorage.ts",
+      "description": "Inline script for the document head of an application that keeps the theme preference with useStoredThemePreference: createThemeBootstrapScript's script, with the preference stored in localStorage, so a stored dark theme does not flash light while the application loads.",
+      "signature": "(theme?: ThemeDefinition, { storageKey, defaultPreference }?: ThemeStorageOptions): string",
       "entries": [
-        "@envsemble/envui/rich-text"
+        "@envsemble/envui/theme-storage"
       ]
     },
     "createThemeBootstrapScript": {
       "kind": "function",
       "source": "packages/ui/src/foundations/themeBootstrap.ts",
-      "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and the contrast, scale, selection and corners of the theme apply from the start. Give it the theme ThemePreferenceProvider takes.",
-      "signature": "(theme?: ThemeDefinition): string",
+      "description": "Inline script for the document head. It themes the root element before the first paint, so a chosen or system dark theme does not flash light while the application loads, and the contrast, scale, selection and corners of the theme apply from the start. Give it the theme and the preference ThemePreferenceProvider takes.",
+      "signature": "(theme?: ThemeDefinition, { preference }?: ThemeBootstrapOptions): string",
       "entries": [
         "@envsemble/envui",
         "@envsemble/envui/theme-bootstrap"
@@ -8971,15 +9121,6 @@
         "@envsemble/envui"
       ]
     },
-    "installDevMode": {
-      "kind": "function",
-      "source": "packages/ui/src/dev/install.tsx",
-      "description": "Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a button in the corner and Alt+Shift+D, which open the page in a new tab with the 3D view and the inspector over the whole window. Closing that tab ends dev mode; the page it came from stays as it was. Load it in development only, so production builds contain none of it: if (import.meta.env.DEV) { void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode()); } Calling it again returns the dev mode already installed, until it is uninstalled.",
-      "signature": "(options?: DevModeOptions): DevModeHandle",
-      "entries": [
-        "@envsemble/envui/dev"
-      ]
-    },
     "isPlaceholder": {
       "kind": "function",
       "source": "packages/ui/src/foundations/placeholders.ts",
@@ -8998,20 +9139,20 @@
         "@envsemble/envui"
       ]
     },
-    "readPanesWidth": {
-      "kind": "function",
-      "source": "packages/ui/src/layout/panesSize.ts",
-      "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `persistedWidth`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" persistedWidth={readPanesWidth(cookieHeader, 'inbox')}> Returns undefined where no width is kept under the key, or what is kept there is no width.",
-      "signature": "(cookies: string | null | undefined, key: string): number | undefined",
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "useContainerSize": {
       "kind": "function",
       "source": "packages/ui/src/foundations/useContainerSize.ts",
       "description": "The size of an element, kept up to date as it changes: its inline and block size in CSS pixels, along its writing mode, from a ResizeObserver. It is undefined on the server and until the element is measured, which happens before the browser paints it; an element that stops being rendered, such as one in a hidden tab panel, keeps its last size until it shows again. Pass a ref object, read once the element mounts, or the element itself, such as one kept in state by a callback ref. Prefer a container query (`@container`) where only styles change. const panel = useRef<HTMLDivElement>(null); const size = useContainerSize(panel); const narrow = size !== undefined && size.inlineSize < 640;",
       "signature": "<T extends Element>(target: RefObject<T | null> | T | null, options?: ContainerSizeOptions): ContainerSize | undefined",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useDialogPending": {
+      "kind": "function",
+      "source": "packages/ui/src/overlays/Dialog.tsx",
+      "description": "Whether the Dialog or Sheet around it is pending, for an action component of the application's own, such as a Button wrapped for analytics, to show the work its press started.",
+      "signature": "(): boolean",
       "entries": [
         "@envsemble/envui"
       ]
@@ -9036,11 +9177,20 @@
     },
     "useSkeleton": {
       "kind": "function",
-      "source": "packages/ui/src/foundations/SkeletonScope.tsx",
+      "source": "packages/ui/src/foundations/useSkeleton.ts",
       "description": "Whether the component is inside a skeleton: a surface with `skeleton` around it. A component of the application's own reads it to give its skeleton a look of its own, such as a chart's.",
       "signature": "(): boolean",
       "entries": [
         "@envsemble/envui"
+      ]
+    },
+    "useStoredThemePreference": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/useStoredThemePreference.ts",
+      "description": "Keeps the theme preference in localStorage, follows a choice made in another window of the same origin, and keeps a choice for the page's life where storage is blocked. Spread what it returns on ThemePreferenceProvider, and give createStoredThemeBootstrapScript the same options. On the server and while the page hydrates it returns the default, as the server rendered it.",
+      "signature": "({ storageKey, defaultPreference, }?: ThemeStorageOptions): StoredThemePreference",
+      "entries": [
+        "@envsemble/envui/theme-storage"
       ]
     },
     "useTheme": {
@@ -9054,7 +9204,7 @@
     },
     "useThemePreference": {
       "kind": "function",
-      "source": "packages/ui/src/foundations/ThemePreference.tsx",
+      "source": "packages/ui/src/foundations/ThemePreferenceProvider.tsx",
       "description": "The theme preference from the nearest ThemePreferenceProvider.",
       "signature": "(): ThemePreferenceValue",
       "entries": [

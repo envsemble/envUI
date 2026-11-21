@@ -5,21 +5,19 @@ import { SiteBanner } from '../../frame/SiteBanner';
 import { pagesOf, type DocumentPage, type RoutePage } from '../../routes/SiteRoutes';
 import { docsTrail } from '../../routes/Trails';
 import { docsRoute } from '../../routes/Address';
-import { PartSwitch } from '../../routes/OtherPart';
 import {
   changelogId,
   PageChangelog,
   TemplateContent,
   templateContents,
 } from '../../template/TemplateContent';
-import { MetadataBadges } from '../../template/MetadataBadges';
 import { useRevealed } from '../../template/useRevealed';
 import { SectionOutline } from '../../markdown/SectionOutline';
 import { GuideDocument, guideContents } from './GuideDocument';
 import { LoadedPart } from '../../loading/LoadedPart';
 import { useDocument } from '../PageContent';
 import { pageParts, partsOfPage } from '../PageParts';
-import { ChangelogSkeleton } from './ChangelogOutline';
+import { ChangelogSkeleton, releaseContents } from './ChangelogOutline';
 import { tokenContents, TokenReferenceSkeleton } from './TokenTables';
 import { ReleaseNotes } from './ReleaseNotes';
 import { AgentSetup, agentSetupContents } from './AgentSetup';
@@ -53,12 +51,11 @@ export function GuidePage({ page }: { page: DocumentPage }) {
   return (
     <>
       <SiteBanner
+        page={page}
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
         kind="docs"
-        meta={<MetadataBadges metadata={{ status: page.document.status }} />}
-        corner={<PartSwitch page={page} />}
       />
       <Column gap={7} className="site-article">
         {home && <AgentSetup note={note} path={whole.path} />}
@@ -72,6 +69,7 @@ export function TokensPage({ page }: { page: RoutePage }) {
   return (
     <>
       <SiteBanner
+        page={page}
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
@@ -91,7 +89,7 @@ export function TokensPage({ page }: { page: RoutePage }) {
 export function LegalPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <SiteBanner title={page.title} breadcrumb="envUI" kind="docs" />
+      <SiteBanner title={page.title} breadcrumb="envUI" kind="docs" page={page} />
       <Column gap={6} className="site-article">
         {legalContents[page.path as keyof typeof legalContents]}
       </Column>
@@ -106,6 +104,7 @@ export function ChangelogDocsPage({ page }: { page: RoutePage }) {
   return (
     <>
       <SiteBanner
+        page={page}
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
@@ -138,11 +137,11 @@ export function FoundationGuidePage({ page }: { page: DocumentPage }) {
   return (
     <>
       <SiteBanner
+        page={page}
         title={page.title}
         kind="docs"
         trail={docsTrail(page)}
         description={page.summary}
-        corner={<PartSwitch page={page} />}
       />
       <Column gap={8} className="site-article docs-api">
         <CodeGuide document={document} />
@@ -181,12 +180,11 @@ export function DocsReferencePage({ page }: { page: DocumentPage }) {
   return (
     <>
       <SiteBanner
+        page={page}
         title={page.title}
         kind="docs"
         trail={docsTrail(page)}
         description={page.summary}
-        meta={metadata && <MetadataBadges metadata={metadata} />}
-        corner={<PartSwitch page={page} />}
       />
       {!cataloguePage && <TemplateContent document={document} provides related={false} />}
       <Column gap={8} className="site-article docs-api" aria-busy={referencePending || undefined}>
@@ -204,7 +202,8 @@ export function docsContents(
   page: RoutePage,
   whole: DocumentationEntry | undefined,
 ): TableOfContentsItem[] {
-  if (page.kind === 'docs-changelog') return [highlights, everyChange];
+  if (page.kind === 'docs-changelog')
+    return [highlights, { ...everyChange, children: releaseContents() }];
   if (page.kind === 'tokens') return tokenContents();
   if (!whole) return [];
   if (page.kind === 'guide') {

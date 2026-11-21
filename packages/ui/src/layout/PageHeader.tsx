@@ -64,6 +64,11 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
    * @default true
    */
   focusOnNavigation?: boolean;
+  /**
+   * More rows under the toolbar, placed as given, such as a progress strip or an inline Alert. They
+   * stay in the header, so they stick with it.
+   */
+  children?: ReactNode;
 }
 
 /**
@@ -84,6 +89,7 @@ export function PageHeader({
   controlSize = 'md',
   focusOnNavigation = true,
   className,
+  children,
   ...props
 }: PageHeaderProps) {
   const Heading = `h${headingLevel}` as const;
@@ -139,6 +145,7 @@ export function PageHeader({
           <ControlDefaults size={controlSize}>{toolbar}</ControlDefaults>
         </Slot>
       )}
+      {children}
     </Column>
   );
 }

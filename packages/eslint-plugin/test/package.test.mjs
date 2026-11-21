@@ -39,7 +39,7 @@ test('the package ships the plugin, its data and its documentation, and nothing 
   ]);
 });
 
-test('an application lints with the installed recommended config', async () => {
+test('an application lints with the installed recommended and strict configs', async () => {
   const script = join(packed.directory, 'Consumer.mjs');
   await writeFile(
     script,
@@ -50,16 +50,17 @@ test('an application lints with the installed recommended config', async () => {
     const location = createRequire(import.meta.url).resolve('@envsemble/eslint-plugin-envui');
     const code = "import { Alert } from '@envsemble/envui';\\n" +
       "export const App = () => <form style={{ color: '#000', display: 'grid' }}><button>Save</button><Button>Proceed</Button><img src='https://cdn.example/logo.png' alt='' /></form>;";
-    const messages = new Linter().verify(code, [envui.configs.recommended], 'App.jsx');
-    console.log(JSON.stringify({ location, rules: messages.map((message) => message.ruleId ?? message.message) }));
+    const rules = (config) => new Linter().verify(code, [config], 'App.jsx').map((message) => message.ruleId ?? message.message);
+    console.log(JSON.stringify({ location, recommended: rules(envui.configs.recommended), strict: rules(envui.configs.strict) }));
   `,
   );
-  const { location, rules } = JSON.parse(runNode(script, [], packed.directory));
+  const { location, recommended, strict } = JSON.parse(runNode(script, [], packed.directory));
   assert.ok(
     location.startsWith(packed.directory),
     `the package resolves from the consumer: ${location}`,
   );
-  assert.deepEqual(rules, [
+  assert.deepEqual(recommended, ['envui/no-raw-colors', 'envui/no-raw-graphics']);
+  assert.deepEqual(strict, [
     'envui/no-raw-colors',
     'envui/no-html-elements',
     'envui/label-vocabulary',

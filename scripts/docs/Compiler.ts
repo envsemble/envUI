@@ -282,8 +282,7 @@ export function compileDocument(
   const head = document.frontmatter
     ? `---\n${(document.yaml ?? '').replace(/\n*$/, '')}\n---\n\n`
     : '';
-  const markdown = document.markdown.replace(/^```tsx figure=\w+\n\n?```[ \t]*\n+/gm, '');
-  return `${head}${title}${markdown}`;
+  return `${head}${title}${document.markdown}`;
 }
 
 export function compileDocumentation(

@@ -80,6 +80,9 @@
     color: inherit;
     font: inherit;
   }
+  .env-disclosure[data-indicator='end'] > .env-disclosure-panel {
+    margin-inline: 0;
+  }
   .env-disclosure-panel > :where(p:not(.env-text)) {
     color: inherit;
     font: inherit;

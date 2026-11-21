@@ -1,4 +1,4 @@
-import type { ThemeDefinition } from '@envsemble/envui';
+import type { ThemeStorageOptions } from '@envsemble/envui/theme-storage';
 
 export const displayStorageKeys = {
   theme: 'envui-site-theme',
@@ -7,9 +7,9 @@ export const displayStorageKeys = {
   motion: 'envui-site-motion',
 } as const;
 
-export const siteTheme = {
+export const siteThemeStorage = {
   storageKey: displayStorageKeys.theme,
-} as const satisfies ThemeDefinition;
+} as const satisfies ThemeStorageOptions;
 
 export const drawerWidthKey = (area: 'catalogue' | 'docs') => `envui-site-drawer-width-${area}`;
 

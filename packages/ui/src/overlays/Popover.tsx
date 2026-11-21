@@ -1,17 +1,21 @@
 'use client';
 
 import { Popover as BasePopover } from '@base-ui/react/popover';
-import { useRef, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
+import {
+  useRef,
+  type ComponentPropsWithRef,
+  type ReactElement,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/popup/PopupSurface.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
-import type { SkeletonProps } from '../internal/skeleton.js';
+import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import '../styles/Base.css';
 import '../styles/Popover.css';
@@ -45,13 +49,28 @@ export interface PopoverOpenChangeDetails {
   reason: PopoverOpenChangeReason;
 }
 
+/**
+ * What a popover opens beside where that isn't its trigger: an element, its ref, or a virtual
+ * element with a getBoundingClientRect, such as a range of selected text.
+ */
+export type PopoverAnchor =
+  Element | RefObject<Element | null> | { getBoundingClientRect(): DOMRect };
+
 export interface PopoverProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>, SkeletonProps {
   /**
    * The control that opens and closes the popover, such as a Button or an IconButton. It must take
-   * a ref and props: it receives the press handler, aria-haspopup and aria-expanded.
+   * a ref and props: it receives the press handler, aria-haspopup and aria-expanded. Leave it out
+   * for a popover the application opens with open, beside its anchor.
    */
-  trigger: ReactElement;
+  trigger?: ReactElement;
+  /**
+   * What the popover opens beside where that isn't its trigger, such as a table cell, a word in
+   * the text or a range of selected text: an element, its ref, or a virtual element with a
+   * getBoundingClientRect.
+   * @default the trigger
+   */
+  anchor?: PopoverAnchor;
   /** A heading at the top, such as the name of what the popover describes; it names the popover. */
   title?: ReactNode;
   /**
@@ -99,6 +118,7 @@ export interface PopoverProps
  */
 export function Popover({
   trigger,
+  anchor,
   title,
   children,
   'aria-label': label,
@@ -128,10 +148,11 @@ export function Popover({
         setOpen(next, details.reason),
       )}
     >
-      <BasePopover.Trigger ref={triggerRef} render={trigger} />
+      {trigger && <BasePopover.Trigger ref={triggerRef} render={trigger} />}
       <PopupSurface
         parts={parts}
         trigger={triggerRef}
+        anchor={anchor}
         side={side}
         align={align}
         width={width}

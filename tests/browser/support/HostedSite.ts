@@ -1,7 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { extname, resolve } from 'node:path';
-import worker from '../../../apps/site/hosting/Worker.mjs';
 import { headersFor, siteHeaders } from '../../../scripts/site/SiteHeaders.ts';
 
 const site = resolve('dist/site');
@@ -73,31 +72,18 @@ export async function serveSite(
     const request = route.request();
     const gone = failing(new URL(request.url()).pathname);
     if (gone && failure === 'aborted') return route.abort('internetdisconnected');
-    const assets = {
-      async fetch(assetRequest: Request) {
-        const requested = new URL(assetRequest.url).pathname;
-        const pathname = redirects.get(requested)?.split('#')[0] ?? requested;
-        const found = gone ? undefined : siteFile(pathname);
-        const file = found ?? resolve(site, '404.html');
-        const body =
-          extname(file) === '.js' ? script(readFileSync(file, 'utf8')) : readFileSync(file);
-        return new Response(body, {
-          status: found ? 200 : 404,
-          headers: {
-            ...(pathname.startsWith('/assets/') ? {} : headersFor(rules, pathname)),
-            'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream',
-          },
-        });
-      },
-    };
-    const response: Response = await worker.fetch(
-      new Request(request.url(), { method: request.method() }),
-      { ASSETS: assets },
-    );
+    const requested = new URL(request.url()).pathname;
+    const pathname = redirects.get(requested)?.split('#')[0] ?? requested;
+    const found = gone ? undefined : siteFile(pathname);
+    const file = found ?? resolve(site, '404.html');
+    const body = extname(file) === '.js' ? script(readFileSync(file, 'utf8')) : readFileSync(file);
     return route.fulfill({
-      status: response.status,
-      headers: Object.fromEntries(response.headers),
-      body: Buffer.from(await response.arrayBuffer()),
+      status: found ? 200 : 404,
+      headers: {
+        ...headersFor(rules, pathname),
+        'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream',
+      },
+      body,
     });
   });
 }

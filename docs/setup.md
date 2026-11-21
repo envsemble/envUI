@@ -6,6 +6,8 @@ components:
   - PortalContainer
   - createThemeBootstrapScript
   - defineTheme
+  - useStoredThemePreference
+  - createStoredThemeBootstrapScript
   - Theme
   - ThemePreferenceProvider
   - ThemeToggle
@@ -34,7 +36,9 @@ exportAliases:
     - switch between light and dark
   ThemePreferenceProvider:
     - theme preference
+  useStoredThemePreference:
     - persisted theme
+    - remember the theme
   LinkProvider:
     - router link
     - client-side navigation
@@ -66,7 +70,7 @@ npm install --save-exact @envsemble/envui@{{version}}
 npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@{{version}} @envsemble/stylelint-config-envui@{{version}}
 ```
 
-Each lint package's README says how to turn it on.
+Each lint package's README says how to turn it on. The ESLint plugin's `configs.recommended` reports envUI used wrongly; `configs.strict` also holds the application to envUI's components in place of plain HTML and to the words of its [writing guide](writing.md).
 
 ## Styles
 
@@ -78,36 +82,80 @@ Put the interface inside `Theme`.
 
 ### Theme preference
 
-For a whole application, `ThemePreferenceProvider` replaces the fixed `Theme`: it follows the system until people choose with `ThemeToggle`, stores the choice, and themes the document root. Define the theme once with `defineTheme` and give it to the provider and to `createThemeBootstrapScript` in the document head, so a saved dark theme doesn't flash light and the first paint has the scale and the look. An application that renders `<html>` with React adds `suppressHydrationWarning` to it.
+For a whole application, `ThemePreferenceProvider` replaces the fixed `Theme`: it follows the system until people choose with `ThemeToggle`, and themes the document root. Where the choice is kept is the application's: give the provider `preference` and `onPreferenceChange` to keep it in a cookie or the user's account; without them, a choice lasts until the page reloads. Define the theme once with `defineTheme` and give it to the provider and to `createThemeBootstrapScript` in the document head, with the preference the page renders, so a dark theme doesn't flash light and the first paint has the scale and the look. An application that renders `<html>` with React adds `suppressHydrationWarning` to it.
 
 ```ts
 import { defineTheme } from '@envsemble/envui/theme-bootstrap';
 
-export const theme = defineTheme({ storageKey: 'app-theme' });
+export const theme = defineTheme({ scale: 'compact' });
 ```
 
 ```tsx
-import { ThemePreferenceProvider, ThemeToggle } from '@envsemble/envui';
+import { ThemePreferenceProvider, ThemeToggle, type ThemePreference } from '@envsemble/envui';
 import { theme } from './theme';
 
-<ThemePreferenceProvider theme={theme}>
-  <ThemeToggle />
-</ThemePreferenceProvider>;
+function App({
+  preference,
+  savePreference,
+}: {
+  preference: ThemePreference;
+  savePreference: (preference: ThemePreference) => void;
+}) {
+  return (
+    <ThemePreferenceProvider
+      theme={theme}
+      preference={preference}
+      onPreferenceChange={savePreference}
+    >
+      <ThemeToggle />
+    </ThemePreferenceProvider>
+  );
+}
 ```
 
 ```ts
 import { createThemeBootstrapScript } from '@envsemble/envui/theme-bootstrap';
-import { theme } from './src/theme';
+import { theme } from './theme';
+
+const script = createThemeBootstrapScript(theme, { preference: 'dark' });
+```
+
+One provider themes the document; a second passes `applyToDocument={false}`. To change the typeface or size, set `--env-font-family`, `--env-font-size-body` and `--env-line-height-body` on `.env-theme` in a style sheet loaded after envUI's.
+
+#### Keep it in the browser
+
+`@envsemble/envui/theme-storage` keeps the preference in localStorage, for an application without a server of its own: spread what `useStoredThemePreference` returns on the provider, and put `createStoredThemeBootstrapScript` in the head in place of `createThemeBootstrapScript`, with the same storage options, such as `export const themeStorage = { storageKey: 'app-theme' }` beside `theme` in `theme.ts`, so the head's script imports them without the application. A choice made in another tab applies in every tab.
+
+```tsx
+import { ThemePreferenceProvider, ThemeToggle } from '@envsemble/envui';
+import { useStoredThemePreference } from '@envsemble/envui/theme-storage';
+import { theme, themeStorage } from './theme';
+
+function App() {
+  const storedTheme = useStoredThemePreference(themeStorage);
+  return (
+    <ThemePreferenceProvider theme={theme} {...storedTheme}>
+      <ThemeToggle />
+    </ThemePreferenceProvider>
+  );
+}
+```
+
+```ts
+import { createStoredThemeBootstrapScript } from '@envsemble/envui/theme-storage';
+import { theme, themeStorage } from './src/theme';
 
 const themeBootstrap = {
   name: 'theme-bootstrap',
   transformIndexHtml: () => [
-    { tag: 'script', children: createThemeBootstrapScript(theme), injectTo: 'head-prepend' },
+    {
+      tag: 'script',
+      children: createStoredThemeBootstrapScript(theme, themeStorage),
+      injectTo: 'head-prepend',
+    },
   ],
 };
 ```
-
-One provider themes the document; a second passes `applyToDocument={false}`. To change the typeface or size, set `--env-font-family`, `--env-font-size-body` and `--env-line-height-body` on `.env-theme` in a style sheet loaded after envUI's.
 
 ## Connect your router
 
@@ -251,7 +299,7 @@ Components with state, effects or context carry `'use client'`; components that 
 - `@envsemble/envui/icons/<Name>` for each icon, `Icon<Name>`.
 - `@envsemble/envui/messages` for `defaultMessages`.
 - `@envsemble/envui/theme-bootstrap` for `defineTheme` and `createThemeBootstrapScript`.
-- `@envsemble/envui/dev` for [dev mode](dev-mode.md), behind a development check.
+- `@envsemble/envui/theme-storage` for `useStoredThemePreference` and `createStoredThemeBootstrapScript`, which keep the theme preference in localStorage.
 - `@envsemble/envui/assets/*` for raw assets, such as the Geist font file.
 
 These entry points need libraries the application installs itself, at these versions or later ones of the same major:
@@ -266,12 +314,6 @@ These entry points need libraries the application installs itself, at these vers
 
   ```sh
   npm install shiki@^4.5.0 @shikijs/langs@^4.5.0 react-markdown@^10.1.0 remark-gfm@^4.0.1
-  ```
-
-- `@envsemble/envui/rich-text`:
-
-  ```sh
-  npm install @tiptap/core@^3.31.4 @tiptap/extension-image@^3.31.4 @tiptap/extension-list@^3.31.4 @tiptap/extension-mention@^3.31.4 @tiptap/extension-placeholder@^3.31.4 @tiptap/extension-table@^3.31.4 @tiptap/markdown@^3.31.4 @tiptap/pm@^3.31.4 @tiptap/react@^3.31.4 @tiptap/starter-kit@^3.31.4 @tiptap/static-renderer@^3.31.4 @tiptap/suggestion@^3.31.4 marked@^17.0.6 shiki@^4.5.0 @shikijs/langs@^4.5.0
   ```
 
 - `@envsemble/envui/diff`:

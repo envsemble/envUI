@@ -25,3 +25,21 @@ test('keys render as key caps joined by plus', () => {
   assert.ok(hasClass(key, 'env-kbd'));
   assert.equal(textOf(key), 'F2');
 });
+
+test('a key can be any content, and the separator a word, or none', () => {
+  const arrow = h('svg', { 'aria-label': 'Up' });
+  const icons = render(h(Kbd, { keys: ['⌘', arrow], separator: null }));
+  assert.equal(
+    elementsOf(icons).filter((element) => hasClass(element, 'env-kbd-separator')).length,
+    0,
+  );
+  assert.ok(elementsOf(icons).some((element) => element.tag === 'svg'));
+  const sequence = render(h(Kbd, { keys: ['G', 'I'], separator: 'then' }));
+  assert.equal(textOf(sequence), 'GthenI');
+  assert.deepEqual(
+    elementsOf(sequence)
+      .filter((element) => hasClass(element, 'env-kbd-separator'))
+      .map(textOf),
+    ['then'],
+  );
+});

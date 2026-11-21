@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Column, Table, Text } from '@envsemble/envui';
 import { PlainCode } from './SimpleTable';
+import { DescriptionText, InlineText } from './InlineText';
 import type { ExportEntry, PropEntry } from '../../documentation/DocumentationTypes';
 import { nativePropsSentence, propDescription } from '../../documentation/PropWording';
 import type { DocumentationEntry } from '../../documentation/DocumentationTypes';
@@ -72,7 +73,11 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
   return (
     <Column render={<section />} gap={4} aria-labelledby={exportSection(name)}>
       {heading}
-      {entry.description && <Text>{entry.description}</Text>}
+      {entry.description && (
+        <Text>
+          <InlineText text={entry.description} />
+        </Text>
+      )}
       {entry.kind === 'function' ? (
         <Text>
           <PlainCode>{`${name}${entry.signature}`}</PlainCode>
@@ -106,8 +111,8 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
                   <PropType type={prop.type} />
                 </Table.Cell>
                 <Table.Cell label="Description">
-                  <Text render={<span />} variant="body-sm" emphasis="muted">
-                    {propDescription(prop, 'text')}
+                  <Text render={<div />} variant="body-sm" emphasis="muted">
+                    <DescriptionText text={propDescription(prop, 'markdown')} />
                   </Text>
                 </Table.Cell>
               </Table.Row>

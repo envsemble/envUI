@@ -1,0 +1,72 @@
+@layer env.components {
+  @property --env-halo-indicator {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --_halo-breath {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 1;
+  }
+  .env-halo {
+    --_halo-tone: var(--env-color-bg-accent-emphasis);
+    --_halo-color: var(--env-halo-indicator, var(--_halo-tone));
+    --_halo-radius: var(--env-halo-radius, var(--env-radius-control));
+    --_halo-spread: var(--env-halo-spread, calc(var(--env-space-1) * 0.75));
+    position: relative;
+    display: block;
+    border-radius: var(--_halo-radius);
+  }
+  .env-halo:where(span) {
+    display: inline-flex;
+  }
+  .env-halo[data-placed] {
+    box-shadow: inset 0 0 0 1.5px var(--_halo-color);
+  }
+  .env-halo[data-tone='primary'] {
+    --_halo-tone: var(--env-color-bg-primary-emphasis);
+  }
+  .env-halo-ring {
+    --_halo-breath: 1;
+    --_halo-reach: calc(var(--_halo-spread) * var(--_halo-breath));
+    position: absolute;
+    inset: calc(-1 * var(--_halo-reach));
+    padding: var(--_halo-reach);
+    border-radius: calc(var(--_halo-radius) + var(--_halo-reach));
+    background: light-dark(
+      color-mix(in srgb, var(--_halo-color) 40%, transparent),
+      color-mix(in srgb, var(--_halo-color) 75%, transparent)
+    );
+    mask:
+      linear-gradient(CanvasText 0 0) content-box exclude,
+      linear-gradient(CanvasText 0 0);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-halo-ring {
+      animation: env-halo-breathe calc(var(--env-motion-duration-slow) * 8) var(--env-motion-ease)
+        infinite;
+    }
+  }
+  @keyframes env-halo-breathe {
+    0%,
+    100% {
+      --_halo-breath: 2;
+      opacity: 0.78;
+    }
+    50% {
+      --_halo-breath: 0.67;
+      opacity: 0.35;
+    }
+  }
+  @media (forced-colors: active) {
+    .env-halo-ring {
+      forced-color-adjust: none;
+      background: Highlight;
+      animation: none;
+    }
+    .env-halo[data-placed] {
+      box-shadow: inset 0 0 0 1.5px Highlight;
+    }
+  }
+}

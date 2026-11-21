@@ -32,6 +32,7 @@ examples:
   RowDensity: example
   TreeAnatomy: anatomy
   ContextMenuActions: example
+  MatchedLetters: example
   NarrowTree: example
 ---
 
@@ -54,7 +55,7 @@ examples:
 1. **Tree** (`env-tree`)
 2. **Row** (`env-tree-item`)
 3. **Chevron** (`env-tree-chevron`, `expandable`)
-4. **Icon** (`env-tree-icon`, `icon`)
+4. **Start** (`env-tree-start`, `start`)
 5. **Label** (`env-tree-label`, `label`)
 6. **End** (`env-tree-end`, `end`)
 7. **Description** (`env-tree-description`, `description`)
@@ -68,6 +69,12 @@ examples:
 ### Actions in a context menu
 
 ```tsx figure=ContextMenuActions motion
+
+```
+
+### Content in a name
+
+```tsx figure=MatchedLetters
 
 ```
 
@@ -90,6 +97,6 @@ examples:
 | <kbd>←</kbd>                                              | Collapses a row, or moves to its parent. <kbd>→</kbd> in right-to-left text.    |
 | <kbd>Enter</kbd>                                          | Opens the active row.                                                           |
 | <kbd>Space</kbd>                                          | Previews the active row.                                                        |
-| A letter or digit                                         | Moves to the next row whose label starts with what was typed.                   |
+| A letter or digit                                         | Moves to the next row whose label or text value starts with what was typed.     |
 | <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd>        | Opens the context menu; <kbd>Esc</kbd> closes it and returns focus to the tree. |
 | Keys with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> | Left to the application.                                                        |

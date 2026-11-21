@@ -1,9 +1,9 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-import { relative, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 import { build, transform } from 'esbuild';
-import { repositoryRoot } from '../RepositoryPaths.ts';
+import { repositoryPath, repositoryRoot } from '../RepositoryPaths.ts';
 
 const typicalAppComponents = [
   'EnvUIProvider',
@@ -81,7 +81,7 @@ async function bundle(source: string, ownCode = false) {
     ],
   });
   const outputs = result.metafile.outputs;
-  const key = (path: string) => relative(repositoryRoot, path).replaceAll('\\', '/');
+  const key = repositoryPath;
   const pageEntry = Object.keys(outputs).find(
     (path) => outputs[path].entryPoint === consumerSourceFile,
   )!;

@@ -18,11 +18,8 @@ const content = [
   'env-segmented-control-thumb',
 ];
 
-test('fields and editors take the background of what they sit on, or a fill from their container property', async () => {
-  await expect.poll(() => document.querySelectorAll('[data-field]').length).toBe(2 * 4 * 13);
-  await expect
-    .poll(() => document.querySelectorAll('.env-rich-text-editor-content [contenteditable]').length)
-    .toBe(8);
+test('fields take the background of what they sit on, or a fill from their container property', async () => {
+  await expect.poll(() => document.querySelectorAll('[data-field]').length).toBe(2 * 4 * 11);
   const painted: string[] = [];
   for (const place of document.querySelectorAll<HTMLElement>('[data-testid]'))
     for (const box of place.querySelectorAll<HTMLElement>('[data-field]'))

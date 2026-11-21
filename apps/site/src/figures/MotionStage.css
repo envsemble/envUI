@@ -12,6 +12,14 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+@media (pointer: coarse) {
+  .catalogue-motion-stage {
+    --catalogue-touch-popup-room: calc(
+      2.5rem + var(--env-control-height-touch) + var(--env-space-2)
+    );
+  }
+}
+
 .catalogue-motion-subject {
   isolation: isolate;
   display: grid;

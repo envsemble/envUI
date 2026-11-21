@@ -4,7 +4,11 @@ import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Menubar as BaseMenubar } from '@base-ui/react/menubar';
 import {
+  Children,
+  cloneElement,
   createContext,
+  Fragment,
+  isValidElement,
   useCallback,
   useContext,
   useEffect,
@@ -17,15 +21,15 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
-import { setRef } from '../internal/react/setRef.js';
-import { MenuPopup, menuParts } from './internal/MenuPopup.js';
-import {
-  containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+import { mergeRefs } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
+import { MenuPopup, menuParts } from './menu/internal/MenuPopup.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
+import { containedOpenChange } from '../internal/popup/containedOverlays.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { flag } from '../internal/flag.js';
 import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';
+import type { TriggerProps } from './menu/internal/menuTriggerProps.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import '../styles/Base.css';
 import '../styles/Menubar.css';
@@ -132,13 +136,7 @@ function Root({
     };
   }, []);
 
-  const setRoot = useCallback(
-    (node: HTMLDivElement | null) => {
-      root.current = node;
-      setRef(ref, node);
-    },
-    [ref],
-  );
+  const setRoot = useMergedRefs(root, ref);
   const context = useMemo(
     () => ({ accessKeys, previousFocus, registerClose }),
     [accessKeys, previousFocus, registerClose],
@@ -168,7 +166,7 @@ function Root({
 }
 
 /** What Menubar.Menu's onOpenChange receives beside the requested state. */
-export interface MenuFocusDetails {
+export interface OpenChangeDetails {
   /**
    * The element that had focus before the menubar took it, such as a text field, or null. Commands
    * such as Copy act on it.
@@ -177,13 +175,19 @@ export interface MenuFocusDetails {
 }
 
 export interface MenuProps {
-  /** The trigger's text, such as File. */
+  /** The trigger's text, such as File, or content such as an icon beside the text. */
   label: ReactNode;
   /**
    * A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines
-   * it and Alt with the letter opens the menu.
+   * it, in the label's text also beside an icon or inside an element such as a span, and Alt with
+   * the letter opens the menu.
    */
   accessKey?: string;
+  /**
+   * Attributes of the trigger button, such as a className, a style, a ref or a data attribute; the
+   * menu's own className, style and ref are its popup's.
+   */
+  triggerProps?: TriggerProps;
   /** The menu's items: Menu.Item, Menu.Submenu, Menu.Separator and the other menu parts. */
   children: ReactNode;
   /** Accessible name of the menu; by default the label, when it is a string. */
@@ -203,7 +207,7 @@ export interface MenuProps {
   /**
    * Called when the menu opens or closes, with the element that had focus before the menubar took it.
    */
-  onOpenChange?: (open: boolean, details: MenuFocusDetails) => void;
+  onOpenChange?: (open: boolean, details: OpenChangeDetails) => void;
   /** Class of the menu popup. */
   className?: string;
   /** The menu popup's ref; the trigger is the menubar's own. */
@@ -212,18 +216,34 @@ export interface MenuProps {
   style?: CSSProperties;
 }
 
+function underlineFirst(node: ReactNode, accessKey: string, found: { done: boolean }): ReactNode {
+  if (found.done) return node;
+  if (typeof node === 'string') {
+    const index = node.toLowerCase().indexOf(accessKey);
+    if (index === -1) return node;
+    found.done = true;
+    return (
+      <>
+        {node.slice(0, index)}
+        <span className="env-menubar-access-key">{node.slice(index, index + 1)}</span>
+        {node.slice(index + 1)}
+      </>
+    );
+  }
+  if (Array.isArray(node))
+    return Children.map(node, (child) => underlineFirst(child, accessKey, found));
+  const rendersItsChildren =
+    isValidElement<{ children?: ReactNode }>(node) &&
+    (node.type === Fragment || typeof node.type === 'string');
+  if (!rendersItsChildren || node.props.children == null) return node;
+  const children = underlineFirst(node.props.children, accessKey, found);
+  return found.done ? cloneElement(node, undefined, children) : node;
+}
+
 function AccessKeyLabel({ label, accessKey }: { label: ReactNode; accessKey: string | undefined }) {
-  const index =
-    typeof label === 'string' && accessKey !== undefined
-      ? label.toLowerCase().indexOf(accessKey)
-      : -1;
-  if (typeof label !== 'string' || index === -1)
-    return <span className="env-menubar-label">{label}</span>;
   return (
     <span className="env-menubar-label">
-      {label.slice(0, index)}
-      <span className="env-menubar-access-key">{label.slice(index, index + 1)}</span>
-      {label.slice(index + 1)}
+      {accessKey === undefined ? label : underlineFirst(label, accessKey, { done: false })}
     </span>
   );
 }
@@ -246,6 +266,7 @@ function Menu({
   className,
   ref,
   style,
+  triggerProps,
 }: MenuProps) {
   const menubar = useContext(MenubarContext);
   if (!menubar) throw new Error('Menubar.Menu must be used inside Menubar.Root.');
@@ -320,8 +341,9 @@ function Menu({
       })}
     >
       <BaseMenu.Trigger
-        ref={trigger}
-        className="env-menubar-trigger"
+        {...triggerProps}
+        ref={mergeRefs(trigger, triggerProps?.ref)}
+        className={classNames('env-menubar-trigger', triggerProps?.className)}
         data-access-key={key}
         aria-keyshortcuts={menubar.accessKeys && key ? `Alt+${key.toUpperCase()}` : undefined}
       >
@@ -336,10 +358,7 @@ function Menu({
         trigger={trigger}
         finalFocus={focusAfterClosing}
         className={className}
-        popupRef={(node: HTMLDivElement | null) => {
-          popup.current = node;
-          setRef(ref, node);
-        }}
+        popupRef={mergeRefs(popup, ref)}
         popupProps={{ style }}
       >
         {children}

@@ -1,6 +1,7 @@
 import {
   Button,
   Graphic,
+  IconButton,
   List,
   PageHeader,
   Text,
@@ -84,17 +85,24 @@ export default function GraphicFixture() {
         </Graphic>
       </div>
       <div className="fixture-actions">
-        <Button variant="outline" startIcon={<img src={png} alt="" />} data-testid="button-img">
+        <IconButton
+          variant="outline"
+          icon={<img src={png} alt="" />}
+          aria-label="Sign in with Acme"
+          data-testid="button-img"
+        />
+        <Button variant="outline" start={<Graphic src={png} alt="" />} data-testid="button-graphic">
           Sign in with Acme
         </Button>
         <Button
           variant="outline"
-          startIcon={<Graphic src={png} alt="" />}
-          data-testid="button-graphic"
+          start={
+            <Graphic alt="">
+              <IconPipeline />
+            </Graphic>
+          }
+          data-testid="button-svg"
         >
-          Sign in with Acme
-        </Button>
-        <Button variant="outline" startIcon={<IconPipeline />} data-testid="button-svg">
           Build pipeline
         </Button>
       </div>

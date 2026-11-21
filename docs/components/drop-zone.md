@@ -36,6 +36,7 @@ examples:
   Sizes: variants
   DropZoneAnatomy: anatomy
   AttachDocuments: example
+  FilesInsideTheZone: example
   NarrowZone: example
 ---
 
@@ -70,6 +71,12 @@ examples:
 ### Attach several files
 
 ```tsx figure=AttachDocuments motion
+
+```
+
+### Files inside the zone
+
+```tsx figure=FilesInsideTheZone
 
 ```
 

@@ -181,3 +181,33 @@ export default function DatePickerFixture({ theme }: { theme: ColorScheme }) {
     </Theme>
   );
 }
+
+export function PickerPopupContentFixture() {
+  const [due, setDue] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <DatePicker
+        label="Due"
+        value={due}
+        onValueChange={setDue}
+        open={open}
+        onOpenChange={setOpen}
+        isDateUnavailable={(date) => date === '2026-10-17'}
+        popupHeader={
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setDue('2026-10-15');
+              setOpen(false);
+            }}
+          >
+            Tomorrow
+          </Button>
+        }
+        popupFooter={<span data-testid="zone-note">Times in UTC</span>}
+      />
+      <output data-testid="due">{due}</output>
+    </>
+  );
+}

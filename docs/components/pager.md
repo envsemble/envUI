@@ -54,7 +54,7 @@ examples:
 
 1. **Pager** (`env-pager`)
 2. **Link** (`env-pager-link-previous`, `previous`)
-3. **Icon** (`env-pager-link-previous > env-icon`, `icon`)
+3. **Start** (`env-pager-link-start`, `start`)
 4. **Direction** (`env-pager-link-label`)
 5. **Title** (`env-pager-link-title`, `children`)
 

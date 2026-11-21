@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { converter, formatHex, parse, wcagLuminance, type Oklch, type Rgb } from 'culori';
-import { formatted, readIfExists, writeIfChanged } from './GeneratedFiles.ts';
+import { formatted, GeneratedOutput } from './GeneratedFiles.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 export const paletteFile = resolve(repositoryRoot, 'packages/ui/tokens/palette.tokens.json');
@@ -257,12 +257,10 @@ function jsonWithOneTokenPerLine(node: unknown, indent = ''): string {
 
 export async function writePalette({ check = false } = {}) {
   const contents = await formatted(paletteFile, jsonWithOneTokenPerLine(paletteDocument()));
-  if (!check) return writeIfChanged(paletteFile, contents);
-  if (readIfExists(paletteFile) !== contents)
-    throw new Error(
-      'packages/ui/tokens/palette.tokens.json is stale: run `npm run palette:generate` and commit the result.',
-    );
-  return false;
+  const output = new GeneratedOutput({ check, regenerate: 'npm run palette:generate' });
+  const changed = output.writeOrCheck(paletteFile, contents);
+  output.throwIfStale();
+  return changed;
 }
 
 if (import.meta.main) {

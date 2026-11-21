@@ -1,12 +1,19 @@
 'use client';
 
-import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
+import {
+  useEffect,
+  useState,
+  type ComponentPropsWithRef,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
 import { Tooltip } from '../overlays/Tooltip.js';
 import { IconChevronLeft } from '../icons/ChevronLeft.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { Row } from '../layout/Layout.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
@@ -28,10 +35,7 @@ export interface PaginationRange {
   pageCount?: number;
 }
 
-export interface PaginationProps extends Omit<
-  ComponentPropsWithRef<'nav'>,
-  'children' | 'onChange'
-> {
+interface PaginationOwnProps extends Omit<ComponentPropsWithRef<'nav'>, 'children' | 'onChange'> {
   /**
    * The page shown, counted from 1. It is kept within the pages that exist, so a page beyond the
    * end shows the last one.
@@ -50,11 +54,6 @@ export interface PaginationProps extends Omit<
    */
   hasNextPage?: boolean;
   /**
-   * Receives the page before or after the current one when its button is pressed. The application
-   * loads that page and passes it back as page.
-   */
-  onPageChange: (page: number) => void;
-  /**
    * A page is loading: the button pressed shows a spinner, also when the load starts in an effect
    * after the page changes, and both buttons ignore presses while staying focusable. A load for
    * another reason, such as a refresh, makes both wait without a spinner.
@@ -63,11 +62,11 @@ export interface PaginationProps extends Omit<
   /** Render nothing while every item fits on one page, so neither button has anywhere to go. */
   hideWhenSinglePage?: boolean;
   /**
-   * Writes the range from the first and last item shown, the total, the page and the page count,
+   * Draws the range from the first and last item shown, the total, the page and the page count,
    * for one pager; EnvUIProvider's messages.pagination.range writes it for every pager.
    * @default 1–60 of 245, or 61–120 without total, with numbers in the locale
    */
-  formatRange?: (range: PaginationRange) => ReactNode;
+  renderRange?: (range: PaginationRange) => ReactNode;
   /**
    * The previous button's accessible name and tooltip.
    * @default 'Previous page', or EnvUIProvider's messages.pagination.previous
@@ -95,6 +94,29 @@ export interface PaginationProps extends Omit<
   'aria-label'?: string;
 }
 
+/** How the controls reach a page: onPageChange, pageHref, or both. */
+type PaginationTarget =
+  | {
+      /**
+       * Receives the page before or after the current one when its button is pressed. The
+       * application loads that page and passes it back as page. Give it, or pageHref, or both.
+       */
+      onPageChange: (page: number) => void;
+      /**
+       * The address of a page, such as `?page=3`, for a list whose pages have their own URLs: the
+       * previous and next controls are then links, through the LinkProvider's link component,
+       * which open in a new tab, are crawlable and work before hydration. A control with no page
+       * to go to reports aria-disabled and has no destination.
+       */
+      pageHref?: (page: number) => string;
+    }
+  | {
+      onPageChange?: (page: number) => void;
+      pageHref: (page: number) => string;
+    };
+
+export type PaginationProps = PaginationOwnProps & PaginationTarget;
+
 interface PressAwaitingItsLoad {
   direction: 'previous' | 'next';
   state: 'pressed' | 'settling' | 'loading';
@@ -111,9 +133,10 @@ export function Pagination({
   total,
   hasNextPage,
   onPageChange,
+  pageHref,
   pending = false,
   hideWhenSinglePage = false,
-  formatRange,
+  renderRange,
   previousLabel,
   nextLabel,
   variant = 'ghost',
@@ -155,22 +178,44 @@ export function Pagination({
         : (nextLabel ?? messages.next);
     const loading = pending && press?.direction === direction;
     const unavailableButFocusable = !loading && (!available || pending);
+    const target = direction === 'previous' ? current - 1 : current + 1;
+    const shared = {
+      icon: direction === 'previous' ? <IconChevronLeft /> : <IconChevronRight />,
+      'aria-label': name,
+      variant,
+      pending: loading,
+      'aria-disabled': unavailableButFocusable ? true : undefined,
+    };
     return (
       <Tooltip content={name}>
-        <IconButton
-          icon={direction === 'previous' ? <IconChevronLeft /> : <IconChevronRight />}
-          aria-label={name}
-          variant={variant}
-          pending={loading}
-          aria-disabled={unavailableButFocusable ? true : undefined}
-          className="env-pagination-button"
-          data-direction={direction}
-          onClick={() => {
-            if (!available || pending) return;
-            setPress({ direction, state: 'pressed' });
-            onPageChange(direction === 'previous' ? current - 1 : current + 1);
-          }}
-        />
+        {pageHref ? (
+          <IconButton
+            {...shared}
+            className="env-pagination-button"
+            data-direction={direction}
+            href={available ? pageHref(target) : ''}
+            disabled={!available}
+            onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+              if (pending) {
+                event.preventDefault();
+                return;
+              }
+              setPress({ direction, state: 'pressed' });
+              onPageChange?.(target);
+            }}
+          />
+        ) : (
+          <IconButton
+            {...shared}
+            className="env-pagination-button"
+            data-direction={direction}
+            onClick={() => {
+              if (!available || pending) return;
+              setPress({ direction, state: 'pressed' });
+              onPageChange?.(target);
+            }}
+          />
+        )}
       </Tooltip>
     );
   }
@@ -183,15 +228,15 @@ export function Pagination({
       render={
         <nav
           {...props}
-          aria-label={label ?? messages.label}
+          aria-label={landmarkLabel(label, props['aria-labelledby'], messages.label)}
           className={classNames('env-pagination', className)}
           data-size={size}
         />
       }
     >
       <span className="env-pagination-range" dir="auto" aria-live="polite" aria-atomic="true">
-        {formatRange
-          ? formatRange({ start, end, total: count, page: current, pageCount })
+        {renderRange
+          ? renderRange({ start, end, total: count, page: current, pageCount })
           : messages.range({
               start: numbers.format(start),
               end: numbers.format(end),

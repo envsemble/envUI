@@ -1,24 +1,10 @@
-import { Fragment, type ReactNode } from 'react';
-import { Code, Column, Link, Text } from '@envsemble/envui';
+import { Column, Text } from '@envsemble/envui';
 import releases from 'virtual:envui-release-notes';
 import type { InlinePiece, Release } from './ReleaseNotesData';
+import { Pieces } from './InlineText';
 
 const formatDate = (date: string) =>
   new Intl.DateTimeFormat('en', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(date));
-
-function Pieces({ pieces }: { pieces: InlinePiece[] }): ReactNode {
-  return pieces.map((piece, index) => (
-    <Fragment key={index}>
-      {piece.kind === 'text' && piece.text}
-      {piece.kind === 'code' && <Code>{piece.text}</Code>}
-      {piece.kind === 'link' && (
-        <Link href={piece.href}>
-          <Pieces pieces={piece.children} />
-        </Link>
-      )}
-    </Fragment>
-  ));
-}
 
 function ReleaseList({ items }: { items: InlinePiece[][] }) {
   return (

@@ -21,8 +21,9 @@ const {
   waveThin,
 } = await importSource('TableOfContents', [
   "export { TableOfContents } from './packages/ui/src/navigation/TableOfContents.tsx';",
-  "export * from './packages/ui/src/navigation/internal/contentsOutline.ts';",
-  "export * from './packages/ui/src/navigation/internal/contentsWave.ts';",
+  "export * from './packages/ui/src/navigation/internal/tableOfContents/contentsOutline.ts';",
+  "export * from './packages/ui/src/navigation/internal/tableOfContents/readingPosition.ts';",
+  "export * from './packages/ui/src/navigation/internal/tableOfContents/contentsWave.ts';",
   "export { EnvUIProvider } from './packages/ui/src/foundations/EnvUIProvider.tsx';",
 ]);
 

@@ -14,11 +14,11 @@ const kinds = {
 
 export function fitKindOf(
   picture: { tile?: boolean; window?: { width: number } } | undefined,
-  frame: 'own' | undefined,
+  ownFrame: boolean,
 ): FitKind {
   const tile = Boolean(picture?.tile);
   const drawing = picture?.window !== undefined && picture.window.width < tileWindowWidthRem;
-  if (frame === 'own' && !drawing) return tile ? kinds.ownTile : kinds.own;
+  if (ownFrame && !drawing) return tile ? kinds.ownTile : kinds.own;
   return tile ? kinds.window : kinds.content;
 }
 

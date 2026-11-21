@@ -573,7 +573,7 @@ const registry: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-border-default',
     [field, page, surface, muted, raised, popup],
-    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
+    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone takes it too',
   ),
   ...nonText(
     'composer-hover-edge',
@@ -608,6 +608,17 @@ const registry: readonly ContrastPair[] = merged([
     },
   ),
 
+  ...nonText(
+    'toolbar-separator',
+    [page, surface, muted, raised, popup],
+    'Separators between a toolbar’s groups, on every surface a toolbar sits on',
+    {
+      contrast: 'standard',
+      minimum: { standard: 1.4 },
+      rationale:
+        'Decorative at standard contrast, as list dividers are, but held to 1.4:1 on every surface, the recessed well too, where the muted hairline faded to 1.1:1: in light a tint of the text color, so it keeps its step from any ground. High contrast draws it in --env-color-border-muted, measured there.',
+    },
+  ),
   ...nonText(
     '--env-elevation-2-border',
     [popup, surface, page, muted, raised],
@@ -1199,11 +1210,6 @@ const registry: readonly ContrastPair[] = merged([
     'A soft neutral badge at high contrast, on the page, a pane, a row, a muted or raised surface or a popup',
     neutralBadgeAtHigh,
   ),
-  ...distinct(
-    'heatmap-accent-lowest',
-    [[fill, page]],
-    'The lightest step of a calendar heatmap against an empty day',
-  ),
   ...buttonEndSeparator('accent', [
     raised,
     '--env-color-bg-raised-hover',
@@ -1341,8 +1347,6 @@ const derived: Readonly<Record<string, string>> = {
   ),
   'document-tabs-strip':
     'color-mix(in srgb, var(--env-color-bg-page), var(--env-color-fg-default) 7%)',
-  'heatmap-accent-lowest':
-    'color-mix(in srgb, var(--env-color-fg-primary) 30%, var(--env-color-bg-page))',
   'popup-frosted': 'color-mix(in srgb, var(--_popup-fill) var(--env-popup-opacity), transparent)',
   'popup-fill': 'var(--_popup-fill)',
   'popup-row-highlight': 'var(--_popup-row-highlight)',
@@ -1351,6 +1355,7 @@ const derived: Readonly<Record<string, string>> = {
   'tooltip-key': ofLabel(tooltipKeyFill, '--env-color-fg-on-strong'),
   'tooltip-worst-backdrop': '#fff',
   'composer-hover-edge': markedColor('packages/ui/src/styles/Composer.css', 'composer-hover-edge'),
+  'toolbar-separator': markedColor('packages/ui/src/styles/Toolbar.css', 'toolbar-separator'),
   'text-field-affix': markedColor('packages/ui/src/styles/TextField.css', 'text-field-affix'),
   'segmented-control-thumb': markedColor(
     'packages/ui/src/styles/SegmentedControl.css',

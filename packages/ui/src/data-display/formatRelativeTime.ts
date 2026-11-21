@@ -1,5 +1,7 @@
 import { relativeTime as relativeTimeMessages } from '../foundations/messages/relativeTime.js';
 import { day, hour, minute, second } from '../internal/time/durations.js';
+import { formattersFor } from '../internal/provider/formatters.js';
+import { toTime } from './internal/relativeTimeFormat.js';
 
 /** A moment: a Date, milliseconds since 1970 or a date string such as an ISO 8601 timestamp. */
 export type RelativeTimeValue = Date | number | string;
@@ -43,10 +45,6 @@ function calendarDaysBetween(from: number, to: number) {
   return Math.round((startOfDay(to) - startOfDay(from)) / day);
 }
 
-export function toTime(value: RelativeTimeValue | undefined) {
-  return new Date(value ?? Number.NaN).getTime();
-}
-
 function relativeUnit(distance: number): [number, Intl.RelativeTimeFormatUnit] | undefined {
   const away = Math.abs(distance);
   const sign = distance < 0 ? -1 : 1;
@@ -63,40 +61,12 @@ function relativeUnit(distance: number): [number, Intl.RelativeTimeFormatUnit] |
   return [sign * Math.max(1, Math.round(away / year)), 'year'];
 }
 
-const formatters = new Map<string, Intl.RelativeTimeFormat | Intl.DateTimeFormat>();
-
-function cachedFormatter<Formatter extends Intl.RelativeTimeFormat | Intl.DateTimeFormat>(
-  key: string,
-  create: () => Formatter,
-): Formatter {
-  let formatter = formatters.get(key) as Formatter | undefined;
-  if (!formatter) {
-    formatter = create();
-    formatters.set(key, formatter);
-  }
-  return formatter;
-}
-
 function relativeFormatter(
   locale: RelativeTimeOptions['locale'],
   style: NonNullable<RelativeTimeOptions['format']>,
   numeric: 'always' | 'auto',
 ) {
-  return cachedFormatter(
-    `relative|${String(locale ?? '')}|${style}|${numeric}`,
-    () => new Intl.RelativeTimeFormat(locale as Intl.LocalesArgument, { style, numeric }),
-  );
-}
-
-export function dateTimeFormatter(locale: RelativeTimeOptions['locale']) {
-  return cachedFormatter(
-    `absolute|${String(locale ?? '')}`,
-    () =>
-      new Intl.DateTimeFormat(locale as Intl.LocalesArgument, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      }),
-  );
+  return formattersFor(locale).relativeTime({ style, numeric });
 }
 
 /**

@@ -1,27 +1,14 @@
 import { Suspense, useRef, useState } from 'react';
-import {
-  Column,
-  EnvUIProvider,
-  IconButton,
-  Link,
-  LinkProvider,
-  Scaffold,
-  Sheet,
-  Text,
-  Tooltip,
-} from '@envsemble/envui';
-import { IconMenu } from '@envsemble/envui/icons/Menu';
+import { Column, EnvUIProvider, Link, LinkProvider, Scaffold, Sheet, Text } from '@envsemble/envui';
 import { findPage, type Area, type RoutePage } from './routes/SiteRoutes';
 import { PageBoundary } from './frame/PageBoundary';
 import { SiteBanner } from './frame/SiteBanner';
-import { ContentsItems, PageContents } from './frame/PageContents';
+import { contentsWorthListing, PageContents } from './frame/PageContents';
 import { PageFooter } from './frame/PageFooter';
 import { retryDocument } from './pages/PageContent';
 import { preloadPage, retryPageView, usePageContents, usePageView } from './pages/PageLoading';
-import { Brand } from './brand/Brand';
 import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
-import { drawerless } from './navigation/CatalogueDestinations';
-import { PageActions } from './navigation/PageActions';
+import { TopBar } from './navigation/TopBar';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink, usePendingRoute } from './navigation/RouterLink';
 import { RouteProgress } from './navigation/RouteProgress';
@@ -30,7 +17,6 @@ import { usePagePlace } from './routes/usePagePlace';
 import { documentTitle, pageDescription } from './routes/PageHead';
 import { useSheetClosesWhenWide } from './navigation/useSheetClosesWhenWide';
 import { SearchShortcut } from './search/SearchShortcut';
-import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './routes/useSiteRoute';
 import { DisplaySettingsProvider } from './display/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
@@ -63,33 +49,6 @@ function PageNotFound({ area }: { area: Area }) {
   );
 }
 
-function CompactControls({
-  area,
-  onOpenNavigation,
-  onSearch,
-}: {
-  area: Area;
-  onOpenNavigation: () => void;
-  onSearch: () => void;
-}) {
-  return (
-    <div className="site-compact-controls">
-      <div className="site-compact-controls-bar">
-        <Tooltip content="Open navigation">
-          <IconButton
-            icon={<IconMenu />}
-            aria-label="Open navigation"
-            variant="ghost"
-            onClick={onOpenNavigation}
-          />
-        </Tooltip>
-        <Brand area={area} />
-        <SearchButton iconOnly onClick={onSearch} />
-      </div>
-    </div>
-  );
-}
-
 function PageColumns({
   page,
   area,
@@ -104,6 +63,7 @@ function PageColumns({
   contents: boolean;
 }) {
   const items = usePageContents(contents ? page : undefined);
+  const listed = contents && contentsWorthListing(items);
   const [prerenderedPath, setPrerenderedPath] = useState(
     useFiguresMounted() ? undefined : routePath,
   );
@@ -114,32 +74,30 @@ function PageColumns({
     <div className="site-page-layout">
       <div className="site-page-grid" data-contents={contents || undefined}>
         <div className="site-page-column">
-          <ContentsItems value={contents ? items : undefined}>
-            <PageBoundary
-              title={page?.title ?? 'Page not found'}
-              route={route}
-              onRetry={() => {
-                if (!page) return;
-                retryPageView(page.kind);
-                if (page.document) retryDocument(page.document.id);
-                setPrerenderedPath(undefined);
-              }}
-            >
-              {prerenderedPageHydratesWithFrame ? (
-                view
-              ) : (
-                <Suspense
-                  key={page?.path ?? routePath}
-                  fallback={page && <PageSkeleton page={page} />}
-                >
-                  {view}
-                </Suspense>
-              )}
-            </PageBoundary>
-          </ContentsItems>
+          <PageBoundary
+            title={page?.title ?? 'Page not found'}
+            route={route}
+            onRetry={() => {
+              if (!page) return;
+              retryPageView(page.kind);
+              if (page.document) retryDocument(page.document.id);
+              setPrerenderedPath(undefined);
+            }}
+          >
+            {prerenderedPageHydratesWithFrame ? (
+              view
+            ) : (
+              <Suspense
+                key={page?.path ?? routePath}
+                fallback={page && <PageSkeleton page={page} />}
+              >
+                {view}
+              </Suspense>
+            )}
+          </PageBoundary>
           {page && <PageNavigation page={page} />}
         </div>
-        {contents && page && <PageContents path={page.path} items={items} />}
+        {listed && page && <PageContents path={page.path} items={items ?? []} />}
       </div>
     </div>
   );
@@ -171,12 +129,10 @@ function Shell() {
           }
         : undefined,
       onClose: inSheet ? () => setNavigationOpen(false) : undefined,
-      onSearch: inSheet
-        ? () => {
-            setNavigationOpen(false);
-            openSearch();
-          }
-        : openSearch,
+      onSearch: () => {
+        setNavigationOpen(false);
+        openSearch();
+      },
     };
     return area === 'docs' ? <DocsNavigation {...props} /> : <CatalogueNavigation {...props} />;
   };
@@ -190,18 +146,13 @@ function Shell() {
       navigationForms={{ compact: 'none', medium: 'none' }}
       navigation={{ drawer: navigation(false) }}
     >
-      <CompactControls
-        area={area}
-        onOpenNavigation={() => setNavigationOpen(true)}
-        onSearch={openSearch}
-      />
       <div className="site-main">
-        {area === 'catalogue' && drawerless(page) && (
-          <div className="site-page-search">
-            <SearchButton onClick={openSearch} className="site-page-search-button" />
-          </div>
-        )}
-        <PageActions page={page} area={area} />
+        <TopBar
+          page={page}
+          area={area}
+          onOpenNavigation={() => setNavigationOpen(true)}
+          onSearch={openSearch}
+        />
         <PageColumns
           page={page}
           area={area}
@@ -216,7 +167,7 @@ function Shell() {
       <Sheet
         className="site-navigation-sheet"
         side="start"
-        aria-label={area === 'docs' ? 'Docs' : 'Catalogue'}
+        aria-label={area === 'docs' ? 'Docs' : 'Gallery'}
         width={area === 'docs' ? 'min(18rem, 100%)' : 'min(22rem, 100%)'}
         closeButton={false}
         open={navigationOpen}

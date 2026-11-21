@@ -1,21 +1,13 @@
-import { Column, List, Panes, Surface, Text } from '@envsemble/envui';
+import { Column, DescriptionList, Panes, Surface, Text } from '@envsemble/envui';
 
 export default function StackedWhenNarrow() {
   return (
     <Panes.Root
       stackBelow="medium"
+      sized="end"
       defaultWidth={14}
       style={{ inlineSize: '100%', blockSize: '18rem' }}
     >
-      <Panes.Pane label="Team inbox">
-        <Surface radius="none" padding={2} style={{ minBlockSize: '100%' }}>
-          <List.Root aria-label="Messages">
-            <List.Item label="Budget review" description="Sam Lee" current />
-            <List.Item label="Launch checklist" description="Priya Shah" />
-          </List.Root>
-        </Surface>
-      </Panes.Pane>
-      <Panes.ResizeHandle label="Resize the inbox" />
       <Panes.Pane label="Budget review">
         <Surface
           radius="none"
@@ -28,6 +20,15 @@ export default function StackedWhenNarrow() {
             Budget review
           </Text>
           <Text>The numbers for March are in the sheet.</Text>
+        </Surface>
+      </Panes.Pane>
+      <Panes.ResizeHandle label="Resize details" />
+      <Panes.Pane label="Review details">
+        <Surface radius="none" padding={4} style={{ minBlockSize: '100%' }}>
+          <DescriptionList.Root aria-label="About the review">
+            <DescriptionList.Item label="Owner">Sam Lee</DescriptionList.Item>
+            <DescriptionList.Item label="Due">April 2</DescriptionList.Item>
+          </DescriptionList.Root>
         </Surface>
       </Panes.Pane>
     </Panes.Root>

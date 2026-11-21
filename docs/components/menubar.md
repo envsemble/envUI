@@ -45,7 +45,7 @@ examples:
 
 ## Anatomy
 
-```tsx figure=MenubarAnatomy open
+```tsx figure=MenubarAnatomy open width="20"
 
 ```
 

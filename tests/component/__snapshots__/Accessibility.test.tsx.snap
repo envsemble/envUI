@@ -37,7 +37,7 @@ exports[`button-counts has no new accessibility violations 1`] = `{}`;
 
 exports[`button-group has no new accessibility violations 1`] = `{}`;
 
-exports[`calendar-heatmap has no new accessibility violations 1`] = `{}`;
+exports[`card has no new accessibility violations 1`] = `{}`;
 
 exports[`choice-controls has no new accessibility violations 1`] = `{}`;
 
@@ -46,7 +46,7 @@ exports[`code-block has no new accessibility violations 1`] = `{}`;
 exports[`code-diff has no new accessibility violations 1`] = `
 {
   "aria-command-name": {
-    "div.env-code-diff diffs-container": 1,
+    "div.env-code-diff diffs-container": 3,
   },
 }
 `;
@@ -82,7 +82,7 @@ exports[`copy-button has no new accessibility violations 1`] = `{}`;
 exports[`data-display has no new accessibility violations 1`] = `
 {
   "landmark-unique": {
-    "nav.env-breadcrumbs": 6,
+    "nav.env-breadcrumbs": 7,
   },
 }
 `;
@@ -93,17 +93,12 @@ exports[`default-colors has no new accessibility violations 1`] = `{}`;
 
 exports[`description-list has no new accessibility violations 1`] = `{}`;
 
-exports[`dev-mode has no new accessibility violations 1`] = `{}`;
-
 exports[`dialog has no new accessibility violations 1`] = `{}`;
 
 exports[`direction has no new accessibility violations 1`] = `
 {
-  "aria-required-children": {
-    "div.env-theme div": 2,
-  },
-  "aria-required-parent": {
-    "div.env-theme div": 14,
+  "target-size": {
+    "div.env-color-picker-swatch": 2,
   },
 }
 `;
@@ -136,6 +131,8 @@ exports[`forms has no new accessibility violations 1`] = `{}`;
 
 exports[`graphic has no new accessibility violations 1`] = `{}`;
 
+exports[`halo has no new accessibility violations 1`] = `{}`;
+
 exports[`hover-card has no new accessibility violations 1`] = `{}`;
 
 exports[`layout has no new accessibility violations 1`] = `{}`;
@@ -145,8 +142,6 @@ exports[`layout-check has no new accessibility violations 1`] = `{}`;
 exports[`list has no new accessibility violations 1`] = `{}`;
 
 exports[`markdown has no new accessibility violations 1`] = `{}`;
-
-exports[`markdown-editor has no new accessibility violations 1`] = `{}`;
 
 exports[`menu has no new accessibility violations 1`] = `{}`;
 
@@ -197,16 +192,7 @@ exports[`popover has no new accessibility violations 1`] = `{}`;
 
 exports[`portal-container has no new accessibility violations 1`] = `{}`;
 
-exports[`primitives has no new accessibility violations 1`] = `
-{
-  "aria-required-children": {
-    "div.env-theme div": 2,
-  },
-  "aria-required-parent": {
-    "div.env-theme div": 28,
-  },
-}
-`;
+exports[`primitives has no new accessibility violations 1`] = `{}`;
 
 exports[`relative-time has no new accessibility violations 1`] = `{}`;
 
@@ -290,6 +276,8 @@ exports[`table-of-contents has no new accessibility violations 1`] = `
 
 exports[`text has no new accessibility violations 1`] = `{}`;
 
+exports[`theme-choices has no new accessibility violations 1`] = `{}`;
+
 exports[`theme-contrast has no new accessibility violations 1`] = `{}`;
 
 exports[`theme-contrast-nested has no new accessibility violations 1`] = `{}`;
@@ -298,11 +286,15 @@ exports[`theme-contrast-provider has no new accessibility violations 1`] = `{}`;
 
 exports[`theme-contrast-remount has no new accessibility violations 1`] = `{}`;
 
+exports[`theme-preference-controlled has no new accessibility violations 1`] = `{}`;
+
 exports[`theme-release has no new accessibility violations 1`] = `{}`;
 
 exports[`time-picker has no new accessibility violations 1`] = `{}`;
 
 exports[`toast has no new accessibility violations 1`] = `{}`;
+
+exports[`toolbar-items has no new accessibility violations 1`] = `{}`;
 
 exports[`tooltip has no new accessibility violations 1`] = `{}`;
 

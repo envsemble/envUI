@@ -65,8 +65,8 @@ export default function MenuTile() {
         onOpenChange={setOpen}
         trigger={<IconButton variant="secondary" icon={<IconMoreVert />} aria-label="Actions" />}
       >
-        <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
-        <Menu.Item icon={<IconDelete />} tone="danger" onClick={() => setDeleted(true)}>
+        <Menu.Item start={<IconEdit />}>Rename</Menu.Item>
+        <Menu.Item start={<IconDelete />} tone="danger" onClick={() => setDeleted(true)}>
           Delete
         </Menu.Item>
       </Menu.Root>

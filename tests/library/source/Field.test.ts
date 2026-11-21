@@ -5,7 +5,8 @@ import { descriptions, elementsOf, firstElement, hasClass, textOf } from '../../
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
-const { TextField, Textarea } = await importSource('Field', [
+const { TextField, Textarea, Field } = await importSource('Field', [
+  "export * as Field from './packages/ui/src/forms/Field.tsx';",
   "export { TextField } from './packages/ui/src/forms/TextField.tsx';",
   "export { Textarea } from './packages/ui/src/forms/Textarea.tsx';",
 ]);
@@ -44,4 +45,22 @@ test('fields associate labels, hints, and validation messages', () => {
   assert.equal(invalid.attributes['data-invalid'], '');
   const error = invalid.children.find((child) => hasClass(child, 'env-field-error'));
   assert.equal(textOf(error), 'Please correct this value');
+});
+
+test("Field.Error renders as the application's element, and its icon can be swapped or left out", () => {
+  const error = (props) =>
+    elementsOf(
+      render(h(Field.Root, { invalid: true }, h(Field.Error, props, 'Use 3 or more.'))),
+    ).find((element) => hasClass(element, 'env-field-error'));
+  const compact = error({ render: h('p', { className: 'compact' }), icon: null });
+  assert.equal(compact.tag, 'p');
+  assert.ok(hasClass(compact, 'compact'));
+  assert.equal(textOf(compact), 'Use 3 or more.');
+  assert.ok(!elementsOf(compact).some((element) => element.tag === 'svg'));
+  const own = error({ icon: h('span', { 'aria-hidden': true, className: 'own-icon' }, '!') });
+  assert.ok(elementsOf(own).some((element) => hasClass(element, 'own-icon')));
+  assert.ok(!elementsOf(own).some((element) => element.tag === 'svg'));
+  const usual = error({});
+  assert.equal(usual.tag, 'div');
+  assert.ok(elementsOf(usual).some((element) => element.tag === 'svg'));
 });

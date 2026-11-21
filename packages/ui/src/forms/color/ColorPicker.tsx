@@ -16,7 +16,6 @@ import { IconColorize } from '../../icons/Colorize.js';
 import * as Field from '../Field.js';
 import { classNames } from '../../internal/classNames.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
-import { setRef } from '../../internal/react/setRef.js';
 import { ColorArea } from './internal/ColorArea.js';
 import { ColorLocale } from './internal/ColorLocale.js';
 import { ColorSlider } from './internal/ColorSlider.js';
@@ -24,8 +23,10 @@ import { ColorValues } from './internal/ColorValues.js';
 import { SwatchList } from './internal/SwatchList.js';
 import { useEyeDropper } from './internal/useEyeDropper.js';
 import type { ColorPickerValueProps } from './internal/colorPickerValueProps.js';
-import { ColorChangeContext } from './internal/colorChange.js';
-import { useColorState, useFormResetOf } from './internal/useColorState.js';
+import { ColorChangeContext } from './internal/ColorChangeContext.js';
+import { useColorFollowingValue } from './internal/useColorFollowingValue.js';
+import { useFormResetting } from './internal/useFormResetting.js';
+import { fieldDescribedBy, fieldPartIds } from '../../internal/field/useFieldControl.js';
 import { formatColor, sameColor, toColor, type ColorFormat } from './internal/colorValue.js';
 import { flag } from '../../internal/flag.js';
 import { Slot } from '../../internal/layout/Slot.js';
@@ -78,6 +79,8 @@ export function ColorPicker({
   eyeDropper = true,
   copyable = true,
   swatches,
+  swatchesFirst = false,
+  fields = true,
   name,
   form,
   disabled = false,
@@ -96,9 +99,9 @@ export function ColorPicker({
   const together = formats.length > 1 && ownFormats !== undefined;
   const [chosenFormat, setFormat] = useState(formats[0]);
   const format = formats.includes(chosenFormat) ? chosenFormat : formats[0];
-  const { color, setOwn, reset, controlled } = useColorState(value, defaultValue, alpha);
+  const { color, setOwn, reset, controlled } = useColorFollowingValue(value, defaultValue, alpha);
   const inputRef = useRef<HTMLInputElement>(null);
-  const resetting = useFormResetOf(
+  const resetting = useFormResetting(
     inputRef,
     () => {
       if (!controlled) reset();
@@ -134,19 +137,28 @@ export function ColorPicker({
     </Tooltip>
   );
 
-  const describedByIds =
-    [describedBy, description != null && `${id}-description`, error != null && `${id}-error`]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const swatchList = swatches && swatches.length > 0 && (
+    <SwatchList
+      swatches={swatches}
+      value={color}
+      onChange={change}
+      alpha={alpha}
+      disabled={inactive}
+      label={messages.swatches}
+    />
+  );
+
+  const ids = fieldPartIds(id);
+  const describedByIds = fieldDescribedBy(id, describedBy, description, error);
 
   return (
     <ColorLocale>
       <div
         {...props}
-        ref={(element) => setRef(ref, element)}
+        ref={ref}
         id={id}
         role="group"
-        aria-labelledby={visibleLabel ? `${id}-label` : undefined}
+        aria-labelledby={visibleLabel ? ids.label : undefined}
         aria-label={visibleLabel ? undefined : label}
         aria-describedby={describedByIds}
         aria-disabled={disabled || undefined}
@@ -156,10 +168,11 @@ export function ColorPicker({
         data-invalid={flag(error != null)}
       >
         {visibleLabel && (
-          <span id={`${id}-label`} className="env-color-picker-label">
+          <span id={ids.label} className="env-color-picker-label">
             {label}
           </span>
         )}
+        {swatchesFirst && swatchList}
         <div className="env-color-picker-controls">
           <ColorArea value={color} onChange={change} disabled={inactive} label={label} />
           <div className="env-color-picker-sliders">
@@ -169,37 +182,30 @@ export function ColorPicker({
             )}
           </div>
         </div>
-        <ColorValues
-          color={color}
-          onChange={change}
-          formats={formats}
-          oneAtATimeFormat={format}
-          onFormatChange={setFormat}
-          together={together}
-          alpha={alpha}
-          copyable={copyable}
-          eyeDropperButton={eyeDropperButton}
-          disabled={disabled}
-          readOnly={readOnly}
-        />
-        {swatches && swatches.length > 0 && (
-          <SwatchList
-            swatches={swatches}
-            value={color}
+        {fields && (
+          <ColorValues
+            color={color}
             onChange={change}
+            formats={formats}
+            oneAtATimeFormat={format}
+            onFormatChange={setFormat}
+            together={together}
             alpha={alpha}
-            disabled={inactive}
-            label={messages.swatches}
+            copyable={copyable}
+            eyeDropperButton={eyeDropperButton}
+            disabled={disabled}
+            readOnly={readOnly}
           />
         )}
+        {!swatchesFirst && swatchList}
         {description != null && (
-          <div id={`${id}-description`} className="env-color-picker-description">
+          <div id={ids.description} className="env-color-picker-description">
             <Slot className="env-color-picker-description-content">{description}</Slot>
           </div>
         )}
         {error != null && (
           <Field.Root invalid>
-            <Field.Error id={`${id}-error`} className="env-color-picker-error">
+            <Field.Error id={ids.error} className="env-color-picker-error">
               {error}
             </Field.Error>
           </Field.Root>

@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import plugin from '../src/index.js';
 import { lintPackages, staleFiles } from '../../../scripts/build/SyncLintPackages.ts';
+import { propsFile } from '../../../scripts/RepositoryPaths.ts';
 import { colorTokenAdvice } from '../src/tokens.js';
 
 const read = (url) => JSON.parse(readFileSync(url, 'utf8'));
@@ -12,20 +13,26 @@ const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 const entries = [...elements.roles, ...elements.elements];
 const isName = (value) => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(value);
 
-test('the plugin names itself and turns every rule on as an error in the recommended config', () => {
+test('the plugin names itself; the recommended config turns on the rules about using envUI, and strict adds the ones that set application policy', () => {
   assert.deepEqual(plugin.meta, {
     name: manifest.name,
     version: manifest.version,
     namespace: 'envui',
   });
-  const { recommended } = plugin.configs;
+  const { recommended, strict } = plugin.configs;
   assert.equal(recommended.plugins.envui, plugin);
+  const policy = ['envui/label-vocabulary', 'envui/no-html-elements'];
+  const all = Object.keys(plugin.rules).map((name) => `envui/${name}`);
   assert.deepEqual(
     Object.keys(recommended.rules).sort(),
-    Object.keys(plugin.rules).map((name) => `envui/${name}`),
+    all.filter((rule) => !policy.includes(rule)),
   );
-  for (const [rule, severity] of Object.entries(recommended.rules))
-    assert.equal(severity, 'error', rule);
+  assert.deepEqual({ ...strict, name: recommended.name, rules: recommended.rules }, recommended);
+  assert.equal(strict.name, 'envui/strict');
+  assert.deepEqual(Object.keys(strict.rules).sort(), all);
+  for (const config of [recommended, strict])
+    for (const [rule, severity] of Object.entries(config.rules))
+      assert.equal(severity, 'error', rule);
 });
 
 test('the mapping table has unique entries that name envUI 1.0 components', () => {
@@ -56,9 +63,8 @@ test('the mapping table has unique entries that name envUI 1.0 components', () =
 });
 
 test("the components that own a role, and those suggested, are envUI's when the repository has its props data", () => {
-  const props = new URL('../../../docs/generated/props.json', import.meta.url);
-  if (!existsSync(props)) return;
-  const exported = new Set(Object.keys(read(props).exports));
+  if (!existsSync(propsFile)) return;
+  const exported = new Set(Object.keys(read(propsFile).exports));
   for (const entry of elements.roles)
     for (const owner of entry.owners)
       assert.ok(exported.has(owner), `${entry.id}: ${owner} is not an envUI component`);

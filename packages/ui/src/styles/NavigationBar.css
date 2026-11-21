@@ -1,18 +1,11 @@
 @layer env.components {
   .env-navigation-bar {
-    --_navigation-bar-indicator-width: 2.75rem;
-    --_navigation-bar-indicator-height: 2rem;
-    --_navigation-bar-count-size: 1rem;
-    box-sizing: border-box;
+    --_destination-indicator-width: 2.75rem;
+    --_navigation-bar-dot-size: 0.5rem;
     inline-size: 100%;
     padding-block: var(--env-space-2);
     padding-block-end: max(var(--env-space-2), env(safe-area-inset-bottom));
     padding-inline: var(--env-space-1);
-    background: var(--_surface-color, var(--env-color-bg-default));
-    color: var(--env-color-fg-default);
-  }
-  .env-navigation-bar[data-background='page'] {
-    background: var(--_surface-color, var(--env-color-bg-page));
   }
   .env-navigation-bar-list {
     margin: 0;
@@ -47,75 +40,10 @@
   }
 
   .env-navigation-bar-item {
-    --_navigation-bar-item-layer: initial;
-    --_navigation-bar-item-content-gate: color-mix(
-      in srgb,
-      var(--env-navigation-bar-item-content) 0%,
-      transparent
-    );
-    --_navigation-bar-item-custom-base: var(
-      --env-navigation-bar-item-container,
-      var(--_navigation-bar-item-content-gate)
-    );
-    --_navigation-bar-item-custom-layered: color-mix(
-      in srgb,
-      var(--_navigation-bar-item-custom-base),
-      currentColor var(--_navigation-bar-item-layer)
-    );
-    --_navigation-bar-item-custom-fill: var(
-      --_navigation-bar-item-custom-layered,
-      var(--_navigation-bar-item-custom-base)
-    );
-    --_navigation-bar-item-selected-gate: color-mix(
-      in srgb,
-      var(--env-navigation-bar-item-selected-content) 0%,
-      var(--env-color-bg-selected)
-    );
-    --_navigation-bar-item-selected-base: var(
-      --env-navigation-bar-item-selected,
-      var(--_navigation-bar-item-selected-gate)
-    );
-    --_navigation-bar-item-selected-layered: color-mix(
-      in srgb,
-      var(--_navigation-bar-item-selected-base),
-      currentColor var(--_navigation-bar-item-layer)
-    );
-    --_navigation-bar-item-selected-fill: var(
-      --_navigation-bar-item-selected-layered,
-      var(--_navigation-bar-item-selected-base)
-    );
-    --_navigation-bar-item-selected-icon: var(
-      --env-navigation-bar-item-selected-content,
-      var(--env-color-fg-on-selected)
-    );
-    --_navigation-bar-item-icon-color: var(
-      --env-navigation-bar-item-icon,
-      var(--env-color-fg-muted)
-    );
-    --env-icon-size: var(--env-control-icon-size);
-    box-sizing: border-box;
-    inline-size: 100%;
-    margin: 0;
     padding: var(--env-space-1) 0;
-    border: 0;
-    border-radius: var(--env-radius-md);
-    background: transparent;
-    color: var(--env-navigation-bar-item-content, var(--env-color-fg-control));
-    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.3 var(--env-font-family);
-    text-align: center;
-    text-decoration: none;
   }
   .env-navigation-bar-indicator {
-    order: -1;
-    position: relative;
-    flex: none;
-    inline-size: min(var(--_navigation-bar-indicator-width), 100%);
-    block-size: var(--_navigation-bar-indicator-height);
-    display: grid;
-    place-items: center;
-    border-radius: var(--env-radius-md);
-    background: var(--_navigation-bar-item-custom-fill, transparent);
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+    inline-size: min(var(--_destination-indicator-width), 100%);
   }
   .env-navigation-bar-label {
     max-inline-size: 100%;
@@ -123,128 +51,23 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .env-navigation-bar-count {
-    box-sizing: border-box;
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: calc(50% + var(--env-space-1));
-    min-inline-size: var(--_navigation-bar-count-size);
-    block-size: var(--_navigation-bar-count-size);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding-inline: var(--env-space-1);
+  .env-navigation-bar-dot {
+    flex: none;
+    inline-size: var(--_navigation-bar-dot-size);
+    block-size: var(--_navigation-bar-dot-size);
     border-radius: var(--env-radius-full);
     background: var(--env-color-bg-primary-solid);
-    color: var(--env-color-fg-on-emphasis);
-    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-  .env-navigation-bar-item:not([data-current]) .env-icon {
-    color: var(--_navigation-bar-item-icon-color, var(--env-color-fg-muted));
-  }
-  .env-navigation-bar-item:hover .env-navigation-bar-indicator,
-  .env-navigation-bar-more[aria-expanded='true'] .env-navigation-bar-indicator {
-    background: var(--_navigation-bar-item-custom-fill, var(--env-color-bg-navigation-hover));
-  }
-  .env-navigation-bar-item:hover,
-  .env-navigation-bar-more[aria-expanded='true'] {
-    --_navigation-bar-item-layer: calc(var(--env-state-hover-opacity) * 100%);
-  }
-  .env-navigation-bar-item:active {
-    --_navigation-bar-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
-  }
-  .env-navigation-bar-item[data-current]:hover {
-    --_navigation-bar-item-layer: calc(var(--env-state-hover-opacity) * 75%);
-  }
-  .env-navigation-bar-item[data-current]:active {
-    --_navigation-bar-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
-  }
-  .env-navigation-bar-item:active .env-navigation-bar-indicator {
-    background: var(--_navigation-bar-item-custom-fill, var(--env-color-bg-navigation-pressed));
-  }
-  .env-navigation-bar-item[data-current] {
-    color: var(--env-navigation-bar-item-content, var(--env-color-fg-default));
-  }
-  .env-navigation-bar-item[data-current] .env-navigation-bar-indicator {
-    color: var(--_navigation-bar-item-selected-icon, var(--env-color-fg-on-selected));
-    background: var(--_navigation-bar-item-selected-fill, var(--env-color-bg-selected));
-  }
-  .env-navigation-bar-item[data-current]:hover .env-navigation-bar-indicator {
-    background: var(--_navigation-bar-item-selected-fill, var(--env-color-bg-selected-hover));
-  }
-  .env-navigation-bar-item[data-current]:active .env-navigation-bar-indicator {
-    background: var(--_navigation-bar-item-selected-fill, var(--env-color-bg-selected-pressed));
   }
   .env-navigation-bar-item:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .env-navigation-bar-indicator {
-      transition: none;
-    }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .env-navigation-bar-indicator {
-      transition-property: background-color, transform;
-    }
-    .env-navigation-bar-item:active .env-navigation-bar-indicator {
-      transform: scale(0.96);
-    }
-  }
   @media (forced-colors: active) {
     .env-navigation-bar {
       border-block-start: 1px solid CanvasText;
     }
-    .env-navigation-bar-item[data-current] .env-navigation-bar-indicator {
-      forced-color-adjust: none;
-      background-color: Highlight;
-      color: HighlightText;
+    .env-navigation-bar-dot {
+      background: CanvasText;
     }
-    .env-navigation-bar-item[data-current] .env-navigation-bar-indicator :where(*) {
-      color: inherit;
-    }
-    .env-navigation-bar-count {
-      border: 1px solid CanvasText;
-    }
-    .env-navigation-bar-item[data-current] .env-navigation-bar-count {
-      background: Canvas;
-      color: CanvasText;
-    }
-  }
-
-  .env-navigation-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-bar-item {
-    border-color: transparent;
-    box-shadow: none;
-    background: transparent;
-  }
-  .env-navigation-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-bar-item,
-  .env-navigation-bar:is([data-env-skeleton], [data-env-skeleton] *)
-    .env-navigation-bar-item
-    :not(.env-navigation-bar-count) {
-    --_skeleton-shape: 0;
-  }
-  .env-navigation-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-bar-item * {
-    visibility: visible;
-  }
-  .env-navigation-bar:is([data-env-skeleton], [data-env-skeleton] *)
-    .env-navigation-bar-item
-    .env-icon
-    * {
-    visibility: hidden;
-  }
-  .env-navigation-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-bar-indicator {
-    background: transparent;
-  }
-  .env-navigation-bar:is([data-env-skeleton], [data-env-skeleton] *)
-    .env-navigation-bar-item
-    .env-navigation-bar-count {
-    visibility: hidden;
-  }
-  .env-navigation-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-bar-label {
-    --_skeleton-placeholder: inline-block;
-    --_skeleton-length: 3rem;
   }
 }

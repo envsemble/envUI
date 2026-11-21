@@ -38,6 +38,11 @@
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
+  @media (pointer: coarse) {
+    .env-table-of-contents-link {
+      padding-block: max(var(--env-space-1), (var(--env-control-height-touch) - 1lh) / 2);
+    }
+  }
 
   .env-table-of-contents-wave {
     position: absolute;

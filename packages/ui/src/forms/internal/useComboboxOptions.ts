@@ -2,12 +2,8 @@
 
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useLayoutEffect, useMemo, useRef } from 'react';
-import {
-  flattenItems,
-  type ComboboxFilter,
-  type ComboboxGroup,
-  type ComboboxItem,
-} from './comboboxItems.js';
+import { flattenGroups } from '../../internal/popup/listEntries.js';
+import { type ComboboxFilter, type ComboboxGroup, type ComboboxItem } from './comboboxItems.js';
 
 type GroupsBaseUiCannotTellFromGenericItems<Item extends ComboboxItem> = Parameters<
   typeof BaseCombobox.createItems<Item, string>
@@ -24,7 +20,7 @@ export function useComboboxOptions<Item extends ComboboxItem>({
   locale: string | undefined;
   selectedValues: readonly string[];
 }) {
-  const flatItems = useMemo(() => flattenItems(items), [items]);
+  const flatItems = useMemo(() => flattenGroups(items), [items]);
   const knownAtLastRender = useRef(new Map<string, Item>());
   const known = useMemo(() => {
     const map = new Map(flatItems.map((item) => [item.value, item] as const));

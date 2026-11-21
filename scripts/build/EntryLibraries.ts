@@ -3,11 +3,7 @@ import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 const dependenciesEnvuiDeclares = ['react', 'react-dom', '@base-ui/react'];
-const importedInDevModeUsageComment = '@envsemble/envui';
-const notThirdPartyLibraries = new Set([
-  ...dependenciesEnvuiDeclares,
-  importedInDevModeUsageComment,
-]);
+const notThirdPartyLibraries = new Set(dependenciesEnvuiDeclares);
 
 function packageName(specifier: string) {
   const parts = specifier.split('/');

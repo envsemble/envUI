@@ -14,6 +14,12 @@ export interface MeterProps extends RangeBarProps {
    * nearest end.
    */
   value: number;
+  /**
+   * stacked puts the label and the value on a row above the bar; inline puts the label, the bar and
+   * the value on one line, as in a table's usage column or a list row.
+   * @default 'stacked'
+   */
+  layout?: 'stacked' | 'inline';
 }
 
 /**
@@ -28,6 +34,7 @@ export function Meter({
   max = 100,
   valueText,
   'aria-valuetext': ariaValueText,
+  layout = 'stacked',
   className,
   ...props
 }: MeterProps) {
@@ -35,6 +42,11 @@ export function Meter({
   const valueTextReplacingBaseUis = ariaValueText !== undefined && {
     'aria-valuetext': ariaValueText,
   };
+  const shownLabel = label != null && (
+    <BaseMeter.Label className="env-meter-label">{label}</BaseMeter.Label>
+  );
+  const shownValue = valueText != null && <span className="env-meter-value">{valueText}</span>;
+  const inline = layout === 'inline';
   return (
     <BaseMeter.Root
       {...props}
@@ -43,16 +55,22 @@ export function Meter({
       max={max}
       locale={locale}
       {...valueTextReplacingBaseUis}
-      render={<Grid gap={2} />}
+      render={inline ? <Row align="center" gap={3} /> : <Grid gap={2} />}
       className={classNames('env-meter', className)}
+      data-layout={inline ? 'inline' : undefined}
     >
-      <Row wrap justify="between" gap={3} className="env-meter-header">
-        <BaseMeter.Label className="env-meter-label">{label}</BaseMeter.Label>
-        {valueText != null && <span className="env-meter-value">{valueText}</span>}
-      </Row>
+      {inline
+        ? shownLabel
+        : (label != null || valueText != null) && (
+            <Row wrap justify="between" gap={3} className="env-meter-header">
+              {shownLabel}
+              {shownValue}
+            </Row>
+          )}
       <BaseMeter.Track className="env-meter-track">
         <BaseMeter.Indicator className="env-meter-indicator" />
       </BaseMeter.Track>
+      {inline && shownValue}
     </BaseMeter.Root>
   );
 }

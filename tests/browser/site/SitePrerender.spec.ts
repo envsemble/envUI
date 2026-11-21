@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { siteBuildUrl } from '../support/Servers';
-import { openSite } from '../support/SiteSpecHelpers';
+import { openSite } from '../support/SiteNavigation';
+import { headlessWebglPerformanceNotice } from '../support/PageErrors';
 import { displayStorageKeys, drawerWidthKey } from '../../../apps/site/src/display/DisplayStorage';
 
 const onePageOfEachPrerenderedKind = [
@@ -74,8 +75,9 @@ function watchProblems(page: Page) {
   const problems: string[] = [];
   page.on('pageerror', (error) => problems.push(`${page.url()}: ${error.message}`));
   page.on('console', (message) => {
-    if (message.type() === 'error' || message.type() === 'warning')
-      problems.push(`${page.url()}: ${message.text()}`);
+    if (message.type() !== 'error' && message.type() !== 'warning') return;
+    if (headlessWebglPerformanceNotice.test(message.text())) return;
+    problems.push(`${page.url()}: ${message.text()}`);
   });
   return problems;
 }

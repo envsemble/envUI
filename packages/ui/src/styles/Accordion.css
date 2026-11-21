@@ -7,6 +7,19 @@
   .env-accordion-item {
     border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
   }
+  .env-accordion-item:has(> .env-accordion-end) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--env-space-2);
+  }
+  .env-accordion-item:has(> .env-accordion-end) > .env-accordion-panel {
+    grid-column: 1 / -1;
+  }
+  .env-accordion-end {
+    gap: var(--env-space-2);
+    padding-inline-end: var(--env-space-2);
+  }
   .env-accordion-header {
     margin: 0;
     font: inherit;
@@ -74,6 +87,9 @@
   }
   .env-accordion-label {
     min-inline-size: 0;
+  }
+  .env-accordion-item:is([data-indicator='end'], [data-indicator='none']) .env-accordion-content {
+    --_accordion-title-inset: var(--env-space-2);
   }
   .env-accordion-panel {
     block-size: var(--accordion-panel-height, auto);

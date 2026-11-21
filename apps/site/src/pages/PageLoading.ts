@@ -109,14 +109,16 @@ export function retryPageView(kind: PageKind) {
 export const usePageView = (page: RoutePage) =>
   use(loadPageView(page.kind)).View as (props: { page: RoutePage }) => ReactNode;
 
-export function usePageContents(page: RoutePage | undefined): readonly TableOfContentsItem[] {
+export function usePageContents(
+  page: RoutePage | undefined,
+): readonly TableOfContentsItem[] | undefined {
   const view = useLoaded(page && loadPageView(page.kind));
   const content = useLoaded(page?.document && loadDocument(page.document.id));
-  return useMemo(
-    () =>
-      !page || !view?.contents || (page.document && !content) ? [] : view.contents(page, content),
-    [page, view, content],
-  );
+  return useMemo(() => {
+    if (!page) return [];
+    if (!view || (page.document && !content)) return undefined;
+    return view.contents ? view.contents(page, content) : [];
+  }, [page, view, content]);
 }
 
 const loads = (page: RoutePage | undefined) =>

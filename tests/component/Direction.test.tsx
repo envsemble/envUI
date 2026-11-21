@@ -31,10 +31,12 @@ test('in a right-to-left region the arrow keys follow the direction from the att
     focus(handle.element());
     await keyboard.press('ArrowLeft');
     await expect.element(handle).toHaveAttribute('aria-valuenow', '210');
-    const grid = region.getByRole('grid');
-    focus(grid.getByRole('gridcell', { name: '1', exact: true }).element());
+    const swatches = region.getByRole('listbox', { name: 'Swatches' }).getByRole('option');
+    focus(swatches.nth(0).element());
     await keyboard.press('ArrowLeft');
-    await expect.element(grid.getByRole('gridcell', { name: '2', exact: true })).toHaveFocus();
+    await expect.element(swatches.nth(1)).toHaveFocus();
+    await keyboard.press('ArrowRight');
+    await expect.element(swatches.nth(0)).toHaveFocus();
     const toolbar = region.getByRole('toolbar', { name: 'Formatting' });
     focus(toolbar.getByRole('button', { name: 'Bold' }).element());
     await keyboard.press('ArrowLeft');

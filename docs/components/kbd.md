@@ -36,6 +36,7 @@ examples:
     caption: Key hints under a list.
   KbdAnatomy: anatomy
   PlatformKeys: example
+  Sequences: example
 ---
 
 # Kbd
@@ -55,5 +56,11 @@ examples:
 ### Keys of each operating system
 
 ```tsx figure=PlatformKeys
+
+```
+
+### Sequences and joined keys
+
+```tsx figure=Sequences
 
 ```

@@ -3,6 +3,7 @@ import { page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/CommandPalette.fixture.tsx';
 import { box, collectErrors, keyboard, mouse, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
+import { textOf as itemText } from '../../packages/ui/src/actions/internal/CommandPaletteOptions.tsx';
 
 beforeEach(() => {
   mount(fixture);
@@ -251,4 +252,40 @@ test('default items show until people type, and choose like results', async () =
   await keyboard.press('Enter');
   await expect.poll(log).toBe('open suggested/Home');
   await isHidden(dialog);
+});
+
+test('a group heading takes content, options show start content, and the search row takes content at both ends', async () => {
+  mount({ default: fixture.PaletteContentFixture });
+  const dialog = page.getByRole('dialog', { name: 'Search people' });
+  await expect.element(dialog).toBeVisible();
+  const input = dialog.getByRole('combobox', { name: 'Search people' });
+  const scope = dialog.getByText('In: People');
+  const projects = dialog.getByRole('button', { name: 'Projects' });
+  expect(box(scope).x).toBeLessThan(box(input).x);
+  expect(box(projects).x).toBeGreaterThan(box(input).x);
+  const group = dialog.getByRole('group', { name: 'People 2' });
+  await expect.element(group).toBeVisible();
+  const headings = dialog.element().querySelectorAll('.env-command-palette-group-label');
+  expect(headings).toHaveLength(1);
+  const priya = group.getByRole('option', { name: 'Priya Shah' });
+  expect(priya.element().querySelector('.env-list-row-start .env-avatar')).not.toBeNull();
+});
+
+test("an item's itemProps reach its option, its class beside the option's own", async () => {
+  mount({ default: fixture.PaletteContentFixture });
+  const option = page.getByTestId('priya');
+  await expect.element(option).toHaveRole('option');
+  await expect.element(option).toHaveAttribute('title', 'Priya');
+  await expect.element(option).toHaveClass('fixture-person');
+  await expect.element(option).toHaveClass('env-command-palette-item');
+  await expect.element(option).toHaveAttribute('data-item-id', 'priya');
+});
+
+test("an item whose label is content takes the label's rendered text as its text value", async () => {
+  mount({ default: fixture.PaletteContentFixture });
+  const list = page.getByRole('listbox', { name: 'Search people' });
+  await expect.element(list.getByRole('option', { name: 'Sam Lee' })).toBeVisible();
+  const sam = { id: 'sam', label: <b>Sam</b> };
+  expect(itemText(sam, list.element() as HTMLElement)).toBe('Sam Lee');
+  expect(itemText({ ...sam, textValue: 'Samuel' }, list.element() as HTMLElement)).toBe('Samuel');
 });

@@ -61,3 +61,19 @@ test("the host serves a page's address from its pre-rendered file, and any other
   assert.match(config, /"not_found_handling": "404-page"/);
   assert.deepEqual(headersFor(siteHeaders(), '/404.html'), headersFor(siteHeaders(), '/'));
 });
+
+test('the host runs no script, so no request to the site counts toward the Workers quota', () => {
+  const config = readFileSync(resolve(repositoryRoot, 'wrangler.jsonc'), 'utf8');
+  assert.doesNotMatch(config, /"main":/);
+  assert.doesNotMatch(config, /"run_worker_first":/);
+});
+
+test("hashed files keep a year's cache from _headers, and every other header of the site", () => {
+  const page = headersFor(siteHeaders(), '/');
+  const asset = headersFor(siteHeaders(), '/assets/index-abc123.js');
+  assert.equal(asset['cache-control'], 'private, max-age=31536000, immutable');
+  assert.equal(asset['x-content-type-options'], 'nosniff');
+  const withoutCache = (headers: Record<string, string>) =>
+    Object.fromEntries(Object.entries(headers).filter(([name]) => name !== 'cache-control'));
+  assert.deepEqual(withoutCache(asset), withoutCache(page));
+});

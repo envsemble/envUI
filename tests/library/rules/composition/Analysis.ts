@@ -1,31 +1,24 @@
-import { readFileSync, readdirSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { join, posix, relative, resolve, sep } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join, posix } from 'node:path';
+import ts from 'typescript';
 import { libraryEntryPoints } from '../../../../scripts/docs/LibraryEntryPoints.ts';
 import { kebab } from '../../../../scripts/docs/PageStructure.ts';
-
-const require = createRequire(import.meta.url);
-const ts = require('typescript');
+import { styleSheetsDirectory } from '../../../../scripts/RepositoryPaths.ts';
+import {
+  importsOf,
+  libraryModulePath,
+  libraryModules,
+  readLibraryModule,
+  resolveImport,
+} from '../../../support/LibraryModules.ts';
 
 export const rulesFile = 'tests/library/rules/composition/Rules.json';
 export const exceptionsFile = 'tests/library/rules/composition/Exceptions.json';
 
-const sourceRoot = resolve('packages/ui/src');
-const stylesRoot = join(sourceRoot, 'styles');
 const generatedIcons = 'icons/';
 const isGeneratedIconLeftUnread = (module) =>
   module.startsWith(generatedIcons) && module !== 'icons/index.ts';
 const isMessages = (module) => module.startsWith('foundations/messages/');
-
-function walk(directory, found = []) {
-  for (const entry of readdirSync(directory, { withFileTypes: true })) {
-    const path = join(directory, entry.name);
-    if (entry.isDirectory()) {
-      if (path !== stylesRoot && entry.name !== 'assets') walk(path, found);
-    } else if (/\.tsx?$/.test(entry.name) && !entry.name.endsWith('.d.ts')) found.push(path);
-  }
-  return found;
-}
 
 function lineIndex(text) {
   const starts = [0];
@@ -43,6 +36,14 @@ function lineIndex(text) {
   };
 }
 const baseName = (module) => posix.basename(module).replace(/\.tsx?$/, '');
+const componentFolder = /^(?<family>(?:[^/]+\/)+)internal\/(?<folder>[a-z][A-Za-z0-9]*)\//;
+const folderComponent = (module) => {
+  const match = componentFolder.exec(module);
+  if (match === null) return undefined;
+  const { family, folder } = match.groups;
+  const name = folder[0].toUpperCase() + folder.slice(1);
+  return { name, module: `${family}${name}.tsx` };
+};
 
 const classPattern = /(?<![\w-])env-[a-z0-9]+(?:(?:--?|__)[a-z0-9]+)*-?/g;
 const classToken = (match) => (match.endsWith('-') ? `${match}*` : match);
@@ -67,13 +68,11 @@ function record(findings, section, entry, site) {
 
 function readLibrary(rules) {
   const problems = [];
-  const modules = walk(sourceRoot)
-    .map((path) => relative(sourceRoot, path).split(sep).join('/'))
-    .sort();
+  const modules = libraryModules();
   const moduleSet = new Set(modules);
   const planned = (rules.planned?.modules ?? []).filter((module) => !moduleSet.has(module));
   const plannedSet = new Set(planned);
-  const stylesheets = readdirSync(stylesRoot)
+  const stylesheets = readdirSync(styleSheetsDirectory)
     .filter((name) => name.endsWith('.css'))
     .sort();
   return {
@@ -85,7 +84,7 @@ function readLibrary(rules) {
     sources: new Map(
       modules
         .filter((module) => !isGeneratedIconLeftUnread(module))
-        .map((module) => [module, readFileSync(join(sourceRoot, module), 'utf8')]),
+        .map((module) => [module, readLibraryModule(module)]),
     ),
     stylesheets,
     usedAllowances: new Set(),
@@ -116,10 +115,15 @@ function readLayers(library) {
       typeof entry === 'string' ? entry : entry.layer,
     ]),
   );
+  const defaultLayer = (module) => {
+    const owner = folderComponent(module)?.module;
+    if (owner === undefined || !library.moduleSet.has(owner)) return directoryLayer(module);
+    return layeredModules[owner] ?? directoryLayer(owner);
+  };
   const components = new Set(['base', 'composites']);
   for (const [module, entry] of Object.entries(listed)) {
     const own = layeredModules[module];
-    const folder = directoryLayer(module);
+    const folder = defaultLayer(module);
     if (own === folder && typeof entry === 'string')
       problems.push(
         `${rulesFile} layers.modules puts ${module} in ${own}, its directory's layer already: remove it.`,
@@ -141,13 +145,11 @@ function readLayers(library) {
       else if (![...modules, ...planned].some((module) => module.startsWith(path)))
         problems.push(`${rulesFile} ${where} names ${path}, which holds no module.`);
     }
-  const entryPoints = new Set(
-    libraryEntryPoints().map(({ file }) => relative(sourceRoot, file).split(sep).join('/')),
-  );
+  const entryPoints = new Set(libraryEntryPoints().map(({ file }) => libraryModulePath(file)));
   const layerOf = (module) => {
     if (entryPoints.has(module)) return 'entries';
     if (Object.hasOwn(layeredModules, module)) return layeredModules[module];
-    return directoryLayer(module);
+    return defaultLayer(module);
   };
   for (const module of modules)
     if (layerOf(module) === undefined)
@@ -156,34 +158,61 @@ function readLayers(library) {
 }
 
 function readImports({ problems, modules, moduleSet, sources }) {
-  const resolveImport = (from, specifier) => {
-    if (!specifier.startsWith('.')) return undefined;
-    const target = posix.normalize(posix.join(posix.dirname(from), specifier)).replace(/\.js$/, '');
-    const candidates = [
-      `${target}.tsx`,
-      `${target}.ts`,
-      `${target}/index.ts`,
-      `${target}/index.tsx`,
-    ];
-    const found = candidates.find((candidate) => moduleSet.has(candidate));
-    if (found === undefined && !/\.(?:css|json|svg|woff2)(?:\?raw)?$/.test(specifier))
-      problems.push(`${from} imports ${specifier}, which isn't a module under packages/ui/src.`);
-    return found;
-  };
   const imports = new Map();
   for (const module of modules) {
     const targets = new Map();
     imports.set(module, targets);
     const text = sources.get(module);
     if (text === undefined) continue;
-    const lineOf = lineIndex(text);
-    const { importedFiles } = ts.preProcessFile(text, true, true);
-    for (const file of importedFiles) {
-      const target = resolveImport(module, file.fileName);
-      if (target !== undefined && !targets.has(target)) targets.set(target, lineOf(file.pos));
+    for (const { specifier, line } of importsOf(module, text)) {
+      if (!specifier.startsWith('.')) continue;
+      const target = resolveImport(module, specifier, moduleSet);
+      if (target === undefined && !/\.(?:css|json|svg|woff2)(?:\?raw)?$/.test(specifier))
+        problems.push(
+          `${module} imports ${specifier}, which isn't a module under packages/ui/src.`,
+        );
+      if (target !== undefined && !targets.has(target)) targets.set(target, line);
     }
   }
   return imports;
+}
+
+const topLevelInternal = 'internal/';
+const familyOf = (module) => (module.includes('/') ? module.split('/')[0] : module);
+
+const iconGenerator = 'scripts/build/GenerateIcons.ts';
+
+function modulesTheGeneratedIconsImport(moduleSet) {
+  const written = readFileSync(iconGenerator, 'utf8').matchAll(/from '\.\.\/([^']+)\.js'/g);
+  return [...written]
+    .map(([, target]) => [`${target}.ts`, `${target}.tsx`].find((module) => moduleSet.has(module)))
+    .filter((module) => module !== undefined);
+}
+
+function familiesUsingTopLevelInternals(imports, moduleSet) {
+  const importers = new Map();
+  for (const [module, targets] of imports)
+    for (const target of targets.keys())
+      importers.set(target, [...(importers.get(target) ?? []), module]);
+  for (const target of modulesTheGeneratedIconsImport(moduleSet))
+    importers.set(target, [...(importers.get(target) ?? []), generatedIcons]);
+  const families = new Map();
+  for (const module of imports.keys()) {
+    if (!module.startsWith(topLevelInternal)) continue;
+    const found = new Set();
+    const seen = new Set([module]);
+    const queue = [module];
+    while (queue.length > 0)
+      for (const importer of importers.get(queue.shift()) ?? []) {
+        if (!importer.startsWith(topLevelInternal)) found.add(familyOf(importer));
+        else if (!seen.has(importer)) {
+          seen.add(importer);
+          queue.push(importer);
+        }
+      }
+    families.set(module, found);
+  }
+  return families;
 }
 
 function importFindingsOf(imports, { rank, layerOf }) {
@@ -204,9 +233,14 @@ function readComponents(library, layerOf) {
   const components = new Map();
   const componentOf = new Map();
   const ownStyles = (name) => new Set(stylesheets.includes(`${name}.css`) ? [`${name}.css`] : []);
+  const ownModules = [];
+  const folderModules = [];
   for (const module of modules) {
     if (layerOf(module) === 'entries' || module.startsWith(generatedIcons) || isMessages(module))
       continue;
+    (folderComponent(module) === undefined ? ownModules : folderModules).push(module);
+  }
+  for (const module of ownModules) {
     const name = baseName(module);
     if (components.has(name)) {
       problems.push(
@@ -220,6 +254,18 @@ function readComponents(library, layerOf) {
       styles: ownStyles(name),
       slots: new Set(),
     });
+    componentOf.set(module, name);
+  }
+  for (const module of folderModules) {
+    const { name, module: owner } = folderComponent(module);
+    const component = componentOf.get(owner) === name ? components.get(name) : undefined;
+    if (component === undefined) {
+      problems.push(
+        `${module} sits in the internal folder of ${name}, but ${owner} doesn't exist: name the folder after the component it serves.`,
+      );
+      continue;
+    }
+    component.modules.add(module);
     componentOf.set(module, name);
   }
   for (const module of planned) {
@@ -387,7 +433,7 @@ function stylesheetFindings(library, { ownerOf, stylesheetOwners }) {
   };
   const findings = new Map();
   for (const stylesheet of stylesheets) {
-    const text = readFileSync(join(stylesRoot, stylesheet), 'utf8');
+    const text = readFileSync(join(styleSheetsDirectory, stylesheet), 'utf8');
     const owners = stylesheetOwners.get(stylesheet);
     for (const { selector, line, properties } of cssSelectors(text)) {
       const tokens = new Set([...selector.matchAll(selectorClassPattern)].map((match) => match[1]));
@@ -473,6 +519,7 @@ export function analyze() {
   return {
     problems: library.problems,
     layers: layers.order,
+    topLevelInternalFamilies: familiesUsingTopLevelInternals(imports, library.moduleSet),
     ownership: {
       ...componentMap,
       ownerOf: (token) => ownership.ownerOf(token, 'a test'),

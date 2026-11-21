@@ -20,7 +20,7 @@ import { IconCheck } from '../icons/Check.js';
 import { IconContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
 import { useButtonEmphasis } from '../internal/control/ControlDefaults.js';
-import { useCopy } from '../internal/useCopy.js';
+import { useCopy } from '../internal/react/useCopy.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { copyButton as copyButtonMessages } from '../foundations/messages/copyButton.js';
 import type { ControlSize } from '../foundations/Theme.js';
@@ -172,7 +172,7 @@ export function CopyButton({
       {...({
         ...shared,
         fallbackVariant: 'primary',
-        startIcon: symbol,
+        start: symbol,
         'aria-label': name,
         children,
       } as ButtonBaseProps)}

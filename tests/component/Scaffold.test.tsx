@@ -176,6 +176,28 @@ describe('Scaffold', () => {
     });
   });
 
+  test('an end region sits beside the body under the top bar, and a bottom bar under both, as the body scrolls', async () => {
+    scaffold('width=60rem&aside&status');
+    const frame = box(page.getByTestId('frame'));
+    const topBar = box(element('.env-scaffold-top-bar'));
+    const main = box(page.getByRole('main'));
+    const inspector = box(page.getByTestId('inspector'));
+    const status = box(page.getByTestId('status-bar'));
+    expect(inspector.x).toBeCloseTo(main.x + main.width, 0);
+    expect(inspector.x + inspector.width).toBeCloseTo(frame.x + frame.width - 1, 0);
+    expect(inspector.y).toBeCloseTo(topBar.y + topBar.height, 0);
+    expect(topBar.x + topBar.width).toBeCloseTo(frame.x + frame.width - 1, 0);
+    expect(status.y).toBeCloseTo(main.y + main.height, 0);
+    expect(status.x).toBeCloseTo(main.x, 0);
+    expect(status.x + status.width).toBeCloseTo(frame.x + frame.width - 1, 0);
+    expect(status.y + status.height).toBeCloseTo(frame.y + frame.height - 1, 0);
+    const body = element('.env-scaffold-body');
+    body.scrollTo(0, 400);
+    await expect.poll(() => body.scrollTop).toBe(400);
+    expect(box(page.getByTestId('status-bar'))).toEqual(status);
+    expect(css(element('.env-scaffold-aside'), 'overflow-y')).toBe('auto');
+  });
+
   test('topBarSpan="full" puts the top bar across the width, above the navigation', () => {
     scaffold('width=60rem&span=full');
     const bar = box(element('.env-top-bar'));
@@ -258,6 +280,34 @@ describe('Scaffold document scroll', { tags: ['engines'] }, () => {
     const rail = box(slotOf('rail'));
     expect(rail.y).toBeGreaterThanOrEqual(top.y + top.height - 1);
     expect(rail.y + rail.height).toBeCloseTo(700, 0);
+  });
+});
+
+describe('Scaffold document scroll, end region and bottom bar', { tags: ['engines'] }, () => {
+  test('the end region and the bottom bar stay in view, the bottom bar above the bar, and focus scrolls clear of both', async () => {
+    await page.viewport(1100, 700);
+    scaffold('width=60rem&scroll=document&aside&status');
+    await scrollDocument(2000);
+    const topBar = box(element('.env-scaffold-top-bar'));
+    const status = box(page.getByTestId('status-bar'));
+    const end = box(element('.env-scaffold-aside'));
+    expect(status.y + status.height).toBeCloseTo(700, 0);
+    expect(end.y).toBeCloseTo(topBar.height, 0);
+    expect(end.y + end.height).toBeCloseTo(status.y, 0);
+    await expect
+      .poll(() => Number.parseFloat(css(document.documentElement, 'scroll-padding-bottom')))
+      .toBeCloseTo(status.height, 0);
+    window.scrollTo(0, 0);
+    scaffold('width=30rem&scroll=document&status');
+    await scrollDocument(1500);
+    const bar = box(slotOf('bar'));
+    const above = box(page.getByTestId('status-bar'));
+    expect(bar.y + bar.height).toBeCloseTo(700, 0);
+    expect(above.y + above.height).toBeCloseTo(bar.y, 0);
+    await expect
+      .poll(() => Number.parseFloat(css(document.documentElement, 'scroll-padding-bottom')))
+      .toBeCloseTo(bar.height + above.height, 0);
+    window.scrollTo(0, 0);
   });
 });
 

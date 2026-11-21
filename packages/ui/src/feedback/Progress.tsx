@@ -9,6 +9,7 @@ import type { RangeBarProps } from '../internal/rangeBarProps.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Meter.css';
+import '../styles/Progress.css';
 
 export interface ProgressProps extends RangeBarProps {
   /**
@@ -58,10 +59,14 @@ export function Progress({
       className={classNames('env-progress', className)}
       data-segmented={flag(steps !== undefined)}
     >
-      <Row wrap justify="between" gap={3} className="env-progress-header">
-        <BaseProgress.Label className="env-progress-label">{label}</BaseProgress.Label>
-        {valueText != null && <span className="env-progress-value">{valueText}</span>}
-      </Row>
+      {(label != null || valueText != null) && (
+        <Row wrap justify="between" gap={3} className="env-progress-header">
+          {label != null && (
+            <BaseProgress.Label className="env-progress-label">{label}</BaseProgress.Label>
+          )}
+          {valueText != null && <span className="env-progress-value">{valueText}</span>}
+        </Row>
+      )}
       <BaseProgress.Track className="env-progress-track">
         {steps === undefined || value === null ? (
           <BaseProgress.Indicator className="env-progress-indicator" />

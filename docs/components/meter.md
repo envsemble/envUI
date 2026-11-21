@@ -20,13 +20,12 @@ avoidWhen:
     use: Progress
   - text: A value people set within a range, such as a volume or a limit.
     use: Slider
-  - text: A score on a scale of stars, such as a review's 4.5 out of 5.
-    use: Rating
 components:
   - Meter
 examples:
   SeatsAssigned: overview
   MeterAnatomy: anatomy
+  InlineUsage: example
   LongLabel: example
 ---
 
@@ -45,6 +44,12 @@ examples:
 5. **Indicator** (`env-meter-indicator`, `value`)
 
 ## Behaviour
+
+### On one line
+
+```tsx figure=InlineUsage
+
+```
 
 ### Adapting to width
 

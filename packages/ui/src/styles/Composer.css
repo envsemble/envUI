@@ -28,6 +28,29 @@
       'input input'
       'start action';
   }
+  .env-composer[data-end] .env-composer-surface {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      'input input input'
+      'start end action';
+  }
+  .env-composer[data-header] .env-composer-surface {
+    grid-template-areas:
+      'header header'
+      'input action';
+  }
+  .env-composer[data-header][data-start] .env-composer-surface {
+    grid-template-areas:
+      'header header'
+      'input input'
+      'start action';
+  }
+  .env-composer[data-header][data-end] .env-composer-surface {
+    grid-template-areas:
+      'header header header'
+      'input input input'
+      'start end action';
+  }
   .env-composer-input {
     grid-area: input;
     box-sizing: border-box;
@@ -52,8 +75,22 @@
     scrollbar-width: thin;
     overflow-wrap: break-word;
   }
-  .env-composer[data-start] .env-composer-input {
+  .env-composer:is([data-start], [data-end]) .env-composer-input {
     padding-inline-end: var(--env-space-4);
+  }
+  .env-composer-header {
+    grid-area: header;
+    min-inline-size: 0;
+    margin: var(--env-space-1) var(--env-space-2) var(--env-space-1);
+    cursor: default;
+  }
+  .env-composer-end {
+    grid-area: end;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--env-space-2);
+    min-block-size: var(--env-control-height);
+    cursor: default;
   }
   .env-composer-input::placeholder {
     color: var(--env-color-fg-muted);
@@ -98,7 +135,8 @@
   .env-composer[data-disabled] .env-composer-surface {
     cursor: default;
   }
-  .env-composer[data-disabled] :is(.env-composer-input, .env-composer-start) {
+  .env-composer[data-disabled]
+    :is(.env-composer-input, .env-composer-start, .env-composer-end, .env-composer-header) {
     opacity: var(--env-state-disabled-opacity);
   }
   .env-composer-footer {

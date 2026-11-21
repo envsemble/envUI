@@ -30,6 +30,7 @@ examples:
     caption: From the workspace to the open document.
   WithoutUrls: example
   LevelWithoutPage: example
+  WithAvatar: example
   WrappingTrail: example
   OneLine: example
   BreadcrumbsAnatomy: anatomy
@@ -48,6 +49,12 @@ examples:
 ### A level without a page
 
 ```tsx figure=LevelWithoutPage
+
+```
+
+### Content beside the name
+
+```tsx figure=WithAvatar
 
 ```
 

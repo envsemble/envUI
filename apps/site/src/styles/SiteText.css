@@ -1,6 +1,5 @@
 .site-lead,
 :where(.site-lead) > p,
-.catalogue-supporting,
 .site-figure-note,
 :where(.site-figures .env-markdown) > :is(p, ul, ol) {
   --_seventy-characters-in-geist: 53ch;
@@ -44,16 +43,11 @@
       )
       *
   ),
-.catalogue-supporting,
 .docs-api p.env-text:not(:where(table, .docs-changelog) *) {
   --env-type-body: var(--env-font-weight-body) var(--site-prose-size) / var(--site-prose-leading)
     var(--env-font-family);
   font-size: var(--site-prose-size);
   line-height: var(--site-prose-leading);
-}
-.site-page-banner-description {
-  font-size: var(--env-font-size-title);
-  line-height: 1.45;
 }
 .site-article > .env-markdown > h2:not(:first-child) {
   margin-block-start: var(--site-section-gap);
@@ -65,7 +59,6 @@
   color: var(--env-color-fg-default);
 }
 
-.catalogue-supporting,
 :where(.site-figures .env-markdown:not(.site-lead)) > p {
   line-height: var(--site-prose-leading);
   color: var(--env-color-fg-muted);
@@ -77,10 +70,6 @@
 :where(.site-figures .env-markdown) > p + p {
   margin-block-start: var(--env-space-3);
 }
-:where(.catalogue-topic-text) > .catalogue-supporting + .catalogue-supporting {
-  margin-block-start: var(--env-space-1);
-}
-
 :where(.site-figure-note) > p {
   font: var(--env-type-body-sm);
   color: var(--env-color-fg-muted);
@@ -131,60 +120,6 @@
   inset-inline-end: var(--env-space-2);
   display: flex;
   align-items: center;
-}
-
-@property --site-code-fade-start {
-  syntax: '<length>';
-  inherits: false;
-  initial-value: 0;
-}
-@property --site-code-fade-end {
-  syntax: '<length>';
-  inherits: false;
-  initial-value: 0;
-}
-@keyframes site-code-fade-start {
-  from {
-    --site-code-fade-start: 0rem;
-  }
-  to {
-    --site-code-fade-start: var(--env-space-9);
-  }
-}
-@keyframes site-code-fade-end {
-  from {
-    --site-code-fade-end: var(--env-space-9);
-  }
-  to {
-    --site-code-fade-end: 0rem;
-  }
-}
-@supports (animation-timeline: scroll()) {
-  :is(.site-code-block, .site-example-source) pre:not(:focus-visible) {
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      var(--env-color-fg-default) var(--site-code-fade-start),
-      var(--env-color-fg-default) calc(100% - var(--site-code-fade-end)),
-      transparent
-    );
-    animation:
-      site-code-fade-start linear both,
-      site-code-fade-end linear both;
-    animation-timeline: scroll(self inline), scroll(self inline);
-    animation-range:
-      0 var(--env-space-9),
-      calc(100% - var(--env-space-9)) 100%;
-  }
-  :is(.site-code-block, .site-example-source) pre:dir(rtl):not(:focus-visible) {
-    mask-image: linear-gradient(
-      to left,
-      transparent,
-      var(--env-color-fg-default) var(--site-code-fade-start),
-      var(--env-color-fg-default) calc(100% - var(--site-code-fade-end)),
-      transparent
-    );
-  }
 }
 
 @property --site-code-thumb {

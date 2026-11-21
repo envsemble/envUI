@@ -1,6 +1,6 @@
 import type { PageStatus } from '../documentation/DocumentationTypes';
 
-export const statusTones = {
+const statusTones = {
   alpha: 'warning',
   beta: 'neutral',
   stable: 'success',

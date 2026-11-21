@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { siteBuildUrl } from '../support/Servers';
 import { chooseScheme } from '../support/CatalogueThemes';
 import { collectErrors } from '../support/PageErrors';
-import { openSite } from '../support/SiteSpecHelpers';
+import { openSite } from '../support/SiteNavigation';
 
 const journeys: { kind: string; path: string; act: (page: Page) => Promise<void> }[] = [
   {
@@ -10,7 +10,7 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
     path: '/',
     act: async (page) => {
       await page
-        .locator('.site-page-search')
+        .locator('.site-top-bar .site-wide-only')
         .getByRole('button', { name: /^Search/ })
         .first()
         .click();
@@ -82,8 +82,8 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
     path: '/docs/components/button',
     act: async (page) => {
       await page
-        .getByRole('navigation', { name: 'Design or code' })
-        .getByRole('link', { name: 'Design' })
+        .getByRole('navigation', { name: 'Gallery or docs' })
+        .getByRole('link', { name: 'Gallery' })
         .click();
       await expect(page).toHaveURL(`${siteBuildUrl}/components/button`);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');

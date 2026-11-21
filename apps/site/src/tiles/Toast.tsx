@@ -28,21 +28,23 @@ function Notices() {
     archivedShown.current = true;
     shown.current = toast.show({
       message: 'Archived.',
-      action: {
-        label: 'Undo',
-        onClick: () => {
-          if (shown.current) toast.dismiss(shown.current);
-          shown.current = null;
-          archivedShown.current = false;
-          timer.current = window.setTimeout(() => {
-            shown.current = toast.show({
-              tone: 'success',
-              message: 'Restored.',
-              duration: Infinity,
-            });
-          }, handoverMs);
+      actions: [
+        {
+          label: 'Undo',
+          onClick: () => {
+            if (shown.current) toast.dismiss(shown.current);
+            shown.current = null;
+            archivedShown.current = false;
+            timer.current = window.setTimeout(() => {
+              shown.current = toast.show({
+                tone: 'success',
+                message: 'Restored.',
+                duration: Infinity,
+              });
+            }, handoverMs);
+          },
         },
-      },
+      ],
     });
   }, [toast]);
   const again = () => {

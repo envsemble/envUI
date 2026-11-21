@@ -18,14 +18,12 @@ import {
   Tree,
   Menubar,
   Panes,
-  readPanesWidth,
   TopBar,
   Menu,
   Table,
   Composer,
   Message,
   MessageList,
-  CalendarHeatmap,
   Combobox,
   RelativeTime,
   AvatarGroup,
@@ -234,15 +232,7 @@ export function HydrationApp() {
           <Panes.ResizeHandle label="Hydrated split" />
           <Panes.Pane label="Hydrated supporting">Hydrated supporting pane</Panes.Pane>
         </Panes.Root>
-        <Panes.Root
-          sized="end"
-          stackBelow="medium"
-          persist="hydrated-kept-panes"
-          persistedWidth={readPanesWidth(
-            'theme=dark; hydrated-kept-panes=30',
-            'hydrated-kept-panes',
-          )}
-        >
+        <Panes.Root sized="end" stackBelow="medium" defaultWidth={30}>
           <Panes.Pane label="Hydrated kept main">Kept main pane</Panes.Pane>
           <Panes.ResizeHandle label="Hydrated kept split" />
           <Panes.Pane label="Hydrated kept supporting">Kept supporting pane</Panes.Pane>
@@ -254,16 +244,6 @@ export function HydrationApp() {
           onFilesAccepted={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
         />
         <p>{files}</p>
-        <CalendarHeatmap
-          aria-label="Hydrated activity"
-          data={[
-            { date: '2026-03-02', value: 3 },
-            { date: '2026-03-09', value: 1200 },
-            { date: '2026-03-16', value: 7 },
-          ]}
-          startDate="2026-03-01"
-          endDate="2026-03-31"
-        />
         <RelativeTime
           data-testid="hydrated-relative-time"
           value="2026-10-16T12:00:00Z"

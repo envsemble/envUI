@@ -171,6 +171,9 @@
   .env-segmented-control[data-size='sm'] .env-segmented-control-item {
     padding-inline: var(--env-space-3);
   }
+  .env-segmented-control-item:not(:has(> .env-segmented-control-item-label)) {
+    padding-inline: var(--env-space-2);
+  }
   .env-segmented-control-item:hover:not([data-disabled]) {
     --_segmented-control-layer: calc(var(--env-state-hover-opacity) * 100%);
   }

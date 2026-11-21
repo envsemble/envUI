@@ -59,14 +59,14 @@ examples:
 
 ## Anatomy
 
-```tsx figure=ToastAnatomy open
+```tsx figure=ToastAnatomy open width="21"
 
 ```
 
 1. **Notification** (`env-toast`)
 2. **Tone icon** (`env-toast-status-icon`, `tone`)
 3. **Message** (`env-toast-message`, `message`)
-4. **Action** (`env-toast-action`, `action`)
+4. **Action** (`env-toast-action`, `actions`)
 5. **Dismiss button** (`env-toast-dismiss`, `dismissible`)
 
 ## Behaviour

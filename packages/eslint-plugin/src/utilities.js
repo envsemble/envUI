@@ -38,6 +38,16 @@ export function insideAttribute(sourceCode, node, accepts) {
     .some((ancestor) => ancestor.type === 'JSXAttribute' && accepts(jsxName(ancestor.name)));
 }
 
+export function enclosingPropName(sourceCode, node) {
+  const ancestors = sourceCode.getAncestors(node);
+  for (let index = ancestors.length - 1; index >= 0; index -= 1) {
+    const ancestor = ancestors[index];
+    if (ancestor.type === 'JSXAttribute') return jsxName(ancestor.name);
+    if (ancestor.type === 'Property') return propertyName(ancestor);
+  }
+  return undefined;
+}
+
 export function spreadsProps(element) {
   return element.attributes.some((attribute) => attribute.type === 'JSXSpreadAttribute');
 }

@@ -18,13 +18,16 @@ import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
-import { setRef } from '../internal/react/setRef.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { TextareaControl } from '../internal/field/TextareaControl.js';
+import { supportsFieldSizing } from '../internal/field/fieldSizing.js';
 import { flag } from '../internal/flag.js';
+import { idRefs } from '../internal/dom/idRefs.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Composer.css';
 
@@ -73,6 +76,22 @@ interface ComposerOptions {
   maxRows?: number;
   /** Content at the start of the action row, such as an attach button or the name of a model. */
   start?: ReactNode;
+  /**
+   * Content in the action row just before the send button, such as a voice button, a model picker
+   * or a token count; the field then takes a row of its own above the action row.
+   */
+  end?: ReactNode;
+  /**
+   * Content inside the composer above the field, such as attachment chips, a quoted reply or
+   * context pills, placed as given.
+   */
+  header?: ReactNode;
+  /**
+   * The key that sends: enter, where Shift+Enter starts a new line, or mod-enter, Ctrl+Enter or
+   * ⌘+Enter, where Enter starts a new line, for prompts that mostly take several lines.
+   * @default 'enter'
+   */
+  sendKey?: 'enter' | 'mod-enter';
   /** Supporting text below the composer, such as a note on attachments; it describes the field. */
   description?: ReactNode;
 }
@@ -95,9 +114,6 @@ export type ComposerProps = ComposerOptions &
 
 const imeProcessKeyCode = 229;
 
-const supportsFieldSizing = (input: HTMLTextAreaElement) =>
-  input.ownerDocument.defaultView?.CSS?.supports('field-sizing', 'content');
-
 function useContentHeightWithoutFieldSizing(
   inputRef: RefObject<HTMLTextAreaElement | null>,
   text: string,
@@ -114,19 +130,18 @@ function useContentHeightWithoutFieldSizing(
   }, [inputRef, text]);
   useEffect(() => {
     const input = inputRef.current;
-    if (!input || typeof ResizeObserver === 'undefined' || supportsFieldSizing(input)) return;
+    if (!input || supportsFieldSizing(input)) return;
     let width = input.clientWidth;
-    const refitWhenWidthRewrapsText = new ResizeObserver(() => {
+    const stopRefittingWhenWidthRewrapsText = observeResize(input, () => {
       if (input.clientWidth === width) return;
       width = input.clientWidth;
       fit.current();
     });
-    refitWhenWidthRewrapsText.observe(input);
     const fonts = input.ownerDocument.fonts;
     const refitWhenWebFontRewrapsText = () => fit.current();
     fonts?.addEventListener('loadingdone', refitWhenWebFontRewrapsText);
     return () => {
-      refitWhenWidthRewrapsText.disconnect();
+      stopRefittingWhenWidthRewrapsText();
       fonts?.removeEventListener('loadingdone', refitWhenWebFontRewrapsText);
     };
   }, [inputRef]);
@@ -135,7 +150,8 @@ function useContentHeightWithoutFieldSizing(
 /**
  * The message field of a conversation: a multiline field on a raised surface that grows with its
  * text up to maxRows, with a send button at the end that becomes a stop button while running.
- * Enter submits, Shift+Enter starts a new line and an input method's composition never submits.
+ * Enter submits, or with sendKey mod-enter Ctrl+Enter or ⌘+Enter; Shift+Enter starts a new line and
+ * an input method's composition never submits.
  * Without onSend, Enter and the send button submit the field's form.
  */
 export function Composer({
@@ -151,6 +167,9 @@ export function Composer({
   minRows = 1,
   maxRows = 8,
   start,
+  end,
+  header,
+  sendKey = 'enter',
   description,
   disabled = false,
   enterKeyHint,
@@ -207,6 +226,8 @@ export function Composer({
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     onKeyDown?.(event);
     if (event.defaultPrevented || event.key !== 'Enter' || event.shiftKey || !canSend) return;
+    const withModifier = event.ctrlKey || event.metaKey;
+    if (sendKey === 'mod-enter' && (!withModifier || event.altKey)) return;
     const confirmsComposition =
       event.nativeEvent.isComposing || event.keyCode === imeProcessKeyCode;
     if (confirmsComposition) return;
@@ -216,7 +237,7 @@ export function Composer({
   }
 
   const unavailableButFocusable = running ? !onStop : blank || busy || !canSend;
-  const touchKeyboardEnterLabel = canSend ? 'send' : undefined;
+  const touchKeyboardEnterLabel = canSend && sendKey === 'enter' ? 'send' : undefined;
   const actionLabel = running ? (stopLabel ?? messages.stop) : (sendLabel ?? messages.send);
 
   return (
@@ -231,6 +252,8 @@ export function Composer({
       data-running={flag(running)}
       data-disabled={flag(disabled)}
       data-start={flag(start != null)}
+      data-end={flag(end != null)}
+      data-header={flag(header != null)}
     >
       <div
         className="env-composer-surface"
@@ -240,24 +263,18 @@ export function Composer({
           inputRef.current?.focus();
         }}
       >
+        {header != null && <Slot className="env-composer-header">{header}</Slot>}
         <TextareaControl
           bare
           {...props}
-          ref={(node) => {
-            inputRef.current = node;
-            setRef(ref, node);
-          }}
+          ref={mergeRefs(inputRef, ref)}
           id={id}
           form={form}
           rows={rows}
           value={text}
           disabled={disabled}
           enterKeyHint={enterKeyHint ?? touchKeyboardEnterLabel}
-          aria-describedby={
-            [describedBy, description != null ? descriptionId : undefined]
-              .filter(Boolean)
-              .join(' ') || undefined
-          }
+          aria-describedby={idRefs(describedBy, description != null ? descriptionId : undefined)}
           className="env-composer-input"
           onChange={(event) => {
             onChange?.(event);
@@ -268,6 +285,11 @@ export function Composer({
         {start != null && (
           <Slot className="env-composer-start" layout="row">
             {start}
+          </Slot>
+        )}
+        {end != null && (
+          <Slot className="env-composer-end" layout="row">
+            {end}
           </Slot>
         )}
         <IconButton

@@ -9,10 +9,10 @@ export function FoundationsPage({ page }: { page: RoutePage }) {
   return (
     <>
       <SiteBanner
+        page={page}
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        subject="foundations"
       />
       <Column gap={7} className="site-article catalogue-overview">
         <FoundationCatalogue />
@@ -25,10 +25,10 @@ export function ComponentsPage({ page }: { page: RoutePage }) {
   return (
     <>
       <SiteBanner
+        page={page}
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        subject="components"
       />
       <Column gap={7} className="site-article catalogue-overview">
         <Catalogue />

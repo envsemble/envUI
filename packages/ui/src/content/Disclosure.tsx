@@ -6,6 +6,7 @@ import { useControllableState } from '../internal/react/useControllableState.js'
 import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import '../styles/Base.css';
 import '../styles/Disclosure.css';
 
@@ -26,6 +27,18 @@ export interface DisclosureProps extends Omit<ComponentPropsWithRef<'details'>, 
   defaultOpen?: boolean;
   /** Receives whether the details show, each time the disclosure opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /**
+   * Where the chevron sits in the summary: before its words, or after them, as in a Show more
+   * link.
+   * @default 'start'
+   */
+  indicatorPlacement?: 'start' | 'end';
+  /**
+   * stack lays the details out one under another, a small gap apart; flow places them as given,
+   * so they keep their own spacing and flow, such as inline text.
+   * @default 'stack'
+   */
+  panelLayout?: 'stack' | 'flow';
 }
 
 const controlsThatTakeTheirOwnClick =
@@ -37,6 +50,8 @@ export function Disclosure({
   open,
   defaultOpen = false,
   onOpenChange,
+  indicatorPlacement = 'start',
+  panelLayout = 'stack',
   onToggle,
   className,
   children,
@@ -64,6 +79,11 @@ export function Disclosure({
     event.preventDefault();
     setShown(!shown);
   };
+  const indicator = (
+    <DecorativeIcon className="env-disclosure-indicator">
+      <IconChevronRight />
+    </DecorativeIcon>
+  );
   return (
     <details
       {...props}
@@ -77,18 +97,24 @@ export function Disclosure({
         setShown(openedByBrowser);
       }}
       className={classNames('env-disclosure', className)}
+      data-indicator={indicatorPlacement === 'end' ? 'end' : undefined}
     >
       <summary onClick={askParentBeforeTogglingControlled}>
-        <span className="env-icon env-disclosure-indicator" aria-hidden="true">
-          <IconChevronRight />
-        </span>
+        {indicatorPlacement !== 'end' && indicator}
         <Slot className="env-disclosure-title" element="span">
           {title}
         </Slot>
+        {indicatorPlacement === 'end' && indicator}
       </summary>
-      <Column gap={2} className="env-disclosure-panel">
-        {children}
-      </Column>
+      {panelLayout === 'flow' ? (
+        <div className="env-disclosure-panel" data-layout="flow">
+          {children}
+        </div>
+      ) : (
+        <Column gap={2} className="env-disclosure-panel">
+          {children}
+        </Column>
+      )}
     </details>
   );
 }

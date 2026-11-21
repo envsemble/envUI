@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { Linter } from 'eslint';
-import { mkdtempSync, rmSync, symlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { symlinkSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import rule from '../src/rules/no-html-elements.js';
+import { inScratchFolder } from '../../../tests/support/ScratchFolder.ts';
 
 const fixture = fileURLToPath(new URL('fixtures/app/', import.meta.url));
 const app = resolve(fixture, 'src/App.js');
@@ -55,15 +55,14 @@ test('a path entry that names no module is a configuration error, and an alias n
   assert.deepEqual(lint(['@/components/ui']), ['envui/no-html-elements']);
 });
 
-test('a module reached through a link matches its real path, from either side of the link', (t) => {
-  const directory = mkdtempSync(join(tmpdir(), 'envui-settings-'));
-  t.after(() => rmSync(directory, { recursive: true, force: true }));
-  const link = join(directory, 'app');
-  symlinkSync(fixture, link, 'junction');
-  const linked = { cwd: directory, filename: join(link, 'src/App.js') };
-  assert.deepEqual(lint([resolve(fixture, 'src/ui')], linked), matched);
-  assert.deepEqual(lint([join(link, 'src/ui')]), matched);
-});
+test('a module reached through a link matches its real path, from either side of the link', () =>
+  inScratchFolder('settings', (directory) => {
+    const link = join(directory, 'app');
+    symlinkSync(fixture, link, 'junction');
+    const linked = { cwd: directory, filename: join(link, 'src/App.js') };
+    assert.deepEqual(lint([resolve(fixture, 'src/ui')], linked), matched);
+    assert.deepEqual(lint([join(link, 'src/ui')]), matched);
+  }));
 
 test(
   'Windows paths match whatever the case of the drive letter',

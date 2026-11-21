@@ -1,4 +1,4 @@
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import type { ComponentPropsWithRef, ReactElement, ReactNode } from 'react';
 import type { ActionElementProps } from '../internal/control/ActionElement.js';
 import type { ControlTone, ControlVariant } from '../internal/control/ControlDefaults.js';
 import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
@@ -73,13 +73,16 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    * @default false
    */
   fullWidth?: boolean;
-  /** A decorative icon before the label, such as IconAdd. */
-  startIcon?: ReactNode;
-  /** A decorative icon after the label, such as a ChevronRight for a next step. */
-  endIcon?: ReactNode;
   /**
-   * Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and
-   * aria-keyshortcuts on the button.
+   * Content before the label, such as IconAdd, or a small Avatar of the person a button assigns: an
+   * envUI icon takes the button's icon size and other content keeps its own. It is hidden from
+   * assistive technology, since the label names the button.
+   */
+  start?: ReactNode;
+  /**
+   * Content after the label, at the far end of a full-width button, such as IconChevronRight for a
+   * next step, or a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the
+   * button: an envUI icon takes the button's icon size and other content keeps its own.
    */
   end?: ReactNode;
   /**
@@ -89,7 +92,16 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    */
   pending?: boolean;
 };
-export type ButtonProps = ButtonAppearanceProps & ActionElementProps;
+export type ButtonProps = ButtonAppearanceProps &
+  ActionElementProps & {
+    /**
+     * Another element to render the button as, such as a label for a file input, or a router's own
+     * link in one place: the button's class, look, state attributes, content and handlers merge
+     * into its props. It takes no type or disabled attribute; disabled reports aria-disabled and
+     * blocks presses.
+     */
+    render?: ReactElement;
+  };
 
 /**
  * Starts an action, or goes to a destination with href, in one of five variants and three tones,
@@ -133,6 +145,12 @@ export type IconButtonProps = IconButtonElementProps &
     pending?: boolean;
     /** As Button's: the height, and the width, of the square button. */
     size?: ControlSize;
+    /**
+     * As Button's: another element to render the button as, such as a label for a file input
+     * shaped like an icon button. Its class, look, state attributes, icon and handlers merge into
+     * that element's props; disabled reports aria-disabled and blocks presses.
+     */
+    render?: ReactElement;
   };
 
 /**

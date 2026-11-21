@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { buildParts, partsFile, serializeParts } from '../../scripts/docs/parts/Contract.ts';
+import { buildParts, serializeParts } from '../../scripts/docs/parts/Contract.ts';
+import { partsFile } from '../../scripts/RepositoryPaths.ts';
 import { removedParts } from '../../scripts/docs/parts/ContractComparison.ts';
 import { isPrivateState } from '../../scripts/docs/parts/Library.ts';
 
@@ -98,10 +99,10 @@ test('shared anatomy lists the components that render it', () => {
 });
 
 test('a state set through a class name held in a variable is on that part', () => {
-  assert.deepEqual(state(component('RichText'), 'data-reference-id'), {
-    attribute: 'data-reference-id',
-    values: [],
-    parts: ['env-rich-text-reference'],
+  assert.deepEqual(state(component('Menu'), 'data-tone'), {
+    attribute: 'data-tone',
+    values: ['danger', 'neutral'],
+    parts: ['env-menu-item'],
   });
 });
 
@@ -207,5 +208,80 @@ test('data-env-ssr-* attributes are private, and the contract leaves them out', 
   assert.deepEqual(
     groups.flatMap((group) => group.states.filter((item) => isPrivateState(item.attribute))),
     [],
+  );
+});
+
+test('a part that goes counts as removed only when the last release shipped it', () => {
+  const card = (parts, values) => ({
+    components: {
+      Card: {
+        parts: parts.map((name) => ({ class: name })),
+        states: [{ attribute: 'data-layout', values, parts: ['env-card'] }],
+        colors: [{ property: '--env-card-container' }],
+      },
+    },
+    shared: {},
+  });
+  const released = card(['env-card', 'env-card-meta'], ['stack']);
+  const before = card(['env-card', 'env-card-meta', 'env-card-badge'], ['stack', 'feature']);
+  const after = {
+    components: { Card: { parts: [{ class: 'env-card' }], states: [] } },
+    shared: {},
+  };
+  const labels = (release) => removedParts(before, after, [], release).map(({ label }) => label);
+  assert.deepEqual(labels(released), [
+    'Card: .env-card-meta',
+    'Card: --env-card-container',
+    'Card: [data-layout]',
+    "Card: [data-layout='stack']",
+  ]);
+  assert.deepEqual(labels(undefined), [
+    'Card: .env-card-meta',
+    'Card: .env-card-badge',
+    'Card: --env-card-container',
+    'Card: [data-layout]',
+    "Card: [data-layout='stack']",
+    "Card: [data-layout='feature']",
+  ]);
+});
+
+const stateAttributeParts = {
+  'data-active': ['env-document-tabs-item'],
+  'data-current': [
+    'env-navigation-bar-item',
+    'env-navigation-drawer-item',
+    'env-navigation-rail-item',
+  ],
+  'data-selected': [
+    'env-avatar',
+    'env-color-picker-swatch',
+    'env-combobox-item',
+    'env-connected-row',
+    'env-list-item',
+    'env-list-row',
+    'env-select-item',
+  ],
+  'data-highlighted': [
+    'env-list-row',
+    'env-menu-choice',
+    'env-menu-item',
+    'env-select-item',
+    'env-tree-item',
+  ],
+};
+
+test('each of the four state attributes keeps one meaning, on the parts reviewed for it', () => {
+  const carriers = Object.fromEntries(
+    Object.keys(stateAttributeParts).map((attribute) => [attribute, new Set<string>()]),
+  );
+  for (const entry of [...Object.values(parts.components), ...Object.values(parts.shared)])
+    for (const { attribute, parts: styled } of entry.states)
+      for (const part of styled) carriers[attribute]?.add(part);
+  assert.deepEqual(
+    Object.fromEntries(
+      Object.entries(carriers).map(([attribute, styled]) => [attribute, [...styled].sort()]),
+    ),
+    stateAttributeParts,
+    'data-active marks what shows, data-current the page’s destination, data-selected what is chosen and data-highlighted the list’s cursor: give a part the one that means its state, then list it in stateAttributeParts.',
   );
 });

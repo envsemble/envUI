@@ -120,6 +120,10 @@
   gap: var(--env-space-1) var(--env-space-2);
   font-weight: var(--env-font-weight-medium);
 }
+.docs-prop-description-list {
+  margin: var(--env-space-1) 0 0;
+  padding-inline-start: var(--env-space-5);
+}
 .docs-prop-default {
   display: block;
   margin-block-start: var(--env-space-1);
@@ -160,12 +164,12 @@
 .docs-agent-prompt {
   max-inline-size: 100%;
   margin-block-start: var(--env-space-2);
-  padding-inline-start: var(--env-space-3);
+  padding-inline-start: var(--env-space-2);
   border-radius: var(--env-radius-full);
 }
 .docs-agent-prompt-text {
   min-inline-size: 0;
-  font: var(--env-font-size-body-sm) / 1.5 var(--site-code-font-family);
+  font: 0.8125rem / 1.5 var(--site-code-font-family);
   overflow-wrap: break-word;
 }
 .docs-agent-logos {
@@ -175,9 +179,9 @@
 }
 .docs-agent-logos > svg {
   position: relative;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
 }
 .docs-agent-logos > svg + svg {
-  margin-inline-start: -0.375rem;
+  margin-inline-start: -0.3125rem;
 }

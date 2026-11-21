@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { flushSync } from 'react-dom';
 import { EnvUIContext, type Direction } from './EnvUIContext.js';
-import { setRef } from '../react/setRef.js';
+import { useMergedRefs } from '../react/useMergedRefs.js';
 import { computedDirection } from '../dom/direction.js';
 
 /**
@@ -68,18 +68,6 @@ export function useDirection(
 export function useDirectionScope<T extends Element>(forwardedRef?: Ref<T>) {
   const elementRef = useRef<T | null>(null);
   const [direction, read] = useDirection(elementRef);
-  const ref = useCallback(
-    (element: T | null) => {
-      elementRef.current = element;
-      const cleanup = typeof forwardedRef === 'function' ? forwardedRef(element) : undefined;
-      if (typeof forwardedRef !== 'function') setRef(forwardedRef, element);
-      return () => {
-        elementRef.current = null;
-        if (typeof cleanup === 'function') cleanup();
-        else setRef(forwardedRef, null);
-      };
-    },
-    [forwardedRef],
-  );
+  const ref = useMergedRefs(elementRef, forwardedRef);
   return { direction, ref, onFocus: read } as const;
 }

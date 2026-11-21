@@ -434,3 +434,37 @@ test('notices wait while a modal dialog is open and then show for their full dur
   vi.advanceTimersByTime(6_000);
   await expect.poll(count('Notice from a dialog')).toBe(0);
 });
+
+test('a notification takes content for its message, titled by its text value or the message’s rendered text, its own icon, and every action it is given, in order, the main one last', async () => {
+  await page.getByTestId('toast-rich').click();
+  await expect.poll(() => notice('report.pdf uploaded')).not.toBeNull();
+  const rich = notice('report.pdf uploaded')!;
+  const message = rich.querySelector('.env-toast-message')!;
+  expect(message.querySelector('strong')?.textContent).toBe('report.pdf');
+  expect(message.getAttribute('title')).toBe('report.pdf uploaded');
+  expect(
+    rich.querySelector('.env-toast-status-icon [data-testid="toast-own-icon"]'),
+  ).not.toBeNull();
+  const actions = [...rich.querySelectorAll('.env-toast-actions > .env-toast-action')];
+  expect(actions.map((action) => [action.tagName, action.textContent])).toEqual([
+    ['BUTTON', 'Undo upload'],
+    ['A', 'View report'],
+  ]);
+  expect(actions[1].getAttribute('href')).toBe('#report');
+  await expect
+    .poll(() => document.querySelector('.env-toast-announcer')?.textContent)
+    .toContain('report.pdf uploaded');
+  (actions[0] as HTMLElement).click();
+  await expect.element(page.getByTestId('toast-action-count')).toHaveTextContent('1');
+
+  await page.getByTestId('toast-three-actions').click();
+  await expect.poll(() => notice('Three actions')).not.toBeNull();
+  expect(
+    [...notice('Three actions')!.querySelectorAll('.env-toast-actions > .env-toast-action')].map(
+      (action) => action.textContent,
+    ),
+  ).toEqual(['One', 'Two', 'Three']);
+  expect(notice('Three actions')!.querySelector('.env-toast-message')!.getAttribute('title')).toBe(
+    'Three actions to choose from',
+  );
+});

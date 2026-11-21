@@ -1,5 +1,6 @@
 import {
   documentationUrl,
+  enclosingPropName,
   findAttribute,
   importedComponent,
   insideAttribute,
@@ -41,13 +42,41 @@ const describeAttribute = (name, value) =>
 
 const isMargin = (name) => typeof name === 'string' && /^margin(?:$|[A-Z-])/.test(name);
 
-const isZero = (value) =>
-  value?.type === 'Literal' &&
-  (value.value === 0 ||
-    (typeof value.value === 'string' && /^(?:\s*[+-]?0*\.?0+[a-z%]*)+\s*$/i.test(value.value)));
+const negativeLength = /(?:^|[\s(,])-\s*(?:\d*\.?\d*[1-9]|var\()/;
+
+const isNegative = (value) =>
+  (value?.type === 'Literal' &&
+    ((typeof value.value === 'number' && value.value < 0) ||
+      (typeof value.value === 'string' && negativeLength.test(value.value)))) ||
+  (value?.type === 'UnaryExpression' &&
+    value.operator === '-' &&
+    !(value.argument.type === 'Literal' && value.argument.value === 0));
+
+const literalString = (node) =>
+  node?.type === 'TemplateLiteral' && node.expressions.length === 0
+    ? node.quasis[0].value.cooked
+    : node?.type === 'Literal'
+      ? node.value
+      : undefined;
+
+function definitionSource(definition) {
+  if (definition.type === 'ImportBinding')
+    return definition.node.type === 'TSImportEqualsDeclaration'
+      ? definition.node.moduleReference.expression
+      : definition.parent?.source;
+  const init = definition.type === 'Variable' ? definition.node.init : undefined;
+  return init?.type === 'CallExpression' &&
+    init.callee.type === 'Identifier' &&
+    init.callee.name === 'require' &&
+    init.arguments.length === 1
+    ? init.arguments[0]
+    : undefined;
+}
 
 const isIconSlot = (name) =>
-  name === 'icon' || name === 'start' || (typeof name === 'string' && /^[a-z]\w*Icon$/.test(name));
+  name === 'icon' || (typeof name === 'string' && /^[a-z]\w*Icon$/.test(name));
+
+const contentSlots = new Set(['start', 'end']);
 
 const passesThrough = (node) =>
   node.type === 'JSXExpressionContainer' ||
@@ -83,10 +112,6 @@ const definitionFixes = {
     'write width="1em" height="1em" fill="currentColor", so it follows its slot or the text and takes the text color',
 };
 
-const isTypeOnly = (node, kind) =>
-  node[kind] === 'type' ||
-  (node.specifiers.length > 0 && node.specifiers.every((specifier) => specifier[kind] === 'type'));
-
 const renderProp = 'render';
 
 const localPath = /^(?:\.{1,2}\/|\/(?!\/))/;
@@ -99,7 +124,7 @@ export default {
     type: 'suggestion',
     docs: {
       description:
-        "Disallow raw images, fixed-size SVGs and other icon packages, which envUI's Graphic and icons provide",
+        "Disallow raw images, and fixed-size SVGs and other icon packages' icons outside an icon slot or envUI's Graphic",
       recommended: true,
       url: documentationUrl('no-raw-graphics'),
     },
@@ -120,13 +145,17 @@ export default {
     defaultOptions: [{ allow: [] }],
     messages: {
       img: 'Use envUI\'s Graphic instead of a raw <img>: import { Graphic } from \'@envsemble/envui\'. Its size comes from envUI\'s steps, not the file\'s: <Graphic src={logo} alt="Acme" size="md" />, or for a photo <Graphic src={photo} alt="…" size="fill" aspect="16/9" fit="cover" />.',
-      svg: "A raw <svg {{attributes}}> takes its {{what}} from the file: pass it to an icon slot, such as Button's startIcon, or wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'.",
+      svg: "A raw <svg {{attributes}}> takes its {{what}} from the file: pass it to an icon slot, such as IconButton's icon, or wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'.",
       definition: "A component's <svg {{attributes}}> takes its {{what}} from the file: {{fix}}.",
       alt: 'Graphic needs alt: what the picture says, such as the company\'s name, or alt="" when the text beside it says it already.',
       margin:
-        "A margin on a Graphic makes up for the file's empty edges: trim the file once with npx envui-graphic <file>, and drop the margin.",
+        "A negative margin on a Graphic makes up for the file's empty edges: trim the file once with npx envui-graphic <file>, and drop the margin.",
       iconPackage:
-        "Use envUI's icons instead of {{source}}: import { IconSearch } from '@envsemble/envui/icons/Search'. For the app's own icons and logos, use Graphic: import { Graphic } from '@envsemble/envui'.",
+        "A <{{name}}> from {{source}} takes its size from the package: pass it to an icon slot, such as IconButton's icon, or wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit its slots and text: import { IconSearch } from '@envsemble/envui/icons/Search'.",
+      svgInContentSlot:
+        "A raw <svg {{attributes}}> keeps the file's {{what}} in {{slot}}, which sizes only envUI's icons and a Graphic: wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'.",
+      iconPackageInContentSlot:
+        "A <{{name}}> from {{source}} keeps the package's size in {{slot}}, which sizes only envUI's icons and a Graphic: wrap it in envUI's <Graphic alt=\"\">: import { Graphic } from '@envsemble/envui'. envUI's own icons fit it: import { IconSearch } from '@envsemble/envui/icons/Search'.",
     },
   },
   create(context) {
@@ -139,16 +168,17 @@ export default {
         `envui/no-raw-graphics: unknown allow ${unknown.length === 1 ? 'entry' : 'entries'} ${unknown.map((name) => `"${name}"`).join(', ')}. Known packages: ${iconPackages.join(', ')}.`,
       );
 
-    function checkSource(node) {
-      const value =
-        node?.type === 'TemplateLiteral' && node.expressions.length === 0
-          ? node.quasis[0].value.cooked
-          : node?.type === 'Literal'
-            ? node.value
-            : undefined;
-      const name = iconPackage(value);
-      if (name && !allow.includes(name))
-        context.report({ node, messageId: 'iconPackage', data: { source: value } });
+    function iconPackageSource(name) {
+      let root = name;
+      while (root.type === 'JSXMemberExpression') root = root.object;
+      if (root.type !== 'JSXIdentifier') return undefined;
+      const variable = resolveVariable(sourceCode, root, root.name);
+      for (const definition of variable?.defs ?? []) {
+        const source = literalString(definitionSource(definition));
+        const known = iconPackage(source);
+        if (known && !allow.includes(known)) return source;
+      }
+      return undefined;
     }
 
     function isGraphic(name) {
@@ -193,6 +223,11 @@ export default {
       );
     }
 
+    function contentSlot(node) {
+      const name = enclosingPropName(sourceCode, node);
+      return contentSlots.has(name) ? name : undefined;
+    }
+
     function checkSvg(node) {
       const fixed = ['width', 'height', 'fill'].flatMap((name) => {
         const attribute = findAttribute(node, name);
@@ -206,10 +241,11 @@ export default {
       const color = fixed.some((attribute) => attribute.startsWith('fill'));
       const what = size && color ? 'size and color' : size ? 'size' : 'color';
       const definition = spreadsProps(node) || isComponentRoot(node.parent);
+      const slot = definition ? undefined : contentSlot(node);
       context.report({
         node: node.name,
-        messageId: definition ? 'definition' : 'svg',
-        data: { attributes: fixed.join(' '), what, fix: definitionFixes[what] },
+        messageId: definition ? 'definition' : slot ? 'svgInContentSlot' : 'svg',
+        data: { attributes: fixed.join(' '), what, fix: definitionFixes[what], slot },
       });
     }
 
@@ -223,36 +259,12 @@ export default {
         if (
           property.type === 'Property' &&
           isMargin(propertyName(property)) &&
-          !isZero(property.value)
+          isNegative(property.value)
         )
           context.report({ node: property, messageId: 'margin' });
     }
 
     return {
-      ImportDeclaration(node) {
-        if (!isTypeOnly(node, 'importKind')) checkSource(node.source);
-      },
-      ExportNamedDeclaration(node) {
-        if (node.source && !isTypeOnly(node, 'exportKind')) checkSource(node.source);
-      },
-      ExportAllDeclaration(node) {
-        if (/** @type {{ exportKind?: string }} */ (node).exportKind !== 'type')
-          checkSource(node.source);
-      },
-      ImportExpression(node) {
-        checkSource(node.source);
-      },
-      CallExpression(node) {
-        if (
-          node.callee.type === 'Identifier' &&
-          node.callee.name === 'require' &&
-          node.arguments.length === 1
-        )
-          checkSource(node.arguments[0]);
-      },
-      TSExternalModuleReference(node) {
-        checkSource(node.expression);
-      },
       JSXOpeningElement(node) {
         const name = jsxName(node.name);
         if (name === 'img') {
@@ -260,6 +272,17 @@ export default {
             context.report({ node: node.name, messageId: 'img' });
         } else if (name === 'svg') checkSvg(node);
         else if (isGraphic(node.name)) checkGraphic(node);
+        else {
+          const source = iconPackageSource(node.name);
+          if (source && !isPlaced(node) && !insideRenderProp(node)) {
+            const slot = contentSlot(node);
+            context.report({
+              node: node.name,
+              messageId: slot ? 'iconPackageInContentSlot' : 'iconPackage',
+              data: { name: jsxName(node.name), source, slot },
+            });
+          }
+        }
       },
     };
   },

@@ -627,3 +627,105 @@ describe('Focus as a menu closes', { tags: ['engines'] }, () => {
     await isFocused(save);
   });
 });
+
+test('a start slot shows an Avatar at its own size, and every label of the menu lines up', async () => {
+  mount({ default: menus.AccountSwitcherFixture });
+  await page.getByRole('button', { name: 'Switch account' }).click();
+  const menu = page.getByRole('menu', { name: 'Switch account' });
+  await settled(menu);
+  const alex = menu.getByRole('menuitem', { name: 'Alex Morgan', exact: true });
+  await expect.element(alex).toHaveAccessibleDescription('alex@example.com');
+  const avatar = alex.element().querySelector('.env-menu-item-start')!;
+  expect(avatar.getAttribute('aria-hidden')).toBe('true');
+  expect(box(avatar.querySelector('.env-avatar')!).width).toBeCloseTo(24, 0);
+  const labelStart = (name: string) =>
+    box(
+      menu
+        .getByRole('menuitem', { name, exact: true })
+        .element()
+        .querySelector('.env-menu-item-label')!,
+    ).x;
+  for (const name of ['Priya Shah', 'Add account', 'Sign out'])
+    expect(labelStart(name)).toBeCloseTo(labelStart('Alex Morgan'), 0);
+  const icon = menu.getByRole('menuitem', { name: 'Add account' }).element().querySelector('svg')!;
+  expect(box(icon).width).toBeCloseTo(16, 0);
+});
+
+test('a start holding an icon takes the icon size and the leading column stays an icon wide', async () => {
+  mount({ default: menus.IconStartFixture });
+  await page.getByRole('button', { name: 'Edit' }).click();
+  const menu = page.getByRole('menu', { name: 'Edit' });
+  await settled(menu);
+  const item = (name: string) => menu.getByRole('menuitem', { name, exact: true }).element();
+  const rename = item('Rename').querySelector<HTMLElement>('.env-menu-item-start')!;
+  expect(rename.getAttribute('aria-hidden')).toBe('true');
+  expect(box(rename).width).toBeCloseTo(16, 0);
+  expect(box(rename.querySelector('svg')!).width).toBeCloseTo(16, 0);
+  const [muted] = tokenColors(menu, ['--env-color-fg-muted']);
+  expect(getComputedStyle(rename.querySelector('svg')!).color).toBe(muted);
+  const label = (name: string) => box(item(name).querySelector('.env-menu-item-label')!);
+  expect(label('Close').x).toBeCloseTo(label('Rename').x, 0);
+  expect(label('Rename').x - box(rename).x).toBeCloseTo(
+    16 + Number.parseFloat(css(item('Rename'), 'column-gap')),
+    0,
+  );
+  const history = item('Version history').querySelector('svg')!;
+  const firstLine = label('Version history');
+  expect(box(history).y + 8).toBeCloseTo(firstLine.y + firstLine.height / 2, 0);
+});
+
+test("typing in a menu matches its items' labels, past an Avatar's initials at their start", async () => {
+  mount({ default: menus.AccountSwitcherFixture });
+  const trigger = page.getByRole('button', { name: 'Switch account' });
+  const menu = page.getByRole('menu', { name: 'Switch account' });
+  for (const [typed, role, name] of [
+    ['al', 'menuitem', 'Alex Morgan'],
+    ['no', 'menuitemradio', 'Northwind'],
+    ['sa', 'menuitemcheckbox', 'Sam Lee'],
+  ] as const) {
+    await trigger.click();
+    await settled(menu);
+    await keyboard.type(typed);
+    await expect.element(menu.getByRole(role, { name, exact: true })).toHaveFocus();
+    await keyboard.press('Escape');
+    await isGone(menu);
+  }
+});
+
+test("a menu item's own aria-describedby stays beside its description", async () => {
+  mount({ default: menus.AccountSwitcherFixture });
+  await page.getByRole('button', { name: 'Switch account' }).click();
+  const menu = page.getByRole('menu', { name: 'Switch account' });
+  await settled(menu);
+  await expect
+    .element(menu.getByRole('menuitemradio', { name: 'Northwind' }))
+    .toHaveAccessibleDescription('Shared account team@northwind.example.com');
+  await expect
+    .element(menu.getByRole('menuitem', { name: 'Sign out' }))
+    .toHaveAccessibleDescription('Signs out of every account');
+});
+
+test('menu items take native attributes, a submenu row takes its own and end content, and an action can keep the menu open', async () => {
+  mount({ default: menus.ItemAttributesFixture });
+  await page.getByRole('button', { name: 'View' }).click();
+  const menu = page.getByRole('menu', { name: 'View' });
+  await settled(menu);
+  const zoom = menu.getByRole('menuitem', { name: 'Zoom in' });
+  await expect.element(zoom).toHaveAttribute('data-testid', 'zoom-in');
+  await expect.element(zoom).toHaveAttribute('data-analytics', 'zoom');
+  await expect.element(zoom).toHaveAttribute('id', 'zoom-in-item');
+  expect(css(zoom, 'font-style')).toBe('italic');
+  await expect
+    .element(menu.getByRole('menuitemcheckbox', { name: 'Rulers' }))
+    .toHaveAttribute('data-testid', 'rulers');
+  await zoom.click();
+  await expect.poll(() => page.getByTestId('zoom').element().textContent).toBe('110 DIV');
+  await isShown(menu);
+  const share = menu.getByRole('menuitem', { name: 'Share 2' });
+  await expect.element(share).toHaveAttribute('data-testid', 'share-row');
+  expect(share.element().classList.contains('fixture-share-row')).toBe(true);
+  expect(share.element().classList.contains('env-menu-submenu-trigger')).toBe(true);
+  const badge = share.element().querySelector('.env-menu-item-end')!;
+  const chevron = share.element().querySelector('.env-menu-submenu-chevron')!;
+  expect(box(badge).x).toBeLessThan(box(chevron).x);
+});

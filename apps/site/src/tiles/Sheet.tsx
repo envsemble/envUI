@@ -44,7 +44,7 @@ export default function SheetTile() {
           trigger={
             <IconButton variant="ghost" size="sm" icon={<IconFilterList />} aria-label="Filters" />
           }
-          width={9.5}
+          width={10.5}
           title="Filters"
         >
           <Checkbox label="Active" defaultChecked />

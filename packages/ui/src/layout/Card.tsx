@@ -11,9 +11,10 @@ import { Column, Row, type SpaceStep } from './Layout.js';
 import { Surface } from './Surface.js';
 import { Slot } from '../internal/layout/Slot.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
-import { given, type SkeletonProps } from '../internal/skeleton.js';
+import { given, type SkeletonProps } from '../internal/skeleton/skeleton.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
+import { rendersContent } from '../internal/react/rendersContent.js';
 import '../styles/Base.css';
 import '../styles/Card.css';
 
@@ -56,13 +57,26 @@ interface CardContentOptions {
   headingLevel?: HeadingLevel;
   /** A short fact at the end of the title row, such as when the card was updated. */
   meta?: ReactNode;
+  /**
+   * Content at the end of the title row, after the meta, such as an overflow Menu or an Edit
+   * Button, placed as given.
+   */
+  headerEnd?: ReactNode;
   /** A sentence under the title, in muted text. */
   description?: ReactNode;
   /**
    * The card's controls, such as Buttons, in a strip along the bottom of the card, at its end and
-   * wrapping onto more lines where they don't fit.
+   * wrapping onto more lines where they don't fit. For controls beside the title, use headerEnd.
    */
   actions?: ReactNode;
+  /**
+   * The card opens something through a link or button inside, such as its title: it reacts to
+   * hover, keyboard focus on that target and presses. Mark the link or button `data-row-target` to
+   * stretch it over the card; the other links, buttons and fields in the card, such as an author's
+   * link in the description or a Menu in headerEnd, stay clickable above it.
+   * @default false
+   */
+  interactive?: boolean;
   /**
    * The element for the card's meaning, such as render={<article />} or render={<section />}. A
    * div by default.
@@ -72,7 +86,10 @@ interface CardContentOptions {
 
 type NoContentOptions = { [Key in keyof CardContentOptions]?: never };
 
-/** A content card: a div, or the element of render, with an optional title row and actions. */
+/**
+ * A content card: a div, or the element of render, with an optional title row and actions; with
+ * interactive, a link or button inside marked data-row-target takes the card's click.
+ */
 export type CardContentProps = CardSurfaceProps &
   CardContentOptions &
   Omit<ComponentPropsWithRef<'div'>, keyof CardSurfaceProps | 'title' | 'onClick'> & {
@@ -105,7 +122,8 @@ export type CardButtonProps = CardSurfaceProps &
 
 /**
  * A content card (the default), a link card with href, or a button card with onClick. A link or
- * button card holds its content alone: no title or actions.
+ * button card holds its content alone: no title or actions. A content card that opens one place
+ * and keeps a title, meta and actions takes interactive and a data-row-target link instead.
  */
 export type CardProps = CardContentProps | CardLinkProps | CardButtonProps;
 
@@ -165,8 +183,10 @@ function ContentCardLayout({
   title,
   headingLevel,
   meta,
+  headerEnd,
   description,
   actions,
+  interactive = false,
   render,
   className,
   style,
@@ -175,7 +195,8 @@ function ContentCardLayout({
 }: CardContentProps & { slots: Record<'title' | 'meta' | 'description', boolean> }) {
   const hasTitle = title != null || slots.title;
   const hasMeta = meta != null || slots.meta;
-  const hasActions = actions != null && actions !== false;
+  const hasEnd = headerEnd != null;
+  const hasActions = rendersContent(actions);
   const level = headingLevel ?? 3;
   const Heading = `h${level}` as const;
   const headingText = hasTitle && (
@@ -183,7 +204,7 @@ function ContentCardLayout({
       {title}
     </Text>
   );
-  const header = (hasTitle || hasMeta) && (
+  const header = (hasTitle || hasMeta || hasEnd) && (
     <Row wrap align="center" gap={3} className="env-card-header">
       {headingText}
       {hasMeta && (
@@ -191,10 +212,15 @@ function ContentCardLayout({
           {meta}
         </Text>
       )}
+      {hasEnd && (
+        <Slot className="env-card-header-end" layout="row" shrink="never">
+          {headerEnd}
+        </Slot>
+      )}
     </Row>
   );
   const descriptionText = (description != null || slots.description) && (
-    <Text variant="body" emphasis="muted" className="env-card-description">
+    <Text render={<div />} variant="body" emphasis="muted" className="env-card-description">
       {description}
     </Text>
   );
@@ -236,6 +262,7 @@ function ContentCardLayout({
           className={classNames('env-card', className)}
           style={style}
           data-actions={flag(hasActions)}
+          data-interactive={flag(interactive)}
         />
       }
     >

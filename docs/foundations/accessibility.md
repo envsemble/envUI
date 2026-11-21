@@ -16,7 +16,7 @@ avoidWhen:
     use: TextField
   - text: One choice of many, moved through with the keyboard.
     use: Select
-  - text: Views moved between with the arrow keys.
+  - text: One of a few options side by side, such as a list or a grid view.
     use: SegmentedControl
   - text: A task that holds focus until people finish it.
     use: Dialog
@@ -64,7 +64,7 @@ Use the motion tokens in the application's own animations, keeping only fades un
 
 ### Customize
 
-Generated from the token list by `npm run docs:guides`; values at the default 16 px root.
+Values at the default 16 px root.
 
 #### Motion
 

@@ -2,15 +2,10 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import ts from 'typescript';
 import { fixtureName } from '../../tests/fixture/FixtureName.ts';
+import { browserTestPaths, browserTestsDirectory } from './BrowserTests.ts';
 
 const library = 'packages/ui/src';
 const fixtures = 'tests/fixture';
-const specs = 'tests/browser';
-const specFolders = [
-  [`${specs}/library`, '.spec.ts'],
-  [`${specs}/site`, '.spec.ts'],
-  ['tests/component', '.test.tsx'],
-] as const;
 
 export interface Import {
   specifier: string;
@@ -183,7 +178,7 @@ function specRoots(sources: Sources, path: string, fixtureModules: Map<string, s
   const helpers = importsOf(sources.text(path) ?? '')
     .map(({ specifier }) => specifier)
     .filter((specifier) => specifier.startsWith('../support/'))
-    .map((specifier) => `${specs}/${specifier.slice(3)}.ts`);
+    .map((specifier) => `${browserTestsDirectory}/${specifier.slice(3)}.ts`);
   const roots = new Set<string>();
   for (const file of [path, ...helpers]) {
     const text = sources.text(file) ?? '';
@@ -203,19 +198,6 @@ function specRoots(sources: Sources, path: string, fixtureModules: Map<string, s
   return roots;
 }
 
-export function specPaths(root: string) {
-  const paths = new Map<string, string>();
-  for (const [folder, ending] of specFolders) {
-    const directory = resolve(root, folder);
-    if (!existsSync(directory)) continue;
-    for (const file of readdirSync(directory))
-      if (file.endsWith(ending)) paths.set(file.slice(0, -ending.length), `${folder}/${file}`);
-  }
-  return paths;
-}
-
-export const isComponentTest = (path: string) => path.endsWith('.test.tsx');
-
 function libraryModules(root: string, directory = library): string[] {
   return readdirSync(resolve(root, directory), { withFileTypes: true }).flatMap((entry) => {
     const path = `${directory}/${entry.name}`;
@@ -228,7 +210,7 @@ export function fixtureUse(root: string) {
   const sources = new Sources(root);
   const fixtureModules = fixtureFiles(root);
   const users = new Map<string, Set<string>>();
-  for (const [name, path] of specPaths(root)) {
+  for (const [name, path] of browserTestPaths(root)) {
     const pending = [...specRoots(sources, path, fixtureModules)];
     const seen = new Set<string>();
     for (let path = pending.pop(); path !== undefined; path = pending.pop()) {

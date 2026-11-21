@@ -18,6 +18,10 @@ import {
   tokenSection,
 } from '../../apps/site/src/documentation/SearchAnchors.ts';
 import { repositoryRoot, tokensDataFile } from '../RepositoryPaths.ts';
+import {
+  docsOnlyComponents,
+  unlistedDocuments,
+} from '../../apps/site/src/documentation/DocumentPlaces.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TokenList = Record<string, any>;
@@ -61,22 +65,18 @@ export const standalonePages: {
     aliases: ['documentation', 'developer reference', 'reference'],
   },
   {
-    page: 'tokens',
+    page: 'docs/tokens',
     title: 'Design tokens',
     area: 'docs',
     aliases: ['token reference', 'CSS custom properties', 'CSS variables'],
   },
   {
-    page: 'full-changelog',
+    page: 'docs/changelog',
     title: 'Changelog',
     area: 'docs',
     aliases: ['release notes', 'releases', 'versions', 'full changelog', 'all changes'],
   },
 ];
-
-export const unlistedPages = new Set(['index']);
-
-const docsOnlyPages = new Set(['field']);
 
 const kindOfGroup = (group: string): SearchKind =>
   group === 'Foundations' ? 'foundation' : group === 'Setup and workflows' ? 'guide' : 'component';
@@ -144,7 +144,7 @@ export function searchDocuments({
   const results: SearchDocument[] = [];
   const homes = new Map<string, DocumentRecord>();
   for (const document of documents) {
-    if (unlistedPages.has(document.id)) continue;
+    if (unlistedDocuments.has(document.id)) continue;
     const kind = kindOfGroup(document.group);
     const frontmatter = document.frontmatter ?? {};
     const exports = documentedExports(frontmatter.components ?? [], props);
@@ -159,7 +159,7 @@ export function searchDocuments({
       owner: '',
       text: [document.summary, ...(frontmatter.useWhen ?? [])].join('\n'),
       page: document.id,
-      area: kind === 'guide' || docsOnlyPages.has(document.id) ? 'docs' : 'catalogue',
+      area: kind === 'guide' || docsOnlyComponents.has(document.id) ? 'docs' : 'catalogue',
     });
   }
   const pages = new Set(
@@ -211,7 +211,7 @@ export function searchDocuments({
       keywords: [token.id, token.type, aliasOf].filter(Boolean).join(' '),
       owner: '',
       text: sentence(token.description ?? ''),
-      page: 'tokens',
+      page: 'docs/tokens',
       area: 'docs',
       section: tokenSection(token.cssVariable),
     });

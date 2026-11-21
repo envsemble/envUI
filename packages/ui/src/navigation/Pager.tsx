@@ -1,13 +1,23 @@
 'use client';
 
-import { Children, type ComponentPropsWithRef, type ReactNode } from 'react';
-import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import {
+  Children,
+  useLayoutEffect,
+  useRef,
+  type ComponentPropsWithRef,
+  type ReactNode,
+  type RefObject,
+} from 'react';
+import { Slot } from '../internal/layout/Slot.js';
 import { classNames } from '../internal/classNames.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import { Row } from '../layout/Layout.js';
+import { mergeRefs } from '../internal/react/setRef.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { useLinkComponent } from '../internal/provider/LinkComponentContext.js';
-import { useEnvUI, useMessages } from '../internal/provider/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { pager } from '../foundations/messages/pager.js';
+import { observeResize } from '../internal/dom/observeResize.js';
 import '../styles/Base.css';
 import '../styles/Pager.css';
 
@@ -20,35 +30,48 @@ export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> 
    */
   children: ReactNode;
   /**
-   * A decorative icon, such as ArrowBack, before the previous destination's text, or such as
-   * ArrowForward, after the next one's; none by default.
-   */
-  icon?: ReactNode;
-  /**
    * The link's relation to this page.
    * @default 'prev' on Pager.Previous, 'next' on Pager.Next
    */
   rel?: string;
+  /**
+   * The direction label above the title, such as Previous chapter or Back to setup, for this link
+   * alone; null leaves it out.
+   * @default 'Previous' or 'Up next', or EnvUIProvider's messages.pager.previous or next
+   */
+  label?: ReactNode;
 }
 
 /** The link to the previous page. */
-export type PreviousProps = LinkProps;
+export type PreviousProps = LinkProps & {
+  /**
+   * Content before the text, such as IconArrowBack: an envUI icon takes the pager's icon size and
+   * other content keeps its own. It is hidden from assistive technology; none by default.
+   */
+  start?: ReactNode;
+};
 /** The link to the next page. */
-export type NextProps = LinkProps;
+export type NextProps = LinkProps & {
+  /**
+   * Content after the text, such as IconArrowForward: an envUI icon takes the pager's icon size and
+   * other content keeps its own. It is hidden from assistive technology; none by default.
+   */
+  end?: ReactNode;
+};
 
 function PagerLink({
   direction,
-  icon,
+  start,
+  end,
   children,
   className,
   rel,
+  label,
   ...props
-}: LinkProps & { direction: 'previous' | 'next' }) {
+}: LinkProps & { direction: 'previous' | 'next'; start?: ReactNode; end?: ReactNode }) {
   const LinkComponent = useLinkComponent();
-  const captionWithoutMergingNamespace =
-    (useEnvUI().messages.pager?.[direction] as string | undefined) ?? pager[direction];
+  const caption = useMessages('pager', pager)[direction];
   const isPrevious = direction === 'previous';
-  const symbol = icon != null ? <DecorativeIcon>{icon}</DecorativeIcon> : null;
 
   return (
     // eslint-disable-next-line react-hooks/static-components
@@ -57,12 +80,26 @@ function PagerLink({
       rel={rel ?? (isPrevious ? 'prev' : 'next')}
       className={classNames('env-pager-link', `env-pager-link-${direction}`, className)}
     >
-      {isPrevious && symbol}
+      {start != null && (
+        <Slot
+          className="env-pager-link-start"
+          element="span"
+          layout="row"
+          shrink="never"
+          aria-hidden
+        >
+          {start}
+        </Slot>
+      )}
       <span className="env-pager-link-copy">
-        <span className="env-pager-link-label">{captionWithoutMergingNamespace}</span>
+        {label !== null && <span className="env-pager-link-label">{label ?? caption}</span>}
         <span className="env-pager-link-title">{children}</span>
       </span>
-      {!isPrevious && symbol}
+      {end != null && (
+        <Slot className="env-pager-link-end" element="span" layout="row" shrink="never" aria-hidden>
+          {end}
+        </Slot>
+      )}
     </LinkComponent>
   );
 }
@@ -88,9 +125,28 @@ export interface RootProps extends ComponentPropsWithRef<'nav'> {
   'aria-label'?: string;
 }
 
-function Root({ children, className, 'aria-label': ariaLabel, ...props }: RootProps) {
+function useStackedOnceWrapped(pager: RefObject<HTMLElement | null>, linkCount: number) {
+  useLayoutEffect(() => {
+    const element = pager.current;
+    if (!element) return;
+    let measuredWidth = -1;
+    return observeResize(element, function stackWhereLinksWrap() {
+      if (element.clientWidth === measuredWidth) return;
+      measuredWidth = element.clientWidth;
+      delete element.dataset.stacked;
+      const links = [...element.children] as HTMLElement[];
+      const wrapped = links.some((link) => link.offsetTop !== links[0].offsetTop);
+      if (wrapped) element.dataset.stacked = '';
+    });
+  }, [pager, linkCount]);
+}
+
+function Root({ children, className, 'aria-label': ariaLabel, ref, ...props }: RootProps) {
   const messages = useMessages('pager', pager);
-  if (Children.toArray(children).length === 0) return null;
+  const element = useRef<HTMLElement>(null);
+  const linkCount = Children.toArray(children).length;
+  useStackedOnceWrapped(element, linkCount);
+  if (linkCount === 0) return null;
 
   return (
     <Row
@@ -101,7 +157,8 @@ function Root({ children, className, 'aria-label': ariaLabel, ...props }: RootPr
       render={
         <nav
           {...props}
-          aria-label={ariaLabel ?? messages.label}
+          ref={mergeRefs(element, ref)}
+          aria-label={landmarkLabel(ariaLabel, props['aria-labelledby'], messages.label)}
           className={classNames('env-pager', className)}
         />
       }
@@ -113,18 +170,19 @@ function Root({ children, className, 'aria-label': ariaLabel, ...props }: RootPr
 
 /**
  * A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous
- * and Pager.Next children; either one can be left out, and without any it renders nothing.
+ * and Pager.Next children; either one can be left out, and without any it renders nothing. Where
+ * the two don't fit side by side, they stack as rows of the pager's width, the previous first.
  */
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Pager.Root');
 /**
  * The destination before this one: a native link with rel="prev", its title under the label
- * Previous (EnvUIProvider's messages.pager.previous), and an optional icon before them. It also
+ * Previous (EnvUIProvider's messages.pager.previous), and optional content before them, its start. It also
  * stands alone, outside Pager.Root.
  */
 const PreviousPart = /* @__PURE__ */ withDisplayName(Previous, 'Pager.Previous');
 /**
  * The destination after this one: a native link with rel="next", its title under the label Up
- * next (EnvUIProvider's messages.pager.next), and an optional icon after them. It also stands
+ * next (EnvUIProvider's messages.pager.next), and optional content after them, its end. It also stands
  * alone, outside Pager.Root.
  */
 const NextPart = /* @__PURE__ */ withDisplayName(Next, 'Pager.Next');

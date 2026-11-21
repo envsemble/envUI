@@ -1,0 +1,13 @@
+.catalogue-ribbon {
+  pointer-events: none;
+}
+
+.catalogue-ribbon-canvas {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.catalogue-ribbon-canvas[hidden] {
+  display: none;
+}

@@ -49,3 +49,23 @@ test('the previous link comes first and the next link last, with strings from me
   assert.equal(nav.attributes['aria-label'], 'Seiten');
   assert.deepEqual(links(nav).map(textOf), ['ZurückEinführung', 'WeiterEinrichtung']);
 });
+
+test('a link’s own label replaces the direction label from messages, and null leaves it out', () => {
+  const nav = firstElement(
+    renderToString(
+      h(
+        Pager.Root,
+        null,
+        h(Pager.Previous, { href: '#setup', label: 'Back to setup' }, 'Setup'),
+        h(Pager.Next, { href: '#deploy', label: null }, 'Deploy'),
+      ),
+    ),
+  );
+  const [previous, next] = links(nav);
+  assert.equal(textOf(previous), 'Back to setupSetup');
+  assert.equal(
+    elementsOf(next).some((element) => element.attributes.class === 'env-pager-link-label'),
+    false,
+  );
+  assert.equal(textOf(next), 'Deploy');
+});

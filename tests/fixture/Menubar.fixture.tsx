@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Menu, Menubar } from '@envsemble/envui';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 function describe(element: Element | null) {
   return element?.getAttribute('aria-label') ?? element?.tagName.toLowerCase() ?? 'nothing';
@@ -79,5 +80,38 @@ export default function MenubarFixture() {
         ))}
       </div>
     </section>
+  );
+}
+
+export function RichTriggerFixture() {
+  return (
+    <Menubar.Root aria-label="Editor menu" accessKeys>
+      <Menubar.Menu
+        label={
+          <>
+            <IconFolder /> Files
+          </>
+        }
+        accessKey="F"
+        triggerProps={{ className: 'fixture-files-trigger', 'data-testid': 'files-trigger' }}
+      >
+        <Menu.Item>New file</Menu.Item>
+      </Menubar.Menu>
+      <Menubar.Menu
+        label={
+          <span className="fixture-wrapped-label">
+            <em>Sel</em>ection
+          </span>
+        }
+        aria-label="Selection"
+        accessKey="c"
+        triggerProps={{ 'data-testid': 'selection-trigger' }}
+      >
+        <Menu.Item>Select all</Menu.Item>
+        <Menu.Submenu label="Expand" triggerProps={{ 'data-testid': 'expand-trigger' }}>
+          <Menu.Item>To word</Menu.Item>
+        </Menu.Submenu>
+      </Menubar.Menu>
+    </Menubar.Root>
   );
 }

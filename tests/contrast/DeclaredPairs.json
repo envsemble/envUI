@@ -6929,20 +6929,6 @@
         "high": 4.5
       }
     },
-    "heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-page": {
-      "kind": "distinct",
-      "minimum": {
-        "standard": 0.03,
-        "high": 0.04
-      }
-    },
-    "heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-recessed": {
-      "kind": "distinct",
-      "minimum": {
-        "standard": 0.03,
-        "high": 0.04
-      }
-    },
     "popup-row-highlight on popup-frosted over --env-color-bg-default": {
       "kind": "difference",
       "minimum": {
@@ -7178,6 +7164,42 @@
         "standard": 4.5,
         "high": 7
       }
+    },
+    "toolbar-separator on --env-color-bg-default": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-popup": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
+    },
+    "toolbar-separator on --env-color-bg-recessed": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.4
+      }
     }
   },
   "dropped": [
@@ -7269,7 +7291,9 @@
     "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis-pressed",
     "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis",
     "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-hover",
-    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-pressed"
+    "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis-pressed",
+    "heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-page",
+    "heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-recessed"
   ],
   "renamed": [
     "--color-action-strip on --color-bg-muted",
@@ -8585,7 +8609,8 @@
     "slider-fill on --env-color-bg-neutral-muted over catalogue-canvas",
     "text-field-affix on --env-color-bg-neutral-muted over catalogue-canvas",
     "text-field-affix on catalogue-canvas",
-    "text-field-affix on text-field-read-only over catalogue-canvas"
+    "text-field-affix on text-field-read-only over catalogue-canvas",
+    "toolbar-separator on catalogue-canvas"
   ],
   "relaxed": [
     {

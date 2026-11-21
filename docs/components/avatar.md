@@ -40,6 +40,7 @@ examples:
     motion: true
   Sizes: variants
   Fallbacks: example
+  BotsAndPresence: example
   AvatarAnatomy:
     role: anatomy
     caption: Spread, as under the pointer, and held level.
@@ -64,6 +65,12 @@ examples:
 ### Pictures and fallbacks
 
 ```tsx figure=Fallbacks
+
+```
+
+### An own fallback and a badge
+
+```tsx figure=BotsAndPresence
 
 ```
 

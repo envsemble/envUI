@@ -988,15 +988,6 @@
           }
         }
       },
-      "rating-star": {
-        "$description": "The filled stars and the filled half of a half star: a clear gold.",
-        "$value": "{palette.amber.25}",
-        "$extensions": {
-          "com.envsemble.envui": {
-            "component": "Rating"
-          }
-        }
-      },
       "avatar": {
         "$description": "The initials of an avatar, in a shade of its fill's hue: deep on the pastel fill, and light on the deep fill in dark, at least 4.5:1 on it, and 7:1 at high contrast.",
         "$root": {

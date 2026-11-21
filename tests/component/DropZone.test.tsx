@@ -187,3 +187,41 @@ test(
     await expect.poll(avatarSubmitted).toBe('mira.png');
   },
 );
+
+test('content inside the zone sits beside its target, takes drops and holds its own controls', async () => {
+  mount({ default: fixture.DropZoneContentFixture });
+  const target = page.getByRole('button', { name: 'Drop attachments here' });
+  const list = page.getByTestId('attachments');
+  expect(target.element().contains(list.element())).toBe(false);
+  expect(list.element().closest('.env-drop-zone-content')).not.toBeNull();
+  drop(list, filesTransfer([['brief.pdf', 'application/pdf']]));
+  await expect.poll(() => list.element().textContent).toContain('brief.pdf');
+  await page.getByRole('button', { name: 'Remove brief.pdf' }).click();
+  await expect.poll(() => list.element().textContent).toBe('');
+  await page.getByRole('button', { name: 'Browse' }).click();
+  await chooseInOpenedPicker([file('plan.png', 'image/png')]);
+  await expect.poll(() => list.element().textContent).toContain('plan.png');
+});
+
+test("the application's own region can be the zone, without the target, named by the label", async () => {
+  mount({ default: fixture.DropZoneRegionFixture });
+  const region = page.getByTestId('region');
+  expect(region.element().tagName).toBe('SECTION');
+  await expect.element(region).toHaveClass(/own-region/);
+  await expect.element(region).toHaveClass(/env-drop-zone/);
+  await expect.element(region).toHaveRole('group');
+  await expect.element(region).toHaveAccessibleName('Drop files on the table');
+  await expect.element(region).toHaveAccessibleDescription('Any file up to 10 MB');
+  expect(region.element().querySelector('.env-drop-zone-target')).toBeNull();
+  const rows = page.getByTestId('rows');
+  const transfer = filesTransfer([['brief.pdf', 'application/pdf']]);
+  drag(rows, 'dragenter', transfer);
+  await expect.element(region).toHaveAttribute('data-drag-over');
+  drag(rows, 'dragover', transfer);
+  drag(rows, 'drop', transfer);
+  await expect.element(region).not.toHaveAttribute('data-drag-over');
+  await expect.poll(() => rows.element().textContent).toContain('brief.pdf');
+  await page.getByRole('button', { name: 'Browse' }).click();
+  await chooseInOpenedPicker([file('plan.png', 'image/png')]);
+  await expect.poll(() => rows.element().textContent).toContain('plan.png');
+});

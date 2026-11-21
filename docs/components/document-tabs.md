@@ -27,10 +27,19 @@ components:
 examples:
   OpenDocuments: overview
   DocumentTabsAnatomy: anatomy
+  EditorTabs: example
   ManyTabs: example
 ---
 
 # DocumentTabs
+
+## Variants
+
+### Tabs of an editor
+
+```tsx figure=EditorTabs
+
+```
 
 ## Anatomy
 
@@ -41,7 +50,7 @@ examples:
 1. **Tabs** (`env-document-tabs-list`)
 2. **Item** (`env-document-tabs-item`)
 3. **Tab** (`env-document-tabs-tab`)
-4. **Icon** (`env-document-tabs-tab > env-icon`, `icon`)
+4. **Start** (`env-document-tabs-tab-start`, `start`)
 5. **Label** (`env-document-tabs-tab-label`, `label`)
 6. **Close button** (`env-document-tabs-close`)
 7. **End** (`env-document-tabs-end`, `end`)
@@ -59,9 +68,9 @@ examples:
 
 ### Keyboard
 
-| Key                                                | Action                                                                                  |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| <kbd>←</kbd>, <kbd>→</kbd>                         | Moves to the previous or next tab and activates it, wrapping, in the reading direction. |
-| <kbd>Home</kbd>, <kbd>End</kbd>                    | Moves to the first or last tab and activates it.                                        |
-| <kbd>Delete</kbd> or <kbd>Backspace</kbd>          | Closes the focused tab; focus moves to the tab that becomes active.                     |
-| <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> | Opens the context menu for the focused tab.                                             |
+| Key                                                | Action                                                                                       |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| <kbd>←</kbd>, <kbd>→</kbd>                         | Moves to the previous or next tab and activates it, wrapping, in the reading direction.      |
+| <kbd>Home</kbd>, <kbd>End</kbd>                    | Moves to the first or last tab and activates it.                                             |
+| <kbd>Delete</kbd> or <kbd>Backspace</kbd>          | Closes the focused tab unless it isn't closable; focus moves to the tab that becomes active. |
+| <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> | Opens the context menu for the focused tab.                                                  |

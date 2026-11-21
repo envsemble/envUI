@@ -3,17 +3,23 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { Column } from '../layout/Layout.js';
 import { Slot } from '../internal/layout/Slot.js';
+import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { landmarkLabel } from './internal/landmarkLabel.js';
 import {
-  destinationKey,
-  DestinationItem,
-  useNavigationMessages,
-  type DestinationClasses,
-} from './internal/DestinationItem.js';
+  inSkeleton,
+  skeletonAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton/skeleton.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { navigation } from '../foundations/messages/navigation.js';
+import { DestinationItem, type DestinationClasses } from './internal/DestinationItem.js';
+import { destinationKey } from './internal/destinationModel.js';
 import type { Destination } from './destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import type { NavigationBackground } from './navigationBackground.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
+import '../styles/NavigationDestinations.css';
 import '../styles/NavigationRail.css';
 
 const railClasses: DestinationClasses = {
@@ -48,6 +54,13 @@ export interface NavigationRailProps
    */
   background?: NavigationBackground;
   /**
+   * Whether the destinations' labels show under their icons. False shows the icons only, for an
+   * icon-only rail such as a code editor's activity bar: each label still names its destination
+   * and shows in a tooltip on hover and keyboard focus.
+   * @default true
+   */
+  visibleLabel?: boolean;
+  /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
    */
@@ -64,22 +77,24 @@ export function NavigationRail({
   header,
   footer,
   background = 'default',
+  visibleLabel = true,
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
   className,
   ...props
 }: NavigationRailProps) {
-  const messages = useNavigationMessages();
+  const messages = useMessages('navigation', navigation);
   return (
     <Column
       render={<nav />}
       {...props}
-      aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
+      aria-label={landmarkLabel(label, labelledBy, messages.label)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-navigation-rail', className)}
-      data-background={backgroundAttribute(background)}
+      data-background={background}
+      data-label-hidden={flag(!visibleLabel)}
       align="center"
       gap={4}
     >
@@ -88,11 +103,22 @@ export function NavigationRail({
         <>
           {header != null && <Slot className="env-navigation-rail-header">{header}</Slot>}
           <Column render={<ul />} className="env-navigation-rail-list" align="stretch" gap={1}>
-            {destinations.map((destination) => (
-              <li key={destinationKey(destination)}>
+            {destinations.map((destination) => {
+              const item = (
                 <DestinationItem classes={railClasses} destination={destination} topLevel />
-              </li>
-            ))}
+              );
+              return (
+                <li key={destinationKey(destination)}>
+                  {!visibleLabel ? (
+                    <CutLabelTooltip cut label={destination.label} side="inline-end">
+                      {item}
+                    </CutLabelTooltip>
+                  ) : (
+                    item
+                  )}
+                </li>
+              );
+            })}
           </Column>
           {footer != null && <Slot className="env-navigation-rail-footer">{footer}</Slot>}
         </>,

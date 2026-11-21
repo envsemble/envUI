@@ -1,6 +1,6 @@
 'use client';
 
-import type { SkeletonProps } from '../internal/skeleton.js';
+import type { SkeletonProps } from '../internal/skeleton/skeleton.js';
 import { Drawer as BaseDrawer } from '@base-ui/react/drawer';
 import {
   useCallback,
@@ -12,34 +12,35 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { IconButton } from '../actions/Button.js';
 import { Column } from '../layout/Layout.js';
-import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
+import { sheetWidthRem } from '../internal/sizeTokens.js';
 import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
-import { setRef } from '../internal/react/setRef.js';
+import { useMergedRefs } from '../internal/react/useMergedRefs.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/provider/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
-import { useTheme } from '../foundations/Theme.js';
 import type { DialogFocusTarget, DialogOpenChangeDetails } from './Dialog.js';
+import { ModalLayer } from '../internal/dialog/ModalLayer.js';
 import {
   DialogActions,
-  DialogBackdrop,
   DialogContent,
   DialogHeader,
-  DialogPendingContext,
   DialogSurface,
-  OverlayTheme,
-} from '../internal/dialog/DialogParts.js';
-import { withPendingAction } from './internal/DialogPendingAction.js';
-import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
+} from './internal/dialog/DialogParts.js';
+import { DialogHeadingClose } from './internal/dialog/DialogHeadingClose.js';
+import {
+  DialogPendingContext,
+  pendingOpenChange,
+  withPendingAction,
+} from './internal/dialog/dialogPending.js';
 import { ResizeHandle } from '../layout/ResizeHandle.js';
 import { useResizableWidth, widthInRem } from '../internal/resize/useResizableWidth.js';
+import { usePortalContainer } from '../internal/provider/PortalContainerContext.js';
 import {
+  containedFocus,
   containedModal,
   containedOpenChange,
-  usePortalContainer,
-} from '../internal/popup/PortalContainerContext.js';
+} from '../internal/popup/containedOverlays.js';
 import { computedDirection } from '../internal/dom/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
@@ -90,9 +91,22 @@ export interface SheetProps
   children?: ReactNode;
   /**
    * Actions at the end of the content, such as Apply, with the primary action last. While the sheet
-   * is pending, the last one shows it, where it is a Button that sets no pending of its own.
+   * is pending, the last one shows it, where it is a Button that sets no pending of its own; another
+   * component reads it with useDialogPending.
    */
   actions?: ReactNode;
+  /**
+   * Content at the start of the actions' row, which takes the room the actions leave, such as a
+   * Reset button or a Learn more link.
+   */
+  actionsStart?: ReactNode;
+  /** Content before the title in the heading's row, such as a back button. */
+  headerStart?: ReactNode;
+  /**
+   * Content at the end of the heading's row, before the close button, such as a Menu of more
+   * actions or an Open full page button.
+   */
+  headerEnd?: ReactNode;
   /**
    * Whether the sheet shows its close button, an IconButton with a cross at the end of the heading. Leave it
    * out only where the sheet holds another control that closes it.
@@ -238,7 +252,7 @@ function useSheetWidth({
   const growsTowardStart = side === 'end';
   const resize = useResizableWidth({
     width: typeof width === 'number' ? width : undefined,
-    defaultWidth: defaultWidth ?? (width === 'lg' ? 44 : 24),
+    defaultWidth: defaultWidth ?? sheetWidthRem[width === 'lg' ? 'lg' : 'md'],
     minWidth,
     maxWidth,
     onWidthChange,
@@ -275,6 +289,9 @@ export function Sheet({
   description,
   children,
   actions,
+  actionsStart,
+  headerStart,
+  headerEnd,
   closeButton = true,
   closeLabel: ownCloseLabel,
   width = 'md',
@@ -295,7 +312,6 @@ export function Sheet({
   ref,
   ...popupProps
 }: SheetProps) {
-  const theme = useTheme();
   const messages = useMessages('dialog', dialog);
   const provided = useEnvUI().dir;
   const [shown, setShown] = useControllableState({
@@ -313,13 +329,7 @@ export function Sheet({
     [shown, provided],
   );
   const popup = useRef<HTMLDivElement | null>(null);
-  const attachPopup = useCallback(
-    (element: HTMLDivElement | null) => {
-      popup.current = element;
-      return setRef(ref, element);
-    },
-    [ref],
-  );
+  const attachPopup = useMergedRefs(popup, ref);
   const focusSheetItselfOnTouch = useCallback(
     (interaction: string) =>
       interaction === 'touch' ? (popup.current ?? firstTabbableElement) : firstTabbableElement,
@@ -342,85 +352,87 @@ export function Sheet({
     <BaseDrawer.Root
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={containedOpenChange(portal, triggerRef, (next, eventDetails) => {
-        if (!next && pending) eventDetails.cancel();
-        else setShown(next, { reason: eventDetails.reason });
-      })}
+      onOpenChange={containedOpenChange(
+        portal,
+        triggerRef,
+        pendingOpenChange(pending, (next, eventDetails) =>
+          setShown(next, { reason: eventDetails.reason }),
+        ),
+      )}
       modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}
       swipeDirection={swipeDirection}
     >
       {trigger && <BaseDrawer.Trigger ref={triggerRef} render={trigger} />}
       <BaseDrawer.Portal container={portal.container}>
-        <OverlayTheme {...theme} dir={provided ?? directionAtTrigger}>
-          <ResetControlDefaults>
-            {modal && <DialogBackdrop className="env-sheet-backdrop" />}
-            <BaseDrawer.Viewport className="env-sheet-viewport" data-side={side}>
-              <BaseDrawer.Popup
-                render={
-                  <BaseDrawer.Content
-                    render={<DialogSurface radius={side === 'bottom' ? undefined : 'none'} />}
+        <ModalLayer
+          backdrop={modal && { className: 'env-sheet-backdrop' }}
+          dir={provided ?? directionAtTrigger}
+        >
+          <BaseDrawer.Viewport className="env-sheet-viewport" data-side={side}>
+            <BaseDrawer.Popup
+              render={
+                <BaseDrawer.Content
+                  render={<DialogSurface radius={side === 'bottom' ? undefined : 'none'} />}
+                />
+              }
+              {...popupProps}
+              ref={attachPopup}
+              className={classNames('env-sheet', className)}
+              style={{
+                ...(customWidth !== undefined && { '--_sheet-width': customWidth }),
+                ...style,
+              }}
+              data-side={side}
+              data-width={named ? width : 'custom'}
+              data-resizable={flag(resizable)}
+              aria-label={title == null ? label : undefined}
+              aria-busy={pending || skeleton || undefined}
+              data-env-skeleton={flag(skeleton)}
+              initialFocus={containedFocus(portal, initialFocus ?? focusSheetItselfOnTouch)}
+              finalFocus={containedFocus(portal, finalFocus)}
+            >
+              <DialogPendingContext.Provider value={pending}>
+                <DialogContent skeleton={skeleton}>
+                  <DialogHeader
+                    title={title}
+                    description={description}
+                    start={headerStart}
+                    end={headerEnd}
+                    close={
+                      closeButton ? (
+                        <DialogHeadingClose
+                          Close={BaseDrawer.Close}
+                          label={ownCloseLabel ?? messages.close}
+                          pending={pending}
+                        />
+                      ) : undefined
+                    }
                   />
-                }
-                {...popupProps}
-                ref={attachPopup}
-                className={classNames('env-sheet', className)}
-                style={{
-                  ...(customWidth !== undefined && { '--_sheet-width': customWidth }),
-                  ...style,
-                }}
-                data-side={side}
-                data-width={named ? width : 'custom'}
-                data-resizable={flag(resizable)}
-                aria-label={title == null ? label : undefined}
-                aria-busy={pending || skeleton || undefined}
-                data-env-skeleton={flag(skeleton)}
-                initialFocus={portal.contained ? false : (initialFocus ?? focusSheetItselfOnTouch)}
-                finalFocus={portal.contained ? false : finalFocus}
-              >
-                <DialogPendingContext.Provider value={pending}>
-                  <DialogContent skeleton={skeleton}>
-                    <DialogHeader
-                      title={title}
-                      description={description}
-                      close={
-                        closeButton ? (
-                          <BaseDrawer.Close
-                            render={
-                              <IconButton
-                                variant="ghost"
-                                icon={<IconClose />}
-                                aria-label={ownCloseLabel ?? messages.close}
-                                disabled={pending}
-                              />
-                            }
-                          />
-                        ) : undefined
-                      }
+                  {children != null && (
+                    <Column gap={5} className="env-sheet-body">
+                      {children}
+                    </Column>
+                  )}
+                  {(actions != null || actionsStart != null) && (
+                    <DialogActions start={actionsStart}>
+                      {withPendingAction(actions, pending)}
+                    </DialogActions>
+                  )}
+                  {resizable && (
+                    <ResizeHandle
+                      {...resize.handleProps}
+                      label={resizeLabel ?? messages.resize}
+                      grip
+                      className="env-sheet-resize-handle"
+                      {...ignoredBySwipeToClose}
                     />
-                    {children != null && (
-                      <Column gap={5} className="env-sheet-body">
-                        {children}
-                      </Column>
-                    )}
-                    {actions != null && (
-                      <DialogActions>{withPendingAction(actions, pending)}</DialogActions>
-                    )}
-                    {resizable && (
-                      <ResizeHandle
-                        {...resize.handleProps}
-                        label={resizeLabel ?? messages.resize}
-                        grip
-                        className="env-sheet-resize-handle"
-                        {...ignoredBySwipeToClose}
-                      />
-                    )}
-                  </DialogContent>
-                </DialogPendingContext.Provider>
-              </BaseDrawer.Popup>
-            </BaseDrawer.Viewport>
-          </ResetControlDefaults>
-        </OverlayTheme>
+                  )}
+                </DialogContent>
+              </DialogPendingContext.Provider>
+            </BaseDrawer.Popup>
+          </BaseDrawer.Viewport>
+        </ModalLayer>
       </BaseDrawer.Portal>
     </BaseDrawer.Root>
   );

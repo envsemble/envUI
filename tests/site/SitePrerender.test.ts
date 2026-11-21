@@ -9,7 +9,7 @@ import {
   redirectsFile,
 } from '../../scripts/site/PrerenderSite.ts';
 import { siteDescription } from '../../apps/site/src/routes/SiteDescription.ts';
-import { technicalText } from '../../apps/site/src/documentation/CatalogueContent.ts';
+import { technicalText } from '../../scripts/docs/validation/CatalogueWording.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import { importSource } from '../support/ImportSource.ts';
 import { elementsOf, firstElement, hasClass, textOf } from '../support/Markup.ts';
@@ -64,7 +64,11 @@ test('every page the site serves pre-renders, with its one heading and its title
     assert.equal(headings.length, 1, `${route} has one <h1>`);
     const [, heading] = headings[0];
     const name = text(heading) || /aria-label="([^"]*)"/.exec(heading)?.[1];
-    assert.equal(name, page.kind === 'home' ? 'envUI' : page.title, route);
+    assert.equal(
+      name,
+      page.kind === 'home' ? 'A React design system for clear, accessible interfaces.' : page.title,
+      route,
+    );
     const site = page.area === 'docs' ? 'envUI Docs' : 'envUI';
     const home = page.kind === 'home' || page.path === 'docs';
     assert.equal(title, home ? site : `${page.title} · ${site}`, route);
@@ -128,7 +132,6 @@ const notCatalogueWords = (element) =>
     'site-anatomy-subject',
     'catalogue-tile-stage',
     'catalogue-open-example',
-    'catalogue-banner-motif',
   ].some((name) => hasClass(element, name));
 
 test("the catalogue's component and foundation pages show no technical text", async () => {
@@ -168,7 +171,9 @@ const linksOf = (list) =>
 
 const repeated = (values) => values.filter((value, index) => values.indexOf(value) !== index);
 
-test("a page's contents list its own sections, each once, at addresses of their own, and every page of the Docs has them", async () => {
+const fewestListedEntries = 3;
+
+test("a page's contents list its own sections, each once, at addresses of their own, and every page of the Docs with three sections or more has them, and none lists fewer than three entries", async () => {
   for (const { path, area } of allPages) {
     const elements = elementsOf(await pageRoot(path));
     const column = elements.find((element) => hasClass(element, 'site-page-column'));
@@ -180,7 +185,12 @@ test("a page's contents list its own sections, each once, at addresses of their 
     const contents = elements.filter(
       (element) => element.tag === 'nav' && element.attributes['aria-label'] === 'On this page',
     );
-    if (area === 'docs') assert.ok(contents.length > 0, `${path} has its contents`);
+    if (area === 'docs' && sections.length >= fewestListedEntries)
+      assert.ok(contents.length > 0, `${path} lists its contents`);
+    for (const navigation of contents) {
+      const entries = elementsOf(navigation).filter(({ tag }) => tag === 'a').length;
+      assert.ok(entries >= fewestListedEntries, `${path} lists ${entries} entries`);
+    }
     for (const navigation of contents) {
       const lists = elementsOf(navigation).filter(({ tag }) => tag === 'ol' || tag === 'ul');
       const hrefs = elementsOf(navigation)

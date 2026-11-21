@@ -11,23 +11,51 @@ export type ToastTone = 'neutral' | 'success' | 'info' | 'danger';
  * downward from the top of the window.
  */
 export type ToastPlacement = 'bottom-end' | 'top-center';
-/** The one button a notification can offer, such as Undo. */
-export interface ToastAction {
-  /** The button's label: a short verb, such as Undo, Retry or View. */
-  label: string;
-  /**
-   * Runs when the button is pressed. The notification stays; dismiss it from here with the id that
-   * show returned, as an undo does once it has run.
-   */
-  onClick: () => void;
-}
+/**
+ * A button a notification offers, such as Undo, with what it runs, or a link, such as View, with
+ * the address it leads to.
+ */
+export type ToastAction =
+  | {
+      /** The button's label: a short verb, such as Undo, Retry or View. */
+      label: string;
+      /**
+       * Runs when the button is pressed. The notification stays; dismiss it from here with the id
+       * that show returned, as an undo does once it has run.
+       */
+      onClick: () => void;
+      href?: undefined;
+    }
+  | {
+      /** The link's label: a short verb, such as View or Open. */
+      label: string;
+      /**
+       * The address the action leads to, such as the new item's page: the action is a link,
+       * through the LinkProvider's link component.
+       */
+      href: string;
+      /** Runs as the link is followed, such as to record it. */
+      onClick?: () => void;
+    };
 /** A notification to show with useToast().show(). */
 export interface ToastNotification {
   /**
-   * What happened, in a short sentence, such as Changes saved. It wraps to three lines; the full
-   * text stays in its title and its announcement.
+   * What happened, in a short sentence, such as Changes saved: text, or content such as the name
+   * of what changed in bold or a link to it. It wraps to three lines; the full text stays in its
+   * title and its announcement.
    */
-  message: string;
+  message: ReactNode;
+  /**
+   * The message as plain text, for its native title and its announcement, where the message's
+   * text isn't it.
+   * @default the message when it is a string, else the message's rendered text
+   */
+  textValue?: string;
+  /**
+   * Replaces the tone's icon before the message, such as an Avatar for a mention; null or false
+   * shows none. It is decorative.
+   */
+  icon?: ReactNode;
   /**
    * What the notification means: neutral, success, info or danger. A danger notification persists
    * until it is dismissed, is announced at once as an alert and is never hidden behind the count
@@ -36,10 +64,11 @@ export interface ToastNotification {
    */
   tone?: ToastTone;
   /**
-   * One button in the notification, such as Undo, with its label and what it runs. A notification
-   * with an action persists until it is dismissed, unless duration is set.
+   * The notification's buttons and links, such as Undo, or Undo and View, shown in the order given
+   * with the main one last; they wrap onto more lines when they don't fit beside the message. A
+   * notification with an action persists until it is dismissed, unless duration is set.
    */
-  action?: ToastAction;
+  actions?: readonly ToastAction[];
   /**
    * Where this notification shows, bottom-end or top-center, instead of the provider's
    * defaultPlacement.

@@ -62,7 +62,7 @@ test('ranges without a total, single pages, empty lists, past the end and in oth
       total: 1234,
       previousLabel: 'Vorherige Seite',
       nextLabel: 'Nächste Seite',
-      formatRange: ({ start, end, total }) =>
+      renderRange: ({ start, end, total }) =>
         `${start.toLocaleString('de')}–${end.toLocaleString('de')} von ${total?.toLocaleString('de')}`,
     }),
   );
@@ -81,4 +81,28 @@ test('ranges without a total, single pages, empty lists, past the end and in oth
   );
   assert.equal(named.tag, 'nav');
   assert.equal(named.attributes['aria-label'], 'Pagination');
+});
+
+test('with pageHref the controls are links to the pages before and after, and one with no page reports aria-disabled with no destination', () => {
+  const pager = firstElement(
+    renderToStaticMarkup(
+      h(Pagination, {
+        'aria-label': 'Pages',
+        page: 1,
+        pageSize: 10,
+        total: 25,
+        pageHref: (page) => `?page=${page}`,
+      }),
+    ),
+  );
+  const links = elementsOf(pager).filter((element) => element.tag === 'a');
+  const [previous, next] = links;
+  assert.equal(links.length, 2);
+  assert.equal(elementsOf(pager).filter((element) => element.tag === 'button').length, 0);
+  assert.equal(previous.attributes['aria-label'], 'Previous page');
+  assert.equal(previous.attributes.href, undefined);
+  assert.equal(previous.attributes['aria-disabled'], 'true');
+  assert.equal(next.attributes['aria-label'], 'Next page');
+  assert.equal(next.attributes.href, '?page=2');
+  assert.equal(next.attributes['aria-disabled'], undefined);
 });
