@@ -3,6 +3,7 @@ import { useDisplaySettings } from '../../../../display/useDisplaySettings';
 import { reducedMotionQuery } from '../../../../shared/ReducedMotion';
 import { remeasure } from '../../../../shared/Remeasure';
 import { useHydrated } from '../../../../shared/useHydrated';
+import { temporaryPhoneFrame, temporaryPhoneRibbon } from './TemporaryPhoneRibbon';
 import type { RibbonFrame, RibbonView } from './RibbonScene';
 import './OverviewRibbon.css';
 
@@ -18,6 +19,8 @@ function frameOf(box: HTMLElement): RibbonFrame | null {
   const outer = box.getBoundingClientRect();
   const inner = (box.parentElement?.querySelector(framingSelector) ?? box).getBoundingClientRect();
   if (outer.width < 1 || outer.height < 1 || inner.width < narrowestFramePx) return null;
+  const temporaryVariant = temporaryPhoneRibbon();
+  if (temporaryVariant) return temporaryPhoneFrame(temporaryVariant, box, inner);
   return {
     width: outer.width,
     height: outer.height,
@@ -28,6 +31,9 @@ function frameOf(box: HTMLElement): RibbonFrame | null {
 }
 
 function startRibbon(box: HTMLElement, paused: () => boolean) {
+  const temporaryVariant = temporaryPhoneRibbon();
+  if (temporaryVariant && box.parentElement)
+    box.parentElement.dataset.temporaryRibbon = temporaryVariant;
   const canvas = document.createElement('canvas');
   canvas.className = 'catalogue-ribbon-canvas';
   box.append(canvas);

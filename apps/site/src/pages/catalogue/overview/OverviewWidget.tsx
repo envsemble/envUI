@@ -9,6 +9,7 @@ import {
   type PointerEvent,
 } from 'react';
 import {
+  Button,
   CopyButton,
   IconButton,
   SegmentedControl,
@@ -19,6 +20,7 @@ import {
   type ColorScheme,
 } from '@envsemble/envui';
 import { HighlightedCodeBlock } from '@envsemble/envui/code';
+import { IconCode } from '@envsemble/envui/icons/Code';
 import { IconDarkMode } from '@envsemble/envui/icons/DarkMode';
 import { IconLightMode } from '@envsemble/envui/icons/LightMode';
 import { useDisplaySettings } from '../../../display/useDisplaySettings';
@@ -49,7 +51,7 @@ function excerptTop(pre: HTMLPreElement, source: string, first: number, last: nu
   return Math.min(Math.max(0, first - shownLead), lastStart) * line;
 }
 
-const compactWidth = 48;
+const compactWidth = 44;
 const selfClosingTag = /^( *)(<[\w.]+)((?: +\w+=(?:"[^"]*"|\{[^}]*\}))+) *\/>$/;
 
 const textElement = /^( *)(<[\w.]+[^<>]*>)([^<>]+)(<\/[\w.]+>)$/;
@@ -287,6 +289,19 @@ function lineMetrics(pre: HTMLPreElement) {
   };
 }
 
+const temporaryPhoneVariants = ['a', 'b', 'c'] as const;
+type TemporaryPhoneVariant = (typeof temporaryPhoneVariants)[number];
+
+function useTemporaryPhoneVariant() {
+  const [variant, setVariant] = useState<TemporaryPhoneVariant>('b');
+  useEffect(() => {
+    const asked = new URLSearchParams(window.location.search).get('ms');
+    const found = temporaryPhoneVariants.find((each) => each === asked);
+    if (found) setVariant(found);
+  }, []);
+  return variant;
+}
+
 export function OverviewWidget({ className }: { className?: string }) {
   const [sampleId, setSampleId] = useState(samples[0]!.id);
   const [hot, setHot] = useState<string | null>(null);
@@ -315,6 +330,8 @@ export function OverviewWidget({ className }: { className?: string }) {
   const touring = hydrated && inView && !engaged && !touched && !reduced && !motionPaused;
   const [compact, setCompact] = useState(false);
   const source = compact ? compactIndent(sample.source) : sample.source;
+  const phoneVariant = useTemporaryPhoneVariant();
+  const [codeShown, setCodeShown] = useState(false);
 
   useEffect(() => {
     const element = code.current;
@@ -398,7 +415,7 @@ export function OverviewWidget({ className }: { className?: string }) {
       fonts: true,
     });
     return () => watching.stop();
-  }, [sample, source, active, ranges, codeFit]);
+  }, [sample, source, active, ranges, codeFit, codeShown]);
 
   useEffect(() => {
     const pre = code.current?.querySelector('pre');
@@ -435,7 +452,7 @@ export function OverviewWidget({ className }: { className?: string }) {
       top: Math.max(0, band.top - pre.clientHeight / 4),
       behavior,
     });
-  }, [sample, source, ranges, reduced]);
+  }, [sample, source, ranges, reduced, codeShown]);
 
   function pointAtCode(event: PointerEvent<HTMLElement>) {
     if (!engaged) return;
@@ -463,6 +480,8 @@ export function OverviewWidget({ className }: { className?: string }) {
     <div
       ref={root}
       className={['catalogue-overview-widget', className].filter(Boolean).join(' ')}
+      data-ms={phoneVariant}
+      data-code-hidden={(phoneVariant === 'c' && !codeShown) || undefined}
       {...engage}
       onPointerLeave={(event) => {
         engage.onPointerLeave(event);
@@ -563,6 +582,18 @@ export function OverviewWidget({ className }: { className?: string }) {
             ))}
           </div>
         </Theme>
+        {phoneVariant === 'c' && (
+          <Button
+            variant="ghost"
+            size="sm"
+            start={<IconCode />}
+            aria-expanded={codeShown}
+            className="catalogue-overview-widget-code-toggle"
+            onClick={() => setCodeShown((shown) => !shown)}
+          >
+            {codeShown ? 'Hide code' : 'Show code'}
+          </Button>
+        )}
       </div>
     </div>
   );

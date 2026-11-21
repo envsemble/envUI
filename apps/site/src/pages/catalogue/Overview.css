@@ -268,3 +268,14 @@
 [data-env-theme='dark'] .catalogue-overview-agent-logos > svg {
   outline-color: color-mix(in oklab, var(--env-color-border-muted) 80%, transparent);
 }
+@media (width < 40rem) {
+  .catalogue-overview-hero[data-temporary-ribbon] > .catalogue-overview-ribbon {
+    position: absolute;
+    inset: 0;
+    grid-area: auto;
+    margin: 0;
+  }
+  .catalogue-overview-hero[data-temporary-ribbon='b'] {
+    --catalogue-overview-ribbon-room: calc(37vw + 0.5rem);
+  }
+}

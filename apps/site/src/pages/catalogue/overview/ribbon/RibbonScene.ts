@@ -23,6 +23,8 @@ export interface RibbonFrame {
   cornerX: number;
   cornerY: number;
   unit: number;
+  placed?: boolean;
+  roll?: number;
 }
 
 export interface RibbonView {
@@ -59,9 +61,32 @@ function compile(gl: WebGL2RenderingContext, vertex: string, fragment: string) {
 const cameraX = -1;
 const cameraY = -0.5;
 
-function frustum({ width, height, cornerX, cornerY, unit: widgetUnit }: RibbonFrame) {
-  const unit = widgetUnit * Math.min(1, cornerY / widgetUnit / crestClearance);
-  const anchorX = Math.min(cornerX, width - curlReach * unit);
+function rolled(projection: Float32Array, angle: number) {
+  const c = Math.cos(angle);
+  const s = Math.sin(angle);
+  const shiftX = c * cameraX - s * cameraY - cameraX;
+  const shiftY = s * cameraX + c * cameraY - cameraY;
+  const turn = [c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, shiftX, shiftY, 0, 1];
+  const out = new Float32Array(16);
+  for (let column = 0; column < 4; column++)
+    for (let row = 0; row < 4; row++) {
+      let sum = 0;
+      for (let k = 0; k < 4; k++) sum += projection[k * 4 + row]! * turn[column * 4 + k]!;
+      out[column * 4 + row] = sum;
+    }
+  return out;
+}
+
+function frustum(frame: RibbonFrame) {
+  const projection = upright(frame);
+  return frame.roll ? rolled(projection, frame.roll) : projection;
+}
+
+function upright({ width, height, cornerX, cornerY, unit: widgetUnit, placed }: RibbonFrame) {
+  const unit = placed
+    ? widgetUnit
+    : widgetUnit * Math.min(1, cornerY / widgetUnit / crestClearance);
+  const anchorX = placed ? cornerX : Math.min(cornerX, width - curlReach * unit);
   const k = nearPlane / cameraDistance;
   const left = (-anchorX / unit - cameraX) * k;
   const right = ((width - anchorX) / unit - cameraX) * k;
