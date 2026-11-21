@@ -21,7 +21,6 @@ aliases:
 useWhen:
   - Items people open, such as agents, documents or messages
   - Options people switch on and off, such as which alerts they get
-  - The list beside an item's details, with its current row marked
 avoidWhen:
   - text: Data compared across columns, or rows people sort by a value.
     use: Table

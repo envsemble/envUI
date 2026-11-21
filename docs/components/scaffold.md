@@ -24,7 +24,7 @@ useWhen:
 avoidWhen:
   - text: A readable column for a page's content, with its gutters.
     use: Page
-  - text: Two panes side by side inside the body, such as a list and its detail.
+  - text: Two panes side by side inside the body, such as a document and its details.
     use: Panes
 components:
   - Scaffold

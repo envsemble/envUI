@@ -18,12 +18,6 @@ aliases:
   - code diff
   - diff viewer
   - file diff
-  - DiffStat
-  - DiffCount
-  - diff stat
-  - diff count
-  - change size
-  - lines changed
 useWhen:
   - A command, a value or a file name in a sentence (Code)
   - Commands, output or source to read or copy (CodeBlock, HighlightedCodeBlock)
@@ -49,9 +43,6 @@ examples:
   CodeBlockAnatomy: anatomy
   PlainOutput: example
   SettingsDiff: example
-  ChangedFiles:
-    role: example
-    caption: Each file's size of change, read as 124 added lines and 37 removed lines; the +124 −37 is hidden from assistive technology, and nothing in it takes focus.
   DiffColumns: example
 ---
 
@@ -93,12 +84,6 @@ examples:
 ### Diffs
 
 ```tsx figure=SettingsDiff
-
-```
-
-### The size of a change
-
-```tsx figure=ChangedFiles
 
 ```
 

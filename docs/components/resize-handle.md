@@ -11,19 +11,21 @@ aliases:
   - drag handle
   - separator
 useWhen:
-  - A sidebar or a panel whose width people choose
-  - An edge between two regions that aren't Panes
+  - A docked panel whose height people choose, such as a run's logs
+  - An edge that none of envUI's resizable components already gives
 avoidWhen:
   - text: Two panes of one region, side by side, one of them resized.
     use: Panes
+  - text: An application's navigation, whose width people choose.
+    use: NavigationDrawer
   - text: A panel over the page whose width people choose.
     use: Sheet
 components:
   - ResizeHandle
 examples:
-  ProjectSidebar:
+  DockedLogs:
     role: overview
-    caption: The sidebar's edge, invisible until the pointer is over it, with its grip.
+    caption: The top edge of a run's logs, which people drag up to read more of them; its grip shows where to take it.
   ResizeHandleAnatomy: anatomy
   WithoutAGrip: example
 ---

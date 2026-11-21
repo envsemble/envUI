@@ -12,10 +12,6 @@ aliases:
   - capacity
   - level
   - meters
-  - Rating
-  - stars
-  - star rating
-  - review score
 useWhen:
   - A quantity within a known range, such as storage used of a quota
   - Several limits compared at a glance, such as a plan's seats and projects
@@ -31,9 +27,6 @@ examples:
   MeterAnatomy: anatomy
   InlineUsage: example
   LongLabel: example
-  StarRating:
-    role: example
-    caption: One image named 4.5 out of 5 stars, the number beside it hidden from assistive technology; read-only, so nothing in it takes focus.
 ---
 
 # Meter
@@ -55,12 +48,6 @@ examples:
 ### On one line
 
 ```tsx figure=InlineUsage
-
-```
-
-### A score in stars
-
-```tsx figure=StarRating
 
 ```
 

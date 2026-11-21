@@ -1,20 +1,28 @@
 import { useState } from 'react';
-import { ResizeHandle, Row, Surface, Text } from '@envsemble/envui';
+import { Column, ResizeHandle, Surface, Text } from '@envsemble/envui';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 
-const row = '[data-env-layout="row"]';
-const rowWidthRem = 20;
-const at = (widthRem: number) => (widthRem + 0.375) / rowWidthRem;
+const column = '[data-env-layout="column"]';
+const handle = '.env-resize-handle';
+const columnHeightRem = 7;
+const logsAt = (heightRem: number) => (columnHeightRem - heightRem) / columnHeightRem;
+
+const logLines = [
+  'Installing dependencies',
+  'Building the site',
+  'Running 214 tests',
+  '214 passed',
+];
 
 const script: PointerStep[] = [
   { wait: 240 },
-  { to: row, x: at(7) },
+  { to: handle, x: 0.5, y: 0.5 },
   { wait: 300 },
   { press: true },
-  { to: row, x: at(10), duration: 900 },
+  { to: column, x: 0.5, y: logsAt(4.75), duration: 900 },
   { wait: 300 },
-  { to: row, x: at(7), duration: 900 },
+  { to: column, x: 0.5, y: logsAt(2.5), duration: 900 },
   { release: true },
   { wait: 300 },
   { leave: true },
@@ -22,26 +30,36 @@ const script: PointerStep[] = [
 ];
 
 export default function ResizeHandleTile() {
-  const [width, setWidth] = useState(7);
+  const [height, setHeight] = useState(2.5);
   usePointer(script);
   return (
-    <Row align="stretch" style={{ inlineSize: `${rowWidthRem}rem`, blockSize: '7rem' }}>
-      <Surface radius="none" padding={2} style={{ inlineSize: `${width}rem`, flex: 'none' }}>
-        <Text variant="body-sm">Files</Text>
+    <Column style={{ inlineSize: '20rem', blockSize: `${columnHeightRem}rem` }}>
+      <Surface radius="none" padding={2} background="page" style={{ flex: 1, minBlockSize: 0 }}>
+        <Text variant="body-sm">Deploy to staging</Text>
       </Surface>
       <ResizeHandle
-        axis="inline"
-        label="Resize the files"
-        value={width}
-        min={5}
-        max={12}
+        axis="block"
+        reverse
+        label="Resize the logs"
+        value={height}
+        min={2}
+        max={5}
         unit="rem"
-        step={1}
-        onChange={setWidth}
+        step={0.5}
+        onChange={setHeight}
       />
-      <Surface radius="none" padding={2} background="page" style={{ flex: 1 }}>
-        <Text variant="body-sm">Preview</Text>
+      <Surface
+        radius="none"
+        padding={2}
+        render={<Column gap={1} />}
+        style={{ blockSize: `${height}rem`, flex: 'none', overflow: 'hidden' }}
+      >
+        {logLines.map((line) => (
+          <Text key={line} variant="caption" emphasis="muted">
+            {line}
+          </Text>
+        ))}
       </Surface>
-    </Row>
+    </Column>
   );
 }

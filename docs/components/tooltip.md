@@ -12,11 +12,6 @@ aliases:
   - title attribute
   - hover text
   - hover label
-  - CalendarHeatmap
-  - heatmap
-  - calendar heatmap
-  - contribution graph
-  - activity calendar
 useWhen:
   - An icon-only control's name, such as Refresh
   - Why a control is disabled, beside the page's own account of it
@@ -39,9 +34,6 @@ examples:
   MenuTrigger: example
   ShortcutHints: example
   TextAbbreviation: example
-  DailyActivity:
-    role: example
-    caption: A grid named by its heading and one tab stop; the arrow keys move a day or a week and Home and End go to the first and last day. Each day is named by its date and count, which its tooltip shows on hover and focus, and the legend is hidden from assistive technology.
 ---
 
 # Tooltip
@@ -80,11 +72,5 @@ examples:
 ### Text
 
 ```tsx figure=TextAbbreviation motion
-
-```
-
-### Details of each day in a grid
-
-```tsx figure=DailyActivity
 
 ```
