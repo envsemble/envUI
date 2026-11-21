@@ -179,7 +179,7 @@ const docsPages: RoutePage[] = [
     area: 'docs',
     section: 'Foundations',
     kind: 'tokens',
-    summary: 'Every design token as a CSS variable, with its value in each theme and density.',
+    summary: 'Every design token as a CSS variable, with its value in each theme and scale.',
   },
   ...componentGroups.flatMap((group) =>
     componentDocuments

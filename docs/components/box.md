@@ -1,6 +1,6 @@
 ---
 title: Box
-summary: A plain block that adds padding, sets a size or labels a region.
+summary: A plain block for padding, container queries, or a name that styles and tests can target.
 status: beta
 since: 1.0.0
 category: App frame & layout

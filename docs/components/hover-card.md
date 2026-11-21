@@ -1,6 +1,6 @@
 ---
 title: HoverCard
-summary: A card with more details that opens when people hover a link, like a link preview.
+summary: A card with more details that opens when people hover or focus a link, like a link preview.
 status: stable
 since: 1.0.0
 category: Overlays

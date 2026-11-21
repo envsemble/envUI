@@ -46,14 +46,12 @@
     box-sizing: border-box;
     min-inline-size: 0;
     max-inline-size: 100%;
-    padding: var(--env-space-5) var(--_code-block-inset-end) var(--env-space-5)
-      var(--_code-block-inset-start);
+    padding-block: var(--env-space-5);
     border-radius: var(--env-radius-sm);
     font: var(--_code-font-size) / 1.7 var(--_code-font-family);
   }
   .env-code-block pre {
-    margin: 0 calc(-1 * var(--_code-block-inset-end)) 0 calc(-1 * var(--_code-block-inset-start));
-    padding: 0 var(--_code-block-inset-end) 0 var(--_code-block-inset-start);
+    margin: 0;
     overflow: auto;
     font: inherit;
     tab-size: 2;
@@ -76,6 +74,11 @@
   .env-code-block[data-wrap] pre {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+  }
+  .env-code-block pre,
+  .env-code-block-header {
+    padding-inline-start: var(--_code-block-inset-start);
+    padding-inline-end: var(--_code-block-inset-end);
   }
   .env-code-block-header {
     margin-block-end: var(--env-space-3);
