@@ -12,6 +12,22 @@ scripts/site/ReleaseNotes.ts reads and checks this file; the full changelog is p
 - A change, [with a link to its entry](/docs/changelog#release).
 -->
 
+## 3.0.0 — 2026-11-21
+
+- [envUI 3.0](/docs/changelog#300--2026-11-21) gives each place one name and leaves the application its own decisions.
+- Halo is new: a soft halo that breathes around the one control or region to look at next.
+- NavigationRail's current destination now looks like NavigationDrawer's current row, the whole item on the drawer's tile.
+- Rows, items and crumbs pass the application's own props through, with `itemProps`, and more components take `render`.
+- The ESLint plugin's `configs.recommended` reports only envUI used wrongly; the application's own policy moves to `configs.strict`.
+
+### Breaking changes
+
+- AnimatedNumber, CalendarHeatmap, DiffStat, Rating, MarkdownEditor, RichTextEditor and dev mode leave the library. [See 3.0.0](/docs/changelog#300--2026-11-21).
+- One leading slot, `start`, holds the content before a label everywhere. [See 3.0.0](/docs/changelog#300--2026-11-21).
+- ThemePreferenceProvider and Panes leave where a preference or a pane's width is kept to the application. [See 3.0.0](/docs/changelog#300--2026-11-21).
+- CommandPalette groups its items in `{ label, items }` groups, as Select and Combobox do; an item's `group` is removed. [See 3.0.0](/docs/changelog#300--2026-11-21).
+- ToastProvider takes a notification's actions as one list, `actions`. [See 3.0.0](/docs/changelog#300--2026-11-21).
+
 ## 2.1.0 — 2026-11-19
 
 - A breadcrumb's label takes any content again, as in 1.x, such as an avatar before a project's name.
