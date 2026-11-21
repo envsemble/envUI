@@ -224,7 +224,7 @@ test('a page that fails to render says so, and the navigation leads to the other
   await expect(main.getByRole('link', { name: 'Return to overview' })).toHaveCount(0);
   await expect(main.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
   await expect(main).not.toBeFocused();
-  const navigation = page.getByRole('navigation', { name: 'Catalogue' });
+  const navigation = page.getByRole('navigation', { name: 'Gallery' });
   await navigation.getByRole('link', { name: 'Components', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Components');
   await expect(main.getByText('This page failed to render')).toHaveCount(0);

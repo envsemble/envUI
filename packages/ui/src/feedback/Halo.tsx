@@ -33,6 +33,7 @@ export function Halo({ tone = 'accent', render, className, children, ...props }:
     ...props,
     className: classNames('env-halo', className),
     'data-tone': tone,
+    'data-placed': children == null || undefined,
     children: (
       <>
         {children}

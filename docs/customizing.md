@@ -223,7 +223,7 @@ envUI's styles sit in the `env` cascade layer, so the application's CSS outside 
 ### Halo
 
 - Parts: `env-halo`, `env-halo-ring`
-- States: `data-tone` (`accent`, `primary`)
+- States: `data-placed` (`true`); `data-tone` (`accent`, `primary`)
 - Color properties: `--env-halo-indicator`
 - `--env-halo-radius`, to set: The corner radius of what the halo surrounds, which its ring follows concentrically; unset, the control radius.
 - `--env-halo-spread`, to set: How far the halo reaches beyond the edge while still, which its breath widens and narrows; unset, 0.1875 rem.

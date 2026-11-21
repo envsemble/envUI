@@ -832,7 +832,7 @@
       "--env-badge-outline": "An edge in this color."
     },
     "Halo": {
-      "--env-halo-indicator": "The halo, in place of the tone, such as a brand color; the halo shows it at 28%, and at 50% in dark."
+      "--env-halo-indicator": "The halo, in place of the tone, such as a brand color; the halo mixes it at 40%, and at 75% in dark, and breathes between about a third and four fifths of that."
     },
     "Button": {
       "--env-button-container": "The fill, in every variant; the state layers lie over it, and a solid variant takes them instead of its designed hover and press fills.",

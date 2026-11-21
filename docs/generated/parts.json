@@ -2499,6 +2499,15 @@
       ],
       "states": [
         {
+          "attribute": "data-placed",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-halo"
+          ]
+        },
+        {
           "attribute": "data-tone",
           "values": [
             "accent",
@@ -2512,7 +2521,7 @@
       "colors": [
         {
           "property": "--env-halo-indicator",
-          "description": "The halo, in place of the tone, such as a brand color; the halo shows it at 28%, and at 50% in dark."
+          "description": "The halo, in place of the tone, such as a brand color; the halo mixes it at 40%, and at 75% in dark, and breathes between about a third and four fifths of that."
         }
       ],
       "properties": [

@@ -52,7 +52,7 @@ export function CatalogueNavigation({
   return (
     <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
       <NavigationRail
-        aria-label="Catalogue"
+        aria-label="Gallery"
         className="catalogue-rail"
         header={<Brand area="catalogue" />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}

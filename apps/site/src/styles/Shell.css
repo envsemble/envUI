@@ -278,6 +278,7 @@ body {
   content: '';
 }
 .site-top-bar::before {
+  pointer-events: auto;
   inset: calc(var(--env-space-3) - var(--env-space-1)) calc(var(--site-gutter) - var(--env-space-2))
     calc(var(--env-space-2) - var(--env-space-1));
 }

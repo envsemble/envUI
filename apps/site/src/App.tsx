@@ -167,7 +167,7 @@ function Shell() {
       <Sheet
         className="site-navigation-sheet"
         side="start"
-        aria-label={area === 'docs' ? 'Docs' : 'Catalogue'}
+        aria-label={area === 'docs' ? 'Docs' : 'Gallery'}
         width={area === 'docs' ? 'min(18rem, 100%)' : 'min(22rem, 100%)'}
         closeButton={false}
         open={navigationOpen}

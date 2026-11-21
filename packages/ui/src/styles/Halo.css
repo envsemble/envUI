@@ -20,7 +20,7 @@
   .env-halo:where(span) {
     display: inline-flex;
   }
-  .env-halo:has(> .env-halo-ring:only-child) {
+  .env-halo[data-placed] {
     box-shadow: inset 0 0 0 1.5px var(--_halo-color);
   }
   .env-halo[data-tone='primary'] {
@@ -65,7 +65,7 @@
       background: Highlight;
       animation: none;
     }
-    .env-halo:has(> .env-halo-ring:only-child) {
+    .env-halo[data-placed] {
       box-shadow: inset 0 0 0 1.5px Highlight;
     }
   }

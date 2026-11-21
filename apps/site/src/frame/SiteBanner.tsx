@@ -55,7 +55,10 @@ function crumbsOf(
 function PageState({ page }: { page: RoutePage }) {
   const status = page.document?.metadata?.status ?? page.document?.status;
   const since = page.document?.metadata?.since;
-  if (!status && !since) return null;
+  const parts = Object.entries(page.document?.metadata?.statuses ?? {}).filter(
+    ([name]) => page.area === 'docs' || /^[A-Z]/.test(name),
+  );
+  if (!status && !since && !parts.length) return null;
   return (
     <Text variant="body-sm" emphasis="muted" render={<p />} className="site-banner-state">
       {status && (
@@ -64,10 +67,16 @@ function PageState({ page }: { page: RoutePage }) {
           {statusWord(status)}
         </span>
       )}
+      {parts.map(([name, partStatus]) => (
+        <span key={name} className="site-status" data-status={partStatus}>
+          <span className="site-status-glyph" aria-hidden="true" />
+          {`${name}: ${statusWord(partStatus)}`}
+        </span>
+      ))}
       {since && (
         <span className="site-banner-since">
           Since{' '}
-          <Link href={changelogHref} underline={false} className="site-banner-since-link">
+          <Link href={changelogHref} className="site-banner-since-link">
             {since}
           </Link>
         </span>
