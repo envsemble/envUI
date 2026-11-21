@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.1 — 2026-11-21
+
+A patch release with one fix, to CodeBlock.
+
+### Patch Changes
+
+- CodeBlock: code that scrolls sideways now runs to the block's edges instead of being cut off at its padding, so scrolling no longer narrows what shows. At rest the code keeps the same inset, and the focus ring of the scrolling code sits inside the block.
+
 ## 3.0.0 — 2026-11-21
 
 envUI 3.0 gives each place one name and leaves the application its own decisions. Components that belong to one kind of product leave the library (AnimatedNumber, CalendarHeatmap, DiffStat, Rating, MarkdownEditor, RichTextEditor and dev mode), content before a label is always `start`, and where a theme preference or a pane's width is kept is the application's call. Halo is new, a breathing halo that points at the one thing to look at next, and NavigationRail's current destination now looks like the drawer's current row. Each breaking change below says what to write instead.
