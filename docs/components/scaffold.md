@@ -1,6 +1,6 @@
 ---
 title: Scaffold
-summary: The frame of an application's screen, around its top bar, its navigation and the page.
+summary: 'The layout of an app screen: top bar, navigation and page.'
 status: beta
 since: 1.0.0
 category: App frame & layout

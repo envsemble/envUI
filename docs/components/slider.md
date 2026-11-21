@@ -1,6 +1,6 @@
 ---
 title: Slider
-summary: A value in a known range, chosen by dragging or with the keyboard.
+summary: Picks a value in a range, by dragging or with the keyboard.
 status: stable
 since: 1.0.0
 category: Forms & selection

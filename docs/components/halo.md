@@ -1,6 +1,6 @@
 ---
 title: Halo
-summary: A soft halo that breathes around the one control or region to look at next.
+summary: A pulsing glow that points people to the next control to use.
 status: beta
 since: 3.0.0
 category: Feedback

@@ -1,6 +1,6 @@
 ---
 title: Kbd
-summary: Key caps that show a key, or keys pressed together.
+summary: Shows a keyboard key or a shortcut.
 status: stable
 since: 1.0.0
 category: Text & content

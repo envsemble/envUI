@@ -1,6 +1,6 @@
 ---
 title: Field
-summary: The label, description and error around a control envUI has no field for.
+summary: Adds a label, description and error message to a custom control.
 status: beta
 since: 1.0.0
 category: Forms & selection

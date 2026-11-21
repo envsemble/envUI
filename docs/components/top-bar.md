@@ -1,6 +1,6 @@
 ---
 title: TopBar
-summary: The bar at the top of an application or a screen, with its title, centered content and actions.
+summary: The bar at the top of an app or a screen, with a title and actions.
 status: beta
 since: 1.0.0
 category: App frame & layout

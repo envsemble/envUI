@@ -1,6 +1,6 @@
 ---
 title: Page
-summary: The column a page's content sits in, under its title and actions.
+summary: The content column of a page, below its title and actions.
 status: beta
 since: 1.0.0
 category: App frame & layout

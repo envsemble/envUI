@@ -1,6 +1,6 @@
 ---
 title: SegmentedControl
-summary: One choice among a few views or filters of the same content.
+summary: Switches between a few views or filters of the same content.
 status: stable
 since: 1.0.0
 category: Forms & selection

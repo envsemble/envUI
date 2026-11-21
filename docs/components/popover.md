@@ -1,6 +1,6 @@
 ---
 title: Popover
-summary: A floating panel beside its trigger, for details or a small form.
+summary: A floating panel next to the control that opens it, for details or a small form.
 status: stable
 since: 1.0.0
 category: Overlays

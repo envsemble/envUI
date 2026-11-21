@@ -1,6 +1,6 @@
 ---
 title: Select
-summary: One choice from a list that stays collapsed until opened.
+summary: A dropdown for picking one option.
 status: stable
 since: 1.0.0
 category: Forms & selection

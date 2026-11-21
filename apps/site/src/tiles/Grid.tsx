@@ -1,7 +1,7 @@
-import { Grid, Surface, Text } from '@envsemble/envui';
+import { Grid } from '@envsemble/envui';
+import { edges } from './LayoutDrawing';
 import { useMedia } from '../motion/Autoplay';
 import { useTimeline } from '../motion/Timeline';
-import { outlined } from './Outline';
 import { narrowGallery } from './Tiles';
 
 const cardLeastWidthRem = 2.25;
@@ -12,29 +12,28 @@ const fit = (count: number) =>
 const widths = [fit(2), fit(4)];
 const narrowWidths = [fit(2), fit(3)];
 
-const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+const cells = [1, 2, 3, 4];
 
 export default function GridTile() {
   const step = useTimeline([1320, 1320]);
   const narrow = useMedia(narrowGallery);
   return (
-    <Surface
-      background="muted"
-      radius="sm"
-      padding={2}
+    <div
       style={{
-        ...outlined,
+        position: 'relative',
+        padding: 'var(--env-space-2)',
         inlineSize: (narrow ? narrowWidths : widths)[step],
         boxSizing: 'content-box',
       }}
     >
+      {edges()}
       <Grid columns={{ min: `${cardLeastWidthRem}rem` }} gap={2}>
-        {quarters.map((name) => (
-          <Surface key={name} background="default" radius="sm" padding={2} style={outlined}>
-            <Text variant="body-sm">{name}</Text>
-          </Surface>
+        {cells.map((cell) => (
+          <span key={cell} style={{ position: 'relative', blockSize: '2rem' }}>
+            {edges('var(--env-radius-sm)')}
+          </span>
         ))}
       </Grid>
-    </Surface>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 ---
 title: Link
-summary: A destination inside running text, underlined by default, routed by the application.
+summary: A link in text, underlined by default, that goes through your app's router.
 status: beta
 since: 1.0.0
 category: Actions

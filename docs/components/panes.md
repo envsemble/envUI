@@ -1,6 +1,6 @@
 ---
 title: Panes
-summary: A region split into two panes side by side, such as a document and its details.
+summary: Two panes side by side, such as a document and its details.
 status: beta
 since: 1.0.0
 category: App frame & layout

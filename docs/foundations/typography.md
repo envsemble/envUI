@@ -1,6 +1,6 @@
 ---
 title: Typography
-summary: A few text styles, each with one job, from a page's hero line to small notes.
+summary: A small set of text styles, from page headlines to captions.
 components:
   - Text
 aliases:

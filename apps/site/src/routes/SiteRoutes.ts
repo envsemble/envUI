@@ -86,7 +86,7 @@ const cataloguePages: RoutePage[] = [
     area: 'catalogue',
     section: 'Foundations',
     kind: 'foundations',
-    summary: 'What every screen built with envUI shares, beneath its components.',
+    summary: 'The color, type, spacing, icon and accessibility rules every component follows.',
   },
   ...groupedPages
     .filter(({ section }) => section === 'Foundations')
@@ -106,7 +106,7 @@ const cataloguePages: RoutePage[] = [
     area: 'catalogue',
     section: 'Components',
     kind: 'components',
-    summary: 'Every component of envUI, by what it is for.',
+    summary: 'All envUI components, grouped by use.',
   },
   ...componentGroups.flatMap((group) =>
     groupedPages
@@ -179,7 +179,7 @@ const docsPages: RoutePage[] = [
     area: 'docs',
     section: 'Foundations',
     kind: 'tokens',
-    summary: 'Every token as a CSS custom property, with its value in each theme and scale.',
+    summary: 'Every design token as a CSS variable, with its value in each theme and scale.',
   },
   ...componentGroups.flatMap((group) =>
     componentDocuments
@@ -201,8 +201,7 @@ const docsPages: RoutePage[] = [
     area: 'docs',
     section: 'Changelog',
     kind: 'docs-changelog',
-    summary:
-      'What changed in each release of @envsemble/envui: its highlights, then every change with how to migrate.',
+    summary: 'What changed in each release of @envsemble/envui, with migration steps.',
   },
 ];
 

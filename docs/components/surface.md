@@ -1,6 +1,6 @@
 ---
 title: Surface
-summary: A container with a background, an inset and corners, but no layout of its own.
+summary: A container with a background, padding and rounded corners, but no layout.
 status: beta
 since: 1.0.0
 category: App frame & layout

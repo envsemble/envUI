@@ -1,7 +1,7 @@
 import { Button, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { license } from '@envsemble/envui/package.json';
-import { docsRoute, routeHref } from '../../routes/Address';
+import { routeHref } from '../../routes/Address';
 import { pagesOf } from '../../routes/SiteRoutes';
 import { OverviewAgentPrompt } from './overview/OverviewAgentPrompt';
 import { OverviewWidget } from './overview/OverviewWidget';
@@ -19,8 +19,8 @@ export function Overview() {
         </Text>
         <div className="catalogue-overview-start">
           <div className="catalogue-overview-actions">
-            <Button href={routeHref(docsRoute)} end={<IconArrowForward />}>
-              Get started
+            <Button href={routeHref('components')} end={<IconArrowForward />}>
+              Explore
             </Button>
             <OverviewAgentPrompt />
           </div>

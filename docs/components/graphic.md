@@ -1,6 +1,6 @@
 ---
 title: Graphic
-summary: The application's own logo, icon or picture, at one of envUI's sizes.
+summary: Your app's logo, icon or image, at one of envUI's sizes.
 status: beta
 since: 1.0.0
 category: Data display

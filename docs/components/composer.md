@@ -1,6 +1,6 @@
 ---
 title: Composer
-summary: The message field of a conversation, which grows with its text.
+summary: A chat message field that grows as people type.
 status: stable
 since: 1.0.0
 category: Text & content
