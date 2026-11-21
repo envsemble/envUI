@@ -126,9 +126,14 @@ async function showFigures(page: Page) {
   }
 }
 
+async function scrollToTop(page: Page) {
+  await page.evaluate(() => document.getElementById('site-main')?.scrollTo({ top: 0 }));
+}
+
 async function settle(page: Page) {
   await page.locator('#site-main').waitFor();
   await showFigures(page);
+  await scrollToTop(page);
   await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
   await page.locator('.site-loading').first().waitFor({ state: 'detached' });
   await page.evaluate(() => document.fonts.ready);
