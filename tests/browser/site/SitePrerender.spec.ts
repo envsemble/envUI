@@ -88,7 +88,7 @@ const codeColor = (page: Page) =>
     .first()
     .evaluate((code) => getComputedStyle(code).color);
 
-test.describe('a reader with nothing stored, in dark at high contrast and reduced motion, on a phone', () => {
+test.describe('a reader on a dark system at high contrast and reduced motion, on a phone', () => {
   test.use({
     colorScheme: 'dark',
     contrast: 'more',
@@ -96,9 +96,25 @@ test.describe('a reader with nothing stored, in dark at high contrast and reduce
     viewport: { width: 390, height: 844 },
   });
 
-  test("a section's address hydrates as it is, its code in the reader's theme from the first paint", async ({
+  test('with nothing stored, the site is light from the first paint', async ({ page }) => {
+    const path = '/components/button';
+    const bare = await page.context().newPage();
+    await bare.route('**/assets/*.js', (route) => route.abort());
+    await bare.goto(`${siteBuildUrl}${path}`);
+    await expect(bare.locator('html')).toHaveAttribute('data-env-theme', 'light');
+    await bare.close();
+
+    await openSite(page, `${siteBuildUrl}${path}`);
+    await expect(page.locator('#root')).toHaveAttribute('data-site-page', 'components/button');
+    await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'light');
+  });
+
+  test("having chosen System, a section's address hydrates as it is, its code in the reader's theme from the first paint", async ({
     page,
   }) => {
+    await page
+      .context()
+      .addInitScript((key) => localStorage.setItem(key, 'system'), displayStorageKeys.theme);
     const path = '/docs/components/button#import';
     const bare = await page.context().newPage();
     await bare.route('**/assets/*.js', (route) => route.abort());

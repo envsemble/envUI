@@ -9,6 +9,7 @@ export const displayStorageKeys = {
 
 export const siteThemeStorage = {
   storageKey: displayStorageKeys.theme,
+  defaultPreference: 'light',
 } as const satisfies ThemeStorageOptions;
 
 export const drawerWidthKey = (area: 'catalogue' | 'docs') => `envui-site-drawer-width-${area}`;
