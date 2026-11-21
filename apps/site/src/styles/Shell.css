@@ -290,19 +290,6 @@ body {
 :root[data-env-theme='dark'] :is(.site-top-bar, .site-top-bar-end)::before {
   background: var(--env-color-bg-raised);
 }
-@keyframes site-top-bar-float {
-  from {
-    opacity: 0;
-  }
-}
-@supports (animation-timeline: scroll()) {
-  .site-top-bar::before,
-  .site-top-bar-end::before {
-    animation: site-top-bar-float linear both;
-    animation-range: 0 var(--env-space-8);
-    animation-timeline: scroll(nearest block);
-  }
-}
 .site-top-bar-end {
   position: relative;
   display: flex;
@@ -344,9 +331,6 @@ body {
   }
   .site-top-bar-end::before {
     display: block;
-  }
-  .site-frame:has(.site-page-grid[data-contents]) .site-top-bar-end::before {
-    display: none;
   }
 }
 .site-main {
