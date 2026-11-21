@@ -1,5 +1,21 @@
 # @envsemble/eslint-plugin-envui
 
+## 3.0.0 — 2026-11-21
+
+### Major Changes
+
+- `configs.recommended` reports only envUI used wrongly. The rules that set the application's own policy, `no-html-elements` (envUI's components in place of plain HTML) and `label-vocabulary` (the words of envUI's writing guide), move to the new opt-in `configs.strict`, which extends `configs.recommended` and turns both on as errors. See [the ESLint plugin](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#use).
+
+  Breaking changes:
+
+  - `configs.recommended` no longer turns on `no-html-elements` and `label-vocabulary`. To keep them, use `envui.configs.strict` in place of `envui.configs.recommended`, or turn either on yourself, such as `rules: { 'envui/no-html-elements': 'error' }`.
+
+- `no-raw-graphics` no longer counts `start` and `end` as icon slots: they size only envUI's icons and a Graphic, so a raw `<svg>` or another package's icon in one, such as `<Button start={<Github />}>`, is reported, with the fix to wrap it in `<Graphic alt="">`. Its messages name IconButton's `icon` as the icon slot that sizes a raw `<svg>` or another package's icon, in place of Button's `startIcon`. See [no-raw-graphics](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#no-raw-graphics).
+
+  Breaking changes:
+
+  - A raw `<svg>` with a fixed size or fill, or another icon package's icon, in a `start` or `end`, such as a List.Item's, is reported: write `start={<Graphic alt=""><Github /></Graphic>}`, or an envUI icon, such as `start={<IconFolder />}`.
+
 ## 2.1.0 — 2026-11-19
 
 The rules report the real mistake and pass what works: a field with its own label in a list row, links beside a row's target, another icon package's icon in an icon slot, and an app's own words.

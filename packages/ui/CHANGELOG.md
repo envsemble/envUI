@@ -1,5 +1,178 @@
 # Changelog
 
+## 3.0.0 — 2026-11-21
+
+envUI 3.0 gives each place one name and leaves the application its own decisions. Components that belong to one kind of product leave the library (AnimatedNumber, CalendarHeatmap, DiffStat, Rating, MarkdownEditor, RichTextEditor and dev mode), content before a label is always `start`, and where a theme preference or a pane's width is kept is the application's call. Halo is new, a breathing halo that points at the one thing to look at next, and NavigationRail's current destination now looks like the drawer's current row. Each breaking change below says what to write instead.
+
+### Major Changes
+
+- AnimatedNumber leaves the library: a number that rolls to its new value is one effect, not a component every app needs.
+
+  Breaking changes:
+
+  - `AnimatedNumber` and `AnimatedNumberProps` are removed, with the parts `env-animated-number`, `env-animated-number-value` and `env-animated-number-previous` and their states `data-direction` (`up` and `down`) and `data-value`: write the number as plain text, such as `Show {total} tasks`. An app that wants it to roll animates it itself, timed by `--env-motion-duration-medium` and `--env-motion-ease-enter`, and only under `prefers-reduced-motion: no-preference`.
+
+- CalendarHeatmap leaves the library: a calendar of daily counts is a code host's contribution grid, the application's to design.
+
+  Breaking changes:
+
+  - `CalendarHeatmap`, `CalendarHeatmapProps`, `CalendarHeatmapDay` and `CalendarHeatmapCell` are removed, with the parts `env-calendar-heatmap`, `env-calendar-heatmap-corner`, `env-calendar-heatmap-day`, `env-calendar-heatmap-grid`, `env-calendar-heatmap-month`, `env-calendar-heatmap-pad`, `env-calendar-heatmap-scroll`, `env-calendar-heatmap-swatch`, `env-calendar-heatmap-tooltip`, `env-calendar-heatmap-tooltip-positioner`, `env-calendar-heatmap-weekday` and `env-calendar-heatmap-legend`, their states `data-date`, `data-day`, `data-level`, `data-closed` and `data-tone` (`primary`, `accent`, `neutral`, `success`, `warning`, `danger` and `done`), and EnvUIProvider's `messages.calendarHeatmap`: an app that shows one builds its own, such as an element with `role="grid"` holding a `role="row"` per weekday, whose days are each a `role="gridcell"` inside a `<Tooltip>`, colored by mixing a tone's text color, such as `var(--env-color-fg-success)`, into `var(--env-color-bg-page)`.
+
+- CommandPalette groups its items only as Select and Combobox do, in `{ label, items }` groups; an item's `group` key is removed.
+
+  Breaking changes:
+
+  - `CommandPaletteItem.group` is removed. Pass the groups in `items` or `suggestedItems`: `items={[{ label: 'Documents', items: documents }]}` in place of `items={documents.map((document) => ({ ...document, group: 'Documents' }))}`. A group with no items shows no heading.
+  - `CommandPaletteItem` reserves `items`: an entry with an `items` array is a group.
+
+- Dev mode is removed. The lint rules, the contrast of the tokens and the components' accessibility already hold what its readout checked, and a page's layout is the browser's developer tools' to show.
+
+  Breaking changes:
+
+  - The entry point `@envsemble/envui/dev` is removed, with `installDevMode`, `layout`, `window.envui.layout`, the Alt+Shift+D view and the types `DevModeHandle`, `DevModeOptions`, `LayoutApi`, `LayoutAtResult`, `LayoutOptions`, `LayoutSize`, `LayoutProblem`, `LayoutProblemRule`, `PartsEntry`, `PartsFile` and `SkeletonShiftOptions`: delete the `import('@envsemble/envui/dev')` behind the development check. Lint with [`@envsemble/eslint-plugin-envui` and `@envsemble/stylelint-config-envui`](https://github.com/envsemble/envUI/blob/main/docs/setup.md), and inspect a page's layout in the browser's developer tools.
+
+- DiffStat leaves the library: a change's line counts as one pill is one product's display, and CodeDiff's file header already shows them. `countDiffLines` from `@envsemble/envui/diff` still counts them.
+
+  Breaking changes:
+
+  - `DiffStat` and `DiffStatProps` are removed, with the parts `env-diff-stat`, `env-diff-stat-additions`, `env-diff-stat-deletions` and `env-diff-stat-label` and EnvUIProvider's `messages.diffStat`: write `<Badge>` with `+12` in `var(--env-color-fg-success)`, `−3` in `var(--env-color-fg-danger)` and `<VisuallyHidden>12 added lines and 3 removed lines</VisuallyHidden>`.
+
+- DocumentTabs: a tab carries its item's `value` in `data-value`, the attribute named after that prop, and `onClose`, `onPin` and `onReorder` name what they receive `value` and `values`. See [DocumentTabs](https://github.com/envsemble/envUI/blob/main/docs/components/document-tabs.md).
+
+  Breaking changes:
+
+  - The state `data-tab-id` on `env-document-tabs-tab` is now `data-value`: select a tab with `.env-document-tabs-tab[data-value="…"]`.
+
+- TopBar: its loading bar is the only one envUI renders, so `env-loading-bar` always lies along the top bar's edge and the part that said so goes. See [TopBar](https://github.com/envsemble/envUI/blob/main/docs/components/top-bar.md).
+
+  Breaking changes:
+
+  - The part `env-loading-bar-contained` is removed: select the bar with `.env-loading-bar`, or with `.env-top-bar-loading-bar` for TopBar's.
+
+- MarkdownEditor is removed. An editor's storage format, toolbar, link picking and uploads are the application's decisions, so the editor is the application's own. `@envsemble/envui/markdown` keeps Markdown, which shows what was written in envUI's typography.
+
+  Breaking changes:
+
+  - `MarkdownEditor` is removed from `@envsemble/envui/markdown`, with the types `MarkdownEditorProps`, `MarkdownEditorActions`, `MarkdownEditorMode`, `MarkdownCommand`, `MarkdownLink` and `MarkdownLinkRequest`, the `markdownEditor`, `editor` and `linkDialog` messages, the parts `env-markdown-editor`, `env-markdown-editor-input`, `env-markdown-editor-view`, `env-markdown-editor-views` and `env-markdown-editor-write`, and the editor toolbar's `env-editor-toolbar` and `env-editor-status`. Write Markdown in a [Textarea](https://github.com/envsemble/envUI/blob/main/docs/components/text-field.md), or the application's own editor, and show it with [Markdown](https://github.com/envsemble/envUI/blob/main/docs/components/markdown.md), such as a SegmentedControl that switches between the two.
+
+- MessageList: a reply on its way is a Message with `status="working"`, rendered last, with the list's `aria-busy` set while it streams in. It lines up with the other messages, takes the agent's Avatar in `start`, and a Stop button in its `actions` reaches the keyboard and assistive technology, which the hidden busy row did not. See [Message](https://github.com/envsemble/envUI/blob/main/docs/components/message.md).
+
+  Breaking changes:
+
+  - MessageList's `busy`, `busyAuthor` and `busyLabel` are removed, with the part `env-message-list-busy`: write `aria-busy={replying}` on the MessageList and, last in it, `<Message from="other" author="Agent" status="working" statusLabel="Thinking">{replySoFar}</Message>`.
+
+- Pagination requires `onPageChange`, `pageHref` or both, so a pager that leads nowhere doesn't compile. See [Pagination](https://github.com/envsemble/envUI/blob/main/docs/components/pagination.md).
+
+  Breaking changes:
+
+  - `PaginationProps` is a type instead of an interface, a union of `onPageChange` and `pageHref`. An interface that extends it writes a type alias with an intersection instead.
+  - `TreeRowElementProps` is renamed `TreeItemElementProps`, the type of a Tree row's `itemProps`.
+  - `NavigationLabels` is removed: NavigationRail and NavigationBar take `visibleLabel={false}` in place of `labels="tooltip"`.
+
+- One leading slot, `start`, holds the content before a label everywhere: Menu's items and submenus, a CommandPalette item, Button, Badge, TextField, a SegmentedControl item, a Tree item, a DocumentTabs tab, Pager.Previous and the rows of Combobox and Select; Button's and Pager.Next's `end` holds everything after their label. An envUI icon in either takes the icon size and other content, such as an Avatar, keeps its own; a menu widens its leading column only when some row's start holds more than an icon. A Combobox option's `start` renders through the row's start slot, at the size it had. See [Menu](https://github.com/envsemble/envUI/blob/main/docs/components/menu.md) and [Button](https://github.com/envsemble/envUI/blob/main/docs/components/button.md).
+
+  Breaking changes:
+
+  - `icon` on `Menu.Item`, `Menu.CheckboxItem`, `Menu.RadioItem` and `Menu.Submenu` is removed: write `start={<IconSettings />}`.
+  - A CommandPalette item's `icon` is removed: write `start: <IconSettings />`.
+  - Button's and ConfirmButton's `startIcon` is removed, with the part `env-button-start-icon`: write `start={<IconAdd />}`; the content is in `env-button-start`.
+  - Badge's `icon` is removed: write `start={<IconCheckCircle />}`, or `start={null}` for a done badge without its check mark. Assistive technology reads `start` unless the content hides itself, as an envUI icon without a label does.
+  - The part `env-list-row-icon` of the rows of Select, Combobox and CommandPalette is removed: the content before a row's name is in `env-list-row-start`.
+  - TextField's `startIcon` is removed, with the state `data-start-icon` on `env-text-field-control`: write `start={<IconMail />}`; the content is still in `env-text-field-start`, and the state is `data-start`.
+  - A SegmentedControl item's `icon` is removed, with the part `env-segmented-control-item-icon`: write `start: <IconViewList />`; the content is in `env-segmented-control-item-start`.
+  - A Tree item's `icon` is removed, with the part `env-tree-icon`: write `start: <IconFolder />`; the content is in `env-tree-start`.
+  - A DocumentTabs item's `icon` is removed: write `start: <IconDescription />`; the content is in `env-document-tabs-tab-start`.
+  - Pager.Previous's and Pager.Next's `icon` is removed: write `start={<IconArrowBack />}` on Pager.Previous and `end={<IconArrowForward />}` on Pager.Next; the content is in `env-pager-link-start` and `env-pager-link-end`. `Pager.LinkProps` no longer has `icon`, `Pager.PreviousProps` adds `start` to it and `Pager.NextProps` `end`.
+  - Button's, ConfirmButton's and DialogClose's `endIcon` is removed, with the part `env-button-end-icon`: write `end={<IconChevronRight />}`; the content is in `env-button-end`, which sits at the far end of a full-width button.
+  - `start` and `end` size envUI's icons and a Graphic, not a raw `<svg>` or another package's icon component, which `icon`, `startIcon` and `endIcon` wrapped: wrap those in `<Graphic alt="">`.
+
+- DatePicker, TimePicker, MonthPicker and Menubar.Menu name what their `onOpenChange` receives the way every other overlay does: `DatePickerOpenChangeDetails`, `TimePickerOpenChangeDetails` and `MonthPickerOpenChangeDetails`, with their `…OpenChangeReason` types, and `Menubar.OpenChangeDetails`. The details themselves are the same.
+
+  Breaking changes:
+
+  - `PickerOpenChangeDetails` and `PickerOpenChangeReason` are no longer exported: write `DatePickerOpenChangeDetails` and `DatePickerOpenChangeReason`, or the TimePicker or MonthPicker ones.
+  - `Menubar.MenuFocusDetails` is renamed: write `Menubar.OpenChangeDetails`.
+
+- Pagination's `formatRange` is renamed `renderRange`, since it returns content, as every function prop that draws a part is named `render<Part>`; a function named `format<Part>` returns text.
+
+  Breaking changes:
+
+  - Pagination's `formatRange` is now `renderRange`, with the same argument and return type: write `renderRange={({ start, end, total }) => …}`.
+
+- Panes leaves where a pane's width is kept to the application: it no longer writes or reads a cookie. Panes takes `width`, `defaultWidth` and `onWidthChange`, so an application keeps the width people choose wherever it likes, such as in a cookie its server reads, in localStorage or in the user's account, and passes it back. See [Panes](https://github.com/envsemble/envUI/blob/main/docs/components/panes.md).
+
+  Breaking changes:
+
+  - Panes.Root's `persist` and `persistedWidth` and the export `readPanesWidth` are removed. Keep the width in the application and pass it back: `<Panes.Root width={width} onWidthChange={(next, { committed }) => { setWidth(next); if (committed) storeWidth(next); }}>` in place of `<Panes.Root persist="inbox" persistedWidth={readPanesWidth(cookieHeader, 'inbox')}>`, where `width` starts from the width the application stored, such as one its server read from its own cookie, and `storeWidth` keeps it there. A double click on the handle still calls `onWidthChange` with `defaultWidth`.
+
+- Radio names its label's parts as Checkbox and Switch do: `env-radio-label` is the label with the description under it, and `env-radio-label-content` the slot inside it. See [Customize](https://github.com/envsemble/envUI/blob/main/docs/customizing.md).
+
+  Breaking changes:
+
+  - `env-radio-label` is now the wrapper of the label and its description, which had no class: a selector that targeted the label's slot as `env-radio-label` targets `env-radio-label-content`.
+
+- Rating leaves the library: a row of review stars is a consumer and shopping pattern, outside the B2B and developer tools envUI is for.
+
+  Breaking changes:
+
+  - `Rating` and `RatingProps` are removed, with the parts `env-rating`, `env-rating-value`, `env-rating-stars`, `env-rating-star` and `env-rating-star-half`, the star's state `data-fill` (`full` and `half`), the token `--env-color-fg-rating-star` and EnvUIProvider's `messages.rating`: an app that shows a score in stars builds it from Row, Text and IconStar, as one image named such as "4.5 out of 5 stars", with its filled stars in IconStar's `tone="warning"` or the app's own color.
+
+- RichTextEditor and RichText are removed, with the entry point `@envsemble/envui/rich-text`. An editor's storage format, schema, mentions and uploads are the application's decisions, so the editor is the application's own, built on the editor library it chooses.
+
+  Breaking changes:
+
+  - `@envsemble/envui/rich-text` is removed, with `RichTextEditor`, `RichText`, `createRichTextExtensions`, the types `RichTextEditorProps`, `RichTextEditorHandle`, `RichTextProps`, `RichTextReference`, `RichTextReferenceSource`, `RichTextRenderOptions`, `RichTextAttachment`, `RichTextCommand`, `RichTextSlashCommand`, `RichTextSuggestionContent` and `RichTextLinkEvent`, the `MarkdownLink` and `MarkdownLinkRequest` types this entry point also exported, and the `richText` messages. The parts go with them: RichText's `env-rich-text`, `env-rich-text-document`, `env-rich-text-reference`, `env-rich-text-suggestions`, `env-rich-text-suggestions-positioner`, `env-rich-text-task`, `env-rich-text-task-check` and `env-rich-text-task-content`, with the states `data-checked` (`true`, `false`) and `data-reference-id`; RichTextEditor's `env-rich-text-editor`, `env-rich-text-editor-content`, `env-rich-text-editor-control` and `env-rich-text-editor-footer`, with the states `data-disabled`, `data-invalid` and `data-readonly`; and the suggestion list's `env-listbox`, `env-listbox-options` and `env-listbox-empty`. Build the editor on Tiptap or another editor library in the application, and drop the Tiptap and `marked` packages if nothing else needs them. Show saved Markdown read-only with [Markdown](https://github.com/envsemble/envUI/blob/main/docs/components/markdown.md), and take plain text on several lines with Textarea.
+
+- TableOfContents leaves the address to the application's router: each entry is an `#id` link through LinkProvider's link component, which now handles the click, so the router, or else the browser, changes the address and decides whether a jump adds a history entry. envUI still scrolls the section into view, focuses it and marks it current. `onNavigate` is called with the section's id and the click before envUI's scroll; call `preventDefault` in it to make the jump yourself. See [TableOfContents](https://github.com/envsemble/envUI/blob/main/docs/components/table-of-contents.md).
+
+  Breaking changes:
+
+  - TableOfContents no longer calls `history.pushState` itself. A click on an entry reaches LinkProvider's link component, as a click on any other envUI link does: a router link that handles `#id` links changes the address its own way, and without one the browser follows the fragment. To keep the address as it is, call `event.preventDefault()` in `onNavigate` and scroll to the section yourself.
+
+- Table.Root's scroll region takes its class through `regionProps`, with its style, ref, data attributes and listeners, so the region has one way to set each. See [Table](https://github.com/envsemble/envUI/blob/main/docs/components/table.md).
+
+  Breaking changes:
+
+  - Table.Root's `regionClassName` is removed: write `regionProps={{ className }}`.
+
+- ThemePreferenceProvider leaves where the theme preference is kept to the application: it takes `preference`, `defaultPreference` and `onPreferenceChange`, so an application keeps the choice in a cookie, so a server-rendered page matches it, or in the user's account, so it follows them across devices. The provider no longer reads or writes localStorage. `@envsemble/envui/theme-storage` keeps it in localStorage for an application that wants that: `useStoredThemePreference` returns the props to spread on the provider and follows a choice made in another tab, and `createStoredThemeBootstrapScript` reads it before the first paint. See [Setup](https://github.com/envsemble/envUI/blob/main/docs/setup.md#theme-preference).
+
+  Breaking changes:
+
+  - ThemePreferenceProvider no longer stores the preference. To keep it in localStorage as before, write `const storedTheme = useStoredThemePreference({ storageKey: 'app-theme' })` and `<ThemePreferenceProvider theme={theme} {...storedTheme}>`, with `useStoredThemePreference` from `@envsemble/envui/theme-storage`; to keep it elsewhere, pass `preference` and `onPreferenceChange`.
+  - `ThemeDefinition` and `defineTheme` no longer take `storageKey` and `defaultPreference`. Pass the storage key to `useStoredThemePreference` and `createStoredThemeBootstrapScript` as `{ storageKey }`, and the default as ThemePreferenceProvider's `defaultPreference` prop or the storage options' `defaultPreference`.
+  - `createThemeBootstrapScript` no longer reads localStorage: it paints the preference given as `createThemeBootstrapScript(theme, { preference })`, or the system theme. For the stored preference, write `createStoredThemeBootstrapScript(theme, { storageKey })` from `@envsemble/envui/theme-storage` in its place.
+
+- ToastProvider: a notification's actions are one list, `actions`, such as Undo, or Undo and View, in the order given with the main one last, wrapping when they don't fit. See [Toast](https://github.com/envsemble/envUI/blob/main/docs/components/toast.md).
+
+  Breaking changes:
+
+  - A notification's single `action` is removed. Write `actions: [{ label: 'Undo', onClick: undo }]` instead of `action: { label: 'Undo', onClick: undo }`.
+  - `ToastAction` is a union instead of an interface: a button with `onClick`, or a link with `href` and an optional `onClick`. An interface that extends it writes a type alias with an intersection instead.
+
+### Minor Changes
+
+- AvatarGroup: a person takes `itemProps`, more props for their avatar, or for its link or button when it is pressable, such as data attributes for tests or a title; its class joins the avatar's, and the avatar's name and role stay. A person takes the same `name`, `src`, `fallback`, `hue`, `badge` and `selected` as Avatar, typed from AvatarProps. See [Avatar](https://github.com/envsemble/envUI/blob/main/docs/components/avatar.md).
+- Breadcrumbs: a crumb's `itemProps` sets more props on its link, button or text, such as `target` and `rel` to open it in a new tab, or data attributes for tests; its class joins the crumb's, and the crumb's `aria-current` and name stay its own. See [Breadcrumbs](https://github.com/envsemble/envUI/blob/main/docs/components/breadcrumbs.md).
+- Combobox: a group's heading takes content, as Select's does, such as an icon or a count beside the group's name. The type of `ComboboxGroup.label` widens from `string` to `ReactNode`: groups an app passes in keep working, and code that reads a group's label back as a string needs a check that it is one. See [Combobox](https://github.com/envsemble/envUI/blob/main/docs/components/combobox.md).
+- DocumentTabs: a tab's `label` takes content, such as a dimmed folder before a name two tabs share, and the tab, its native tooltip, its close button and its context menu are named by its text: the new `textValue`, else the label when it is a string, else the label's rendered text. A tab's new `itemProps` sets more props on its element, such as a className or data attributes for tests; its `onPointerDown`, `onMouseDown` and `onAuxClick` run before the tab's own, and its other handlers after the tab's own. The type of `DocumentTabsItem.label` widens from `string` to `ReactNode`: tabs an app passes in keep working, and code that reads `label` back as a string needs a check that it is one, or `textValue`. See [DocumentTabs](https://github.com/envsemble/envUI/blob/main/docs/components/document-tabs.md).
+- DropZone takes `render`, another element to render the zone as, such as the application's own panel or table region, which then takes dropped files and gets the zone's `data-drag-over`; and `target={false}` leaves out the target button, for content with its own Browse button that opens the picker through `inputRef`, while the label and description name the zone as a group. See [DropZone](https://github.com/envsemble/envUI/blob/main/docs/components/drop-zone.md).
+- Halo: a new component that draws a soft halo breathing around what it holds, to point at the one control or region to look at next, such as the first step of onboarding or a product tour. The halo stays outside its content, takes no room and is hidden from assistive technology; it holds still with a reduced-motion preference and shows in the system highlight color with forced colors. `tone` is `accent` or `primary`, `--env-halo-indicator` gives it any other color, and `--env-halo-radius` the corners it follows. `render={<div />}` wraps a block, and without children a Halo is the box the application places, such as over a region it measured. See [Halo](https://github.com/envsemble/envUI/blob/main/docs/components/halo.md).
+- IconButton takes `render`, as Button does: another element to render the button as, such as a label for a file input shaped like an icon button. Its class, look, state attributes, icon and handlers merge into that element's props, and a disabled one reports aria-disabled and blocks presses. See [Button](https://github.com/envsemble/envUI/blob/main/docs/components/button.md).
+- Select, Combobox and CommandPalette: an option takes `itemProps`, more props for its element, such as a title or data attributes for tests, its class beside the option's own; the option's role, id and ARIA attributes stay its own. See [Select](https://github.com/envsemble/envUI/blob/main/docs/components/select.md), [Combobox](https://github.com/envsemble/envUI/blob/main/docs/components/combobox.md) and [CommandPalette](https://github.com/envsemble/envUI/blob/main/docs/components/command-palette.md).
+- Markdown: `allowLinkSchemes` lets links take the application's own schemes beside the safe ones, such as `allowLinkSchemes={['vscode']}` for links that open the editor, and keeps the safe-link check for every other link: a `javascript:` link still renders as plain text, and `javascript`, `data` and `vbscript` are refused even when listed. See [Markdown](https://github.com/envsemble/envUI/blob/main/docs/components/markdown.md).
+- Meter: `label` is optional, as on Progress, for a bare bar named with `aria-label` or `aria-labelledby`, such as in a table's usage column; without a label or `valueText` the bar has no row above it. See [Meter](https://github.com/envsemble/envUI/blob/main/docs/components/meter.md).
+- NavigationRail's current destination now looks like a NavigationDrawer's current row: the whole item, icon and label, takes the selected fill with the drawer's corners, its label turns semibold and its icon stays filled. Before, only a rounded rectangle behind the icon was filled. Hover and press fill the whole item too, the keyboard focus ring goes around it, and the rail has a small inline padding so the items sit inside it. NavigationBar is unchanged.
+
+  `--env-navigation-rail-item-selected` now colors the current item's fill, and `--env-navigation-rail-item-selected-content` its icon and label; `--env-navigation-rail-item-container` colors each item's fill at rest.
+
+- Radio: `labelPlacement="start"` puts the label before the radio, as on Checkbox and Switch, keeping the native label that names and chooses it. See [Radio](https://github.com/envsemble/envUI/blob/main/docs/components/radio.md).
+- List: a row's `control` takes any field, such as a Select, a SegmentedControl, a Slider, a TextField, a Combobox, a RadioGroup, a picker or a Calendar, as well as a Switch, a Checkbox or a Radio. A field there with no name of its own is named by the row's `label` and described by its `description`, so a settings row writes its label once: `<List.Item label="Theme" description="Follows the system until set" control={<Select items={themes} />} />`. A field with its own `label`, `aria-label` or `aria-labelledby` keeps it. SegmentedControl's `aria-label` and Slider's `label` are optional for this. See [List](https://github.com/envsemble/envUI/blob/main/docs/components/list.md).
+
+### Patch Changes
+
+- CommandPalette: an item whose label is content and that has no `textValue` takes the label's rendered text as its text, rather than its id.
+
 ## 2.1.0 — 2026-11-19
 
 envUI 2.1 lets an app put what it wants where it wants. Labels across the library take any content again, components gain start, end, header and action slots and render functions, rows and items pass an app's own props through, and the lint rules report only real mistakes. Nothing breaks: every 2.0 call compiles and renders as before, and the few item types that widened say what code that reads them back needs.
