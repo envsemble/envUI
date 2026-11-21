@@ -42,4 +42,4 @@ Set up envUI in my app: envui.envsemble.com/SKILL.md
 
 ## License
 
-[MIT](LICENSE), for the code; the envUI name and logos remain envsemble’s. Bundled third-party assets keep their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).
+[MIT](LICENSE), for the code; the envUI name and logos remain envsemble’s. Bundled third-party assets and dependencies keep their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).
