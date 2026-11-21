@@ -19,9 +19,14 @@ body {
 }
 .site-brand {
   display: flex;
+  flex: none;
   align-items: center;
   gap: var(--env-space-2);
   min-block-size: var(--env-control-height-md);
+  min-inline-size: 0;
+  margin-inline: calc(-1 * var(--env-space-2));
+  padding-inline: var(--env-space-2);
+  border-radius: var(--env-radius-control);
   color: var(--env-color-fg-default);
 }
 .site-brand svg {
@@ -235,8 +240,7 @@ body {
   display: none;
 }
 .docs-drawer-top .site-brand {
-  flex: none;
-  padding-inline-start: var(--env-space-2);
+  margin-inline-start: 0;
 }
 .docs-drawer-top .site-brand svg {
   inline-size: 4rem;
