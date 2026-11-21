@@ -9,8 +9,6 @@ import {
   type PointerEvent,
 } from 'react';
 import {
-  Button,
-  CopyButton,
   IconButton,
   SegmentedControl,
   Text,
@@ -20,7 +18,6 @@ import {
   type ColorScheme,
 } from '@envsemble/envui';
 import { HighlightedCodeBlock } from '@envsemble/envui/code';
-import { IconCode } from '@envsemble/envui/icons/Code';
 import { IconDarkMode } from '@envsemble/envui/icons/DarkMode';
 import { IconLightMode } from '@envsemble/envui/icons/LightMode';
 import { useDisplaySettings } from '../../../display/useDisplaySettings';
@@ -51,7 +48,7 @@ function excerptTop(pre: HTMLPreElement, source: string, first: number, last: nu
   return Math.min(Math.max(0, first - shownLead), lastStart) * line;
 }
 
-const compactWidth = 44;
+const compactWidth = 48;
 const selfClosingTag = /^( *)(<[\w.]+)((?: +\w+=(?:"[^"]*"|\{[^}]*\}))+) *\/>$/;
 
 const textElement = /^( *)(<[\w.]+[^<>]*>)([^<>]+)(<\/[\w.]+>)$/;
@@ -239,7 +236,7 @@ const ringInsideCells = -2;
 const touchPauseMs = 6000;
 const ringRoomInCard = 6;
 
-function spanOf(element: Element, box: { left: number; width: number }) {
+function spanOf(element: Element, box: { left: number; width: number }, zoom: number) {
   const body = element.parentElement;
   if (!body?.matches('.env-card-body') || element.matches('.env-text')) {
     return { left: box.left, right: box.left + box.width };
@@ -247,17 +244,20 @@ function spanOf(element: Element, box: { left: number; width: number }) {
   const edge = body.getBoundingClientRect();
   const style = getComputedStyle(body);
   return {
-    left: edge.left + parseFloat(style.paddingLeft),
-    right: edge.right - parseFloat(style.paddingRight),
+    left: edge.left + parseFloat(style.paddingLeft) * zoom,
+    right: edge.right - parseFloat(style.paddingRight) * zoom,
   };
 }
 
+const scaleOf = (element: Element) => parseFloat(getComputedStyle(element).scale) || 1;
+
 function ringAround(stage: HTMLElement, element: Element): Ring {
+  const zoom = scaleOf(stage);
   const box = boxOf(element);
   const text = element.matches('.env-text');
-  const outset = element.matches('td, tr, thead') ? ringInsideCells : ringOutset;
+  const outset = (element.matches('td, tr, thead') ? ringInsideCells : ringOutset) * zoom;
   const ownRadius = parseFloat(getComputedStyle(element).borderTopLeftRadius) || 0;
-  const span = spanOf(element, box);
+  const span = spanOf(element, box, zoom);
   let left = span.left - outset;
   let right = span.right + outset;
   let top = box.top - outset;
@@ -265,20 +265,32 @@ function ringAround(stage: HTMLElement, element: Element): Ring {
   const card = element.parentElement?.closest('.env-card');
   if (card) {
     const edge = card.getBoundingClientRect();
-    left = Math.max(left, edge.left + ringRoomInCard);
-    right = Math.min(right, edge.right - ringRoomInCard);
-    top = Math.max(top, edge.top + ringRoomInCard);
-    bottom = Math.min(bottom, edge.bottom - ringRoomInCard);
+    const room = ringRoomInCard * zoom;
+    left = Math.max(left, edge.left + room);
+    right = Math.min(right, edge.right - room);
+    top = Math.max(top, edge.top + room);
+    bottom = Math.min(bottom, edge.bottom - room);
   }
   const frame = stage.getBoundingClientRect();
   return {
-    top: top - frame.top - stage.clientTop + stage.scrollTop,
-    left: left - frame.left - stage.clientLeft + stage.scrollLeft,
-    width: right - left,
-    height: bottom - top,
-    radius: ownRadius ? Math.min(ownRadius, box.height / 2) + outset : null,
+    top: (top - frame.top) / zoom - stage.clientTop + stage.scrollTop,
+    left: (left - frame.left) / zoom - stage.clientLeft + stage.scrollLeft,
+    width: (right - left) / zoom,
+    height: (bottom - top) / zoom,
+    radius: ownRadius ? Math.min(ownRadius, box.height / zoom / 2) + outset / zoom : null,
     text,
   };
+}
+
+const miniatureShare = { width: 0.5, height: 0.4 };
+const miniatureScaleMax = 0.6;
+
+function miniatureScale(widget: HTMLElement, stage: HTMLElement) {
+  return Math.min(
+    miniatureScaleMax,
+    (widget.clientWidth * miniatureShare.width) / stage.offsetWidth,
+    (widget.offsetHeight * miniatureShare.height) / stage.offsetHeight,
+  );
 }
 
 function lineMetrics(pre: HTMLPreElement) {
@@ -287,19 +299,6 @@ function lineMetrics(pre: HTMLPreElement) {
     top: parseFloat(style.paddingTop) || 0,
     line: parseFloat(style.lineHeight) || 20,
   };
-}
-
-const temporaryPhoneVariants = ['a', 'b', 'c'] as const;
-type TemporaryPhoneVariant = (typeof temporaryPhoneVariants)[number];
-
-function useTemporaryPhoneVariant() {
-  const [variant, setVariant] = useState<TemporaryPhoneVariant>('b');
-  useEffect(() => {
-    const asked = new URLSearchParams(window.location.search).get('ms');
-    const found = temporaryPhoneVariants.find((each) => each === asked);
-    if (found) setVariant(found);
-  }, []);
-  return variant;
 }
 
 export function OverviewWidget({ className }: { className?: string }) {
@@ -330,8 +329,7 @@ export function OverviewWidget({ className }: { className?: string }) {
   const touring = hydrated && inView && !engaged && !touched && !reduced && !motionPaused;
   const [compact, setCompact] = useState(false);
   const source = compact ? compactIndent(sample.source) : sample.source;
-  const phoneVariant = useTemporaryPhoneVariant();
-  const [codeShown, setCodeShown] = useState(false);
+  const [miniature, setMiniature] = useState<number | null>(null);
 
   useEffect(() => {
     const element = code.current;
@@ -344,6 +342,21 @@ export function OverviewWidget({ className }: { className?: string }) {
   }, []);
 
   useEffect(() => () => window.clearTimeout(touchTimer.current), []);
+
+  useLayoutEffect(() => {
+    const widget = root.current;
+    const element = stage.current;
+    if (!compact || !widget || !element) {
+      setMiniature(null);
+      return;
+    }
+    const watching = remeasure(() => setMiniature(miniatureScale(widget, element)), {
+      first: 'now',
+      resize: [widget, element],
+      fonts: true,
+    });
+    return () => watching.stop();
+  }, [compact, sample]);
 
   useEffect(() => {
     const codePane = code.current;
@@ -396,7 +409,7 @@ export function OverviewWidget({ className }: { className?: string }) {
       { first: 'now', resize: [element, ...marked], fonts: true },
     );
     return () => watching.stop();
-  }, [sample, active, stageTheme]);
+  }, [sample, active, stageTheme, miniature]);
 
   useEffect(() => {
     const pre = code.current?.querySelector('pre');
@@ -415,7 +428,7 @@ export function OverviewWidget({ className }: { className?: string }) {
       fonts: true,
     });
     return () => watching.stop();
-  }, [sample, source, active, ranges, codeFit, codeShown]);
+  }, [sample, source, active, ranges, codeFit]);
 
   useEffect(() => {
     const pre = code.current?.querySelector('pre');
@@ -452,7 +465,7 @@ export function OverviewWidget({ className }: { className?: string }) {
       top: Math.max(0, band.top - pre.clientHeight / 4),
       behavior,
     });
-  }, [sample, source, ranges, reduced, codeShown]);
+  }, [sample, source, ranges, reduced]);
 
   function pointAtCode(event: PointerEvent<HTMLElement>) {
     if (!engaged) return;
@@ -480,8 +493,6 @@ export function OverviewWidget({ className }: { className?: string }) {
     <div
       ref={root}
       className={['catalogue-overview-widget', className].filter(Boolean).join(' ')}
-      data-ms={phoneVariant}
-      data-code-hidden={(phoneVariant === 'c' && !codeShown) || undefined}
       {...engage}
       onPointerLeave={(event) => {
         engage.onPointerLeave(event);
@@ -522,15 +533,7 @@ export function OverviewWidget({ className }: { className?: string }) {
           }}
           onPointerMove={pointAtCode}
         >
-          <HighlightedCodeBlock
-            language="tsx"
-            label={sample.file}
-            copyable={!compact}
-            headerEnd={
-              compact && <CopyButton value={sample.source} variant="ghost" aria-label="Copy code" />
-            }
-            key={sample.id}
-          >
+          <HighlightedCodeBlock language="tsx" label={sample.file} copyable key={sample.id}>
             {source}
           </HighlightedCodeBlock>
         </Theme>
@@ -538,6 +541,9 @@ export function OverviewWidget({ className }: { className?: string }) {
           theme={stageTheme}
           className="catalogue-overview-widget-example"
           data-wide={sample.wide || undefined}
+          scale={compact ? 'compact' : undefined}
+          inert={compact || undefined}
+          style={{ '--catalogue-overview-miniature-scale': miniature?.toString() }}
         >
           <div className="catalogue-overview-widget-example-bar">
             <Text render={<h2 />} variant="caption" emphasis="muted">
@@ -582,18 +588,6 @@ export function OverviewWidget({ className }: { className?: string }) {
             ))}
           </div>
         </Theme>
-        {phoneVariant === 'c' && (
-          <Button
-            variant="ghost"
-            size="sm"
-            start={<IconCode />}
-            aria-expanded={codeShown}
-            className="catalogue-overview-widget-code-toggle"
-            onClick={() => setCodeShown((shown) => !shown)}
-          >
-            {codeShown ? 'Hide code' : 'Show code'}
-          </Button>
-        )}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { useDisplaySettings } from '../../../../display/useDisplaySettings';
 import { reducedMotionQuery } from '../../../../shared/ReducedMotion';
 import { remeasure } from '../../../../shared/Remeasure';
 import { useHydrated } from '../../../../shared/useHydrated';
-import { temporaryPhoneFrame, temporaryPhoneRibbon } from './TemporaryPhoneRibbon';
+import { arcFrame } from './RibbonArc';
 import type { RibbonFrame, RibbonView } from './RibbonScene';
 import './OverviewRibbon.css';
 
@@ -13,14 +13,20 @@ const longestStepS = 0.1;
 const pixelRatioCap = 2;
 const themeAttribute = 'data-env-theme';
 const framingSelector = '.catalogue-overview-widget';
+const clearedSelector = '.catalogue-overview-facts';
+const arcProperty = '--catalogue-overview-ribbon-arc';
 const narrowestFramePx = 300;
 
 function frameOf(box: HTMLElement): RibbonFrame | null {
   const outer = box.getBoundingClientRect();
   const inner = (box.parentElement?.querySelector(framingSelector) ?? box).getBoundingClientRect();
   if (outer.width < 1 || outer.height < 1 || inner.width < narrowestFramePx) return null;
-  const temporaryVariant = temporaryPhoneRibbon();
-  if (temporaryVariant) return temporaryPhoneFrame(temporaryVariant, box, inner);
+  if (getComputedStyle(box).getPropertyValue(arcProperty).trim())
+    return arcFrame(
+      outer,
+      inner,
+      box.parentElement?.querySelector(clearedSelector)?.getBoundingClientRect(),
+    );
   return {
     width: outer.width,
     height: outer.height,
@@ -31,9 +37,6 @@ function frameOf(box: HTMLElement): RibbonFrame | null {
 }
 
 function startRibbon(box: HTMLElement, paused: () => boolean) {
-  const temporaryVariant = temporaryPhoneRibbon();
-  if (temporaryVariant && box.parentElement)
-    box.parentElement.dataset.temporaryRibbon = temporaryVariant;
   const canvas = document.createElement('canvas');
   canvas.className = 'catalogue-ribbon-canvas';
   box.append(canvas);

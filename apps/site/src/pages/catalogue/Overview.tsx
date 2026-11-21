@@ -1,16 +1,13 @@
 import { Button, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { license, version } from '@envsemble/envui/package.json';
+import { license } from '@envsemble/envui/package.json';
 import { docsRoute, routeHref } from '../../routes/Address';
 import { pagesOf } from '../../routes/SiteRoutes';
 import { OverviewAgentPrompt } from './overview/OverviewAgentPrompt';
 import { OverviewWidget } from './overview/OverviewWidget';
 import { OverviewRibbon } from './overview/ribbon/OverviewRibbon';
 
-const counts = (['component', 'foundation'] as const).map((kind) => ({
-  kind,
-  count: pagesOf('catalogue').filter((page) => page.kind === kind).length,
-}));
+const componentCount = pagesOf('catalogue').filter((page) => page.kind === 'component').length;
 
 export function Overview() {
   return (
@@ -28,12 +25,7 @@ export function Overview() {
             <OverviewAgentPrompt />
           </div>
           <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
-            {counts.map(({ kind, count }) => (
-              <span key={kind}>
-                {count} {kind}s
-              </span>
-            ))}
-            <span>Version {version}</span>
+            <span>{componentCount} components</span>
             <span>{license} license</span>
           </Text>
         </div>
