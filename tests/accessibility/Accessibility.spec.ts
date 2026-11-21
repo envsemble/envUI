@@ -218,7 +218,7 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
           if (example) return 'specimen';
           const regions: [string, string][] = [
             ['.site-sidebar', 'sidebar'],
-            ['.site-compact-controls', 'page controls'],
+            ['.site-top-bar', 'page controls'],
             ['.site-page-header, .site-page-banner, .catalogue-overview-hero', 'header'],
             ['.site-page-navigation', 'page navigation'],
             ['.site-article', 'article'],

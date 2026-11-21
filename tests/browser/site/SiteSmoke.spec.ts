@@ -10,7 +10,7 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
     path: '/',
     act: async (page) => {
       await page
-        .locator('.site-page-search')
+        .locator('.site-top-bar .site-wide-only')
         .getByRole('button', { name: /^Search/ })
         .first()
         .click();

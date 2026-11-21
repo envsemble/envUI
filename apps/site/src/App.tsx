@@ -1,16 +1,5 @@
 import { Suspense, useRef, useState } from 'react';
-import {
-  Column,
-  EnvUIProvider,
-  IconButton,
-  Link,
-  LinkProvider,
-  Scaffold,
-  Sheet,
-  Text,
-  Tooltip,
-} from '@envsemble/envui';
-import { IconMenu } from '@envsemble/envui/icons/Menu';
+import { Column, EnvUIProvider, Link, LinkProvider, Scaffold, Sheet, Text } from '@envsemble/envui';
 import { findPage, type Area, type RoutePage } from './routes/SiteRoutes';
 import { PageBoundary } from './frame/PageBoundary';
 import { SiteBanner } from './frame/SiteBanner';
@@ -18,10 +7,8 @@ import { ContentsItems, contentsWorthListing, PageContents } from './frame/PageC
 import { PageFooter } from './frame/PageFooter';
 import { retryDocument } from './pages/PageContent';
 import { preloadPage, retryPageView, usePageContents, usePageView } from './pages/PageLoading';
-import { Brand } from './brand/Brand';
 import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
-import { drawerless } from './navigation/CatalogueDestinations';
-import { PageActions } from './navigation/PageActions';
+import { TopBar } from './navigation/TopBar';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink, usePendingRoute } from './navigation/RouterLink';
 import { RouteProgress } from './navigation/RouteProgress';
@@ -30,7 +17,6 @@ import { usePagePlace } from './routes/usePagePlace';
 import { documentTitle, pageDescription } from './routes/PageHead';
 import { useSheetClosesWhenWide } from './navigation/useSheetClosesWhenWide';
 import { SearchShortcut } from './search/SearchShortcut';
-import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './routes/useSiteRoute';
 import { DisplaySettingsProvider } from './display/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
@@ -60,33 +46,6 @@ function PageNotFound({ area }: { area: Area }) {
         </Text>
       </Column>
     </>
-  );
-}
-
-function CompactControls({
-  area,
-  onOpenNavigation,
-  onSearch,
-}: {
-  area: Area;
-  onOpenNavigation: () => void;
-  onSearch: () => void;
-}) {
-  return (
-    <div className="site-compact-controls">
-      <div className="site-compact-controls-bar">
-        <Tooltip content="Open navigation">
-          <IconButton
-            icon={<IconMenu />}
-            aria-label="Open navigation"
-            variant="ghost"
-            onClick={onOpenNavigation}
-          />
-        </Tooltip>
-        <Brand area={area} />
-        <SearchButton iconOnly onClick={onSearch} />
-      </div>
-    </div>
   );
 }
 
@@ -172,12 +131,10 @@ function Shell() {
           }
         : undefined,
       onClose: inSheet ? () => setNavigationOpen(false) : undefined,
-      onSearch: inSheet
-        ? () => {
-            setNavigationOpen(false);
-            openSearch();
-          }
-        : openSearch,
+      onSearch: () => {
+        setNavigationOpen(false);
+        openSearch();
+      },
     };
     return area === 'docs' ? <DocsNavigation {...props} /> : <CatalogueNavigation {...props} />;
   };
@@ -191,18 +148,13 @@ function Shell() {
       navigationForms={{ compact: 'none', medium: 'none' }}
       navigation={{ drawer: navigation(false) }}
     >
-      <CompactControls
-        area={area}
-        onOpenNavigation={() => setNavigationOpen(true)}
-        onSearch={openSearch}
-      />
       <div className="site-main">
-        {area === 'catalogue' && drawerless(page) && (
-          <div className="site-page-search">
-            <SearchButton onClick={openSearch} className="site-page-search-button" />
-          </div>
-        )}
-        <PageActions page={page} area={area} />
+        <TopBar
+          page={page}
+          area={area}
+          onOpenNavigation={() => setNavigationOpen(true)}
+          onSearch={openSearch}
+        />
         <PageColumns
           page={page}
           area={area}

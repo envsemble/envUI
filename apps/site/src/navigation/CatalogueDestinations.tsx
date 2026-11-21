@@ -37,9 +37,6 @@ export function catalogueSectionOf(page: RoutePage | undefined): CatalogueSectio
 export const sectionPages = (section: CatalogueSection) =>
   pagesOf('catalogue').filter((entry) => entry.section === section);
 
-export const drawerless = (page: RoutePage | undefined) =>
-  sectionPages(catalogueSectionOf(page)).length === 1;
-
 export function pageDestinations(
   pages: readonly RoutePage[],
   currentPath: string,
